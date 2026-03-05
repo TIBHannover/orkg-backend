@@ -8,7 +8,7 @@ value class ISBN private constructor(override val value: String) : IdentifierVal
     companion object : IdentifierValueFactory<ISBN>(
         fn = ::ISBN,
         validationRegex = VALID_ISBN_REGEX,
-        uriValidationRegex = VALID_ISBN_URI_REGEX
+        uriValidationRegex = VALID_ISBN_URI_REGEX,
     )
 
     override val uri: String get() = "urn:ISBN:$value"

@@ -35,7 +35,7 @@ internal class BenchmarkControllerUnitTest : MockMvcBaseTest("benchmarks") {
     fun findAllResearchFieldsWithBenchmarks() {
         every { retrieveResearchField.findAllWithBenchmarks(any()) } returns pageOf(
             ResearchField(id = "R11", label = "Science"),
-            ResearchField(id = "R12", label = "Life Sciences")
+            ResearchField(id = "R12", label = "Life Sciences"),
         )
 
         documentedGetRequestTo("/api/research-fields/benchmarks")
@@ -47,7 +47,7 @@ internal class BenchmarkControllerUnitTest : MockMvcBaseTest("benchmarks") {
                     """
                     A `GET` request returns a <<sorting-and-pagination,paged>> list of all the research fields associated with benchmarks.
                     This includes all research fields that have papers containing benchmarks in their contributions.
-                    """
+                    """,
                 )
                 pagedQueryParameters()
                 pagedResponseFields<ResearchField>(
@@ -68,12 +68,12 @@ internal class BenchmarkControllerUnitTest : MockMvcBaseTest("benchmarks") {
             BenchmarkSummary(
                 researchProblem = ResearchProblem(id = ThingId("R456"), label = "Problem 1"),
                 researchFields = listOf(
-                    ResearchField(id = "R11", label = "Science")
+                    ResearchField(id = "R11", label = "Science"),
                 ),
                 totalPapers = 567,
                 totalDatasets = 2,
-                totalCodes = 231
-            )
+                totalCodes = 231,
+            ),
         )
 
         documentedGetRequestTo("/api/benchmarks/summary/research-field/{id}", researchFieldId)
@@ -84,10 +84,10 @@ internal class BenchmarkControllerUnitTest : MockMvcBaseTest("benchmarks") {
                 description(
                     """
                     A `GET` request returns a <<sorting-and-pagination,paged>> list of benchmark summaries under a certain research field.
-                    """
+                    """,
                 )
                 pathParameters(
-                    parameterWithName("id").description("The identifier of the research field.")
+                    parameterWithName("id").description("The identifier of the research field."),
                 )
                 pagedQueryParameters()
                 pagedResponseFields<BenchmarkSummaryRepresentation>(benchmarkSummaryResponseFields())
@@ -103,12 +103,12 @@ internal class BenchmarkControllerUnitTest : MockMvcBaseTest("benchmarks") {
             BenchmarkSummary(
                 researchProblem = ResearchProblem(id = ThingId("R456"), label = "Problem 1"),
                 researchFields = listOf(
-                    ResearchField(id = "R11", label = "Science")
+                    ResearchField(id = "R11", label = "Science"),
                 ),
                 totalPapers = 567,
                 totalDatasets = 2,
-                totalCodes = 231
-            )
+                totalCodes = 231,
+            ),
         )
 
         documentedGetRequestTo("/api/benchmarks/summary")
@@ -119,7 +119,7 @@ internal class BenchmarkControllerUnitTest : MockMvcBaseTest("benchmarks") {
                 description(
                     """
                     A `GET` request returns a <<sorting-and-pagination,paged>> list of benchmark summaries.
-                    """
+                    """,
                 )
                 pagedQueryParameters()
                 pagedResponseFields<BenchmarkSummaryRepresentation>(benchmarkSummaryResponseFields())

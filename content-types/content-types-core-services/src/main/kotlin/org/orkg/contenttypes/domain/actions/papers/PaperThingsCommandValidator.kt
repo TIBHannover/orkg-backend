@@ -13,7 +13,7 @@ class PaperThingsCommandValidator(
         thingRepository: ThingRepository,
         classRepository: ClassRepository,
     ) : this(
-        ThingsCommandValidator(thingRepository, classRepository)
+        ThingsCommandValidator(thingRepository, classRepository),
     )
 
     override fun invoke(command: CreatePaperCommand, state: State): State {
@@ -21,8 +21,8 @@ class PaperThingsCommandValidator(
             return state.copy(
                 validationCache = thingsCommandValidator.validate(
                     thingsCommand = command.contents!!,
-                    validationCache = state.validationCache
-                )
+                    validationCache = state.validationCache,
+                ),
             )
         }
         return state

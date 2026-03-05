@@ -48,7 +48,7 @@ internal class SmartReviewSectionUpdaterUnitTest : MockkBaseTest {
         val oldSection = smartReview.sections.filterIsInstance<SmartReviewComparisonSection>().single()
         val state = UpdateSmartReviewSectionState(
             smartReview = smartReview,
-            statements = oldSection.toGroupedStatements()
+            statements = oldSection.toGroupedStatements(),
         )
         val command = oldSection.toUpdateCommand(contributorId, smartReview.id)
             .shouldBeInstanceOf<UpdateSmartReviewSectionUseCase.UpdateComparisonSectionCommand>()
@@ -63,7 +63,7 @@ internal class SmartReviewSectionUpdaterUnitTest : MockkBaseTest {
                 contributorId = command.contributorId,
                 newSection = command,
                 oldSection = oldSection,
-                statements = state.statements
+                statements = state.statements,
             )
         }
     }
@@ -86,7 +86,7 @@ internal class SmartReviewSectionUpdaterUnitTest : MockkBaseTest {
         val oldSection = smartReview.sections.filterIsInstance<SmartReviewVisualizationSection>().single()
         val state = UpdateSmartReviewSectionState(
             smartReview = smartReview,
-            statements = oldSection.toGroupedStatements()
+            statements = oldSection.toGroupedStatements(),
         )
         val command = oldSection.toUpdateCommand(contributorId, smartReview.id)
             .shouldBeInstanceOf<UpdateSmartReviewSectionUseCase.UpdateVisualizationSectionCommand>()
@@ -101,7 +101,7 @@ internal class SmartReviewSectionUpdaterUnitTest : MockkBaseTest {
                 contributorId = command.contributorId,
                 newSection = command,
                 oldSection = oldSection,
-                statements = state.statements
+                statements = state.statements,
             )
         }
     }
@@ -124,7 +124,7 @@ internal class SmartReviewSectionUpdaterUnitTest : MockkBaseTest {
         val oldSection = smartReview.sections.filterIsInstance<SmartReviewResourceSection>().single()
         val state = UpdateSmartReviewSectionState(
             smartReview = smartReview,
-            statements = oldSection.toGroupedStatements()
+            statements = oldSection.toGroupedStatements(),
         )
         val command = oldSection.toUpdateCommand(contributorId, smartReview.id)
             .shouldBeInstanceOf<UpdateSmartReviewSectionUseCase.UpdateResourceSectionCommand>()
@@ -139,7 +139,7 @@ internal class SmartReviewSectionUpdaterUnitTest : MockkBaseTest {
                 contributorId = command.contributorId,
                 newSection = command,
                 oldSection = oldSection,
-                statements = state.statements
+                statements = state.statements,
             )
         }
     }
@@ -162,7 +162,7 @@ internal class SmartReviewSectionUpdaterUnitTest : MockkBaseTest {
         val oldSection = smartReview.sections.filterIsInstance<SmartReviewPredicateSection>().single()
         val state = UpdateSmartReviewSectionState(
             smartReview = smartReview,
-            statements = oldSection.toGroupedStatements()
+            statements = oldSection.toGroupedStatements(),
         )
         val command = oldSection.toUpdateCommand(contributorId, smartReview.id)
             .shouldBeInstanceOf<UpdateSmartReviewSectionUseCase.UpdatePredicateSectionCommand>()
@@ -177,7 +177,7 @@ internal class SmartReviewSectionUpdaterUnitTest : MockkBaseTest {
                 contributorId = command.contributorId,
                 newSection = command,
                 oldSection = oldSection,
-                statements = state.statements
+                statements = state.statements,
             )
         }
     }
@@ -200,7 +200,7 @@ internal class SmartReviewSectionUpdaterUnitTest : MockkBaseTest {
         val oldSection = smartReview.sections.filterIsInstance<SmartReviewOntologySection>().single()
         val state = UpdateSmartReviewSectionState(
             smartReview = smartReview,
-            statements = oldSection.toGroupedStatements()
+            statements = oldSection.toGroupedStatements(),
         )
         val command = oldSection.toUpdateCommand(contributorId, smartReview.id)
             .shouldBeInstanceOf<UpdateSmartReviewSectionUseCase.UpdateOntologySectionCommand>()
@@ -215,7 +215,7 @@ internal class SmartReviewSectionUpdaterUnitTest : MockkBaseTest {
                 contributorId = command.contributorId,
                 newSection = command,
                 oldSection = oldSection,
-                statements = state.statements
+                statements = state.statements,
             )
         }
     }
@@ -238,7 +238,7 @@ internal class SmartReviewSectionUpdaterUnitTest : MockkBaseTest {
         val oldSection = smartReview.sections.filterIsInstance<SmartReviewTextSection>().single()
         val state = UpdateSmartReviewSectionState(
             smartReview = smartReview,
-            statements = oldSection.toGroupedStatements()
+            statements = oldSection.toGroupedStatements(),
         )
         val command = oldSection.toUpdateCommand(contributorId, smartReview.id)
             .shouldBeInstanceOf<UpdateSmartReviewSectionUseCase.UpdateTextSectionCommand>()
@@ -253,7 +253,7 @@ internal class SmartReviewSectionUpdaterUnitTest : MockkBaseTest {
                 contributorId = command.contributorId,
                 newSection = command,
                 oldSection = oldSection,
-                statements = state.statements
+                statements = state.statements,
             )
         }
     }
@@ -279,7 +279,7 @@ internal class SmartReviewSectionUpdaterUnitTest : MockkBaseTest {
         contributorId = contributorId,
         smartReviewId = smartReviewId,
         heading = heading,
-        comparison = comparison?.id
+        comparison = comparison?.id,
     )
 
     private fun SmartReviewVisualizationSection.toUpdateCommand(
@@ -290,7 +290,7 @@ internal class SmartReviewSectionUpdaterUnitTest : MockkBaseTest {
         contributorId = contributorId,
         smartReviewId = smartReviewId,
         heading = heading,
-        visualization = visualization?.id
+        visualization = visualization?.id,
     )
 
     private fun SmartReviewResourceSection.toUpdateCommand(
@@ -301,7 +301,7 @@ internal class SmartReviewSectionUpdaterUnitTest : MockkBaseTest {
         contributorId = contributorId,
         smartReviewId = smartReviewId,
         heading = heading,
-        resource = resource?.id
+        resource = resource?.id,
     )
 
     private fun SmartReviewPredicateSection.toUpdateCommand(
@@ -312,7 +312,7 @@ internal class SmartReviewSectionUpdaterUnitTest : MockkBaseTest {
         contributorId = contributorId,
         smartReviewId = smartReviewId,
         heading = heading,
-        predicate = predicate?.id
+        predicate = predicate?.id,
     )
 
     private fun SmartReviewOntologySection.toUpdateCommand(
@@ -324,7 +324,7 @@ internal class SmartReviewSectionUpdaterUnitTest : MockkBaseTest {
         smartReviewId = smartReviewId,
         heading = heading,
         entities = entities.mapNotNull { it.id },
-        predicates = predicates.map { it.id }
+        predicates = predicates.map { it.id },
     )
 
     private fun SmartReviewTextSection.toUpdateCommand(
@@ -336,6 +336,6 @@ internal class SmartReviewSectionUpdaterUnitTest : MockkBaseTest {
         smartReviewId = smartReviewId,
         heading = heading,
         `class` = classes.first { it in SmartReviewTextSection.types },
-        text = text
+        text = text,
     )
 }

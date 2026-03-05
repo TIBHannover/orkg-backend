@@ -24,7 +24,7 @@ class SmartReviewSectionsUpdater(
     ) : this(
         AbstractSmartReviewSectionCreator(unsafeStatementUseCases, unsafeResourceUseCases, unsafeLiteralUseCases),
         AbstractSmartReviewSectionDeleter(statementService, resourceService),
-        StatementCollectionPropertyUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases)
+        StatementCollectionPropertyUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases),
     )
 
     override fun invoke(command: UpdateSmartReviewCommand, state: State): State {
@@ -43,7 +43,7 @@ class SmartReviewSectionsUpdater(
                     contributorId = command.contributorId,
                     subjectId = contributionId,
                     predicateId = Predicates.hasSection,
-                    objects = sectionIds
+                    objects = sectionIds,
                 )
                 oldSections.forEach {
                     abstractSmartReviewSectionDeleter.delete(command.contributorId, contributionId, it, state.statements)

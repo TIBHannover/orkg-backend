@@ -32,7 +32,7 @@ internal class ClassHierarchyServiceUnitTest : MockkBaseTest {
         val command = CreateClassHierarchyUseCase.CreateCommand(
             contributorId = ContributorId.UNKNOWN,
             parentId = parentId,
-            childIds = setOf(childId)
+            childIds = setOf(childId),
         )
 
         every { classRepository.findById(parentId) } returns Optional.of(createClass(id = parentId))
@@ -50,7 +50,7 @@ internal class ClassHierarchyServiceUnitTest : MockkBaseTest {
         val command = CreateClassHierarchyUseCase.CreateCommand(
             contributorId = ContributorId.UNKNOWN,
             parentId = parentId,
-            childIds = setOf(childId)
+            childIds = setOf(childId),
         )
 
         every { classRepository.findById(parentId) } returns Optional.of(createClass(id = parentId))
@@ -70,7 +70,7 @@ internal class ClassHierarchyServiceUnitTest : MockkBaseTest {
         val command = CreateClassHierarchyUseCase.CreateCommand(
             contributorId = ContributorId.UNKNOWN,
             parentId = parentId,
-            childIds = setOf(childId)
+            childIds = setOf(childId),
         )
 
         every { classRepository.findById(parentId) } returns Optional.empty()
@@ -88,7 +88,7 @@ internal class ClassHierarchyServiceUnitTest : MockkBaseTest {
         val command = CreateClassHierarchyUseCase.CreateCommand(
             contributorId = ContributorId.UNKNOWN,
             parentId = parentId,
-            childIds = setOf(childId)
+            childIds = setOf(childId),
         )
 
         every { classRepository.findById(childId) } returns Optional.of(createClass(id = childId))
@@ -110,7 +110,7 @@ internal class ClassHierarchyServiceUnitTest : MockkBaseTest {
         val command = CreateClassHierarchyUseCase.CreateCommand(
             contributorId = ContributorId.UNKNOWN,
             parentId = parentId,
-            childIds = setOf(childId)
+            childIds = setOf(childId),
         )
 
         every { classRepository.findById(childId) } returns Optional.of(createClass(id = childId))
@@ -134,7 +134,7 @@ internal class ClassHierarchyServiceUnitTest : MockkBaseTest {
         val command = CreateClassHierarchyUseCase.CreateCommand(
             contributorId = ContributorId.UNKNOWN,
             parentId = parentId,
-            childIds = setOf(childId)
+            childIds = setOf(childId),
         )
 
         every { classRepository.findById(childId) } returns Optional.of(createClass(id = childId))

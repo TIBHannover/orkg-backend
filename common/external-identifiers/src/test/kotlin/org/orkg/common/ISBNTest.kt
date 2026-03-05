@@ -79,7 +79,7 @@ internal class ISBNTest {
             // 12 digits used
             Arguments.of("960-4125-0591-0", "urn:ISBN:960-4125-0591-0"),
             // empty
-            Arguments.of("", "urn:ISBN:")
+            Arguments.of("", "urn:ISBN:"),
         )
     }
 }

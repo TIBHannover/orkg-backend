@@ -77,7 +77,7 @@ class TemplateInstanceController(
             createdAtStart = createdAtStart,
             createdAtEnd = createdAtEnd,
             observatoryId = observatoryId,
-            organizationId = organizationId
+            organizationId = organizationId,
         ).mapToTemplateInstanceRepresentation(capabilities)
 
     @RequireLogin
@@ -129,7 +129,7 @@ class TemplateInstanceController(
                 predicates = predicates?.mapValues { it.value.toCreateCommand() }.orEmpty(),
                 classes = classes?.mapValues { it.value.toCreateCommand() }.orEmpty(),
                 lists = lists?.mapValues { it.value.toCreateCommand() }.orEmpty(),
-                extractionMethod = extractionMethod
+                extractionMethod = extractionMethod,
             )
     }
 }

@@ -26,7 +26,7 @@ internal class RosettaStoneStatementThingsCommandUpdateValidatorUnitTest : Mockk
         val state = UpdateRosettaStoneStatementState()
 
         val validationCache = mapOf<String, Either<CreateThingCommandPart, Thing>>(
-            "R100" to Either.right(createResource())
+            "R100" to Either.right(createResource()),
         )
 
         every { thingsCommandValidator.validate(command, state.validationCache) } returns validationCache

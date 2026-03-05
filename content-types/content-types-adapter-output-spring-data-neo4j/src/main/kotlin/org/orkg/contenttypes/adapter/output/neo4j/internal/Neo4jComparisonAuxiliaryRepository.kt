@@ -34,7 +34,7 @@ CALL (template, n, template_desc) {
     RETURN n.id AS subjectId, template.id AS predicateId, template_desc AS description, [template.id] AS objectIds, template.label AS predicateLabel, "ROSETTA_STONE_STATEMENT" AS type
 }
 RETURN subjectId, predicateId, description, objectIds, predicateLabel, type
-"""
+""",
     )
     fun findAllComparisonTablePredicatePathsByComparisonId(id: ThingId, maxDepth: Int): Set<Neo4jComparisonPathEntry>
 
@@ -57,7 +57,7 @@ CALL (template) {
     MATCH (template)-[:RELATED {predicate_id: "description"}]->(template_desc_literal:Literal)
     RETURN template.id AS predicateId, NULL AS templateId, template.label AS predicateLabel, template_desc_literal.label AS description, "ROSETTA_STONE_STATEMENT" AS type
 }
-RETURN predicateId, templateId, predicateLabel, description, type"""
+RETURN predicateId, templateId, predicateLabel, description, type""",
     )
     fun findComparisonPathLabelsByThingIdsAndRosettaStoneTemplateIds(
         predicateIds: Set<ThingId>,

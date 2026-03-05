@@ -24,15 +24,15 @@ class AbstractTableCellCreator(
                 contributorId = contributorId,
                 label = "",
                 classes = setOf(Classes.cell),
-            )
+            ),
         )
         unsafeStatementUseCases.create(
             CreateStatementUseCase.CreateCommand(
                 contributorId = contributorId,
                 subjectId = cellId,
                 predicateId = Predicates.csvwColumn,
-                objectId = columnId
-            )
+                objectId = columnId,
+            ),
         )
         if (value != null) {
             unsafeStatementUseCases.create(
@@ -40,8 +40,8 @@ class AbstractTableCellCreator(
                     contributorId = contributorId,
                     subjectId = cellId,
                     predicateId = Predicates.csvwValue,
-                    objectId = value
-                )
+                    objectId = value,
+                ),
             )
         }
         unsafeStatementUseCases.create(
@@ -49,8 +49,8 @@ class AbstractTableCellCreator(
                 contributorId = contributorId,
                 subjectId = rowId,
                 predicateId = Predicates.csvwCells,
-                objectId = cellId
-            )
+                objectId = cellId,
+            ),
         )
         return cellId
     }

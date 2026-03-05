@@ -33,7 +33,7 @@ class SpringDataNeo4jResearchFieldHierarchyAdapter(
             .map {
                 ResearchFieldHierarchyEntry(
                     it.resource.toResource(),
-                    it.parentIds.mapTo(mutableSetOf(), ::ThingId)
+                    it.parentIds.mapTo(mutableSetOf(), ::ThingId),
                 )
             }
 }

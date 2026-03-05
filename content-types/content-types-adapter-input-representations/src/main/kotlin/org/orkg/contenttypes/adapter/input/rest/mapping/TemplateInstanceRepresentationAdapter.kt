@@ -52,7 +52,7 @@ interface TemplateInstanceRepresentationAdapter :
             predicates = predicates.mapValues { (_, value) -> value.toPredicateRepresentation(descriptions[value.id]) },
             statements = statements.mapValues { (_, value) ->
                 value.map { it.toEmbeddedStatementRepresentation(statementCounts, formattedLabels, descriptions) }
-            }
+            },
         )
 
     fun TemplateInstance.resources(): List<Resource> =

@@ -20,112 +20,112 @@ private val subjectClassesParameter = MultiValueParameterSpec(
     name = "Subject classes filter",
     description = "Filter for subject classes.",
     type = ThingId::class,
-    parser = ::ThingId
+    parser = ::ThingId,
 )
 
 private val subjectIdParameter = SingleValueParameterSpec(
     name = "Subject id filter",
     description = "Filter for subject id.",
     type = ThingId::class,
-    parser = ::ThingId
+    parser = ::ThingId,
 )
 
 private val subjectLabelParameter = SingleValueParameterSpec(
     name = "Subject label filter",
     description = "Filter for subject label.",
     type = String::class,
-    parser = { it }
+    parser = { it },
 )
 
 private val predicateIdParameter = SingleValueParameterSpec(
     name = "Predicate id filter",
     description = "Filter for predicate id.",
     type = ThingId::class,
-    parser = ::ThingId
+    parser = ::ThingId,
 )
 
 private val objectClassesParameter = MultiValueParameterSpec(
     name = "Object classes filter",
     description = "Filter for object classes.",
     type = ThingId::class,
-    parser = ::ThingId
+    parser = ::ThingId,
 )
 
 private val objectIdParameter = SingleValueParameterSpec(
     name = "Object id filter",
     description = "Filter for object id.",
     type = ThingId::class,
-    parser = ::ThingId
+    parser = ::ThingId,
 )
 
 private val objectLabelParameter = SingleValueParameterSpec(
     name = "Object label filter",
     description = "Filter for object label.",
     type = String::class,
-    parser = { it }
+    parser = { it },
 )
 
 private val labelParameter = SingleValueParameterSpec(
     name = "Label filter",
     description = "Filter for label.",
     type = String::class,
-    parser = { it }
+    parser = { it },
 )
 
 private val exactParameter = SingleValueParameterSpec(
     name = "Exact label filter",
     description = "Whether label filtering should be exact.",
     type = Boolean::class,
-    parser = { it.toBoolean() }
+    parser = { it.toBoolean() },
 )
 
 private val observatoryIdParameter = SingleValueParameterSpec(
     name = "Observatory id filter",
     description = "Filter for observatory id.",
     type = ObservatoryId::class,
-    parser = ::ObservatoryId
+    parser = ::ObservatoryId,
 )
 
 private val organizationIdParameter = SingleValueParameterSpec(
     name = "Organization id filter",
     description = "Filter for organization id.",
     type = OrganizationId::class,
-    parser = ::OrganizationId
+    parser = ::OrganizationId,
 )
 
 private val includeParameter = MultiValueParameterSpec(
     name = "Include class filter",
     description = "A set of class ids that the thing must have.",
     type = ThingId::class,
-    parser = ::ThingId
+    parser = ::ThingId,
 )
 
 private val excludeParameter = MultiValueParameterSpec(
     name = "Exclude class filter",
     description = "A set of class ids that the thing must not have.",
     type = ThingId::class,
-    parser = ::ThingId
+    parser = ::ThingId,
 )
 
 private val createdByParameter = SingleValueParameterSpec(
     name = "Created by filter",
     description = "Filter for the original creator.",
     type = ContributorId::class,
-    parser = ::ContributorId
+    parser = ::ContributorId,
 )
 
 private val createdAtStartParameter = SingleValueParameterSpec(
     name = "Creation time start filter",
     description = "Filter for the created at timestamp, marking the oldest timestamp.",
     type = OffsetDateTime::class,
-    parser = { OffsetDateTime.parse(it, DateTimeFormatter.ISO_DATE_TIME) }
+    parser = { OffsetDateTime.parse(it, DateTimeFormatter.ISO_DATE_TIME) },
 )
 
 private val createdAtEndParameter = SingleValueParameterSpec(
     name = "Creation time end filter",
     description = "Filter for the created at timestamp, marking the most recent timestamp.",
     type = OffsetDateTime::class,
-    parser = { OffsetDateTime.parse(it, DateTimeFormatter.ISO_DATE_TIME) }
+    parser = { OffsetDateTime.parse(it, DateTimeFormatter.ISO_DATE_TIME) },
 )
 
 private val visibilityParameter = SingleValueParameterSpec(
@@ -133,7 +133,7 @@ private val visibilityParameter = SingleValueParameterSpec(
     description = "Filter for visibility.",
     type = VisibilityFilter::class,
     values = VisibilityFilter.entries,
-    parser = VisibilityFilter::valueOf
+    parser = VisibilityFilter::valueOf,
 )
 
 @Configuration
@@ -171,7 +171,7 @@ class GraphMetrics {
                 observatoryId = parameters[observatoryIdParameter],
                 organizationId = parameters[organizationIdParameter],
             )
-        }
+        },
     )
 
     @Bean
@@ -208,6 +208,6 @@ class GraphMetrics {
                 objectId = parameters[objectIdParameter],
                 objectLabel = parameters[objectLabelParameter],
             )
-        }
+        },
     )
 }

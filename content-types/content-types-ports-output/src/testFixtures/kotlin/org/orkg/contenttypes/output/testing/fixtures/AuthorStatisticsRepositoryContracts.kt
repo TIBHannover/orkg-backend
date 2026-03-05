@@ -56,10 +56,10 @@ fun <
     val fabricator = Fabrikate(
         FabricatorConfig(
             collectionSizes = 12..12,
-            nullableStrategy = FabricatorConfig.NullableStrategy.NeverSetToNull // FIXME: because "id" is nullable
+            nullableStrategy = FabricatorConfig.NullableStrategy.NeverSetToNull, // FIXME: because "id" is nullable
         )
             .withStandardMappings()
-            .withGraphMappings()
+            .withGraphMappings(),
     )
 
     val saveThing: (Thing) -> Unit = {
@@ -109,8 +109,8 @@ fun <
             fabricator.random<GeneralStatement>().copy(
                 subject = this,
                 predicate = hasContribution,
-                `object` = contribution
-            )
+                `object` = contribution,
+            ),
         )
         return contribution
     }
@@ -124,8 +124,8 @@ fun <
             fabricator.random<GeneralStatement>().copy(
                 subject = comparison,
                 predicate = comparesContribution,
-                `object` = this
-            )
+                `object` = this,
+            ),
         )
         return comparison
     }
@@ -136,7 +136,7 @@ fun <
                 subject = this,
                 predicate = hasResearchProblem,
                 `object` = researchProblem,
-            )
+            ),
         )
         return researchProblem
     }
@@ -144,14 +144,14 @@ fun <
     fun Resource.associateVisualization(createdAt: OffsetDateTime): Resource {
         val visualization = fabricator.random<Resource>().copy(
             classes = setOf(Classes.visualization),
-            createdAt = createdAt
+            createdAt = createdAt,
         )
         saveStatement(
             fabricator.random<GeneralStatement>().copy(
                 subject = this,
                 predicate = hasVisualization,
-                `object` = visualization
-            )
+                `object` = visualization,
+            ),
         )
         return visualization
     }
@@ -163,8 +163,8 @@ fun <
             fabricator.random<GeneralStatement>().copy(
                 subject = this,
                 predicate = hasAuthors,
-                `object` = resourceRepository.findById(authorList.id).orElseThrow()
-            )
+                `object` = resourceRepository.findById(authorList.id).orElseThrow(),
+            ),
         )
         return authorList
     }
@@ -268,7 +268,7 @@ fun <
                     result.content.shouldBeSortedWith(
                         Comparator.comparing<AuthorRecord, Long> { it.totalCount }.reversed()
                             .thenBy { it.authorName }
-                            .thenBy { it.authorId }
+                            .thenBy { it.authorId },
                     )
                 }
             }
@@ -333,7 +333,7 @@ fun <
                     result.content.shouldBeSortedWith(
                         Comparator.comparing<AuthorRecord, Long> { it.totalCount }.reversed()
                             .thenBy { it.authorName }
-                            .thenBy { it.authorId }
+                            .thenBy { it.authorId },
                     )
                 }
             }
@@ -398,7 +398,7 @@ fun <
                     result.content.shouldBeSortedWith(
                         Comparator.comparing<AuthorRecord, Long> { it.totalCount }.reversed()
                             .thenBy { it.authorName }
-                            .thenBy { it.authorId }
+                            .thenBy { it.authorId },
                     )
                 }
             }
@@ -466,7 +466,7 @@ fun <
                     result.content.shouldBeSortedWith(
                         Comparator.comparing<AuthorRecord, Long> { it.totalCount }.reversed()
                             .thenBy { it.authorName }
-                            .thenBy { it.authorId }
+                            .thenBy { it.authorId },
                     )
                 }
             }

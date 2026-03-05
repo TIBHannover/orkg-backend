@@ -29,7 +29,7 @@ import org.springframework.web.server.ResponseStatusException
         CommonSpringConfig::class,
         ExceptionTestConfiguration::class,
         FixedClockConfig::class,
-    ]
+    ],
 )
 @Suppress("serial")
 internal class ErrorControllerUnitTest : MockMvcBaseTest("errors") {

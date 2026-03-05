@@ -28,7 +28,7 @@ internal class TemplateInstanceSubjectValidatorUnitTest : MockkBaseTest {
     fun `Given a template instance update command, when validating its subject, it returns success`() {
         val command = updateTemplateInstanceCommand()
         val state = UpdateTemplateInstanceState(
-            template = createTemplate()
+            template = createTemplate(),
         )
         val subject = createResource()
         val templateInstance = createTemplateInstance()
@@ -55,7 +55,7 @@ internal class TemplateInstanceSubjectValidatorUnitTest : MockkBaseTest {
     fun `Given a template instance update command, when subject resource is not found, it throws an exception`() {
         val command = updateTemplateInstanceCommand()
         val state = UpdateTemplateInstanceState(
-            template = createTemplate()
+            template = createTemplate(),
         )
 
         every { resourceRepository.findById(command.subject) } returns Optional.empty()

@@ -63,7 +63,7 @@ data class Paper(
                 verified = resource.verified ?: false,
                 visibility = resource.visibility,
                 modifiable = resource.modifiable,
-                unlistedBy = resource.unlistedBy
+                unlistedBy = resource.unlistedBy,
             )
         }
     }

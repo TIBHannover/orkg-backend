@@ -29,29 +29,29 @@ fun createPaperCommand() = CreatePaperUseCase.CreateCommand(
         publishedYear = 2015,
         publishedMonth = 5,
         publishedIn = "conference",
-        url = ParsedIRI.create("https://example.org")
+        url = ParsedIRI.create("https://example.org"),
     ),
     authors = listOf(
         Author(
             id = ThingId("R123"),
-            name = "Author with id"
+            name = "Author with id",
         ),
         Author(
             name = "Author with orcid",
-            identifiers = mapOf("orcid" to listOf("0000-1111-2222-3333"))
+            identifiers = mapOf("orcid" to listOf("0000-1111-2222-3333")),
         ),
         Author(
             id = ThingId("R456"),
             name = "Author with id and orcid",
-            identifiers = mapOf("orcid" to listOf("1111-2222-3333-4444"))
+            identifiers = mapOf("orcid" to listOf("1111-2222-3333-4444")),
         ),
         Author(
             name = "Author with homepage",
-            homepage = ParsedIRI.create("https://example.org/author")
+            homepage = ParsedIRI.create("https://example.org/author"),
         ),
         Author(
-            name = "Author that just has a name"
-        )
+            name = "Author that just has a name",
+        ),
     ),
     sustainableDevelopmentGoals = setOf(ThingId("SDG_1"), ThingId("SDG_2")),
     mentionings = setOf(ThingId("R159"), ThingId("R753")),
@@ -61,23 +61,23 @@ fun createPaperCommand() = CreatePaperUseCase.CreateCommand(
         resources = mapOf(
             "#temp1" to CreateResourceCommandPart(
                 label = "MOTO",
-                classes = setOf(ThingId("R2000"))
-            )
+                classes = setOf(ThingId("R2000")),
+            ),
         ),
         literals = mapOf(
             "#temp2" to CreateLiteralCommandPart(
                 label = "0.1",
-                dataType = Literals.XSD.DECIMAL.prefixedUri
-            )
+                dataType = Literals.XSD.DECIMAL.prefixedUri,
+            ),
         ),
         predicates = mapOf(
             "#temp3" to CreatePredicateCommandPart(
                 label = "hasResult",
-                description = "has result"
+                description = "has result",
             ),
             "#temp4" to CreatePredicateCommandPart(
-                label = "hasLiteral"
-            )
+                label = "hasLiteral",
+            ),
         ),
         contributions = listOf(
             CreateContributionCommandPart(
@@ -85,18 +85,18 @@ fun createPaperCommand() = CreatePaperUseCase.CreateCommand(
                 classes = setOf(ThingId("C123")),
                 statements = mapOf(
                     Predicates.hasResearchProblem.value to listOf(
-                        CreateContributionCommandPart.StatementObject("R3003")
+                        CreateContributionCommandPart.StatementObject("R3003"),
                     ),
                     Predicates.hasEvaluation.value to listOf(
-                        CreateContributionCommandPart.StatementObject("#temp1")
-                    )
-                )
+                        CreateContributionCommandPart.StatementObject("#temp1"),
+                    ),
+                ),
             ),
             CreateContributionCommandPart(
                 label = "Contribution 2",
                 statements = mapOf(
                     Predicates.hasResearchProblem.value to listOf(
-                        CreateContributionCommandPart.StatementObject("R3003")
+                        CreateContributionCommandPart.StatementObject("R3003"),
                     ),
                     Predicates.hasEvaluation.value to listOf(
                         CreateContributionCommandPart.StatementObject("#temp1"),
@@ -105,19 +105,19 @@ fun createPaperCommand() = CreatePaperUseCase.CreateCommand(
                             statements = mapOf(
                                 "#temp3" to listOf(
                                     CreateContributionCommandPart.StatementObject("R3003"),
-                                    CreateContributionCommandPart.StatementObject("#temp2")
+                                    CreateContributionCommandPart.StatementObject("#temp2"),
                                 ),
                                 "#temp4" to listOf(
-                                    CreateContributionCommandPart.StatementObject("#temp1")
-                                )
-                            )
-                        )
-                    )
-                )
-            )
-        )
+                                    CreateContributionCommandPart.StatementObject("#temp1"),
+                                ),
+                            ),
+                        ),
+                    ),
+                ),
+            ),
+        ),
     ),
-    extractionMethod = ExtractionMethod.MANUAL
+    extractionMethod = ExtractionMethod.MANUAL,
 )
 
 fun updatePaperCommand() = UpdatePaperUseCase.UpdateCommand(
@@ -130,43 +130,43 @@ fun updatePaperCommand() = UpdatePaperUseCase.UpdateCommand(
         publishedYear = 2015,
         publishedMonth = 5,
         publishedIn = "conference",
-        url = ParsedIRI.create("https://example.org")
+        url = ParsedIRI.create("https://example.org"),
     ),
     authors = listOf(
         Author(
             id = ThingId("R123"),
-            name = "Author with id"
+            name = "Author with id",
         ),
         Author(
             name = "Author with orcid",
-            identifiers = mapOf("orcid" to listOf("0000-1111-2222-3333"))
+            identifiers = mapOf("orcid" to listOf("0000-1111-2222-3333")),
         ),
         Author(
             id = ThingId("R456"),
             name = "Author with id and orcid",
-            identifiers = mapOf("orcid" to listOf("1111-2222-3333-4444"))
+            identifiers = mapOf("orcid" to listOf("1111-2222-3333-4444")),
         ),
         Author(
             name = "Author with homepage",
-            homepage = ParsedIRI.create("https://example.org/author")
+            homepage = ParsedIRI.create("https://example.org/author"),
         ),
         Author(
-            name = "Author that just has a name"
-        )
+            name = "Author that just has a name",
+        ),
     ),
     sustainableDevelopmentGoals = setOf(
         ThingId("SDG_3"),
-        ThingId("SDG_4")
+        ThingId("SDG_4"),
     ),
     mentionings = setOf(
         ThingId("R591"),
-        ThingId("R357")
+        ThingId("R357"),
     ),
     observatories = listOf(ObservatoryId("eeb1ab0f-0ef5-4bee-aba2-2d5cea2f0174")),
     organizations = listOf(OrganizationId("f9965b2a-5222-45e1-8ef8-dbd8ce1f57bc")),
     extractionMethod = ExtractionMethod.AUTOMATIC,
     visibility = Visibility.DEFAULT,
-    verified = false
+    verified = false,
 )
 
 fun deletePaperCommand() = DeletePaperUseCase.DeleteCommand(
@@ -182,23 +182,23 @@ fun publishPaperCommand() = PublishPaperUseCase.PublishCommand(
     authors = listOf(
         Author(
             id = ThingId("R123"),
-            name = "Author with id"
+            name = "Author with id",
         ),
         Author(
             name = "Author with orcid",
-            identifiers = mapOf("orcid" to listOf("0000-1111-2222-3333"))
+            identifiers = mapOf("orcid" to listOf("0000-1111-2222-3333")),
         ),
         Author(
             id = ThingId("R456"),
             name = "Author with id and orcid",
-            identifiers = mapOf("orcid" to listOf("1111-2222-3333-4444"))
+            identifiers = mapOf("orcid" to listOf("1111-2222-3333-4444")),
         ),
         Author(
             name = "Author with homepage",
-            homepage = ParsedIRI.create("https://example.org/author")
+            homepage = ParsedIRI.create("https://example.org/author"),
         ),
         Author(
-            name = "Author that just has a name"
-        )
-    )
+            name = "Author that just has a name",
+        ),
+    ),
 )

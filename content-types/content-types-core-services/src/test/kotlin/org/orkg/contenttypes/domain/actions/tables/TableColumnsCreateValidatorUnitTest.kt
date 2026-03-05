@@ -26,20 +26,20 @@ internal class TableColumnsCreateValidatorUnitTest : MockkBaseTest {
         val command = createTableCommand()
         val state = CreateTableState(
             validationCache = mapOf(
-                "R123" to Either.right(createResource(ThingId("R123")))
-            )
+                "R123" to Either.right(createResource(ThingId("R123"))),
+            ),
         )
 
         val validationCache = mapOf<String, Either<CreateThingCommandPart, Thing>>(
             "R123" to Either.right(createResource(ThingId("R123"))),
-            "#temp1" from command
+            "#temp1" from command,
         )
 
         every {
             abstractTableColumnsValidator.validate(
                 thingCommands = command.all(),
                 rows = command.rows,
-                validationCacheIn = state.validationCache
+                validationCacheIn = state.validationCache,
             )
         } returns validationCache
 
@@ -57,7 +57,7 @@ internal class TableColumnsCreateValidatorUnitTest : MockkBaseTest {
             abstractTableColumnsValidator.validate(
                 thingCommands = command.all(),
                 rows = command.rows,
-                validationCacheIn = state.validationCache
+                validationCacheIn = state.validationCache,
             )
         }
     }

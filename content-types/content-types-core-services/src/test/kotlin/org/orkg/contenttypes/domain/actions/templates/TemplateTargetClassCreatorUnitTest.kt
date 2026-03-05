@@ -24,7 +24,7 @@ internal class TemplateTargetClassCreatorUnitTest : MockkBaseTest {
     fun `Given a template create command, it creates a new statement for the target class`() {
         val command = createTemplateCommand()
         val state = CreateTemplateState(
-            templateId = ThingId("R45665")
+            templateId = ThingId("R45665"),
         )
 
         every {
@@ -33,8 +33,8 @@ internal class TemplateTargetClassCreatorUnitTest : MockkBaseTest {
                     contributorId = command.contributorId,
                     subjectId = state.templateId!!,
                     predicateId = Predicates.shTargetClass,
-                    objectId = command.targetClass
-                )
+                    objectId = command.targetClass,
+                ),
             )
         } returns StatementId("S1")
 
@@ -50,8 +50,8 @@ internal class TemplateTargetClassCreatorUnitTest : MockkBaseTest {
                     contributorId = command.contributorId,
                     subjectId = state.templateId!!,
                     predicateId = Predicates.shTargetClass,
-                    objectId = command.targetClass
-                )
+                    objectId = command.targetClass,
+                ),
             )
         }
     }

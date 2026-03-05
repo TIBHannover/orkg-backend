@@ -30,7 +30,7 @@ class CSVProfilingResultWriter(csv: File) : ProfilingResultWriter {
             val parameters = measurement.parameters.entries.joinToString(
                 prefix = "\"",
                 separator = "&",
-                postfix = "\""
+                postfix = "\"",
             ) {
                 (it.key + "=" + it.value + "@" + it.value.javaClass.simpleName).replace("\"", "\"\"")
             }

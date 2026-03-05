@@ -36,7 +36,7 @@ class ComparisonRelatedResourceUpdater(
         comparisonRelatedResourceUseCases,
         resourceService,
         statementService,
-        SingleStatementPropertyUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases)
+        SingleStatementPropertyUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases),
     )
 
     fun execute(command: UpdateComparisonRelatedResourceCommand) {
@@ -59,14 +59,14 @@ class ComparisonRelatedResourceUpdater(
                 UpdateResourceUseCase.UpdateCommand(
                     id = comparisonRelatedResource.id,
                     contributorId = command.contributorId,
-                    label = command.label
-                )
+                    label = command.label,
+                ),
             )
         }
         val statements by lazy {
             statementService.findAll(
                 subjectId = command.comparisonRelatedResourceId,
-                pageable = PageRequests.ALL
+                pageable = PageRequests.ALL,
             ).content
         }
         if (command.image != comparisonRelatedResource.image) {
@@ -75,7 +75,7 @@ class ComparisonRelatedResourceUpdater(
                 contributorId = command.contributorId,
                 subjectId = command.comparisonRelatedResourceId,
                 predicateId = Predicates.hasImage,
-                label = command.image
+                label = command.image,
             )
         }
         if (command.url != comparisonRelatedResource.url) {
@@ -84,7 +84,7 @@ class ComparisonRelatedResourceUpdater(
                 contributorId = command.contributorId,
                 subjectId = command.comparisonRelatedResourceId,
                 predicateId = Predicates.hasURL,
-                label = command.url
+                label = command.url,
             )
         }
         if (command.description != comparisonRelatedResource.description) {
@@ -93,7 +93,7 @@ class ComparisonRelatedResourceUpdater(
                 contributorId = command.contributorId,
                 subjectId = command.comparisonRelatedResourceId,
                 predicateId = Predicates.description,
-                label = command.description
+                label = command.description,
             )
         }
     }

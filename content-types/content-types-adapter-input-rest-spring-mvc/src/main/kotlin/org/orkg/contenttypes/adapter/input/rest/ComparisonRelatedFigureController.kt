@@ -114,7 +114,7 @@ class ComparisonRelatedFigureController(
                 contributorId = contributorId,
                 label = label,
                 image = image,
-                description = description
+                description = description,
             )
     }
 
@@ -132,7 +132,7 @@ class ComparisonRelatedFigureController(
                 contributorId = contributorId,
                 label = label,
                 image = image,
-                description = description
+                description = description,
             )
     }
 }

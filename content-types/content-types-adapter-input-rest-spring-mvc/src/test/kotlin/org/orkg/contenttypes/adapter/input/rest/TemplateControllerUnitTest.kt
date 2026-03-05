@@ -126,7 +126,7 @@ internal class TemplateControllerUnitTest : MockMvcBaseTest("templates") {
                 description(
                     """
                     A `GET` request provides information about a template.
-                    """
+                    """,
                 )
                 pathParameters(
                     parameterWithName("id").description("The identifier of the template to retrieve."),
@@ -217,7 +217,7 @@ internal class TemplateControllerUnitTest : MockMvcBaseTest("templates") {
                     """
                     A `GET` request returns a <<sorting-and-pagination,paged>> list of <<templates-fetch,templates>>.
                     If no paging request parameters are provided, the default values will be used.
-                    """
+                    """,
                 )
                 pagedQueryParameters(
                     parameterWithName("q").description("A search term that must be contained in the label of the template. (optional).").optional(),
@@ -252,7 +252,7 @@ internal class TemplateControllerUnitTest : MockMvcBaseTest("templates") {
                 researchField = researchFieldId,
                 includeSubfields = includeSubfields,
                 researchProblem = researchProblemId,
-                targetClass = targetClass
+                targetClass = targetClass,
             )
         }
     }
@@ -278,7 +278,7 @@ internal class TemplateControllerUnitTest : MockMvcBaseTest("templates") {
                     A `POST` request creates a new template with all the given parameters.
                     The response will be `201 Created` when successful.
                     The template (object) can be retrieved by following the URI in the `Location` header field.
-                    """
+                    """,
                 )
                 responseHeaders(
                     headerWithName("Location").description("The uri path where the newly created template can be fetched from."),
@@ -296,7 +296,7 @@ internal class TemplateControllerUnitTest : MockMvcBaseTest("templates") {
                     fieldWithPath("is_closed").description("Whether the template is closed or not. When a template is closed, its properties cannot be modified."),
                     fieldWithPath("organizations[]").description("The list of IDs of the organizations the template belongs to."),
                     fieldWithPath("observatories[]").description("The list of IDs of the observatories the template belongs to."),
-                    fieldWithPath("extraction_method").description("""The method used to extract the template resource. Can be one of $allowedExtractionMethodValues. (optional)""").optional()
+                    fieldWithPath("extraction_method").description("""The method used to extract the template resource. Can be one of $allowedExtractionMethodValues. (optional)""").optional(),
                 )
                 throws(
                     InvalidLabel::class,
@@ -554,7 +554,7 @@ internal class TemplateControllerUnitTest : MockMvcBaseTest("templates") {
                     1. All fields at the top level in the request can be omitted or `null`, meaning that the corresponding fields should not be updated.
                     2. The same rules as for <<resources-edit,updating resources>> apply when updating the visibility of a template.
                     ====
-                    """
+                    """,
                 )
                 pathParameters(
                     parameterWithName("id").description("The identifier of the template."),
@@ -576,7 +576,7 @@ internal class TemplateControllerUnitTest : MockMvcBaseTest("templates") {
                     fieldWithPath("organizations[]").description("The list of IDs of the organizations the template belongs to. (optional)").optional(),
                     fieldWithPath("observatories[]").description("The list of IDs of the observatories the template belongs to. (optional)").optional(),
                     fieldWithPath("extraction_method").description("""The updated method used to extract the template resource. Can be one of $allowedExtractionMethodValues. (optional)""").optional(),
-                    fieldWithPath("visibility").description("The updated visibility of the template. Can be one of $allowedVisibilityValues. (optional)").optional()
+                    fieldWithPath("visibility").description("The updated visibility of the template. Can be one of $allowedVisibilityValues. (optional)").optional(),
                 )
                 throws(
                     TemplateNotFound::class,
@@ -660,7 +660,7 @@ internal class TemplateControllerUnitTest : MockMvcBaseTest("templates") {
             templateService.create(
                 withArg<T> {
                     it.shouldBeInstanceOf<T>()
-                }
+                },
             )
         }
     }
@@ -689,13 +689,13 @@ internal class TemplateControllerUnitTest : MockMvcBaseTest("templates") {
         stringLiteralTemplatePropertyRequest(),
         listOf(
             fieldWithPath("pattern").description("The pattern (regular expression) of the property. (optional)").optional(),
-            fieldWithPath("datatype").type("String").description("""The class id of the datatype of the property. Must be "String".""")
+            fieldWithPath("datatype").type("String").description("""The class id of the datatype of the property. Must be "String"."""),
         ),
         setOf(
             InvalidDataType::class,
             InvalidRegexPattern::class,
             ClassNotFound::class,
-        )
+        ),
     )
 
     @Test
@@ -711,13 +711,13 @@ internal class TemplateControllerUnitTest : MockMvcBaseTest("templates") {
         listOf(
             fieldWithPath("min_inclusive").description("The minimum value (inclusive) that the number can have (optional).").optional(),
             fieldWithPath("max_inclusive").description("The maximum value (inclusive) that the number can have (optional).").optional(),
-            fieldWithPath("datatype").type("String").description("""The class id of the datatype of the property. Must be either of "Integer", "Decimal" or "Float".""")
+            fieldWithPath("datatype").type("String").description("""The class id of the datatype of the property. Must be either of "Integer", "Decimal" or "Float"."""),
         ),
         setOf(
             InvalidDataType::class,
             InvalidBounds::class,
             ClassNotFound::class,
-        )
+        ),
     )
 
     @Test
@@ -731,11 +731,11 @@ internal class TemplateControllerUnitTest : MockMvcBaseTest("templates") {
         """,
         otherLiteralTemplatePropertyRequest(),
         listOf(
-            fieldWithPath("datatype").type("String").description("The class id of the datatype of the property, indicating a literal property.")
+            fieldWithPath("datatype").type("String").description("The class id of the datatype of the property, indicating a literal property."),
         ),
         setOf(
             ClassNotFound::class,
-        )
+        ),
     )
 
     @Test
@@ -749,11 +749,11 @@ internal class TemplateControllerUnitTest : MockMvcBaseTest("templates") {
         """,
         resourceTemplatePropertyRequest(),
         listOf(
-            fieldWithPath("class").type("String").description("The class id of the range of the property, indicating a resource property.")
+            fieldWithPath("class").type("String").description("The class id of the range of the property, indicating a resource property."),
         ),
         setOf(
             ClassNotFound::class,
-        )
+        ),
     )
 
     @ParameterizedTest
@@ -925,10 +925,10 @@ internal class TemplateControllerUnitTest : MockMvcBaseTest("templates") {
                 description(description)
                 pathParameters(
                     parameterWithName("id").description("The identifier of the template that the property belongs to."),
-                    parameterWithName("propertyId").description("The identifier of the template property.")
+                    parameterWithName("propertyId").description("The identifier of the template property."),
                 )
                 responseHeaders(
-                    headerWithName("Location").description("The uri path where the updated template can be fetched from.")
+                    headerWithName("Location").description("The uri path where the updated template can be fetched from."),
                 )
                 requestFields(
                     request::class,
@@ -953,7 +953,7 @@ internal class TemplateControllerUnitTest : MockMvcBaseTest("templates") {
             templateService.update(
                 withArg<T> {
                     it.shouldBeInstanceOf<T>()
-                }
+                },
             )
         }
     }
@@ -987,13 +987,13 @@ internal class TemplateControllerUnitTest : MockMvcBaseTest("templates") {
         stringLiteralTemplatePropertyRequest(),
         listOf(
             fieldWithPath("pattern").description("The pattern (regular expression) of the property."),
-            fieldWithPath("datatype").type("String").description("""The class id of the datatype of the property. Must be "String".""")
+            fieldWithPath("datatype").type("String").description("""The class id of the datatype of the property. Must be "String"."""),
         ),
         setOf(
             InvalidDataType::class,
             InvalidRegexPattern::class,
             ClassNotFound::class,
-        )
+        ),
     )
 
     @Test
@@ -1011,13 +1011,13 @@ internal class TemplateControllerUnitTest : MockMvcBaseTest("templates") {
         listOf(
             fieldWithPath("min_inclusive").description("The minimum value (inclusive) that the number can have."),
             fieldWithPath("max_inclusive").description("The maximum value (inclusive) that the number can have."),
-            fieldWithPath("datatype").type("String").description("""The class id of the datatype of the property. Must be either of "Integer", "Decimal" or "Float".""")
+            fieldWithPath("datatype").type("String").description("""The class id of the datatype of the property. Must be either of "Integer", "Decimal" or "Float"."""),
         ),
         setOf(
             InvalidDataType::class,
             InvalidBounds::class,
             ClassNotFound::class,
-        )
+        ),
     )
 
     @Test
@@ -1033,11 +1033,11 @@ internal class TemplateControllerUnitTest : MockMvcBaseTest("templates") {
         """,
         otherLiteralTemplatePropertyRequest(),
         listOf(
-            fieldWithPath("datatype").type("String").description("The class id of the datatype of the property, indicating a literal property.")
+            fieldWithPath("datatype").type("String").description("The class id of the datatype of the property, indicating a literal property."),
         ),
         setOf(
             ClassNotFound::class,
-        )
+        ),
     )
 
     @Test
@@ -1053,11 +1053,11 @@ internal class TemplateControllerUnitTest : MockMvcBaseTest("templates") {
         """,
         resourceTemplatePropertyRequest(),
         listOf(
-            fieldWithPath("class").type("String").description("The class id of the range of the property, indicating a resource property.")
+            fieldWithPath("class").type("String").description("The class id of the range of the property, indicating a resource property."),
         ),
         setOf(
             ClassNotFound::class,
-        )
+        ),
     )
 
     private fun createTemplateRequest() =
@@ -1069,22 +1069,22 @@ internal class TemplateControllerUnitTest : MockMvcBaseTest("templates") {
             relations = TemplateController.TemplateRelationsRequestPart(
                 researchFields = listOf(ThingId("R20")),
                 researchProblems = listOf(ThingId("R21")),
-                predicate = ThingId("P22")
+                predicate = ThingId("P22"),
             ),
             properties = listOf(
                 untypedTemplatePropertyRequest(),
                 stringLiteralTemplatePropertyRequest(),
                 numberLiteralTemplatePropertyRequest(),
                 otherLiteralTemplatePropertyRequest(),
-                resourceTemplatePropertyRequest()
+                resourceTemplatePropertyRequest(),
             ),
             isClosed = true,
             observatories = listOf(
-                ObservatoryId("cb71eebf-8afd-4fe3-9aea-d0966d71cece")
+                ObservatoryId("cb71eebf-8afd-4fe3-9aea-d0966d71cece"),
             ),
             organizations = listOf(
-                OrganizationId("a700c55f-aae2-4696-b7d5-6e8b89f66a8f")
-            )
+                OrganizationId("a700c55f-aae2-4696-b7d5-6e8b89f66a8f"),
+            ),
         )
 
     private fun updateTemplateRequest() =
@@ -1096,24 +1096,24 @@ internal class TemplateControllerUnitTest : MockMvcBaseTest("templates") {
             relations = TemplateController.TemplateRelationsRequestPart(
                 researchFields = listOf(ThingId("R20")),
                 researchProblems = listOf(ThingId("R21")),
-                predicate = ThingId("P22")
+                predicate = ThingId("P22"),
             ),
             properties = listOf(
                 untypedTemplatePropertyRequest(),
                 stringLiteralTemplatePropertyRequest(),
                 numberLiteralTemplatePropertyRequest(),
                 otherLiteralTemplatePropertyRequest(),
-                resourceTemplatePropertyRequest()
+                resourceTemplatePropertyRequest(),
             ),
             isClosed = true,
             observatories = listOf(
-                ObservatoryId("cb71eebf-8afd-4fe3-9aea-d0966d71cece")
+                ObservatoryId("cb71eebf-8afd-4fe3-9aea-d0966d71cece"),
             ),
             organizations = listOf(
-                OrganizationId("a700c55f-aae2-4696-b7d5-6e8b89f66a8f")
+                OrganizationId("a700c55f-aae2-4696-b7d5-6e8b89f66a8f"),
             ),
             extractionMethod = ExtractionMethod.MANUAL,
-            visibility = Visibility.FEATURED
+            visibility = Visibility.FEATURED,
         )
 
     companion object {
@@ -1123,7 +1123,7 @@ internal class TemplateControllerUnitTest : MockMvcBaseTest("templates") {
             Arguments.of(stringLiteralTemplatePropertyRequest()),
             Arguments.of(numberLiteralTemplatePropertyRequest()),
             Arguments.of(otherLiteralTemplatePropertyRequest()),
-            Arguments.of(resourceTemplatePropertyRequest())
+            Arguments.of(resourceTemplatePropertyRequest()),
         )
     }
 }

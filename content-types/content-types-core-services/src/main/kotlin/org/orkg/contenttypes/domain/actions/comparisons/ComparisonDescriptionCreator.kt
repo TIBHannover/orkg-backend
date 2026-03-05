@@ -21,7 +21,7 @@ class ComparisonDescriptionCreator(
                 contributorId = command.contributorId,
                 subjectId = state.comparisonId!!,
                 predicateId = Predicates.description,
-                label = command.description
+                label = command.description,
             )
         }
 }

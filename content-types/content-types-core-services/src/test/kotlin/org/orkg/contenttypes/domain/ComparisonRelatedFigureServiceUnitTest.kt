@@ -48,7 +48,7 @@ internal class ComparisonRelatedFigureServiceUnitTest : MockkBaseTest {
         unsafeResourceUseCases,
         statementService,
         unsafeStatementUseCases,
-        unsafeLiteralUseCases
+        unsafeLiteralUseCases,
     )
 
     @Test
@@ -58,7 +58,7 @@ internal class ComparisonRelatedFigureServiceUnitTest : MockkBaseTest {
             contributorId = ContributorId(UUID.randomUUID()),
             label = "related figure",
             image = "https://example.org/test.png",
-            description = "comparison related figure description"
+            description = "comparison related figure description",
         )
         val figureId = ThingId("R456")
         val comparison = createResource(classes = setOf(Classes.comparison))
@@ -72,7 +72,7 @@ internal class ComparisonRelatedFigureServiceUnitTest : MockkBaseTest {
                     contributorId = command.contributorId,
                     label = command.label,
                     classes = setOf(Classes.comparisonRelatedFigure),
-                )
+                ),
             )
         } returns figureId
         every {
@@ -81,24 +81,24 @@ internal class ComparisonRelatedFigureServiceUnitTest : MockkBaseTest {
                     contributorId = command.contributorId,
                     subjectId = command.comparisonId,
                     predicateId = Predicates.hasRelatedFigure,
-                    objectId = figureId
-                )
+                    objectId = figureId,
+                ),
             )
         } returns StatementId("S1")
         every {
             unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = command.contributorId,
-                    label = command.image!!
-                )
+                    label = command.image!!,
+                ),
             )
         } returns image.id
         every {
             unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = command.contributorId,
-                    label = command.description!!
-                )
+                    label = command.description!!,
+                ),
             )
         } returns description.id
         every {
@@ -107,8 +107,8 @@ internal class ComparisonRelatedFigureServiceUnitTest : MockkBaseTest {
                     contributorId = command.contributorId,
                     subjectId = figureId,
                     predicateId = Predicates.hasImage,
-                    objectId = image.id
-                )
+                    objectId = image.id,
+                ),
             )
         } returns StatementId("S2")
         every {
@@ -117,8 +117,8 @@ internal class ComparisonRelatedFigureServiceUnitTest : MockkBaseTest {
                     contributorId = command.contributorId,
                     subjectId = figureId,
                     predicateId = Predicates.description,
-                    objectId = description.id
-                )
+                    objectId = description.id,
+                ),
             )
         } returns StatementId("S3")
 
@@ -131,7 +131,7 @@ internal class ComparisonRelatedFigureServiceUnitTest : MockkBaseTest {
                     contributorId = command.contributorId,
                     label = command.label,
                     classes = setOf(Classes.comparisonRelatedFigure),
-                )
+                ),
             )
         }
         verify(exactly = 1) {
@@ -140,24 +140,24 @@ internal class ComparisonRelatedFigureServiceUnitTest : MockkBaseTest {
                     contributorId = command.contributorId,
                     subjectId = command.comparisonId,
                     predicateId = Predicates.hasRelatedFigure,
-                    objectId = figureId
-                )
+                    objectId = figureId,
+                ),
             )
         }
         verify(exactly = 1) {
             unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = command.contributorId,
-                    label = command.image!!
-                )
+                    label = command.image!!,
+                ),
             )
         }
         verify(exactly = 1) {
             unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = command.contributorId,
-                    label = command.description!!
-                )
+                    label = command.description!!,
+                ),
             )
         }
         verify(exactly = 1) {
@@ -166,8 +166,8 @@ internal class ComparisonRelatedFigureServiceUnitTest : MockkBaseTest {
                     contributorId = command.contributorId,
                     subjectId = figureId,
                     predicateId = Predicates.hasImage,
-                    objectId = image.id
-                )
+                    objectId = image.id,
+                ),
             )
         }
         verify(exactly = 1) {
@@ -176,8 +176,8 @@ internal class ComparisonRelatedFigureServiceUnitTest : MockkBaseTest {
                     contributorId = command.contributorId,
                     subjectId = figureId,
                     predicateId = Predicates.description,
-                    objectId = description.id
-                )
+                    objectId = description.id,
+                ),
             )
         }
     }
@@ -189,7 +189,7 @@ internal class ComparisonRelatedFigureServiceUnitTest : MockkBaseTest {
             contributorId = ContributorId(UUID.randomUUID()),
             label = "\n",
             image = null,
-            description = null
+            description = null,
         )
         shouldThrow<InvalidLabel> { service.create(command) }.asClue {
             it.property shouldBe "label"
@@ -203,7 +203,7 @@ internal class ComparisonRelatedFigureServiceUnitTest : MockkBaseTest {
             contributorId = ContributorId(UUID.randomUUID()),
             label = "related figure",
             image = "\n",
-            description = null
+            description = null,
         )
         shouldThrow<InvalidLabel> { service.create(command) }.asClue {
             it.property shouldBe "image"
@@ -217,7 +217,7 @@ internal class ComparisonRelatedFigureServiceUnitTest : MockkBaseTest {
             contributorId = ContributorId(UUID.randomUUID()),
             label = "related figure",
             image = null,
-            description = "a".repeat(MAX_LABEL_LENGTH + 1)
+            description = "a".repeat(MAX_LABEL_LENGTH + 1),
         )
         shouldThrow<InvalidDescription> { service.create(command) }.asClue {
             it.property shouldBe "description"
@@ -231,7 +231,7 @@ internal class ComparisonRelatedFigureServiceUnitTest : MockkBaseTest {
             contributorId = ContributorId(UUID.randomUUID()),
             label = "related figure",
             image = null,
-            description = null
+            description = null,
         )
 
         every { resourceRepository.findById(any()) } returns Optional.empty()

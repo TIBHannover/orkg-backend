@@ -33,7 +33,7 @@ internal class SingleStatementPropertyUpdaterUnitTest : MockkBaseTest {
         unsafeLiteralUseCases,
         statementService,
         unsafeStatementUseCases,
-        singleStatementPropertyCreator
+        singleStatementPropertyCreator,
     )
 
     @Test
@@ -46,13 +46,13 @@ internal class SingleStatementPropertyUpdaterUnitTest : MockkBaseTest {
             id = literal.id,
             contributorId = contributorId,
             label = description,
-            datatype = Literals.XSD.INT.prefixedUri
+            datatype = Literals.XSD.INT.prefixedUri,
         )
         val statements = listOf(
             createStatement(
                 predicate = createPredicate(Predicates.description),
-                `object` = literal
-            )
+                `object` = literal,
+            ),
         )
 
         every { unsafeLiteralUseCases.update(updateLiteralCommand) } just runs
@@ -63,7 +63,7 @@ internal class SingleStatementPropertyUpdaterUnitTest : MockkBaseTest {
             subjectId = subjectId,
             predicateId = Predicates.description,
             label = description,
-            datatype = Literals.XSD.INT.prefixedUri
+            datatype = Literals.XSD.INT.prefixedUri,
         )
 
         verify(exactly = 1) { unsafeLiteralUseCases.update(updateLiteralCommand) }
@@ -82,7 +82,7 @@ internal class SingleStatementPropertyUpdaterUnitTest : MockkBaseTest {
                 subjectId = subjectId,
                 predicateId = Predicates.description,
                 label = description,
-                datatype = Literals.XSD.INT.prefixedUri
+                datatype = Literals.XSD.INT.prefixedUri,
             )
         } just runs
 
@@ -92,7 +92,7 @@ internal class SingleStatementPropertyUpdaterUnitTest : MockkBaseTest {
             subjectId = subjectId,
             predicateId = Predicates.description,
             label = description,
-            datatype = Literals.XSD.INT.prefixedUri
+            datatype = Literals.XSD.INT.prefixedUri,
         )
 
         verify(exactly = 1) {
@@ -101,7 +101,7 @@ internal class SingleStatementPropertyUpdaterUnitTest : MockkBaseTest {
                 subjectId = subjectId,
                 predicateId = Predicates.description,
                 label = description,
-                datatype = Literals.XSD.INT.prefixedUri
+                datatype = Literals.XSD.INT.prefixedUri,
             )
         }
     }
@@ -116,18 +116,18 @@ internal class SingleStatementPropertyUpdaterUnitTest : MockkBaseTest {
             id = literal.id,
             contributorId = contributorId,
             label = description,
-            datatype = Literals.XSD.INT.prefixedUri
+            datatype = Literals.XSD.INT.prefixedUri,
         )
         val statements = listOf(
             createStatement(
                 predicate = createPredicate(Predicates.description),
-                `object` = literal
+                `object` = literal,
             ),
             createStatement(
                 id = StatementId("S456"),
                 predicate = createPredicate(Predicates.description),
-                `object` = createLiteral(ThingId("L132"), label = "other")
-            )
+                `object` = createLiteral(ThingId("L132"), label = "other"),
+            ),
         )
 
         every { unsafeLiteralUseCases.update(updateLiteralCommand) } just runs
@@ -139,7 +139,7 @@ internal class SingleStatementPropertyUpdaterUnitTest : MockkBaseTest {
             subjectId = subjectId,
             predicateId = Predicates.description,
             label = description,
-            datatype = Literals.XSD.INT.prefixedUri
+            datatype = Literals.XSD.INT.prefixedUri,
         )
 
         verify(exactly = 1) { unsafeLiteralUseCases.update(updateLiteralCommand) }
@@ -156,13 +156,13 @@ internal class SingleStatementPropertyUpdaterUnitTest : MockkBaseTest {
             id = literal.id,
             contributorId = contributorId,
             label = description,
-            datatype = Literals.XSD.STRING.prefixedUri
+            datatype = Literals.XSD.STRING.prefixedUri,
         )
         val statements = listOf(
             createStatement(
                 predicate = createPredicate(Predicates.description),
-                `object` = literal
-            )
+                `object` = literal,
+            ),
         )
 
         every { unsafeLiteralUseCases.update(updateLiteralCommand) } just runs
@@ -184,7 +184,7 @@ internal class SingleStatementPropertyUpdaterUnitTest : MockkBaseTest {
                 contributorId = contributorId,
                 subjectId = subjectId,
                 predicateId = Predicates.description,
-                label = description
+                label = description,
             )
         } just runs
 
@@ -195,7 +195,7 @@ internal class SingleStatementPropertyUpdaterUnitTest : MockkBaseTest {
                 contributorId = contributorId,
                 subjectId = subjectId,
                 predicateId = Predicates.description,
-                label = description
+                label = description,
             )
         }
     }
@@ -210,18 +210,18 @@ internal class SingleStatementPropertyUpdaterUnitTest : MockkBaseTest {
             id = literal.id,
             contributorId = contributorId,
             label = description,
-            datatype = Literals.XSD.STRING.prefixedUri
+            datatype = Literals.XSD.STRING.prefixedUri,
         )
         val statements = listOf(
             createStatement(
                 predicate = createPredicate(Predicates.description),
-                `object` = literal
+                `object` = literal,
             ),
             createStatement(
                 id = StatementId("S456"),
                 predicate = createPredicate(Predicates.description),
-                `object` = createLiteral(ThingId("L132"), label = "other")
-            )
+                `object` = createLiteral(ThingId("L132"), label = "other"),
+            ),
         )
 
         every { unsafeLiteralUseCases.update(updateLiteralCommand) } just runs
@@ -242,8 +242,8 @@ internal class SingleStatementPropertyUpdaterUnitTest : MockkBaseTest {
             createStatement(
                 id = StatementId("S456"),
                 predicate = createPredicate(Predicates.description),
-                `object` = createLiteral(ThingId("L132"), label = "other")
-            )
+                `object` = createLiteral(ThingId("L132"), label = "other"),
+            ),
         )
 
         every { statementService.deleteAllById(setOf(StatementId("S456"))) } just runs
@@ -274,8 +274,8 @@ internal class SingleStatementPropertyUpdaterUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     subjectId = subjectId,
                     predicateId = Predicates.hasContribution,
-                    objectId = contributionId
-                )
+                    objectId = contributionId,
+                ),
             )
         } returns StatementId("S1")
 
@@ -287,8 +287,8 @@ internal class SingleStatementPropertyUpdaterUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     subjectId = subjectId,
                     predicateId = Predicates.hasContribution,
-                    objectId = contributionId
-                )
+                    objectId = contributionId,
+                ),
             )
         }
     }
@@ -300,7 +300,7 @@ internal class SingleStatementPropertyUpdaterUnitTest : MockkBaseTest {
         val contributionId = ThingId("R456")
         val statements = listOf(
             createStatement(StatementId("S159")),
-            createStatement(StatementId("S357"), predicate = createPredicate(Predicates.hasContribution))
+            createStatement(StatementId("S357"), predicate = createPredicate(Predicates.hasContribution)),
         )
 
         every { statementService.deleteAllById(setOf(StatementId("S357"))) } just runs
@@ -310,8 +310,8 @@ internal class SingleStatementPropertyUpdaterUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     subjectId = subjectId,
                     predicateId = Predicates.hasContribution,
-                    objectId = contributionId
-                )
+                    objectId = contributionId,
+                ),
             )
         } returns StatementId("S1")
 
@@ -324,8 +324,8 @@ internal class SingleStatementPropertyUpdaterUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     subjectId = subjectId,
                     predicateId = Predicates.hasContribution,
-                    objectId = contributionId
-                )
+                    objectId = contributionId,
+                ),
             )
         }
     }
@@ -343,8 +343,8 @@ internal class SingleStatementPropertyUpdaterUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     subjectId = subjectId,
                     predicateId = Predicates.hasContribution,
-                    objectId = objectId
-                )
+                    objectId = objectId,
+                ),
             )
         } returns StatementId("S1")
 
@@ -356,8 +356,8 @@ internal class SingleStatementPropertyUpdaterUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     subjectId = subjectId,
                     predicateId = Predicates.hasContribution,
-                    objectId = objectId
-                )
+                    objectId = objectId,
+                ),
             )
         }
     }
@@ -369,7 +369,7 @@ internal class SingleStatementPropertyUpdaterUnitTest : MockkBaseTest {
         val objectId = ThingId("R456")
         val statements = listOf(
             createStatement(StatementId("S159")),
-            createStatement(StatementId("S357"), predicate = createPredicate(Predicates.hasContribution))
+            createStatement(StatementId("S357"), predicate = createPredicate(Predicates.hasContribution)),
         )
 
         every { statementService.deleteAllById(setOf(StatementId("S357"))) } just runs
@@ -379,8 +379,8 @@ internal class SingleStatementPropertyUpdaterUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     subjectId = subjectId,
                     predicateId = Predicates.hasContribution,
-                    objectId = objectId
-                )
+                    objectId = objectId,
+                ),
             )
         } returns StatementId("S1")
 
@@ -393,8 +393,8 @@ internal class SingleStatementPropertyUpdaterUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     subjectId = subjectId,
                     predicateId = Predicates.hasContribution,
-                    objectId = objectId
-                )
+                    objectId = objectId,
+                ),
             )
         }
     }
@@ -406,7 +406,7 @@ internal class SingleStatementPropertyUpdaterUnitTest : MockkBaseTest {
         val objectId = null
         val statements = listOf(
             createStatement(StatementId("S159")),
-            createStatement(StatementId("S357"), predicate = createPredicate(Predicates.hasContribution))
+            createStatement(StatementId("S357"), predicate = createPredicate(Predicates.hasContribution)),
         )
 
         every { statementService.deleteAllById(setOf(StatementId("S357"))) } just runs

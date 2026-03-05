@@ -34,7 +34,7 @@ class SimCompLiteratureListPublishedAdapter(
         repository.save(
             id = literatureList.id,
             type = ThingType.LIST,
-            data = literatureList.toPublishedContentTypeRepresentation(MediaTypeCapabilities.EMPTY)
+            data = literatureList.toPublishedContentTypeRepresentation(MediaTypeCapabilities.EMPTY),
         )
     }
 }

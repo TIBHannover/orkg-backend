@@ -55,7 +55,7 @@ class ImportService(
                         subjectClasses = setOf(Classes.resource),
                         predicateId = Predicates.sameAs,
                         objectLabel = externalThing.uri.toString(),
-                        objectClasses = setOf(Classes.literal)
+                        objectClasses = setOf(Classes.literal),
                     )
                     if (!statements.isEmpty) {
                         return statements.single().subject.id
@@ -77,7 +77,7 @@ class ImportService(
             subjectClasses = setOf(Classes.resource),
             predicateId = Predicates.sameAs,
             objectLabel = uri.toString(),
-            objectClasses = setOf(Classes.literal)
+            objectClasses = setOf(Classes.literal),
         )
         if (!statements.isEmpty) {
             return statements.single().subject.id
@@ -107,7 +107,7 @@ class ImportService(
                         subjectClasses = setOf(Classes.predicate),
                         predicateId = Predicates.sameAs,
                         objectLabel = externalThing.uri.toString(),
-                        objectClasses = setOf(Classes.literal)
+                        objectClasses = setOf(Classes.literal),
                     )
                     if (!statements.isEmpty) {
                         return statements.single().subject.id
@@ -129,7 +129,7 @@ class ImportService(
             subjectClasses = setOf(Classes.predicate),
             predicateId = Predicates.sameAs,
             objectLabel = uri.toString(),
-            objectClasses = setOf(Classes.literal)
+            objectClasses = setOf(Classes.literal),
         )
         if (!statements.isEmpty) {
             return statements.single().subject.id
@@ -190,7 +190,7 @@ class ImportService(
             CreateResourceUseCase.CreateCommand(
                 contributorId = contributorId,
                 label = externalThing.label,
-            )
+            ),
         )
         createDescription(externalThing, contributorId, resourceId)
         createSameAsLiteral(contributorId, externalThing, resourceId)
@@ -202,7 +202,7 @@ class ImportService(
             CreatePredicateUseCase.CreateCommand(
                 contributorId = contributorId,
                 label = externalThing.label,
-            )
+            ),
         )
         createDescription(externalThing, contributorId, predicateId)
         createSameAsLiteral(contributorId, externalThing, predicateId)
@@ -214,8 +214,8 @@ class ImportService(
             CreateClassUseCase.CreateCommand(
                 contributorId = contributorId,
                 label = externalThing.label,
-                uri = externalThing.uri
-            )
+                uri = externalThing.uri,
+            ),
         )
         createDescription(externalThing, contributorId, classId)
         return classId
@@ -230,16 +230,16 @@ class ImportService(
             CreateLiteralUseCase.CreateCommand(
                 contributorId = contributorId,
                 label = externalThing.uri.toString(),
-                datatype = Literals.XSD.URI.prefixedUri
-            )
+                datatype = Literals.XSD.URI.prefixedUri,
+            ),
         )
         unsafeStatementService.create(
             CreateStatementUseCase.CreateCommand(
                 contributorId = contributorId,
                 subjectId = subjectId,
                 predicateId = Predicates.sameAs,
-                objectId = sameAsLiteralId
-            )
+                objectId = sameAsLiteralId,
+            ),
         )
     }
 
@@ -252,16 +252,16 @@ class ImportService(
             val descriptionId = literalService.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = contributorId,
-                    label = description
-                )
+                    label = description,
+                ),
             )
             unsafeStatementService.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = contributorId,
                     subjectId = subjectId,
                     predicateId = Predicates.description,
-                    objectId = descriptionId
-                )
+                    objectId = descriptionId,
+                ),
             )
         }
     }

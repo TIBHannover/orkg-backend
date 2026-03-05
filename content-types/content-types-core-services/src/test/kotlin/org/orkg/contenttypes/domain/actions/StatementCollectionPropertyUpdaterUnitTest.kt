@@ -35,7 +35,7 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
     private val statementCollectionPropertyUpdater = StatementCollectionPropertyUpdater(
         unsafeLiteralUseCases,
         statementService,
-        unsafeStatementUseCases
+        unsafeStatementUseCases,
     )
 
     @Test
@@ -57,8 +57,8 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     subjectId = subjectId,
                     predicateId = Predicates.reference,
-                    objectId = objects[0]
-                )
+                    objectId = objects[0],
+                ),
             )
         }
         verify(exactly = 1) {
@@ -67,8 +67,8 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     subjectId = subjectId,
                     predicateId = Predicates.reference,
-                    objectId = objects[1]
-                )
+                    objectId = objects[1],
+                ),
             )
         }
     }
@@ -92,8 +92,8 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     subjectId = subjectId,
                     predicateId = Predicates.reference,
-                    objectId = objects[1]
-                )
+                    objectId = objects[1],
+                ),
             )
         }
     }
@@ -138,8 +138,8 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     subjectId = subjectId,
                     predicateId = Predicates.reference,
-                    objectId = objects[0]
-                )
+                    objectId = objects[0],
+                ),
             )
         }
         verify(exactly = 1) {
@@ -148,8 +148,8 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     subjectId = subjectId,
                     predicateId = Predicates.reference,
-                    objectId = objects[1]
-                )
+                    objectId = objects[1],
+                ),
             )
         }
     }
@@ -171,7 +171,7 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
         literals.forEach { literal ->
             verify(exactly = 1) {
                 unsafeLiteralUseCases.create(
-                    CreateLiteralUseCase.CreateCommand(label = literal, contributorId = contributorId)
+                    CreateLiteralUseCase.CreateCommand(label = literal, contributorId = contributorId),
                 )
             }
         }
@@ -181,8 +181,8 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     subjectId = subjectId,
                     predicateId = Predicates.reference,
-                    objectId = ThingId("L1")
-                )
+                    objectId = ThingId("L1"),
+                ),
             )
         }
         verify(exactly = 1) {
@@ -191,8 +191,8 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     subjectId = subjectId,
                     predicateId = Predicates.reference,
-                    objectId = ThingId("L2")
-                )
+                    objectId = ThingId("L2"),
+                ),
             )
         }
     }
@@ -213,7 +213,7 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
         verify(exactly = 1) { statementService.deleteAllById(setOf(oldLiteralStatements[0].id)) }
         verify(exactly = 1) {
             unsafeLiteralUseCases.create(
-                CreateLiteralUseCase.CreateCommand(label = literals[1], contributorId = contributorId)
+                CreateLiteralUseCase.CreateCommand(label = literals[1], contributorId = contributorId),
             )
         }
         verify(exactly = 1) {
@@ -222,8 +222,8 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     subjectId = subjectId,
                     predicateId = Predicates.reference,
-                    objectId = ThingId("L1")
-                )
+                    objectId = ThingId("L1"),
+                ),
             )
         }
     }
@@ -266,7 +266,7 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
         literals.forEach { literal ->
             verify(exactly = 1) {
                 unsafeLiteralUseCases.create(
-                    CreateLiteralUseCase.CreateCommand(label = literal, contributorId = contributorId)
+                    CreateLiteralUseCase.CreateCommand(label = literal, contributorId = contributorId),
                 )
             }
         }
@@ -276,8 +276,8 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     subjectId = subjectId,
                     predicateId = Predicates.reference,
-                    objectId = ThingId("L1")
-                )
+                    objectId = ThingId("L1"),
+                ),
             )
         }
         verify(exactly = 1) {
@@ -286,8 +286,8 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     subjectId = subjectId,
                     predicateId = Predicates.reference,
-                    objectId = ThingId("L2")
-                )
+                    objectId = ThingId("L2"),
+                ),
             )
         }
     }
@@ -311,8 +311,8 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     subjectId = subjectId,
                     predicateId = Predicates.reference,
-                    objectId = objects[0]
-                )
+                    objectId = objects[0],
+                ),
             )
         }
         verify(exactly = 1) {
@@ -321,8 +321,8 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     subjectId = subjectId,
                     predicateId = Predicates.reference,
-                    objectId = objects[1]
-                )
+                    objectId = objects[1],
+                ),
             )
         }
     }
@@ -346,8 +346,8 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     subjectId = subjectId,
                     predicateId = Predicates.reference,
-                    objectId = objects[1]
-                )
+                    objectId = objects[1],
+                ),
             )
         }
     }
@@ -392,8 +392,8 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     subjectId = subjectId,
                     predicateId = Predicates.reference,
-                    objectId = objects[0]
-                )
+                    objectId = objects[0],
+                ),
             )
         }
         verify(exactly = 1) {
@@ -402,8 +402,8 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     subjectId = subjectId,
                     predicateId = Predicates.reference,
-                    objectId = objects[1]
-                )
+                    objectId = objects[1],
+                ),
             )
         }
     }
@@ -429,12 +429,12 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
         val objects = listOf(
             ThingId("R1") to ThingId("P1"),
             ThingId("R2") to ThingId("P1"),
-            ThingId("R3") to ThingId("P2")
+            ThingId("R3") to ThingId("P2"),
         )
         val oldObjectStatements = listOf(
             ThingId("R1") to ThingId("P1"),
             ThingId("R2") to ThingId("P2"),
-            ThingId("R3") to ThingId("P1")
+            ThingId("R3") to ThingId("P1"),
         ).toStatements(subjectId, { it.second }, { it.first })
         val contributorId = ContributorId(UUID.randomUUID())
         val predicateIds = setOf(ThingId("P1"), ThingId("P2"))
@@ -450,8 +450,8 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     subjectId = subjectId,
                     predicateId = ThingId("P1"),
-                    objectId = ThingId("R2")
-                )
+                    objectId = ThingId("R2"),
+                ),
             )
         }
         verify(exactly = 1) {
@@ -460,8 +460,8 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     subjectId = subjectId,
                     predicateId = ThingId("P2"),
-                    objectId = ThingId("R3")
-                )
+                    objectId = ThingId("R3"),
+                ),
             )
         }
         verify(exactly = 1) { statementService.deleteAllById(oldObjectStatements.drop(1).map { it.id }.toSet()) }
@@ -478,12 +478,12 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
         val literalCreateCommand1 = CreateLiteralUseCase.CreateCommand(
             contributorId = contributorId,
             label = literals[0],
-            datatype = Literals.XSD.STRING.prefixedUri
+            datatype = Literals.XSD.STRING.prefixedUri,
         )
         val literalCreateCommand2 = CreateLiteralUseCase.CreateCommand(
             contributorId = contributorId,
             label = literals[1],
-            datatype = Literals.XSD.STRING.prefixedUri
+            datatype = Literals.XSD.STRING.prefixedUri,
         )
 
         every { statementService.deleteAllById(any<Set<StatementId>>()) } just runs
@@ -502,8 +502,8 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     subjectId = subjectId,
                     predicateId = Predicates.reference,
-                    objectId = literalId1
-                )
+                    objectId = literalId1,
+                ),
             )
         }
         verify(exactly = 1) {
@@ -512,8 +512,8 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     subjectId = subjectId,
                     predicateId = Predicates.reference,
-                    objectId = literalId2
-                )
+                    objectId = literalId2,
+                ),
             )
         }
     }
@@ -528,7 +528,7 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
         val literalCreateCommand2 = CreateLiteralUseCase.CreateCommand(
             contributorId = contributorId,
             label = literals[1],
-            datatype = Literals.XSD.STRING.prefixedUri
+            datatype = Literals.XSD.STRING.prefixedUri,
         )
 
         every { statementService.deleteAllById(any<Set<StatementId>>()) } just runs
@@ -545,8 +545,8 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     subjectId = subjectId,
                     predicateId = Predicates.reference,
-                    objectId = literalId2
-                )
+                    objectId = literalId2,
+                ),
             )
         }
     }
@@ -585,12 +585,12 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
         val literalCreateCommand1 = CreateLiteralUseCase.CreateCommand(
             contributorId = contributorId,
             label = literals[0],
-            datatype = Literals.XSD.STRING.prefixedUri
+            datatype = Literals.XSD.STRING.prefixedUri,
         )
         val literalCreateCommand2 = CreateLiteralUseCase.CreateCommand(
             contributorId = contributorId,
             label = literals[1],
-            datatype = Literals.XSD.STRING.prefixedUri
+            datatype = Literals.XSD.STRING.prefixedUri,
         )
 
         every { unsafeStatementUseCases.create(any()) } returns StatementId("S1")
@@ -607,8 +607,8 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     subjectId = subjectId,
                     predicateId = Predicates.reference,
-                    objectId = literalId1
-                )
+                    objectId = literalId1,
+                ),
             )
         }
         verify(exactly = 1) {
@@ -617,8 +617,8 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     subjectId = subjectId,
                     predicateId = Predicates.reference,
-                    objectId = literalId2
-                )
+                    objectId = literalId2,
+                ),
             )
         }
     }
@@ -643,7 +643,7 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
             id = StatementId("S$id"),
             subject = createResource(subjectId, createdAt = OffsetDateTime.now(fixedClock).plusHours(index.toLong())),
             predicate = createPredicate(Predicates.reference),
-            `object` = createResource(id, classes = setOf(Classes.paper))
+            `object` = createResource(id, classes = setOf(Classes.paper)),
         )
     }
 
@@ -657,7 +657,7 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
             id = StatementId("S$objectId"),
             subject = createResource(subjectId, createdAt = OffsetDateTime.now(fixedClock).plusHours(index.toLong())),
             predicate = createPredicate(predicateIdSelector(`object`)),
-            `object` = createResource(objectId, classes = setOf(Classes.paper))
+            `object` = createResource(objectId, classes = setOf(Classes.paper)),
         )
     }
 
@@ -666,7 +666,7 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
             id = StatementId("S$index"),
             subject = createResource(subjectId),
             predicate = createPredicate(Predicates.reference),
-            `object` = createLiteral(ThingId("L$index"), string)
+            `object` = createLiteral(ThingId("L$index"), string),
         )
     }
 }

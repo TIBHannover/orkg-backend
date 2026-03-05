@@ -66,8 +66,8 @@ data class PaperCSVRecordRepresentation(
 @JsonSubTypes(
     value = [
         JsonSubTypes.Type(ExistingPredicateContributionStatementRepresentation::class),
-        JsonSubTypes.Type(NewPredicateContributionStatementRepresentation::class)
-    ]
+        JsonSubTypes.Type(NewPredicateContributionStatementRepresentation::class),
+    ],
 )
 sealed interface ContributionStatementRepresentation
 

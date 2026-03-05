@@ -68,7 +68,7 @@ internal class ResearchFieldControllerUnitTest : MockMvcBaseTest("research-field
                 description(
                     """
                     A `GET` request provides information about a resource.
-                    """
+                    """,
                 )
                 pathParameters(
                     parameterWithName("id").description("The identifier of the research field to retrieve."),
@@ -131,7 +131,7 @@ internal class ResearchFieldControllerUnitTest : MockMvcBaseTest("research-field
                 description(
                     """
                     A `GET` request lists all research-fields.
-                    """
+                    """,
                 )
                 pagedQueryParameters(
                     visibilityFilterQueryParameter(),

@@ -23,7 +23,7 @@ internal class AbstractTableCellCreatorUnitTest : MockkBaseTest {
 
     private val abstractTableCellCreator = AbstractTableCellCreator(
         unsafeResourceUseCases,
-        unsafeStatementUseCases
+        unsafeStatementUseCases,
     )
 
     @Test
@@ -43,19 +43,19 @@ internal class AbstractTableCellCreatorUnitTest : MockkBaseTest {
             contributorId = contributorId,
             subjectId = cellId,
             predicateId = Predicates.csvwColumn,
-            objectId = columnId
+            objectId = columnId,
         )
         val createCellValueStatementCommand = CreateStatementUseCase.CreateCommand(
             contributorId = contributorId,
             subjectId = cellId,
             predicateId = Predicates.csvwValue,
-            objectId = cellValueId
+            objectId = cellValueId,
         )
         val createCellStatementCommand = CreateStatementUseCase.CreateCommand(
             contributorId = contributorId,
             subjectId = rowId,
             predicateId = Predicates.csvwCells,
-            objectId = cellId
+            objectId = cellId,
         )
 
         every { unsafeResourceUseCases.create(createCellResourceCommand) } returns cellId
@@ -89,13 +89,13 @@ internal class AbstractTableCellCreatorUnitTest : MockkBaseTest {
             contributorId = contributorId,
             subjectId = cellId,
             predicateId = Predicates.csvwColumn,
-            objectId = columnId
+            objectId = columnId,
         )
         val createCellStatementCommand = CreateStatementUseCase.CreateCommand(
             contributorId = contributorId,
             subjectId = rowId,
             predicateId = Predicates.csvwCells,
-            objectId = cellId
+            objectId = cellId,
         )
 
         every { unsafeResourceUseCases.create(createCellResourceCommand) } returns cellId

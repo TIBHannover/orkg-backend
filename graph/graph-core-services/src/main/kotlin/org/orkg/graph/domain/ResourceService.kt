@@ -73,7 +73,7 @@ class ResourceService(
             excludeClasses = excludeClasses,
             baseClass = baseClass,
             observatoryId = observatoryId,
-            organizationId = organizationId
+            organizationId = organizationId,
         )
 
     override fun findById(id: ThingId): Optional<Resource> =

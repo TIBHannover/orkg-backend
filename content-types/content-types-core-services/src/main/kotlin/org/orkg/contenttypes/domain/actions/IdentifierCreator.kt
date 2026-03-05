@@ -25,16 +25,16 @@ class IdentifierCreator(
                 val identifierLiteralId = unsafeLiteralUseCases.create(
                     CreateLiteralUseCase.CreateCommand(
                         contributorId = contributorId,
-                        label = value
-                    )
+                        label = value,
+                    ),
                 )
                 unsafeStatementUseCases.create(
                     CreateStatementUseCase.CreateCommand(
                         contributorId = contributorId,
                         subjectId = subjectId,
                         predicateId = identifier.predicateId,
-                        objectId = identifierLiteralId
-                    )
+                        objectId = identifierLiteralId,
+                    ),
                 )
             }
         }

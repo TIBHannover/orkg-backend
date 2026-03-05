@@ -40,8 +40,8 @@ fun <
                     child,
                     parent,
                     OffsetDateTime.now(fixedClock),
-                    ContributorId(UUID.randomUUID())
-                )
+                    ContributorId(UUID.randomUUID()),
+                ),
             )
             val result = hierarchyRepository.findParentByChildId(child.id)
             result.isPresent shouldBe true
@@ -63,15 +63,15 @@ fun <
                         childOfRoot,
                         root,
                         OffsetDateTime.now(fixedClock),
-                        ContributorId(UUID.randomUUID())
+                        ContributorId(UUID.randomUUID()),
                     ),
                     ClassSubclassRelation(
                         childOfChild,
                         childOfRoot,
                         OffsetDateTime.now(fixedClock),
-                        ContributorId(UUID.randomUUID())
-                    )
-                )
+                        ContributorId(UUID.randomUUID()),
+                    ),
+                ),
             )
             val result1 = hierarchyRepository.findParentByChildId(childOfRoot.id)
             result1.isPresent shouldBe true
@@ -94,8 +94,8 @@ fun <
                         child,
                         parent,
                         OffsetDateTime.now(fixedClock),
-                        ContributorId(UUID.randomUUID())
-                    )
+                        ContributorId(UUID.randomUUID()),
+                    ),
                 )
                 val precondition = hierarchyRepository.findParentByChildId(child.id)
                 precondition.isPresent shouldBe true
@@ -120,7 +120,7 @@ fun <
                 child,
                 parent,
                 OffsetDateTime.now(fixedClock),
-                ContributorId(UUID.randomUUID())
+                ContributorId(UUID.randomUUID()),
             )
             repository.save(relation)
             relations.add(relation)

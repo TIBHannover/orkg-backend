@@ -27,7 +27,7 @@ internal class ComparisonPublicationInfoCreatorUnitTest : MockkBaseTest {
     private val comparisonPublicationInfoCreator = ComparisonPublicationInfoCreator(
         unsafeStatementUseCases,
         unsafeLiteralUseCases,
-        fixedClock
+        fixedClock,
     )
 
     @Test
@@ -52,8 +52,8 @@ internal class ComparisonPublicationInfoCreatorUnitTest : MockkBaseTest {
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     label = now.year.toString(),
-                    datatype = Literals.XSD.INT.prefixedUri
-                )
+                    datatype = Literals.XSD.INT.prefixedUri,
+                ),
             )
         }
         verify(exactly = 1) {
@@ -62,8 +62,8 @@ internal class ComparisonPublicationInfoCreatorUnitTest : MockkBaseTest {
                     contributorId = command.contributorId,
                     subjectId = comparisonId,
                     predicateId = Predicates.yearPublished,
-                    objectId = publicationYearLiteralId
-                )
+                    objectId = publicationYearLiteralId,
+                ),
             )
         }
         verify(exactly = 1) {
@@ -71,8 +71,8 @@ internal class ComparisonPublicationInfoCreatorUnitTest : MockkBaseTest {
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     label = now.monthValue.toString(),
-                    datatype = Literals.XSD.INT.prefixedUri
-                )
+                    datatype = Literals.XSD.INT.prefixedUri,
+                ),
             )
         }
         verify(exactly = 1) {
@@ -81,8 +81,8 @@ internal class ComparisonPublicationInfoCreatorUnitTest : MockkBaseTest {
                     contributorId = command.contributorId,
                     subjectId = comparisonId,
                     predicateId = Predicates.yearPublished,
-                    objectId = publicationMonthLiteralId
-                )
+                    objectId = publicationMonthLiteralId,
+                ),
             )
         }
     }

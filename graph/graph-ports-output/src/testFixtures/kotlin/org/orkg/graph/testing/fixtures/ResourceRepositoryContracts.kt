@@ -48,10 +48,10 @@ fun <
     val fabricator = Fabrikate(
         FabricatorConfig(
             collectionSizes = 12..12,
-            nullableStrategy = FabricatorConfig.NullableStrategy.NeverSetToNull // FIXME: because "id" is nullable
+            nullableStrategy = FabricatorConfig.NullableStrategy.NeverSetToNull, // FIXME: because "id" is nullable
         )
             .withStandardMappings()
-            .withGraphMappings()
+            .withGraphMappings(),
     )
 
     describe("saving a resource") {
@@ -83,7 +83,7 @@ fun <
             val found = repository.findById(original.id).get()
             val modified = found.copy(
                 label = "some new label, never seen before",
-                classes = setOf(Classes.paper, Classes.contribution)
+                classes = setOf(Classes.paper, Classes.contribution),
             )
             repository.save(modified)
 
@@ -136,7 +136,7 @@ fun <
             it("returns the correct result") {
                 val resource = fabricator.random<Resource>().copy(
                     label = "label to find",
-                    classes = setOf(Classes.paper)
+                    classes = setOf(Classes.paper),
                 )
                 repository.save(resource)
                 val actual = repository.findPaperByLabel("LABEL to find")
@@ -213,7 +213,7 @@ fun <
                     resources.forEach(repository::save)
                     val result = repository.findAll(
                         pageable = PageRequest.of(0, 5),
-                        label = SearchString.of("label find", exactMatch = false)
+                        label = SearchString.of("label find", exactMatch = false),
                     )
 
                     it("returns the correct result") {
@@ -238,7 +238,7 @@ fun <
             context("by visibility") {
                 val resources = fabricator.random<List<Resource>>().mapIndexed { index, resource ->
                     resource.copy(
-                        visibility = Visibility.entries[index % Visibility.entries.size]
+                        visibility = Visibility.entries[index % Visibility.entries.size],
                     )
                 }
                 VisibilityFilter.entries.forEach { visibilityFilter ->
@@ -247,7 +247,7 @@ fun <
                         val expected = resources.filter { it.visibility in visibilityFilter.targets }
                         val result = repository.findAll(
                             visibility = visibilityFilter,
-                            pageable = PageRequest.of(0, 10)
+                            pageable = PageRequest.of(0, 10),
                         )
 
                         it("returns the correct result") {
@@ -282,7 +282,7 @@ fun <
                 val expected = resources.take(expectedCount)
                 val result = repository.findAll(
                     pageable = PageRequest.of(0, 5),
-                    createdBy = createdBy
+                    createdBy = createdBy,
                 )
 
                 it("returns the correct result") {
@@ -307,7 +307,7 @@ fun <
                 val expectedCount = 3
                 val resources = fabricator.random<List<Resource>>().mapIndexed { index, resource ->
                     resource.copy(
-                        createdAt = OffsetDateTime.now(fixedClock).minusHours(index.toLong())
+                        createdAt = OffsetDateTime.now(fixedClock).minusHours(index.toLong()),
                     )
                 }
                 resources.forEach(repository::save)
@@ -315,7 +315,7 @@ fun <
                 val expected = resources.take(expectedCount)
                 val result = repository.findAll(
                     pageable = PageRequest.of(0, 5),
-                    createdAtStart = expected.last().createdAt
+                    createdAtStart = expected.last().createdAt,
                 )
 
                 it("returns the correct result") {
@@ -340,7 +340,7 @@ fun <
                 val expectedCount = 3
                 val resources = fabricator.random<List<Resource>>().mapIndexed { index, resource ->
                     resource.copy(
-                        createdAt = OffsetDateTime.now(fixedClock).plusHours(index.toLong())
+                        createdAt = OffsetDateTime.now(fixedClock).plusHours(index.toLong()),
                     )
                 }
                 resources.forEach(repository::save)
@@ -348,7 +348,7 @@ fun <
                 val expected = resources.take(expectedCount)
                 val result = repository.findAll(
                     pageable = PageRequest.of(0, 5),
-                    createdAtEnd = expected.last().createdAt
+                    createdAtEnd = expected.last().createdAt,
                 )
 
                 it("returns the correct result") {
@@ -381,7 +381,7 @@ fun <
                 val expected = resources.take(expectedCount)
                 val result = repository.findAll(
                     pageable = PageRequest.of(0, 5),
-                    includeClasses = setOf(`class`)
+                    includeClasses = setOf(`class`),
                 )
 
                 it("returns the correct result") {
@@ -417,7 +417,7 @@ fun <
                 val expected = resources.take(expectedCount)
                 val result = repository.findAll(
                     pageable = PageRequest.of(0, 5),
-                    excludeClasses = setOf(`class`)
+                    excludeClasses = setOf(`class`),
                 )
 
                 it("returns the correct result") {
@@ -450,7 +450,7 @@ fun <
                 val expected = resources.take(expectedCount)
                 val result = repository.findAll(
                     pageable = PageRequest.of(0, 5),
-                    observatoryId = observatoryId
+                    observatoryId = observatoryId,
                 )
 
                 it("returns the correct result") {
@@ -483,7 +483,7 @@ fun <
                 val expected = resources.take(expectedCount)
                 val result = repository.findAll(
                     pageable = PageRequest.of(0, 5),
-                    organizationId = organizationId
+                    organizationId = organizationId,
                 )
 
                 it("returns the correct result") {
@@ -522,7 +522,7 @@ fun <
 
                 val result = repository.findAll(
                     baseClass = parent.id,
-                    pageable = PageRequest.of(0, 5)
+                    pageable = PageRequest.of(0, 5),
                 )
 
                 it("returns the correct result") {
@@ -567,7 +567,7 @@ fun <
                     excludeClasses = setOf(ThingId("MissingCLass")),
                     baseClass = parent.id,
                     observatoryId = expected.observatoryId,
-                    organizationId = expected.organizationId
+                    organizationId = expected.organizationId,
                 )
 
                 it("returns the correct result") {
@@ -611,7 +611,7 @@ fun <
         val unknownContributor = ContributorId.UNKNOWN
         val resources = fabricator.random<MutableList<Resource>>()
         resources[0] = resources[0].copy(
-            createdBy = unknownContributor
+            createdBy = unknownContributor,
         )
         resources.forEach(repository::save)
 

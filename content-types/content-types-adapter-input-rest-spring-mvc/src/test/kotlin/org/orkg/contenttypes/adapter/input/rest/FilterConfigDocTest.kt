@@ -46,10 +46,10 @@ internal class FilterConfigDocTest : MockMvcBaseTest("filter-configs") {
             values = setOf(
                 Value(
                     op = Operator.EQ,
-                    value = "some value"
-                )
+                    value = "some value",
+                ),
             ),
-            exact = true
+            exact = true,
         )
     }
 }

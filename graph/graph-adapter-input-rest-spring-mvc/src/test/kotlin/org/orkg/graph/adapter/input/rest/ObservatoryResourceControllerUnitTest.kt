@@ -55,7 +55,7 @@ internal class ObservatoryResourceControllerUnitTest : MockMvcBaseTest("observat
         val id = ObservatoryId("95565e51-2b80-4c28-918c-6fbc5e2a9b33")
         val paperResource = createResource(
             observatoryId = id,
-            classes = setOf(Classes.paper)
+            classes = setOf(Classes.paper),
         )
         every {
             resourceService.findAllPapersByObservatoryIdAndFilters(id, emptyList(), VisibilityFilter.ALL_LISTED, any())
@@ -80,7 +80,7 @@ internal class ObservatoryResourceControllerUnitTest : MockMvcBaseTest("observat
         val paperResource = createResource(
             observatoryId = id,
             classes = setOf(Classes.paper),
-            visibility = Visibility.FEATURED
+            visibility = Visibility.FEATURED,
         )
         every {
             resourceService.findAllPapersByObservatoryIdAndFilters(id, emptyList(), VisibilityFilter.FEATURED, any())
@@ -105,21 +105,21 @@ internal class ObservatoryResourceControllerUnitTest : MockMvcBaseTest("observat
         val paperResource = createResource(
             observatoryId = id,
             classes = setOf(Classes.paper),
-            visibility = Visibility.FEATURED
+            visibility = Visibility.FEATURED,
         )
         val filterConfig = listOf(
             SearchFilter(
                 path = listOf(ThingId("P105027")),
                 range = Classes.string,
                 values = setOf(Value(Operator.EQ, "yes")),
-                exact = true
+                exact = true,
             ),
             SearchFilter(
                 path = listOf(Predicates.hasResearchProblem),
                 range = Classes.resources,
                 values = setOf(Value(Operator.EQ, "R1234")),
-                exact = false
-            )
+                exact = false,
+            ),
         )
         val encodedFilterConfig = objectMapper.writeValueAsString(filterConfig)
 
@@ -148,21 +148,21 @@ internal class ObservatoryResourceControllerUnitTest : MockMvcBaseTest("observat
         val paperResource = createResource(
             observatoryId = id,
             classes = setOf(Classes.paper),
-            visibility = Visibility.FEATURED
+            visibility = Visibility.FEATURED,
         )
         val filterConfig = listOf(
             SearchFilter(
                 path = listOf(ThingId("P105027")),
                 range = Classes.string,
                 values = setOf(Value(Operator.EQ, "yes")),
-                exact = true
+                exact = true,
             ),
             SearchFilter(
                 path = listOf(Predicates.hasResearchProblem),
                 range = Classes.resources,
                 values = setOf(Value(Operator.EQ, "R1234")),
-                exact = false
-            )
+                exact = false,
+            ),
         )
         val encodedFilterConfig = objectMapper.writeValueAsString(filterConfig)
 
@@ -192,10 +192,10 @@ internal class ObservatoryResourceControllerUnitTest : MockMvcBaseTest("observat
                     To sort by the first search filter, the parameter `value0` can be used.
                     If a second search filter is defined, the parameter `value1` can be used.
                     By default, elements are sorted by `created_at` (descending).
-                    """
+                    """,
                 )
                 pathParameters(
-                    parameterWithName("id").description("The identifier of the observatory.")
+                    parameterWithName("id").description("The identifier of the observatory."),
                 )
                 pagedQueryParameters(
                     parameterWithName("filter_config").description("The filter config to use. (optional)").optional(),

@@ -61,48 +61,48 @@ internal class AbstractRosettaStoneStatementPropertyValueValidatorUnitTest : Moc
         ThingIdValidator(thingRepository), // it is easier to mock thingRepository calls than thingIdValidator calls
         statementRepository,
         rosettaStoneStatementService,
-        abstractTemplatePropertyValueValidator
+        abstractTemplatePropertyValueValidator,
     )
 
     @Test
     fun `Given a rosetta stone statement create command, when validating its properties, it returns success`() {
         val templateProperties = listOf(
             createSubjectPositionTemplateProperty(),
-            createStringLiteralObjectPositionTemplateProperty()
+            createStringLiteralObjectPositionTemplateProperty(),
         )
         val thingCommands = mapOf(
             "#temp1" to CreateLiteralCommandPart("1"),
             "#temp2" to CreateResourceCommandPart(
                 label = "MOTO",
-                classes = setOf(ThingId("C28"))
-            )
+                classes = setOf(ThingId("C28")),
+            ),
         )
         val validationCache: Map<String, Either<CreateThingCommandPart, Thing>> = mapOf(
             "R123" to Either.right(
                 createResource(
                     id = ThingId("R123"),
                     label = "word",
-                    classes = setOf(ThingId("C28"))
-                )
+                    classes = setOf(ThingId("C28")),
+                ),
             ),
             "R1" to Either.right(
                 createResource(
                     label = "other",
-                    classes = setOf(ThingId("C28"))
-                )
+                    classes = setOf(ThingId("C28")),
+                ),
             ),
             "L123" to Either.right(
                 createLiteral(
                     id = ThingId("L123"),
                     label = "10",
-                    datatype = Literals.XSD.DECIMAL.prefixedUri
-                )
-            )
+                    datatype = Literals.XSD.DECIMAL.prefixedUri,
+                ),
+            ),
         )
         val templateId = ThingId("R456")
         val subjects = listOf("R123", "R1", "#temp2")
         val objects = listOf(
-            listOf("#temp1", "L123")
+            listOf("#temp1", "L123"),
         )
 
         every { abstractTemplatePropertyValueValidator.validateCardinality(any(), any()) } just runs
@@ -114,12 +114,12 @@ internal class AbstractRosettaStoneStatementPropertyValueValidatorUnitTest : Moc
             validationCacheIn = validationCache,
             templateId = templateId,
             subjects = subjects,
-            objects = objects
+            objects = objects,
         )
 
         result shouldBe validationCache + mapOf(
             "#temp2" to Either.left(thingCommands["#temp2"]),
-            "#temp1" to Either.left(thingCommands["#temp1"])
+            "#temp1" to Either.left(thingCommands["#temp1"]),
         )
 
         verify { abstractTemplatePropertyValueValidator.validateCardinality(any(), any()) }
@@ -130,7 +130,7 @@ internal class AbstractRosettaStoneStatementPropertyValueValidatorUnitTest : Moc
     fun `Given a rosetta stone statement create command, when too few object positions are defined, it throws an exception`() {
         val templateProperties = listOf(
             createSubjectPositionTemplateProperty(),
-            createStringLiteralObjectPositionTemplateProperty()
+            createStringLiteralObjectPositionTemplateProperty(),
         )
         val thingCommands = emptyMap<String, CreateThingCommandPart>()
         val templateId = ThingId("R456")
@@ -144,7 +144,7 @@ internal class AbstractRosettaStoneStatementPropertyValueValidatorUnitTest : Moc
                 validationCacheIn = emptyMap(),
                 templateId = templateId,
                 subjects = subjects,
-                objects = objects
+                objects = objects,
             )
         }
     }
@@ -153,14 +153,14 @@ internal class AbstractRosettaStoneStatementPropertyValueValidatorUnitTest : Moc
     fun `Given a rosetta stone statement create command, when too many input positions are defined, it throws an exception`() {
         val templateProperties = listOf(
             createSubjectPositionTemplateProperty(),
-            createStringLiteralObjectPositionTemplateProperty()
+            createStringLiteralObjectPositionTemplateProperty(),
         )
         val thingCommands = emptyMap<String, CreateThingCommandPart>()
         val templateId = ThingId("R456")
         val subjects = listOf("R123", "R1", "#temp2")
         val objects = listOf(
             listOf("#temp1", "L123"),
-            listOf("#temp1", "L123")
+            listOf("#temp1", "L123"),
         )
 
         shouldThrow<TooManyInputPositions> {
@@ -170,7 +170,7 @@ internal class AbstractRosettaStoneStatementPropertyValueValidatorUnitTest : Moc
                 validationCacheIn = emptyMap(),
                 templateId = templateId,
                 subjects = subjects,
-                objects = objects
+                objects = objects,
             )
         }
     }
@@ -179,17 +179,17 @@ internal class AbstractRosettaStoneStatementPropertyValueValidatorUnitTest : Moc
     fun `Given a rosetta stone statement create command, when inputs contain a rosetta stone statement that contains rosetta stone statements, it throws an exception`() {
         val templateProperties = listOf(
             createSubjectPositionTemplateProperty().copy(
-                `class` = ObjectIdAndLabel(Classes.rosettaStoneStatement, "irrelevant")
-            )
+                `class` = ObjectIdAndLabel(Classes.rosettaStoneStatement, "irrelevant"),
+            ),
         )
         val templateId = ThingId("R456")
         val rosettaStoneStatement = createRosettaStoneStatement().let {
             it.copy(
                 versions = listOf(
                     it.latestVersion.copy(
-                        subjects = listOf(createResource(classes = setOf(Classes.rosettaStoneStatement)))
-                    )
-                )
+                        subjects = listOf(createResource(classes = setOf(Classes.rosettaStoneStatement))),
+                    ),
+                ),
             )
         }
         val latestVersionId = rosettaStoneStatement.latestVersion.id
@@ -207,7 +207,7 @@ internal class AbstractRosettaStoneStatementPropertyValueValidatorUnitTest : Moc
                 validationCacheIn = emptyMap(),
                 templateId = templateId,
                 subjects = subjects,
-                objects = emptyList()
+                objects = emptyList(),
             )
         }
 
@@ -220,8 +220,8 @@ internal class AbstractRosettaStoneStatementPropertyValueValidatorUnitTest : Moc
     fun `Given a rosetta stone statement create command, when inputs contain a rosetta stone statement that does not contain a rosetta stone statement, it returns success`() {
         val templateProperties = listOf(
             createSubjectPositionTemplateProperty().copy(
-                `class` = ObjectIdAndLabel(Classes.rosettaStoneStatement, "irrelevant")
-            )
+                `class` = ObjectIdAndLabel(Classes.rosettaStoneStatement, "irrelevant"),
+            ),
         )
         val templateId = ThingId("R456")
         val rosettaStoneStatement = createRosettaStoneStatement()
@@ -240,11 +240,11 @@ internal class AbstractRosettaStoneStatementPropertyValueValidatorUnitTest : Moc
             validationCacheIn = emptyMap(),
             templateId = templateId,
             subjects = subjects,
-            objects = emptyList()
+            objects = emptyList(),
         )
 
         result shouldBe mapOf(
-            latestVersionId.value to Either.right<CreateThingCommandPart, Thing>(rosettaStoneStatementResource)
+            latestVersionId.value to Either.right<CreateThingCommandPart, Thing>(rosettaStoneStatementResource),
         )
 
         verify(exactly = 1) { thingRepository.findById(latestVersionId) }
@@ -257,8 +257,8 @@ internal class AbstractRosettaStoneStatementPropertyValueValidatorUnitTest : Moc
     fun `Given a rosetta stone statement create command, when inputs contain a rosetta stone statement that cannot be found, it throws an exception`() {
         val templateProperties = listOf(
             createSubjectPositionTemplateProperty().copy(
-                `class` = ObjectIdAndLabel(Classes.rosettaStoneStatement, "irrelevant")
-            )
+                `class` = ObjectIdAndLabel(Classes.rosettaStoneStatement, "irrelevant"),
+            ),
         )
         val templateId = ThingId("R456")
         val rosettaStoneStatement = createRosettaStoneStatement()
@@ -277,7 +277,7 @@ internal class AbstractRosettaStoneStatementPropertyValueValidatorUnitTest : Moc
                 validationCacheIn = emptyMap(),
                 templateId = templateId,
                 subjects = subjects,
-                objects = emptyList()
+                objects = emptyList(),
             )
         }
 
@@ -290,8 +290,8 @@ internal class AbstractRosettaStoneStatementPropertyValueValidatorUnitTest : Moc
     fun `Given a rosetta stone statement create command, when inputs contain a rosetta stone statement that does not have the specified version, it throws an exception`() {
         val templateProperties = listOf(
             createSubjectPositionTemplateProperty().copy(
-                `class` = ObjectIdAndLabel(Classes.rosettaStoneStatement, "irrelevant")
-            )
+                `class` = ObjectIdAndLabel(Classes.rosettaStoneStatement, "irrelevant"),
+            ),
         )
         val templateId = ThingId("R456")
         val rosettaStoneStatement = createRosettaStoneStatement()
@@ -310,7 +310,7 @@ internal class AbstractRosettaStoneStatementPropertyValueValidatorUnitTest : Moc
                 validationCacheIn = emptyMap(),
                 templateId = templateId,
                 subjects = subjects,
-                objects = emptyList()
+                objects = emptyList(),
             )
         }
 
@@ -323,7 +323,7 @@ internal class AbstractRosettaStoneStatementPropertyValueValidatorUnitTest : Moc
     fun `Given a rosetta stone statement create command, when too few subject inputs are specified, it throws an exception`() {
         val templateProperties = listOf(
             createSubjectPositionTemplateProperty(),
-            createStringLiteralObjectPositionTemplateProperty()
+            createStringLiteralObjectPositionTemplateProperty(),
         )
         val thingCommands = emptyMap<String, CreateThingCommandPart>()
         val templateId = ThingId("R456")
@@ -340,7 +340,7 @@ internal class AbstractRosettaStoneStatementPropertyValueValidatorUnitTest : Moc
                 validationCacheIn = emptyMap(),
                 templateId = templateId,
                 subjects = subjects,
-                objects = objects
+                objects = objects,
             )
         }
 
@@ -351,10 +351,10 @@ internal class AbstractRosettaStoneStatementPropertyValueValidatorUnitTest : Moc
     fun `Given a rosetta stone statement create command, when too few object inputs are specified, it throws an exception`() {
         val templateProperties = listOf(
             createSubjectPositionTemplateProperty(),
-            createStringLiteralObjectPositionTemplateProperty()
+            createStringLiteralObjectPositionTemplateProperty(),
         )
         val thingCommands = mapOf(
-            "#temp2" to CreateLiteralCommandPart("subject")
+            "#temp2" to CreateLiteralCommandPart("subject"),
         )
         val templateId = ThingId("R456")
         val subjects = listOf("#temp2")
@@ -371,7 +371,7 @@ internal class AbstractRosettaStoneStatementPropertyValueValidatorUnitTest : Moc
                 validationCacheIn = emptyMap(),
                 templateId = templateId,
                 subjects = subjects,
-                objects = objects
+                objects = objects,
             )
         }
 
@@ -383,7 +383,7 @@ internal class AbstractRosettaStoneStatementPropertyValueValidatorUnitTest : Moc
     fun `Given a rosetta stone statement create command, when too many subject inputs are specified, it throws an exception`() {
         val templateProperties = listOf(
             createSubjectPositionTemplateProperty(),
-            createStringLiteralObjectPositionTemplateProperty()
+            createStringLiteralObjectPositionTemplateProperty(),
         )
         val thingCommands = emptyMap<String, CreateThingCommandPart>()
         val templateId = ThingId("R456")
@@ -400,7 +400,7 @@ internal class AbstractRosettaStoneStatementPropertyValueValidatorUnitTest : Moc
                 validationCacheIn = emptyMap(),
                 templateId = templateId,
                 subjects = subjects,
-                objects = objects
+                objects = objects,
             )
         }
 
@@ -411,10 +411,10 @@ internal class AbstractRosettaStoneStatementPropertyValueValidatorUnitTest : Moc
     fun `Given a rosetta stone statement create command, when too many object inputs are specified, it throws an exception`() {
         val templateProperties = listOf(
             createSubjectPositionTemplateProperty(),
-            createStringLiteralObjectPositionTemplateProperty()
+            createStringLiteralObjectPositionTemplateProperty(),
         )
         val thingCommands = mapOf(
-            "#temp2" to CreateLiteralCommandPart("subject")
+            "#temp2" to CreateLiteralCommandPart("subject"),
         )
         val templateId = ThingId("R456")
         val subjects = listOf("#temp2")
@@ -431,7 +431,7 @@ internal class AbstractRosettaStoneStatementPropertyValueValidatorUnitTest : Moc
                 validationCacheIn = emptyMap(),
                 templateId = templateId,
                 subjects = subjects,
-                objects = objects
+                objects = objects,
             )
         }
 
@@ -443,13 +443,13 @@ internal class AbstractRosettaStoneStatementPropertyValueValidatorUnitTest : Moc
     fun `Given a rosetta stone statement create command, when object position value does not match property pattern, it throws an exception`() {
         val templateProperties = listOf(
             createSubjectPositionTemplateProperty(),
-            createStringLiteralObjectPositionTemplateProperty()
+            createStringLiteralObjectPositionTemplateProperty(),
         )
         val thingCommands = emptyMap<String, CreateThingCommandPart>()
         val literal = createLiteral(ThingId("L123"), label = "15603")
         val validationCache: MutableMap<String, Either<CreateThingCommandPart, Thing>> = mutableMapOf(
             "L123" to Either.right(literal),
-            "R123" to Either.right(createResource(ThingId("R123")))
+            "R123" to Either.right(createResource(ThingId("R123"))),
         )
         val templateId = ThingId("R456")
         val subjects = listOf("R123")
@@ -468,7 +468,7 @@ internal class AbstractRosettaStoneStatementPropertyValueValidatorUnitTest : Moc
                 validationCacheIn = validationCache,
                 templateId = templateId,
                 subjects = subjects,
-                objects = objects
+                objects = objects,
             )
         }
 
@@ -480,13 +480,13 @@ internal class AbstractRosettaStoneStatementPropertyValueValidatorUnitTest : Moc
     fun `Given a rosetta stone statement create command, when object position value is too low, it throws an exception`() {
         val templateProperties = listOf(
             createSubjectPositionTemplateProperty(),
-            createNumberLiteralTemplateProperty()
+            createNumberLiteralTemplateProperty(),
         )
         val thingCommands = emptyMap<String, CreateThingCommandPart>()
         val literal = createLiteral(ThingId("L123"), label = "-20")
         val validationCache: MutableMap<String, Either<CreateThingCommandPart, Thing>> = mutableMapOf(
             "L123" to Either.right(literal),
-            "R123" to Either.right(createResource(ThingId("R123")))
+            "R123" to Either.right(createResource(ThingId("R123"))),
         )
         val templateId = ThingId("R456")
         val subjects = listOf("R123")
@@ -505,7 +505,7 @@ internal class AbstractRosettaStoneStatementPropertyValueValidatorUnitTest : Moc
                 validationCacheIn = validationCache,
                 templateId = templateId,
                 subjects = subjects,
-                objects = objects
+                objects = objects,
             )
         }
 
@@ -517,13 +517,13 @@ internal class AbstractRosettaStoneStatementPropertyValueValidatorUnitTest : Moc
     fun `Given a rosetta stone statement create command, when object position value is too high, it throws an exception`() {
         val templateProperties = listOf(
             createSubjectPositionTemplateProperty(),
-            createNumberLiteralTemplateProperty()
+            createNumberLiteralTemplateProperty(),
         )
         val literal = createLiteral(ThingId("L123"), label = "20")
         val thingCommands = emptyMap<String, CreateThingCommandPart>()
         val validationCache = mapOf<String, Either<CreateThingCommandPart, Thing>>(
             "L123" to Either.right(literal),
-            "R123" to Either.right(createResource(ThingId("R123")))
+            "R123" to Either.right(createResource(ThingId("R123"))),
         )
         val templateId = ThingId("R456")
         val subjects = listOf("R123")
@@ -542,7 +542,7 @@ internal class AbstractRosettaStoneStatementPropertyValueValidatorUnitTest : Moc
                 validationCacheIn = validationCache,
                 templateId = templateId,
                 subjects = subjects,
-                objects = objects
+                objects = objects,
             )
         }
 

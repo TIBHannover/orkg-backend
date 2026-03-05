@@ -35,7 +35,7 @@ class SimCompSmartReviewPublishedAdapter(
         repository.save(
             id = smartReview.id,
             type = ThingType.REVIEW,
-            data = smartReview.toPublishedContentTypeRepresentation(MediaTypeCapabilities.EMPTY)
+            data = smartReview.toPublishedContentTypeRepresentation(MediaTypeCapabilities.EMPTY),
         )
     }
 }

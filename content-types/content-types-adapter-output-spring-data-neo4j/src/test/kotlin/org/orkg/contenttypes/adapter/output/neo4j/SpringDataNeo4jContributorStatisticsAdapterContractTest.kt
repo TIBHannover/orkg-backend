@@ -32,7 +32,7 @@ import org.springframework.beans.factory.annotation.Autowired
         GraphNeo4jConfiguration::class,
         ContentTypesNeo4jConfiguration::class,
         CypherQueryBuilderConfiguration::class,
-    ]
+    ],
 )
 internal class SpringDataNeo4jContributorStatisticsAdapterContractTest(
     @param:Autowired private val springDataNeo4jContributorStatisticsAdapter: ContributorStatisticsRepository,
@@ -50,6 +50,6 @@ internal class SpringDataNeo4jContributorStatisticsAdapterContractTest(
                 springDataNeo4jClassAdapter,
                 springDataNeo4jLiteralAdapter,
                 springDataNeo4jStatementAdapter,
-            )
+            ),
         )
     })

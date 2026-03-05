@@ -143,7 +143,7 @@ class ObservatoryFilterController(
                 path = path,
                 range = range,
                 exact = exact,
-                featured = featured
+                featured = featured,
             )
     }
 
@@ -163,7 +163,7 @@ class ObservatoryFilterController(
                 path = path,
                 range = range,
                 exact = exact,
-                featured = featured
+                featured = featured,
             )
     }
 }

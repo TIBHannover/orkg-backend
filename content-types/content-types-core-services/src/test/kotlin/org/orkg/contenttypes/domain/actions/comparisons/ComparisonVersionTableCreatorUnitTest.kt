@@ -42,7 +42,7 @@ internal class ComparisonVersionTableCreatorUnitTest : MockkBaseTest {
                     it.titles shouldBe table.titles
                     it.subtitles shouldBe table.subtitles
                     it.values shouldBe table.values
-                }
+                },
             )
         }
     }
@@ -66,7 +66,7 @@ internal class ComparisonVersionTableCreatorUnitTest : MockkBaseTest {
                     it.titles shouldBe emptyList()
                     it.subtitles shouldBe emptyList()
                     it.values shouldBe emptyMap()
-                }
+                },
             )
         }
     }

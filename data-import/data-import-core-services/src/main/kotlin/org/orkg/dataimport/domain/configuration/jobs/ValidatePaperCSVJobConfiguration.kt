@@ -114,6 +114,6 @@ class ValidatePaperCSVJobConfiguration(
             successState = State.VALIDATION_DONE,
             stoppedState = State.VALIDATION_STOPPED,
             failureState = State.VALIDATION_FAILED,
-            jobIdSetter = { csv, jobId -> csv.copy(validationJobId = jobId) }
+            jobIdSetter = { csv, jobId -> csv.copy(validationJobId = jobId) },
         )
 }

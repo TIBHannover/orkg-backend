@@ -65,11 +65,11 @@ fun <
     val fabricator = Fabrikate(
         FabricatorConfig(
             collectionSizes = 5..5,
-            nullableStrategy = FabricatorConfig.NullableStrategy.NeverSetToNull // FIXME: because "id" is nullable
+            nullableStrategy = FabricatorConfig.NullableStrategy.NeverSetToNull, // FIXME: because "id" is nullable
         )
             .withStandardMappings()
             .withGraphMappings()
-            .withRosettaStoneStatementMappings()
+            .withRosettaStoneStatementMappings(),
     )
 
     val saveThing: (Thing) -> Unit = {
@@ -119,7 +119,7 @@ fun <
 
             val found = repository.findByIdOrVersionId(original.id).get()
             val modified = found.copy(
-                label = "some new label, never seen before"
+                label = "some new label, never seen before",
             )
             modified.requiredEntities(fabricator).forEach(saveThing)
             repository.save(modified)
@@ -328,7 +328,7 @@ fun <
                 statements[index] = statement.copy(
                     versions = statement.versions.toMutableList().also { versions ->
                         versions[0] = versions[0].copy(createdBy = contributorId)
-                    }
+                    },
                 )
             }
             statements.forEach {
@@ -362,7 +362,7 @@ fun <
                 statements[index] = statement.copy(
                     versions = statement.versions.toMutableList().also { versions ->
                         versions[0] = versions[0].copy(createdAt = OffsetDateTime.now().minusHours(index.toLong()))
-                    }
+                    },
                 )
             }
             statements.forEach {
@@ -372,7 +372,7 @@ fun <
             val expected = statements.take(3)
             val result = repository.findAll(
                 pageable = PageRequest.of(0, 10),
-                createdAtStart = expected.last().versions.first().createdAt
+                createdAtStart = expected.last().versions.first().createdAt,
             )
 
             it("returns the correct result") {
@@ -399,7 +399,7 @@ fun <
                 statements[index] = statement.copy(
                     versions = statement.versions.toMutableList().also { versions ->
                         versions[0] = versions[0].copy(createdAt = OffsetDateTime.now().plusHours(index.toLong()))
-                    }
+                    },
                 )
             }
             statements.forEach {
@@ -409,7 +409,7 @@ fun <
             val expected = statements.take(3)
             val result = repository.findAll(
                 pageable = PageRequest.of(0, 10),
-                createdAtEnd = expected.last().versions.first().createdAt
+                createdAtEnd = expected.last().versions.first().createdAt,
             )
 
             it("returns the correct result") {
@@ -512,7 +512,7 @@ fun <
                 createdAtStart = firstVersion.createdAt,
                 createdAtEnd = firstVersion.createdAt,
                 observatoryId = expected.observatories.single(),
-                organizationId = expected.organizations.single()
+                organizationId = expected.organizations.single(),
             )
 
             it("returns the correct result") {
@@ -538,7 +538,7 @@ fun <
             statements[1] = statements[1].copy(
                 versions = statements[1].versions.toMutableList().also { versions ->
                     versions[0] = versions[0].copy(createdBy = statements[0].versions.first().createdBy)
-                }
+                },
             )
             statements.forEach {
                 it.requiredEntities(fabricator).forEach(saveThing)
@@ -669,8 +669,8 @@ fun <
                     it.copy(
                         versions = it.versions + it.versions.first().copy(
                             id = fabricator.random(),
-                            subjects = listOf(statementResource)
-                        )
+                            subjects = listOf(statementResource),
+                        ),
                     )
                 }
                 otherStatement.requiredEntities(fabricator).forEach(saveThing)
@@ -691,8 +691,8 @@ fun <
                     it.copy(
                         versions = it.versions + it.versions.first().copy(
                             id = fabricator.random(),
-                            subjects = listOf(statementResource)
-                        )
+                            subjects = listOf(statementResource),
+                        ),
                     )
                 }
                 otherStatement.requiredEntities(fabricator).forEach(saveThing)
@@ -713,8 +713,8 @@ fun <
                     it.copy(
                         versions = it.versions + it.versions.first().copy(
                             id = fabricator.random(),
-                            objects = listOf(listOf(statementResource))
-                        )
+                            objects = listOf(listOf(statementResource)),
+                        ),
                     )
                 }
                 otherStatement.requiredEntities(fabricator).forEach(saveThing)
@@ -735,8 +735,8 @@ fun <
                     it.copy(
                         versions = it.versions + it.versions.first().copy(
                             id = fabricator.random(),
-                            objects = listOf(listOf(statementResource))
-                        )
+                            objects = listOf(listOf(statementResource)),
+                        ),
                     )
                 }
                 otherStatement.requiredEntities(fabricator).forEach(saveThing)
@@ -754,8 +754,8 @@ fun <
 
                 saveStatement(
                     fabricator.random<GeneralStatement>().copy(
-                        `object` = resourceRepository.findById(statement.id).get()
-                    )
+                        `object` = resourceRepository.findById(statement.id).get(),
+                    ),
                 )
 
                 repository.isUsedAsObject(statement.id) shouldBe true
@@ -770,8 +770,8 @@ fun <
 
                 saveStatement(
                     fabricator.random<GeneralStatement>().copy(
-                        `object` = resourceRepository.findById(statement.versions.last().id).get()
-                    )
+                        `object` = resourceRepository.findById(statement.versions.last().id).get(),
+                    ),
                 )
 
                 repository.isUsedAsObject(statement.id) shouldBe true

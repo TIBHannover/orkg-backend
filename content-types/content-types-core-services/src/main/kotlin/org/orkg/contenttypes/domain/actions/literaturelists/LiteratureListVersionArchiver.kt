@@ -16,7 +16,7 @@ private val bundleConfiguration = BundleConfiguration(
     minLevel = null,
     maxLevel = 10,
     blacklist = listOf(Classes.researchField),
-    whitelist = emptyList()
+    whitelist = emptyList(),
 )
 
 class LiteratureListVersionArchiver(
@@ -30,7 +30,7 @@ class LiteratureListVersionArchiver(
             thingId = command.id,
             configuration = bundleConfiguration,
             includeFirst = true,
-            sort = Sort.unsorted()
+            sort = Sort.unsorted(),
         ).bundle
         literatureListSnapshotRepository.save(
             LiteratureListSnapshotV1(
@@ -40,7 +40,7 @@ class LiteratureListVersionArchiver(
                 resourceId = state.literatureListVersionId!!,
                 rootId = command.id,
                 subgraph = statementsToPersist,
-            )
+            ),
         )
         return state
     }

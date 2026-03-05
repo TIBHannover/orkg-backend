@@ -37,7 +37,7 @@ internal class PredicateServiceUnitTest : MockkBaseTest {
             id = id,
             contributorId = ContributorId(MockUserId.USER),
             label = "label",
-            modifiable = false
+            modifiable = false,
         )
 
         every { repository.findById(id) } returns Optional.empty()
@@ -54,7 +54,7 @@ internal class PredicateServiceUnitTest : MockkBaseTest {
         val id = ThingId("R123")
         val command = CreatePredicateUseCase.CreateCommand(
             contributorId = ContributorId(MockUserId.USER),
-            label = "label"
+            label = "label",
         )
 
         every { unsafePredicateUseCases.create(command) } returns id
@@ -70,7 +70,7 @@ internal class PredicateServiceUnitTest : MockkBaseTest {
         val command = CreatePredicateUseCase.CreateCommand(
             id = id,
             contributorId = ContributorId(MockUserId.USER),
-            label = "some label"
+            label = "some label",
         )
 
         every { repository.findById(id) } returns Optional.of(createPredicate(id))
@@ -86,7 +86,7 @@ internal class PredicateServiceUnitTest : MockkBaseTest {
         val command = CreatePredicateUseCase.CreateCommand(
             id = id,
             contributorId = ContributorId(MockUserId.USER),
-            label = "\n"
+            label = "\n",
         )
 
         assertThrows<InvalidLabel> { service.create(command) }
@@ -106,7 +106,7 @@ internal class PredicateServiceUnitTest : MockkBaseTest {
         val command = UpdatePredicateUseCase.UpdateCommand(
             id = predicate.id,
             contributorId = ContributorId(MockUserId.USER),
-            label = "\n"
+            label = "\n",
         )
 
         every { repository.findById(predicate.id) } returns Optional.of(predicate)
@@ -121,7 +121,7 @@ internal class PredicateServiceUnitTest : MockkBaseTest {
         val command = UpdatePredicateUseCase.UpdateCommand(
             id = ThingId("P123"),
             contributorId = ContributorId(MockUserId.USER),
-            label = "new label"
+            label = "new label",
         )
 
         every { repository.findById(any()) } returns Optional.empty()
@@ -158,8 +158,8 @@ internal class PredicateServiceUnitTest : MockkBaseTest {
                 id = predicate.id,
                 contributorId = contributorId,
                 label = predicate.label,
-                modifiable = predicate.modifiable
-            )
+                modifiable = predicate.modifiable,
+            ),
         )
 
         verify(exactly = 1) { repository.findById(predicate.id) }
@@ -175,7 +175,7 @@ internal class PredicateServiceUnitTest : MockkBaseTest {
             id = predicate.id,
             contributorId = contributorId,
             label = label,
-            modifiable = modifiable
+            modifiable = modifiable,
         )
 
         every { repository.findById(predicate.id) } returns Optional.of(predicate)
@@ -192,7 +192,7 @@ internal class PredicateServiceUnitTest : MockkBaseTest {
                     it.createdAt shouldBe predicate.createdAt
                     it.createdBy shouldBe predicate.createdBy
                     it.modifiable shouldBe modifiable
-                }
+                },
             )
         }
     }

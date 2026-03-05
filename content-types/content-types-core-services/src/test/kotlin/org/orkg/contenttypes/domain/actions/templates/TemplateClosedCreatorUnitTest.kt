@@ -29,7 +29,7 @@ internal class TemplateClosedCreatorUnitTest : MockkBaseTest {
         val command = createTemplateCommand()
         val templateId = ThingId("R123")
         val state = CreateTemplateState(
-            templateId = templateId
+            templateId = templateId,
         )
         val closedLiteralId = ThingId("R125")
 
@@ -38,8 +38,8 @@ internal class TemplateClosedCreatorUnitTest : MockkBaseTest {
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     label = "true",
-                    datatype = Literals.XSD.BOOLEAN.prefixedUri
-                )
+                    datatype = Literals.XSD.BOOLEAN.prefixedUri,
+                ),
             )
         } returns closedLiteralId
         every {
@@ -48,8 +48,8 @@ internal class TemplateClosedCreatorUnitTest : MockkBaseTest {
                     contributorId = command.contributorId,
                     subjectId = state.templateId!!,
                     predicateId = Predicates.shClosed,
-                    objectId = closedLiteralId
-                )
+                    objectId = closedLiteralId,
+                ),
             )
         } returns StatementId("S1")
 
@@ -64,8 +64,8 @@ internal class TemplateClosedCreatorUnitTest : MockkBaseTest {
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     label = "true",
-                    datatype = Literals.XSD.BOOLEAN.prefixedUri
-                )
+                    datatype = Literals.XSD.BOOLEAN.prefixedUri,
+                ),
             )
         }
         verify(exactly = 1) {
@@ -74,8 +74,8 @@ internal class TemplateClosedCreatorUnitTest : MockkBaseTest {
                     contributorId = command.contributorId,
                     subjectId = state.templateId!!,
                     predicateId = Predicates.shClosed,
-                    objectId = closedLiteralId
-                )
+                    objectId = closedLiteralId,
+                ),
             )
         }
     }
@@ -83,11 +83,11 @@ internal class TemplateClosedCreatorUnitTest : MockkBaseTest {
     @Test
     fun `Given a template create command, when closed is false, it does not create a statement`() {
         val command = createTemplateCommand().copy(
-            isClosed = false
+            isClosed = false,
         )
         val templateId = ThingId("R123")
         val state = CreateTemplateState(
-            templateId = templateId
+            templateId = templateId,
         )
 
         val result = templateClosedCreator(command, state)

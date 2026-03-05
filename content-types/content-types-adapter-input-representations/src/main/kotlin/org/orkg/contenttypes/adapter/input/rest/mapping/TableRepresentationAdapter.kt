@@ -27,12 +27,12 @@ interface TableRepresentationAdapter : ThingReferenceRepresentationAdapter {
             createdBy = createdBy,
             visibility = visibility,
             modifiable = modifiable,
-            unlistedBy = unlistedBy
+            unlistedBy = unlistedBy,
         )
 
     fun Row.toRowRepresentation(): RowRepresentation =
         RowRepresentation(
             label = label,
-            data = data.map { thing -> thing?.let { ThingReference.from(it, false).toThingReferenceRepresentation(false) } }
+            data = data.map { thing -> thing?.let { ThingReference.from(it, false).toThingReferenceRepresentation(false) } },
         )
 }

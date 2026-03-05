@@ -52,14 +52,14 @@ class SpringDataNeo4jContributorStatisticsAdapter(
                 id = researchField,
                 after = afterString,
                 before = beforeString,
-                pageable = pageableWithSort
+                pageable = pageableWithSort,
             )
         } else {
             neo4jRepository.findAllByResearchFieldId(
                 id = researchField,
                 after = afterString,
                 before = beforeString,
-                pageable = pageableWithSort
+                pageable = pageableWithSort,
             )
         }
     }
@@ -79,14 +79,14 @@ class SpringDataNeo4jContributorStatisticsAdapter(
                 id = researchProblem,
                 after = afterString,
                 before = beforeString,
-                pageable = pageableWithSort
+                pageable = pageableWithSort,
             )
         } else {
             neo4jRepository.findAllByResearchProblemId(
                 id = researchProblem,
                 after = afterString,
                 before = beforeString,
-                pageable = pageableWithSort
+                pageable = pageableWithSort,
             )
         }
     }

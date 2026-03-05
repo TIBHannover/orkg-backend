@@ -37,8 +37,8 @@ internal class SpringDataNeo4jListAdapterContractTest(
                 listAdapter,
                 springDataNeo4jResourceAdapter,
                 springDataNeo4jPredicateAdapter,
-                springDataNeo4jStatementAdapter
-            )
+                springDataNeo4jStatementAdapter,
+            ),
         )
 
         afterSpec {

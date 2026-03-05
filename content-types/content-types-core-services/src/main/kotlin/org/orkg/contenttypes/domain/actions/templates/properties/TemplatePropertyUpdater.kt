@@ -17,7 +17,7 @@ class TemplatePropertyUpdater(
         statementService: StatementUseCases,
         unsafeStatementUseCases: UnsafeStatementUseCases,
     ) : this(
-        AbstractTemplatePropertyUpdater(unsafeLiteralUseCases, unsafeResourceUseCases, statementService, unsafeStatementUseCases)
+        AbstractTemplatePropertyUpdater(unsafeLiteralUseCases, unsafeResourceUseCases, statementService, unsafeStatementUseCases),
     )
 
     override fun invoke(command: UpdateTemplatePropertyCommand, state: State): State {
@@ -27,7 +27,7 @@ class TemplatePropertyUpdater(
                 contributorId = command.contributorId,
                 order = state.templateProperty.order.toInt(),
                 newProperty = command,
-                oldProperty = state.templateProperty
+                oldProperty = state.templateProperty,
             )
         }
         return state

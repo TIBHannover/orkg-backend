@@ -22,8 +22,8 @@ import org.springframework.data.neo4j.core.fetchAs
     classes = [
         SpringDataNeo4jLiteralAdapter::class,
         GraphNeo4jConfiguration::class,
-        CypherQueryBuilderConfiguration::class
-    ]
+        CypherQueryBuilderConfiguration::class,
+    ],
 )
 internal class SpringDataNeo4jLiteralAdapterContractTests(
     private val springDataNeo4jLiteralAdapter: LiteralRepository,

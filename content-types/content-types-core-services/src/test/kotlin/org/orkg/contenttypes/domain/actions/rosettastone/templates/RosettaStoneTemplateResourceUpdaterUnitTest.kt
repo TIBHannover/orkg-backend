@@ -31,7 +31,7 @@ internal class RosettaStoneTemplateResourceUpdaterUnitTest : MockkBaseTest {
             contributorId = command.contributorId,
             label = command.label,
             observatoryId = command.observatories!!.single(),
-            organizationId = command.organizations!!.single()
+            organizationId = command.organizations!!.single(),
         )
 
         every { unsafeResourceUseCases.update(resourceUpdateCommand) } just runs
@@ -57,7 +57,7 @@ internal class RosettaStoneTemplateResourceUpdaterUnitTest : MockkBaseTest {
             contributorId = command.contributorId,
             label = command.label,
             observatoryId = ObservatoryId.UNKNOWN,
-            organizationId = command.organizations!!.single()
+            organizationId = command.organizations!!.single(),
         )
 
         every { unsafeResourceUseCases.update(resourceUpdateCommand) } just runs
@@ -81,7 +81,7 @@ internal class RosettaStoneTemplateResourceUpdaterUnitTest : MockkBaseTest {
             contributorId = command.contributorId,
             label = command.label,
             observatoryId = null,
-            organizationId = command.organizations!!.single()
+            organizationId = command.organizations!!.single(),
         )
 
         every { unsafeResourceUseCases.update(resourceUpdateCommand) } just runs
@@ -105,7 +105,7 @@ internal class RosettaStoneTemplateResourceUpdaterUnitTest : MockkBaseTest {
             contributorId = command.contributorId,
             label = command.label,
             observatoryId = command.observatories!!.single(),
-            organizationId = OrganizationId.UNKNOWN
+            organizationId = OrganizationId.UNKNOWN,
         )
 
         every { unsafeResourceUseCases.update(resourceUpdateCommand) } just runs
@@ -129,7 +129,7 @@ internal class RosettaStoneTemplateResourceUpdaterUnitTest : MockkBaseTest {
             contributorId = command.contributorId,
             label = command.label,
             observatoryId = command.observatories!!.single(),
-            organizationId = null
+            organizationId = null,
         )
 
         every { unsafeResourceUseCases.update(resourceUpdateCommand) } just runs

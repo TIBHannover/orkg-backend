@@ -41,7 +41,7 @@ internal class TemplateTargetClassValidatorUnitTest : MockkBaseTest {
                 subjectClasses = setOf(Classes.rosettaNodeShape),
                 predicateId = Predicates.shTargetClass,
                 objectId = targetClassId,
-                pageable = PageRequests.SINGLE
+                pageable = PageRequests.SINGLE,
             )
         } returns pageOf()
         every {
@@ -49,7 +49,7 @@ internal class TemplateTargetClassValidatorUnitTest : MockkBaseTest {
                 subjectClasses = setOf(Classes.nodeShape),
                 predicateId = Predicates.shTargetClass,
                 objectId = targetClassId,
-                pageable = PageRequests.SINGLE
+                pageable = PageRequests.SINGLE,
             )
         } returns pageOf()
 
@@ -61,7 +61,7 @@ internal class TemplateTargetClassValidatorUnitTest : MockkBaseTest {
                 subjectClasses = setOf(Classes.rosettaNodeShape),
                 predicateId = Predicates.shTargetClass,
                 objectId = targetClassId,
-                pageable = PageRequests.SINGLE
+                pageable = PageRequests.SINGLE,
             )
         }
         verify(exactly = 1) {
@@ -69,7 +69,7 @@ internal class TemplateTargetClassValidatorUnitTest : MockkBaseTest {
                 subjectClasses = setOf(Classes.nodeShape),
                 predicateId = Predicates.shTargetClass,
                 objectId = targetClassId,
-                pageable = PageRequests.SINGLE
+                pageable = PageRequests.SINGLE,
             )
         }
     }
@@ -103,7 +103,7 @@ internal class TemplateTargetClassValidatorUnitTest : MockkBaseTest {
                 subjectClasses = setOf(Classes.rosettaNodeShape),
                 predicateId = Predicates.shTargetClass,
                 objectId = targetClassId,
-                pageable = PageRequests.SINGLE
+                pageable = PageRequests.SINGLE,
             )
         } returns pageOf()
         every {
@@ -111,14 +111,14 @@ internal class TemplateTargetClassValidatorUnitTest : MockkBaseTest {
                 subjectClasses = setOf(Classes.nodeShape),
                 predicateId = Predicates.shTargetClass,
                 objectId = targetClassId,
-                pageable = PageRequests.SINGLE
+                pageable = PageRequests.SINGLE,
             )
         } returns pageOf(
             createStatement(
                 subject = otherTemplate,
                 predicate = createPredicate(Predicates.shTargetClass),
-                `object` = targetClass
-            )
+                `object` = targetClass,
+            ),
         )
 
         assertThrows<TemplateAlreadyExistsForClass> { templateTargetClassValidator(targetClassId, null) } shouldBe exception
@@ -129,7 +129,7 @@ internal class TemplateTargetClassValidatorUnitTest : MockkBaseTest {
                 subjectClasses = setOf(Classes.rosettaNodeShape),
                 predicateId = Predicates.shTargetClass,
                 objectId = targetClassId,
-                pageable = PageRequests.SINGLE
+                pageable = PageRequests.SINGLE,
             )
         }
         verify(exactly = 1) {
@@ -137,7 +137,7 @@ internal class TemplateTargetClassValidatorUnitTest : MockkBaseTest {
                 subjectClasses = setOf(Classes.nodeShape),
                 predicateId = Predicates.shTargetClass,
                 objectId = targetClassId,
-                pageable = PageRequests.SINGLE
+                pageable = PageRequests.SINGLE,
             )
         }
     }
@@ -162,14 +162,14 @@ internal class TemplateTargetClassValidatorUnitTest : MockkBaseTest {
                 subjectClasses = setOf(Classes.rosettaNodeShape),
                 predicateId = Predicates.shTargetClass,
                 objectId = targetClassId,
-                pageable = PageRequests.SINGLE
+                pageable = PageRequests.SINGLE,
             )
         } returns pageOf(
             createStatement(
                 subject = otherTemplate,
                 predicate = createPredicate(Predicates.shTargetClass),
-                `object` = targetClass
-            )
+                `object` = targetClass,
+            ),
         )
 
         assertThrows<ReservedClass> { templateTargetClassValidator(targetClassId, null) } shouldBe exception
@@ -180,7 +180,7 @@ internal class TemplateTargetClassValidatorUnitTest : MockkBaseTest {
                 subjectClasses = setOf(Classes.rosettaNodeShape),
                 predicateId = Predicates.shTargetClass,
                 objectId = targetClassId,
-                pageable = PageRequests.SINGLE
+                pageable = PageRequests.SINGLE,
             )
         }
     }

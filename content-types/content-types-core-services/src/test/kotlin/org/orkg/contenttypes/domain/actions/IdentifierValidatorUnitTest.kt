@@ -35,7 +35,7 @@ internal class IdentifierValidatorUnitTest : MockkBaseTest {
                 predicateId = Predicates.hasDOI,
                 objectClasses = setOf(Classes.literal),
                 objectLabel = doi,
-                pageable = any()
+                pageable = any(),
             )
         } returns Page.empty()
 
@@ -47,7 +47,7 @@ internal class IdentifierValidatorUnitTest : MockkBaseTest {
                 predicateId = Predicates.hasDOI,
                 objectClasses = setOf(Classes.literal),
                 objectLabel = doi,
-                pageable = any()
+                pageable = any(),
             )
         }
     }
@@ -59,7 +59,7 @@ internal class IdentifierValidatorUnitTest : MockkBaseTest {
         val statement = createStatement(
             subject = createResource(),
             predicate = createPredicate(Predicates.hasDOI),
-            `object` = createLiteral(label = doi)
+            `object` = createLiteral(label = doi),
         )
         val expected = AssertionError(doi)
 
@@ -69,7 +69,7 @@ internal class IdentifierValidatorUnitTest : MockkBaseTest {
                 predicateId = Predicates.hasDOI,
                 objectClasses = setOf(Classes.literal),
                 objectLabel = doi,
-                pageable = any()
+                pageable = any(),
             )
         } returns pageOf(statement)
 
@@ -84,7 +84,7 @@ internal class IdentifierValidatorUnitTest : MockkBaseTest {
                 predicateId = Predicates.hasDOI,
                 objectClasses = setOf(Classes.literal),
                 objectLabel = doi,
-                pageable = any()
+                pageable = any(),
             )
         }
     }
@@ -97,7 +97,7 @@ internal class IdentifierValidatorUnitTest : MockkBaseTest {
         val statement = createStatement(
             subject = createResource(subjectId),
             predicate = createPredicate(Predicates.hasDOI),
-            `object` = createLiteral(label = doi)
+            `object` = createLiteral(label = doi),
         )
 
         every {
@@ -106,7 +106,7 @@ internal class IdentifierValidatorUnitTest : MockkBaseTest {
                 predicateId = Predicates.hasDOI,
                 objectClasses = setOf(Classes.literal),
                 objectLabel = doi,
-                pageable = any()
+                pageable = any(),
             )
         } returns pageOf(statement)
 
@@ -118,7 +118,7 @@ internal class IdentifierValidatorUnitTest : MockkBaseTest {
                 predicateId = Predicates.hasDOI,
                 objectClasses = setOf(Classes.literal),
                 objectLabel = doi,
-                pageable = any()
+                pageable = any(),
             )
         }
     }
@@ -131,7 +131,7 @@ internal class IdentifierValidatorUnitTest : MockkBaseTest {
                 identifiers = identifiers,
                 `class` = Classes.paper,
                 subjectId = null,
-                exceptionFactory = ::AssertionError
+                exceptionFactory = ::AssertionError,
             )
         }
         result.name shouldBe "doi"

@@ -16,7 +16,7 @@ class ComparisonReferencesUpdater(
         statementService: StatementUseCases,
         unsafeStatementUseCases: UnsafeStatementUseCases,
     ) : this(
-        StatementCollectionPropertyUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases)
+        StatementCollectionPropertyUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases),
     )
 
     override fun invoke(command: UpdateComparisonCommand, state: State): State {
@@ -26,7 +26,7 @@ class ComparisonReferencesUpdater(
                 contributorId = command.contributorId,
                 subjectId = command.comparisonId,
                 predicateId = Predicates.reference,
-                literals = command.references!!
+                literals = command.references!!,
             )
         }
         return state

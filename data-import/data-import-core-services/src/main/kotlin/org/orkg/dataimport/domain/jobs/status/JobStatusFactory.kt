@@ -17,7 +17,7 @@ class JobStatusFactory(statusFormatters: List<JobStatusFormatter>) {
             jobId = JobId(jobExecution.id),
             jobName = jobExecution.jobInstance.jobName,
             context = formatter.getContext(jobExecution),
-            status = formatter.getStatus(jobExecution)
+            status = formatter.getStatus(jobExecution),
         )
     }
 }

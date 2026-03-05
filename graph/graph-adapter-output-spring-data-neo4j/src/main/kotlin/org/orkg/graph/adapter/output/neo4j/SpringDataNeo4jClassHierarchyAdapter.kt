@@ -47,23 +47,23 @@ class SpringDataNeo4jClassHierarchyAdapter(
                 val parent = node("Class")
                 match(child)
                     .where(
-                        child.property("id").eq(parameter("childId"))
+                        child.property("id").eq(parameter("childId")),
                     ).match(parent).where(
-                        parent.property("id").eq(parameter("parentId"))
+                        parent.property("id").eq(parameter("parentId")),
                     ).create(
                         child.relationshipTo(parent, SUBCLASS_OF).withProperties(
                             "created_by",
                             parameter("createdBy"),
                             "created_at",
-                            parameter("createdAt")
-                        )
+                            parameter("createdAt"),
+                        ),
                     )
             }
             .withParameters(
                 "childId" to classRelation.child.id.value,
                 "parentId" to classRelation.parent.id.value,
                 "createdBy" to classRelation.createdBy.value.toString(),
-                "createdAt" to classRelation.createdAt.format(ISO_OFFSET_DATE_TIME)
+                "createdAt" to classRelation.createdAt.format(ISO_OFFSET_DATE_TIME),
             )
             .run()
     }
@@ -79,16 +79,16 @@ class SpringDataNeo4jClassHierarchyAdapter(
                 unwind(rows).`as`(row)
                     .with(row)
                     .match(child).where(
-                        child.property("id").eq(row.property("child_id"))
+                        child.property("id").eq(row.property("child_id")),
                     ).match(parent).where(
-                        parent.property("id").eq(row.property("parent_id"))
+                        parent.property("id").eq(row.property("parent_id")),
                     ).create(
                         r.withProperties(
                             "created_by",
                             row.property("created_by"),
                             "created_at",
-                            row.property("created_at")
-                        )
+                            row.property("created_at"),
+                        ),
                     ).returning(elementId(r))
             }
             .withParameters(
@@ -97,9 +97,9 @@ class SpringDataNeo4jClassHierarchyAdapter(
                         "child_id" to it.child.id.value,
                         "parent_id" to it.parent.id.value,
                         "created_by" to it.createdBy.value.toString(),
-                        "created_at" to it.createdAt.format(ISO_OFFSET_DATE_TIME)
+                        "created_at" to it.createdAt.format(ISO_OFFSET_DATE_TIME),
                     )
-                }
+                },
             )
             .run()
     }
@@ -112,7 +112,7 @@ class SpringDataNeo4jClassHierarchyAdapter(
                     node("Class")
                         .withProperties("id", parameter("childId"))
                         .relationshipTo(node("Class"), SUBCLASS_OF)
-                        .named(r)
+                        .named(r),
                 ).delete(r)
             }
             .withParameters("childId" to childId.value)
@@ -126,7 +126,7 @@ class SpringDataNeo4jClassHierarchyAdapter(
                 match(
                     node("Class")
                         .relationshipTo(node("Class"), SUBCLASS_OF)
-                        .named(r)
+                        .named(r),
                 ).delete(r)
             }
             .run()
@@ -141,8 +141,8 @@ class SpringDataNeo4jClassHierarchyAdapter(
                         node("Class")
                             .named("p")
                             .withProperties("id", parameter("id")),
-                        SUBCLASS_OF
-                    )
+                        SUBCLASS_OF,
+                    ),
             )
         }
         .withQuery { commonQuery ->
@@ -164,7 +164,7 @@ class SpringDataNeo4jClassHierarchyAdapter(
             match(
                 node("Class")
                     .withProperties("id", parameter("id"))
-                    .relationshipTo(anyNode("Class").named(p), SUBCLASS_OF)
+                    .relationshipTo(anyNode("Class").named(p), SUBCLASS_OF),
             ).returning(p)
         }
         .withParameters("id" to id.value)
@@ -180,11 +180,11 @@ class SpringDataNeo4jClassHierarchyAdapter(
                 node("Class")
                     .withProperties("id", parameter("id"))
                     .relationshipTo(root, SUBCLASS_OF)
-                    .unbounded()
+                    .unbounded(),
             ).where(
                 root.relationshipTo(node("Class"), SUBCLASS_OF)
                     .asCondition()
-                    .not()
+                    .not(),
             ).returning(root)
         }
         .withParameters("id" to id.value)
@@ -198,7 +198,7 @@ class SpringDataNeo4jClassHierarchyAdapter(
                 .where(
                     root.relationshipTo(node("Class"), SUBCLASS_OF)
                         .asCondition()
-                        .not()
+                        .not(),
                 )
         }
         .withQuery { commonQuery ->
@@ -220,7 +220,7 @@ class SpringDataNeo4jClassHierarchyAdapter(
                 node("Class")
                     .withProperties("id", parameter("id"))
                     .relationshipTo(node("Class").named(c), SUBCLASS_OF)
-                    .length(0, null)
+                    .length(0, null),
             ).with(collect(c).`as`(classes))
                 .unwind(classes)
                 .`as`(`class`)
@@ -234,7 +234,7 @@ class SpringDataNeo4jClassHierarchyAdapter(
                 .optionalMatch(
                     anyNode()
                         .named(`class`)
-                        .relationshipTo(node("Class").named(p), SUBCLASS_OF)
+                        .relationshipTo(node("Class").named(p), SUBCLASS_OF),
                 )
                 .with(`class`.`as`(`class`), p.property("id").`as`(parentId))
                 .orderBy(`class`.property("id").ascending())
@@ -251,7 +251,7 @@ class SpringDataNeo4jClassHierarchyAdapter(
             match(
                 node.relationshipTo(node("Class"), INSTANCE_OF)
                     .relationshipTo(node("Class").withProperties("id", parameter("id")), SUBCLASS_OF)
-                    .length(0, null)
+                    .length(0, null),
             ).returning(countDistinct(node))
         }
         .withParameters("id" to id.value)
@@ -270,9 +270,9 @@ class SpringDataNeo4jClassHierarchyAdapter(
                         c.relationshipTo(
                             node("Class")
                                 .withProperties("id", literalOf<String>(id.value)),
-                            SUBCLASS_OF
-                        ).unbounded()
-                    )
+                            SUBCLASS_OF,
+                        ).unbounded(),
+                    ),
                 )
         }
         .fetchAs<Boolean>()

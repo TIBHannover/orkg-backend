@@ -25,7 +25,7 @@ interface LegacyNeo4jProblemRepository : Neo4jRepository<Neo4jResource, ThingId>
         value = """MATCH (ds:$DATASET_CLASS {id: $DATASET_ID})<-[:RELATED {predicate_id: '$DATASET_PREDICATE'}]-(:$BENCHMARK_CLASS)<-[:RELATED {predicate_id: '$BENCHMARK_PREDICATE'}]-(:Contribution:Resource)-[:RELATED {predicate_id: 'P32'}]->(problem:Problem:Resource)
                     RETURN DISTINCT problem ORDER BY problem.id $PAGE_PARAMS""",
         countQuery = """MATCH (ds:$DATASET_CLASS {id: $DATASET_ID})<-[:RELATED {predicate_id: '$DATASET_PREDICATE'}]-(:$BENCHMARK_CLASS)<-[:RELATED {predicate_id: '$BENCHMARK_PREDICATE'}]-(:Contribution:Resource)-[:RELATED {predicate_id: 'P32'}]->(problem:Problem:Resource)
-                    RETURN COUNT(DISTINCT problem) as cnt"""
+                    RETURN COUNT(DISTINCT problem) as cnt""",
     )
     fun findAllByDatasetId(datasetId: ThingId, pageable: Pageable): Page<Neo4jResource>
 }

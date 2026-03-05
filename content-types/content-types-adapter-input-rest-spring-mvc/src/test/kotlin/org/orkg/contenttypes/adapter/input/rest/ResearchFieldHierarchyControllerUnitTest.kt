@@ -77,10 +77,10 @@ internal class ResearchFieldHierarchyControllerUnitTest : MockMvcBaseTest("resea
                 description(
                     """
                     A `GET` request returns a <<sorting-and-pagination,paged>> list of all child research field <<resources,resources>> for a given research field.
-                    """
+                    """,
                 )
                 pathParameters(
-                    parameterWithName("id").description("The research field id to fetch the direct subfields of.")
+                    parameterWithName("id").description("The research field id to fetch the direct subfields of."),
                 )
                 pagedQueryParameters()
                 pagedResponseFields<ResearchFieldWithChildCountRepresentation>(researchFieldWithChildCountResponseFields())
@@ -125,10 +125,10 @@ internal class ResearchFieldHierarchyControllerUnitTest : MockMvcBaseTest("resea
                 description(
                     """
                     A `GET` request returns a <<sorting-and-pagination,paged>> list of all parent research field <<resources,resources>> for a given research field.
-                    """
+                    """,
                 )
                 pathParameters(
-                    parameterWithName("id").description("The research field id to fetch the direct parent research fields of.")
+                    parameterWithName("id").description("The research field id to fetch the direct parent research fields of."),
                 )
                 pagedQueryParameters()
                 pagedResponseFields<ResourceRepresentation>(resourceResponseFields())
@@ -189,10 +189,10 @@ internal class ResearchFieldHierarchyControllerUnitTest : MockMvcBaseTest("resea
                 description(
                     """
                     A `GET` request returns a <<sorting-and-pagination,paged>> list of all root research field <<resources,resources>> for a given research field.
-                    """
+                    """,
                 )
                 pathParameters(
-                    parameterWithName("id").description("The research field id to fetch the roots research fields of.")
+                    parameterWithName("id").description("The research field id to fetch the roots research fields of."),
                 )
                 pagedQueryParameters()
                 pagedResponseFields<ResourceRepresentation>(resourceResponseFields())
@@ -256,10 +256,10 @@ internal class ResearchFieldHierarchyControllerUnitTest : MockMvcBaseTest("resea
                 description(
                     """
                     A `GET` request returns a <<sorting-and-pagination,paged>> list of all paths from each root research field <<resources,resource>> to the given research field.
-                    """
+                    """,
                 )
                 pathParameters(
-                    parameterWithName("id").description("The research field id to fetch the hierarchy of.")
+                    parameterWithName("id").description("The research field id to fetch the hierarchy of."),
                 )
                 pagedQueryParameters()
                 pagedResponseFields<ResearchFieldHierarchyEntryRepresentation>(researchFieldHierarchyEntryResponseFields())
@@ -304,7 +304,7 @@ internal class ResearchFieldHierarchyControllerUnitTest : MockMvcBaseTest("resea
                 description(
                     """
                     A `GET` request returns a <<sorting-and-pagination,paged>> list of all root research field <<resources,resources>>.
-                    """
+                    """,
                 )
                 pagedQueryParameters()
                 pagedResponseFields<ResourceRepresentation>(resourceResponseFields())

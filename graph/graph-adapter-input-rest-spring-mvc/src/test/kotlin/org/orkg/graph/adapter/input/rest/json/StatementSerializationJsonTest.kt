@@ -125,7 +125,7 @@ internal class StatementSerializationJsonTest {
             createdAt = OffsetDateTime.parse("2019-12-19T15:07:02.204+01:00"),
             createdBy = ContributorId("64acea2a-d2d7-4b28-9ada-8f9c0c5afea2"),
             modifiable = true,
-            index = 5
+            index = 5,
         )
 
         val expected = modelJson("orkg/statement")

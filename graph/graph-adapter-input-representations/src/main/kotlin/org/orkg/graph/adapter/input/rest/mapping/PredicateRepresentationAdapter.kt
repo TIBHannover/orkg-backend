@@ -19,8 +19,8 @@ interface PredicateRepresentationAdapter {
                     pageable = PageRequests.SINGLE,
                     subjectId = it.id,
                     predicateId = Predicates.description,
-                    objectClasses = setOf(Classes.literal)
-                ).singleOrNull()?.`object`?.label
+                    objectClasses = setOf(Classes.literal),
+                ).singleOrNull()?.`object`?.label,
             )
         }
 

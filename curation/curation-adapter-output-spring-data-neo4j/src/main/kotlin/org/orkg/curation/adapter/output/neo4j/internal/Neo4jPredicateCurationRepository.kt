@@ -25,7 +25,7 @@ interface Neo4jPredicateCurationRepository : Neo4jRepository<Neo4jPredicate, Thi
             match (node:Predicate)
             WHERE NOT EXISTS((node)-[:RELATED {predicate_id: "description"}]->(:Literal))
             return COUNT(node)
-        """
+        """,
     )
     fun findAllPredicatesWithoutDescriptions(pageable: Pageable): Page<Neo4jPredicate>
 }

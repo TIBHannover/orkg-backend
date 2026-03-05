@@ -57,7 +57,7 @@ class ContributionService(
             ContributionPaperValidator(resourceRepository),
             ContributionThingsCommandValidator(thingRepository, classRepository),
             ContributionContentsValidator(thingRepository),
-            ContributionContentsCreator(unsafeClassUseCases, unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases, unsafePredicateUseCases, statementRepository, listService)
+            ContributionContentsCreator(unsafeClassUseCases, unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases, unsafePredicateUseCases, statementRepository, listService),
         )
         return steps.execute(command, ContributionState()).contributionId!!
     }
@@ -74,7 +74,7 @@ class ContributionService(
             createdAt = createdAt,
             createdBy = createdBy,
             visibility = this@toContribution.visibility,
-            unlistedBy = unlistedBy
+            unlistedBy = unlistedBy,
         )
     }
 }

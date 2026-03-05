@@ -33,7 +33,7 @@ internal class TemplatePropertyCreatorUnitTest : MockkBaseTest {
                 contributorId = command.contributorId,
                 templateId = command.templateId,
                 order = template.properties.size,
-                property = command
+                property = command,
             )
         } returns templatePropertyId
 
@@ -49,7 +49,7 @@ internal class TemplatePropertyCreatorUnitTest : MockkBaseTest {
                 contributorId = command.contributorId,
                 templateId = command.templateId,
                 order = template.properties.size,
-                property = command
+                property = command,
             )
         }
     }

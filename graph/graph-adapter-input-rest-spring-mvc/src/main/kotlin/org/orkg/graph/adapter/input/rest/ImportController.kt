@@ -33,13 +33,13 @@ class ImportController(
             is ImportByURIRequest -> service.importResourceByURI(
                 contributorId = currentUser.contributorId(),
                 ontologyId = request.ontology,
-                uri = request.uri
+                uri = request.uri,
             )
 
             is ImportByShortFormRequest -> service.importResourceByShortForm(
                 contributorId = currentUser.contributorId(),
                 ontologyId = request.ontology,
-                shortForm = request.shortForm
+                shortForm = request.shortForm,
             )
         }
         val location = uriComponentsBuilder.path("/api/resources/{id}")
@@ -59,13 +59,13 @@ class ImportController(
             is ImportByURIRequest -> service.importPredicateByURI(
                 contributorId = currentUser.contributorId(),
                 ontologyId = request.ontology,
-                uri = request.uri
+                uri = request.uri,
             )
 
             is ImportByShortFormRequest -> service.importPredicateByShortForm(
                 contributorId = currentUser.contributorId(),
                 ontologyId = request.ontology,
-                shortForm = request.shortForm
+                shortForm = request.shortForm,
             )
         }
         val location = uriComponentsBuilder.path("/api/predicates/{id}")
@@ -85,13 +85,13 @@ class ImportController(
             is ImportByURIRequest -> service.importClassByURI(
                 contributorId = currentUser.contributorId(),
                 ontologyId = request.ontology,
-                uri = request.uri
+                uri = request.uri,
             )
 
             is ImportByShortFormRequest -> service.importClassByShortForm(
                 contributorId = currentUser.contributorId(),
                 ontologyId = request.ontology,
-                shortForm = request.shortForm
+                shortForm = request.shortForm,
             )
         }
         val location = uriComponentsBuilder.path("/api/classes/{id}")
@@ -104,8 +104,8 @@ class ImportController(
     @JsonSubTypes(
         value = [
             JsonSubTypes.Type(ImportByURIRequest::class),
-            JsonSubTypes.Type(ImportByShortFormRequest::class)
-        ]
+            JsonSubTypes.Type(ImportByShortFormRequest::class),
+        ],
     )
     sealed interface ImportRequest
 

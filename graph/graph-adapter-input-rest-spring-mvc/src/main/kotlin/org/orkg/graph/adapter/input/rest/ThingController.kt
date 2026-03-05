@@ -63,6 +63,6 @@ class ThingController(
             includeClasses = includeClasses,
             excludeClasses = excludeClasses,
             observatoryId = observatoryId,
-            organizationId = organizationId
+            organizationId = organizationId,
         ).mapToThingRepresentation(capabilities)
 }

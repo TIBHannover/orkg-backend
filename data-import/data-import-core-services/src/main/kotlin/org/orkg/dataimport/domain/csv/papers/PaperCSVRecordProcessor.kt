@@ -39,11 +39,11 @@ open class PaperCSVRecordProcessor(
                 .map {
                     val predicateId = it.predicate.fold(
                         leftMapper = { it.value },
-                        rightMapper = { throw IllegalStateException("""Predicate with label "$it" was not created during CSV processing! This is a bug!""") }
+                        rightMapper = { throw IllegalStateException("""Predicate with label "$it" was not created during CSV processing! This is a bug!""") },
                     )
                     predicateId to it.`object`.value!!
                 }
-                .groupBy({ it.first }, { CreateContributionCommandPart.StatementObject(it.second) })
+                .groupBy({ it.first }, { CreateContributionCommandPart.StatementObject(it.second) }),
         )
         if (paperId.isPresent) {
             logger.info("""Importing contribution for paper {} ({}) from CSV ({})""", paperId, item.title, item.csvId)
@@ -52,8 +52,8 @@ open class PaperCSVRecordProcessor(
                     contributorId = contributorId,
                     paperId = paperId.get(),
                     extractionMethod = item.extractionMethod,
-                    contribution = contribution
-                )
+                    contribution = contribution,
+                ),
             )
             return PaperCSVRecordImportResult(
                 id = UUID.randomUUID(),
@@ -75,7 +75,7 @@ open class PaperCSVRecordProcessor(
                         publishedMonth = item.publicationMonth,
                         publishedYear = item.publicationYear,
                         publishedIn = item.publishedIn,
-                        url = item.url
+                        url = item.url,
                     ),
                     authors = item.authors,
                     sustainableDevelopmentGoals = emptySet(),
@@ -84,7 +84,7 @@ open class PaperCSVRecordProcessor(
                     organizations = emptyList(),
                     contents = CreatePaperUseCase.CreateCommand.PaperContents(contributions = listOf(contribution)),
                     extractionMethod = item.extractionMethod,
-                )
+                ),
             )
             return PaperCSVRecordImportResult(
                 id = UUID.randomUUID(),

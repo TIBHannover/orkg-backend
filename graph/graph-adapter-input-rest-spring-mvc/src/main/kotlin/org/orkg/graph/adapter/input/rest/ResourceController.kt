@@ -84,7 +84,7 @@ class ResourceController(
             excludeClasses = excludeClasses,
             baseClass = baseClass,
             observatoryId = observatoryId,
-            organizationId = organizationId
+            organizationId = organizationId,
         ).mapToResourceRepresentation(capabilities)
 
     @RequireLogin
@@ -104,7 +104,7 @@ class ResourceController(
                 extractionMethod = request.extractionMethod,
                 observatoryId = contributor.map { it.observatoryId }.orElse(ObservatoryId.UNKNOWN),
                 organizationId = contributor.map { it.organizationId }.orElse(OrganizationId.UNKNOWN),
-            )
+            ),
         )
         val location = uriComponentsBuilder
             .path("/api/resources/{id}")
@@ -175,7 +175,7 @@ class ResourceController(
                 observatoryId = observatoryId,
                 organizationId = organizationId,
                 extractionMethod = extractionMethod,
-                visibility = visibility
+                visibility = visibility,
             )
     }
 }

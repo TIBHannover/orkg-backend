@@ -80,7 +80,7 @@ data class Table(
                 createdBy = resource.createdBy,
                 visibility = resource.visibility,
                 modifiable = resource.modifiable,
-                unlistedBy = resource.unlistedBy
+                unlistedBy = resource.unlistedBy,
             )
         }
     }

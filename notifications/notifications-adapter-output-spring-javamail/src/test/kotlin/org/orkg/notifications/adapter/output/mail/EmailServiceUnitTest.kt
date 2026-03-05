@@ -22,9 +22,9 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
     classes = [
         MailSenderAutoConfiguration::class,
         EmailServiceAdapter::class,
-        EmailServiceConfiguration::class
+        EmailServiceConfiguration::class,
     ],
-    initializers = [MailpitContainerInitializer::class]
+    initializers = [MailpitContainerInitializer::class],
 )
 @TestPropertySource(
     properties = [
@@ -32,7 +32,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
         "orkg.mail.from.display-name=ORKG - Open Research Knowledge Graph",
         "orkg.mail.reply-to.email=reply@orkg.org",
         "orkg.mail.reply-to.display-name=ORKG Support Team",
-    ]
+    ],
 )
 internal class EmailServiceUnitTest {
     @Autowired

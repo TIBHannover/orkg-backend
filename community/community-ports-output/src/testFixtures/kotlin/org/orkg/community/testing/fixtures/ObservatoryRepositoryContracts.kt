@@ -24,9 +24,9 @@ interface ObservatoryRepositoryContracts {
         val expected = createObservatory(
             organizationIds = setOf(
                 OrganizationId("6b9737ca-0cf4-4265-b6a3-316506587906"),
-                OrganizationId("fd8cc4bf-5862-43cb-96ea-2a76db509ad7")
+                OrganizationId("fd8cc4bf-5862-43cb-96ea-2a76db509ad7"),
             ),
-            sustainableDevelopmentGoals = setOf(ThingId("SDG1"))
+            sustainableDevelopmentGoals = setOf(ThingId("SDG1")),
         )
         expected.createOrganizations()
         repository.save(expected)
@@ -51,9 +51,9 @@ interface ObservatoryRepositoryContracts {
         val observatory = createObservatory(
             organizationIds = setOf(
                 OrganizationId("6b9737ca-0cf4-4265-b6a3-316506587906"),
-                OrganizationId("fd8cc4bf-5862-43cb-96ea-2a76db509ad7")
+                OrganizationId("fd8cc4bf-5862-43cb-96ea-2a76db509ad7"),
             ),
-            sustainableDevelopmentGoals = setOf(ThingId("SDG1"))
+            sustainableDevelopmentGoals = setOf(ThingId("SDG1")),
         )
         observatory.createOrganizations()
         repository.save(observatory)
@@ -61,10 +61,10 @@ interface ObservatoryRepositoryContracts {
         val updated = repository.findById(observatory.id).get().copy(
             name = "new name",
             organizationIds = setOf(
-                OrganizationId("6b9737ca-0cf4-4265-b6a3-316506587906")
+                OrganizationId("6b9737ca-0cf4-4265-b6a3-316506587906"),
             ),
             description = "new description",
-            sustainableDevelopmentGoals = setOf(ThingId("SDG1"), ThingId("SDG2"))
+            sustainableDevelopmentGoals = setOf(ThingId("SDG1"), ThingId("SDG2")),
         )
         repository.save(updated)
 
@@ -88,8 +88,8 @@ interface ObservatoryRepositoryContracts {
         val expected = createObservatory(
             organizationIds = setOf(
                 OrganizationId("6b9737ca-0cf4-4265-b6a3-316506587906"),
-                OrganizationId("fd8cc4bf-5862-43cb-96ea-2a76db509ad7")
-            )
+                OrganizationId("fd8cc4bf-5862-43cb-96ea-2a76db509ad7"),
+            ),
         )
         expected.createOrganizations()
         repository.save(expected)
@@ -162,7 +162,7 @@ interface ObservatoryRepositoryContracts {
             name = "zero",
             description = "desc",
             researchField = null,
-            displayId = "displayId"
+            displayId = "displayId",
         )
         val observatories = (0..3).map {
             Observatory(
@@ -170,7 +170,7 @@ interface ObservatoryRepositoryContracts {
                 name = "$it",
                 description = "desc",
                 researchField = ThingId("R${it.coerceAtMost(2)}"),
-                displayId = "displayId$it"
+                displayId = "displayId$it",
             )
         }
         repository.save(nullObservatory)
@@ -198,7 +198,7 @@ interface ObservatoryRepositoryContracts {
                 description = "desc",
                 researchField = ThingId("R${it.coerceAtMost(2)}"),
                 organizationIds = emptySet(),
-                displayId = "displayId$it"
+                displayId = "displayId$it",
             )
         }
         observatories.forEach(repository::save)

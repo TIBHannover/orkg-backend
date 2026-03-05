@@ -146,8 +146,8 @@ internal class XSDValidationTest {
         strings = [
             "", "   ", "abc", "+-5", "\n", "PT15Z", "AT10H", "+-PT-6H+3M", "--P10M", "p10M",
             "P10m", "P10h", "P10s", "P.5S", "P1.S", "P-10H", "P-10M", "P-10S", "P", "PHMS",
-            "PH", "PM", "PS", "P5H", "P5S", "P.5S", "P0.5S", "PT"
-        ]
+            "PH", "PM", "PS", "P5H", "P5S", "P.5S", "P0.5S", "PT",
+        ],
     )
     fun `Given a malformed duration, when tested, it is not valid`(value: String) {
         DURATION.canParse(value) shouldBe false
@@ -300,8 +300,8 @@ internal class XSDValidationTest {
             "sr-Cyrl",
             "sr-Latn",
             "hy-Latn-IT-arevela",
-            "zh-TW"
-        ]
+            "zh-TW",
+        ],
     )
     fun `Given a language tag, when tested, it is valid`(value: String) {
         LANGUAGE.canParse(value) shouldBe true
@@ -467,8 +467,8 @@ internal class XSDValidationTest {
             "P12Y34M", "-P12Y34M", "P0Y12M", "-P0Y12M",
             "P12Y0M", "-P12Y0M",
             "P12Y", "-P12Y",
-            "P17M", "-P17M"
-        ]
+            "P17M", "-P17M",
+        ],
     )
     fun `Given a year month duration, when tested, it is valid`(value: String) {
         YEAR_MONTH_DURATION.canParse(value) shouldBe true

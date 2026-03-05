@@ -43,8 +43,8 @@ class ContributionCreator(
             unsafeLiteralUseCases,
             unsafePredicateUseCases,
             statementRepository,
-            listService
-        )
+            listService,
+        ),
     )
 
     internal fun create(
@@ -63,8 +63,8 @@ class ContributionCreator(
                     contributorId = contributorId,
                     label = contribution.label,
                     classes = contribution.classes + Classes.contribution,
-                    extractionMethod = extractionMethod
-                )
+                    extractionMethod = extractionMethod,
+                ),
             )
             contributionLookup["^$index"] = contributionId
             unsafeStatementUseCases.create(
@@ -72,8 +72,8 @@ class ContributionCreator(
                     contributorId = contributorId,
                     subjectId = paperId,
                     predicateId = Predicates.hasContribution,
-                    objectId = contributionId
-                )
+                    objectId = contributionId,
+                ),
             )
             contributionId
         }
@@ -84,7 +84,7 @@ class ContributionCreator(
             thingsCommand = thingsCommand,
             validationCache = validationCache,
             bakedStatements = bakedStatements,
-            lookup = contributionLookup
+            lookup = contributionLookup,
         )
 
         return contributions

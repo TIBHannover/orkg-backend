@@ -13,7 +13,7 @@ fun <T : Any> List<T>.paged(pageable: Pageable): Page<T> =
             .drop(pageable.pageNumber * pageable.pageSize)
             .take<T>(pageable.pageSize),
         PageRequest.of(pageable.pageNumber, pageable.pageSize),
-        size.toLong()
+        size.toLong(),
     )
 
 internal fun <T : Any> Sort.toComparator(): Comparator<T?> =
@@ -21,7 +21,7 @@ internal fun <T : Any> Sort.toComparator(): Comparator<T?> =
         stream().map { it.toComparator<T, Comparable<Any>>() }
             .reduce { a, b -> a.thenComparing(b) }
             .map { Comparator.nullsFirst(it) }
-            .orElseGet { Comparator<T?> { _, _ -> 0 } }
+            .orElseGet { Comparator<T?> { _, _ -> 0 } },
     )
 
 internal fun <T : Any, U : Comparable<U>> Sort.Order.toComparator(): Comparator<T> {

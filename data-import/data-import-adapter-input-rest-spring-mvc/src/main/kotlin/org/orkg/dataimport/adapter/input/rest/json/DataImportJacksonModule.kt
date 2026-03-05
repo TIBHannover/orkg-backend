@@ -12,13 +12,13 @@ class DataImportJacksonModule : SimpleModule() {
             SimpleDeserializers().apply {
                 addDeserializer(CSVID::class.java, CSVIDDeserializer())
                 addDeserializer(JobId::class.java, JobIdDeserializer())
-            }
+            },
         )
         context.addSerializers(
             SimpleSerializers().apply {
                 addSerializer(CSVID::class.java, CSVIDSerializer())
                 addSerializer(JobId::class.java, JobIdSerializer())
-            }
+            },
         )
     }
 }

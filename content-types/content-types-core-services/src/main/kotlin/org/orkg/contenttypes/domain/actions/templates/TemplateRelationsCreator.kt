@@ -31,8 +31,8 @@ class TemplateRelationsCreator(
                     contributorId = contributorId,
                     subjectId = subjectId,
                     predicateId = Predicates.templateOfResearchField,
-                    objectId = researchFieldId
-                )
+                    objectId = researchFieldId,
+                ),
             )
         }
     }
@@ -48,8 +48,8 @@ class TemplateRelationsCreator(
                     contributorId = contributorId,
                     subjectId = subjectId,
                     predicateId = Predicates.templateOfResearchProblem,
-                    objectId = researchProblemId
-                )
+                    objectId = researchProblemId,
+                ),
             )
         }
     }
@@ -64,8 +64,8 @@ class TemplateRelationsCreator(
                 contributorId = contributorId,
                 subjectId = subjectId,
                 predicateId = Predicates.templateOfPredicate,
-                objectId = predicateId
-            )
+                objectId = predicateId,
+            ),
         )
     }
 }

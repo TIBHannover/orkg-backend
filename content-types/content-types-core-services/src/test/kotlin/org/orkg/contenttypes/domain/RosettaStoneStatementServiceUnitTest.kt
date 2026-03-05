@@ -70,7 +70,7 @@ internal class RosettaStoneStatementServiceUnitTest : MockkBaseTest {
         listService,
         contributorRepository,
         classHierarchyRepository,
-        fixedClock
+        fixedClock,
     )
 
     @Test

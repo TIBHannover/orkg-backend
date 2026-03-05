@@ -86,7 +86,7 @@ class RosettaStoneStatementLabelMigrator(
     private fun updateStatementLabel(id: ThingId, label: String) {
         val parameters = mapOf(
             "id" to id.value,
-            "label" to label
+            "label" to label,
         )
         neo4jClient.query(UPDATE_STATEMENT_LABEL_QUERY)
             .bindAll(parameters)

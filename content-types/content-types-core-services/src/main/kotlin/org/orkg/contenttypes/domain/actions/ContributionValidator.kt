@@ -52,7 +52,7 @@ class ContributionValidator(
                 statementCommands = contribution.statements,
                 thingCommands = thingCommands,
                 validationCache = validationCache,
-                destination = bakedStatements
+                destination = bakedStatements,
             )
         }
         return Result(validationCache, bakedStatements)
@@ -99,7 +99,7 @@ class ContributionValidator(
                         statementCommands = `object`.statements!!,
                         thingCommands = thingCommands,
                         validationCache = validationCache,
-                        destination = destination
+                        destination = destination,
                     )
                 }
             }

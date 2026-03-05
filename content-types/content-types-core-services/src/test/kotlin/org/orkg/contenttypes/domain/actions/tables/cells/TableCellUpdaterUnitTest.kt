@@ -33,13 +33,13 @@ internal class TableCellUpdaterUnitTest : MockkBaseTest {
         val statements = createTableStatements(
             tableId = command.tableId,
             rowCount = 2,
-            columnCount = 2
+            columnCount = 2,
         ).filter {
             it.subject.id != ThingId("Cell_1_2") && it.`object`.id != ThingId("Cell_1_2")
         }
         val state = UpdateTableCellState(
             table = createTable(),
-            statements = statements.groupBy { it.subject.id }
+            statements = statements.groupBy { it.subject.id },
         )
 
         every { abstractTableCellCreator.create(any(), any(), any(), any()) } returns ThingId("irrelevant")
@@ -64,11 +64,11 @@ internal class TableCellUpdaterUnitTest : MockkBaseTest {
         val statements = createTableStatements(
             tableId = command.tableId,
             rowCount = 2,
-            columnCount = 2
+            columnCount = 2,
         )
         val state = UpdateTableCellState(
             table = createTable(),
-            statements = statements.groupBy { it.subject.id }
+            statements = statements.groupBy { it.subject.id },
         )
 
         every { singleStatementPropertyUpdater.updateOptionalProperty(any(), any(), any(), any(), any<ThingId>()) } just runs
@@ -96,11 +96,11 @@ internal class TableCellUpdaterUnitTest : MockkBaseTest {
             valueIds = listOf(
                 listOf(ThingId("Value_1_1"), ThingId("Value_1_2")),
                 listOf(ThingId("Value_2_1"), ThingId("Value_2_2")),
-            )
+            ),
         )
         val state = UpdateTableCellState(
             table = createTable(),
-            statements = statements.groupBy { it.subject.id }
+            statements = statements.groupBy { it.subject.id },
         )
 
         tableCellUpdater(command, state) shouldBe state
@@ -113,11 +113,11 @@ internal class TableCellUpdaterUnitTest : MockkBaseTest {
         val statements = createTableStatements(
             tableId = command.tableId,
             rowCount = 2,
-            columnCount = 2
+            columnCount = 2,
         )
         val state = UpdateTableCellState(
             table = createTable(),
-            statements = statements.groupBy { it.subject.id }
+            statements = statements.groupBy { it.subject.id },
         )
 
         every { singleStatementPropertyUpdater.updateRequiredProperty(any(), any(), any(), any(), any<ThingId>()) } just runs
@@ -142,11 +142,11 @@ internal class TableCellUpdaterUnitTest : MockkBaseTest {
         val statements = createTableStatements(
             tableId = command.tableId,
             rowCount = 2,
-            columnCount = 2
+            columnCount = 2,
         )
         val state = UpdateTableCellState(
             table = createTable(),
-            statements = statements.groupBy { it.subject.id }
+            statements = statements.groupBy { it.subject.id },
         )
 
         tableCellUpdater(command, state) shouldBe state

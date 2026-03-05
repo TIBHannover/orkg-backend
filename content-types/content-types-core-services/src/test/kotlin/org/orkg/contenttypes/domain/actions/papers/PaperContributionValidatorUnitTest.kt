@@ -36,8 +36,8 @@ internal class PaperContributionValidatorUnitTest : MockkBaseTest {
                 "#temp1" from command,
                 "#temp2" from command,
                 "#temp3" from command,
-                "#temp4" from command
-            )
+                "#temp4" from command,
+            ),
         )
         val bakedStatements = setOf(
             BakedStatement("^0", Predicates.hasResearchProblem.value, "R3003"),
@@ -45,7 +45,7 @@ internal class PaperContributionValidatorUnitTest : MockkBaseTest {
             BakedStatement("^0", Predicates.hasEvaluation.value, "R3004"),
             BakedStatement("R3004", "#temp3", "R3003"),
             BakedStatement("R3004", "#temp3", "#temp2"),
-            BakedStatement("R3004", "#temp4", "#temp1")
+            BakedStatement("R3004", "#temp4", "#temp1"),
         )
         val template = createClass(ThingId("C123"))
         val `class` = createClass(ThingId("R3004"))
@@ -56,14 +56,14 @@ internal class PaperContributionValidatorUnitTest : MockkBaseTest {
             "R3003" to Either.right(resource),
             "R3004" to Either.right(`class`),
             Predicates.hasEvaluation.value to Either.right(hasEvaluation),
-            Predicates.hasResearchProblem.value to Either.right(hasResearchProblem)
+            Predicates.hasResearchProblem.value to Either.right(hasResearchProblem),
         )
 
         every {
             contributionValidator.validate(
                 validationCacheIn = state.validationCache,
                 thingCommands = command.contents!!.all(),
-                contributionCommands = command.contents!!.contributions
+                contributionCommands = command.contents!!.contributions,
             )
         } returns ContributionValidator.Result(validationCache, bakedStatements)
 
@@ -79,7 +79,7 @@ internal class PaperContributionValidatorUnitTest : MockkBaseTest {
             contributionValidator.validate(
                 validationCacheIn = state.validationCache,
                 thingCommands = command.contents!!.all(),
-                contributionCommands = command.contents!!.contributions
+                contributionCommands = command.contents!!.contributions,
             )
         }
     }

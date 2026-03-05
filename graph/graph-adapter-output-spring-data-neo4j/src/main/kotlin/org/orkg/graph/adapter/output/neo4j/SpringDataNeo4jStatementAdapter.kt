@@ -106,8 +106,8 @@ class SpringDataNeo4jStatementAdapter(
                             "index",
                             parameter("index"),
                             "modifiable",
-                            parameter("modifiable")
-                        )
+                            parameter("modifiable"),
+                        ),
                     )
             }
             .withParameters(
@@ -118,7 +118,7 @@ class SpringDataNeo4jStatementAdapter(
                 "createdBy" to statement.createdBy.value.toString(),
                 "createdAt" to statement.createdAt!!.format(ISO_OFFSET_DATE_TIME),
                 "index" to (statement.index ?: NullValue.NULL),
-                "modifiable" to statement.modifiable
+                "modifiable" to statement.modifiable,
             )
             .run()
     }
@@ -147,8 +147,8 @@ class SpringDataNeo4jStatementAdapter(
                             "index",
                             valueAt(statement, 6),
                             "modifiable",
-                            valueAt(statement, 7)
-                        )
+                            valueAt(statement, 7),
+                        ),
                     )
             }
             .withParameters(
@@ -161,9 +161,9 @@ class SpringDataNeo4jStatementAdapter(
                         it.createdBy.value.toString(),
                         it.createdAt?.format(ISO_OFFSET_DATE_TIME),
                         it.index,
-                        it.modifiable
+                        it.modifiable,
                     )
-                }
+                },
             )
             .run()
     }
@@ -195,7 +195,7 @@ class SpringDataNeo4jStatementAdapter(
                     .where(
                         node.hasLabels("Literal")
                             .and(node.relationshipBetween(anyNode()).asCondition().not())
-                            .and(o.property("modifiable").eq(literalOf<Boolean>(true)))
+                            .and(o.property("modifiable").eq(literalOf<Boolean>(true))),
                     ).with(o.property("id").`as`(l), o.`as`(o))
                     .delete(o)
                     .returning(l)
@@ -225,7 +225,7 @@ class SpringDataNeo4jStatementAdapter(
                     .with(o)
                     .where(
                         node.hasLabels("Literal")
-                            .and(node.relationshipBetween(anyNode()).asCondition().not())
+                            .and(node.relationshipBetween(anyNode()).asCondition().not()),
                     ).with(o.property("id").`as`(l), o.`as`(o))
                     .delete(o)
                     .returning(l)
@@ -261,7 +261,7 @@ class SpringDataNeo4jStatementAdapter(
             createdAtEnd = null,
             objectClasses = emptySet(),
             objectId = null,
-            objectLabel = null
+            objectLabel = null,
         )
 
     override fun countIncomingStatementsById(id: ThingId): Long = cypherQueryBuilderFactory.newBuilder()
@@ -272,7 +272,7 @@ class SpringDataNeo4jStatementAdapter(
                 .withProperties("id", parameter("id"))
             match(
                 subject.relationshipTo(`object`, RELATED)
-                    .named(r)
+                    .named(r),
             ).returning(count(r))
         }
         .withParameters("id" to id.value)
@@ -290,7 +290,7 @@ class SpringDataNeo4jStatementAdapter(
                 unwind(parameter("ids")).`as`(id)
                     .match(
                         node("Thing").relationshipTo(`object`, RELATED)
-                            .named(r)
+                            .named(r),
                     )
                     .with(id, count(r).`as`(count))
                     .returning(id, count)
@@ -309,7 +309,7 @@ class SpringDataNeo4jStatementAdapter(
                 unwind(parameter("ids")).`as`(id)
                     .match(
                         subject.relationshipTo(`object`, RELATED)
-                            .withProperties("predicate_id", literalOf<String>(Predicates.description.value))
+                            .withProperties("predicate_id", literalOf<String>(Predicates.description.value)),
                     )
                     .returning(id, valueAt(collect(`object`.property("label")), 0).`as`("description"))
             }
@@ -326,8 +326,8 @@ class SpringDataNeo4jStatementAdapter(
             match(
                 subject.relationshipTo(`object`, RELATED).withProperties(
                     "statement_id",
-                    parameter("id")
-                ).named(r)
+                    parameter("id"),
+                ).named(r),
             ).returning(r, subject.`as`("sub"), `object`.`as`("obj"))
         }
         .withParameters("id" to id.value)
@@ -415,7 +415,7 @@ class SpringDataNeo4jStatementAdapter(
                     createdAtEnd.toCondition { r.property("created_at").lte(anonParameter(it.format(ISO_OFFSET_DATE_TIME))) },
                     objectClasses.toCondition { `object`.hasLabels(*it.map(ThingId::value).toTypedArray()) },
                     objectId.toCondition { `object`.property("id").eq(anonParameter(it.value)) },
-                    objectLabel.toCondition { `object`.property("label").eq(anonParameter(it)) }
+                    objectLabel.toCondition { `object`.property("label").eq(anonParameter(it)) },
                 )
         }
         .withQuery { commonQuery ->
@@ -442,8 +442,8 @@ class SpringDataNeo4jStatementAdapter(
                     orderByOptimizations(
                         propertyMappings = propertyMappings,
                         sort = sort,
-                        properties = arrayOf("id", "created_at", "created_by", "index")
-                    )
+                        properties = arrayOf("id", "created_at", "created_by", "index"),
+                    ),
                 )
                 .with(r, subject, `object`)
                 .orderBy(
@@ -461,9 +461,9 @@ class SpringDataNeo4jStatementAdapter(
                             "obj.id",
                             "obj.label",
                             "obj.created_at",
-                            "obj.created_by"
-                        )
-                    )
+                            "obj.created_by",
+                        ),
+                    ),
                 )
                 .returning(r.`as`("rel"), subject, `object`)
         }
@@ -482,7 +482,7 @@ class SpringDataNeo4jStatementAdapter(
                     .match(
                         subject.relationshipTo(`object`, RELATED)
                             .withProperties("statement_id", id)
-                            .named("r")
+                            .named("r"),
                     )
             }
             .withQuery { commonQuery ->
@@ -497,7 +497,7 @@ class SpringDataNeo4jStatementAdapter(
         .withQuery {
             val apocConfiguration = mapOf<String, Any>(
                 "relationshipFilter" to ">",
-                "labelFilter" to "-ResearchField|-Problem|-Paper"
+                "labelFilter" to "-ResearchField|-Problem|-Paper",
             )
             val n = name("n")
             val relationships = name("relationships")
@@ -506,7 +506,7 @@ class SpringDataNeo4jStatementAdapter(
             match(
                 node("Thing")
                     .withProperties("id", parameter("id"))
-                    .named(n)
+                    .named(n),
             )
                 .call("custom.subgraph")
                 .withArgs(n, asExpression(apocConfiguration))
@@ -542,7 +542,7 @@ class SpringDataNeo4jStatementAdapter(
             }
             .withParameters(
                 "id" to id.value,
-                "config" to configuration.toApocConfiguration()
+                "config" to configuration.toApocConfiguration(),
             )
             .mappedBy(StatementMapper(predicateRepository))
             .all()
@@ -552,8 +552,8 @@ class SpringDataNeo4jStatementAdapter(
             returning(
                 exists(
                     anyNode().relationshipTo(anyNode(), RELATED)
-                        .withProperties("statement_id", parameter("id"))
-                )
+                        .withProperties("statement_id", parameter("id")),
+                ),
             )
         }
         .withParameters("id" to id.value)
@@ -582,10 +582,10 @@ class SpringDataNeo4jStatementAdapter(
             val l = name("l")
             match(
                 p.relationshipTo(node("Literal").named(l), RELATED)
-                    .withProperties("predicate_id", literalOf<String>(Predicates.hasDOI.value))
+                    .withProperties("predicate_id", literalOf<String>(Predicates.hasDOI.value)),
             ).where(
                 toUpper(l.property("label")).eq(toUpper(parameter("doi")))
-                    .and(classes.map { p.hasLabels(it.value) }.reduceOrNull(Condition::or) ?: noCondition())
+                    .and(classes.map { p.hasLabels(it.value) }.reduceOrNull(Condition::or) ?: noCondition()),
             ).returning(p)
                 .orderBy(p.property("created_at").descending())
                 .limit(1)
@@ -602,10 +602,10 @@ class SpringDataNeo4jStatementAdapter(
                 val l = name("l")
                 match(
                     resource.relationshipTo(node("Literal").named(l), RELATED)
-                        .withProperties("predicate_id", literalOf<String>(Predicates.hasDOI.value))
+                        .withProperties("predicate_id", literalOf<String>(Predicates.hasDOI.value)),
                 ).where(
                     resource.hasLabels(subjectClass.value)
-                        .and(toUpper(l.property("label")).eq(toUpper(parameter("doi"))))
+                        .and(toUpper(l.property("label")).eq(toUpper(parameter("doi")))),
                 )
             }.withQuery { commonQuery ->
                 commonQuery.returningDistinct("n")
@@ -620,7 +620,7 @@ class SpringDataNeo4jStatementAdapter(
             .withCommonQuery {
                 val apocConfiguration = mapOf<String, Any>(
                     "relationshipFilter" to ">",
-                    "labelFilter" to "-ResearchField|-Problem|-Paper"
+                    "labelFilter" to "-ResearchField|-Problem|-Paper",
                 )
                 val n = name("n")
                 val relationships = name("relationships")
@@ -631,7 +631,7 @@ class SpringDataNeo4jStatementAdapter(
                 match(
                     node("Resource")
                         .withProperties("id", parameter("id"))
-                        .named(n)
+                        .named(n),
                 ).call("custom.subgraph")
                     .withArgs(n, asExpression(apocConfiguration))
                     .yield(relationships)
@@ -659,7 +659,7 @@ class SpringDataNeo4jStatementAdapter(
             .withCommonQuery {
                 val apocConfiguration = mapOf<String, Any>(
                     "relationshipFilter" to ">",
-                    "labelFilter" to "-ResearchField|-Problem|-Paper"
+                    "labelFilter" to "-ResearchField|-Problem|-Paper",
                 )
                 val n = name("n")
                 val relationships = name("relationships")
@@ -674,15 +674,15 @@ class SpringDataNeo4jStatementAdapter(
                         .withArgs(
                             ms,
                             literalOf<String>("ms"),
-                            literalOf<String>("yyyy-MM-dd'T'HH:mm:'00'XXX")
+                            literalOf<String>("yyyy-MM-dd'T'HH:mm:'00'XXX"),
                         )
-                        .asFunction()
+                        .asFunction(),
                 ).`as`("edit")
 
                 match(
                     node("Resource")
                         .withProperties("id", parameter("id"))
-                        .named(n)
+                        .named(n),
                 ).call("custom.subgraph")
                     .withArgs(n, asExpression(apocConfiguration))
                     .yield(relationships)
@@ -694,13 +694,13 @@ class SpringDataNeo4jStatementAdapter(
                     .where(
                         node.property("created_by").isNotNull
                             .and(node.property("created_at").isNotNull)
-                            .and(node.property("created_at").gte(n.property("created_at")))
+                            .and(node.property("created_at").gte(n.property("created_at"))),
                     )
                     .with(
                         node.property("created_by").`as`(createdBy),
                         call("custom.parseIsoOffsetDateTime")
                             .withArgs(node.property("created_at"), literalOf<String>("ms"))
-                            .asFunction().`as`(ms)
+                            .asFunction().`as`(ms),
                     )
                     .withDistinct(edit)
             }
@@ -754,13 +754,13 @@ class SpringDataNeo4jStatementAdapter(
                         Classes.predicates -> """(n$filterIndex:Predicate)"""
                         else -> """(n$filterIndex:Resource)"""
                     },
-                    separator = "(:Thing)"
+                    separator = "(:Thing)",
                 ) { """-[:RELATED {predicate_id: "$it"}]->""" }
             }.joinToString(
                 separator = " ",
                 // The contribution needs to be matched only when filters exist,
                 // otherwise only papers that have contributions would be returned
-                prefix = """MATCH (paper)-[:RELATED {predicate_id: "P31"}]->(ctr:Contribution) """
+                prefix = """MATCH (paper)-[:RELATED {predicate_id: "P31"}]->(ctr:Contribution) """,
             )
         }
         val filterValuesWithAlias = if (filters.isEmpty()) {
@@ -781,7 +781,7 @@ class SpringDataNeo4jStatementAdapter(
                 filter.values.withIndex().joinToString(
                     separator = " OR ",
                     prefix = "(",
-                    postfix = ")"
+                    postfix = ")",
                 ) { (valueIndex, value) ->
                     val op = when (value.op) {
                         Operator.EQ -> "="
@@ -819,7 +819,7 @@ class SpringDataNeo4jStatementAdapter(
             "observatoryId" to (observatoryId?.value?.toString() ?: NullValue.NULL),
             "values" to filters.map { it.values.map(Value::value) },
             "sdnSkip" to pageable.offset,
-            "sdnLimit" to pageable.pageSize
+            "sdnLimit" to pageable.pageSize,
         )
         val elements = neo4jClient.query(query)
             .bindAll(parameters)
@@ -836,7 +836,7 @@ class SpringDataNeo4jStatementAdapter(
     private fun BundleConfiguration.toApocConfiguration(): Map<String, Any> {
         val conf = mutableMapOf<String, Any>(
             "relationshipFilter" to "RELATED>",
-            "bfs" to true
+            "bfs" to true,
         )
         // configure min and max levels
         if (maxLevel != null) {
@@ -890,7 +890,7 @@ class SpringDataNeo4jStatementAdapter(
             `object`.`as`(obj),
             relation.property("created_at").`as`("created_at"),
             relation.property("created_by").`as`("created_by"),
-            relation.property("index").`as`("index")
+            relation.property("index").`as`("index"),
         ).returning(rel, sub, obj)
     }
 }

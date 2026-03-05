@@ -18,6 +18,6 @@ data class CellGraph(
     val statementIds = setOfNotNull(
         rowHasCellStatement.id,
         columnStatement?.id,
-        valueStatement?.id
+        valueStatement?.id,
     )
 }

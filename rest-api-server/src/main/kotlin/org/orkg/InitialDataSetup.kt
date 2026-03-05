@@ -103,7 +103,7 @@ class InitialDataSetup(
                     id = researchField.id,
                     label = researchField.label,
                     classes = setOf(Classes.researchField),
-                    createdAt = OffsetDateTime.now(clock)
+                    createdAt = OffsetDateTime.now(clock),
                 )
                 resourceRepository.save(resource)
             }
@@ -116,8 +116,8 @@ class InitialDataSetup(
                         contributorId = ContributorId.UNKNOWN,
                         subjectId = researchField.id,
                         predicateId = Predicates.hasSubfield,
-                        objectId = subField.id
-                    )
+                        objectId = subField.id,
+                    ),
                 )
             }
         }

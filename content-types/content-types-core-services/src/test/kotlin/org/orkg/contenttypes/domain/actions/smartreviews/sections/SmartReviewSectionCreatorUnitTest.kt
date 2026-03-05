@@ -41,7 +41,7 @@ internal class SmartReviewSectionCreatorUnitTest : MockkBaseTest {
     private val smartReviewSectionCreator = SmartReviewSectionCreator(
         unsafeStatementUseCases,
         abstractSmartReviewSectionCreator,
-        statementCollectionPropertyUpdater
+        statementCollectionPropertyUpdater,
     )
 
     @ParameterizedTest
@@ -54,7 +54,7 @@ internal class SmartReviewSectionCreatorUnitTest : MockkBaseTest {
         every {
             abstractSmartReviewSectionCreator.create(
                 contributorId = command.contributorId,
-                section = command as AbstractSmartReviewSectionCommand
+                section = command as AbstractSmartReviewSectionCommand,
             )
         } returns sectionId
         every {
@@ -63,8 +63,8 @@ internal class SmartReviewSectionCreatorUnitTest : MockkBaseTest {
                     contributorId = command.contributorId,
                     subjectId = contributionId,
                     predicateId = Predicates.hasSection,
-                    objectId = sectionId
-                )
+                    objectId = sectionId,
+                ),
             )
         } returns StatementId("S1")
 
@@ -77,7 +77,7 @@ internal class SmartReviewSectionCreatorUnitTest : MockkBaseTest {
         verify(exactly = 1) {
             abstractSmartReviewSectionCreator.create(
                 contributorId = command.contributorId,
-                section = command as AbstractSmartReviewSectionCommand
+                section = command as AbstractSmartReviewSectionCommand,
             )
         }
         verify(exactly = 1) {
@@ -86,8 +86,8 @@ internal class SmartReviewSectionCreatorUnitTest : MockkBaseTest {
                     contributorId = command.contributorId,
                     subjectId = contributionId,
                     predicateId = Predicates.hasSection,
-                    objectId = sectionId
-                )
+                    objectId = sectionId,
+                ),
             )
         }
     }
@@ -101,23 +101,23 @@ internal class SmartReviewSectionCreatorUnitTest : MockkBaseTest {
             createStatement(
                 subject = createResource(contributionId),
                 predicate = createPredicate(Predicates.hasSection),
-                `object` = createResource(ThingId("Section1"))
+                `object` = createResource(ThingId("Section1")),
             ),
             createStatement(
                 subject = createResource(contributionId),
                 predicate = createPredicate(Predicates.hasSection),
-                `object` = createResource(ThingId("Section2"))
-            )
+                `object` = createResource(ThingId("Section2")),
+            ),
         )
         val state = CreateSmartReviewSectionState().copy(
             contributionId = contributionId,
-            statements = statements.groupBy { it.subject.id }
+            statements = statements.groupBy { it.subject.id },
         )
 
         every {
             abstractSmartReviewSectionCreator.create(
                 contributorId = command.contributorId,
-                section = command as AbstractSmartReviewSectionCommand
+                section = command as AbstractSmartReviewSectionCommand,
             )
         } returns sectionId
         every {
@@ -126,7 +126,7 @@ internal class SmartReviewSectionCreatorUnitTest : MockkBaseTest {
                 contributorId = command.contributorId,
                 subjectId = contributionId,
                 predicateId = Predicates.hasSection,
-                objects = any<List<ThingId>>()
+                objects = any<List<ThingId>>(),
             )
         } just runs
 
@@ -139,7 +139,7 @@ internal class SmartReviewSectionCreatorUnitTest : MockkBaseTest {
         verify(exactly = 1) {
             abstractSmartReviewSectionCreator.create(
                 contributorId = command.contributorId,
-                section = command as AbstractSmartReviewSectionCommand
+                section = command as AbstractSmartReviewSectionCommand,
             )
         }
         verify(exactly = 1) {
@@ -148,7 +148,7 @@ internal class SmartReviewSectionCreatorUnitTest : MockkBaseTest {
                 contributorId = command.contributorId,
                 subjectId = contributionId,
                 predicateId = Predicates.hasSection,
-                objects = listOf(ThingId("Section1"), sectionId, ThingId("Section2"))
+                objects = listOf(ThingId("Section1"), sectionId, ThingId("Section2")),
             )
         }
     }
@@ -162,23 +162,23 @@ internal class SmartReviewSectionCreatorUnitTest : MockkBaseTest {
             createStatement(
                 subject = createResource(contributionId),
                 predicate = createPredicate(Predicates.hasSection),
-                `object` = createResource(ThingId("Section1"))
+                `object` = createResource(ThingId("Section1")),
             ),
             createStatement(
                 subject = createResource(contributionId),
                 predicate = createPredicate(Predicates.hasSection),
-                `object` = createResource(ThingId("Section2"))
-            )
+                `object` = createResource(ThingId("Section2")),
+            ),
         )
         val state = CreateSmartReviewSectionState().copy(
             contributionId = contributionId,
-            statements = statements.groupBy { it.subject.id }
+            statements = statements.groupBy { it.subject.id },
         )
 
         every {
             abstractSmartReviewSectionCreator.create(
                 contributorId = command.contributorId,
-                section = command as AbstractSmartReviewSectionCommand
+                section = command as AbstractSmartReviewSectionCommand,
             )
         } returns sectionId
         every {
@@ -187,7 +187,7 @@ internal class SmartReviewSectionCreatorUnitTest : MockkBaseTest {
                 contributorId = command.contributorId,
                 subjectId = contributionId,
                 predicateId = Predicates.hasSection,
-                objects = any<List<ThingId>>()
+                objects = any<List<ThingId>>(),
             )
         } just runs
 
@@ -200,7 +200,7 @@ internal class SmartReviewSectionCreatorUnitTest : MockkBaseTest {
         verify(exactly = 1) {
             abstractSmartReviewSectionCreator.create(
                 contributorId = command.contributorId,
-                section = command as AbstractSmartReviewSectionCommand
+                section = command as AbstractSmartReviewSectionCommand,
             )
         }
         verify(exactly = 1) {
@@ -209,7 +209,7 @@ internal class SmartReviewSectionCreatorUnitTest : MockkBaseTest {
                 contributorId = command.contributorId,
                 subjectId = contributionId,
                 predicateId = Predicates.hasSection,
-                objects = listOf(ThingId("Section1"), ThingId("Section2"), sectionId)
+                objects = listOf(ThingId("Section1"), ThingId("Section2"), sectionId),
             )
         }
     }
@@ -222,7 +222,7 @@ internal class SmartReviewSectionCreatorUnitTest : MockkBaseTest {
             Arguments.of(createSmartReviewResourceSectionCommand()),
             Arguments.of(createSmartReviewPredicateSectionCommand()),
             Arguments.of(createSmartReviewOntologySectionCommand()),
-            Arguments.of(createSmartReviewTextSectionCommand())
+            Arguments.of(createSmartReviewTextSectionCommand()),
         )
     }
 }

@@ -30,8 +30,8 @@ class PaperContributionCreator(
             unsafeLiteralUseCases,
             unsafePredicateUseCases,
             statementRepository,
-            listService
-        )
+            listService,
+        ),
     )
 
     override fun invoke(command: CreatePaperCommand, state: State): State {
@@ -43,7 +43,7 @@ class PaperContributionCreator(
                 thingsCommand = it,
                 contributionCommands = it.contributions,
                 validationCache = state.validationCache,
-                bakedStatements = state.bakedStatements
+                bakedStatements = state.bakedStatements,
             )
         }
         return state

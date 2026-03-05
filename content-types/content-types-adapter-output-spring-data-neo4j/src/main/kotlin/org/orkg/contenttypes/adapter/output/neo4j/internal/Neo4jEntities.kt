@@ -21,7 +21,7 @@ data class Neo4jBenchmarkSummary(
             researchFields = fields.map { ResearchField(it.id!!.value, it.label!!) },
             totalPapers = totalPapers.toInt(),
             totalDatasets = totalDatasets.toInt(),
-            totalCodes = totalCodes.toInt()
+            totalCodes = totalCodes.toInt(),
         )
 }
 
@@ -37,7 +37,7 @@ data class Neo4jDataset(
             label = dataset.label!!,
             totalModels = totalModels.toInt(),
             totalPapers = totalPapers.toInt(),
-            totalCodes = totalCodes.toInt()
+            totalCodes = totalCodes.toInt(),
         )
 }
 
@@ -61,6 +61,6 @@ data class Neo4jDatasetSummary(
             paperTitle = paper.label!!,
             paperMonth = month?.toInt(),
             paperYear = year?.toInt(),
-            codeURLs = codes
+            codeURLs = codes,
         )
 }

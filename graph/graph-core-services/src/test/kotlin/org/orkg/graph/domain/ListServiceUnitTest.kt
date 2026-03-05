@@ -39,7 +39,7 @@ internal class ListServiceUnitTest : MockkBaseTest {
             contributorId = ContributorId(UUID.randomUUID()),
             label = "label",
             elements = listOf(ThingId("R1")),
-            modifiable = false
+            modifiable = false,
         )
 
         every { thingRepository.findById(command.id!!) } returns Optional.empty()
@@ -60,7 +60,7 @@ internal class ListServiceUnitTest : MockkBaseTest {
             label = "\n",
             elements = listOf(ThingId("R1")),
             id = ThingId("List1"),
-            contributorId = ContributorId(UUID.randomUUID())
+            contributorId = ContributorId(UUID.randomUUID()),
         )
 
         assertThrows<InvalidLabel> { service.create(command) }
@@ -72,7 +72,7 @@ internal class ListServiceUnitTest : MockkBaseTest {
             id = ThingId("List1"),
             contributorId = ContributorId(UUID.randomUUID()),
             label = "label",
-            elements = listOf(ThingId("R1"))
+            elements = listOf(ThingId("R1")),
         )
 
         every { thingRepository.findById(command.id!!) } returns Optional.empty()
@@ -90,7 +90,7 @@ internal class ListServiceUnitTest : MockkBaseTest {
             label = "label",
             elements = listOf(ThingId("R1")),
             id = null,
-            contributorId = ContributorId(UUID.randomUUID())
+            contributorId = ContributorId(UUID.randomUUID()),
         )
         val id = ThingId("1")
 
@@ -121,12 +121,12 @@ internal class ListServiceUnitTest : MockkBaseTest {
             id = id,
             contributorId = ContributorId.UNKNOWN,
             label = "label",
-            elements = listOf(ThingId("R1"))
+            elements = listOf(ThingId("R1")),
         )
         val list = createList(id)
         val expected = list.copy(
             label = command.label!!,
-            elements = command.elements!!
+            elements = command.elements!!,
         )
 
         every { repository.findById(id) } returns Optional.of(list)
@@ -147,7 +147,7 @@ internal class ListServiceUnitTest : MockkBaseTest {
             id = id,
             contributorId = ContributorId.UNKNOWN,
             label = "label",
-            elements = listOf(ThingId("R1"))
+            elements = listOf(ThingId("R1")),
         )
 
         every { repository.findById(id) } returns Optional.empty()
@@ -164,7 +164,7 @@ internal class ListServiceUnitTest : MockkBaseTest {
             id = id,
             contributorId = ContributorId.UNKNOWN,
             label = "\n",
-            elements = listOf(ThingId("R1"))
+            elements = listOf(ThingId("R1")),
         )
         val list = createList(id = id)
 
@@ -182,7 +182,7 @@ internal class ListServiceUnitTest : MockkBaseTest {
             id = id,
             contributorId = ContributorId.UNKNOWN,
             label = "label",
-            elements = listOf(ThingId("R1"))
+            elements = listOf(ThingId("R1")),
         )
         val list = createList(id = id)
 
@@ -202,11 +202,11 @@ internal class ListServiceUnitTest : MockkBaseTest {
             id = id,
             contributorId = ContributorId.UNKNOWN,
             label = "label",
-            elements = null
+            elements = null,
         )
         val list = createList(id = id)
         val expected = list.copy(
-            label = command.label!!
+            label = command.label!!,
         )
 
         every { repository.findById(id) } returns Optional.of(list)
@@ -225,11 +225,11 @@ internal class ListServiceUnitTest : MockkBaseTest {
             id = id,
             contributorId = ContributorId.UNKNOWN,
             label = null,
-            elements = listOf(ThingId("R1"))
+            elements = listOf(ThingId("R1")),
         )
         val list = createList(id = id)
         val expected = list.copy(
-            elements = command.elements!!
+            elements = command.elements!!,
         )
 
         every { repository.findById(id) } returns Optional.of(list)
@@ -250,12 +250,12 @@ internal class ListServiceUnitTest : MockkBaseTest {
             id = id,
             contributorId = ContributorId.UNKNOWN,
             label = "label",
-            elements = listOf()
+            elements = listOf(),
         )
         val list = createList(id = id, elements = listOf(ThingId("R25")))
         val expected = list.copy(
             label = command.label!!,
-            elements = command.elements!!
+            elements = command.elements!!,
         )
 
         every { repository.findById(id) } returns Optional.of(list)
@@ -274,7 +274,7 @@ internal class ListServiceUnitTest : MockkBaseTest {
             id = id,
             contributorId = ContributorId.UNKNOWN,
             label = "label",
-            elements = listOf()
+            elements = listOf(),
         )
         val list = createList(id = id, elements = listOf(ThingId("R25")), modifiable = false)
 
@@ -292,7 +292,7 @@ internal class ListServiceUnitTest : MockkBaseTest {
             createResource(),
             createLiteral(),
             createClass(),
-            createPredicate()
+            createPredicate(),
         )
         val pageable = PageRequest.of(0, 5)
 

@@ -120,7 +120,7 @@ internal class SpringExceptionUnitTest : MockMvcExceptionBaseTest() {
         val methodParameter = MethodParameter(method, -1)
         val parameterValidationResult = ParameterValidationResult(methodParameter, null, errors, null, null, null) { _, _ -> Unit }
         val handlerMethodValidationException = HandlerMethodValidationException(
-            MethodValidationResult.create(this, method, listOf(parameterValidationResult))
+            MethodValidationResult.create(this, method, listOf(parameterValidationResult)),
         )
         val type = "orkg:problem:handler_method_validation"
         documentedGetRequestTo(handlerMethodValidationException)
@@ -170,7 +170,7 @@ internal class SpringExceptionUnitTest : MockMvcExceptionBaseTest() {
             MethodParameter(this::class.java.getDeclaredMethod("methodArgumentNotValidException"), -1),
             MapBindingResult(mapOf("key" to "value"), "field").apply {
                 addError(org.springframework.validation.FieldError("Container", "field", "Invalid value."))
-            }
+            },
         )
         val type = "orkg:problem:invalid_argument"
         documentedGetRequestTo(methodArgumentNotValidException)
@@ -194,7 +194,7 @@ internal class SpringExceptionUnitTest : MockMvcExceptionBaseTest() {
     fun missingRequestHeaderException() {
         val missingRequestHeaderException = MissingRequestHeaderException(
             "header-name",
-            MethodParameter(this::class.java.getDeclaredMethod("missingRequestHeaderException"), -1)
+            MethodParameter(this::class.java.getDeclaredMethod("missingRequestHeaderException"), -1),
         )
         val type = "orkg:problem:missing_request_header"
         documentedGetRequestTo(missingRequestHeaderException)
@@ -220,7 +220,7 @@ internal class SpringExceptionUnitTest : MockMvcExceptionBaseTest() {
     fun missingMatrixVariableException() {
         val missingMatrixVariableException = MissingMatrixVariableException(
             "variable-name",
-            MethodParameter(this::class.java.getDeclaredMethod("missingMatrixVariableException"), -1)
+            MethodParameter(this::class.java.getDeclaredMethod("missingMatrixVariableException"), -1),
         )
         val type = "orkg:problem:missing_matrix_variable"
         documentedGetRequestTo(missingMatrixVariableException)
@@ -235,7 +235,7 @@ internal class SpringExceptionUnitTest : MockMvcExceptionBaseTest() {
     fun missingPathVariableException() {
         val missingPathVariableException = MissingPathVariableException(
             "variable-name",
-            MethodParameter(this::class.java.getDeclaredMethod("missingPathVariableException"), -1)
+            MethodParameter(this::class.java.getDeclaredMethod("missingPathVariableException"), -1),
         )
         val type = "orkg:problem:missing_path_variable"
         documentedGetRequestTo(missingPathVariableException)
@@ -249,7 +249,7 @@ internal class SpringExceptionUnitTest : MockMvcExceptionBaseTest() {
     fun missingRequestCookieException() {
         val missingRequestCookieException = MissingRequestCookieException(
             "cookie-name",
-            MethodParameter(this::class.java.getDeclaredMethod("missingRequestCookieException"), -1)
+            MethodParameter(this::class.java.getDeclaredMethod("missingRequestCookieException"), -1),
         )
         val type = "orkg:problem:missing_request_cookie"
         documentedGetRequestTo(missingRequestCookieException)

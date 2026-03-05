@@ -73,8 +73,8 @@ internal class OpenApiDocTest : MockMvcOpenApiBaseTest() {
                         "template" to TemplateRepresentation::class,
                         "literature-list" to LiteratureListRepresentation::class,
                         "smart-review" to SmartReviewRepresentation::class,
-                    )
-                )
+                    ),
+                ),
             )
         }
     }
@@ -87,10 +87,10 @@ internal class OpenApiDocTest : MockMvcOpenApiBaseTest() {
                 "P32" to listOf(
                     StatementObjectRequest(
                         id = "#temp2",
-                        statements = null
-                    )
-                )
-            )
+                        statements = null,
+                    ),
+                ),
+            ),
         )
 
         document(statementObjectRepresentation) {
@@ -116,9 +116,9 @@ internal class OpenApiDocTest : MockMvcOpenApiBaseTest() {
                         createdAt = OffsetDateTime.parse("2023-10-06T11:28:14.613254+01:00"),
                         createdBy = ContributorId.UNKNOWN,
                         statements = emptyMap(),
-                    )
-                )
-            )
+                    ),
+                ),
+            ),
         )
 
         document(embeddedStatementRepresentation) {
@@ -135,8 +135,8 @@ internal class OpenApiDocTest : MockMvcOpenApiBaseTest() {
                     mapOf(
                         "text" to LiteratureListListSectionRepresentation::class,
                         "list" to LiteratureListTextSectionRepresentation::class,
-                    )
-                )
+                    ),
+                ),
             )
         }
     }
@@ -147,7 +147,7 @@ internal class OpenApiDocTest : MockMvcOpenApiBaseTest() {
             id = ThingId("R154686"),
             heading = "Heading",
             headingSize = 2,
-            text = "text section contents"
+            text = "text section contents",
         )
 
         document(literatureListTextSectionRepresentation) {
@@ -164,11 +164,11 @@ internal class OpenApiDocTest : MockMvcOpenApiBaseTest() {
                     ResourceReferenceRepresentation(
                         id = ThingId("R154686"),
                         label = "Paper",
-                        classes = setOf(Classes.paper)
+                        classes = setOf(Classes.paper),
                     ),
-                    "paper entry description"
-                )
-            )
+                    "paper entry description",
+                ),
+            ),
         )
 
         document(literatureListListSectionRepresentation) {
@@ -181,12 +181,12 @@ internal class OpenApiDocTest : MockMvcOpenApiBaseTest() {
         val literatureListSectionRequest = LiteratureListTextSectionRequest(
             heading = "heading",
             headingSize = 2,
-            text = "text contents"
+            text = "text contents",
         )
 
         document(literatureListSectionRequest) {
             responseFields<LiteratureListSectionRequest>(
-                oneOf(LiteratureListListSectionRequest::class, LiteratureListTextSectionRequest::class)
+                oneOf(LiteratureListListSectionRequest::class, LiteratureListTextSectionRequest::class),
             )
         }
     }
@@ -197,7 +197,7 @@ internal class OpenApiDocTest : MockMvcOpenApiBaseTest() {
 
         document(simpleAuthorRepresentation) {
             responseFields<SimpleAuthorRepresentation>(
-                oneOf(ResourceAuthorRepresentation::class, LiteralAuthorRepresentation::class)
+                oneOf(ResourceAuthorRepresentation::class, LiteralAuthorRepresentation::class),
             )
         }
     }
@@ -219,7 +219,7 @@ internal class OpenApiDocTest : MockMvcOpenApiBaseTest() {
 
         document(literalAuthorRepresentation) {
             responseFields<LiteralAuthorRepresentation>(
-                fieldWithPath("value").description("The name of the author.")
+                fieldWithPath("value").description("The name of the author."),
             )
         }
     }
@@ -235,8 +235,8 @@ internal class OpenApiDocTest : MockMvcOpenApiBaseTest() {
                         "predicate_ref" to PredicateReferenceRepresentation::class,
                         "class_ref" to ClassReferenceRepresentation::class,
                         "literal_ref" to LiteralReferenceRepresentation::class,
-                    )
-                )
+                    ),
+                ),
             )
         }
     }
@@ -251,7 +251,7 @@ internal class OpenApiDocTest : MockMvcOpenApiBaseTest() {
                     NumberLiteralPropertyRequest::class,
                     OtherLiteralPropertyRequest::class,
                     ResourcePropertyRequest::class,
-                )
+                ),
             )
         }
     }
@@ -266,7 +266,7 @@ internal class OpenApiDocTest : MockMvcOpenApiBaseTest() {
                     NumberLiteralTemplatePropertyRepresentation::class,
                     OtherLiteralTemplatePropertyRepresentation::class,
                     ResourceTemplatePropertyRepresentation::class,
-                )
+                ),
             )
         }
     }
@@ -275,7 +275,7 @@ internal class OpenApiDocTest : MockMvcOpenApiBaseTest() {
     fun untypedTemplatePropertyRepresentation() {
         document(createUntypedTemplatePropertyRepresentation()) {
             responseFields<UntypedTemplatePropertyRepresentation>(
-                commonTemplatePropertyResponseFields()
+                commonTemplatePropertyResponseFields(),
             )
         }
     }
@@ -409,8 +409,8 @@ internal class OpenApiDocTest : MockMvcOpenApiBaseTest() {
                         "property" to SmartReviewPredicateSectionRepresentation::class,
                         "ontology" to SmartReviewOntologySectionRepresentation::class,
                         "text" to SmartReviewTextSectionRepresentation::class,
-                    )
-                )
+                    ),
+                ),
             )
         }
     }
@@ -506,7 +506,7 @@ internal class OpenApiDocTest : MockMvcOpenApiBaseTest() {
     fun smartReviewSectionRequest() {
         val smartReviewSectionRequest = SmartReviewComparisonSectionRequest(
             heading = "comparison section heading",
-            comparison = ThingId("comparisonId")
+            comparison = ThingId("comparisonId"),
         )
 
         document(smartReviewSectionRequest) {
@@ -518,7 +518,7 @@ internal class OpenApiDocTest : MockMvcOpenApiBaseTest() {
                     SmartReviewPredicateSectionRequest::class,
                     SmartReviewOntologySectionRequest::class,
                     SmartReviewTextSectionRequest::class,
-                )
+                ),
             )
         }
     }
@@ -532,9 +532,9 @@ internal class OpenApiDocTest : MockMvcOpenApiBaseTest() {
                     ComparisonTableRowRepresentation(
                         values = listOf(createResourceReferenceRepresentation()),
                         children = emptyMap(),
-                    )
-                )
-            )
+                    ),
+                ),
+            ),
         )
 
         document(comparisonTableRowRepresentation) {
@@ -584,7 +584,7 @@ internal class OpenApiDocTest : MockMvcOpenApiBaseTest() {
     private fun createClassReferenceRepresentation() = ClassReferenceRepresentation(
         id = ThingId("C123"),
         label = "Default label",
-        uri = ParsedIRI("http://example.org")
+        uri = ParsedIRI("http://example.org"),
     )
 
     private fun createLiteralReferenceRepresentation() = LiteralReferenceRepresentation(

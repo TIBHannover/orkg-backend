@@ -38,7 +38,7 @@ internal class RdfServiceIntegrationTest :
             resourceRepository,
             classRepository,
             fileExportService,
-            classHierarchyRepository
+            classHierarchyRepository,
         )
 
         val targetDir = tempdir()
@@ -63,8 +63,8 @@ internal class RdfServiceIntegrationTest :
                         observatoryId = ObservatoryId("bcfa8bf8-c22d-4ee4-b817-5161b3f8595f"),
                         extractionMethod = ExtractionMethod.UNKNOWN,
                         organizationId = OrganizationId("aa88aa24-9649-4e60-92c8-b0fe7258fbef"),
-                    )
-                )
+                    ),
+                ),
             )
             withContext(Dispatchers.IO) {
                 service.dumpToNTriple(targetFile.absolutePath)

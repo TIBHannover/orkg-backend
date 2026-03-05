@@ -32,7 +32,7 @@ class RdfController(
                 uriComponentsBuilder
                     .path("/files/rdf-dumps/rdf-export-orkg.nt")
                     .build()
-                    .toUri()
+                    .toUri(),
             )
             .build()
 

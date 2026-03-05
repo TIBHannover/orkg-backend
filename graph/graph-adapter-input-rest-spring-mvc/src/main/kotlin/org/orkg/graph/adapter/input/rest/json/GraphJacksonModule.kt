@@ -16,13 +16,13 @@ class GraphJacksonModule : SimpleModule() {
         context?.addSerializers(
             SimpleSerializers().apply {
                 addSerializer(StatementId::class.java, StatementIdSerializer())
-            }
+            },
         )
         context?.addDeserializers(
             SimpleDeserializers().apply {
                 addDeserializer(StatementId::class.java, StatementIdDeserializer())
                 addDeserializer(Resource::class.java, ResourceDeserializer())
-            }
+            },
         )
         context?.setMixIn(Thing::class.java, ThingMixin::class.java)
         context?.setMixIn(Class::class.java, ClassMixin::class.java)

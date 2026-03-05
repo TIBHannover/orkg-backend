@@ -9,5 +9,5 @@ open class IdentifierValueFactory<DOMAIN : Value<String>>(
     uriValidationRegex: Regex,
 ) : StringValueFactory<DOMAIN>(
         { value -> fn(uriValidationRegex.matchAt(value, 0)?.let { it.groups[1]!!.value } ?: value) },
-        { value -> validationRegex.matches(value) || uriValidationRegex.matches(value) }
+        { value -> validationRegex.matches(value) || uriValidationRegex.matches(value) },
     )

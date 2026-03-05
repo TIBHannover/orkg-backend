@@ -107,8 +107,8 @@ internal class PaperCSVRecordParserUnitTest : MockkBaseTest {
                         ContributionStatement(Either.right("result"), record.values[12]),
                         ContributionStatement(Either.left(ThingId("numericValue")), record.values[13]),
                         ContributionStatement(Either.left(Predicates.description), record.values[14]),
-                        ContributionStatement(Either.left(Predicates.hasResearchProblem), record.values[8])
-                    )
+                        ContributionStatement(Either.left(Predicates.hasResearchProblem), record.values[8]),
+                    ),
                 )
             }
 
@@ -176,8 +176,8 @@ internal class PaperCSVRecordParserUnitTest : MockkBaseTest {
                         ContributionStatement(Either.right("result"), record.values[12]),
                         ContributionStatement(Either.left(ThingId("numericValue")), record.values[13]),
                         ContributionStatement(Either.left(Predicates.description), record.values[14]),
-                        ContributionStatement(Either.left(Predicates.hasResearchProblem), record.values[8])
-                    )
+                        ContributionStatement(Either.left(Predicates.hasResearchProblem), record.values[8]),
+                    ),
                 )
             }
 

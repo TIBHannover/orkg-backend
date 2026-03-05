@@ -53,7 +53,7 @@ internal class ContributionServiceUnitTest : MockkBaseTest {
     @Test
     fun `Given a contribution exists, when fetching it by id, then it is returned`() {
         val expected = createResource(
-            classes = setOf(Classes.contribution)
+            classes = setOf(Classes.contribution),
         )
         every { resourceRepository.findById(expected.id) } returns Optional.of(expected)
         every { statementRepository.findAll(subjectId = expected.id, pageable = PageRequests.ALL) } returns Page.empty(PageRequests.ALL)

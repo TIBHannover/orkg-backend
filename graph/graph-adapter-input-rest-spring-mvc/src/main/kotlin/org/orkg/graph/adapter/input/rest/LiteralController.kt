@@ -73,8 +73,8 @@ class LiteralController(
             CreateCommand(
                 contributorId = currentUser.contributorId(),
                 label = literal.label,
-                datatype = literal.datatype
-            )
+                datatype = literal.datatype,
+            ),
         )
         val location = uriComponentsBuilder
             .path("/api/literals/{id}")
@@ -96,8 +96,8 @@ class LiteralController(
                 id = id,
                 contributorId = currentUser.contributorId(),
                 label = request.label,
-                datatype = request.datatype
-            )
+                datatype = request.datatype,
+            ),
         )
         val location = uriComponentsBuilder
             .path("/api/literals/{id}")

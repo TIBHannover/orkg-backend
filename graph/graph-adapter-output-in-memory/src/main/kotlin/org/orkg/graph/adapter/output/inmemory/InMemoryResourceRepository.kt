@@ -72,7 +72,7 @@ class InMemoryResourceRepository(private val inMemoryGraph: InMemoryGraph) :
             includeClasses = emptySet(),
             excludeClasses = emptySet(),
             observatoryId = null,
-            organizationId = null
+            organizationId = null,
         )
 
     override fun count(
@@ -98,8 +98,8 @@ class InMemoryResourceRepository(private val inMemoryGraph: InMemoryGraph) :
                 excludeClasses,
                 observatoryId,
                 organizationId,
-                baseClass
-            )
+                baseClass,
+            ),
         ).size.toLong()
 
     override fun findAll(
@@ -132,8 +132,8 @@ class InMemoryResourceRepository(private val inMemoryGraph: InMemoryGraph) :
                 excludeClasses,
                 observatoryId,
                 organizationId,
-                baseClass
-            )
+                baseClass,
+            ),
         )
 
     private fun buildFindAllPredicate(
@@ -188,7 +188,7 @@ class InMemoryResourceRepository(private val inMemoryGraph: InMemoryGraph) :
         Optional.ofNullable(
             entities.values.firstOrNull {
                 it.label.equals(label, ignoreCase = true) && Classes.paper in it.classes
-            }
+            },
         )
 
     // TODO: Create a method with class parameter (and possibly unlisted, featured and verified flags)
@@ -196,7 +196,7 @@ class InMemoryResourceRepository(private val inMemoryGraph: InMemoryGraph) :
         Optional.ofNullable(
             entities.values.firstOrNull {
                 it.id == id && Classes.paper in it.classes
-            }
+            },
         )
 
     override fun findAllContributorIds(pageable: Pageable) =

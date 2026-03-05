@@ -14,7 +14,7 @@ class TemplateDescriptionCreator(
         unsafeLiteralUseCases: UnsafeLiteralUseCases,
         unsafeStatementUseCases: UnsafeStatementUseCases,
     ) : this(
-        SingleStatementPropertyCreator(unsafeLiteralUseCases, unsafeStatementUseCases)
+        SingleStatementPropertyCreator(unsafeLiteralUseCases, unsafeStatementUseCases),
     )
 
     override fun invoke(command: CreateTemplateCommand, state: State): State {
@@ -23,7 +23,7 @@ class TemplateDescriptionCreator(
                 contributorId = command.contributorId,
                 subjectId = state.templateId!!,
                 predicateId = Predicates.description,
-                label = it
+                label = it,
             )
         }
         return state

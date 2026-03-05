@@ -12,5 +12,5 @@ class VisualizationIdsValidator<T, S>(
         resourceRepository = resourceRepository,
         newValueSelector = { valueSelector(it)?.toSet() },
         includeClasses = setOf(Classes.visualization),
-        exceptionFactory = ::VisualizationNotFound
+        exceptionFactory = ::VisualizationNotFound,
     )

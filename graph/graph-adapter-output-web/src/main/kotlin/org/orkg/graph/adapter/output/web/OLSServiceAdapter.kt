@@ -63,7 +63,7 @@ class OLSServiceAdapter(
                 .queryParam("page", 0)
                 .queryParam("size", 1)
                 .build()
-                .toUri()
+                .toUri(),
         )
     }
 
@@ -79,7 +79,7 @@ class OLSServiceAdapter(
                 .queryParam("page", 0)
                 .queryParam("size", 1)
                 .build()
-                .toUri()
+                .toUri(),
         )
     }
 

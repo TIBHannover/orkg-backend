@@ -33,15 +33,15 @@ internal class IdentifierCreatorUnitTest : MockkBaseTest {
             contributorId = contributorId,
             subjectId = paperId,
             predicateId = Predicates.hasDOI,
-            objectId = doiLiteralId
+            objectId = doiLiteralId,
         )
 
         every {
             unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = contributorId,
-                    label = doi
-                )
+                    label = doi,
+                ),
             )
         } returns doiLiteralId
         every { unsafeStatementUseCases.create(command) } returns StatementId("S435")
@@ -52,8 +52,8 @@ internal class IdentifierCreatorUnitTest : MockkBaseTest {
             unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = contributorId,
-                    label = doi
-                )
+                    label = doi,
+                ),
             )
         }
         verify(exactly = 1) { unsafeStatementUseCases.create(command) }

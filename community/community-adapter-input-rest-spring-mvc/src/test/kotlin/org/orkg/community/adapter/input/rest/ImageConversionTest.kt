@@ -24,7 +24,7 @@ internal class ImageConversionTest {
             "data:;base64,",
             "data:;,",
             "data:;,data",
-        ]
+        ],
     )
     fun `given an image is being decoded, when the image encoding is invalid, then an exception is thrown`(string: String) {
         shouldThrow<InvalidImageEncoding> {

@@ -30,7 +30,7 @@ class ThingsCommandValidator(
         classRepository: ClassRepository,
     ) : this(
         ThingIdValidator(thingRepository),
-        classRepository
+        classRepository,
     )
 
     internal fun validate(

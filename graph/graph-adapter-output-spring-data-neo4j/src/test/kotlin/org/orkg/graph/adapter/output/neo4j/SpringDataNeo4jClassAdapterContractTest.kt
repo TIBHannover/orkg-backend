@@ -23,8 +23,8 @@ import org.springframework.data.neo4j.core.fetchAs
     classes = [
         SpringDataNeo4jClassAdapter::class,
         GraphNeo4jConfiguration::class,
-        CypherQueryBuilderConfiguration::class
-    ]
+        CypherQueryBuilderConfiguration::class,
+    ],
 )
 internal class SpringDataNeo4jClassAdapterContractTests(
     @param:Autowired private val springDataNeo4jClassAdapter: ClassRepository,
@@ -32,8 +32,8 @@ internal class SpringDataNeo4jClassAdapterContractTests(
 ) : DescribeSpec({
         include(
             classRepositoryContract(
-                springDataNeo4jClassAdapter
-            )
+                springDataNeo4jClassAdapter,
+            ),
         )
         include(neo4jClassRepositoryContract(springDataNeo4jClassAdapter, neo4jClient))
 

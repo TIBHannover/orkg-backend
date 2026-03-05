@@ -45,16 +45,16 @@ class PaperRanker(
                 resourceRepository.save(
                     paper.copy(
                         visibility = Visibility.DEFAULT,
-                        unlistedBy = null
-                    )
+                        unlistedBy = null,
+                    ),
                 )
                 logger.debug("""Re-listing paper "{}".""", paper.id)
             } else if (paper.visibility == Visibility.DEFAULT && score.isRejected) {
                 resourceRepository.save(
                     paper.copy(
                         visibility = Visibility.UNLISTED,
-                        unlistedBy = ContributorId.SYSTEM
-                    )
+                        unlistedBy = ContributorId.SYSTEM,
+                    ),
                 )
                 logger.debug("""Unlisting paper "{}".""", paper.id)
             }
@@ -69,7 +69,7 @@ class PaperRanker(
     ): CompletableFuture<Void> {
         val total = resourceRepository.findAll(
             includeClasses = setOf(Classes.paper),
-            pageable = PageRequest.of(0, 1)
+            pageable = PageRequest.of(0, 1),
         ).totalElements
         logger.info("Total papers: $total")
         val papersPerWorker = total / workers
@@ -132,8 +132,8 @@ class PaperRanker(
                 pageable = PageRequest.of(
                     (skip / chunkSize!!).toInt(),
                     chunkSize.coerceAtMost((end - skip).toInt()),
-                    Sort.by(Order.asc("id"))
-                )
+                    Sort.by(Order.asc("id")),
+                ),
             ).forEach(action)
             skip += chunkSize
         }
@@ -168,7 +168,7 @@ class PaperRanker(
             comparisonScore = if (stats.comparisons > 0) (1 + log10(stats.comparisons.toDouble())) * 2 else 0.0,
             listScore = if (stats.lists > 0) (1 + log10(stats.lists.toDouble())) else 0.0,
             doiScore = if (stats.hasDoi) 1 else 0,
-            observatoryScore = if (stats.hasObservatory) 5 else 0
+            observatoryScore = if (stats.hasObservatory) 5 else 0,
         )
     }
 }

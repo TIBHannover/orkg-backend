@@ -25,13 +25,13 @@ class LiteratureListSectionCreator(
     ) : this(
         unsafeStatementUseCases,
         AbstractLiteratureListSectionCreator(unsafeStatementUseCases, unsafeResourceUseCases, unsafeLiteralUseCases),
-        StatementCollectionPropertyUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases)
+        StatementCollectionPropertyUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases),
     )
 
     override fun invoke(command: CreateLiteratureListSectionCommand, state: State): State {
         val sectionId = abstractLiteratureListSectionCreator.create(
             contributorId = command.contributorId,
-            section = command as AbstractLiteratureListSectionCommand
+            section = command as AbstractLiteratureListSectionCommand,
         )
         if (command.index != null && command.index!! >= 0) {
             val sectionStatements = state.statements[command.literatureListId].orEmpty()
@@ -41,7 +41,7 @@ class LiteratureListSectionCreator(
                 subjectId = command.literatureListId,
                 predicateId = Predicates.hasSection,
                 objects = sectionStatements.mapTo(mutableListOf()) { it.`object`.id }
-                    .also { it.add(command.index!!.coerceAtMost(it.size), sectionId) }
+                    .also { it.add(command.index!!.coerceAtMost(it.size), sectionId) },
             )
         } else {
             unsafeStatementUseCases.create(
@@ -49,8 +49,8 @@ class LiteratureListSectionCreator(
                     contributorId = command.contributorId,
                     subjectId = command.literatureListId,
                     predicateId = Predicates.hasSection,
-                    objectId = sectionId
-                )
+                    objectId = sectionId,
+                ),
             )
         }
         return state.copy(literatureListSectionId = sectionId)

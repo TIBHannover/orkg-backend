@@ -17,8 +17,8 @@ class ComparisonVersionResourceCreator(
                 classes = setOf(Classes.comparisonPublished, Classes.latestVersion),
                 extractionMethod = command.extractionMethod,
                 observatoryId = command.observatories.singleOrNull(),
-                organizationId = command.organizations.singleOrNull()
-            )
+                organizationId = command.organizations.singleOrNull(),
+            ),
         )
         return state.copy(comparisonId = comparisonId)
     }

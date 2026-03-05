@@ -18,6 +18,6 @@ class ValidatePaperCSVStepConfiguration {
         PaperCSVRecordParser(
             thingRepository = thingRepository,
             resourceRepository = resourceRepository,
-            doiService = doiService
+            doiService = doiService,
         )
 }

@@ -37,13 +37,13 @@ internal class TableCellsUpdaterUnitTest : MockkBaseTest {
             rows = listOf(
                 CreateRowCommand(
                     label = "header",
-                    data = listOf("Column_1_Title", "Column_2_Title", "Column_3_Title")
+                    data = listOf("Column_1_Title", "Column_2_Title", "Column_3_Title"),
                 ),
                 CreateRowCommand(
                     label = "Row Row_1 Label",
-                    data = listOf("R123", "R456", "R789")
-                )
-            )
+                    data = listOf("R123", "R456", "R789"),
+                ),
+            ),
         )
         val existingRows = listOf(
             createRowGraph(
@@ -52,7 +52,7 @@ internal class TableCellsUpdaterUnitTest : MockkBaseTest {
                     createResource(ThingId("R123")),
                     createResource(ThingId("R456")),
                     createResource(ThingId("R789")),
-                )
+                ),
             ),
         )
         val columns = listOf(
@@ -61,7 +61,7 @@ internal class TableCellsUpdaterUnitTest : MockkBaseTest {
             ThingId("Column_3"),
         )
         val rows = listOf(
-            ThingId("Row_1")
+            ThingId("Row_1"),
         )
         val state = UpdateTableState().copy(
             columns = columns,
@@ -70,8 +70,8 @@ internal class TableCellsUpdaterUnitTest : MockkBaseTest {
             thingsToDelete = setOf(ThingId("ToBeDeleted")),
             statementsToDelete = setOf(StatementId("SalreadyExists")),
             validationCache = mapOf(
-                "ToBeDeleted" to Either.right(createResource(ThingId("ToBeDeleted")))
-            )
+                "ToBeDeleted" to Either.right(createResource(ThingId("ToBeDeleted"))),
+            ),
         )
 
         every { unsafeResourceUseCases.delete(any(), command.contributorId) } just runs
@@ -103,13 +103,13 @@ internal class TableCellsUpdaterUnitTest : MockkBaseTest {
             rows = listOf(
                 CreateRowCommand(
                     label = "header",
-                    data = listOf("Column_1_Title", "Column_2_Title", "Column_3_Title")
+                    data = listOf("Column_1_Title", "Column_2_Title", "Column_3_Title"),
                 ),
                 CreateRowCommand(
                     label = "Row Row_1 Label",
-                    data = listOf("R123", "R456", "RNEW")
-                )
-            )
+                    data = listOf("R123", "R456", "RNEW"),
+                ),
+            ),
         )
         val existingRows = listOf(
             createRowGraph(
@@ -118,7 +118,7 @@ internal class TableCellsUpdaterUnitTest : MockkBaseTest {
                     createResource(ThingId("R123")),
                     createResource(ThingId("R456")),
                     createResource(ThingId("R789")),
-                )
+                ),
             ),
         )
         val columns = listOf(
@@ -127,11 +127,11 @@ internal class TableCellsUpdaterUnitTest : MockkBaseTest {
             ThingId("Column_3"),
         )
         val rows = listOf(
-            ThingId("Row_1")
+            ThingId("Row_1"),
         )
         val validationCache: Map<String, Either<CreateThingCommandPart, Thing>> = mapOf(
             "RNEW" to Either.right(createResource(ThingId("RNEW"))),
-            "ToBeDeleted" to Either.right(createResource(ThingId("ToBeDeleted")))
+            "ToBeDeleted" to Either.right(createResource(ThingId("ToBeDeleted"))),
         )
         val state = UpdateTableState().copy(
             validationCache = validationCache,
@@ -139,10 +139,10 @@ internal class TableCellsUpdaterUnitTest : MockkBaseTest {
             rows = rows,
             existingRows = existingRows,
             thingsToDelete = setOf(ThingId("ToBeDeleted")),
-            statementsToDelete = setOf(StatementId("SalreadyExists"))
+            statementsToDelete = setOf(StatementId("SalreadyExists")),
         )
         val expectedStatementsToDelete = state.statementsToDelete + setOf(
-            StatementId("S_Cell_Row_1_2--CSVW_Value--R789")
+            StatementId("S_Cell_Row_1_2--CSVW_Value--R789"),
         )
 
         every {
@@ -151,8 +151,8 @@ internal class TableCellsUpdaterUnitTest : MockkBaseTest {
                     contributorId = command.contributorId,
                     subjectId = ThingId("Cell_Row_1_2"),
                     predicateId = Predicates.csvwValue,
-                    objectId = ThingId("RNEW")
-                )
+                    objectId = ThingId("RNEW"),
+                ),
             )
         } returns StatementId("S1")
         every { unsafeResourceUseCases.delete(any(), command.contributorId) } just runs
@@ -180,8 +180,8 @@ internal class TableCellsUpdaterUnitTest : MockkBaseTest {
                     contributorId = command.contributorId,
                     subjectId = ThingId("Cell_Row_1_2"),
                     predicateId = Predicates.csvwValue,
-                    objectId = ThingId("RNEW")
-                )
+                    objectId = ThingId("RNEW"),
+                ),
             )
         }
         verify(exactly = 1) { unsafeResourceUseCases.delete(any(), command.contributorId) }
@@ -194,13 +194,13 @@ internal class TableCellsUpdaterUnitTest : MockkBaseTest {
             rows = listOf(
                 CreateRowCommand(
                     label = "header",
-                    data = listOf("Column_1_Title", "Column_2_Title", "Column_3_Title")
+                    data = listOf("Column_1_Title", "Column_2_Title", "Column_3_Title"),
                 ),
                 CreateRowCommand(
                     label = "Row Row_1 Label",
-                    data = listOf("R123", "R456", "RNEW")
-                )
-            )
+                    data = listOf("R123", "R456", "RNEW"),
+                ),
+            ),
         )
         val existingRows = listOf(
             createRowGraph(
@@ -209,13 +209,13 @@ internal class TableCellsUpdaterUnitTest : MockkBaseTest {
                     createResource(ThingId("R123")),
                     createResource(ThingId("R456")),
                     null,
-                )
+                ),
             ).let { rowGraph ->
                 rowGraph.copy(
                     cells = rowGraph.cells.toMutableList()
-                        .also { it[it.lastIndex] = null }
+                        .also { it[it.lastIndex] = null },
                 )
-            }
+            },
         )
         val columns = listOf(
             ThingId("Column_1"),
@@ -223,11 +223,11 @@ internal class TableCellsUpdaterUnitTest : MockkBaseTest {
             ThingId("Column_3"),
         )
         val rows = listOf(
-            ThingId("Row_1")
+            ThingId("Row_1"),
         )
         val validationCache: Map<String, Either<CreateThingCommandPart, Thing>> = mapOf(
             "RNEW" to Either.right(createResource(ThingId("RNEW"))),
-            "ToBeDeleted" to Either.right(createResource(ThingId("ToBeDeleted")))
+            "ToBeDeleted" to Either.right(createResource(ThingId("ToBeDeleted"))),
         )
         val state = UpdateTableState().copy(
             validationCache = validationCache,
@@ -235,7 +235,7 @@ internal class TableCellsUpdaterUnitTest : MockkBaseTest {
             rows = rows,
             existingRows = existingRows,
             thingsToDelete = setOf(ThingId("ToBeDeleted")),
-            statementsToDelete = setOf(StatementId("SalreadyExists"))
+            statementsToDelete = setOf(StatementId("SalreadyExists")),
         )
 
         every {
@@ -243,7 +243,7 @@ internal class TableCellsUpdaterUnitTest : MockkBaseTest {
                 contributorId = command.contributorId,
                 rowId = ThingId("Row_1"),
                 columnId = ThingId("Column_3"),
-                value = ThingId("RNEW")
+                value = ThingId("RNEW"),
             )
         } returns ThingId("NewCellId")
         every { unsafeResourceUseCases.delete(any(), command.contributorId) } just runs
@@ -270,7 +270,7 @@ internal class TableCellsUpdaterUnitTest : MockkBaseTest {
                 contributorId = command.contributorId,
                 rowId = ThingId("Row_1"),
                 columnId = ThingId("Column_3"),
-                value = ThingId("RNEW")
+                value = ThingId("RNEW"),
             )
         }
         verify(exactly = 1) { unsafeResourceUseCases.delete(any(), command.contributorId) }
@@ -283,17 +283,17 @@ internal class TableCellsUpdaterUnitTest : MockkBaseTest {
             rows = listOf(
                 CreateRowCommand(
                     label = "header",
-                    data = listOf("Column_1_Title", "Column_2_Title", "Column_3_Title")
+                    data = listOf("Column_1_Title", "Column_2_Title", "Column_3_Title"),
                 ),
                 CreateRowCommand(
                     label = "Row Row_1 Label",
-                    data = listOf("R123", "R456", "R789")
+                    data = listOf("R123", "R456", "R789"),
                 ),
                 CreateRowCommand(
                     label = "Row Row_2 Label",
-                    data = listOf("R321", "R654", "R987")
-                )
-            )
+                    data = listOf("R321", "R654", "R987"),
+                ),
+            ),
         )
         val existingRows = listOf(
             createRowGraph(
@@ -302,7 +302,7 @@ internal class TableCellsUpdaterUnitTest : MockkBaseTest {
                     createResource(ThingId("R123")),
                     createResource(ThingId("R456")),
                     createResource(ThingId("R789")),
-                )
+                ),
             ),
         )
         val columns = listOf(
@@ -318,7 +318,7 @@ internal class TableCellsUpdaterUnitTest : MockkBaseTest {
             "R321" to Either.right(createResource(ThingId("R321"))),
             "R654" to Either.right(createResource(ThingId("R654"))),
             "R987" to Either.right(createResource(ThingId("R987"))),
-            "ToBeDeleted" to Either.right(createResource(ThingId("ToBeDeleted")))
+            "ToBeDeleted" to Either.right(createResource(ThingId("ToBeDeleted"))),
         )
         val state = UpdateTableState().copy(
             validationCache = validationCache,
@@ -326,7 +326,7 @@ internal class TableCellsUpdaterUnitTest : MockkBaseTest {
             rows = rows,
             existingRows = existingRows,
             thingsToDelete = setOf(ThingId("ToBeDeleted")),
-            statementsToDelete = setOf(StatementId("SalreadyExists"))
+            statementsToDelete = setOf(StatementId("SalreadyExists")),
         )
 
         every {
@@ -334,7 +334,7 @@ internal class TableCellsUpdaterUnitTest : MockkBaseTest {
                 contributorId = command.contributorId,
                 rowId = ThingId("Row_2"),
                 columnId = any(),
-                value = any()
+                value = any(),
             )
         } returnsMany listOf(ThingId("NewCellId1"), ThingId("NewCellId2"), ThingId("NewCellId3"))
         every { unsafeResourceUseCases.delete(any(), command.contributorId) } just runs
@@ -361,7 +361,7 @@ internal class TableCellsUpdaterUnitTest : MockkBaseTest {
                 contributorId = command.contributorId,
                 rowId = ThingId("Row_2"),
                 columnId = ThingId("Column_1"),
-                value = ThingId("R321")
+                value = ThingId("R321"),
             )
         }
         verify(exactly = 1) {
@@ -369,7 +369,7 @@ internal class TableCellsUpdaterUnitTest : MockkBaseTest {
                 contributorId = command.contributorId,
                 rowId = ThingId("Row_2"),
                 columnId = ThingId("Column_2"),
-                value = ThingId("R654")
+                value = ThingId("R654"),
             )
         }
         verify(exactly = 1) {
@@ -377,7 +377,7 @@ internal class TableCellsUpdaterUnitTest : MockkBaseTest {
                 contributorId = command.contributorId,
                 rowId = ThingId("Row_2"),
                 columnId = ThingId("Column_3"),
-                value = ThingId("R987")
+                value = ThingId("R987"),
             )
         }
         verify(exactly = 1) { unsafeResourceUseCases.delete(any(), command.contributorId) }
@@ -390,22 +390,22 @@ internal class TableCellsUpdaterUnitTest : MockkBaseTest {
             rows = listOf(
                 CreateRowCommand(
                     label = "header",
-                    data = listOf("Column_1_Title", "Column_2_Title", "Column_3_Title")
+                    data = listOf("Column_1_Title", "Column_2_Title", "Column_3_Title"),
                 ),
                 CreateRowCommand(
                     label = "Row Row_1 Label",
-                    data = listOf("R123", "R456", "R789")
+                    data = listOf("R123", "R456", "R789"),
                 ),
-            )
+            ),
         )
         val existingRows = listOf(
             createRowGraph(
                 ThingId("Row_1"),
                 listOf(
                     createResource(ThingId("R123")),
-                    createResource(ThingId("R456"))
-                )
-            )
+                    createResource(ThingId("R456")),
+                ),
+            ),
         )
         val columns = listOf(
             ThingId("Column_1"),
@@ -417,7 +417,7 @@ internal class TableCellsUpdaterUnitTest : MockkBaseTest {
         )
         val validationCache: Map<String, Either<CreateThingCommandPart, Thing>> = mapOf(
             "R789" to Either.right(createResource(ThingId("R789"))),
-            "ToBeDeleted" to Either.right(createResource(ThingId("ToBeDeleted")))
+            "ToBeDeleted" to Either.right(createResource(ThingId("ToBeDeleted"))),
         )
         val state = UpdateTableState().copy(
             validationCache = validationCache,
@@ -425,7 +425,7 @@ internal class TableCellsUpdaterUnitTest : MockkBaseTest {
             rows = rows,
             existingRows = existingRows,
             thingsToDelete = setOf(ThingId("ToBeDeleted")),
-            statementsToDelete = setOf(StatementId("SalreadyExists"))
+            statementsToDelete = setOf(StatementId("SalreadyExists")),
         )
 
         every {
@@ -433,7 +433,7 @@ internal class TableCellsUpdaterUnitTest : MockkBaseTest {
                 contributorId = command.contributorId,
                 rowId = ThingId("Row_1"),
                 columnId = ThingId("Column_3"),
-                value = ThingId("R789")
+                value = ThingId("R789"),
             )
         } returns ThingId("NewCellId")
         every { unsafeResourceUseCases.delete(any(), command.contributorId) } just runs
@@ -460,7 +460,7 @@ internal class TableCellsUpdaterUnitTest : MockkBaseTest {
                 contributorId = command.contributorId,
                 rowId = ThingId("Row_1"),
                 columnId = ThingId("Column_3"),
-                value = ThingId("R789")
+                value = ThingId("R789"),
             )
         }
         verify(exactly = 1) { unsafeResourceUseCases.delete(any(), command.contributorId) }
@@ -473,13 +473,13 @@ internal class TableCellsUpdaterUnitTest : MockkBaseTest {
             rows = listOf(
                 CreateRowCommand(
                     label = "header",
-                    data = listOf("Column_1_Title", "Column_2_Title")
+                    data = listOf("Column_1_Title", "Column_2_Title"),
                 ),
                 CreateRowCommand(
                     label = "Row Row_1 Label",
-                    data = listOf("R123", "R456")
+                    data = listOf("R123", "R456"),
                 ),
-            )
+            ),
         )
         val existingRows = listOf(
             createRowGraph(
@@ -487,8 +487,8 @@ internal class TableCellsUpdaterUnitTest : MockkBaseTest {
                 listOf(
                     createResource(ThingId("R123")),
                     createResource(ThingId("R456")),
-                    createResource(ThingId("R789"))
-                )
+                    createResource(ThingId("R789")),
+                ),
             ),
         )
         val columns = listOf(
@@ -507,7 +507,7 @@ internal class TableCellsUpdaterUnitTest : MockkBaseTest {
             validationCache = mapOf(
                 "ToBeDeleted" to Either.right(createResource(ThingId("ToBeDeleted"))),
                 "Cell_Row_1_2" to Either.right(createResource(ThingId("Cell_Row_1_2"))),
-            )
+            ),
         )
         val expectedThingsToDelete = state.thingsToDelete + ThingId("Cell_Row_1_2")
         val expectedStatementsToDelete = state.statementsToDelete + existingRows.first().let { it.cells.last()!!.statementIds }
@@ -545,13 +545,13 @@ internal class TableCellsUpdaterUnitTest : MockkBaseTest {
             rows = listOf(
                 CreateRowCommand(
                     label = "header",
-                    data = listOf("Column_1_Title", "Column_2_Title", "Column_3_Title")
+                    data = listOf("Column_1_Title", "Column_2_Title", "Column_3_Title"),
                 ),
                 CreateRowCommand(
                     label = "Row Row_1 Label",
-                    data = listOf("R123", "R456", "R789")
+                    data = listOf("R123", "R456", "R789"),
                 ),
-            )
+            ),
         )
         val existingRows = listOf(
             createRowGraph(
@@ -559,16 +559,16 @@ internal class TableCellsUpdaterUnitTest : MockkBaseTest {
                 listOf(
                     createResource(ThingId("R123")),
                     createResource(ThingId("R456")),
-                    createResource(ThingId("R789"))
-                )
+                    createResource(ThingId("R789")),
+                ),
             ),
             createRowGraph(
                 ThingId("Row_2"),
                 listOf(
                     createResource(ThingId("R321")),
                     createResource(ThingId("R654")),
-                    createResource(ThingId("R987"))
-                )
+                    createResource(ThingId("R987")),
+                ),
             ),
         )
         val columns = listOf(
@@ -590,12 +590,12 @@ internal class TableCellsUpdaterUnitTest : MockkBaseTest {
                 "Cell_Row_2_0" to Either.right(createResource(ThingId("Cell_Row_2_0"))),
                 "Cell_Row_2_1" to Either.right(createResource(ThingId("Cell_Row_2_1"))),
                 "Cell_Row_2_2" to Either.right(createResource(ThingId("Cell_Row_2_2"))),
-            )
+            ),
         )
         val expectedThingsToDelete = state.thingsToDelete + setOf(
             ThingId("Cell_Row_2_0"),
             ThingId("Cell_Row_2_1"),
-            ThingId("Cell_Row_2_2")
+            ThingId("Cell_Row_2_2"),
         )
         val expectedStatementsToDelete = state.statementsToDelete + existingRows.last()
             .let { rowGraph -> rowGraph.cells.flatMap { it!!.statementIds } }

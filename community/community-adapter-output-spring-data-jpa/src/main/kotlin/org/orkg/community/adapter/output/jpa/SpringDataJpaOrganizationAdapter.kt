@@ -26,7 +26,7 @@ class SpringDataJpaOrganizationAdapter(
 ) : OrganizationRepository {
     override fun save(organization: Organization) {
         postgresOrganizationRepository.save(
-            postgresOrganizationRepository.toOrganizationEntity(organization, postgresObservatoryRepository)
+            postgresOrganizationRepository.toOrganizationEntity(organization, postgresObservatoryRepository),
         )
     }
 

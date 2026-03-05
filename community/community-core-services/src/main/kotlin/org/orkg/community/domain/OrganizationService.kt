@@ -85,8 +85,8 @@ class OrganizationService(
                         CreateImageUseCase.CreateCommand(
                             command.logo!!.data,
                             command.logo!!.mimeType,
-                            contributorId
-                        )
+                            contributorId,
+                        ),
                     )
                 }
             }

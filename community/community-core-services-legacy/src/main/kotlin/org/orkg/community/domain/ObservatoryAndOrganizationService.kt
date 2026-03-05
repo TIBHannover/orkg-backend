@@ -57,7 +57,7 @@ class ObservatoryAndOrganizationService(
             .orElseThrow { ContributorNotFound(contributorId) }
         user = user.copy(
             observatoryId = ObservatoryId.UNKNOWN,
-            organizationId = OrganizationId.UNKNOWN
+            organizationId = OrganizationId.UNKNOWN,
         )
         repository.save(user)
     }

@@ -36,14 +36,14 @@ internal class AbstractTemplatePropertyUpdaterStringLiteralPropertyUnitTest : Ab
         val contributorId = ContributorId(UUID.randomUUID())
         val oldProperty = createStringLiteralTemplateProperty()
         val newProperty = oldProperty.toStringLiteralTemplatePropertyCommand().copy(
-            pattern = "[0-9]+"
+            pattern = "[0-9]+",
         )
         val statements = listOf(
             createStatement(
                 subject = createResource(oldProperty.id),
                 predicate = createPredicate(Predicates.shPattern),
-                `object` = createLiteral(label = """\w+""")
-            )
+                `object` = createLiteral(label = """\w+"""),
+            ),
         )
 
         every {
@@ -52,7 +52,7 @@ internal class AbstractTemplatePropertyUpdaterStringLiteralPropertyUnitTest : Ab
                 contributorId = contributorId,
                 subjectId = oldProperty.id,
                 predicateId = Predicates.shPattern,
-                label = newProperty.pattern
+                label = newProperty.pattern,
             )
         } just runs
 
@@ -64,7 +64,7 @@ internal class AbstractTemplatePropertyUpdaterStringLiteralPropertyUnitTest : Ab
                 contributorId = contributorId,
                 subjectId = oldProperty.id,
                 predicateId = Predicates.shPattern,
-                label = newProperty.pattern
+                label = newProperty.pattern,
             )
         }
     }
@@ -73,7 +73,7 @@ internal class AbstractTemplatePropertyUpdaterStringLiteralPropertyUnitTest : Ab
     fun `Given an updated string literal template property, when old template property was of another type, it creates a pattern statement`() {
         val contributorId = ContributorId(UUID.randomUUID())
         val oldProperty = createOtherLiteralTemplateProperty().copy(
-            datatype = ClassReference(Classes.string, "String", null)
+            datatype = ClassReference(Classes.string, "String", null),
         )
         val newProperty = StringLiteralPropertyCommand(
             label = oldProperty.label,
@@ -83,14 +83,14 @@ internal class AbstractTemplatePropertyUpdaterStringLiteralPropertyUnitTest : Ab
             maxCount = oldProperty.maxCount,
             pattern = "[0-9]+",
             path = oldProperty.path.id,
-            datatype = Classes.string
+            datatype = Classes.string,
         )
         val statements = listOf(
             createStatement(
                 subject = createResource(oldProperty.id),
                 predicate = createPredicate(Predicates.shPattern),
-                `object` = createLiteral(label = """\w+""")
-            )
+                `object` = createLiteral(label = """\w+"""),
+            ),
         )
 
         every {
@@ -99,7 +99,7 @@ internal class AbstractTemplatePropertyUpdaterStringLiteralPropertyUnitTest : Ab
                 contributorId = contributorId,
                 subjectId = oldProperty.id,
                 predicateId = Predicates.shPattern,
-                label = newProperty.pattern
+                label = newProperty.pattern,
             )
         } just runs
 
@@ -111,7 +111,7 @@ internal class AbstractTemplatePropertyUpdaterStringLiteralPropertyUnitTest : Ab
                 contributorId = contributorId,
                 subjectId = oldProperty.id,
                 predicateId = Predicates.shPattern,
-                label = newProperty.pattern
+                label = newProperty.pattern,
             )
         }
     }
@@ -129,7 +129,7 @@ internal class AbstractTemplatePropertyUpdaterStringLiteralPropertyUnitTest : Ab
             minInclusive = null,
             maxInclusive = null,
             path = oldProperty.path.id,
-            datatype = Classes.string
+            datatype = Classes.string,
         )
         val statementToRemove = StatementId("S123")
         val statements = listOf(
@@ -137,8 +137,8 @@ internal class AbstractTemplatePropertyUpdaterStringLiteralPropertyUnitTest : Ab
                 id = statementToRemove,
                 subject = createResource(oldProperty.id),
                 predicate = createPredicate(Predicates.shPattern),
-                `object` = createLiteral(label = """\w+""")
-            )
+                `object` = createLiteral(label = """\w+"""),
+            ),
         )
 
         every { statementService.deleteAllById(setOf(statementToRemove)) } just runs

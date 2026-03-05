@@ -48,7 +48,7 @@ internal class ImportServiceClassUnitTest : AbstractImportServiceUnitTest() {
         val externalThing = ExternalThing(
             uri = ParsedIRI.create("https://example.org/classs/$ontologyId/$shortForm"),
             label = "class label",
-            description = "class description"
+            description = "class description",
         )
         val existingId = ThingId("existing")
 
@@ -71,7 +71,7 @@ internal class ImportServiceClassUnitTest : AbstractImportServiceUnitTest() {
         val externalThing = ExternalThing(
             uri = ParsedIRI.create("https://example.org/classs/$ontologyId/$shortForm"),
             label = "class label",
-            description = "class description"
+            description = "class description",
         )
         val contributorId = ContributorId(MockUserId.USER)
         val classId = ThingId("newClassId")
@@ -145,7 +145,7 @@ internal class ImportServiceClassUnitTest : AbstractImportServiceUnitTest() {
         val externalThing = ExternalThing(
             uri = uri,
             label = "class label",
-            description = "class description"
+            description = "class description",
         )
         val contributorId = ContributorId(MockUserId.USER)
         val classId = ThingId("newClassId")
@@ -169,8 +169,8 @@ internal class ImportServiceClassUnitTest : AbstractImportServiceUnitTest() {
                 CreateClassUseCase.CreateCommand(
                     contributorId = contributorId,
                     label = externalThing.label,
-                    uri = externalThing.uri
-                )
+                    uri = externalThing.uri,
+                ),
             )
         } returns classId
         mockDescriptionCreation(contributorId, externalThing, classId)
@@ -183,8 +183,8 @@ internal class ImportServiceClassUnitTest : AbstractImportServiceUnitTest() {
                 CreateClassUseCase.CreateCommand(
                     contributorId = contributorId,
                     label = externalThing.label,
-                    uri = externalThing.uri
-                )
+                    uri = externalThing.uri,
+                ),
             )
         }
         verifyDescriptionCreation(contributorId, externalThing, subjectId)

@@ -30,7 +30,7 @@ internal class SmartReviewResourceCreatorUnitTest : MockkBaseTest {
             classes = setOf(Classes.smartReview),
             extractionMethod = command.extractionMethod,
             observatoryId = command.observatories.firstOrNull(),
-            organizationId = command.organizations.firstOrNull()
+            organizationId = command.organizations.firstOrNull(),
         )
         val id = ThingId("R123")
 

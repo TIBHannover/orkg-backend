@@ -76,10 +76,10 @@ internal class ThingControllerUnitTest : MockMvcBaseTest("things") {
                 description(
                     """
                     A `GET` request provides information about a thing.
-                    """
+                    """,
                 )
                 pathParameters(
-                    parameterWithName("id").description("The identifier of the thing to retrieve.")
+                    parameterWithName("id").description("The identifier of the thing to retrieve."),
                 )
                 responseFields<ThingRepresentation>(
                     oneOf(
@@ -89,8 +89,8 @@ internal class ThingControllerUnitTest : MockMvcBaseTest("things") {
                             "resource" to ResourceRepresentation::class,
                             "literal" to LiteralRepresentation::class,
                             "predicate" to PredicateRepresentation::class,
-                        )
-                    )
+                        ),
+                    ),
                 )
                 throws(ThingNotFound::class)
             }
@@ -154,7 +154,7 @@ internal class ThingControllerUnitTest : MockMvcBaseTest("things") {
                     """
                     A `GET` request returns a <<sorting-and-pagination,paged>> list of <<things-fetch,things>>.
                     If no paging request parameters are provided, the default values will be used.
-                    """
+                    """,
                 )
                 pagedQueryParameters(
                     parameterWithName("q").description("A search term that must be contained in the label. (optional)").optional(),
@@ -185,7 +185,7 @@ internal class ThingControllerUnitTest : MockMvcBaseTest("things") {
                 includeClasses = includeClasses,
                 excludeClasses = excludeClasses,
                 observatoryId = observatoryId,
-                organizationId = organizationId
+                organizationId = organizationId,
             )
         }
         verify(exactly = 1) { statementService.countAllIncomingStatementsById(any<Set<ThingId>>()) }

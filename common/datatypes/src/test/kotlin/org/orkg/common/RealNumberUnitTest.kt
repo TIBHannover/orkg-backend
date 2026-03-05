@@ -17,7 +17,7 @@ internal class RealNumberUnitTest {
             "+12", "+0.12", "+00.12", "+.12", "+12.12", "+12.", "+12.0", "+12.00",
             "-1", "-0.1", "-00.1", "-.1", "-1.1", "-1.", "-1.0", "-1.00",
             "-12", "-0.12", "-00.12", "-.12", "-1.12", "-12.", "-12.0", "-12.00",
-        ]
+        ],
     )
     fun `Given a number, when instantiated, it returns success`(value: String) {
         shouldNotThrow<IllegalArgumentException> { RealNumber(value) }

@@ -29,7 +29,7 @@ internal class RosettaStoneTemplateResourceCreatorUnitTest : MockkBaseTest {
             label = command.label,
             classes = setOf(Classes.rosettaNodeShape),
             observatoryId = command.observatories.firstOrNull(),
-            organizationId = command.organizations.firstOrNull()
+            organizationId = command.organizations.firstOrNull(),
         )
         val id = ThingId("RosettaStoneTemplate")
 

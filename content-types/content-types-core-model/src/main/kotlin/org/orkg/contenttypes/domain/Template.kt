@@ -67,7 +67,7 @@ data class Template(
                 observatories = listOf(resource.observatoryId),
                 extractionMethod = resource.extractionMethod,
                 visibility = resource.visibility,
-                unlistedBy = resource.unlistedBy
+                unlistedBy = resource.unlistedBy,
             )
         }
     }
@@ -91,7 +91,7 @@ data class TemplateRelations(
                 predicate = directStatements
                     .wherePredicate(Predicates.templateOfPredicate)
                     .singleOrNull()
-                    ?.objectIdAndLabel()
+                    ?.objectIdAndLabel(),
             )
         }
     }
@@ -140,7 +140,7 @@ sealed interface TemplateProperty {
                             path = path,
                             createdBy = resource.createdBy,
                             createdAt = resource.createdAt,
-                            datatype = datatype
+                            datatype = datatype,
                         )
 
                         in Literals.XSD.entries.filter { it.isNumber }.map { it.`class` } -> NumberLiteralTemplateProperty(
@@ -158,7 +158,7 @@ sealed interface TemplateProperty {
                             path = path,
                             createdBy = resource.createdBy,
                             createdAt = resource.createdAt,
-                            datatype = datatype
+                            datatype = datatype,
                         )
 
                         else -> OtherLiteralTemplateProperty(
@@ -172,7 +172,7 @@ sealed interface TemplateProperty {
                             path = path,
                             createdBy = resource.createdBy,
                             createdAt = resource.createdAt,
-                            datatype = datatype
+                            datatype = datatype,
                         )
                     }
                 }
@@ -189,7 +189,7 @@ sealed interface TemplateProperty {
                         path = path,
                         createdBy = resource.createdBy,
                         createdAt = resource.createdAt,
-                        `class` = `class`
+                        `class` = `class`,
                     )
                 }
 
@@ -204,7 +204,7 @@ sealed interface TemplateProperty {
                         maxCount = maxCount,
                         path = path,
                         createdBy = resource.createdBy,
-                        createdAt = resource.createdAt
+                        createdAt = resource.createdAt,
                     )
                 }
             }

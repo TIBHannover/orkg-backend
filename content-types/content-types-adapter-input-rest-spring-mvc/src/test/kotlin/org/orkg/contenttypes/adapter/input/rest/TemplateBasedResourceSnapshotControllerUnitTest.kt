@@ -42,7 +42,7 @@ import java.util.Optional
 
 @ContextConfiguration(classes = [TemplateBasedResourceSnapshotController::class, ContentTypeControllerUnitTestConfiguration::class])
 @TestPropertySource(
-    properties = ["orkg.snapshots.resources.url-templates.frontend=https://orkg.org/resource/{id}/snapshots/{snapshotId}"]
+    properties = ["orkg.snapshots.resources.url-templates.frontend=https://orkg.org/resource/{id}/snapshots/{snapshotId}"],
 )
 @WebMvcTest(controllers = [TemplateBasedResourceSnapshotController::class])
 internal class TemplateBasedResourceSnapshotControllerUnitTest : MockMvcBaseTest("template-based-resource-snapshots") {
@@ -72,7 +72,7 @@ internal class TemplateBasedResourceSnapshotControllerUnitTest : MockMvcBaseTest
                 description(
                     """
                     A `GET` request returns a template based resource snapshot.
-                    """
+                    """,
                 )
                 pathParameters(
                     parameterWithName("id").description("The identifier the resource the snapshot was created of."),
@@ -161,7 +161,7 @@ internal class TemplateBasedResourceSnapshotControllerUnitTest : MockMvcBaseTest
                     """
                     A `GET` request returns a <<sorting-and-pagination,paged>> list of <<template-based-resource-snapshots-fetch,template based resource snapshots>>.
                     If no paging request parameters are provided, the default values will be used.
-                    """
+                    """,
                 )
                 pathParameters(
                     parameterWithName("id").description("The identifier the resource the snapshot was created for."),
@@ -203,7 +203,7 @@ internal class TemplateBasedResourceSnapshotControllerUnitTest : MockMvcBaseTest
                     A `POST` request creates a new template based resource snapshot.
                     The response will be `201 Created` when successful.
                     The template based resource snapshot (object) can be retrieved by following the URI in the `Location` header field.
-                    """
+                    """,
                 )
                 pathParameters(
                     parameterWithName("id").description("The identifier the resource the snapshot was created of."),
@@ -230,6 +230,6 @@ internal class TemplateBasedResourceSnapshotControllerUnitTest : MockMvcBaseTest
     private fun createTemplateBasedResourceSnapshotRequest() =
         CreateTemplateBasedResourceSnapshotRequest(
             templateId = ThingId("R456"),
-            registerHandle = true
+            registerHandle = true,
         )
 }

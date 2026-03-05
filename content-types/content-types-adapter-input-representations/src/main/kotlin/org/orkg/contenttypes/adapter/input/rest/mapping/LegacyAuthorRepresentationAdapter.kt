@@ -32,7 +32,7 @@ interface LegacyAuthorRepresentationAdapter : ResourceRepresentationAdapter {
     ): ComparisonAuthorRepresentation =
         ComparisonAuthorRepresentation(
             author.toSimpleAuthorRepresentation(usageCounts, formattedLabels),
-            info.map { it.toComparisonAuthorInfoRepresentation() }
+            info.map { it.toComparisonAuthorInfoRepresentation() },
         )
 
     fun SimpleAuthor.toSimpleAuthorRepresentation(
@@ -41,7 +41,7 @@ interface LegacyAuthorRepresentationAdapter : ResourceRepresentationAdapter {
     ): SimpleAuthorRepresentation =
         when (this) {
             is ResourceAuthor -> ResourceAuthorRepresentation(
-                value.toResourceRepresentation(usageCounts, formattedLabels)
+                value.toResourceRepresentation(usageCounts, formattedLabels),
             )
 
             is LiteralAuthor -> LiteralAuthorRepresentation(value)

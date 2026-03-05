@@ -28,8 +28,8 @@ import org.orkg.testing.annotations.Neo4jContainerUnitTest
         SpringDataNeo4jClassAdapter::class,
         GraphNeo4jConfiguration::class,
         ContentTypesNeo4jConfiguration::class,
-        CypherQueryBuilderConfiguration::class
-    ]
+        CypherQueryBuilderConfiguration::class,
+    ],
 )
 internal class SpringDataNeo4jLiteratureListAdapterContractTest(
     private val springDataNeo4jLiteratureListAdapter: LiteratureListRepository,
@@ -46,7 +46,7 @@ internal class SpringDataNeo4jLiteratureListAdapterContractTest(
                 springDataNeo4jClassAdapter,
                 springDataNeo4jLiteralAdapter,
                 springDataNeo4jResourceAdapter,
-                springDataNeo4jPredicateAdapter
-            )
+                springDataNeo4jPredicateAdapter,
+            ),
         )
     })

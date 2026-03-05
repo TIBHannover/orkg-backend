@@ -33,9 +33,9 @@ internal class IdentifierUpdaterUnitTest : MockkBaseTest {
                 createStatement(
                     subject = createResource(subjectId),
                     predicate = createPredicate(Predicates.hasORCID),
-                    `object` = createLiteral(label = orcid)
-                )
-            )
+                    `object` = createLiteral(label = orcid),
+                ),
+            ),
         )
 
         identifierUpdater.update(statements, contributorId, newIdentifiers, Identifiers.author, subjectId)
@@ -53,9 +53,9 @@ internal class IdentifierUpdaterUnitTest : MockkBaseTest {
                 createStatement(
                     subject = createResource(authorId),
                     predicate = createPredicate(Predicates.hasORCID),
-                    `object` = createLiteral(label = oldOrcid)
-                )
-            )
+                    `object` = createLiteral(label = oldOrcid),
+                ),
+            ),
         )
 
         every {
@@ -64,7 +64,7 @@ internal class IdentifierUpdaterUnitTest : MockkBaseTest {
                 contributorId = contributorId,
                 subjectId = authorId,
                 predicateId = any(),
-                literals = any<Set<String>>()
+                literals = any<Set<String>>(),
             )
         } just runs
 
@@ -77,7 +77,7 @@ internal class IdentifierUpdaterUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     subjectId = authorId,
                     predicateId = it.predicateId,
-                    literals = newIdentifiers[it.id].orEmpty().toSet()
+                    literals = newIdentifiers[it.id].orEmpty().toSet(),
                 )
             }
         }

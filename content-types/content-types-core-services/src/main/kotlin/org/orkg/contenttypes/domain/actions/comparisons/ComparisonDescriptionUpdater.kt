@@ -24,7 +24,7 @@ class ComparisonDescriptionUpdater(
                 contributorId = command.contributorId,
                 subjectId = command.comparisonId,
                 predicateId = Predicates.description,
-                label = command.description!!
+                label = command.description!!,
             )
         }
         return state

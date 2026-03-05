@@ -47,14 +47,14 @@ class ObservatoryEntity {
     @JoinTable(
         name = "observatories_organizations",
         joinColumns = [JoinColumn(name = "observatory_id", referencedColumnName = "id")],
-        inverseJoinColumns = [JoinColumn(name = "organization_id", referencedColumnName = "id")]
+        inverseJoinColumns = [JoinColumn(name = "organization_id", referencedColumnName = "id")],
     )
     var organizations: MutableSet<OrganizationEntity>? = mutableSetOf()
 
     @ElementCollection
     @CollectionTable(
         name = "observatories_sdgs",
-        joinColumns = [JoinColumn(name = "observatory_id", referencedColumnName = "id")]
+        joinColumns = [JoinColumn(name = "observatory_id", referencedColumnName = "id")],
     )
     @Column(name = "sdg_id", nullable = false)
     var sustainableDevelopmentGoals: MutableSet<String>? = mutableSetOf()
@@ -69,5 +69,5 @@ fun ObservatoryEntity.toObservatory() =
         members = users.orEmpty().map { ContributorId(it.id!!) }.toSet(),
         organizationIds = organizations.orEmpty().map { OrganizationId(it.id!!) }.toSet(),
         displayId = displayId!!,
-        sustainableDevelopmentGoals = sustainableDevelopmentGoals.orEmpty().map(::ThingId).toSet()
+        sustainableDevelopmentGoals = sustainableDevelopmentGoals.orEmpty().map(::ThingId).toSet(),
     )

@@ -34,7 +34,7 @@ MATCH (field)<-[:RELATED {predicate_id: 'P30'}]-(p:Paper)-[:RELATED {predicate_i
 MATCH (cont)-[:RELATED {predicate_id: '$BENCHMARK_PREDICATE'}]->(:$BENCHMARK_CLASS)-[:RELATED {predicate_id: '$DATASET_PREDICATE'}]->(ds:$DATASET_CLASS)
 MATCH (cont)-[:RELATED {predicate_id: 'P32'}]->(pr:Problem)
 MATCH (f:ResearchField)<-[:RELATED {predicate_id: 'P30'}]-(p)-[:RELATED {predicate_id: 'P31'}]->(cont)-[:RELATED {predicate_id: 'P32'}]->(pr)
-RETURN COUNT(DISTINCT pr) AS cnt"""
+RETURN COUNT(DISTINCT pr) AS cnt""",
     )
     fun findAllBenchmarkSummariesByResearchFieldId(id: ThingId, pageable: Pageable): Page<Neo4jBenchmarkSummary>
 
@@ -51,7 +51,7 @@ MATCH (f:ResearchField)<-[:RELATED {predicate_id: 'P30'}]-(p:Paper)-[:RELATED {p
 MATCH (cont)-[:RELATED {predicate_id: '$BENCHMARK_PREDICATE'}]->(:$BENCHMARK_CLASS)-[:RELATED {predicate_id: '$DATASET_PREDICATE'}]->(ds:$DATASET_CLASS)
 MATCH (cont)-[:RELATED {predicate_id: 'P32'}]->(pr:Problem)
 RETURN COUNT(DISTINCT pr) AS cnt
-    """
+    """,
     )
     fun findAllBenchmarkSummaries(pageable: Pageable): Page<Neo4jBenchmarkSummary>
 }

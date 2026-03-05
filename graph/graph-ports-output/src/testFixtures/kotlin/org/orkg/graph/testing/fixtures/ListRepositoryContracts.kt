@@ -42,10 +42,10 @@ fun <
     val fabricator = Fabrikate(
         FabricatorConfig(
             collectionSizes = 12..12,
-            nullableStrategy = FabricatorConfig.NullableStrategy.NeverSetToNull // FIXME: because "id" is nullable
+            nullableStrategy = FabricatorConfig.NullableStrategy.NeverSetToNull, // FIXME: because "id" is nullable
         )
             .withStandardMappings()
-            .withGraphMappings()
+            .withGraphMappings(),
     )
 
     describe("saving a list") {
@@ -78,8 +78,8 @@ fun <
                     ThingId("R2"),
                     ThingId("R3"),
                     ThingId("R4"),
-                    ThingId("R5")
-                )
+                    ThingId("R5"),
+                ),
             )
             original.elements.forEach {
                 resourceRepository.save(createResource(id = it))
@@ -90,7 +90,7 @@ fun <
             val modifiedElements = listOf(ThingId("R2"), ThingId("R4"))
             val modified = found.copy(
                 label = modifiedLabel,
-                elements = modifiedElements
+                elements = modifiedElements,
             )
             modifiedElements.forEach {
                 resourceRepository.save(createResource(id = it))
@@ -145,7 +145,7 @@ fun <
         context("by id") {
             val elements = (0 until 5).map { fabricator.random<Resource>() }
             val list = fabricator.random<List>().copy(
-                elements = elements.map { it.id }
+                elements = elements.map { it.id },
             )
 
             elements.forEach(resourceRepository::save)
@@ -153,7 +153,7 @@ fun <
 
             val result = repository.findAllElementsById(
                 list.id,
-                PageRequest.of(0, 5, Sort.by("created_at"))
+                PageRequest.of(0, 5, Sort.by("created_at")),
             )
 
             it("returns the correct result") {

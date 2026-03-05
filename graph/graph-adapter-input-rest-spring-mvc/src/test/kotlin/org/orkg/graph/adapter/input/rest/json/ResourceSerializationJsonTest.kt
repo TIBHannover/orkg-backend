@@ -158,7 +158,7 @@ internal class ResourceSerializationJsonTest {
             visibility = Visibility.FEATURED,
             verified = false,
             extractionMethod = ExtractionMethod.UNKNOWN,
-            modifiable = true
+            modifiable = true,
         )
 
         val expected = modelJson("orkg/resource")

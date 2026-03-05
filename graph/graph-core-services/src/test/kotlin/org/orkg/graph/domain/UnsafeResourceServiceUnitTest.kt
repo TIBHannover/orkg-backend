@@ -38,7 +38,7 @@ internal class UnsafeResourceServiceUnitTest : MockkBaseTest {
             extractionMethod = ExtractionMethod.MANUAL,
             observatoryId = ObservatoryId("1255bbe4-1850-4033-ba10-c80d4b370e3e"),
             organizationId = OrganizationId("56a4b65e-de56-0d4b-255b-255b372b65ef"),
-            modifiable = false
+            modifiable = false,
         )
 
         every { repository.save(any()) } just runs
@@ -60,7 +60,7 @@ internal class UnsafeResourceServiceUnitTest : MockkBaseTest {
                     it.verified shouldBe null
                     it.unlistedBy shouldBe null
                     it.modifiable shouldBe command.modifiable
-                }
+                },
             )
         }
     }
@@ -71,7 +71,7 @@ internal class UnsafeResourceServiceUnitTest : MockkBaseTest {
         val contributorId = ContributorId(MockUserId.USER)
         val command = CreateResourceUseCase.CreateCommand(
             contributorId = contributorId,
-            label = "label"
+            label = "label",
         )
 
         every { repository.nextIdentity() } returns id
@@ -95,7 +95,7 @@ internal class UnsafeResourceServiceUnitTest : MockkBaseTest {
                     it.verified shouldBe null
                     it.unlistedBy shouldBe null
                     it.modifiable shouldBe command.modifiable
-                }
+                },
             )
         }
     }
@@ -127,8 +127,8 @@ internal class UnsafeResourceServiceUnitTest : MockkBaseTest {
                 extractionMethod = extractionMethod,
                 modifiable = modifiable,
                 visibility = visibility,
-                verified = verified
-            )
+                verified = verified,
+            ),
         )
 
         verify(exactly = 1) { repository.findById(resource.id) }
@@ -143,7 +143,7 @@ internal class UnsafeResourceServiceUnitTest : MockkBaseTest {
                     it.modifiable shouldBe modifiable
                     it.visibility shouldBe visibility
                     it.verified shouldBe verified
-                }
+                },
             )
         }
     }
@@ -162,7 +162,7 @@ internal class UnsafeResourceServiceUnitTest : MockkBaseTest {
         val command = UpdateResourceUseCase.UpdateCommand(
             id = resource.id,
             contributorId = ContributorId(MockUserId.USER),
-            classes = setOf(Classes.list)
+            classes = setOf(Classes.list),
         )
 
         every { repository.findById(resource.id) } returns Optional.of(resource)
@@ -181,7 +181,7 @@ internal class UnsafeResourceServiceUnitTest : MockkBaseTest {
         val command = UpdateResourceUseCase.UpdateCommand(
             id = resource.id,
             contributorId = ContributorId(MockUserId.USER),
-            label = label
+            label = label,
         )
 
         every { repository.findById(resource.id) } returns Optional.of(resource)
@@ -241,7 +241,7 @@ internal class UnsafeResourceServiceUnitTest : MockkBaseTest {
         val command = UpdateResourceUseCase.UpdateCommand(
             id = resource.id,
             contributorId = ContributorId(MockUserId.CURATOR),
-            visibility = Visibility.UNLISTED
+            visibility = Visibility.UNLISTED,
         )
 
         every { repository.findById(resource.id) } returns Optional.of(resource)
@@ -257,12 +257,12 @@ internal class UnsafeResourceServiceUnitTest : MockkBaseTest {
     fun `Given a resource update command, when visibility is changed from unlisted to something else, it clears the unlisted by metadata`() {
         val resource = createResource(
             visibility = Visibility.UNLISTED,
-            unlistedBy = ContributorId(MockUserId.USER)
+            unlistedBy = ContributorId(MockUserId.USER),
         )
         val command = UpdateResourceUseCase.UpdateCommand(
             id = resource.id,
             contributorId = ContributorId(MockUserId.CURATOR),
-            visibility = Visibility.DEFAULT
+            visibility = Visibility.DEFAULT,
         )
 
         every { repository.findById(resource.id) } returns Optional.of(resource)
@@ -278,13 +278,13 @@ internal class UnsafeResourceServiceUnitTest : MockkBaseTest {
     fun `Given a resource update command, when visibility is changed from unlisted to unlisted, it keeps the unlisted by metadata`() {
         val resource = createResource(
             visibility = Visibility.UNLISTED,
-            unlistedBy = ContributorId(MockUserId.ADMIN)
+            unlistedBy = ContributorId(MockUserId.ADMIN),
         )
         val command = UpdateResourceUseCase.UpdateCommand(
             id = resource.id,
             contributorId = ContributorId(MockUserId.CURATOR),
             label = "some change",
-            visibility = Visibility.UNLISTED
+            visibility = Visibility.UNLISTED,
         )
 
         every { repository.findById(resource.id) } returns Optional.of(resource)

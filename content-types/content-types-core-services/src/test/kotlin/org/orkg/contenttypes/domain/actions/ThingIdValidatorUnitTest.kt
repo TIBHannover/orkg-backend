@@ -28,7 +28,7 @@ internal class ThingIdValidatorUnitTest : MockkBaseTest {
         val id = "#temp"
         val command = CreateResourceCommandPart("label")
         val thingCommands = mapOf(
-            id to command
+            id to command,
         )
         val validationCache = mutableMapOf<String, Either<CreateThingCommandPart, Thing>>()
 
@@ -43,7 +43,7 @@ internal class ThingIdValidatorUnitTest : MockkBaseTest {
         val command = CreateResourceCommandPart("label")
         val thingCommands = emptyMap<String, CreateThingCommandPart>()
         val validationCache = mutableMapOf<String, Either<CreateThingCommandPart, Thing>>(
-            id to Either.left(command)
+            id to Either.left(command),
         )
 
         thingIdValidator.validate(id, thingCommands, validationCache) shouldBe Either.left(command)
@@ -84,7 +84,7 @@ internal class ThingIdValidatorUnitTest : MockkBaseTest {
         val id = thing.id.value
         val thingCommands = emptyMap<String, CreateThingCommandPart>()
         val validationCache = mutableMapOf<String, Either<CreateThingCommandPart, Thing>>(
-            id to Either.right(thing)
+            id to Either.right(thing),
         )
 
         thingIdValidator.validate(id, thingCommands, validationCache) shouldBe Either.right(thing)

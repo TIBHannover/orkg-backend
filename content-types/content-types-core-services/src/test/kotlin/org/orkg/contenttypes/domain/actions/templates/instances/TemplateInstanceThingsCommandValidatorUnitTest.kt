@@ -26,7 +26,7 @@ internal class TemplateInstanceThingsCommandValidatorUnitTest : MockkBaseTest {
         val state = UpdateTemplateInstanceState()
 
         val validationCache = mapOf<String, Either<CreateThingCommandPart, Thing>>(
-            "R100" to Either.right(createResource())
+            "R100" to Either.right(createResource()),
         )
 
         every { thingsCommandValidator.validate(command, state.validationCache) } returns validationCache

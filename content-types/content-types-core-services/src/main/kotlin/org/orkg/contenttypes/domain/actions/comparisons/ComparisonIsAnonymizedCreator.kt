@@ -23,7 +23,7 @@ class ComparisonIsAnonymizedCreator(
                 subjectId = state.comparisonId!!,
                 predicateId = Predicates.description,
                 label = "true",
-                datatype = Literals.XSD.BOOLEAN.prefixedUri
+                datatype = Literals.XSD.BOOLEAN.prefixedUri,
             )
         }
         return state

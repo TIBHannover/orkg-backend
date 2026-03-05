@@ -87,7 +87,7 @@ class InMemoryStatementRepository(private val inMemoryGraph: InMemoryGraph) :
             createdAtEnd = null,
             objectClasses = emptySet(),
             objectId = null,
-            objectLabel = null
+            objectLabel = null,
         )
 
     override fun findAll(
@@ -116,8 +116,8 @@ class InMemoryStatementRepository(private val inMemoryGraph: InMemoryGraph) :
                 createdAtEnd,
                 objectClasses,
                 objectId,
-                objectLabel
-            )
+                objectLabel,
+            ),
         )
 
     override fun count(
@@ -143,8 +143,8 @@ class InMemoryStatementRepository(private val inMemoryGraph: InMemoryGraph) :
                 createdAtEnd,
                 objectClasses,
                 objectId,
-                objectLabel
-            )
+                objectLabel,
+            ),
         ).toLong()
 
     private fun buildFindAllPredicate(
@@ -292,7 +292,7 @@ class InMemoryStatementRepository(private val inMemoryGraph: InMemoryGraph) :
                 }?.let {
                     it.`object` as Literal
                 }
-            }
+            },
         )
 
     override fun findByDOI(doi: String, classes: Set<ThingId>): Optional<Resource> =
@@ -332,7 +332,7 @@ class InMemoryStatementRepository(private val inMemoryGraph: InMemoryGraph) :
             setOf(
                 it.subject.createdBy,
                 it.`object`.createdBy,
-                it.createdBy
+                it.createdBy,
             )
         }.flatten().distinct()
             .sortedBy { it.toString() }
@@ -352,7 +352,7 @@ class InMemoryStatementRepository(private val inMemoryGraph: InMemoryGraph) :
                 setOf(
                     ResourceContributor(it.subject.createdBy, it.subject.createdAt),
                     ResourceContributor(it.`object`.createdBy, it.`object`.createdAt),
-                    ResourceContributor(it.createdBy, it.createdAt!!)
+                    ResourceContributor(it.createdBy, it.createdAt!!),
                 )
             }
             .flatten()
@@ -470,7 +470,7 @@ class InMemoryStatementRepository(private val inMemoryGraph: InMemoryGraph) :
                     it.subject == statement.`object` && it !in visited && expansionFilter(it, level + 1)
                 }.map {
                     it to level + 1
-                }
+                },
             )
         }
         return visited

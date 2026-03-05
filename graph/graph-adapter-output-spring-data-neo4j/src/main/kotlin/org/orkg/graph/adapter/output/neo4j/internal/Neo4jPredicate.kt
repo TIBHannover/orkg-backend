@@ -14,7 +14,7 @@ class Neo4jPredicate : Neo4jThing() {
         label = label!!,
         createdAt = created_at!!,
         createdBy = created_by,
-        modifiable = modifiable!!
+        modifiable = modifiable!!,
     )
 
     override fun toThing() = toPredicate()

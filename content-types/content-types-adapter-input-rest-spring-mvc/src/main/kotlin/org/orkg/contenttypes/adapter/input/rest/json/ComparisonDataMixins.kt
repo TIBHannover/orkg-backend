@@ -32,8 +32,8 @@ abstract class ComparisonIndexCellMixin(
 @JsonSubTypes(
     value = [
         JsonSubTypes.Type(EmptyComparisonTargetCell::class),
-        JsonSubTypes.Type(ConfiguredComparisonTargetCell::class)
-    ]
+        JsonSubTypes.Type(ConfiguredComparisonTargetCell::class),
+    ],
 )
 abstract class ComparisonTargetCellMixin
 

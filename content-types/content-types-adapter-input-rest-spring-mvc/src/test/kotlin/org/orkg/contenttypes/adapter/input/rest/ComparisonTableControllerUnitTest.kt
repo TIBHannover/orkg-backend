@@ -61,10 +61,10 @@ internal class ComparisonTableControllerUnitTest : MockMvcBaseTest("comparison-t
                 description(
                     """
                     A `GET` request provides information about a comparison table.
-                    """
+                    """,
                 )
                 pathParameters(
-                    parameterWithName("id").description("The identifier of the comparison to fetch the table paths for.")
+                    parameterWithName("id").description("The identifier of the comparison to fetch the table paths for."),
                 )
                 responseFields<ComparisonTableRepresentation>(comparisonTableResponseFields())
                 throws(ComparisonNotFound::class, ComparisonTableNotFound::class)
@@ -91,10 +91,10 @@ internal class ComparisonTableControllerUnitTest : MockMvcBaseTest("comparison-t
                 description(
                     """
                     A `GET` request returns all possible row paths for a comparison table (up to a depth of 10).
-                    """
+                    """,
                 )
                 pathParameters(
-                    parameterWithName("id").description("The identifier of the comparison to fetch the predicate paths for.")
+                    parameterWithName("id").description("The identifier of the comparison to fetch the predicate paths for."),
                 )
                 listResponseFields<LabeledComparisonPathRepresentation>(labeledComparisonPathResponseFields())
             }
@@ -123,13 +123,13 @@ internal class ComparisonTableControllerUnitTest : MockMvcBaseTest("comparison-t
                     A `PUT` request updates a comparison table configuration with all the given parameters.
                     The response will be `204 No Content` when successful.
                     The updated comparison table (object) can be retrieved by following the URI in the `Location` header field.
-                    """
+                    """,
                 )
                 pathParameters(
-                    parameterWithName("id").description("The identifier of the comparison.")
+                    parameterWithName("id").description("The identifier of the comparison."),
                 )
                 responseHeaders(
-                    headerWithName("Location").description("The uri path where the updated comparison contents can be fetched from.")
+                    headerWithName("Location").description("The uri path where the updated comparison contents can be fetched from."),
                 )
                 requestFields<UpdateComparisonTableRequest>(
                     fieldWithPath("selected_paths[]").description("The list of paths that define the rows of the comparison table."),

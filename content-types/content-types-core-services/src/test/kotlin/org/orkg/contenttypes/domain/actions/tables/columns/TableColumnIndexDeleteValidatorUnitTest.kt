@@ -27,7 +27,7 @@ internal class TableColumnIndexDeleteValidatorUnitTest {
             table.copy(
                 rows = table.rows.map { row ->
                     row.copy(data = row.data.take(1))
-                }
+                },
             )
         }
         val state = DeleteTableColumnState(table = table)

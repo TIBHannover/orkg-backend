@@ -51,7 +51,7 @@ class SpringDataNeo4jClassAdapter(
         evict = [
             CacheEvict(key = "#c.id", cacheNames = [CLASS_ID_TO_CLASS_CACHE]),
             CacheEvict(key = "#c.id", cacheNames = [THING_ID_TO_THING_CACHE]),
-        ]
+        ],
     )
     override fun save(c: Class) {
         neo4jRepository.save(c.toNeo4jClass())
@@ -63,7 +63,7 @@ class SpringDataNeo4jClassAdapter(
             label = null,
             createdBy = null,
             createdAtStart = null,
-            createdAtEnd = null
+            createdAtEnd = null,
         )
 
     override fun findAll(
@@ -113,8 +113,8 @@ class SpringDataNeo4jClassAdapter(
                     orderByOptimizations(
                         node = node,
                         sort = sort,
-                        properties = arrayOf("id", "label", "created_at", "created_by")
-                    )
+                        properties = arrayOf("id", "label", "created_at", "created_by"),
+                    ),
                 )
                 .with(variables)
                 .orderBy(
@@ -122,14 +122,14 @@ class SpringDataNeo4jClassAdapter(
                         listOf(
                             size(node.property("label")).ascending(),
                             score.descending(),
-                            node.property("created_at").ascending()
+                            node.property("created_at").ascending(),
                         )
                     } else {
                         sort.toSortItems(
                             node = node,
-                            knownProperties = arrayOf("id", "label", "created_at", "created_by")
+                            knownProperties = arrayOf("id", "label", "created_at", "created_by"),
                         )
-                    }
+                    },
                 )
                 .returning(node)
         }
@@ -152,7 +152,7 @@ class SpringDataNeo4jClassAdapter(
         evict = [
             CacheEvict(allEntries = true),
             CacheEvict(allEntries = true, cacheNames = [THING_ID_TO_THING_CACHE]),
-        ]
+        ],
     )
     override fun deleteAll() {
         neo4jRepository.deleteAll()

@@ -13,7 +13,7 @@ class SmartReviewSectionExistenceDeleteValidator(
         smartReviewService: SmartReviewService,
         resourceRepository: ResourceRepository,
     ) : this(
-        AbstractSmartReviewExistenceValidator(smartReviewService, resourceRepository)
+        AbstractSmartReviewExistenceValidator(smartReviewService, resourceRepository),
     )
 
     override fun invoke(command: DeleteSmartReviewSectionCommand, state: State): State =

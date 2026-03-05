@@ -37,7 +37,7 @@ internal class LiteratureListSectionCreatorUnitTest : MockkBaseTest {
     private val literatureListSectionCreator = LiteratureListSectionCreator(
         unsafeStatementUseCases,
         abstractLiteratureListSectionCreator,
-        statementCollectionPropertyUpdater
+        statementCollectionPropertyUpdater,
     )
 
     @ParameterizedTest
@@ -49,7 +49,7 @@ internal class LiteratureListSectionCreatorUnitTest : MockkBaseTest {
         every {
             abstractLiteratureListSectionCreator.create(
                 contributorId = command.contributorId,
-                section = command as AbstractLiteratureListSectionCommand
+                section = command as AbstractLiteratureListSectionCommand,
             )
         } returns sectionId
         every {
@@ -58,8 +58,8 @@ internal class LiteratureListSectionCreatorUnitTest : MockkBaseTest {
                     contributorId = command.contributorId,
                     subjectId = command.literatureListId,
                     predicateId = Predicates.hasSection,
-                    objectId = sectionId
-                )
+                    objectId = sectionId,
+                ),
             )
         } returns StatementId("S1")
 
@@ -72,7 +72,7 @@ internal class LiteratureListSectionCreatorUnitTest : MockkBaseTest {
         verify(exactly = 1) {
             abstractLiteratureListSectionCreator.create(
                 contributorId = command.contributorId,
-                section = command as AbstractLiteratureListSectionCommand
+                section = command as AbstractLiteratureListSectionCommand,
             )
         }
         verify(exactly = 1) {
@@ -81,8 +81,8 @@ internal class LiteratureListSectionCreatorUnitTest : MockkBaseTest {
                     contributorId = command.contributorId,
                     subjectId = command.literatureListId,
                     predicateId = Predicates.hasSection,
-                    objectId = sectionId
-                )
+                    objectId = sectionId,
+                ),
             )
         }
     }
@@ -95,22 +95,22 @@ internal class LiteratureListSectionCreatorUnitTest : MockkBaseTest {
             createStatement(
                 subject = createResource(command.literatureListId),
                 predicate = createPredicate(Predicates.hasSection),
-                `object` = createResource(ThingId("Section1"))
+                `object` = createResource(ThingId("Section1")),
             ),
             createStatement(
                 subject = createResource(command.literatureListId),
                 predicate = createPredicate(Predicates.hasSection),
-                `object` = createResource(ThingId("Section2"))
-            )
+                `object` = createResource(ThingId("Section2")),
+            ),
         )
         val state = CreateLiteratureListSectionState().copy(
-            statements = statements.groupBy { it.subject.id }
+            statements = statements.groupBy { it.subject.id },
         )
 
         every {
             abstractLiteratureListSectionCreator.create(
                 contributorId = command.contributorId,
-                section = command as AbstractLiteratureListSectionCommand
+                section = command as AbstractLiteratureListSectionCommand,
             )
         } returns sectionId
         every {
@@ -119,7 +119,7 @@ internal class LiteratureListSectionCreatorUnitTest : MockkBaseTest {
                 contributorId = command.contributorId,
                 subjectId = command.literatureListId,
                 predicateId = Predicates.hasSection,
-                objects = any<List<ThingId>>()
+                objects = any<List<ThingId>>(),
             )
         } just runs
 
@@ -132,7 +132,7 @@ internal class LiteratureListSectionCreatorUnitTest : MockkBaseTest {
         verify(exactly = 1) {
             abstractLiteratureListSectionCreator.create(
                 contributorId = command.contributorId,
-                section = command as AbstractLiteratureListSectionCommand
+                section = command as AbstractLiteratureListSectionCommand,
             )
         }
         verify(exactly = 1) {
@@ -141,7 +141,7 @@ internal class LiteratureListSectionCreatorUnitTest : MockkBaseTest {
                 contributorId = command.contributorId,
                 subjectId = command.literatureListId,
                 predicateId = Predicates.hasSection,
-                objects = listOf(ThingId("Section1"), sectionId, ThingId("Section2"))
+                objects = listOf(ThingId("Section1"), sectionId, ThingId("Section2")),
             )
         }
     }
@@ -154,22 +154,22 @@ internal class LiteratureListSectionCreatorUnitTest : MockkBaseTest {
             createStatement(
                 subject = createResource(command.literatureListId),
                 predicate = createPredicate(Predicates.hasSection),
-                `object` = createResource(ThingId("Section1"))
+                `object` = createResource(ThingId("Section1")),
             ),
             createStatement(
                 subject = createResource(command.literatureListId),
                 predicate = createPredicate(Predicates.hasSection),
-                `object` = createResource(ThingId("Section2"))
-            )
+                `object` = createResource(ThingId("Section2")),
+            ),
         )
         val state = CreateLiteratureListSectionState().copy(
-            statements = statements.groupBy { it.subject.id }
+            statements = statements.groupBy { it.subject.id },
         )
 
         every {
             abstractLiteratureListSectionCreator.create(
                 contributorId = command.contributorId,
-                section = command as AbstractLiteratureListSectionCommand
+                section = command as AbstractLiteratureListSectionCommand,
             )
         } returns sectionId
         every {
@@ -178,7 +178,7 @@ internal class LiteratureListSectionCreatorUnitTest : MockkBaseTest {
                 contributorId = command.contributorId,
                 subjectId = command.literatureListId,
                 predicateId = Predicates.hasSection,
-                objects = any<List<ThingId>>()
+                objects = any<List<ThingId>>(),
             )
         } just runs
 
@@ -191,7 +191,7 @@ internal class LiteratureListSectionCreatorUnitTest : MockkBaseTest {
         verify(exactly = 1) {
             abstractLiteratureListSectionCreator.create(
                 contributorId = command.contributorId,
-                section = command as AbstractLiteratureListSectionCommand
+                section = command as AbstractLiteratureListSectionCommand,
             )
         }
         verify(exactly = 1) {
@@ -200,7 +200,7 @@ internal class LiteratureListSectionCreatorUnitTest : MockkBaseTest {
                 contributorId = command.contributorId,
                 subjectId = command.literatureListId,
                 predicateId = Predicates.hasSection,
-                objects = listOf(ThingId("Section1"), ThingId("Section2"), sectionId)
+                objects = listOf(ThingId("Section1"), ThingId("Section2"), sectionId),
             )
         }
     }
@@ -209,7 +209,7 @@ internal class LiteratureListSectionCreatorUnitTest : MockkBaseTest {
         @JvmStatic
         fun createLiteratureListSectionCommands(): Stream<Arguments> = Stream.of(
             Arguments.of(createLiteratureListListSectionCommand()),
-            Arguments.of(createLiteratureListTextSectionCommand())
+            Arguments.of(createLiteratureListTextSectionCommand()),
         )
     }
 }

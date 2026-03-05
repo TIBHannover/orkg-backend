@@ -63,7 +63,7 @@ class Neo4jTestConfiguration {
     authorities = [],
     userId = MockUserId.USER,
     username = "Test User",
-    email = "user@example.org"
+    email = "user@example.org",
 )
 annotation class TestWithMockUser
 
@@ -72,7 +72,7 @@ annotation class TestWithMockUser
     authorities = ["ROLE_CURATOR"],
     userId = MockUserId.CURATOR,
     username = "Test Curator",
-    email = "curator@example.org"
+    email = "curator@example.org",
 )
 annotation class TestWithMockCurator
 
@@ -81,6 +81,6 @@ annotation class TestWithMockCurator
     authorities = ["ROLE_ADMIN"],
     userId = MockUserId.ADMIN,
     username = "Test Admin",
-    email = "admin@example.org"
+    email = "admin@example.org",
 )
 annotation class TestWithMockAdmin

@@ -17,7 +17,7 @@ class LiteratureListResearchFieldUpdater(
         statementService: StatementUseCases,
         unsafeStatementUseCases: UnsafeStatementUseCases,
     ) : this(
-        StatementCollectionPropertyUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases)
+        StatementCollectionPropertyUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases),
     )
 
     override fun invoke(command: UpdateLiteratureListCommand, state: State): State {
@@ -27,7 +27,7 @@ class LiteratureListResearchFieldUpdater(
                 contributorId = command.contributorId,
                 subjectId = command.literatureListId,
                 predicateId = Predicates.hasResearchField,
-                objects = command.researchFields!!.toSet()
+                objects = command.researchFields!!.toSet(),
             )
         }
         return state

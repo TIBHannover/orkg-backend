@@ -26,8 +26,8 @@ import org.springframework.data.neo4j.core.fetchAs
         SpringDataNeo4jClassAdapter::class,
         SpringDataNeo4jClassHierarchyAdapter::class,
         GraphNeo4jConfiguration::class,
-        CypherQueryBuilderConfiguration::class
-    ]
+        CypherQueryBuilderConfiguration::class,
+    ],
 )
 internal class SpringDataNeo4jResourceAdapterContractTests(
     private val springDataNeo4jResourceAdapter: ResourceRepository,
@@ -39,8 +39,8 @@ internal class SpringDataNeo4jResourceAdapterContractTests(
             resourceRepositoryContract(
                 springDataNeo4jResourceAdapter,
                 springDataNeo4jClassAdapter,
-                springDataNeo4jClassRelationAdapter
-            )
+                springDataNeo4jClassRelationAdapter,
+            ),
         )
         include(neo4jResourceRepositoryContract(springDataNeo4jResourceAdapter, neo4jClient))
 

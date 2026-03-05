@@ -22,8 +22,8 @@ import org.orkg.testing.annotations.Neo4jContainerUnitTest
         SpringDataNeo4jPredicateAdapter::class,
         GraphNeo4jConfiguration::class,
         ContentTypesNeo4jConfiguration::class,
-        CypherQueryBuilderConfiguration::class
-    ]
+        CypherQueryBuilderConfiguration::class,
+    ],
 )
 internal class SpringDataNeo4jResearchFieldHierarchyAdapterContractTest(
     private val springDataNeo4jResearchFieldHierarchyAdapter: ResearchFieldHierarchyRepository,
@@ -36,8 +36,8 @@ internal class SpringDataNeo4jResearchFieldHierarchyAdapterContractTest(
                 springDataNeo4jResearchFieldHierarchyAdapter,
                 springDataNeo4jStatementAdapter,
                 springDataNeo4jResourceAdapter,
-                springDataNeo4jPredicateAdapter
-            )
+                springDataNeo4jPredicateAdapter,
+            ),
         )
 
         afterSpec {

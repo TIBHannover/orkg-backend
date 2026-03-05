@@ -63,7 +63,7 @@ internal class StatementServiceUnitTest :
                 subjectId = subject.id,
                 predicateId = predicate.id,
                 objectId = `object`.id,
-                modifiable = true
+                modifiable = true,
             )
             val expected = GeneralStatement(
                 id = expectedId,
@@ -73,7 +73,7 @@ internal class StatementServiceUnitTest :
                 createdAt = OffsetDateTime.now(fixedClock),
                 createdBy = contributorId,
                 modifiable = true,
-                index = null
+                index = null,
             )
             context("when an id is given") {
                 it("then it does not get a new id") {
@@ -85,7 +85,7 @@ internal class StatementServiceUnitTest :
                             subjectId = subject.id,
                             predicateId = predicate.id,
                             objectId = `object`.id,
-                            pageable = PageRequests.SINGLE
+                            pageable = PageRequests.SINGLE,
                         )
                     } returns pageOf()
                     every { statementRepository.findByStatementId(expectedId) } returns Optional.empty()
@@ -103,7 +103,7 @@ internal class StatementServiceUnitTest :
                             subjectId = subject.id,
                             predicateId = predicate.id,
                             objectId = `object`.id,
-                            pageable = PageRequests.SINGLE
+                            pageable = PageRequests.SINGLE,
                         )
                     }
                     verify(exactly = 1) { statementRepository.findByStatementId(expectedId) }
@@ -120,7 +120,7 @@ internal class StatementServiceUnitTest :
                             subjectId = subject.id,
                             predicateId = predicate.id,
                             objectId = `object`.id,
-                            pageable = PageRequests.SINGLE
+                            pageable = PageRequests.SINGLE,
                         )
                     } returns pageOf()
                     every { statementRepository.nextIdentity() } returns expectedId
@@ -138,7 +138,7 @@ internal class StatementServiceUnitTest :
                             subjectId = subject.id,
                             predicateId = predicate.id,
                             objectId = `object`.id,
-                            pageable = PageRequests.SINGLE
+                            pageable = PageRequests.SINGLE,
                         )
                     }
                     verify(exactly = 1) { statementRepository.nextIdentity() }
@@ -155,7 +155,7 @@ internal class StatementServiceUnitTest :
                             subjectId = subject.id,
                             predicateId = predicate.id,
                             objectId = `object`.id,
-                            pageable = PageRequests.SINGLE
+                            pageable = PageRequests.SINGLE,
                         )
                     } returns pageOf()
                     every { statementRepository.findByStatementId(expectedId) } returns Optional.of(createStatement(expectedId))
@@ -174,7 +174,7 @@ internal class StatementServiceUnitTest :
                             subjectId = subject.id,
                             predicateId = predicate.id,
                             objectId = `object`.id,
-                            pageable = PageRequests.SINGLE
+                            pageable = PageRequests.SINGLE,
                         )
                     }
                     verify(exactly = 1) { statementRepository.findByStatementId(expectedId) }
@@ -238,7 +238,7 @@ internal class StatementServiceUnitTest :
                                 subjectId = subject.id,
                                 predicateId = predicate.id,
                                 objectId = `object`.id,
-                                pageable = PageRequests.SINGLE
+                                pageable = PageRequests.SINGLE,
                             )
                         } returns pageOf(createStatement(existingStatementId))
 
@@ -254,7 +254,7 @@ internal class StatementServiceUnitTest :
                                 subjectId = subject.id,
                                 predicateId = predicate.id,
                                 objectId = `object`.id,
-                                pageable = PageRequests.SINGLE
+                                pageable = PageRequests.SINGLE,
                             )
                         }
                     }
@@ -270,7 +270,7 @@ internal class StatementServiceUnitTest :
                                     subjectId = subject.id,
                                     predicateId = predicate.id,
                                     objectId = `object`.id,
-                                    pageable = PageRequests.SINGLE
+                                    pageable = PageRequests.SINGLE,
                                 )
                             } returns pageOf(createStatement(expectedId))
 
@@ -286,7 +286,7 @@ internal class StatementServiceUnitTest :
                                     subjectId = subject.id,
                                     predicateId = predicate.id,
                                     objectId = `object`.id,
-                                    pageable = PageRequests.SINGLE
+                                    pageable = PageRequests.SINGLE,
                                 )
                             }
                         }
@@ -301,7 +301,7 @@ internal class StatementServiceUnitTest :
                                     subjectId = subject.id,
                                     predicateId = predicate.id,
                                     objectId = `object`.id,
-                                    pageable = PageRequests.SINGLE
+                                    pageable = PageRequests.SINGLE,
                                 )
                             } returns pageOf(createStatement(existingStatementId))
 
@@ -319,7 +319,7 @@ internal class StatementServiceUnitTest :
                                     subjectId = subject.id,
                                     predicateId = predicate.id,
                                     objectId = `object`.id,
-                                    pageable = PageRequests.SINGLE
+                                    pageable = PageRequests.SINGLE,
                                 )
                             }
                         }
@@ -334,8 +334,8 @@ internal class StatementServiceUnitTest :
                         createResource(
                             id = listId,
                             label = "irrelevant",
-                            classes = setOf(Classes.list)
-                        )
+                            classes = setOf(Classes.list),
+                        ),
                     )
 
                     withContext(Dispatchers.IO) {
@@ -345,8 +345,8 @@ internal class StatementServiceUnitTest :
                                     contributorId = ContributorId(UUID.randomUUID()),
                                     subjectId = listId,
                                     predicateId = Predicates.hasListElement,
-                                    objectId = ThingId("R1")
-                                )
+                                    objectId = ThingId("R1"),
+                                ),
                             )
                         }
                     }
@@ -361,8 +361,8 @@ internal class StatementServiceUnitTest :
                     every { thingRepository.findById(subjectId) } returns Optional.of(
                         createResource(
                             id = subjectId,
-                            classes = setOf(Classes.rosettaStoneStatement)
-                        )
+                            classes = setOf(Classes.rosettaStoneStatement),
+                        ),
                     )
 
                     withContext(Dispatchers.IO) {
@@ -372,8 +372,8 @@ internal class StatementServiceUnitTest :
                                     contributorId = ContributorId(UUID.randomUUID()),
                                     subjectId = subjectId,
                                     predicateId = Predicates.description,
-                                    objectId = ThingId("R1")
-                                )
+                                    objectId = ThingId("R1"),
+                                ),
                             )
                         }
                     }
@@ -386,7 +386,7 @@ internal class StatementServiceUnitTest :
                     val subjectId = ThingId("L1")
 
                     every { thingRepository.findById(subjectId) } returns Optional.of(
-                        createLiteral(subjectId)
+                        createLiteral(subjectId),
                     )
 
                     withContext(Dispatchers.IO) {
@@ -396,8 +396,8 @@ internal class StatementServiceUnitTest :
                                     contributorId = ContributorId(UUID.randomUUID()),
                                     subjectId = subjectId,
                                     predicateId = Predicates.description,
-                                    objectId = ThingId("R1")
-                                )
+                                    objectId = ThingId("R1"),
+                                ),
                             )
                         }
                     }
@@ -421,7 +421,7 @@ internal class StatementServiceUnitTest :
                         contributorId = contributorId,
                         subjectId = newSubject.id,
                         predicateId = newPredicate.id,
-                        objectId = newObject.id
+                        objectId = newObject.id,
                     )
                     every { statementRepository.findByStatementId(id) } returns Optional.of(statement)
                     every { thingRepository.findById(command.subjectId!!) } returns Optional.of(newSubject)
@@ -450,7 +450,7 @@ internal class StatementServiceUnitTest :
                                 it.createdAt shouldBe statement.createdAt
                                 it.modifiable shouldBe statement.modifiable
                                 it.index shouldBe statement.index
-                            }
+                            },
                         )
                     }
                 }
@@ -493,7 +493,7 @@ internal class StatementServiceUnitTest :
                                 it.createdAt shouldBe statement.createdAt
                                 it.modifiable shouldBe statement.modifiable
                                 it.index shouldBe statement.index
-                            }
+                            },
                         )
                     }
                     verify(exactly = 1) { literalRepository.save(statement.`object` as Literal) }
@@ -508,7 +508,7 @@ internal class StatementServiceUnitTest :
                         contributorId = contributorId,
                         subjectId = statement.subject.id,
                         predicateId = statement.predicate.id,
-                        objectId = statement.`object`.id
+                        objectId = statement.`object`.id,
                     )
                     every { statementRepository.findByStatementId(id) } returns Optional.of(statement)
 
@@ -525,7 +525,7 @@ internal class StatementServiceUnitTest :
                     val command = UpdateStatementUseCase.UpdateCommand(
                         statementId = id,
                         contributorId = contributorId,
-                        subjectId = ThingId("someChange")
+                        subjectId = ThingId("someChange"),
                     )
                     every { statementRepository.findByStatementId(id) } returns Optional.empty()
 
@@ -560,18 +560,18 @@ internal class StatementServiceUnitTest :
                     val command = UpdateStatementUseCase.UpdateCommand(
                         statementId = id,
                         contributorId = contributorId,
-                        subjectId = ThingId("someChange")
+                        subjectId = ThingId("someChange"),
                     )
                     val existingStatement = GeneralStatement(
                         id = id,
                         subject = createResource(
                             id = listId,
-                            classes = setOf(Classes.list)
+                            classes = setOf(Classes.list),
                         ),
                         predicate = createPredicate(Predicates.hasListElement),
                         `object` = createResource(),
                         createdBy = ContributorId(UUID.randomUUID()),
-                        createdAt = OffsetDateTime.now(fixedClock)
+                        createdAt = OffsetDateTime.now(fixedClock),
                     )
 
                     every { statementRepository.findByStatementId(id) } returns Optional.of(existingStatement)
@@ -592,7 +592,7 @@ internal class StatementServiceUnitTest :
                     val command = UpdateStatementUseCase.UpdateCommand(
                         statementId = id,
                         contributorId = contributorId,
-                        subjectId = ThingId("missing")
+                        subjectId = ThingId("missing"),
                     )
                     every { statementRepository.findByStatementId(id) } returns Optional.of(statement)
                     every { thingRepository.findById(command.subjectId!!) } returns Optional.empty()
@@ -615,7 +615,7 @@ internal class StatementServiceUnitTest :
                         statementId = id,
                         contributorId = contributorId,
                         subjectId = listId,
-                        predicateId = Predicates.hasListElement
+                        predicateId = Predicates.hasListElement,
                     )
                     val existingStatement = GeneralStatement(
                         id = id,
@@ -623,11 +623,11 @@ internal class StatementServiceUnitTest :
                         predicate = createPredicate(),
                         `object` = createResource(),
                         createdBy = ContributorId(UUID.randomUUID()),
-                        createdAt = OffsetDateTime.now(fixedClock)
+                        createdAt = OffsetDateTime.now(fixedClock),
                     )
                     val list = createResource(
                         id = listId,
-                        classes = setOf(Classes.list)
+                        classes = setOf(Classes.list),
                     )
 
                     every { statementRepository.findByStatementId(id) } returns Optional.of(existingStatement)
@@ -653,7 +653,7 @@ internal class StatementServiceUnitTest :
 
                     every { statementRepository.findByStatementId(id) } returns Optional.of(fakeStatement)
                     every { thingRepository.findById(subjectId) } returns Optional.of(
-                        createResource(subjectId, classes = setOf(Classes.rosettaStoneStatement))
+                        createResource(subjectId, classes = setOf(Classes.rosettaStoneStatement)),
                     )
 
                     withContext(Dispatchers.IO) {
@@ -664,8 +664,8 @@ internal class StatementServiceUnitTest :
                                     contributorId = contributorId,
                                     subjectId = subjectId,
                                     predicateId = Predicates.description,
-                                    objectId = ThingId("R1")
-                                )
+                                    objectId = ThingId("R1"),
+                                ),
                             )
                         }
                     }
@@ -683,7 +683,7 @@ internal class StatementServiceUnitTest :
                     val command = UpdateStatementUseCase.UpdateCommand(
                         statementId = id,
                         contributorId = contributorId,
-                        predicateId = ThingId("missing")
+                        predicateId = ThingId("missing"),
                     )
                     every { statementRepository.findByStatementId(id) } returns Optional.of(statement)
                     every { predicateRepository.findById(command.predicateId!!) } returns Optional.empty()
@@ -705,7 +705,7 @@ internal class StatementServiceUnitTest :
                     val command = UpdateStatementUseCase.UpdateCommand(
                         statementId = id,
                         contributorId = contributorId,
-                        objectId = ThingId("missing")
+                        objectId = ThingId("missing"),
                     )
                     every { statementRepository.findByStatementId(id) } returns Optional.of(statement)
                     every { thingRepository.findById(command.objectId!!) } returns Optional.empty()
@@ -735,7 +735,7 @@ internal class StatementServiceUnitTest :
                     subject = subject,
                     predicate = predicate,
                     `object` = `object`,
-                    createdBy = contributorId
+                    createdBy = contributorId,
                 )
                 every { statementRepository.findByStatementId(statementId) } returns Optional.of(statement)
 
@@ -764,7 +764,7 @@ internal class StatementServiceUnitTest :
                     subject = subject,
                     predicate = predicate,
                     `object` = `object`,
-                    createdBy = randomContributorId()
+                    createdBy = randomContributorId(),
                 )
                 every { statementRepository.findByStatementId(statementId) } returns Optional.of(statement)
                 // Safeguard for broken test assumption
@@ -785,10 +785,10 @@ internal class StatementServiceUnitTest :
                 val id = StatementId("S1")
                 val fakeStatement = createStatement(
                     subject = createResource(
-                        classes = setOf(Classes.list)
+                        classes = setOf(Classes.list),
                     ),
                     predicate = createPredicate(Predicates.hasListElement),
-                    `object` = createResource()
+                    `object` = createResource(),
                 )
 
                 it("throws an error") {
@@ -807,9 +807,9 @@ internal class StatementServiceUnitTest :
                 val id = StatementId("S1")
                 val fakeStatement = createStatement(
                     subject = createResource(
-                        classes = setOf(Classes.list)
+                        classes = setOf(Classes.list),
                     ),
-                    `object` = createResource()
+                    `object` = createResource(),
                 )
 
                 it("deletes the statement") {
@@ -845,10 +845,10 @@ internal class StatementServiceUnitTest :
                 val fakeStatements = ids.map {
                     createStatement(
                         subject = createResource(
-                            classes = setOf(Classes.list)
+                            classes = setOf(Classes.list),
                         ),
                         predicate = createPredicate(Predicates.hasListElement),
-                        `object` = createResource()
+                        `object` = createResource(),
                     )
                 }
 

@@ -31,53 +31,53 @@ fun createTableCommand() = CreateTableUseCase.CreateCommand(
     resources = mapOf(
         "#temp1" to CreateResourceCommandPart(
             label = "MOTO",
-            classes = setOf(ThingId("Result"))
-        )
+            classes = setOf(ThingId("Result")),
+        ),
     ),
     literals = mapOf(
         "#temp2" to CreateLiteralCommandPart("column 1", Literals.XSD.STRING.prefixedUri),
         "#temp3" to CreateLiteralCommandPart("column 2", Literals.XSD.STRING.prefixedUri),
-        "#temp4" to CreateLiteralCommandPart("column 3", Literals.XSD.STRING.prefixedUri)
+        "#temp4" to CreateLiteralCommandPart("column 3", Literals.XSD.STRING.prefixedUri),
     ),
     predicates = mapOf(
         "#temp5" to CreatePredicateCommandPart(
             label = "hasResult",
-            description = "has result"
-        )
+            description = "has result",
+        ),
     ),
     lists = mapOf(
         "#temp6" to CreateListCommandPart(
             label = "list",
-            elements = listOf("#temp1", "C123")
-        )
+            elements = listOf("#temp1", "C123"),
+        ),
     ),
     classes = mapOf(
         "#temp7" to CreateClassCommandPart(
             label = "class",
-            uri = ParsedIRI.create("https://orkg.org/class/C1")
-        )
+            uri = ParsedIRI.create("https://orkg.org/class/C1"),
+        ),
     ),
     rows = listOf(
         CreateRowCommand(
             label = "header",
-            data = listOf("#temp1", "#temp2", "#temp3")
+            data = listOf("#temp1", "#temp2", "#temp3"),
         ),
         CreateRowCommand(
             label = null,
-            data = listOf("R456", "#temp4", "#temp5")
+            data = listOf("R456", "#temp4", "#temp5"),
         ),
         CreateRowCommand(
             label = "row 2",
-            data = listOf("#temp6", null, "#temp7")
-        )
+            data = listOf("#temp6", null, "#temp7"),
+        ),
     ),
     observatories = listOf(
-        ObservatoryId("cb71eebf-8afd-4fe3-9aea-d0966d71cece")
+        ObservatoryId("cb71eebf-8afd-4fe3-9aea-d0966d71cece"),
     ),
     organizations = listOf(
-        OrganizationId("a700c55f-aae2-4696-b7d5-6e8b89f66a8f")
+        OrganizationId("a700c55f-aae2-4696-b7d5-6e8b89f66a8f"),
     ),
-    extractionMethod = ExtractionMethod.UNKNOWN
+    extractionMethod = ExtractionMethod.UNKNOWN,
 )
 
 fun updateTableCommand() = UpdateTableUseCase.UpdateCommand(
@@ -87,51 +87,51 @@ fun updateTableCommand() = UpdateTableUseCase.UpdateCommand(
     resources = mapOf(
         "#temp1" to CreateResourceCommandPart(
             label = "MOTO",
-            classes = setOf(ThingId("Result"))
-        )
+            classes = setOf(ThingId("Result")),
+        ),
     ),
     literals = mapOf(
         "#temp2" to CreateLiteralCommandPart("column 1", Literals.XSD.STRING.prefixedUri),
         "#temp3" to CreateLiteralCommandPart("column 2", Literals.XSD.STRING.prefixedUri),
-        "#temp4" to CreateLiteralCommandPart("column 3", Literals.XSD.STRING.prefixedUri)
+        "#temp4" to CreateLiteralCommandPart("column 3", Literals.XSD.STRING.prefixedUri),
     ),
     predicates = mapOf(
         "#temp5" to CreatePredicateCommandPart(
             label = "hasResult",
-            description = "has result"
-        )
+            description = "has result",
+        ),
     ),
     lists = mapOf(
         "#temp6" to CreateListCommandPart(
             label = "list",
-            elements = listOf("#temp1", "C123")
-        )
+            elements = listOf("#temp1", "C123"),
+        ),
     ),
     classes = mapOf(
         "#temp7" to CreateClassCommandPart(
             label = "class",
-            uri = ParsedIRI.create("https://orkg.org/class/C1")
-        )
+            uri = ParsedIRI.create("https://orkg.org/class/C1"),
+        ),
     ),
     rows = listOf(
         CreateRowCommand(
             label = "header",
-            data = listOf("#temp1", "#temp2", "#temp3")
+            data = listOf("#temp1", "#temp2", "#temp3"),
         ),
         CreateRowCommand(
             label = null,
-            data = listOf("R456", "#temp4", "#temp5")
+            data = listOf("R456", "#temp4", "#temp5"),
         ),
         CreateRowCommand(
             label = "row 2",
-            data = listOf("#temp6", null, "#temp7")
-        )
+            data = listOf("#temp6", null, "#temp7"),
+        ),
     ),
     observatories = listOf(
-        ObservatoryId("cb71eebf-8afd-4fe3-9aea-d0966d71cece")
+        ObservatoryId("cb71eebf-8afd-4fe3-9aea-d0966d71cece"),
     ),
     organizations = listOf(
-        OrganizationId("a700c55f-aae2-4696-b7d5-6e8b89f66a8f")
+        OrganizationId("a700c55f-aae2-4696-b7d5-6e8b89f66a8f"),
     ),
     extractionMethod = ExtractionMethod.UNKNOWN,
     visibility = Visibility.DEFAULT,
@@ -144,8 +144,8 @@ fun createTableRowCommand() = CreateTableRowUseCase.CreateCommand(
     resources = mapOf(
         "#temp1" to CreateResourceCommandPart(
             label = "MOTO2",
-            classes = setOf(ThingId("Result"))
-        )
+            classes = setOf(ThingId("Result")),
+        ),
     ),
     literals = emptyMap(),
     predicates = emptyMap(),
@@ -153,8 +153,8 @@ fun createTableRowCommand() = CreateTableRowUseCase.CreateCommand(
     classes = emptyMap(),
     row = CreateRowCommand(
         label = "updated",
-        data = listOf("R456", null, "#temp1")
-    )
+        data = listOf("R456", null, "#temp1"),
+    ),
 )
 
 fun updateTableRowCommand() = UpdateTableRowUseCase.UpdateCommand(
@@ -164,8 +164,8 @@ fun updateTableRowCommand() = UpdateTableRowUseCase.UpdateCommand(
     resources = mapOf(
         "#temp1" to CreateResourceCommandPart(
             label = "MOTO2",
-            classes = setOf(ThingId("Result"))
-        )
+            classes = setOf(ThingId("Result")),
+        ),
     ),
     literals = emptyMap(),
     predicates = emptyMap(),
@@ -173,8 +173,8 @@ fun updateTableRowCommand() = UpdateTableRowUseCase.UpdateCommand(
     classes = emptyMap(),
     row = UpdateRowCommand(
         label = "updated",
-        data = listOf("R456", null, "#temp1")
-    )
+        data = listOf("R456", null, "#temp1"),
+    ),
 )
 
 fun deleteTableRowCommand() = DeleteTableRowUseCase.DeleteCommand(

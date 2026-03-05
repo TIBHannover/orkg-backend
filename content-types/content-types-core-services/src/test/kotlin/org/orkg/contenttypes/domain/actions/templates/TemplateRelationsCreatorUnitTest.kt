@@ -28,11 +28,11 @@ internal class TemplateRelationsCreatorUnitTest : MockkBaseTest {
             relations = TemplateRelationsCommand(
                 researchFields = listOf(researchFieldId),
                 researchProblems = emptyList(),
-                predicate = null
-            )
+                predicate = null,
+            ),
         )
         val state = CreateTemplateState(
-            templateId = ThingId("R45665")
+            templateId = ThingId("R45665"),
         )
 
         every {
@@ -41,8 +41,8 @@ internal class TemplateRelationsCreatorUnitTest : MockkBaseTest {
                     contributorId = command.contributorId,
                     subjectId = state.templateId!!,
                     predicateId = Predicates.templateOfResearchField,
-                    objectId = researchFieldId
-                )
+                    objectId = researchFieldId,
+                ),
             )
         } returns StatementId("S1")
 
@@ -58,8 +58,8 @@ internal class TemplateRelationsCreatorUnitTest : MockkBaseTest {
                     contributorId = command.contributorId,
                     subjectId = state.templateId!!,
                     predicateId = Predicates.templateOfResearchField,
-                    objectId = researchFieldId
-                )
+                    objectId = researchFieldId,
+                ),
             )
         }
     }
@@ -71,11 +71,11 @@ internal class TemplateRelationsCreatorUnitTest : MockkBaseTest {
             relations = TemplateRelationsCommand(
                 researchFields = emptyList(),
                 researchProblems = listOf(researchProblemId),
-                predicate = null
-            )
+                predicate = null,
+            ),
         )
         val state = CreateTemplateState(
-            templateId = ThingId("R45665")
+            templateId = ThingId("R45665"),
         )
 
         every {
@@ -84,8 +84,8 @@ internal class TemplateRelationsCreatorUnitTest : MockkBaseTest {
                     contributorId = command.contributorId,
                     subjectId = state.templateId!!,
                     predicateId = Predicates.templateOfResearchProblem,
-                    objectId = researchProblemId
-                )
+                    objectId = researchProblemId,
+                ),
             )
         } returns StatementId("S1")
 
@@ -101,8 +101,8 @@ internal class TemplateRelationsCreatorUnitTest : MockkBaseTest {
                     contributorId = command.contributorId,
                     subjectId = state.templateId!!,
                     predicateId = Predicates.templateOfResearchProblem,
-                    objectId = researchProblemId
-                )
+                    objectId = researchProblemId,
+                ),
             )
         }
     }
@@ -114,11 +114,11 @@ internal class TemplateRelationsCreatorUnitTest : MockkBaseTest {
             relations = TemplateRelationsCommand(
                 researchFields = emptyList(),
                 researchProblems = emptyList(),
-                predicate = predicateId
-            )
+                predicate = predicateId,
+            ),
         )
         val state = CreateTemplateState(
-            templateId = ThingId("R45665")
+            templateId = ThingId("R45665"),
         )
 
         every {
@@ -127,8 +127,8 @@ internal class TemplateRelationsCreatorUnitTest : MockkBaseTest {
                     contributorId = command.contributorId,
                     subjectId = state.templateId!!,
                     predicateId = Predicates.templateOfPredicate,
-                    objectId = predicateId
-                )
+                    objectId = predicateId,
+                ),
             )
         } returns StatementId("S1")
 
@@ -144,8 +144,8 @@ internal class TemplateRelationsCreatorUnitTest : MockkBaseTest {
                     contributorId = command.contributorId,
                     subjectId = state.templateId!!,
                     predicateId = Predicates.templateOfPredicate,
-                    objectId = predicateId
-                )
+                    objectId = predicateId,
+                ),
             )
         }
     }
@@ -156,11 +156,11 @@ internal class TemplateRelationsCreatorUnitTest : MockkBaseTest {
             relations = TemplateRelationsCommand(
                 researchFields = emptyList(),
                 researchProblems = emptyList(),
-                predicate = null
-            )
+                predicate = null,
+            ),
         )
         val state = CreateTemplateState(
-            templateId = ThingId("R45665")
+            templateId = ThingId("R45665"),
         )
 
         val result = templateRelationsCreator(command, state)

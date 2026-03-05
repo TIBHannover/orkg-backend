@@ -312,7 +312,7 @@ class PagedQueryBuilderImpl {
                 query,
                 countQuery,
                 parameters,
-                targetClass
+                targetClass,
             )
     }
 
@@ -339,7 +339,7 @@ class PagedQueryBuilderImpl {
                 countQuery,
                 parameters,
                 targetClass,
-                mappingFunction
+                mappingFunction,
             )
 
         override fun fetch(pageable: Pageable, appendSort: Boolean): Page<R> {

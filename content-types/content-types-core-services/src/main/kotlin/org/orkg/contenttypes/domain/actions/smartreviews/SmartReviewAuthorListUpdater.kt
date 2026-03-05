@@ -24,8 +24,8 @@ class SmartReviewAuthorListUpdater(
             unsafeStatementUseCases,
             unsafeLiteralUseCases,
             listService,
-            listRepository
-        )
+            listRepository,
+        ),
     )
 
     override fun invoke(command: UpdateSmartReviewCommand, state: State): State {

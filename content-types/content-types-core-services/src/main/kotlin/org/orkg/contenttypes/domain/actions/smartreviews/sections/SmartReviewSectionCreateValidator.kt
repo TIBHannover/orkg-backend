@@ -16,13 +16,13 @@ class SmartReviewSectionCreateValidator(
         predicateRepository: PredicateRepository,
         thingRepository: ThingRepository,
     ) : this(
-        AbstractSmartReviewSectionValidator(resourceRepository, predicateRepository, thingRepository)
+        AbstractSmartReviewSectionValidator(resourceRepository, predicateRepository, thingRepository),
     )
 
     override fun invoke(command: CreateSmartReviewSectionCommand, state: State): State {
         abstractSmartReviewSectionValidator.validate(
             section = command as AbstractSmartReviewSectionCommand,
-            validationCache = mutableSetOf()
+            validationCache = mutableSetOf(),
         )
         return state
     }

@@ -19,7 +19,7 @@ import java.lang.annotation.Inherited
     AnnotationTarget.FUNCTION,
     AnnotationTarget.PROPERTY_GETTER,
     AnnotationTarget.PROPERTY_SETTER,
-    AnnotationTarget.CLASS
+    AnnotationTarget.CLASS,
 )
 @Retention(AnnotationRetention.RUNTIME)
 @Inherited
@@ -49,8 +49,8 @@ annotation class WithMockAuthentication(
                 "preferred_username" to annotation.username,
                 "email" to annotation.email,
                 "realm_access" to mapOf(
-                    "roles" to annotation.authorities.map { it.replaceFirst("ROLE_", "").lowercase() }
-                )
+                    "roles" to annotation.authorities.map { it.replaceFirst("ROLE_", "").lowercase() },
+                ),
             )
             val tokenValue = Jwts.builder()
                 .subject(subject)

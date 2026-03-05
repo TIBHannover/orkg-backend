@@ -129,13 +129,13 @@ internal class ComparisonControllerIntegrationTest : MockMvcBaseTest("comparison
         resourceService.createResource(
             id = ThingId("R12"),
             label = "Computer Science",
-            classes = setOf(Classes.researchField)
+            classes = setOf(Classes.researchField),
         )
 
         resourceService.createResource(
             id = ThingId("R13"),
             label = "Engineering",
-            classes = setOf(Classes.researchField)
+            classes = setOf(Classes.researchField),
         )
 
         // Example specific entities
@@ -162,44 +162,44 @@ internal class ComparisonControllerIntegrationTest : MockMvcBaseTest("comparison
             subject = resourceService.createResource(
                 id = ThingId("R456"),
                 label = "Author with id and orcid",
-                classes = setOf(Classes.author)
+                classes = setOf(Classes.author),
             ),
             predicate = Predicates.hasORCID,
-            `object` = literalService.createLiteral(label = "1111-2222-3333-4444")
+            `object` = literalService.createLiteral(label = "1111-2222-3333-4444"),
         )
 
         statementService.createStatement(
             subject = resourceService.createResource(
                 id = ThingId("R4567"),
                 label = "Author with orcid",
-                classes = setOf(Classes.author)
+                classes = setOf(Classes.author),
             ),
             predicate = Predicates.hasORCID,
-            `object` = literalService.createLiteral(label = "0000-1111-2222-3333")
+            `object` = literalService.createLiteral(label = "0000-1111-2222-3333"),
         )
 
         val contributorId = contributorService.createContributor()
 
         organizationService.createOrganization(
             createdBy = contributorId,
-            id = OrganizationId("edc18168-c4ee-4cb8-a98a-136f748e912e")
+            id = OrganizationId("edc18168-c4ee-4cb8-a98a-136f748e912e"),
         )
         organizationService.createOrganization(
             createdBy = contributorId,
             id = OrganizationId("dc9a860c-1a1b-4977-bd6a-9dc21de46df6"),
-            organizationName = "Different Organization" // required to satisfy unique constraint
+            organizationName = "Different Organization", // required to satisfy unique constraint
         )
 
         observatoryService.createObservatory(
             organizations = setOf(OrganizationId("edc18168-c4ee-4cb8-a98a-136f748e912e")),
             researchField = ThingId("R12"),
-            id = ObservatoryId("1afefdd0-5c09-4c9c-b718-2b35316b56f3")
+            id = ObservatoryId("1afefdd0-5c09-4c9c-b718-2b35316b56f3"),
         )
         observatoryService.createObservatory(
             organizations = setOf(OrganizationId("dc9a860c-1a1b-4977-bd6a-9dc21de46df6")),
             researchField = ThingId("R12"),
             id = ObservatoryId("33d0776f-59ad-465f-a22c-cd794694edc6"),
-            name = "Different Observatory" // required to satisfy unique constraint
+            name = "Different Observatory", // required to satisfy unique constraint
         )
     }
 
@@ -244,26 +244,26 @@ internal class ComparisonControllerIntegrationTest : MockMvcBaseTest("comparison
             it.id shouldBe id
             it.title shouldBe "example comparison"
             it.researchFields shouldBe listOf(
-                LabeledObjectRepresentation(ThingId("R12"), "Computer Science")
+                LabeledObjectRepresentation(ThingId("R12"), "Computer Science"),
             )
             it.authors.size shouldBe 5
             it.authors[0] shouldBe AuthorRepresentation(
                 name = "Author with id",
                 id = ThingId("R123"),
                 identifiers = emptyMap(),
-                homepage = null
+                homepage = null,
             )
             it.authors[1] shouldBe AuthorRepresentation(
                 name = "Author with orcid",
                 id = ThingId("R4567"),
                 identifiers = mapOf("orcid" to listOf("0000-1111-2222-3333")),
-                homepage = null
+                homepage = null,
             )
             it.authors[2] shouldBe AuthorRepresentation(
                 name = "Author with id and orcid",
                 id = ThingId("R456"),
                 identifiers = mapOf("orcid" to listOf("1111-2222-3333-4444")),
-                homepage = null
+                homepage = null,
             )
             it.authors[3].asClue { author ->
                 author.name shouldBe "Author with homepage"
@@ -275,17 +275,17 @@ internal class ComparisonControllerIntegrationTest : MockMvcBaseTest("comparison
                 name = "Author that just has a name",
                 id = null,
                 identifiers = emptyMap(),
-                homepage = null
+                homepage = null,
             )
             it.sustainableDevelopmentGoals shouldBe setOf(
                 LabeledObjectRepresentation(ThingId("SDG_1"), "No poverty"),
-                LabeledObjectRepresentation(ThingId("SDG_2"), "Zero hunger")
+                LabeledObjectRepresentation(ThingId("SDG_2"), "Zero hunger"),
             )
             it.sources shouldBe listOf(
                 ComparisonDataSourceRepresentation(ThingId("R6541"), ComparisonDataSource.Type.THING),
                 ComparisonDataSourceRepresentation(ThingId("R5364"), ComparisonDataSource.Type.THING),
                 ComparisonDataSourceRepresentation(ThingId("R9786"), ComparisonDataSource.Type.THING),
-                ComparisonDataSourceRepresentation(ThingId("R3120"), ComparisonDataSource.Type.THING)
+                ComparisonDataSourceRepresentation(ThingId("R3120"), ComparisonDataSource.Type.THING),
             )
             it.visualizations shouldContainExactlyInAnyOrder listOf(
                 LabeledObjectRepresentation(ThingId("R6571"), "Visualization 1"),
@@ -302,7 +302,7 @@ internal class ComparisonControllerIntegrationTest : MockMvcBaseTest("comparison
             it.createdBy shouldBe ContributorId(MockUserId.USER)
             it.versions shouldBe VersionInfoRepresentation(
                 head = HeadVersionRepresentation(it.id, it.title, it.createdAt, it.createdBy),
-                published = emptyList()
+                published = emptyList(),
             )
             it.published shouldBe false
             it.unlistedBy shouldBe null
@@ -321,26 +321,26 @@ internal class ComparisonControllerIntegrationTest : MockMvcBaseTest("comparison
             it.id shouldBe id
             it.title shouldBe "updated comparison"
             it.researchFields shouldBe listOf(
-                ObjectIdAndLabel(ThingId("R13"), "Engineering")
+                ObjectIdAndLabel(ThingId("R13"), "Engineering"),
             )
             it.authors.size shouldBe 5
             it.authors[0] shouldBe Author(
                 name = "Other author with id",
                 id = ThingId("R124"),
                 identifiers = emptyMap(),
-                homepage = null
+                homepage = null,
             )
             it.authors[1] shouldBe Author(
                 name = "Author with orcid",
                 id = ThingId("R4567"),
                 identifiers = mapOf("orcid" to listOf("0000-1111-2222-3333")),
-                homepage = null
+                homepage = null,
             )
             it.authors[2] shouldBe Author(
                 name = "Author with id and orcid",
                 id = ThingId("R456"),
                 identifiers = mapOf("orcid" to listOf("1111-2222-3333-4444")),
-                homepage = null
+                homepage = null,
             )
             it.authors[3].asClue { author ->
                 author.name shouldBe "Author with homepage"
@@ -352,17 +352,17 @@ internal class ComparisonControllerIntegrationTest : MockMvcBaseTest("comparison
                 name = "Author that just has a name",
                 id = null,
                 identifiers = emptyMap(),
-                homepage = null
+                homepage = null,
             )
             it.sustainableDevelopmentGoals shouldBe setOf(
                 ObjectIdAndLabel(ThingId("SDG_2"), "Zero hunger"),
-                ObjectIdAndLabel(ThingId("SDG_3"), "Good health and well-being")
+                ObjectIdAndLabel(ThingId("SDG_3"), "Good health and well-being"),
             )
             it.sources shouldBe listOf(
                 ComparisonDataSource(ThingId("R6541"), ComparisonDataSource.Type.THING),
                 ComparisonDataSource(ThingId("R5364"), ComparisonDataSource.Type.THING),
                 ComparisonDataSource(ThingId("R3120"), ComparisonDataSource.Type.THING),
-                ComparisonDataSource(ThingId("R7864"), ComparisonDataSource.Type.THING)
+                ComparisonDataSource(ThingId("R7864"), ComparisonDataSource.Type.THING),
             )
             it.visualizations shouldContainExactlyInAnyOrder listOf(
                 ObjectIdAndLabel(ThingId("R1354"), "Visualization 2"),
@@ -379,7 +379,7 @@ internal class ComparisonControllerIntegrationTest : MockMvcBaseTest("comparison
             it.createdBy shouldBe ContributorId(MockUserId.USER)
             it.versions shouldBe VersionInfo(
                 head = HeadVersion(it.id, it.title, it.createdAt, it.createdBy),
-                published = emptyList()
+                published = emptyList(),
             )
             it.published shouldBe false
             it.unlistedBy shouldBe null

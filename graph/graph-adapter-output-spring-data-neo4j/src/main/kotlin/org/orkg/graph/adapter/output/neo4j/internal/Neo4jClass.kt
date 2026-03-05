@@ -19,7 +19,7 @@ class Neo4jClass : Neo4jThing() {
         uri = uri?.toIRIOrNull(),
         createdAt = created_at!!,
         createdBy = created_by,
-        modifiable = modifiable!!
+        modifiable = modifiable!!,
     )
 
     override fun toThing() = toClass()

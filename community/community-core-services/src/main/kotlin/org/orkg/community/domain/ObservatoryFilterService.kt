@@ -47,7 +47,7 @@ class ObservatoryFilterService(
             path = command.path,
             range = command.range,
             exact = command.exact,
-            featured = command.featured
+            featured = command.featured,
         )
         repository.save(observatoryFilter)
         return id
@@ -68,8 +68,8 @@ class ObservatoryFilterService(
                 path = command.path ?: filter.path,
                 range = command.range ?: filter.range,
                 exact = command.exact ?: filter.exact,
-                featured = command.featured ?: filter.featured
-            )
+                featured = command.featured ?: filter.featured,
+            ),
         )
     }
 

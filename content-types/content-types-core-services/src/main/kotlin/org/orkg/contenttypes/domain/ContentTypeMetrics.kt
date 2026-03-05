@@ -30,49 +30,49 @@ private val researchFieldParameter = SingleValueParameterSpec(
     name = "Research field id filter",
     description = "Filter for research field id.",
     type = ThingId::class,
-    parser = ::ThingId
+    parser = ::ThingId,
 )
 
 private val includeSubfieldsParameter = SingleValueParameterSpec(
     name = "Include subfields",
     description = "Whether to include subfields when filtering by research field id.",
     type = Boolean::class,
-    parser = { it.toBoolean() }
+    parser = { it.toBoolean() },
 )
 
 private val observatoryIdParameter = SingleValueParameterSpec(
     name = "Observatory id filter",
     description = "Filter for observatory id.",
     type = ObservatoryId::class,
-    parser = ::ObservatoryId
+    parser = ::ObservatoryId,
 )
 
 private val organizationIdParameter = SingleValueParameterSpec(
     name = "Organization id filter",
     description = "Filter for organization id.",
     type = OrganizationId::class,
-    parser = ::OrganizationId
+    parser = ::OrganizationId,
 )
 
 private val createdByParameter = SingleValueParameterSpec(
     name = "Created by filter",
     description = "Filter for the original creator.",
     type = ContributorId::class,
-    parser = ::ContributorId
+    parser = ::ContributorId,
 )
 
 private val createdAtStartParameter = SingleValueParameterSpec(
     name = "Creation time start filter",
     description = "Filter for the created at timestamp, marking the oldest timestamp.",
     type = OffsetDateTime::class,
-    parser = { OffsetDateTime.parse(it, DateTimeFormatter.ISO_DATE_TIME) }
+    parser = { OffsetDateTime.parse(it, DateTimeFormatter.ISO_DATE_TIME) },
 )
 
 private val createdAtEndParameter = SingleValueParameterSpec(
     name = "Creation time end filter",
     description = "Filter for the created at timestamp, marking the most recent timestamp.",
     type = OffsetDateTime::class,
-    parser = { OffsetDateTime.parse(it, DateTimeFormatter.ISO_DATE_TIME) }
+    parser = { OffsetDateTime.parse(it, DateTimeFormatter.ISO_DATE_TIME) },
 )
 
 private val visibilityParameter = SingleValueParameterSpec(
@@ -80,7 +80,7 @@ private val visibilityParameter = SingleValueParameterSpec(
     description = "Filter for visibility.",
     type = VisibilityFilter::class,
     values = VisibilityFilter.entries,
-    parser = VisibilityFilter::valueOf
+    parser = VisibilityFilter::valueOf,
 )
 
 private val sdgParameter = SingleValueParameterSpec(
@@ -88,7 +88,7 @@ private val sdgParameter = SingleValueParameterSpec(
     description = "Filter for a Sustainable Development Goal.",
     type = ThingId::class,
     values = Resources.sustainableDevelopmentGoals,
-    parser = ::ThingId
+    parser = ::ThingId,
 )
 
 private val resourceParameters = mapOf(
@@ -109,32 +109,32 @@ private val publishedParameter = SingleValueParameterSpec(
     name = "Published filter",
     description = "Filter for publication state.",
     type = Boolean::class,
-    parser = { it.toBoolean() }
+    parser = { it.toBoolean() },
 )
 
 private val publishableContentTypeParameters = sharedContentTypeParameters + mapOf(
-    "published" to publishedParameter
+    "published" to publishedParameter,
 )
 
 private val verifiedParameter = SingleValueParameterSpec(
     name = "Verified filter",
     description = "Filter for verified state.",
     type = Boolean::class,
-    parser = { it.toBoolean() }
+    parser = { it.toBoolean() },
 )
 
 private val researchProblemParameter = SingleValueParameterSpec(
     name = "Research problem filter",
     description = "Filter for research problem id.",
     type = ThingId::class,
-    parser = ::ThingId
+    parser = ::ThingId,
 )
 
 private val venueParameter = SingleValueParameterSpec(
     name = "Venue filter",
     description = "Filter for venue id.",
     type = ThingId::class,
-    parser = ::ThingId
+    parser = ::ThingId,
 )
 
 private val contentTypeClassParameter = MultiValueParameterSpec(
@@ -142,7 +142,7 @@ private val contentTypeClassParameter = MultiValueParameterSpec(
     description = "Filter for one or more content-type classes. If absent, all content-type classes are included.",
     type = ContentTypeClass::class,
     values = ContentTypeClass.entries,
-    parser = ContentTypeClass::valueOf
+    parser = ContentTypeClass::valueOf,
 )
 
 @Configuration
@@ -158,7 +158,7 @@ class ContentTypeMetrics {
         group = "content-types",
         parameterSpecs = sharedContentTypeParameters + mapOf(
             "classes" to contentTypeClassParameter,
-            "sdg" to sdgParameter
+            "sdg" to sdgParameter,
         ),
         supplier = { parameters ->
             contentTypeRepository.count(
@@ -173,7 +173,7 @@ class ContentTypeMetrics {
                 visibility = parameters[visibilityParameter],
                 sustainableDevelopmentGoal = parameters[sdgParameter],
             )
-        }
+        },
     )
 
     @Bean
@@ -206,7 +206,7 @@ class ContentTypeMetrics {
                 researchProblem = parameters[researchProblemParameter],
                 venue = parameters[venueParameter],
             )
-        }
+        },
     )
 
     @Bean
@@ -219,7 +219,7 @@ class ContentTypeMetrics {
         description = "Number of comparisons in the graph.",
         group = "content-types",
         parameterSpecs = publishableContentTypeParameters + mapOf(
-            "sdg" to sdgParameter
+            "sdg" to sdgParameter,
         ),
         supplier = { parameters ->
             comparisonRepository.count(
@@ -234,7 +234,7 @@ class ContentTypeMetrics {
                 sustainableDevelopmentGoal = parameters[sdgParameter],
                 published = parameters[publishedParameter],
             )
-        }
+        },
     )
 
     @Bean
@@ -258,7 +258,7 @@ class ContentTypeMetrics {
                 createdAtEnd = parameters[createdAtEndParameter],
                 visibility = parameters[visibilityParameter],
             )
-        }
+        },
     )
 
     @Bean
@@ -271,7 +271,7 @@ class ContentTypeMetrics {
         description = "Number of literature lists in the graph.",
         group = "content-types",
         parameterSpecs = publishableContentTypeParameters + mapOf(
-            "sdg" to sdgParameter
+            "sdg" to sdgParameter,
         ),
         supplier = { parameters ->
             literatureListRepository.count(
@@ -286,7 +286,7 @@ class ContentTypeMetrics {
                 sustainableDevelopmentGoal = parameters[sdgParameter],
                 published = parameters[publishedParameter],
             )
-        }
+        },
     )
 
     @Bean
@@ -299,7 +299,7 @@ class ContentTypeMetrics {
         description = "Number of smart reviews in the graph.",
         group = "content-types",
         parameterSpecs = publishableContentTypeParameters + mapOf(
-            "sdg" to sdgParameter
+            "sdg" to sdgParameter,
         ),
         supplier = { parameters ->
             smartReviewRepository.count(
@@ -314,7 +314,7 @@ class ContentTypeMetrics {
                 sustainableDevelopmentGoal = parameters[sdgParameter],
                 published = parameters[publishedParameter],
             )
-        }
+        },
     )
 
     @Bean
@@ -338,7 +338,7 @@ class ContentTypeMetrics {
                 createdAtEnd = parameters[createdAtEndParameter],
                 visibility = parameters[visibilityParameter],
             )
-        }
+        },
     )
 
     @Bean
@@ -353,8 +353,8 @@ class ContentTypeMetrics {
         parameterSpecs = resourceParameters,
         supplier = resourceRepositoryBasedParameterizedCountSupplier(
             resourceRepository = resourceRepository,
-            classes = setOf(Classes.rosettaNodeShape)
-        )
+            classes = setOf(Classes.rosettaNodeShape),
+        ),
     )
 
     @Bean
@@ -369,8 +369,8 @@ class ContentTypeMetrics {
         parameterSpecs = resourceParameters,
         supplier = resourceRepositoryBasedParameterizedCountSupplier(
             resourceRepository = resourceRepository,
-            classes = setOf(Classes.rosettaStoneStatement, Classes.latestVersion)
-        )
+            classes = setOf(Classes.rosettaStoneStatement, Classes.latestVersion),
+        ),
     )
 
     @Bean
@@ -385,8 +385,8 @@ class ContentTypeMetrics {
         parameterSpecs = resourceParameters,
         supplier = resourceRepositoryBasedParameterizedCountSupplier(
             resourceRepository = resourceRepository,
-            classes = setOf(Classes.rosettaStoneStatement)
-        )
+            classes = setOf(Classes.rosettaStoneStatement),
+        ),
     )
 
     private fun resourceRepositoryBasedParameterizedCountSupplier(

@@ -124,19 +124,19 @@ internal class PaperControllerIntegrationTest : MockMvcBaseTest("papers") {
         resourceService.createResource(
             id = ThingId("R12"),
             label = "Computer Science",
-            classes = setOf(Classes.researchField)
+            classes = setOf(Classes.researchField),
         )
         resourceService.createResource(
             id = ThingId("R194"),
             label = "Engineering",
-            classes = setOf(Classes.researchField)
+            classes = setOf(Classes.researchField),
         )
 
         // Example specific entities
 
         classService.createClasses(
             ThingId("C123"),
-            ThingId("Result")
+            ThingId("Result"),
         )
 
         resourceService.createResource(id = ThingId("R3003"), label = "Some resource")
@@ -153,33 +153,33 @@ internal class PaperControllerIntegrationTest : MockMvcBaseTest("papers") {
             subject = resourceService.createResource(
                 id = ThingId("R456"),
                 label = "Author with id and orcid",
-                classes = setOf(Classes.author)
+                classes = setOf(Classes.author),
             ),
             predicate = Predicates.hasORCID,
-            `object` = literalService.createLiteral(label = "1111-2222-3333-4444")
+            `object` = literalService.createLiteral(label = "1111-2222-3333-4444"),
         )
 
         statementService.createStatement(
             subject = resourceService.createResource(
                 id = ThingId("R4567"),
                 label = "Author with orcid",
-                classes = setOf(Classes.author)
+                classes = setOf(Classes.author),
             ),
             predicate = Predicates.hasORCID,
-            `object` = literalService.createLiteral(label = "0000-1111-2222-3333")
+            `object` = literalService.createLiteral(label = "0000-1111-2222-3333"),
         )
 
         val contributorId = contributorService.createContributor()
 
         organizationService.createOrganization(
             createdBy = contributorId,
-            id = OrganizationId("edc18168-c4ee-4cb8-a98a-136f748e912e")
+            id = OrganizationId("edc18168-c4ee-4cb8-a98a-136f748e912e"),
         )
 
         observatoryService.createObservatory(
             organizations = setOf(OrganizationId("edc18168-c4ee-4cb8-a98a-136f748e912e")),
             researchField = ThingId("R12"),
-            id = ObservatoryId("1afefdd0-5c09-4c9c-b718-2b35316b56f3")
+            id = ObservatoryId("1afefdd0-5c09-4c9c-b718-2b35316b56f3"),
         )
     }
 
@@ -223,10 +223,10 @@ internal class PaperControllerIntegrationTest : MockMvcBaseTest("papers") {
             it.id shouldBe id
             it.title shouldBe "example paper"
             it.researchFields shouldBe listOf(
-                LabeledObjectRepresentation(ThingId("R12"), "Computer Science")
+                LabeledObjectRepresentation(ThingId("R12"), "Computer Science"),
             )
             it.identifiers shouldBe mapOf(
-                "doi" to listOf("10.48550/arXiv.2304.05327")
+                "doi" to listOf("10.48550/arXiv.2304.05327"),
             )
             it.publicationInfo.asClue { publicationInfo ->
                 publicationInfo.publishedMonth shouldBe 5
@@ -243,19 +243,19 @@ internal class PaperControllerIntegrationTest : MockMvcBaseTest("papers") {
                 name = "Author with id",
                 id = ThingId("R123"),
                 identifiers = emptyMap(),
-                homepage = null
+                homepage = null,
             )
             it.authors[1] shouldBe AuthorRepresentation(
                 name = "Author with orcid",
                 id = ThingId("R4567"),
                 identifiers = mapOf("orcid" to listOf("0000-1111-2222-3333")),
-                homepage = null
+                homepage = null,
             )
             it.authors[2] shouldBe AuthorRepresentation(
                 name = "Author with id and orcid",
                 id = ThingId("R456"),
                 identifiers = mapOf("orcid" to listOf("1111-2222-3333-4444")),
-                homepage = null
+                homepage = null,
             )
             it.authors[3].asClue { author ->
                 author.name shouldBe "Author with homepage"
@@ -267,7 +267,7 @@ internal class PaperControllerIntegrationTest : MockMvcBaseTest("papers") {
                 name = "Author that just has a name",
                 id = null,
                 identifiers = emptyMap(),
-                homepage = null
+                homepage = null,
             )
             it.contributions.asClue { contributions ->
                 contributions.size shouldBe 1
@@ -278,11 +278,11 @@ internal class PaperControllerIntegrationTest : MockMvcBaseTest("papers") {
             }
             it.sustainableDevelopmentGoals shouldBe setOf(
                 LabeledObjectRepresentation(ThingId("SDG_1"), "No poverty"),
-                LabeledObjectRepresentation(ThingId("SDG_2"), "Zero hunger")
+                LabeledObjectRepresentation(ThingId("SDG_2"), "Zero hunger"),
             )
             it.mentionings shouldBe setOf(
                 ResourceReferenceRepresentation(ThingId("R3003"), "Some resource", emptySet()),
-                ResourceReferenceRepresentation(ThingId("R3004"), "Some other resource", emptySet())
+                ResourceReferenceRepresentation(ThingId("R3004"), "Some other resource", emptySet()),
             )
             it.observatories shouldBe listOf(ObservatoryId("1afefdd0-5c09-4c9c-b718-2b35316b56f3"))
             it.organizations shouldBe listOf(OrganizationId("edc18168-c4ee-4cb8-a98a-136f748e912e"))
@@ -308,12 +308,12 @@ internal class PaperControllerIntegrationTest : MockMvcBaseTest("papers") {
             it.id shouldBe id
             it.title shouldBe "updated paper title"
             it.researchFields shouldBe listOf(
-                ObjectIdAndLabel(ThingId("R194"), "Engineering")
+                ObjectIdAndLabel(ThingId("R194"), "Engineering"),
             )
             it.identifiers shouldBe mapOf(
                 "doi" to listOf("10.48550/arXiv.2304.05328"),
                 "isbn" to listOf("978-123456789-0"),
-                "issn" to listOf("1234-5678")
+                "issn" to listOf("1234-5678"),
             )
             it.publicationInfo.asClue { publicationInfo ->
                 publicationInfo.publishedMonth shouldBe 6
@@ -330,19 +330,19 @@ internal class PaperControllerIntegrationTest : MockMvcBaseTest("papers") {
                 name = "Author with id",
                 id = ThingId("R123"),
                 identifiers = emptyMap(),
-                homepage = null
+                homepage = null,
             )
             it.authors[1] shouldBe Author(
                 name = "Author with orcid",
                 id = ThingId("R4567"),
                 identifiers = mapOf("orcid" to listOf("0000-1111-2222-3333")),
-                homepage = null
+                homepage = null,
             )
             it.authors[2] shouldBe Author(
                 name = "Author with id and orcid",
                 id = ThingId("R456"),
                 identifiers = mapOf("orcid" to listOf("1111-2222-3333-4444", "4444-3333-2222-1111")),
-                homepage = null
+                homepage = null,
             )
             it.authors[3].asClue { author ->
                 author.name shouldBe "Author with homepage"
@@ -354,7 +354,7 @@ internal class PaperControllerIntegrationTest : MockMvcBaseTest("papers") {
                 name = "Another author that just has a name",
                 id = null,
                 identifiers = emptyMap(),
-                homepage = null
+                homepage = null,
             )
             it.contributions.asClue { contributions ->
                 contributions.size shouldBe 1
@@ -365,11 +365,11 @@ internal class PaperControllerIntegrationTest : MockMvcBaseTest("papers") {
             }
             it.sustainableDevelopmentGoals shouldBe setOf(
                 ObjectIdAndLabel(ThingId("SDG_3"), "Good health and well-being"),
-                ObjectIdAndLabel(ThingId("SDG_4"), "Quality education")
+                ObjectIdAndLabel(ThingId("SDG_4"), "Quality education"),
             )
             it.mentionings shouldBe setOf(
                 ResourceReference(ThingId("R3004"), "Some other resource", emptySet()),
-                ResourceReference(ThingId("R3005"), "Some other more different resource", setOf(Classes.problem))
+                ResourceReference(ThingId("R3005"), "Some other more different resource", setOf(Classes.problem)),
             )
             it.observatories shouldBe listOf(ObservatoryId("1afefdd0-5c09-4c9c-b718-2b35316b56f3"))
             it.organizations shouldBe listOf(OrganizationId("edc18168-c4ee-4cb8-a98a-136f748e912e"))

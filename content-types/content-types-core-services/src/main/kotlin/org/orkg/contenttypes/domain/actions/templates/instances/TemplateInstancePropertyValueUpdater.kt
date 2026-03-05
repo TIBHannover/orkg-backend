@@ -35,9 +35,9 @@ class TemplateInstancePropertyValueUpdater(
             unsafeLiteralUseCases,
             unsafePredicateUseCases,
             statementRepository,
-            listService
+            listService,
         ),
-        statementService
+        statementService,
     )
 
     override fun invoke(command: UpdateTemplateInstanceCommand, state: State): State {
@@ -54,7 +54,7 @@ class TemplateInstancePropertyValueUpdater(
                 extractionMethod = command.extractionMethod,
                 thingsCommand = command.copy(literals = state.literals),
                 validationCache = state.validationCache,
-                bakedStatements = state.statementsToAdd
+                bakedStatements = state.statementsToAdd,
             )
         }
         return state

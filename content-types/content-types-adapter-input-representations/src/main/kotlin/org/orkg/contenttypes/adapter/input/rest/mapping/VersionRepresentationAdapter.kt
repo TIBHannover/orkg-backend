@@ -19,7 +19,7 @@ interface VersionRepresentationAdapter {
     fun VersionInfo.toVersionInfoRepresentation(): VersionInfoRepresentation =
         VersionInfoRepresentation(
             head = head.toHeadVersionRepresentation(),
-            published = published.map { it.toPublishedVersionRepresentation() }
+            published = published.map { it.toPublishedVersionRepresentation() },
         )
 
     fun Optional<HeadVersion>.mapToHeadVersionRepresentation(): Optional<HeadVersionRepresentation> =

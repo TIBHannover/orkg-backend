@@ -13,7 +13,7 @@ class SmartReviewSectionExistenceUpdateValidator(
         smartReviewService: SmartReviewService,
         resourceRepository: ResourceRepository,
     ) : this(
-        AbstractSmartReviewExistenceValidator(smartReviewService, resourceRepository)
+        AbstractSmartReviewExistenceValidator(smartReviewService, resourceRepository),
     )
 
     override fun invoke(command: UpdateSmartReviewSectionCommand, state: State): State =

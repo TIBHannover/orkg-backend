@@ -50,7 +50,7 @@ WITH [ppra, cmpa, vsla] AS nodes
 UNWIND nodes AS n
 WITH DISTINCT n
 WHERE n IS NOT NULL
-RETURN COUNT(n)"""
+RETURN COUNT(n)""",
     )
     fun findAllByResearchProblemId(id: ThingId, after: String, before: String, pageable: Pageable): Page<Neo4jAuthorRecord>
 }

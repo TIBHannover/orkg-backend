@@ -17,7 +17,7 @@ class PaperSDGUpdater(
         statementService: StatementUseCases,
         unsafeStatementUseCases: UnsafeStatementUseCases,
     ) : this(
-        StatementCollectionPropertyUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases)
+        StatementCollectionPropertyUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases),
     )
 
     override fun invoke(command: UpdatePaperCommand, state: State): State {
@@ -27,7 +27,7 @@ class PaperSDGUpdater(
                 contributorId = command.contributorId,
                 subjectId = command.paperId,
                 predicateId = Predicates.sustainableDevelopmentGoal,
-                objects = command.sustainableDevelopmentGoals!!
+                objects = command.sustainableDevelopmentGoals!!,
             )
         }
         return state

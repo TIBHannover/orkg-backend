@@ -53,7 +53,7 @@ internal class PaperCSVPredicateProcessorUnitTest : MockkBaseTest {
                         namespace = "resource",
                         value = "DOI",
                         type = Classes.resource,
-                    )
+                    ),
                 ),
                 ContributionStatement(
                     predicate = Either.left(predicateId),
@@ -61,8 +61,8 @@ internal class PaperCSVPredicateProcessorUnitTest : MockkBaseTest {
                         namespace = "resource",
                         value = "Result",
                         type = Classes.resource,
-                    )
-                )
+                    ),
+                ),
             )
         }
 
@@ -71,7 +71,7 @@ internal class PaperCSVPredicateProcessorUnitTest : MockkBaseTest {
                 withArg {
                     it.label shouldBe "result"
                     it.contributorId shouldBe contributorId
-                }
+                },
             )
         }
 

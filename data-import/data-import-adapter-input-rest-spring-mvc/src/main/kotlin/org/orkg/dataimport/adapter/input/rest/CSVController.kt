@@ -91,8 +91,8 @@ class CSVController(
                 name = request.file.originalFilename ?: "${request.file.name}.csv",
                 format = request.format,
                 type = request.type,
-                data = String(request.file.bytes)
-            )
+                data = String(request.file.bytes),
+            ),
         )
         val location = uriComponentsBuilder
             .path("/api/csvs/{id}")
@@ -115,8 +115,8 @@ class CSVController(
                 name = request.file?.let { it.originalFilename ?: "${it.name}.csv" },
                 format = request.format,
                 type = request.type,
-                data = request.file?.let { String(it.bytes) }
-            )
+                data = request.file?.let { String(it.bytes) },
+            ),
         )
         return noContent().build()
     }

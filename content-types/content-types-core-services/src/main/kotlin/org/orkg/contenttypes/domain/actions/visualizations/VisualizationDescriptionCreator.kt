@@ -14,7 +14,7 @@ class VisualizationDescriptionCreator(
         unsafeLiteralUseCases: UnsafeLiteralUseCases,
         unsafeStatementUseCases: UnsafeStatementUseCases,
     ) : this(
-        SingleStatementPropertyCreator(unsafeLiteralUseCases, unsafeStatementUseCases)
+        SingleStatementPropertyCreator(unsafeLiteralUseCases, unsafeStatementUseCases),
     )
 
     override operator fun invoke(command: CreateVisualizationCommand, state: State): State {
@@ -22,7 +22,7 @@ class VisualizationDescriptionCreator(
             contributorId = command.contributorId,
             subjectId = state.visualizationId!!,
             predicateId = Predicates.description,
-            label = command.description
+            label = command.description,
         )
         return state
     }

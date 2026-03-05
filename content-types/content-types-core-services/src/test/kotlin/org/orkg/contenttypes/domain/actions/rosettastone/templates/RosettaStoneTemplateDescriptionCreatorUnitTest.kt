@@ -25,7 +25,7 @@ internal class RosettaStoneTemplateDescriptionCreatorUnitTest : MockkBaseTest {
         val command = createRosettaStoneTemplateCommand()
         val rosettaStoneTemplateId = ThingId("R123")
         val state = CreateRosettaStoneTemplateState(
-            rosettaStoneTemplateId = rosettaStoneTemplateId
+            rosettaStoneTemplateId = rosettaStoneTemplateId,
         )
 
         every {
@@ -33,7 +33,7 @@ internal class RosettaStoneTemplateDescriptionCreatorUnitTest : MockkBaseTest {
                 contributorId = command.contributorId,
                 subjectId = state.rosettaStoneTemplateId!!,
                 predicateId = Predicates.description,
-                label = command.description
+                label = command.description,
             )
         } just runs
 
@@ -48,7 +48,7 @@ internal class RosettaStoneTemplateDescriptionCreatorUnitTest : MockkBaseTest {
                 contributorId = command.contributorId,
                 subjectId = state.rosettaStoneTemplateId!!,
                 predicateId = Predicates.description,
-                label = command.description
+                label = command.description,
             )
         }
     }

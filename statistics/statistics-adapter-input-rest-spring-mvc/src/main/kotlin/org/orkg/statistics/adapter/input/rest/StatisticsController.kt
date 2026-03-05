@@ -22,7 +22,7 @@ class StatisticsController(private val service: StatisticsUseCases) : MetricRepr
                 uriComponentsBuilder.cloneBuilder()
                     .path("/api/statistics/{group}")
                     .buildAndExpand(it)
-                    .toUri()
+                    .toUri(),
             )
         }
 
@@ -36,7 +36,7 @@ class StatisticsController(private val service: StatisticsUseCases) : MetricRepr
                 uriComponentsBuilder.cloneBuilder()
                     .path("/api/statistics/{group}/{metric}")
                     .buildAndExpand(it.group, it.name)
-                    .toUri()
+                    .toUri(),
             )
         }
 

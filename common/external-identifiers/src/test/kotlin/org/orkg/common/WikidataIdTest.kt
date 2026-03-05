@@ -45,7 +45,7 @@ internal class WikidataIdTest {
         @JvmStatic
         fun validWikidataIds(): Stream<Arguments> = Stream.of(
             Arguments.of("Q416565", "https://www.wikidata.org/wiki/Q416565"),
-            Arguments.of("Q45", "https://www.wikidata.org/wiki/Q45")
+            Arguments.of("Q45", "https://www.wikidata.org/wiki/Q45"),
         )
 
         @JvmStatic
@@ -55,7 +55,7 @@ internal class WikidataIdTest {
             // Illegal prefix
             Arguments.of("P41656#", "https://www.wikidata.org/wiki/P416565"),
             // Does not follow scheme at all
-            Arguments.of("example", "https://example.com/")
+            Arguments.of("example", "https://example.com/"),
         )
     }
 }

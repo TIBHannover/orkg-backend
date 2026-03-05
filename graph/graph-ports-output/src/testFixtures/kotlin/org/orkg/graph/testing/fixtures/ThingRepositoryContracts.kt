@@ -55,10 +55,10 @@ fun <
     val fabricator = Fabrikate(
         FabricatorConfig(
             collectionSizes = 12..12,
-            nullableStrategy = FabricatorConfig.NullableStrategy.NeverSetToNull // FIXME: because "id" is nullable
+            nullableStrategy = FabricatorConfig.NullableStrategy.NeverSetToNull, // FIXME: because "id" is nullable
         )
             .withStandardMappings()
-            .withGraphMappings()
+            .withGraphMappings(),
     )
 
     fun save(thing: Thing) {
@@ -137,7 +137,7 @@ fun <
                     things.forEach(::save)
                     val result = repository.findAll(
                         pageable = PageRequest.of(0, 5),
-                        label = SearchString.of("label find", exactMatch = false)
+                        label = SearchString.of("label find", exactMatch = false),
                     )
 
                     it("returns the correct result") {
@@ -162,7 +162,7 @@ fun <
             context("by visibility") {
                 val things = fabricator.random<List<Resource>>().mapIndexed { index, thing ->
                     thing.copy(
-                        visibility = Visibility.entries[index % Visibility.entries.size]
+                        visibility = Visibility.entries[index % Visibility.entries.size],
                     )
                 }
                 VisibilityFilter.entries.forEach { visibilityFilter ->
@@ -171,7 +171,7 @@ fun <
                         val expected = things.filter { it.visibility in visibilityFilter.targets }
                         val result = repository.findAll(
                             visibility = visibilityFilter,
-                            pageable = PageRequest.of(0, 10)
+                            pageable = PageRequest.of(0, 10),
                         )
 
                         it("returns the correct result") {
@@ -206,7 +206,7 @@ fun <
                 val expected = things.take(expectedCount)
                 val result = repository.findAll(
                     pageable = PageRequest.of(0, 5),
-                    createdBy = createdBy
+                    createdBy = createdBy,
                 )
 
                 it("returns the correct result") {
@@ -231,7 +231,7 @@ fun <
                 val expectedCount = 3
                 val things = fabricator.random<List<Literal>>().mapIndexed { index, thing ->
                     thing.copy(
-                        createdAt = OffsetDateTime.now(fixedClock).minusHours(index.toLong())
+                        createdAt = OffsetDateTime.now(fixedClock).minusHours(index.toLong()),
                     )
                 }
                 things.forEach(::save)
@@ -239,7 +239,7 @@ fun <
                 val expected = things.take(expectedCount)
                 val result = repository.findAll(
                     pageable = PageRequest.of(0, 5),
-                    createdAtStart = expected.last().createdAt
+                    createdAtStart = expected.last().createdAt,
                 )
 
                 it("returns the correct result") {
@@ -264,7 +264,7 @@ fun <
                 val expectedCount = 3
                 val things = fabricator.random<List<Resource>>().mapIndexed { index, thing ->
                     thing.copy(
-                        createdAt = OffsetDateTime.now(fixedClock).plusHours(index.toLong())
+                        createdAt = OffsetDateTime.now(fixedClock).plusHours(index.toLong()),
                     )
                 }
                 things.forEach(::save)
@@ -272,7 +272,7 @@ fun <
                 val expected = things.take(expectedCount)
                 val result = repository.findAll(
                     pageable = PageRequest.of(0, 5),
-                    createdAtEnd = expected.last().createdAt
+                    createdAtEnd = expected.last().createdAt,
                 )
 
                 it("returns the correct result") {
@@ -305,7 +305,7 @@ fun <
                 val expected = things.take(expectedCount)
                 val result = repository.findAll(
                     pageable = PageRequest.of(0, 5),
-                    includeClasses = setOf(`class`)
+                    includeClasses = setOf(`class`),
                 )
 
                 it("returns the correct result") {
@@ -341,7 +341,7 @@ fun <
                 val expected = things.take(expectedCount)
                 val result = repository.findAll(
                     pageable = PageRequest.of(0, 5),
-                    excludeClasses = setOf(`class`)
+                    excludeClasses = setOf(`class`),
                 )
 
                 it("returns the correct result") {
@@ -374,7 +374,7 @@ fun <
                 val expected = things.take(expectedCount)
                 val result = repository.findAll(
                     pageable = PageRequest.of(0, 5),
-                    observatoryId = observatoryId
+                    observatoryId = observatoryId,
                 )
 
                 it("returns the correct result") {
@@ -407,7 +407,7 @@ fun <
                 val expected = things.take(expectedCount)
                 val result = repository.findAll(
                     pageable = PageRequest.of(0, 5),
-                    organizationId = organizationId
+                    organizationId = organizationId,
                 )
 
                 it("returns the correct result") {
@@ -445,7 +445,7 @@ fun <
                     includeClasses = expected.classes,
                     excludeClasses = setOf(ThingId("MissingClass")),
                     observatoryId = expected.observatoryId,
-                    organizationId = expected.organizationId
+                    organizationId = expected.organizationId,
                 )
 
                 it("returns the correct result") {

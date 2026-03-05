@@ -39,7 +39,7 @@ val reservedClassIds = setOf(
     Classes.resource,
     Classes.list,
     Classes.rosettaStoneStatement,
-    Classes.thing
+    Classes.thing,
 )
 
 object Literals {

@@ -73,7 +73,7 @@ class PredicateController(
                 id = predicate.id,
                 contributorId = currentUser.contributorId(),
                 label = predicate.label,
-            )
+            ),
         )
         val location = uriComponentsBuilder
             .path("/api/predicates/{id}")
@@ -94,8 +94,8 @@ class PredicateController(
             UpdatePredicateUseCase.UpdateCommand(
                 id = id,
                 contributorId = currentUser.contributorId(),
-                label = predicate.label
-            )
+                label = predicate.label,
+            ),
         )
         val location = uriComponentsBuilder
             .path("/api/predicates/{id}")

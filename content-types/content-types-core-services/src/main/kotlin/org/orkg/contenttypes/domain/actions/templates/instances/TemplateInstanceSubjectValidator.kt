@@ -14,7 +14,7 @@ class TemplateInstanceSubjectValidator(
         val subject = resourceRepository.findById(command.subject)
             .orElseThrow { ResourceNotFound(command.subject) }
         return state.copy(
-            templateInstance = with(templateInstanceService) { subject.toTemplateInstance(state.template!!) }
+            templateInstance = with(templateInstanceService) { subject.toTemplateInstance(state.template!!) },
         )
     }
 }

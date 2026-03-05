@@ -19,9 +19,9 @@ internal class PublicationInfoValidatorUnitTest {
                 publishedMonth = 1,
                 publishedYear = 2024,
                 publishedIn = "valid venue",
-                url = ParsedIRI.create("https://orkg.org/paper/R1000")
+                url = ParsedIRI.create("https://orkg.org/paper/R1000"),
             ),
-            Unit
+            Unit,
         )
     }
 
@@ -33,9 +33,9 @@ internal class PublicationInfoValidatorUnitTest {
                     publishedMonth = null,
                     publishedYear = null,
                     publishedIn = "\n",
-                    url = null
+                    url = null,
                 ),
-                Unit
+                Unit,
             )
         }.asClue {
             it.property shouldBe "published_in"
@@ -50,9 +50,9 @@ internal class PublicationInfoValidatorUnitTest {
                     publishedMonth = 13,
                     publishedYear = null,
                     publishedIn = null,
-                    url = null
+                    url = null,
                 ),
-                Unit
+                Unit,
             )
         }
     }

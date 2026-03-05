@@ -20,10 +20,10 @@ object Identifiers {
         Identifier("open_alex", Predicates.hasOpenAlexId, OpenAlexId::of),
     )
     val comparison = setOf(
-        Identifier("doi", Predicates.hasDOI, DOI::of)
+        Identifier("doi", Predicates.hasDOI, DOI::of),
     )
     val smartReview = setOf(
-        Identifier("doi", Predicates.hasDOI, DOI::of)
+        Identifier("doi", Predicates.hasDOI, DOI::of),
     )
     val author = setOf(
         Identifier("orcid", Predicates.hasORCID, ORCID::of),

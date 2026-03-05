@@ -45,7 +45,7 @@ internal class SmartReviewSectionExistenceCreateValidatorUnitTest : MockkBaseTes
         val statement = createStatement(
             subject = createResource(command.smartReviewId, classes = setOf(Classes.smartReview)),
             predicate = createPredicate(Predicates.hasContribution),
-            `object` = createResource(contributionId, classes = setOf(Classes.contribution, Classes.contributionSmartReview))
+            `object` = createResource(contributionId, classes = setOf(Classes.contribution, Classes.contributionSmartReview)),
         )
 
         every {
@@ -53,7 +53,7 @@ internal class SmartReviewSectionExistenceCreateValidatorUnitTest : MockkBaseTes
                 subjectId = command.smartReviewId,
                 predicateId = Predicates.hasContribution,
                 objectClasses = setOf(Classes.contribution, Classes.contributionSmartReview),
-                pageable = PageRequests.SINGLE
+                pageable = PageRequests.SINGLE,
             )
         } returns pageOf(statement)
 
@@ -70,7 +70,7 @@ internal class SmartReviewSectionExistenceCreateValidatorUnitTest : MockkBaseTes
                 subjectId = command.smartReviewId,
                 predicateId = Predicates.hasContribution,
                 objectClasses = setOf(Classes.contribution, Classes.contributionSmartReview),
-                pageable = PageRequests.SINGLE
+                pageable = PageRequests.SINGLE,
             )
         }
     }
@@ -83,7 +83,7 @@ internal class SmartReviewSectionExistenceCreateValidatorUnitTest : MockkBaseTes
         val statement = createStatement(
             subject = createResource(command.smartReviewId, classes = setOf(Classes.smartReviewPublished)),
             predicate = createPredicate(Predicates.hasContribution),
-            `object` = createResource(contributionId, classes = setOf(Classes.contribution, Classes.contributionSmartReview))
+            `object` = createResource(contributionId, classes = setOf(Classes.contribution, Classes.contributionSmartReview)),
         )
 
         every {
@@ -91,7 +91,7 @@ internal class SmartReviewSectionExistenceCreateValidatorUnitTest : MockkBaseTes
                 subjectId = command.smartReviewId,
                 predicateId = Predicates.hasContribution,
                 objectClasses = setOf(Classes.contribution, Classes.contributionSmartReview),
-                pageable = PageRequests.SINGLE
+                pageable = PageRequests.SINGLE,
             )
         } returns pageOf(statement)
 
@@ -102,7 +102,7 @@ internal class SmartReviewSectionExistenceCreateValidatorUnitTest : MockkBaseTes
                 subjectId = command.smartReviewId,
                 predicateId = Predicates.hasContribution,
                 objectClasses = setOf(Classes.contribution, Classes.contributionSmartReview),
-                pageable = PageRequests.SINGLE
+                pageable = PageRequests.SINGLE,
             )
         }
     }
@@ -117,7 +117,7 @@ internal class SmartReviewSectionExistenceCreateValidatorUnitTest : MockkBaseTes
                 subjectId = command.smartReviewId,
                 predicateId = Predicates.hasContribution,
                 objectClasses = setOf(Classes.contribution, Classes.contributionSmartReview),
-                pageable = PageRequests.SINGLE
+                pageable = PageRequests.SINGLE,
             )
         } returns pageOf()
 
@@ -128,7 +128,7 @@ internal class SmartReviewSectionExistenceCreateValidatorUnitTest : MockkBaseTes
                 subjectId = command.smartReviewId,
                 predicateId = Predicates.hasContribution,
                 objectClasses = setOf(Classes.contribution, Classes.contributionSmartReview),
-                pageable = PageRequests.SINGLE
+                pageable = PageRequests.SINGLE,
             )
         }
     }
@@ -141,7 +141,7 @@ internal class SmartReviewSectionExistenceCreateValidatorUnitTest : MockkBaseTes
             Arguments.of(createSmartReviewResourceSectionCommand()),
             Arguments.of(createSmartReviewPredicateSectionCommand()),
             Arguments.of(createSmartReviewOntologySectionCommand()),
-            Arguments.of(createSmartReviewTextSectionCommand())
+            Arguments.of(createSmartReviewTextSectionCommand()),
         )
     }
 }

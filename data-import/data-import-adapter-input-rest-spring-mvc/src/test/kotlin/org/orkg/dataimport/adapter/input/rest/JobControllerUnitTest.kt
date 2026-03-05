@@ -47,8 +47,8 @@ import kotlin.reflect.KClass
         JobResultRepresentationFactory::class,
         ImportPaperCSVJobResultRepresentationFormatter::class,
         ValidatePaperCSVJobResultRepresentationFormatter::class,
-        DataImportControllerUnitTestConfiguration::class
-    ]
+        DataImportControllerUnitTestConfiguration::class,
+    ],
 )
 @TestPropertySource(properties = ["orkg.import.csv.enabled=true"])
 @WebMvcTest(controllers = [JobController::class])
@@ -74,7 +74,7 @@ internal class JobControllerUnitTest : MockMvcBaseTest("jobs") {
                 description(
                     """
                     A `GET` request provides information about a job.
-                    """
+                    """,
                 )
                 pathParameters(
                     parameterWithName("id").description("The identifier of the job to retrieve."),
@@ -105,7 +105,7 @@ internal class JobControllerUnitTest : MockMvcBaseTest("jobs") {
                     ====
                     Results are only available for completed jobs.
                     ====
-                    """
+                    """,
                 )
                 pathParameters(
                     parameterWithName("id").description("The identifier of the job to retrieve the results for."),
@@ -128,8 +128,8 @@ internal class JobControllerUnitTest : MockMvcBaseTest("jobs") {
             jobResult = createJobResult(
                 jobId = JobId(123),
                 jobName = JobNames.VALIDATE_PAPER_CSV,
-                value = Optional.of(pageOf(createPaperCSVRecord()))
-            )
+                value = Optional.of(pageOf(createPaperCSVRecord())),
+            ),
         )
     }
 
@@ -143,8 +143,8 @@ internal class JobControllerUnitTest : MockMvcBaseTest("jobs") {
             jobResult = createJobResult(
                 jobId = JobId(123),
                 jobName = JobNames.IMPORT_PAPER_CSV,
-                value = Optional.of(pageOf(createPaperCSVRecordImportResult()))
-            )
+                value = Optional.of(pageOf(createPaperCSVRecordImportResult())),
+            ),
         )
     }
 
@@ -154,7 +154,7 @@ internal class JobControllerUnitTest : MockMvcBaseTest("jobs") {
         val jobId = JobId(123)
         val jobResult = createJobResult().copy(
             status = JobStatus.Status.RUNNING,
-            value = Optional.empty()
+            value = Optional.empty(),
         )
         val contributorId = ContributorId(MockUserId.ADMIN)
 
@@ -185,7 +185,7 @@ internal class JobControllerUnitTest : MockMvcBaseTest("jobs") {
                     """
                     A `DELETE` request attempts to stop a running job.
                     The response will be `201 NO CONTENT` when successful.
-                    """
+                    """,
                 )
                 pathParameters(
                     parameterWithName("id").description("The identifier of the job to stop."),

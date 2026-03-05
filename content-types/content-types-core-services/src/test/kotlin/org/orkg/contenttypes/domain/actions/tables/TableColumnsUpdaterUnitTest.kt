@@ -30,19 +30,19 @@ internal class TableColumnsUpdaterUnitTest : MockkBaseTest {
             rows = listOf(
                 CreateRowCommand(
                     label = "header",
-                    data = listOf("Column_1_Title", "Column_2_Title", "Column_3_Title")
-                )
-            )
+                    data = listOf("Column_1_Title", "Column_2_Title", "Column_3_Title"),
+                ),
+            ),
         )
         val existingColumnIds = listOf(
             ThingId("Column_1"),
             ThingId("Column_2"),
-            ThingId("Column_3")
+            ThingId("Column_3"),
         )
         val state = UpdateTableState().copy(
             existingColumns = existingColumnIds.map(::createColumnGraph),
             thingsToDelete = setOf(ThingId("ToBeDeleted")),
-            statementsToDelete = setOf(StatementId("SalreadyExists"))
+            statementsToDelete = setOf(StatementId("SalreadyExists")),
         )
 
         val result = tableColumnsUpdater(command, state)
@@ -68,32 +68,32 @@ internal class TableColumnsUpdaterUnitTest : MockkBaseTest {
         val existingColumnIds = listOf(
             ThingId("Column_1"),
             ThingId("Column_2"),
-            ThingId("Column_3")
+            ThingId("Column_3"),
         )
         val state = UpdateTableState().copy(
             existingColumns = existingColumnIds.map(::createColumnGraph),
             validationCache = mapOf(
                 "#temp1" from command,
                 "#temp2" from command,
-                "#temp3" from command
+                "#temp3" from command,
             ),
             tempIdToThingId = mapOf(
                 "#temp1" to ThingId("L1"),
                 "#temp2" to ThingId("L2"),
-                "#temp3" to ThingId("L3")
+                "#temp3" to ThingId("L3"),
             ),
             thingsToDelete = setOf(ThingId("ToBeDeleted")),
-            statementsToDelete = setOf(StatementId("SalreadyExists"))
+            statementsToDelete = setOf(StatementId("SalreadyExists")),
         )
         val expecetedStatementsToDelete = state.statementsToDelete + setOf(
             StatementId("S_Column_1--CSVW_Titles--Column_1_Title"),
             StatementId("S_Column_2--CSVW_Titles--Column_2_Title"),
-            StatementId("S_Column_3--CSVW_Titles--Column_3_Title")
+            StatementId("S_Column_3--CSVW_Titles--Column_3_Title"),
         )
         val newColumnTitleStatements = listOf(
             StatementId("S1"),
             StatementId("S2"),
-            StatementId("S3")
+            StatementId("S3"),
         )
 
         every { unsafeStatementUseCases.create(any()) } returnsMany newColumnTitleStatements
@@ -120,8 +120,8 @@ internal class TableColumnsUpdaterUnitTest : MockkBaseTest {
                     contributorId = command.contributorId,
                     subjectId = existingColumnIds[0],
                     predicateId = Predicates.csvwTitles,
-                    objectId = ThingId("L1")
-                )
+                    objectId = ThingId("L1"),
+                ),
             )
         }
         verify(exactly = 1) {
@@ -130,8 +130,8 @@ internal class TableColumnsUpdaterUnitTest : MockkBaseTest {
                     contributorId = command.contributorId,
                     subjectId = existingColumnIds[1],
                     predicateId = Predicates.csvwTitles,
-                    objectId = ThingId("L2")
-                )
+                    objectId = ThingId("L2"),
+                ),
             )
         }
         verify(exactly = 1) {
@@ -140,8 +140,8 @@ internal class TableColumnsUpdaterUnitTest : MockkBaseTest {
                     contributorId = command.contributorId,
                     subjectId = existingColumnIds[2],
                     predicateId = Predicates.csvwTitles,
-                    objectId = ThingId("L3")
-                )
+                    objectId = ThingId("L3"),
+                ),
             )
         }
     }
@@ -151,7 +151,7 @@ internal class TableColumnsUpdaterUnitTest : MockkBaseTest {
         val command = updateTableCommand()
         val existingColumnIds = listOf(
             ThingId("Column_1"),
-            ThingId("Column_2")
+            ThingId("Column_2"),
         )
         val existingColumns = existingColumnIds.map(::createColumnGraph)
         val state = UpdateTableState().copy(
@@ -159,15 +159,15 @@ internal class TableColumnsUpdaterUnitTest : MockkBaseTest {
             validationCache = mapOf(
                 "#temp1" from command,
                 "#temp2" from command,
-                "#temp3" from command
+                "#temp3" from command,
             ),
             tempIdToThingId = mapOf(
                 "#temp1" to ThingId("L1"),
                 "#temp2" to ThingId("L2"),
-                "#temp3" to ThingId("L3")
+                "#temp3" to ThingId("L3"),
             ),
             thingsToDelete = setOf(ThingId("ToBeDeleted")),
-            statementsToDelete = setOf(StatementId("SalreadyExists"))
+            statementsToDelete = setOf(StatementId("SalreadyExists")),
         )
         val newColumnId = ThingId("Column3")
         val columnIds = existingColumnIds + newColumnId
@@ -186,7 +186,7 @@ internal class TableColumnsUpdaterUnitTest : MockkBaseTest {
                 contributorId = command.contributorId,
                 tableId = command.tableId,
                 index = 2,
-                titleLiteralId = ThingId("L3")
+                titleLiteralId = ThingId("L3"),
             )
         } returns newColumnId
 
@@ -212,8 +212,8 @@ internal class TableColumnsUpdaterUnitTest : MockkBaseTest {
                     contributorId = command.contributorId,
                     subjectId = existingColumnIds[0],
                     predicateId = Predicates.csvwTitles,
-                    objectId = ThingId("L1")
-                )
+                    objectId = ThingId("L1"),
+                ),
             )
         }
         verify(exactly = 1) {
@@ -222,8 +222,8 @@ internal class TableColumnsUpdaterUnitTest : MockkBaseTest {
                     contributorId = command.contributorId,
                     subjectId = existingColumnIds[1],
                     predicateId = Predicates.csvwTitles,
-                    objectId = ThingId("L2")
-                )
+                    objectId = ThingId("L2"),
+                ),
             )
         }
         verify(exactly = 1) {
@@ -231,7 +231,7 @@ internal class TableColumnsUpdaterUnitTest : MockkBaseTest {
                 contributorId = command.contributorId,
                 tableId = command.tableId,
                 index = 2,
-                titleLiteralId = ThingId("L3")
+                titleLiteralId = ThingId("L3"),
             )
         }
     }
@@ -242,30 +242,30 @@ internal class TableColumnsUpdaterUnitTest : MockkBaseTest {
             rows = listOf(
                 CreateRowCommand(
                     label = "header",
-                    data = listOf("#temp1")
-                )
-            )
+                    data = listOf("#temp1"),
+                ),
+            ),
         )
         val existingColumnIds = listOf(
             ThingId("Column_1"),
-            ThingId("Column_2")
+            ThingId("Column_2"),
         )
         val existingColumns = existingColumnIds.map(::createColumnGraph)
         val state = UpdateTableState().copy(
             existingColumns = existingColumns,
             validationCache = mapOf(
-                "#temp1" from command
+                "#temp1" from command,
             ),
             tempIdToThingId = mapOf(
-                "#temp1" to ThingId("L1")
+                "#temp1" to ThingId("L1"),
             ),
             thingsToDelete = setOf(ThingId("ToBeDeleted")),
-            statementsToDelete = setOf(StatementId("SalreadyExists"))
+            statementsToDelete = setOf(StatementId("SalreadyExists")),
         )
         val columnIds = existingColumnIds.take(1)
         val expectedThingsToDelete = state.thingsToDelete + ThingId("Column_2")
         val expecetedStatementsToDelete = state.statementsToDelete + existingColumns.last().statementIds + setOf(
-            StatementId("S_Column_1--CSVW_Titles--Column_1_Title")
+            StatementId("S_Column_1--CSVW_Titles--Column_1_Title"),
         )
 
         every { unsafeStatementUseCases.create(any()) } returns StatementId("S1")
@@ -292,8 +292,8 @@ internal class TableColumnsUpdaterUnitTest : MockkBaseTest {
                     contributorId = command.contributorId,
                     subjectId = existingColumnIds[0],
                     predicateId = Predicates.csvwTitles,
-                    objectId = ThingId("L1")
-                )
+                    objectId = ThingId("L1"),
+                ),
             )
         }
     }

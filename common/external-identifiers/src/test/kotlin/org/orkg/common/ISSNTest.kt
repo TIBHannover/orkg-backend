@@ -46,7 +46,7 @@ internal class ISSNTest {
         @Suppress("HttpUrlsUsage")
         fun validISSNs(): Stream<Arguments> = Stream.of(
             Arguments.of("1245-6549", "https://portal.issn.org/resource/ISSN/1245-6549"),
-            Arguments.of("1564-561X", "https://portal.issn.org/resource/ISSN/1564-561X")
+            Arguments.of("1564-561X", "https://portal.issn.org/resource/ISSN/1564-561X"),
         )
 
         @JvmStatic
@@ -60,7 +60,7 @@ internal class ISSNTest {
             // Less than 8 digits
             Arguments.of("1245654", "https://portal.issn.org/resource/ISSN/1245654"),
             // empty
-            Arguments.of("", "https://portal.issn.org/resource/ISSN/")
+            Arguments.of("", "https://portal.issn.org/resource/ISSN/"),
         )
     }
 }

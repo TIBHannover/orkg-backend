@@ -19,30 +19,30 @@ fun createContributionCommand() = CreateContributionUseCase.CreateCommand(
     resources = mapOf(
         "#temp1" to CreateResourceCommandPart(
             label = "MOTO",
-            classes = setOf(ThingId("R2000"))
-        )
+            classes = setOf(ThingId("R2000")),
+        ),
     ),
     literals = mapOf(
         "#temp2" to CreateLiteralCommandPart(
             label = "0.1",
-            dataType = Literals.XSD.DECIMAL.prefixedUri
-        )
+            dataType = Literals.XSD.DECIMAL.prefixedUri,
+        ),
     ),
     predicates = mapOf(
         "#temp3" to CreatePredicateCommandPart(
             label = "hasResult",
-            description = "has result"
+            description = "has result",
         ),
         "#temp4" to CreatePredicateCommandPart(
-            label = "hasLiteral"
-        )
+            label = "hasLiteral",
+        ),
     ),
     contribution = CreateContributionCommandPart(
         label = "Contribution 1",
         classes = setOf(ThingId("C123")),
         statements = mapOf(
             Predicates.hasResearchProblem.value to listOf(
-                CreateContributionCommandPart.StatementObject("R3003")
+                CreateContributionCommandPart.StatementObject("R3003"),
             ),
             Predicates.hasEvaluation.value to listOf(
                 CreateContributionCommandPart.StatementObject("#temp1"),
@@ -51,14 +51,14 @@ fun createContributionCommand() = CreateContributionUseCase.CreateCommand(
                     statements = mapOf(
                         "#temp3" to listOf(
                             CreateContributionCommandPart.StatementObject("R3003"),
-                            CreateContributionCommandPart.StatementObject("#temp2")
+                            CreateContributionCommandPart.StatementObject("#temp2"),
                         ),
                         "#temp4" to listOf(
-                            CreateContributionCommandPart.StatementObject("#temp1")
-                        )
-                    )
-                )
-            )
-        )
-    )
+                            CreateContributionCommandPart.StatementObject("#temp1"),
+                        ),
+                    ),
+                ),
+            ),
+        ),
+    ),
 )

@@ -14,7 +14,7 @@ class SmartReviewResearchFieldCreator(
         unsafeLiteralUseCases: UnsafeLiteralUseCases,
         unsafeStatementUseCases: UnsafeStatementUseCases,
     ) : this(
-        StatementCollectionPropertyCreator(unsafeLiteralUseCases, unsafeStatementUseCases)
+        StatementCollectionPropertyCreator(unsafeLiteralUseCases, unsafeStatementUseCases),
     )
 
     override fun invoke(command: CreateSmartReviewCommand, state: State): State {
@@ -22,7 +22,7 @@ class SmartReviewResearchFieldCreator(
             contributorId = command.contributorId,
             subjectId = state.smartReviewId!!,
             predicateId = Predicates.hasResearchField,
-            objects = command.researchFields
+            objects = command.researchFields,
         )
         return state
     }

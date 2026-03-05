@@ -13,7 +13,7 @@ class VisualizationAuthorListValidator(
         resourceRepository: ResourceRepository,
         statementRepository: StatementRepository,
     ) : this(
-        AbstractAuthorListValidator(resourceRepository, statementRepository)
+        AbstractAuthorListValidator(resourceRepository, statementRepository),
     )
 
     override fun invoke(command: CreateVisualizationCommand, state: State): State =

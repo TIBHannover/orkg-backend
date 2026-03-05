@@ -72,7 +72,7 @@ internal class ContributionControllerIntegrationTest : MockMvcBaseTest("contribu
             Predicates.description,
             Predicates.hasListElement,
             Predicates.hasEvaluation,
-            Predicates.hasResearchProblem
+            Predicates.hasResearchProblem,
         )
 
         classService.createClasses(
@@ -84,7 +84,7 @@ internal class ContributionControllerIntegrationTest : MockMvcBaseTest("contribu
 
         classService.createClasses(
             ThingId("C123"),
-            ThingId("Result")
+            ThingId("Result"),
         )
 
         resourceService.createResource(id = ThingId("R3003"), label = "Some resource")
@@ -107,7 +107,7 @@ internal class ContributionControllerIntegrationTest : MockMvcBaseTest("contribu
         val paperId = resourceService.createResource(
             id = ThingId("R165487"),
             label = "Some other resource",
-            classes = setOf(Classes.paper)
+            classes = setOf(Classes.paper),
         )
 
         val id = post("/api/papers/$paperId/contributions")

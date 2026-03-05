@@ -36,7 +36,7 @@ class LegacyUserObservatoryController(
         observatoryAuthUseCases.addUserObservatory(
             observatoryId = request.observatoryId,
             organizationId = request.organizationId,
-            contributorId = request.contributorId
+            contributorId = request.contributorId,
         )
         val location = uriComponentsBuilder.path("/api/user/{id}")
             .buildAndExpand(request.contributorId)

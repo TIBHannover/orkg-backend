@@ -114,7 +114,7 @@ internal class OrganizationControllerUnitTest : MockMvcBaseTest("organizations")
         val logoId = ImageId(UUID.randomUUID())
         val organization = createOrganization().copy(
             id = id,
-            logoId = logoId
+            logoId = logoId,
         )
 
         every { organizationService.findById(id) } returns Optional.of(organization)
@@ -133,7 +133,7 @@ internal class OrganizationControllerUnitTest : MockMvcBaseTest("organizations")
     fun `Given an organization is updated, when service reports organization not found, then status is 404 NOT FOUND`() {
         val id = OrganizationId(UUID.randomUUID())
         val body = mapOf(
-            "name" to "irrelevant"
+            "name" to "irrelevant",
         )
 
         every { organizationService.update(any(), any()) } throws OrganizationNotFound(id)
@@ -152,7 +152,7 @@ internal class OrganizationControllerUnitTest : MockMvcBaseTest("organizations")
     fun `Given an organization is updated, when service reports invalid mime type for the logo, then status is 400 BAD REQUEST`() {
         val id = OrganizationId(UUID.randomUUID())
         val body = mapOf(
-            "name" to "irrelevant"
+            "name" to "irrelevant",
         )
         val exception = InvalidMimeType("irrelevant")
 
@@ -172,7 +172,7 @@ internal class OrganizationControllerUnitTest : MockMvcBaseTest("organizations")
     fun `Given an organization is updated, when service reports invalid image data for the logo, then status is 400 BAD REQUEST`() {
         val id = OrganizationId(UUID.randomUUID())
         val body = mapOf(
-            "name" to "irrelevant"
+            "name" to "irrelevant",
         )
         val exception = InvalidImageData()
 
@@ -192,7 +192,7 @@ internal class OrganizationControllerUnitTest : MockMvcBaseTest("organizations")
     fun `Given an organization is updated, when service succeeds, then status is 204 NO CONTENT`() {
         val id = OrganizationId(UUID.randomUUID())
         val body = mapOf(
-            "name" to "irrelevant"
+            "name" to "irrelevant",
         )
 
         every { organizationService.update(any(), any()) } returns Unit
@@ -211,7 +211,7 @@ internal class OrganizationControllerUnitTest : MockMvcBaseTest("organizations")
     fun `Given an organization is updated, when name is invalid, then status is 400 BAD REQUEST`() {
         val id = OrganizationId(UUID.randomUUID())
         val body = mapOf(
-            "name" to ""
+            "name" to "",
         )
 
         patchMultipart("/api/organizations/{id}", id)
@@ -228,7 +228,7 @@ internal class OrganizationControllerUnitTest : MockMvcBaseTest("organizations")
     fun `Given an organization is updated, when url is invalid, then status is 400 BAD REQUEST`() {
         val id = OrganizationId(UUID.randomUUID())
         val body = mapOf(
-            "url" to ""
+            "url" to "",
         )
 
         patchMultipart("/api/organizations/{id}", id)
@@ -249,7 +249,7 @@ internal class OrganizationControllerUnitTest : MockMvcBaseTest("organizations")
         val body = mapOf(
             "name" to "Organization",
             "url" to "https://example.com",
-            "type" to OrganizationType.GENERAL
+            "type" to OrganizationType.GENERAL,
         )
 
         every { organizationService.update(any(), any()) } returns Unit
@@ -270,7 +270,7 @@ internal class OrganizationControllerUnitTest : MockMvcBaseTest("organizations")
                     The updated organization (object) can be retrieved by following the URI in the `Location` header field.
                     
                     NOTE: This endpoint can only be accessed by curators.
-                    """
+                    """,
                 )
                 responseHeaders(
                     headerWithName("Location").description("The uri path where the updated organization can be fetched from."),
@@ -319,7 +319,7 @@ internal class OrganizationControllerUnitTest : MockMvcBaseTest("organizations")
         val body = mapOf(
             "name" to "Organization",
             "url" to "https://example.com",
-            "type" to OrganizationType.GENERAL
+            "type" to OrganizationType.GENERAL,
         )
 
         every { organizationService.update(any(), any()) } returns Unit

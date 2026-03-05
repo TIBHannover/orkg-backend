@@ -37,7 +37,7 @@ import org.springframework.beans.factory.annotation.Autowired
         ContentTypesNeo4jConfiguration::class,
         CypherQueryBuilderConfiguration::class,
         FixedClockConfig::class,
-    ]
+    ],
 )
 internal class SpringDataNeo4jAuthorStatisticsAdapterContractTest(
     @param:Autowired private val springDataNeo4jAuthorStatisticsAdapter: AuthorStatisticsRepository,
@@ -57,6 +57,6 @@ internal class SpringDataNeo4jAuthorStatisticsAdapterContractTest(
                 springDataNeo4jLiteralAdapter,
                 springDataNeo4jStatementAdapter,
                 listAdapter,
-            )
+            ),
         )
     })

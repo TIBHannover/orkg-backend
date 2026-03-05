@@ -17,16 +17,16 @@ class TemplateFormattedLabelCreator(
             val labelLiteralId = unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = command.contributorId,
-                    label = label.value
-                )
+                    label = label.value,
+                ),
             )
             unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     subjectId = state.templateId!!,
                     predicateId = Predicates.templateLabelFormat,
-                    objectId = labelLiteralId
-                )
+                    objectId = labelLiteralId,
+                ),
             )
         }
         return state

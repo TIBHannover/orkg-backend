@@ -18,7 +18,7 @@ class SingleStatementPropertyUpdater(
     private val unsafeStatementUseCases: UnsafeStatementUseCases,
     private val singleStatementPropertyCreator: SingleStatementPropertyCreator = SingleStatementPropertyCreator(
         unsafeLiteralUseCases,
-        unsafeStatementUseCases
+        unsafeStatementUseCases,
     ),
 ) {
     internal fun updateRequiredProperty(
@@ -43,8 +43,8 @@ class SingleStatementPropertyUpdater(
                         id = (statement.`object` as Literal).id,
                         contributorId = contributorId,
                         label = label,
-                        datatype = datatype
-                    )
+                        datatype = datatype,
+                    ),
                 )
                 toRemove -= statement
             }
@@ -93,8 +93,8 @@ class SingleStatementPropertyUpdater(
                 contributorId = contributorId,
                 subjectId = subjectId,
                 predicateId = predicateId,
-                objectId = objectId
-            )
+                objectId = objectId,
+            ),
         )
     }
 
@@ -115,8 +115,8 @@ class SingleStatementPropertyUpdater(
                     contributorId = contributorId,
                     subjectId = subjectId,
                     predicateId = predicateId,
-                    objectId = objectId
-                )
+                    objectId = objectId,
+                ),
             )
         }
     }

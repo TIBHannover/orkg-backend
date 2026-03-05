@@ -82,7 +82,7 @@ internal class VisualizationControllerUnitTest : MockMvcBaseTest("visualizations
                 description(
                     """
                     A `GET` request provides information about a visualization.
-                    """
+                    """,
                 )
                 pathParameters(
                     parameterWithName("id").description("The identifier of the visualization to retrieve."),
@@ -171,7 +171,7 @@ internal class VisualizationControllerUnitTest : MockMvcBaseTest("visualizations
                     """
                     A `GET` request returns a <<sorting-and-pagination,paged>> list of <<visualizations-fetch,visualizations>>.
                     If no paging request parameters are provided, the default values will be used.
-                    """
+                    """,
                 )
                 pagedQueryParameters(
                     parameterWithName("title").description("A search term that must be contained in the title of the visualization. (optional).").optional(),
@@ -249,7 +249,7 @@ internal class VisualizationControllerUnitTest : MockMvcBaseTest("visualizations
                     A `POST` request creates a new visualization with all the given parameters.
                     The response will be `201 Created` when successful.
                     The visualization (object) can be retrieved by following the URI in the `Location` header field.
-                    """
+                    """,
                 )
                 responseHeaders(
                     headerWithName("Location").description("The uri path where the newly created visualization can be fetched from."),
@@ -335,8 +335,8 @@ internal class VisualizationControllerUnitTest : MockMvcBaseTest("visualizations
             Author(
                 id = ThingId("R123"),
                 name = "author",
-                identifiers = mapOf("orcid" to listOf("0000-1111-2222-3333"))
-            )
+                identifiers = mapOf("orcid" to listOf("0000-1111-2222-3333")),
+            ),
         )
         every { visualizationService.create(any()) } throws exception
 
@@ -360,35 +360,35 @@ internal class VisualizationControllerUnitTest : MockMvcBaseTest("visualizations
                     id = ThingId("R123"),
                     name = "Author with id",
                     identifiers = null,
-                    homepage = null
+                    homepage = null,
                 ),
                 AuthorRequest(
                     id = null,
                     name = "Author with orcid",
                     identifiers = IdentifierMapRequest(mapOf("orcid" to listOf("0000-1111-2222-3333"))),
-                    homepage = null
+                    homepage = null,
                 ),
                 AuthorRequest(
                     id = ThingId("R456"),
                     name = "Author with id and orcid",
                     identifiers = IdentifierMapRequest(mapOf("orcid" to listOf("1111-2222-3333-4444"))),
-                    homepage = null
+                    homepage = null,
                 ),
                 AuthorRequest(
                     id = null,
                     name = "Author with homepage",
                     identifiers = null,
-                    homepage = ParsedIRI.create("https://example.org/author")
+                    homepage = ParsedIRI.create("https://example.org/author"),
                 ),
                 AuthorRequest(
                     id = null,
                     name = "Author that just has a name",
                     identifiers = null,
-                    homepage = null
-                )
+                    homepage = null,
+                ),
             ),
             observatories = listOf(ObservatoryId("eeb1ab0f-0ef5-4bee-aba2-2d5cea2f0174")),
             organizations = listOf(OrganizationId("f9965b2a-5222-45e1-8ef8-dbd8ce1f57bc")),
-            extractionMethod = ExtractionMethod.UNKNOWN
+            extractionMethod = ExtractionMethod.UNKNOWN,
         )
 }

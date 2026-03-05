@@ -16,16 +16,16 @@ class RosettaStoneTemplateDynamicLabelCreator(
         val literalId = unsafeLiteralUseCases.create(
             CreateLiteralUseCase.CreateCommand(
                 contributorId = command.contributorId,
-                label = command.dynamicLabel.template
-            )
+                label = command.dynamicLabel.template,
+            ),
         )
         unsafeStatementUseCases.create(
             CreateStatementUseCase.CreateCommand(
                 contributorId = command.contributorId,
                 subjectId = state.rosettaStoneTemplateId!!,
                 predicateId = Predicates.templateLabelFormat,
-                objectId = literalId
-            )
+                objectId = literalId,
+            ),
         )
         return state
     }

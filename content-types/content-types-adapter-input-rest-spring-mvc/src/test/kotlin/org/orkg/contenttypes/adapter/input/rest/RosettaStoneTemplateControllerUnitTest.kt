@@ -113,10 +113,10 @@ internal class RosettaStoneTemplateControllerUnitTest : MockMvcBaseTest("rosetta
                 description(
                     """
                     A `GET` request provides information about a template.
-                    """
+                    """,
                 )
                 pathParameters(
-                    parameterWithName("id").description("The identifier of the rosetta stone template to retrieve.")
+                    parameterWithName("id").description("The identifier of the rosetta stone template to retrieve."),
                 )
                 responseFields<RosettaStoneTemplateRepresentation>(rosettaStoneTemplateResponseFields())
                 throws(RosettaStoneTemplateNotFound::class)
@@ -179,7 +179,7 @@ internal class RosettaStoneTemplateControllerUnitTest : MockMvcBaseTest("rosetta
                 createdAtEnd = createdAtEnd,
                 observatoryId = observatoryId,
                 organizationId = organizationId,
-                pageable = any()
+                pageable = any(),
             )
         } returns pageOf(template)
 
@@ -203,7 +203,7 @@ internal class RosettaStoneTemplateControllerUnitTest : MockMvcBaseTest("rosetta
                     """
                     A `GET` request returns a <<sorting-and-pagination,paged>> list of <<rosetta-stone-templates-fetch,rosetta stone templates>>.
                     If no paging request parameters are provided, the default values will be used.
-                    """
+                    """,
                 )
                 pagedQueryParameters(
                     parameterWithName("q").description("Optional filter for the rosetta stone template label.").optional(),
@@ -228,7 +228,7 @@ internal class RosettaStoneTemplateControllerUnitTest : MockMvcBaseTest("rosetta
                 createdAtEnd = createdAtEnd,
                 observatoryId = observatoryId,
                 organizationId = organizationId,
-                pageable = any()
+                pageable = any(),
             )
         }
     }
@@ -258,10 +258,10 @@ internal class RosettaStoneTemplateControllerUnitTest : MockMvcBaseTest("rosetta
                     NOTE: The first property of a rosetta stone template defines the subject position of the statement and is required to have a path of `hasSubjectPosition`, must have a minimum cardinality of at least one and is not a literal template property.
                           All other properties define an object position, which must have a path of `hasObjectPosition`.
                           At least one property is required to create a new rosetta stone template.
-                    """
+                    """,
                 )
                 responseHeaders(
-                    headerWithName("Location").description("The uri path where the newly created rosetta stone template can be fetched from.")
+                    headerWithName("Location").description("The uri path where the newly created rosetta stone template can be fetched from."),
                 )
                 requestFields<CreateRosettaStoneTemplateRequest>(
                     fieldWithPath("label").description("The label of the rosetta stone template."),
@@ -323,13 +323,13 @@ internal class RosettaStoneTemplateControllerUnitTest : MockMvcBaseTest("rosetta
                     
                     NOTE: Only rosetta stone templates that have not been used to create a rosetta stone statement can be fully updated.
                           Otherwise, it is only possible to add new object positions and to insert a section for that specific object position properties into the formatted label.
-                    """
+                    """,
                 )
                 pathParameters(
-                    parameterWithName("id").description("The identifier of the rosetta stone template.")
+                    parameterWithName("id").description("The identifier of the rosetta stone template."),
                 )
                 responseHeaders(
-                    headerWithName("Location").description("The uri path where the updated rosetta stone template can be fetched from.")
+                    headerWithName("Location").description("The uri path where the updated rosetta stone template can be fetched from."),
                 )
                 requestFields<UpdateRosettaStoneTemplateRequest>(
                     fieldWithPath("label").description("The updated label of the rosetta stone template. After the rosetta stone template has been used to instantiate a rosetta stone statement, it is no longer possible to update the label. (optional)").optional(),
@@ -398,10 +398,10 @@ internal class RosettaStoneTemplateControllerUnitTest : MockMvcBaseTest("rosetta
                     The response will be `204 No Content` when successful.
                     
                     NOTE: A rosetta stone template can only be deleted when it is not used for any <<rosetta-stone-statements,rosetta stone statement>>.
-                    """
+                    """,
                 )
                 pathParameters(
-                    parameterWithName("id").description("The id of the rosetta stone template to delete.")
+                    parameterWithName("id").description("The id of the rosetta stone template to delete."),
                 )
                 throws(
                     RosettaStoneTemplateNotFound::class,
@@ -426,14 +426,14 @@ internal class RosettaStoneTemplateControllerUnitTest : MockMvcBaseTest("rosetta
                 stringLiteralTemplatePropertyRequest(),
                 numberLiteralTemplatePropertyRequest(),
                 otherLiteralTemplatePropertyRequest(),
-                resourceTemplatePropertyRequest()
+                resourceTemplatePropertyRequest(),
             ),
             observatories = listOf(
-                ObservatoryId("cb71eebf-8afd-4fe3-9aea-d0966d71cece")
+                ObservatoryId("cb71eebf-8afd-4fe3-9aea-d0966d71cece"),
             ),
             organizations = listOf(
-                OrganizationId("a700c55f-aae2-4696-b7d5-6e8b89f66a8f")
-            )
+                OrganizationId("a700c55f-aae2-4696-b7d5-6e8b89f66a8f"),
+            ),
         )
 
     private fun updateRosettaStoneTemplateRequest() =
@@ -447,13 +447,13 @@ internal class RosettaStoneTemplateControllerUnitTest : MockMvcBaseTest("rosetta
                 stringLiteralTemplatePropertyRequest(),
                 numberLiteralTemplatePropertyRequest(),
                 otherLiteralTemplatePropertyRequest(),
-                resourceTemplatePropertyRequest()
+                resourceTemplatePropertyRequest(),
             ),
             observatories = listOf(
-                ObservatoryId("cb71eebf-8afd-4fe3-9aea-d0966d71cece")
+                ObservatoryId("cb71eebf-8afd-4fe3-9aea-d0966d71cece"),
             ),
             organizations = listOf(
-                OrganizationId("a700c55f-aae2-4696-b7d5-6e8b89f66a8f")
-            )
+                OrganizationId("a700c55f-aae2-4696-b7d5-6e8b89f66a8f"),
+            ),
         )
 }

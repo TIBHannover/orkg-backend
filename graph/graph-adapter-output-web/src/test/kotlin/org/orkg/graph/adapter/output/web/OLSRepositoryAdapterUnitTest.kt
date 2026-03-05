@@ -69,7 +69,7 @@ internal class OLSRepositoryAdapterUnitTest : MockkBaseTest {
                         CALLER to listOf(caller),
                     )
                 },
-                any<HttpResponse.BodyHandler<String>>()
+                any<HttpResponse.BodyHandler<String>>(),
             )
         }
         verify(exactly = 1) { response.statusCode() }
@@ -98,7 +98,7 @@ internal class OLSRepositoryAdapterUnitTest : MockkBaseTest {
                         CALLER to listOf(caller),
                     )
                 },
-                any<HttpResponse.BodyHandler<String>>()
+                any<HttpResponse.BodyHandler<String>>(),
             )
         }
         verify(exactly = 1) { response.statusCode() }
@@ -129,7 +129,7 @@ internal class OLSRepositoryAdapterUnitTest : MockkBaseTest {
                         CALLER to listOf(caller),
                     )
                 },
-                any<HttpResponse.BodyHandler<String>>()
+                any<HttpResponse.BodyHandler<String>>(),
             )
         }
         verify(exactly = 2) { response.statusCode() }
@@ -193,8 +193,8 @@ internal class OLSRepositoryAdapterUnitTest : MockkBaseTest {
                 expectedResult = ExternalThing(
                     uri = ParsedIRI.create("http://rs.tdwg.org/abcd/terms/AbsenceObservation"),
                     label = "AbsenceObservation",
-                    description = "A record describing an output of an observation process with indication of the absence of an observation"
-                )
+                    description = "A record describing an output of an observation process with indication of the absence of an observation",
+                ),
             ),
             TestParameters(
                 entityType = "individuals",
@@ -205,8 +205,8 @@ internal class OLSRepositoryAdapterUnitTest : MockkBaseTest {
                 expectedResult = ExternalThing(
                     uri = ParsedIRI.create("http://rs.tdwg.org/abcd/terms/AbsenceObservation"),
                     label = "AbsenceObservation",
-                    description = "A record describing an output of an observation process with indication of the absence of an observation"
-                )
+                    description = "A record describing an output of an observation process with indication of the absence of an observation",
+                ),
             ),
             TestParameters(
                 entityType = "classes",
@@ -217,8 +217,8 @@ internal class OLSRepositoryAdapterUnitTest : MockkBaseTest {
                 expectedResult = ExternalThing(
                     uri = ParsedIRI.create("http://www.w3.org/2004/02/skos/core#Collection"),
                     label = "Collection",
-                    description = "A meaningful collection of concepts."
-                )
+                    description = "A meaningful collection of concepts.",
+                ),
             ),
             TestParameters(
                 entityType = "classes",
@@ -229,8 +229,8 @@ internal class OLSRepositoryAdapterUnitTest : MockkBaseTest {
                 expectedResult = ExternalThing(
                     uri = ParsedIRI.create("http://www.w3.org/2004/02/skos/core#Collection"),
                     label = "Collection",
-                    description = "A meaningful collection of concepts."
-                )
+                    description = "A meaningful collection of concepts.",
+                ),
             ),
             TestParameters(
                 entityType = "properties",
@@ -241,8 +241,8 @@ internal class OLSRepositoryAdapterUnitTest : MockkBaseTest {
                 expectedResult = ExternalThing(
                     uri = ParsedIRI.create("http://rs.tdwg.org/abcd/terms/hasCountry"),
                     label = "has Country",
-                    description = "Property to connect an instance of a class to a Country."
-                )
+                    description = "Property to connect an instance of a class to a Country.",
+                ),
             ),
             TestParameters(
                 entityType = "properties",
@@ -253,9 +253,9 @@ internal class OLSRepositoryAdapterUnitTest : MockkBaseTest {
                 expectedResult = ExternalThing(
                     uri = ParsedIRI.create("http://rs.tdwg.org/abcd/terms/hasCountry"),
                     label = "has Country",
-                    description = "Property to connect an instance of a class to a Country."
-                )
-            )
+                    description = "Property to connect an instance of a class to a Country.",
+                ),
+            ),
         ).map(Arguments::of)
 
         @JvmStatic

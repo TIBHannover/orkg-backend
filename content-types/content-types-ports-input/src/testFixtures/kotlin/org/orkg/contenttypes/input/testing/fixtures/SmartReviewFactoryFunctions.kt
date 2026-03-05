@@ -38,24 +38,24 @@ fun createSmartReviewCommand() = CreateSmartReviewUseCase.CreateCommand(
     authors = listOf(
         Author(
             id = ThingId("R123"),
-            name = "Author with id"
+            name = "Author with id",
         ),
         Author(
             name = "Author with orcid",
-            identifiers = mapOf("orcid" to listOf("0000-1111-2222-3333"))
+            identifiers = mapOf("orcid" to listOf("0000-1111-2222-3333")),
         ),
         Author(
             id = ThingId("R456"),
             name = "Author with id and orcid",
-            identifiers = mapOf("orcid" to listOf("1111-2222-3333-4444"))
+            identifiers = mapOf("orcid" to listOf("1111-2222-3333-4444")),
         ),
         Author(
             name = "Author with homepage",
-            homepage = ParsedIRI.create("https://example.org/author")
+            homepage = ParsedIRI.create("https://example.org/author"),
         ),
         Author(
-            name = "Author that just has a name"
-        )
+            name = "Author that just has a name",
+        ),
     ),
     sustainableDevelopmentGoals = setOf(ThingId("SDG_3")),
     observatories = listOf(ObservatoryId("eeb1ab0f-0ef5-4bee-aba2-2d5cea2f0174")),
@@ -67,12 +67,12 @@ fun createSmartReviewCommand() = CreateSmartReviewUseCase.CreateCommand(
         smartReviewResourceSectionCommand(),
         smartReviewPredicateSectionCommand(),
         smartReviewOntologySectionCommand(),
-        smartReviewTextSectionCommand()
+        smartReviewTextSectionCommand(),
     ),
     references = listOf(
         "@misc{R123456,title = {Fancy title of a super important paper}",
-        "@misc{R456789,title = {Another super important paper}"
-    )
+        "@misc{R456789,title = {Another super important paper}",
+    ),
 )
 
 fun updateSmartReviewCommand() = UpdateSmartReviewUseCase.UpdateCommand(
@@ -83,24 +83,24 @@ fun updateSmartReviewCommand() = UpdateSmartReviewUseCase.UpdateCommand(
     authors = listOf(
         Author(
             id = ThingId("R123"),
-            name = "Author with id"
+            name = "Author with id",
         ),
         Author(
             name = "Author with orcid",
-            identifiers = mapOf("orcid" to listOf("0000-1111-2222-3333"))
+            identifiers = mapOf("orcid" to listOf("0000-1111-2222-3333")),
         ),
         Author(
             id = ThingId("R456"),
             name = "Author with id and orcid",
-            identifiers = mapOf("orcid" to listOf("1111-2222-3333-4444"))
+            identifiers = mapOf("orcid" to listOf("1111-2222-3333-4444")),
         ),
         Author(
             name = "Author with homepage",
-            homepage = ParsedIRI.create("https://example.org/author")
+            homepage = ParsedIRI.create("https://example.org/author"),
         ),
         Author(
-            name = "Author that just has a name"
-        )
+            name = "Author that just has a name",
+        ),
     ),
     sustainableDevelopmentGoals = setOf(ThingId("SDG_3")),
     observatories = listOf(ObservatoryId("eeb1ab0f-0ef5-4bee-aba2-2d5cea2f0174")),
@@ -112,13 +112,13 @@ fun updateSmartReviewCommand() = UpdateSmartReviewUseCase.UpdateCommand(
         smartReviewResourceSectionCommand(),
         smartReviewPredicateSectionCommand(),
         smartReviewOntologySectionCommand(),
-        smartReviewTextSectionCommand()
+        smartReviewTextSectionCommand(),
     ),
     references = listOf(
         "@misc{R123456,title = {Fancy title of a super important paper}",
-        "@misc{R456789,title = {Another super important paper}"
+        "@misc{R456789,title = {Another super important paper}",
     ),
-    visibility = Visibility.DEFAULT
+    visibility = Visibility.DEFAULT,
 )
 
 fun createSmartReviewComparisonSectionCommand() =
@@ -127,7 +127,7 @@ fun createSmartReviewComparisonSectionCommand() =
         smartReviewId = ThingId("R123"),
         index = null,
         heading = "comparison section heading",
-        comparison = ThingId("R6416")
+        comparison = ThingId("R6416"),
     )
 
 fun createSmartReviewVisualizationSectionCommand() =
@@ -136,7 +136,7 @@ fun createSmartReviewVisualizationSectionCommand() =
         smartReviewId = ThingId("R123"),
         index = null,
         heading = "visualization section heading",
-        visualization = ThingId("R215648")
+        visualization = ThingId("R215648"),
     )
 
 fun createSmartReviewResourceSectionCommand() =
@@ -145,7 +145,7 @@ fun createSmartReviewResourceSectionCommand() =
         smartReviewId = ThingId("R123"),
         index = null,
         heading = "resource section heading",
-        resource = ThingId("R14565")
+        resource = ThingId("R14565"),
     )
 
 fun createSmartReviewPredicateSectionCommand() =
@@ -154,7 +154,7 @@ fun createSmartReviewPredicateSectionCommand() =
         smartReviewId = ThingId("R123"),
         index = null,
         heading = "predicate section heading",
-        predicate = ThingId("R15696541")
+        predicate = ThingId("R15696541"),
     )
 
 fun createSmartReviewOntologySectionCommand() =
@@ -164,7 +164,7 @@ fun createSmartReviewOntologySectionCommand() =
         index = null,
         heading = "ontology section heading",
         entities = listOf(ThingId("R1"), ThingId("P1")),
-        predicates = listOf(ThingId("P1"))
+        predicates = listOf(ThingId("P1")),
     )
 
 fun createSmartReviewTextSectionCommand() =
@@ -174,7 +174,7 @@ fun createSmartReviewTextSectionCommand() =
         index = null,
         heading = "Heading",
         `class` = Classes.introduction,
-        text = "text section contents"
+        text = "text section contents",
     )
 
 fun updateSmartReviewComparisonSectionCommand() =
@@ -183,7 +183,7 @@ fun updateSmartReviewComparisonSectionCommand() =
         contributorId = ContributorId(UUID.fromString("341995ab-1498-4d34-bac5-d39d866ce00e")),
         smartReviewId = ThingId("R123"),
         heading = "comparison section heading",
-        comparison = ThingId("R6416")
+        comparison = ThingId("R6416"),
     )
 
 fun updateSmartReviewVisualizationSectionCommand() =
@@ -192,7 +192,7 @@ fun updateSmartReviewVisualizationSectionCommand() =
         contributorId = ContributorId(UUID.fromString("341995ab-1498-4d34-bac5-d39d866ce00e")),
         smartReviewId = ThingId("R123"),
         heading = "visualization section heading",
-        visualization = ThingId("R215648")
+        visualization = ThingId("R215648"),
     )
 
 fun updateSmartReviewResourceSectionCommand() =
@@ -201,7 +201,7 @@ fun updateSmartReviewResourceSectionCommand() =
         contributorId = ContributorId(UUID.fromString("341995ab-1498-4d34-bac5-d39d866ce00e")),
         smartReviewId = ThingId("R123"),
         heading = "resource section heading",
-        resource = ThingId("R14565")
+        resource = ThingId("R14565"),
     )
 
 fun updateSmartReviewPredicateSectionCommand() =
@@ -210,7 +210,7 @@ fun updateSmartReviewPredicateSectionCommand() =
         contributorId = ContributorId(UUID.fromString("341995ab-1498-4d34-bac5-d39d866ce00e")),
         smartReviewId = ThingId("R123"),
         heading = "predicate section heading",
-        predicate = ThingId("R15696541")
+        predicate = ThingId("R15696541"),
     )
 
 fun updateSmartReviewOntologySectionCommand() =
@@ -220,7 +220,7 @@ fun updateSmartReviewOntologySectionCommand() =
         smartReviewId = ThingId("R123"),
         heading = "ontology section heading",
         entities = listOf(ThingId("R1"), ThingId("P1")),
-        predicates = listOf(ThingId("P1"))
+        predicates = listOf(ThingId("P1")),
     )
 
 fun updateSmartReviewTextSectionCommand() =
@@ -230,51 +230,51 @@ fun updateSmartReviewTextSectionCommand() =
         smartReviewId = ThingId("R123"),
         heading = "Heading",
         `class` = Classes.introduction,
-        text = "text section contents"
+        text = "text section contents",
     )
 
 fun smartReviewComparisonSectionCommand(): SmartReviewComparisonSectionCommand =
     SmartReviewComparisonSectionCommand(
         heading = "comparison section heading",
-        comparison = ThingId("R6416")
+        comparison = ThingId("R6416"),
     )
 
 fun smartReviewVisualizationSectionCommand(): SmartReviewVisualizationSectionCommand =
     SmartReviewVisualizationSectionCommand(
         heading = "visualization section heading",
-        visualization = ThingId("R215648")
+        visualization = ThingId("R215648"),
     )
 
 fun smartReviewResourceSectionCommand(): SmartReviewResourceSectionCommand =
     SmartReviewResourceSectionCommand(
         heading = "resource section heading",
-        resource = ThingId("R14565")
+        resource = ThingId("R14565"),
     )
 
 fun smartReviewPredicateSectionCommand(): SmartReviewPredicateSectionCommand =
     SmartReviewPredicateSectionCommand(
         heading = "predicate section heading",
-        predicate = ThingId("R15696541")
+        predicate = ThingId("R15696541"),
     )
 
 fun smartReviewOntologySectionCommand(): SmartReviewOntologySectionCommand =
     SmartReviewOntologySectionCommand(
         heading = "ontology section heading",
         entities = listOf(ThingId("R1"), ThingId("P1")),
-        predicates = listOf(ThingId("P1"))
+        predicates = listOf(ThingId("P1")),
     )
 
 fun smartReviewTextSectionCommand(): SmartReviewTextSectionCommand =
     SmartReviewTextSectionCommand(
         heading = "Heading",
         `class` = Classes.introduction,
-        text = "text section contents"
+        text = "text section contents",
     )
 
 fun deleteSmartReviewSectionCommand() = DeleteSmartReviewSectionUseCase.DeleteCommand(
     contributorId = ContributorId(UUID.fromString("341995ab-1498-4d34-bac5-d39d866ce00e")),
     smartReviewId = ThingId("R123"),
-    sectionId = ThingId("R456")
+    sectionId = ThingId("R456"),
 )
 
 fun SmartReviewSection.toSmartReviewSectionCommand(): AbstractSmartReviewSectionCommand =
@@ -310,5 +310,5 @@ fun publishSmartReviewCommand() = PublishSmartReviewUseCase.PublishCommand(
     contributorId = ContributorId("dca4080c-e23f-489d-b900-af8bfc2b0620"),
     changelog = "new release",
     assignDOI = true,
-    description = "review about important topic"
+    description = "review about important topic",
 )

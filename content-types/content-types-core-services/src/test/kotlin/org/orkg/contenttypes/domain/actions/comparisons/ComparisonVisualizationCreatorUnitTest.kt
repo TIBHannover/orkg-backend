@@ -25,7 +25,7 @@ internal class ComparisonVisualizationCreatorUnitTest : MockkBaseTest {
         val comparisonId = ThingId("R12")
         val command = createComparisonCommand()
         val state = CreateComparisonState(
-            comparisonId = comparisonId
+            comparisonId = comparisonId,
         )
 
         every { unsafeStatementUseCases.create(any()) } returns StatementId("S1")
@@ -44,8 +44,8 @@ internal class ComparisonVisualizationCreatorUnitTest : MockkBaseTest {
                         contributorId = command.contributorId,
                         subjectId = comparisonId,
                         predicateId = Predicates.hasVisualization,
-                        objectId = it
-                    )
+                        objectId = it,
+                    ),
                 )
             }
         }

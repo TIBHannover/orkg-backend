@@ -49,6 +49,6 @@ interface PaperResourceWithPathRepresentationAdapter : ThingRepresentationAdapte
             verified = paper.verified ?: false,
             unlistedBy = paper.unlistedBy,
             formattedLabel = formattedLabels[this@toPaperResourceWithPathRepresentation.paper.id],
-            extractionMethod = paper.extractionMethod
+            extractionMethod = paper.extractionMethod,
         )
 }

@@ -30,7 +30,7 @@ internal class ContributionCreatorUnitTest : MockkBaseTest {
     private val contributionCreator = ContributionCreator(
         unsafeResourceUseCases,
         unsafeStatementUseCases,
-        subgraphCreator
+        subgraphCreator,
     )
 
     @Test
@@ -39,10 +39,10 @@ internal class ContributionCreatorUnitTest : MockkBaseTest {
         val contributorId = ContributorId(UUID.randomUUID())
         val contributionCommand = CreateContributionCommandPart(
             label = "MOTO",
-            statements = emptyMap()
+            statements = emptyMap(),
         )
         val contents = CreatePaperUseCase.CreateCommand.PaperContents(
-            contributions = listOf(contributionCommand)
+            contributions = listOf(contributionCommand),
         )
         val contributionId = ThingId("R456")
 
@@ -52,8 +52,8 @@ internal class ContributionCreatorUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     label = contributionCommand.label,
                     classes = setOf(Classes.contribution),
-                    extractionMethod = ExtractionMethod.MANUAL
-                )
+                    extractionMethod = ExtractionMethod.MANUAL,
+                ),
             )
         } returns contributionId
         every {
@@ -62,8 +62,8 @@ internal class ContributionCreatorUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     subjectId = paperId,
                     predicateId = Predicates.hasContribution,
-                    objectId = contributionId
-                )
+                    objectId = contributionId,
+                ),
             )
         } returns StatementId("S1")
         every {
@@ -73,7 +73,7 @@ internal class ContributionCreatorUnitTest : MockkBaseTest {
                 thingsCommand = contents,
                 validationCache = emptyMap(),
                 bakedStatements = emptySet(),
-                lookup = mutableMapOf("^0" to contributionId)
+                lookup = mutableMapOf("^0" to contributionId),
             )
         } just runs
 
@@ -84,7 +84,7 @@ internal class ContributionCreatorUnitTest : MockkBaseTest {
             thingsCommand = contents,
             contributionCommands = contents.contributions,
             validationCache = emptyMap(),
-            bakedStatements = emptySet()
+            bakedStatements = emptySet(),
         )
 
         result shouldBe listOf(contributionId)
@@ -95,8 +95,8 @@ internal class ContributionCreatorUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     label = contributionCommand.label,
                     classes = setOf(Classes.contribution),
-                    extractionMethod = ExtractionMethod.MANUAL
-                )
+                    extractionMethod = ExtractionMethod.MANUAL,
+                ),
             )
         }
         verify(exactly = 1) {
@@ -105,8 +105,8 @@ internal class ContributionCreatorUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     subjectId = paperId,
                     predicateId = Predicates.hasContribution,
-                    objectId = contributionId
-                )
+                    objectId = contributionId,
+                ),
             )
         }
         verify(exactly = 1) {
@@ -116,7 +116,7 @@ internal class ContributionCreatorUnitTest : MockkBaseTest {
                 thingsCommand = contents,
                 validationCache = emptyMap(),
                 bakedStatements = emptySet(),
-                lookup = mutableMapOf("^0" to contributionId)
+                lookup = mutableMapOf("^0" to contributionId),
             )
         }
     }

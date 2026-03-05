@@ -32,7 +32,7 @@ internal class RosettaStoneTemplateExampleUsageUpdateValidatorUnitTest {
     fun `Given a rosetta stone template update command, when example usage did not change, it does nothing`() {
         val rosettaStoneTemplate = createRosettaStoneTemplate()
         val command = updateRosettaStoneTemplateCommand().copy(
-            exampleUsage = rosettaStoneTemplate.exampleUsage
+            exampleUsage = rosettaStoneTemplate.exampleUsage,
         )
         val state = UpdateRosettaStoneTemplateState(rosettaStoneTemplate = rosettaStoneTemplate)
 
@@ -82,7 +82,7 @@ internal class RosettaStoneTemplateExampleUsageUpdateValidatorUnitTest {
         val command = updateRosettaStoneTemplateCommand()
         val state = UpdateRosettaStoneTemplateState(
             rosettaStoneTemplate = rosettaStoneTemplate,
-            isUsedInRosettaStoneStatement = true
+            isUsedInRosettaStoneStatement = true,
         )
 
         assertThrows<NewRosettaStoneTemplateExampleUsageMustStartWithPreviousExampleUsage> {
@@ -95,11 +95,11 @@ internal class RosettaStoneTemplateExampleUsageUpdateValidatorUnitTest {
     fun startsWithPreviousExampleUsage_success() {
         val rosettaStoneTemplate = createRosettaStoneTemplate()
         val command = updateRosettaStoneTemplateCommand().copy(
-            exampleUsage = rosettaStoneTemplate.exampleUsage + " appendix."
+            exampleUsage = rosettaStoneTemplate.exampleUsage + " appendix.",
         )
         val state = UpdateRosettaStoneTemplateState(
             rosettaStoneTemplate = rosettaStoneTemplate,
-            isUsedInRosettaStoneStatement = true
+            isUsedInRosettaStoneStatement = true,
         )
 
         val result = rosettaStoneTemplateExampleUsageUpdateValidator(command, state)

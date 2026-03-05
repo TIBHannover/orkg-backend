@@ -95,7 +95,7 @@ class TemplateService(
             subjectClasses = setOf(Classes.resource, Classes.nodeShape),
             predicateId = Predicates.shTargetClass,
             objectClasses = setOf(Classes.`class`),
-            pageable = PageRequests.SINGLE
+            pageable = PageRequests.SINGLE,
         ).content
             .singleOrNull()
             .let { Optional.ofNullable(it) }
@@ -127,7 +127,7 @@ class TemplateService(
             includeSubfields = includeSubfields,
             researchProblem = researchProblem,
             targetClassId = targetClass,
-            pageable = pageable
+            pageable = pageable,
         ).pmap { it.toTemplate() }
 
     override fun create(command: CreateTemplateCommand): ThingId {
@@ -146,7 +146,7 @@ class TemplateService(
             TemplateDescriptionCreator(unsafeLiteralUseCases, unsafeStatementUseCases),
             TemplateFormattedLabelCreator(unsafeLiteralUseCases, unsafeStatementUseCases),
             TemplateClosedCreator(unsafeLiteralUseCases, unsafeStatementUseCases),
-            TemplatePropertiesCreator(unsafeResourceUseCases, unsafeLiteralUseCases, unsafeStatementUseCases)
+            TemplatePropertiesCreator(unsafeResourceUseCases, unsafeLiteralUseCases, unsafeStatementUseCases),
         )
         return steps.execute(command, CreateTemplateState()).templateId!!
     }
@@ -156,7 +156,7 @@ class TemplateService(
             TemplatePropertyExistenceCreateValidator(this, resourceRepository),
             TemplatePropertyTemplateCreateValidator(),
             TemplatePropertyValidator(predicateRepository, classRepository, { it.template!!.properties }, { it }),
-            TemplatePropertyCreator(unsafeResourceUseCases, unsafeLiteralUseCases, unsafeStatementUseCases)
+            TemplatePropertyCreator(unsafeResourceUseCases, unsafeLiteralUseCases, unsafeStatementUseCases),
         )
         return steps.execute(command, CreateTemplatePropertyState()).templatePropertyId!!
     }
@@ -179,7 +179,7 @@ class TemplateService(
             TemplateDescriptionUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases),
             TemplateFormattedLabelUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases),
             TemplateClosedUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases),
-            TemplatePropertiesUpdater(unsafeLiteralUseCases, resourceService, unsafeResourceUseCases, statementService, unsafeStatementUseCases)
+            TemplatePropertiesUpdater(unsafeLiteralUseCases, resourceService, unsafeResourceUseCases, statementService, unsafeStatementUseCases),
         )
         steps.execute(command, UpdateTemplateState())
     }
@@ -189,7 +189,7 @@ class TemplateService(
             TemplatePropertyExistenceUpdateValidator(this, resourceRepository),
             TemplatePropertyTemplateUpdateValidator(),
             TemplatePropertyValidator(predicateRepository, classRepository, { it.template!!.properties }, { it }, { it.templateProperty }),
-            TemplatePropertyUpdater(unsafeLiteralUseCases, unsafeResourceUseCases, statementService, unsafeStatementUseCases)
+            TemplatePropertyUpdater(unsafeLiteralUseCases, unsafeResourceUseCases, statementService, unsafeStatementUseCases),
         )
         steps.execute(command, UpdateTemplatePropertyState())
     }
@@ -202,10 +202,10 @@ class TemplateService(
                 minLevel = null,
                 maxLevel = 2,
                 blacklist = emptyList(),
-                whitelist = emptyList()
+                whitelist = emptyList(),
             ),
-            sort = Sort.unsorted()
-        ).groupBy { it.subject.id }
+            sort = Sort.unsorted(),
+        ).groupBy { it.subject.id },
     )
 
     internal fun Resource.toTemplate(): Template =

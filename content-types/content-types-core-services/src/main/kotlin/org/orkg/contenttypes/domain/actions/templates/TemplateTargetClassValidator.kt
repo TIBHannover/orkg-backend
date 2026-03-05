@@ -38,7 +38,7 @@ class TemplateTargetClassValidator<T, S>(
                 subjectClasses = setOf(Classes.nodeShape),
                 predicateId = Predicates.shTargetClass,
                 objectId = newTargetClass,
-                pageable = PageRequests.SINGLE
+                pageable = PageRequests.SINGLE,
             )
             if (statements.numberOfElements > 0) {
                 throw TemplateAlreadyExistsForClass(newTargetClass, statements.single().subject.id)

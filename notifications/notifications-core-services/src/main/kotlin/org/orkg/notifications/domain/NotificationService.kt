@@ -23,7 +23,7 @@ class NotificationService(
 
     override fun sendTestEmail(recipient: Recipient, message: String) {
         val model = mapOf(
-            "message" to message
+            "message" to message,
         )
         sendEmail(recipient, "email-test-subject", "email-test", model)
     }

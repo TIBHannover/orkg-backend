@@ -23,7 +23,7 @@ internal class RosettaStoneTemplatePropertiesUpdaterUnitTest : MockkBaseTest {
     fun `Given a template update command, when properties are not set, it does nothing`() {
         val rosettaStoneTemplate = createRosettaStoneTemplate()
         val command = updateRosettaStoneTemplateCommand().copy(
-            properties = null
+            properties = null,
         )
         val state = UpdateRosettaStoneTemplateState(rosettaStoneTemplate)
 
@@ -36,7 +36,7 @@ internal class RosettaStoneTemplatePropertiesUpdaterUnitTest : MockkBaseTest {
         val command = updateRosettaStoneTemplateCommand()
         val state = UpdateRosettaStoneTemplateState(
             rosettaStoneTemplate = rosettaStoneTemplate,
-            statements = listOf(createStatement(subject = createResource(rosettaStoneTemplate.id))).groupBy { it.subject.id }
+            statements = listOf(createStatement(subject = createResource(rosettaStoneTemplate.id))).groupBy { it.subject.id },
         )
 
         every {
@@ -45,7 +45,7 @@ internal class RosettaStoneTemplatePropertiesUpdaterUnitTest : MockkBaseTest {
                 subjectId = command.templateId,
                 newProperties = command.properties!!,
                 oldProperties = state.rosettaStoneTemplate!!.properties,
-                statements = state.statements
+                statements = state.statements,
             )
         } just runs
 
@@ -57,7 +57,7 @@ internal class RosettaStoneTemplatePropertiesUpdaterUnitTest : MockkBaseTest {
                 subjectId = command.templateId,
                 newProperties = command.properties!!,
                 oldProperties = state.rosettaStoneTemplate!!.properties,
-                statements = state.statements
+                statements = state.statements,
             )
         }
     }

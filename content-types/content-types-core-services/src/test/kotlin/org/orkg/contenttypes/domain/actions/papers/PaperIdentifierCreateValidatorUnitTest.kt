@@ -28,7 +28,7 @@ internal class PaperIdentifierCreateValidatorUnitTest : MockkBaseTest {
                 identifiers = command.identifiers,
                 `class` = Classes.paper,
                 subjectId = null,
-                exceptionFactory = PaperAlreadyExists::withIdentifier
+                exceptionFactory = PaperAlreadyExists::withIdentifier,
             )
         } just runs
 
@@ -39,7 +39,7 @@ internal class PaperIdentifierCreateValidatorUnitTest : MockkBaseTest {
                 identifiers = command.identifiers,
                 `class` = Classes.paper,
                 subjectId = null,
-                exceptionFactory = PaperAlreadyExists::withIdentifier
+                exceptionFactory = PaperAlreadyExists::withIdentifier,
             )
         }
     }

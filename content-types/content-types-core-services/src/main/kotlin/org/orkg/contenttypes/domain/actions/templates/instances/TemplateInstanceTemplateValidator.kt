@@ -11,6 +11,6 @@ class TemplateInstanceTemplateValidator(
     override fun invoke(command: UpdateTemplateInstanceCommand, state: State): State =
         state.copy(
             template = templateService.findById(command.templateId)
-                .orElseThrow { TemplateNotFound(command.templateId) }
+                .orElseThrow { TemplateNotFound(command.templateId) },
         )
 }

@@ -110,18 +110,18 @@ internal class ComparisonTableServiceUnitTest : MockkBaseTest {
             createStatement(
                 subject = comparison,
                 predicate = createPredicate(id = Predicates.comparesContribution),
-                `object` = createResource(id = sourceId1)
+                `object` = createResource(id = sourceId1),
             ),
             createStatement(
                 subject = comparison,
                 predicate = createPredicate(id = Predicates.comparesContribution),
-                `object` = createResource(id = sourceId2)
+                `object` = createResource(id = sourceId2),
             ),
             createStatement(
                 subject = comparison,
                 predicate = createPredicate(id = Predicates.comparesRosettaStoneContribution),
-                `object` = rosettaStoneStatementContext
-            )
+                `object` = rosettaStoneStatementContext,
+            ),
         )
         val comparisonColumnData = createComparisonColumnData().map { it.copy(values = emptyMap()) }
         val thingColumnData = mapOf(
@@ -151,13 +151,13 @@ internal class ComparisonTableServiceUnitTest : MockkBaseTest {
         verify(exactly = 1) {
             comparisonAuxiliaryRepository.findComparisonColumnDataByRootIdsAndPaths(
                 rootIds = listOf(sourceId1, sourceId2),
-                paths = emptyList()
+                paths = emptyList(),
             )
         }
         verify(exactly = 1) {
             rosettaStoneStatementRepository.findAllByContextIdsAndTemplateIds(
                 contextIds = setOf(sourceId3),
-                templateIds = emptySet()
+                templateIds = emptySet(),
             )
         }
     }
@@ -175,18 +175,18 @@ internal class ComparisonTableServiceUnitTest : MockkBaseTest {
             createStatement(
                 subject = comparison,
                 predicate = createPredicate(id = Predicates.comparesContribution),
-                `object` = createResource(id = sourceId1)
+                `object` = createResource(id = sourceId1),
             ),
             createStatement(
                 subject = comparison,
                 predicate = createPredicate(id = Predicates.comparesContribution),
-                `object` = createResource(id = sourceId2)
+                `object` = createResource(id = sourceId2),
             ),
             createStatement(
                 subject = comparison,
                 predicate = createPredicate(id = Predicates.comparesRosettaStoneContribution),
-                `object` = rosettaStoneStatementContext
-            )
+                `object` = rosettaStoneStatementContext,
+            ),
         )
         val comparisonColumnData = createComparisonColumnData()
         val thingColumnData = mapOf(
@@ -212,13 +212,13 @@ internal class ComparisonTableServiceUnitTest : MockkBaseTest {
         verify(exactly = 1) {
             comparisonAuxiliaryRepository.findComparisonColumnDataByRootIdsAndPaths(
                 rootIds = listOf(sourceId1, sourceId2),
-                paths = comparisonTable.selectedPaths
+                paths = comparisonTable.selectedPaths,
             )
         }
         verify(exactly = 1) {
             rosettaStoneStatementRepository.findAllByContextIdsAndTemplateIds(
                 contextIds = setOf(sourceId3),
-                templateIds = setOf(ThingId("R21325"))
+                templateIds = setOf(ThingId("R21325")),
             )
         }
     }
@@ -336,10 +336,10 @@ internal class ComparisonTableServiceUnitTest : MockkBaseTest {
                             id = Predicates.hasSubjectPosition,
                             type = ComparisonPath.Type.ROSETTA_STONE_STATEMENT,
                             children = emptyList(),
-                        )
+                        ),
                     ),
                 ),
-            )
+            ),
         )
 
         every { resourceRepository.findById(comparisonId) } returns Optional.of(comparison)
@@ -371,12 +371,12 @@ internal class ComparisonTableServiceUnitTest : MockkBaseTest {
                                     id = Predicates.mentions,
                                     type = ComparisonPath.Type.PREDICATE,
                                     children = emptyList(),
-                                )
+                                ),
                             ),
-                        )
+                        ),
                     ),
                 ),
-            )
+            ),
         )
 
         every { resourceRepository.findById(comparisonId) } returns Optional.of(comparison)
@@ -404,10 +404,10 @@ internal class ComparisonTableServiceUnitTest : MockkBaseTest {
                             id = ThingId("ABC"),
                             type = ComparisonPath.Type.ROSETTA_STONE_STATEMENT,
                             children = emptyList(),
-                        )
+                        ),
                     ),
                 ),
-            )
+            ),
         )
 
         every { resourceRepository.findById(comparisonId) } returns Optional.of(comparison)
@@ -426,7 +426,7 @@ internal class ComparisonTableServiceUnitTest : MockkBaseTest {
         val table = createComparisonTable().copy(selectedPaths = emptyList())
         val command = updateComparisonTableCommand().copy(
             comparisonId = comparisonId,
-            selectedPaths = listOf(createSimpleComparisonPathWithDepth(11))
+            selectedPaths = listOf(createSimpleComparisonPathWithDepth(11)),
         )
 
         every { resourceRepository.findById(comparisonId) } returns Optional.of(comparison)
@@ -454,10 +454,10 @@ internal class ComparisonTableServiceUnitTest : MockkBaseTest {
                             id = ThingId("R21325"),
                             type = ComparisonPath.Type.ROSETTA_STONE_STATEMENT,
                             children = emptyList(),
-                        )
+                        ),
                     ),
                 ),
-            )
+            ),
         )
 
         every { resourceRepository.findById(comparisonId) } returns Optional.of(comparison)
@@ -482,7 +482,7 @@ internal class ComparisonTableServiceUnitTest : MockkBaseTest {
                     type = ComparisonPath.Type.ROSETTA_STONE_STATEMENT_VALUE,
                     children = emptyList(),
                 ),
-            )
+            ),
         )
 
         every { resourceRepository.findById(comparisonId) } returns Optional.of(comparison)
@@ -514,12 +514,12 @@ internal class ComparisonTableServiceUnitTest : MockkBaseTest {
                                     id = Predicates.hasSubjectPosition,
                                     type = ComparisonPath.Type.ROSETTA_STONE_STATEMENT_VALUE,
                                     children = emptyList(),
-                                )
+                                ),
                             ),
-                        )
+                        ),
                     ),
                 ),
-            )
+            ),
         )
 
         every { resourceRepository.findById(comparisonId) } returns Optional.of(comparison)
@@ -554,6 +554,6 @@ internal class ComparisonTableServiceUnitTest : MockkBaseTest {
         SimpleComparisonPath(
             id = ThingId("R21325"),
             type = ComparisonPath.Type.PREDICATE,
-            children = if (depth <= 0) emptyList() else listOf(createSimpleComparisonPathWithDepth(depth - 1))
+            children = if (depth <= 0) emptyList() else listOf(createSimpleComparisonPathWithDepth(depth - 1)),
         )
 }

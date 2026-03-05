@@ -27,7 +27,7 @@ internal class TemplateTargetClassUpdaterUnitTest : MockkBaseTest {
         val command = updateTemplateCommand()
         val state = UpdateTemplateState(
             template = createTemplate(),
-            statements = mapOf(command.templateId to listOf(createStatement()))
+            statements = mapOf(command.templateId to listOf(createStatement())),
         )
 
         every { singleStatementPropertyUpdater.updateRequiredProperty(any(), any(), any(), any(), any<ThingId>()) } just runs
@@ -44,7 +44,7 @@ internal class TemplateTargetClassUpdaterUnitTest : MockkBaseTest {
                 contributorId = command.contributorId,
                 subjectId = command.templateId,
                 predicateId = Predicates.shTargetClass,
-                objectId = command.targetClass!!
+                objectId = command.targetClass!!,
             )
         }
     }

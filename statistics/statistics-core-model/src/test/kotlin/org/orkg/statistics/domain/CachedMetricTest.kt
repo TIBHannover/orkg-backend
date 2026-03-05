@@ -29,7 +29,7 @@ internal class CachedMetricTest : MockkBaseTest {
             name = "test",
             group = "test",
             description = "test description",
-            supplier = mockMetricSupplier
+            supplier = mockMetricSupplier,
         )
         val parameters = LinkedMultiValueMap<String, String>()
 
@@ -55,7 +55,7 @@ internal class CachedMetricTest : MockkBaseTest {
             name = "test",
             group = "test",
             description = "test description",
-            supplier = mockMetricSupplier
+            supplier = mockMetricSupplier,
         )
         val parameters = LinkedMultiValueMap<String, String>()
 
@@ -82,7 +82,7 @@ internal class CachedMetricTest : MockkBaseTest {
             name = "test",
             description = "test description",
             type = Int::class,
-            parser = { it.toInt() }
+            parser = { it.toInt() },
         )
         val metric = CachedMetric.create(
             cacheManager = cacheManager,
@@ -90,7 +90,7 @@ internal class CachedMetricTest : MockkBaseTest {
             group = "test",
             description = "test description",
             parameterSpecs = mapOf("id" to intParameterSpec),
-            supplier = mockMetricSupplier
+            supplier = mockMetricSupplier,
         )
         val parameters = MultiValueMap.fromSingleValue(mapOf("id" to "123"))
 
@@ -115,7 +115,7 @@ internal class CachedMetricTest : MockkBaseTest {
             name = "test",
             description = "test description",
             type = Int::class,
-            parser = { it.toInt() }
+            parser = { it.toInt() },
         )
         val metric = CachedMetric.create(
             cacheManager = cacheManager,
@@ -123,7 +123,7 @@ internal class CachedMetricTest : MockkBaseTest {
             group = "test",
             description = "test description",
             parameterSpecs = mapOf("id" to intParameterSpec),
-            supplier = mockMetricSupplier
+            supplier = mockMetricSupplier,
         )
         val parameters = LinkedMultiValueMap<String, String>().apply {
             put("id", listOf("123", "456"))
@@ -151,7 +151,7 @@ internal class CachedMetricTest : MockkBaseTest {
             name = "test",
             group = "test",
             description = "test description",
-            supplier = mockMetricSupplier
+            supplier = mockMetricSupplier,
         )
         val parameters = MultiValueMap.fromSingleValue(mapOf("filter" to "value"))
         val cacheKey = "test-test:[filter=value]"

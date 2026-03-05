@@ -69,7 +69,7 @@ internal class DataCiteDoiServiceAdapterUnitTest : MockkBaseTest {
                     )
                     request.uri() shouldBe URI.create(doi.uri)
                 },
-                any<HttpResponse.BodyHandler<InputStream>>()
+                any<HttpResponse.BodyHandler<InputStream>>(),
             )
         }
         verify(exactly = 1) { response.statusCode() }
@@ -101,7 +101,7 @@ internal class DataCiteDoiServiceAdapterUnitTest : MockkBaseTest {
                     )
                     request.uri() shouldBe URI.create(doi.uri)
                 },
-                any<HttpResponse.BodyHandler<InputStream>>()
+                any<HttpResponse.BodyHandler<InputStream>>(),
             )
         }
         verify(exactly = 1) { response.statusCode() }
@@ -132,7 +132,7 @@ internal class DataCiteDoiServiceAdapterUnitTest : MockkBaseTest {
                     )
                     request.uri() shouldBe URI.create(doi.uri)
                 },
-                any<HttpResponse.BodyHandler<InputStream>>()
+                any<HttpResponse.BodyHandler<InputStream>>(),
             )
         }
         verify(exactly = 1) { response.statusCode() }
@@ -182,7 +182,7 @@ internal class DataCiteDoiServiceAdapterUnitTest : MockkBaseTest {
                         }
                     }
                 },
-                any<HttpResponse.BodyHandler<String>>()
+                any<HttpResponse.BodyHandler<String>>(),
             )
         }
         verify(exactly = 1) { response.statusCode() }

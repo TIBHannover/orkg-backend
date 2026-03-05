@@ -329,13 +329,13 @@ class URINotAbsolute(uri: ParsedIRI) :
 class InvalidLabel(val property: String = "label") :
     PropertyValidationException(
         jsonFieldPathToJsonPointerReference(property),
-        "A label must not be blank or contain newlines or NULL characters and must be at most $MAX_LABEL_LENGTH characters long."
+        "A label must not be blank or contain newlines or NULL characters and must be at most $MAX_LABEL_LENGTH characters long.",
     )
 
 class InvalidDescription(val property: String = "description") :
     PropertyValidationException(
         jsonFieldPathToJsonPointerReference(property),
-        "A description must not be blank or contain NULL characters and must be at most $MAX_LABEL_LENGTH characters long."
+        "A description must not be blank or contain NULL characters and must be at most $MAX_LABEL_LENGTH characters long.",
     )
 
 class InvalidLiteralLabel : PropertyValidationException {
@@ -348,14 +348,14 @@ class InvalidLiteralLabel : PropertyValidationException {
 class InvalidLiteralDatatype :
     PropertyValidationException(
         jsonFieldPathToJsonPointerReference("datatype"),
-        "A literal datatype must be a URI or a \"xsd:\"-prefixed type."
+        "A literal datatype must be a URI or a \"xsd:\"-prefixed type.",
     )
 
 class CannotResetURI(id: ThingId) :
     ForbiddenOperationException(
         jsonFieldPathToJsonPointerReference("uri"),
         """The class "$id" already has a URI. It is not allowed to change URIs.""",
-        type = createProblemURI("cannot_reset_uri")
+        type = createProblemURI("cannot_reset_uri"),
     )
 
 class StatementSubjectNotFound(id: ThingId) :
@@ -384,15 +384,15 @@ class InvalidStatement private constructor(
 ) : SimpleMessageException(HttpStatus.BAD_REQUEST, message, null) {
     companion object {
         fun isListElementStatement() = InvalidStatement(
-            "A list element statement cannot be managed using the statements endpoint. Please see the documentation on how to manage lists."
+            "A list element statement cannot be managed using the statements endpoint. Please see the documentation on how to manage lists.",
         )
 
         fun subjectMustNotBeLiteral() = InvalidStatement(
-            "Subject must not be a literal."
+            "Subject must not be a literal.",
         )
 
         fun includesRosettaStoneStatementResource() = InvalidStatement(
-            "A rosetta stone statement resource cannot be managed using statements endpoint. Please see the documentation on how to manage rosetta stone statements."
+            "A rosetta stone statement resource cannot be managed using statements endpoint. Please see the documentation on how to manage rosetta stone statements.",
         )
     }
 }
@@ -402,7 +402,7 @@ class StatementInUse private constructor(
 ) : SimpleMessageException(HttpStatus.BAD_REQUEST, message, null) {
     companion object {
         fun usedInList() = StatementInUse(
-            "A statement cannot be deleted when it is used in a list. Please see the documentation on how to manage lists."
+            "A statement cannot be deleted when it is used in a list. Please see the documentation on how to manage lists.",
         )
     }
 }
@@ -410,7 +410,7 @@ class StatementInUse private constructor(
 class ListElementNotFound :
     PropertyValidationException(
         jsonFieldPathToJsonPointerReference("elements"),
-        "All elements inside the list have to exist."
+        "All elements inside the list have to exist.",
     )
 
 class InvalidSubclassRelation(

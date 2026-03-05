@@ -81,7 +81,7 @@ class SpringDataNeo4jResourceAdapter(
         evict = [
             CacheEvict(key = "#resource.id", cacheNames = [RESOURCE_ID_TO_RESOURCE_CACHE]),
             CacheEvict(key = "#resource.id", cacheNames = [THING_ID_TO_THING_CACHE]),
-        ]
+        ],
     )
     override fun save(resource: Resource) {
         val hlp = name("hlp")
@@ -117,21 +117,21 @@ class SpringDataNeo4jResourceAdapter(
                         .create(neo4jResource.relationshipTo(c, INSTANCE_OF).named(created))
                         .returning(count(neo4jResource).`as`("add_instance_of_create_subquery")) // always return a value, so the outer query continues execution
                         .build(),
-                    neo4jResource
+                    neo4jResource,
                 )
                 .returning(neo4jResource)
                 .build(),
             match(neo4jResource)
                 .where(
                     neo4jResource.property("id").eq(parameter("__id__"))
-                        .and(neo4jResource.property("version").eq(parameter("__version__")))
+                        .and(neo4jResource.property("version").eq(parameter("__version__"))),
                 )
                 // we need to compute the next version here, because cypher dsl throws an error if we try to compute it within the SET clause
                 .with(neo4jResource, neo4jResource.property("version").add(literalOf<Long>(1L)).`as`(nextVersion))
                 .set(neo4jResource.property("version"), nextVersion)
                 .with(neo4jResource)
                 .where(
-                    neo4jResource.property("version").eq(coalesce(parameter("__version__"), literalOf<Long>(0L)).add(literalOf<Long>(1L)))
+                    neo4jResource.property("version").eq(coalesce(parameter("__version__"), literalOf<Long>(0L)).add(literalOf<Long>(1L))),
                 )
                 .mutate(neo4jResource, parameter("__properties__"))
                 // cypher dsl does not accept empty label lists
@@ -149,7 +149,7 @@ class SpringDataNeo4jResourceAdapter(
                         .returning(count(neo4jResource).`as`("add_instance_of_update_subquery")) // always return a value, so the outer query continues execution
                         .build(),
                     neo4jResource,
-                    classIds
+                    classIds,
                 )
                 .call(
                     unwind(parameter("__labels_to_remove__")).`as`(label)
@@ -160,10 +160,10 @@ class SpringDataNeo4jResourceAdapter(
                         .returning(count(neo4jResource).`as`("remove_instance_of_update_subquery")) // always return a value, so the outer query continues execution
                         .build(),
                     neo4jResource,
-                    classIds
+                    classIds,
                 )
                 .returning(neo4jResource)
-                .build()
+                .build(),
         )
         neo4jClient.query(Renderer.getRenderer(neo4jConfiguration).render(query))
             .bindAll(
@@ -187,9 +187,9 @@ class SpringDataNeo4jResourceAdapter(
                         "verified" to resource.verified,
                         "visibility" to resource.visibility.name,
                         "unlisted_by" to resource.unlistedBy?.value?.toString(),
-                        "modifiable" to resource.modifiable
-                    )
-                )
+                        "modifiable" to resource.modifiable,
+                    ),
+                ),
             )
             .run()
     }
@@ -198,7 +198,7 @@ class SpringDataNeo4jResourceAdapter(
         evict = [
             CacheEvict(key = "#id"),
             CacheEvict(key = "#id", cacheNames = [THING_ID_TO_THING_CACHE]),
-        ]
+        ],
     )
     override fun deleteById(id: ThingId) {
         neo4jRepository.deleteById(id)
@@ -208,7 +208,7 @@ class SpringDataNeo4jResourceAdapter(
         evict = [
             CacheEvict(allEntries = true),
             CacheEvict(allEntries = true, cacheNames = [THING_ID_TO_THING_CACHE]),
-        ]
+        ],
     )
     override fun deleteAll() {
         neo4jRepository.deleteAll()
@@ -225,7 +225,7 @@ class SpringDataNeo4jResourceAdapter(
             includeClasses = emptySet(),
             excludeClasses = emptySet(),
             observatoryId = null,
-            organizationId = null
+            organizationId = null,
         )
 
     @Cacheable(key = "#id", cacheNames = [RESOURCE_ID_TO_RESOURCE_EXISTS_CACHE])
@@ -259,7 +259,7 @@ class SpringDataNeo4jResourceAdapter(
             excludeClasses = excludeClasses,
             baseClass = baseClass,
             observatoryId = observatoryId,
-            organizationId = organizationId
+            organizationId = organizationId,
         ).fetch(pageable, false)
 
     override fun count(
@@ -284,7 +284,7 @@ class SpringDataNeo4jResourceAdapter(
             excludeClasses = excludeClasses,
             baseClass = baseClass,
             observatoryId = observatoryId,
-            organizationId = organizationId
+            organizationId = organizationId,
         ).count()
 
     private fun buildFindAll(
@@ -377,8 +377,8 @@ class SpringDataNeo4jResourceAdapter(
                     orderByOptimizations(
                         node = node,
                         sort = sort,
-                        properties = arrayOf("id", "label", "created_at", "created_by", "visibility")
-                    )
+                        properties = arrayOf("id", "label", "created_at", "created_by", "visibility"),
+                    ),
                 )
                 .with(variables)
                 .orderBy(
@@ -386,14 +386,14 @@ class SpringDataNeo4jResourceAdapter(
                         listOf(
                             size(node.property("label")).ascending(),
                             score.descending(),
-                            node.property("created_at").ascending()
+                            node.property("created_at").ascending(),
                         )
                     } else {
                         sort.toSortItems(
                             node = node,
-                            knownProperties = arrayOf("id", "label", "created_at", "created_by", "visibility")
+                            knownProperties = arrayOf("id", "label", "created_at", "created_by", "visibility"),
                         )
-                    }
+                    },
                 )
                 .returning(node)
         }

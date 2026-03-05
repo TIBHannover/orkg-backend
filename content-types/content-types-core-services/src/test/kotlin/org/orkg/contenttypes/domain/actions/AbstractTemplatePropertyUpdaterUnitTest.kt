@@ -16,6 +16,6 @@ abstract class AbstractTemplatePropertyUpdaterUnitTest : MockkBaseTest {
         statementService,
         unsafeStatementUseCases,
         unsafeResourceUseCases,
-        singleStatementPropertyUpdater
+        singleStatementPropertyUpdater,
     )
 }

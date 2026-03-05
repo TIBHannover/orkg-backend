@@ -62,7 +62,7 @@ internal class ObservatoryControllerIntegrationTest : MockMvcBaseTest("observato
             Classes.paper,
             Classes.comparison,
             Classes.problem,
-            ThingId("SomeClass")
+            ThingId("SomeClass"),
         )
     }
 
@@ -81,11 +81,11 @@ internal class ObservatoryControllerIntegrationTest : MockMvcBaseTest("observato
         val contributorId = contributorService.createContributor()
         val organizationId = service.createOrganization(createdBy = contributorId)
         val researchField = resourceService.createResource(
-            classes = setOf(Classes.researchField)
+            classes = setOf(Classes.researchField),
         )
         observatoryService.createObservatory(
             organizations = setOf(organizationId),
-            researchField = researchField
+            researchField = researchField,
         )
 
         documentedGetRequestTo("/api/observatories")
@@ -99,7 +99,7 @@ internal class ObservatoryControllerIntegrationTest : MockMvcBaseTest("observato
                     If no paging request parameters are provided, the default values will be used.
                     
                     NOTE: Query parameters cannot be combined for this endpoint.
-                    """
+                    """,
                 )
                 pagedQueryParameters(
                     parameterWithName("q").description("A search term that must be contained in the label. (optional)").optional(),
@@ -115,11 +115,11 @@ internal class ObservatoryControllerIntegrationTest : MockMvcBaseTest("observato
         val contributorId = contributorService.createContributor()
         val organizationId = service.createOrganization(createdBy = contributorId)
         val researchField = resourceService.createResource(
-            classes = setOf(Classes.researchField)
+            classes = setOf(Classes.researchField),
         )
         val observatoryId = observatoryService.createObservatory(
             organizations = setOf(organizationId),
-            researchField = researchField
+            researchField = researchField,
         )
 
         documentedGetRequestTo("/api/observatories/{id}", observatoryId)
@@ -130,10 +130,10 @@ internal class ObservatoryControllerIntegrationTest : MockMvcBaseTest("observato
                 description(
                     """
                     A `GET` request provides information about an observatory.
-                    """
+                    """,
                 )
                 pathParameters(
-                    parameterWithName("id").description("The identifier of the observatory.")
+                    parameterWithName("id").description("The identifier of the observatory."),
                 )
                 responseFields<ObservatoryRepresentation>(observatoryResponseFields())
             }
@@ -144,16 +144,16 @@ internal class ObservatoryControllerIntegrationTest : MockMvcBaseTest("observato
         val contributorId = contributorService.createContributor()
         val organizationId = service.createOrganization(createdBy = contributorId)
         val researchField = resourceService.createResource(
-            classes = setOf(Classes.researchField)
+            classes = setOf(Classes.researchField),
         )
         val observatoryId = observatoryService.createObservatory(
             organizations = setOf(organizationId),
-            researchField = researchField
+            researchField = researchField,
         )
         resourceService.createResource(
             classes = setOf(Classes.paper),
             organizationId = organizationId,
-            observatoryId = observatoryId
+            observatoryId = observatoryId,
         )
 
         get("/api/observatories/{id}/papers", observatoryId)

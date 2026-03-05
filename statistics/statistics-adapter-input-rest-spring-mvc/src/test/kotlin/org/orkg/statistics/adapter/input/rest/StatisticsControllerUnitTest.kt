@@ -55,7 +55,7 @@ internal class StatisticsControllerUnitTest : MockMvcBaseTest("statistics") {
                 description(
                     """
                     A `GET` request provides a list of all available metric groups.
-                    """
+                    """,
                 )
                 mapResponseFields<EndpointReference>(
                     "The id of the entry",
@@ -84,10 +84,10 @@ internal class StatisticsControllerUnitTest : MockMvcBaseTest("statistics") {
                 description(
                     """
                     A `GET` request provides a list of all available metrics of a given group.
-                    """
+                    """,
                 )
                 pathParameters(
-                    parameterWithName("group").description("The name of the group of metrics.")
+                    parameterWithName("group").description("The name of the group of metrics."),
                 )
                 mapResponseFields<EndpointReference>(
                     "The id of the entry.",
@@ -122,7 +122,7 @@ internal class StatisticsControllerUnitTest : MockMvcBaseTest("statistics") {
                     ====
                     The values of some metrics are cached and therefore might not reflect the real value of the metric at that point in time.
                     ====
-                    """
+                    """,
                 )
                 pathParameters(
                     parameterWithName("group").description("The name of the group of metrics."),
@@ -159,7 +159,7 @@ internal class StatisticsControllerUnitTest : MockMvcBaseTest("statistics") {
                 fieldWithPath("parameters[].type").description("The type of the parameter."),
                 fieldWithPath("parameters[].multivalued").description("Whether the parameter accepts multiple values at once."),
                 fieldWithPath("parameters[].values[]").description("A list of possible values for the parameter. (optional)").optional(),
-            )
+            ),
         )
             .andExpect(jsonPath("$.name").value("metric1"))
             .andExpect(jsonPath("$.description").value("Description of the metric."))
@@ -173,7 +173,7 @@ internal class StatisticsControllerUnitTest : MockMvcBaseTest("statistics") {
         findMetricByGroupAndName<SlimMetricRepresentation>(
             responseFormat = MetricResponseFormat.SLIM,
             responseFields = listOf(
-                fieldWithPath("value").description("The value of the metric.")
+                fieldWithPath("value").description("The value of the metric."),
             ),
         )
             .andExpect(jsonPath("$.value").value(1))

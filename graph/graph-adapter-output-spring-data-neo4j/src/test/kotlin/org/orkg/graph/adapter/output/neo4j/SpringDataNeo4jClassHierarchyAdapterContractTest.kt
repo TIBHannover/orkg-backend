@@ -17,8 +17,8 @@ import org.orkg.testing.annotations.Neo4jContainerUnitTest
         SpringDataNeo4jClassHierarchyAdapter::class,
         SpringDataNeo4jResourceAdapter::class,
         GraphNeo4jConfiguration::class,
-        CypherQueryBuilderConfiguration::class
-    ]
+        CypherQueryBuilderConfiguration::class,
+    ],
 )
 internal class SpringDataNeo4jClassHierarchyAdapterContractTest(
     private val springDataNeo4jClassAdapter: ClassRepository,
@@ -31,15 +31,15 @@ internal class SpringDataNeo4jClassHierarchyAdapterContractTest(
                 springDataNeo4jClassHierarchyAdapter,
                 springDataNeo4jClassAdapter,
                 springDataNeo4jClassRelationAdapter,
-                springDataNeo4jResourceAdapter
-            )
+                springDataNeo4jResourceAdapter,
+            ),
         )
         include(
             classRelationRepositoryContract(
                 springDataNeo4jClassRelationAdapter,
                 springDataNeo4jClassAdapter,
-                springDataNeo4jClassHierarchyAdapter
-            )
+                springDataNeo4jClassHierarchyAdapter,
+            ),
         )
 
         afterSpec {

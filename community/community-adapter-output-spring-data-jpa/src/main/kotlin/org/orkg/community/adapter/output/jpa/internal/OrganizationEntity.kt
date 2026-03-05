@@ -64,6 +64,6 @@ class OrganizationEntity() {
             observatoryIds = observatories!!.map { ObservatoryId(it.id!!) }.toSet(),
             displayId = displayId,
             type = type!!,
-            logoId = if (logoId != null) ImageId(logoId!!) else null
+            logoId = if (logoId != null) ImageId(logoId!!) else null,
         )
 }

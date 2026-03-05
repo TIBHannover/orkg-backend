@@ -42,8 +42,8 @@ fun <
                 createClass(
                     id = ThingId("${it + 1}"),
                     uri = null,
-                    createdAt = OffsetDateTime.parse("2023-02-17T12:48:28.709687300+01:00")
-                )
+                    createdAt = OffsetDateTime.parse("2023-02-17T12:48:28.709687300+01:00"),
+                ),
             )
         }
     }
@@ -52,7 +52,7 @@ fun <
         ClassSubclassRelation(
             classRepository.findById(childId).get(),
             classRepository.findById(parentId).get(),
-            OffsetDateTime.now(fixedClock)
+            OffsetDateTime.now(fixedClock),
         )
 
     //      1     4
@@ -66,8 +66,8 @@ fun <
                 createRelation(ThingId("1"), ThingId("2")),
                 createRelation(ThingId("1"), ThingId("3")),
                 createRelation(ThingId("3"), ThingId("5")),
-                createRelation(ThingId("3"), ThingId("6"))
-            )
+                createRelation(ThingId("3"), ThingId("6")),
+            ),
         )
     }
 
@@ -112,7 +112,7 @@ fun <
                 result.content.size shouldBe 2
                 result.content shouldContainAll setOf(
                     ChildClass(classRepository.findById(ThingId("2")).get(), 0),
-                    ChildClass(classRepository.findById(ThingId("3")).get(), 2)
+                    ChildClass(classRepository.findById(ThingId("3")).get(), 2),
                 )
             }
             it("pages the result correctly") {
@@ -235,13 +235,13 @@ fun <
                 setOf(
                     ThingId("4"), // Direct instance
                     ThingId("1"), // Not an instance
-                    ThingId("2") // Not an instance, but a subclass
+                    ThingId("2"), // Not an instance, but a subclass
                 ).forEachIndexed { index, it ->
                     resourceRepository.save(
                         createResource(
                             id = ThingId("R$index"),
-                            classes = setOf(it)
-                        )
+                            classes = setOf(it),
+                        ),
                     )
                 }
 
@@ -255,13 +255,13 @@ fun <
                 setOf(
                     ThingId("1"), // Direct instance
                     ThingId("2"), // Inherited instance
-                    ThingId("4") // Not an instance
+                    ThingId("4"), // Not an instance
                 ).forEachIndexed { index, it ->
                     resourceRepository.save(
                         createResource(
                             id = ThingId("R$index"),
-                            classes = setOf(it)
-                        )
+                            classes = setOf(it),
+                        ),
                     )
                 }
 
@@ -276,13 +276,13 @@ fun <
                     ThingId("1"), // Not an instance, because parent
                     ThingId("6"), // Inherited instance
                     ThingId("3"), // Direct instance
-                    ThingId("4") // Not an instance
+                    ThingId("4"), // Not an instance
                 ).forEachIndexed { index, it ->
                     resourceRepository.save(
                         createResource(
                             id = ThingId("R$index"),
-                            classes = setOf(it)
-                        )
+                            classes = setOf(it),
+                        ),
                     )
                 }
 
@@ -302,7 +302,7 @@ fun <
                 result.content shouldNotBe null
                 result.content.size shouldBe 1
                 result.content shouldContainAll setOf(
-                    ClassHierarchyEntry(classRepository.findById(ThingId("1")).get(), null)
+                    ClassHierarchyEntry(classRepository.findById(ThingId("1")).get(), null),
                 )
             }
             it("pages the result correctly") {
@@ -327,7 +327,7 @@ fun <
                 result.content.size shouldBe 2
                 result.content shouldContainAll setOf(
                     ClassHierarchyEntry(classRepository.findById(ThingId("1")).get(), null),
-                    ClassHierarchyEntry(classRepository.findById(ThingId("3")).get(), ThingId("1"))
+                    ClassHierarchyEntry(classRepository.findById(ThingId("3")).get(), ThingId("1")),
                 )
             }
             it("pages the result correctly") {
@@ -351,7 +351,7 @@ fun <
                 result.content shouldNotBe null
                 result.content.size shouldBe 1
                 result.content shouldContainAll setOf(
-                    ClassHierarchyEntry(classRepository.findById(ThingId("4")).get(), null)
+                    ClassHierarchyEntry(classRepository.findById(ThingId("4")).get(), null),
                 )
             }
             it("pages the result correctly") {

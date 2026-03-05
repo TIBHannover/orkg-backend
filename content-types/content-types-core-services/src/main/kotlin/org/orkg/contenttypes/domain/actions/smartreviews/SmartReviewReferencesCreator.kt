@@ -14,7 +14,7 @@ class SmartReviewReferencesCreator(
         unsafeLiteralUseCases: UnsafeLiteralUseCases,
         unsafeStatementUseCases: UnsafeStatementUseCases,
     ) : this(
-        StatementCollectionPropertyCreator(unsafeLiteralUseCases, unsafeStatementUseCases)
+        StatementCollectionPropertyCreator(unsafeLiteralUseCases, unsafeStatementUseCases),
     )
 
     override fun invoke(command: CreateSmartReviewCommand, state: State): State {
@@ -22,7 +22,7 @@ class SmartReviewReferencesCreator(
             contributorId = command.contributorId,
             subjectId = state.contributionId!!,
             predicateId = Predicates.hasReference,
-            labels = command.references
+            labels = command.references,
         )
         return state
     }

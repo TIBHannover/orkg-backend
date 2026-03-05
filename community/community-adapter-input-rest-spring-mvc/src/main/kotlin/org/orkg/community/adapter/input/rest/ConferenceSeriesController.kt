@@ -51,7 +51,7 @@ class ConferenceSeriesController(
                 startDate = conference.metadata.startDate,
                 reviewType = PeerReviewType.fromOrNull(conference.metadata.reviewType)
                     ?: throw InvalidPeerReviewType(conference.metadata.reviewType),
-            )
+            ),
         )
         val location = uriComponentsBuilder
             .path("/api/conference-series/{id}")

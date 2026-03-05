@@ -27,7 +27,7 @@ internal class ContributorIdentifierServiceUnitTest : MockkBaseTest {
     private val service = ContributorIdentifierService(
         contribtorRepository,
         contributorIdentifierRepository,
-        fixedClock
+        fixedClock,
     )
 
     @Test

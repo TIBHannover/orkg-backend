@@ -23,7 +23,7 @@ internal class VisibilityValidatorUnitTest : MockkBaseTest {
         contributorRepository = contributorRepository,
         contributorSelector = { (contributorId, _) -> contributorId },
         contentTypeExtractor = { it },
-        newValueSelector = { (_, newVisibility) -> newVisibility }
+        newValueSelector = { (_, newVisibility) -> newVisibility },
     )
 
     @Test

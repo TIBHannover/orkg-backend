@@ -40,8 +40,8 @@ internal class LiteratureListVersionHistoryUpdaterUnitTest : MockkBaseTest {
                     contributorId = command.contributorId,
                     subjectId = literatureList.id,
                     predicateId = Predicates.hasPublishedVersion,
-                    objectId = literatureListVersionId
-                )
+                    objectId = literatureListVersionId,
+                ),
             )
         } returns StatementId("S1")
         every { unsafeResourceUseCases.update(any()) } just runs
@@ -57,8 +57,8 @@ internal class LiteratureListVersionHistoryUpdaterUnitTest : MockkBaseTest {
                     contributorId = command.contributorId,
                     subjectId = literatureList.id,
                     predicateId = Predicates.hasPublishedVersion,
-                    objectId = literatureListVersionId
-                )
+                    objectId = literatureListVersionId,
+                ),
             )
         }
         verify(exactly = 1) {
@@ -66,8 +66,8 @@ internal class LiteratureListVersionHistoryUpdaterUnitTest : MockkBaseTest {
                 UpdateResourceUseCase.UpdateCommand(
                     id = literatureList.versions.published.first().id,
                     contributorId = command.contributorId,
-                    classes = setOf(Classes.literatureListPublished)
-                )
+                    classes = setOf(Classes.literatureListPublished),
+                ),
             )
         }
     }
@@ -87,8 +87,8 @@ internal class LiteratureListVersionHistoryUpdaterUnitTest : MockkBaseTest {
                     contributorId = command.contributorId,
                     subjectId = literatureList.id,
                     predicateId = Predicates.hasPublishedVersion,
-                    objectId = literatureListVersionId
-                )
+                    objectId = literatureListVersionId,
+                ),
             )
         } returns StatementId("S1")
 
@@ -103,8 +103,8 @@ internal class LiteratureListVersionHistoryUpdaterUnitTest : MockkBaseTest {
                     contributorId = command.contributorId,
                     subjectId = literatureList.id,
                     predicateId = Predicates.hasPublishedVersion,
-                    objectId = literatureListVersionId
-                )
+                    objectId = literatureListVersionId,
+                ),
             )
         }
     }

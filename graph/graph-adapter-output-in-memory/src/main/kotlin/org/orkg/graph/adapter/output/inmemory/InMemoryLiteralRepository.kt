@@ -56,7 +56,7 @@ class InMemoryLiteralRepository(inMemoryGraph: InMemoryGraph) :
             label = null,
             createdBy = null,
             createdAtStart = null,
-            createdAtEnd = null
+            createdAtEnd = null,
         )
 
     override fun findAll(
@@ -78,6 +78,6 @@ class InMemoryLiteralRepository(inMemoryGraph: InMemoryGraph) :
                     (createdBy == null || it.createdBy == createdBy) &&
                     (createdAtStart == null || it.createdAt >= createdAtStart) &&
                     (createdAtEnd == null || it.createdAt <= createdAtEnd)
-            }
+            },
         )
 }

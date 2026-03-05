@@ -41,13 +41,13 @@ internal class AbstractLiteratureListSectionDeleterUnitTest : MockkBaseTest {
             id = StatementId("S123"),
             subject = createResource(literatureListId),
             predicate = createPredicate(Predicates.hasSection),
-            `object` = createResource(section.id)
+            `object` = createResource(section.id),
         )
 
         every {
             statementService.findAll(
                 objectId = section.id,
-                pageable = PageRequests.ALL
+                pageable = PageRequests.ALL,
             )
         } returns pageOf(literatureListHasSectionStatement)
         every { statementService.deleteAllById(any<Set<StatementId>>()) } just runs
@@ -58,7 +58,7 @@ internal class AbstractLiteratureListSectionDeleterUnitTest : MockkBaseTest {
         verify(exactly = 1) {
             statementService.findAll(
                 objectId = section.id,
-                pageable = PageRequests.ALL
+                pageable = PageRequests.ALL,
             )
         }
         verify(exactly = 1) {
@@ -69,8 +69,8 @@ internal class AbstractLiteratureListSectionDeleterUnitTest : MockkBaseTest {
                     StatementId("S0_2"),
                     StatementId("S1_2"),
                     StatementId("S0_3"),
-                    literatureListHasSectionStatement.id
-                )
+                    literatureListHasSectionStatement.id,
+                ),
             )
         }
         verify(exactly = 1) { resourceService.delete(section.id, contributorId) }
@@ -88,19 +88,19 @@ internal class AbstractLiteratureListSectionDeleterUnitTest : MockkBaseTest {
             id = StatementId("S123"),
             subject = createResource(literatureListId),
             predicate = createPredicate(Predicates.hasSection),
-            `object` = createResource(section.id)
+            `object` = createResource(section.id),
         )
         val otherStatementAboutListSection = createStatement(
             id = StatementId("S456"),
             subject = createResource(),
             predicate = createPredicate(Predicates.hasLink),
-            `object` = createResource(section.id)
+            `object` = createResource(section.id),
         )
 
         every {
             statementService.findAll(
                 objectId = section.id,
-                pageable = PageRequests.ALL
+                pageable = PageRequests.ALL,
             )
         } returns pageOf(literatureListHasSectionStatement, otherStatementAboutListSection)
         every { statementService.deleteAllById(setOf(literatureListHasSectionStatement.id)) } just runs
@@ -110,7 +110,7 @@ internal class AbstractLiteratureListSectionDeleterUnitTest : MockkBaseTest {
         verify(exactly = 1) {
             statementService.findAll(
                 objectId = section.id,
-                pageable = PageRequests.ALL
+                pageable = PageRequests.ALL,
             )
         }
         verify(exactly = 1) { statementService.deleteAllById(setOf(literatureListHasSectionStatement.id)) }
@@ -126,14 +126,14 @@ internal class AbstractLiteratureListSectionDeleterUnitTest : MockkBaseTest {
             id = StatementId("S123"),
             subject = createResource(literatureListId),
             predicate = createPredicate(Predicates.hasSection),
-            `object` = createResource(section.id)
+            `object` = createResource(section.id),
         )
         val exception = NeitherOwnerNorCurator(ContributorId(UUID.randomUUID()), contributorId, section.id)
 
         every {
             statementService.findAll(
                 objectId = section.id,
-                pageable = PageRequests.ALL
+                pageable = PageRequests.ALL,
             )
         } returns pageOf(literatureListHasSectionStatement)
         every { statementService.deleteAllById(any<Set<StatementId>>()) } just runs
@@ -146,7 +146,7 @@ internal class AbstractLiteratureListSectionDeleterUnitTest : MockkBaseTest {
         verify(exactly = 1) {
             statementService.findAll(
                 objectId = section.id,
-                pageable = PageRequests.ALL
+                pageable = PageRequests.ALL,
             )
         }
         verify(exactly = 1) {
@@ -157,8 +157,8 @@ internal class AbstractLiteratureListSectionDeleterUnitTest : MockkBaseTest {
                     StatementId("S0_2"),
                     StatementId("S1_2"),
                     StatementId("S0_3"),
-                    literatureListHasSectionStatement.id
-                )
+                    literatureListHasSectionStatement.id,
+                ),
             )
         }
         verify(exactly = 1) { resourceService.delete(section.id, contributorId) }
@@ -176,13 +176,13 @@ internal class AbstractLiteratureListSectionDeleterUnitTest : MockkBaseTest {
             id = StatementId("S123"),
             subject = createResource(literatureListId),
             predicate = createPredicate(Predicates.hasSection),
-            `object` = createResource(section.id)
+            `object` = createResource(section.id),
         )
 
         every {
             statementService.findAll(
                 objectId = section.id,
-                pageable = PageRequests.ALL
+                pageable = PageRequests.ALL,
             )
         } returns pageOf(literatureListHasSectionStatement)
         every { statementService.deleteAllById(any<Set<StatementId>>()) } just runs
@@ -193,7 +193,7 @@ internal class AbstractLiteratureListSectionDeleterUnitTest : MockkBaseTest {
         verify(exactly = 1) {
             statementService.findAll(
                 objectId = section.id,
-                pageable = PageRequests.ALL
+                pageable = PageRequests.ALL,
             )
         }
         verify(exactly = 1) { statementService.deleteAllById(setOf(StatementId("S1"), StatementId("S2"), literatureListHasSectionStatement.id)) }
@@ -210,19 +210,19 @@ internal class AbstractLiteratureListSectionDeleterUnitTest : MockkBaseTest {
             id = StatementId("S123"),
             subject = createResource(literatureListId),
             predicate = createPredicate(Predicates.hasSection),
-            `object` = createResource(section.id)
+            `object` = createResource(section.id),
         )
         val otherStatementAboutTextSection = createStatement(
             id = StatementId("S456"),
             subject = createResource(),
             predicate = createPredicate(Predicates.hasLink),
-            `object` = createResource(section.id)
+            `object` = createResource(section.id),
         )
 
         every {
             statementService.findAll(
                 objectId = section.id,
-                pageable = PageRequests.ALL
+                pageable = PageRequests.ALL,
             )
         } returns pageOf(literatureListHasSectionStatement, otherStatementAboutTextSection)
         every { statementService.deleteAllById(setOf(literatureListHasSectionStatement.id)) } just runs
@@ -232,7 +232,7 @@ internal class AbstractLiteratureListSectionDeleterUnitTest : MockkBaseTest {
         verify(exactly = 1) {
             statementService.findAll(
                 objectId = section.id,
-                pageable = PageRequests.ALL
+                pageable = PageRequests.ALL,
             )
         }
         verify(exactly = 1) { statementService.deleteAllById(setOf(literatureListHasSectionStatement.id)) }
@@ -248,14 +248,14 @@ internal class AbstractLiteratureListSectionDeleterUnitTest : MockkBaseTest {
             id = StatementId("S123"),
             subject = createResource(literatureListId),
             predicate = createPredicate(Predicates.hasSection),
-            `object` = createResource(section.id)
+            `object` = createResource(section.id),
         )
         val exception = NeitherOwnerNorCurator(ContributorId(UUID.randomUUID()), contributorId, section.id)
 
         every {
             statementService.findAll(
                 objectId = section.id,
-                pageable = PageRequests.ALL
+                pageable = PageRequests.ALL,
             )
         } returns pageOf(literatureListHasSectionStatement)
         every { statementService.deleteAllById(any<Set<StatementId>>()) } just runs
@@ -268,7 +268,7 @@ internal class AbstractLiteratureListSectionDeleterUnitTest : MockkBaseTest {
         verify(exactly = 1) {
             statementService.findAll(
                 objectId = section.id,
-                pageable = PageRequests.ALL
+                pageable = PageRequests.ALL,
             )
         }
         verify(exactly = 1) { statementService.deleteAllById(setOf(StatementId("S1"), StatementId("S2"), literatureListHasSectionStatement.id)) }

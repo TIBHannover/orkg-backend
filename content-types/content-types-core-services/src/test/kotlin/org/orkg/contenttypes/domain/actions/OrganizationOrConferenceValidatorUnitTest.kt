@@ -25,7 +25,7 @@ internal class OrganizationOrConferenceValidatorUnitTest : MockkBaseTest {
         organizationRepository,
         conferenceSeriesRepository,
         { it },
-        { it }
+        { it },
     )
 
     @Test

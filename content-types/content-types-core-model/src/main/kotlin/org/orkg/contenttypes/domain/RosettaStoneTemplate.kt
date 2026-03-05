@@ -62,7 +62,7 @@ data class RosettaStoneTemplate(
                 observatories = listOf(resource.observatoryId),
                 visibility = resource.visibility,
                 unlistedBy = resource.unlistedBy,
-                modifiable = resource.modifiable
+                modifiable = resource.modifiable,
             )
         }
     }

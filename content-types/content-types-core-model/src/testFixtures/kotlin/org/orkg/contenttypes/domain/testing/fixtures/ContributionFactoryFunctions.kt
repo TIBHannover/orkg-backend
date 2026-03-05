@@ -14,11 +14,11 @@ fun createContribution() = Contribution(
     properties = mapOf(
         ThingId("R456") to listOf(
             ThingId("R789"),
-            ThingId("R147")
-        )
+            ThingId("R147"),
+        ),
     ),
     extractionMethod = ExtractionMethod.MANUAL,
     createdAt = OffsetDateTime.parse("2023-11-02T10:25:05.959539600+01:00"),
     createdBy = ContributorId("dca4080c-e23f-489d-b900-af8bfc2b0620"),
-    visibility = Visibility.DEFAULT
+    visibility = Visibility.DEFAULT,
 )

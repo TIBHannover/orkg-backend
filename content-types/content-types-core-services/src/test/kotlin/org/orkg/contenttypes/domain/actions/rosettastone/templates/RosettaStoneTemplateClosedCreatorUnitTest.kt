@@ -29,7 +29,7 @@ internal class RosettaStoneTemplateClosedCreatorUnitTest : MockkBaseTest {
         val command = createRosettaStoneTemplateCommand()
         val rosettaStoneTemplateId = ThingId("R123")
         val state = CreateRosettaStoneTemplateState(
-            rosettaStoneTemplateId = rosettaStoneTemplateId
+            rosettaStoneTemplateId = rosettaStoneTemplateId,
         )
         val closedLiteralId = ThingId("R125")
 
@@ -38,8 +38,8 @@ internal class RosettaStoneTemplateClosedCreatorUnitTest : MockkBaseTest {
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     label = "true",
-                    datatype = Literals.XSD.BOOLEAN.prefixedUri
-                )
+                    datatype = Literals.XSD.BOOLEAN.prefixedUri,
+                ),
             )
         } returns closedLiteralId
         every {
@@ -48,8 +48,8 @@ internal class RosettaStoneTemplateClosedCreatorUnitTest : MockkBaseTest {
                     contributorId = command.contributorId,
                     subjectId = state.rosettaStoneTemplateId!!,
                     predicateId = Predicates.shClosed,
-                    objectId = closedLiteralId
-                )
+                    objectId = closedLiteralId,
+                ),
             )
         } returns StatementId("S1")
 
@@ -64,8 +64,8 @@ internal class RosettaStoneTemplateClosedCreatorUnitTest : MockkBaseTest {
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     label = "true",
-                    datatype = Literals.XSD.BOOLEAN.prefixedUri
-                )
+                    datatype = Literals.XSD.BOOLEAN.prefixedUri,
+                ),
             )
         }
         verify(exactly = 1) {
@@ -74,8 +74,8 @@ internal class RosettaStoneTemplateClosedCreatorUnitTest : MockkBaseTest {
                     contributorId = command.contributorId,
                     subjectId = state.rosettaStoneTemplateId!!,
                     predicateId = Predicates.shClosed,
-                    objectId = closedLiteralId
-                )
+                    objectId = closedLiteralId,
+                ),
             )
         }
     }

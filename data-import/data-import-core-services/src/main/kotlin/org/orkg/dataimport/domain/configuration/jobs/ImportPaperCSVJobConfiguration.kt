@@ -83,6 +83,6 @@ class ImportPaperCSVJobConfiguration(
             successState = State.IMPORT_DONE,
             stoppedState = State.IMPORT_STOPPED,
             failureState = State.IMPORT_FAILED,
-            jobIdSetter = { csv, jobId -> csv.copy(importJobId = jobId) }
+            jobIdSetter = { csv, jobId -> csv.copy(importJobId = jobId) },
         )
 }

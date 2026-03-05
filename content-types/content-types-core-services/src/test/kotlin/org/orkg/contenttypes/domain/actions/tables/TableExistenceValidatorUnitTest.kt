@@ -30,7 +30,7 @@ internal class TableExistenceValidatorUnitTest : MockkBaseTest {
         tableService = tableService,
         resourceRepository = resourceRepository,
         tableIdSelector = { it },
-        stateUpdater = { table, statements -> table to statements }
+        stateUpdater = { table, statements -> table to statements },
     )
 
     @Test
@@ -40,7 +40,7 @@ internal class TableExistenceValidatorUnitTest : MockkBaseTest {
         val root = createResource(
             id = table.id,
             label = table.label,
-            classes = setOf(Classes.table)
+            classes = setOf(Classes.table),
         )
         val statements = listOf(createStatement()).groupBy { it.subject.id }
         val state = table to statements

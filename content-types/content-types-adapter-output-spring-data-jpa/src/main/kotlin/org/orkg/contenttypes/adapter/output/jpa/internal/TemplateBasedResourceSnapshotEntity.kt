@@ -35,7 +35,7 @@ class TemplateBasedResourceSnapshotEntity : SnapshotEntity<ModelVersion>() {
                     data = objectMapper.treeToValue(data, TemplateInstance::class.java),
                     resourceId = ThingId(resourceId!!),
                     templateId = ThingId(templateId!!),
-                    handle = handle?.let(Handle::of)
+                    handle = handle?.let(Handle::of),
                 )
             }
         }

@@ -62,15 +62,15 @@ internal class RosettaStoneStatementUpdaterUnitTest : MockkBaseTest {
                 "#temp2" from command,
                 "#temp3" from command,
                 "#temp4" from command,
-                "#temp5" from command
+                "#temp5" from command,
             ),
             tempIdToThingId = mapOf(
                 "#temp1" to ThingId("Temp1"),
                 "#temp2" to ThingId("Temp2"),
                 "#temp3" to ThingId("Temp3"),
                 "#temp4" to ThingId("Temp4"),
-                "#temp5" to ThingId("Temp5")
-            )
+                "#temp5" to ThingId("Temp5"),
+            ),
         )
         val rosettaStoneStatementVersionId = ThingId("R123")
         val temp1 = createResource(ThingId("Temp1"))
@@ -81,14 +81,14 @@ internal class RosettaStoneStatementUpdaterUnitTest : MockkBaseTest {
         val subjects = listOf(r258, r369, temp1)
         val objects = listOf(
             listOf(r987, r654, temp2, temp3),
-            listOf(r321, r741, temp4, temp5)
+            listOf(r321, r741, temp4, temp5),
         )
         val updatedLabel = dynamicLabel.render(
             mapOf(
                 "0" to subjects,
                 "1" to objects[0],
                 "2" to objects[1],
-            ).mapValues { (_, value) -> value.map { it.label } }
+            ).mapValues { (_, value) -> value.map { it.label } },
         )
 
         every { rosettaStoneStatementRepository.nextIdentity() } returns rosettaStoneStatementVersionId
@@ -145,7 +145,7 @@ internal class RosettaStoneStatementUpdaterUnitTest : MockkBaseTest {
                     it.extractionMethod shouldBe command.extractionMethod
                     it.visibility shouldBe command.visibility
                     it.modifiable shouldBe command.modifiable
-                }
+                },
             )
         }
     }

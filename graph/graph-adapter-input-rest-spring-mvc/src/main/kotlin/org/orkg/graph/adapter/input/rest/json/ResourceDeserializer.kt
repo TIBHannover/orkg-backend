@@ -31,7 +31,7 @@ class ResourceDeserializer : ValueDeserializer<Resource>() {
                 ?: visibilityFromFlags(node["featured"]?.asBoolean(), node["unlisted"]?.asBoolean()),
             verified = node["verified"]?.asBoolean(),
             unlistedBy = node["unlisted_by"]?.stringValue(null)?.let(::ContributorId),
-            modifiable = node["modifiable"]?.asBoolean() ?: true
+            modifiable = node["modifiable"]?.asBoolean() ?: true,
         )
     }
 

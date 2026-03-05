@@ -37,7 +37,7 @@ internal class AbstractTemplatePropertyUpdaterUntypedPropertyUnitTest : Abstract
         val contributorId = ContributorId(UUID.randomUUID())
         val oldProperty = createUntypedTemplateProperty()
         val newProperty = oldProperty.toUntypedTemplatePropertyCommand().copy(
-            label = "new label"
+            label = "new label",
         )
 
         every {
@@ -45,8 +45,8 @@ internal class AbstractTemplatePropertyUpdaterUntypedPropertyUnitTest : Abstract
                 UpdateResourceUseCase.UpdateCommand(
                     id = oldProperty.id,
                     contributorId = contributorId,
-                    label = newProperty.label
-                )
+                    label = newProperty.label,
+                ),
             )
         } just runs
 
@@ -57,8 +57,8 @@ internal class AbstractTemplatePropertyUpdaterUntypedPropertyUnitTest : Abstract
                 UpdateResourceUseCase.UpdateCommand(
                     id = oldProperty.id,
                     contributorId = contributorId,
-                    label = newProperty.label
-                )
+                    label = newProperty.label,
+                ),
             )
         }
     }
@@ -68,14 +68,14 @@ internal class AbstractTemplatePropertyUpdaterUntypedPropertyUnitTest : Abstract
         val contributorId = ContributorId(UUID.randomUUID())
         val oldProperty = createUntypedTemplateProperty()
         val newProperty = oldProperty.toUntypedTemplatePropertyCommand().copy(
-            placeholder = "new placeholder"
+            placeholder = "new placeholder",
         )
         val statements = listOf(
             createStatement(
                 subject = createResource(oldProperty.id),
                 predicate = createPredicate(Predicates.placeholder),
-                `object` = createLiteral(label = "old placeholder")
-            )
+                `object` = createLiteral(label = "old placeholder"),
+            ),
         )
 
         every {
@@ -84,7 +84,7 @@ internal class AbstractTemplatePropertyUpdaterUntypedPropertyUnitTest : Abstract
                 contributorId = contributorId,
                 subjectId = oldProperty.id,
                 predicateId = Predicates.placeholder,
-                label = newProperty.placeholder
+                label = newProperty.placeholder,
             )
         } just runs
 
@@ -96,7 +96,7 @@ internal class AbstractTemplatePropertyUpdaterUntypedPropertyUnitTest : Abstract
                 contributorId = contributorId,
                 subjectId = oldProperty.id,
                 predicateId = Predicates.placeholder,
-                label = newProperty.placeholder
+                label = newProperty.placeholder,
             )
         }
     }
@@ -106,14 +106,14 @@ internal class AbstractTemplatePropertyUpdaterUntypedPropertyUnitTest : Abstract
         val contributorId = ContributorId(UUID.randomUUID())
         val oldProperty = createUntypedTemplateProperty()
         val newProperty = oldProperty.toUntypedTemplatePropertyCommand().copy(
-            description = "new description"
+            description = "new description",
         )
         val statements = listOf(
             createStatement(
                 subject = createResource(oldProperty.id),
                 predicate = createPredicate(Predicates.description),
-                `object` = createLiteral(label = "old description")
-            )
+                `object` = createLiteral(label = "old description"),
+            ),
         )
 
         every {
@@ -122,7 +122,7 @@ internal class AbstractTemplatePropertyUpdaterUntypedPropertyUnitTest : Abstract
                 contributorId = contributorId,
                 subjectId = oldProperty.id,
                 predicateId = Predicates.description,
-                label = newProperty.description
+                label = newProperty.description,
             )
         } just runs
 
@@ -134,7 +134,7 @@ internal class AbstractTemplatePropertyUpdaterUntypedPropertyUnitTest : Abstract
                 contributorId = contributorId,
                 subjectId = oldProperty.id,
                 predicateId = Predicates.description,
-                label = newProperty.description
+                label = newProperty.description,
             )
         }
     }
@@ -144,14 +144,14 @@ internal class AbstractTemplatePropertyUpdaterUntypedPropertyUnitTest : Abstract
         val contributorId = ContributorId(UUID.randomUUID())
         val oldProperty = createUntypedTemplateProperty()
         val newProperty = oldProperty.toUntypedTemplatePropertyCommand().copy(
-            minCount = 5
+            minCount = 5,
         )
         val statements = listOf(
             createStatement(
                 subject = createResource(oldProperty.id),
                 predicate = createPredicate(Predicates.shMinCount),
-                `object` = createLiteral(label = "4", datatype = Literals.XSD.INT.prefixedUri)
-            )
+                `object` = createLiteral(label = "4", datatype = Literals.XSD.INT.prefixedUri),
+            ),
         )
 
         every {
@@ -161,7 +161,7 @@ internal class AbstractTemplatePropertyUpdaterUntypedPropertyUnitTest : Abstract
                 subjectId = oldProperty.id,
                 predicateId = Predicates.shMinCount,
                 label = newProperty.minCount.toString(),
-                datatype = Literals.XSD.INT.prefixedUri
+                datatype = Literals.XSD.INT.prefixedUri,
             )
         } just runs
 
@@ -174,7 +174,7 @@ internal class AbstractTemplatePropertyUpdaterUntypedPropertyUnitTest : Abstract
                 subjectId = oldProperty.id,
                 predicateId = Predicates.shMinCount,
                 label = newProperty.minCount.toString(),
-                datatype = Literals.XSD.INT.prefixedUri
+                datatype = Literals.XSD.INT.prefixedUri,
             )
         }
     }
@@ -184,14 +184,14 @@ internal class AbstractTemplatePropertyUpdaterUntypedPropertyUnitTest : Abstract
         val contributorId = ContributorId(UUID.randomUUID())
         val oldProperty = createUntypedTemplateProperty()
         val newProperty = oldProperty.toUntypedTemplatePropertyCommand().copy(
-            maxCount = 5
+            maxCount = 5,
         )
         val statements = listOf(
             createStatement(
                 subject = createResource(oldProperty.id),
                 predicate = createPredicate(Predicates.shMaxCount),
-                `object` = createLiteral(label = "4", datatype = Literals.XSD.INT.prefixedUri)
-            )
+                `object` = createLiteral(label = "4", datatype = Literals.XSD.INT.prefixedUri),
+            ),
         )
 
         every {
@@ -201,7 +201,7 @@ internal class AbstractTemplatePropertyUpdaterUntypedPropertyUnitTest : Abstract
                 subjectId = oldProperty.id,
                 predicateId = Predicates.shMaxCount,
                 label = newProperty.maxCount.toString(),
-                datatype = Literals.XSD.INT.prefixedUri
+                datatype = Literals.XSD.INT.prefixedUri,
             )
         } just runs
 
@@ -214,7 +214,7 @@ internal class AbstractTemplatePropertyUpdaterUntypedPropertyUnitTest : Abstract
                 subjectId = oldProperty.id,
                 predicateId = Predicates.shMaxCount,
                 label = newProperty.maxCount.toString(),
-                datatype = Literals.XSD.INT.prefixedUri
+                datatype = Literals.XSD.INT.prefixedUri,
             )
         }
     }
@@ -229,21 +229,21 @@ internal class AbstractTemplatePropertyUpdaterUntypedPropertyUnitTest : Abstract
             description = oldProperty.description,
             minCount = oldProperty.minCount,
             maxCount = oldProperty.maxCount,
-            path = oldProperty.path.id
+            path = oldProperty.path.id,
         )
         val statements = listOf(
             createStatement(
                 id = StatementId("S123"),
                 subject = createResource(oldProperty.id),
                 predicate = createPredicate(Predicates.shDatatype),
-                `object` = createClass(Classes.integer)
+                `object` = createClass(Classes.integer),
             ),
             createStatement(
                 id = StatementId("S456"),
                 subject = createResource(oldProperty.id),
                 predicate = createPredicate(Predicates.shClass),
-                `object` = createClass(Classes.resources)
-            )
+                `object` = createClass(Classes.resources),
+            ),
         )
         val statementsToRemove = statements.map { it.id }.toSet()
 
@@ -259,14 +259,14 @@ internal class AbstractTemplatePropertyUpdaterUntypedPropertyUnitTest : Abstract
         val contributorId = ContributorId(UUID.randomUUID())
         val oldProperty = createUntypedTemplateProperty()
         val newProperty = oldProperty.toUntypedTemplatePropertyCommand().copy(
-            path = Predicates.hasLink
+            path = Predicates.hasLink,
         )
         val statements = listOf(
             createStatement(
                 subject = createResource(oldProperty.id),
                 predicate = createPredicate(Predicates.hasLink),
-                `object` = createPredicate(oldProperty.path.id)
-            )
+                `object` = createPredicate(oldProperty.path.id),
+            ),
         )
 
         every {
@@ -275,7 +275,7 @@ internal class AbstractTemplatePropertyUpdaterUntypedPropertyUnitTest : Abstract
                 contributorId = contributorId,
                 subjectId = oldProperty.id,
                 predicateId = Predicates.shPath,
-                objectId = newProperty.path
+                objectId = newProperty.path,
             )
         } just runs
 
@@ -287,7 +287,7 @@ internal class AbstractTemplatePropertyUpdaterUntypedPropertyUnitTest : Abstract
                 contributorId = contributorId,
                 subjectId = oldProperty.id,
                 predicateId = Predicates.shPath,
-                objectId = newProperty.path
+                objectId = newProperty.path,
             )
         }
     }
@@ -301,8 +301,8 @@ internal class AbstractTemplatePropertyUpdaterUntypedPropertyUnitTest : Abstract
             createStatement(
                 subject = createResource(oldProperty.id),
                 predicate = createPredicate(Predicates.shOrder),
-                `object` = createLiteral(label = "0", datatype = Literals.XSD.INT.prefixedUri)
-            )
+                `object` = createLiteral(label = "0", datatype = Literals.XSD.INT.prefixedUri),
+            ),
         )
         val newOrder = 2
 
@@ -313,7 +313,7 @@ internal class AbstractTemplatePropertyUpdaterUntypedPropertyUnitTest : Abstract
                 subjectId = oldProperty.id,
                 predicateId = Predicates.shOrder,
                 label = newOrder.toString(),
-                datatype = Literals.XSD.INT.prefixedUri
+                datatype = Literals.XSD.INT.prefixedUri,
             )
         } just runs
 
@@ -326,7 +326,7 @@ internal class AbstractTemplatePropertyUpdaterUntypedPropertyUnitTest : Abstract
                 subjectId = oldProperty.id,
                 predicateId = Predicates.shOrder,
                 label = newOrder.toString(),
-                datatype = Literals.XSD.INT.prefixedUri
+                datatype = Literals.XSD.INT.prefixedUri,
             )
         }
     }

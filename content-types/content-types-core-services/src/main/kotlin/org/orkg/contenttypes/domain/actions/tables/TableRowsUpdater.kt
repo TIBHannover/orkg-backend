@@ -22,7 +22,7 @@ class TableRowsUpdater(
     ) : this(
         unsafeStatementUseCases,
         unsafeLiteralUseCases,
-        AbstractTableRowCreator(unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases)
+        AbstractTableRowCreator(unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases),
     )
 
     override fun invoke(command: UpdateTableCommand, state: State): State {
@@ -42,16 +42,16 @@ class TableRowsUpdater(
                 val rowLabelLiteralId = unsafeLiteralUseCases.create(
                     CreateLiteralUseCase.CreateCommand(
                         contributorId = command.contributorId,
-                        label = rowCommand.label!!
-                    )
+                        label = rowCommand.label!!,
+                    ),
                 )
                 unsafeStatementUseCases.create(
                     CreateStatementUseCase.CreateCommand(
                         contributorId = command.contributorId,
                         subjectId = existingRowGraph.rowId,
                         predicateId = Predicates.csvwTitles,
-                        objectId = rowLabelLiteralId
-                    )
+                        objectId = rowLabelLiteralId,
+                    ),
                 )
             } else if (rowCommand.label != existingRowGraph.label) {
                 unsafeLiteralUseCases.update(
@@ -59,7 +59,7 @@ class TableRowsUpdater(
                         id = existingRowGraph.labelStatement!!.`object`.id,
                         contributorId = command.contributorId,
                         label = rowCommand.label!!,
-                    )
+                    ),
                 )
             }
         }
@@ -72,7 +72,7 @@ class TableRowsUpdater(
                     contributorId = command.contributorId,
                     tableId = command.tableId,
                     index = index,
-                    label = row.label
+                    label = row.label,
                 )
             }
 
@@ -87,7 +87,7 @@ class TableRowsUpdater(
         return state.copy(
             rows = rows,
             thingsToDelete = thingsToDelete,
-            statementsToDelete = statementsToDelete
+            statementsToDelete = statementsToDelete,
         )
     }
 }

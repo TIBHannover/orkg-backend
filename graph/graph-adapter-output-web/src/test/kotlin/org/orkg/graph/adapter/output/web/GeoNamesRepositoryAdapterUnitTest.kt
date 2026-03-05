@@ -69,7 +69,7 @@ internal class GeoNamesRepositoryAdapterUnitTest : MockkBaseTest {
                         USER_AGENT to listOf(userAgent),
                     )
                 },
-                any<HttpResponse.BodyHandler<String>>()
+                any<HttpResponse.BodyHandler<String>>(),
             )
         }
         verify(exactly = 1) { response.statusCode() }
@@ -103,7 +103,7 @@ internal class GeoNamesRepositoryAdapterUnitTest : MockkBaseTest {
                         USER_AGENT to listOf(userAgent),
                     )
                 },
-                any<HttpResponse.BodyHandler<String>>()
+                any<HttpResponse.BodyHandler<String>>(),
             )
         }
         verify(exactly = 1) { response.statusCode() }
@@ -137,7 +137,7 @@ internal class GeoNamesRepositoryAdapterUnitTest : MockkBaseTest {
                         USER_AGENT to listOf(userAgent),
                     )
                 },
-                any<HttpResponse.BodyHandler<String>>()
+                any<HttpResponse.BodyHandler<String>>(),
             )
         }
         verify(exactly = 2) { response.statusCode() }
@@ -177,8 +177,8 @@ internal class GeoNamesRepositoryAdapterUnitTest : MockkBaseTest {
                 ExternalThing(
                     uri = ParsedIRI.create("https://sws.geonames.org/2950159"),
                     label = "Berlin",
-                    description = null
-                )
+                    description = null,
+                ),
             ),
             Arguments.of(
                 "2950159",
@@ -188,9 +188,9 @@ internal class GeoNamesRepositoryAdapterUnitTest : MockkBaseTest {
                 ExternalThing(
                     uri = ParsedIRI.create("https://sws.geonames.org/2950159"),
                     label = "Berlin",
-                    description = null
-                )
-            )
+                    description = null,
+                ),
+            ),
         )
 
         @JvmStatic

@@ -19,16 +19,16 @@ class TemplateClosedCreator(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     label = "true",
-                    datatype = Literals.XSD.BOOLEAN.prefixedUri
-                )
+                    datatype = Literals.XSD.BOOLEAN.prefixedUri,
+                ),
             )
             unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     subjectId = state.templateId!!,
                     predicateId = Predicates.shClosed,
-                    objectId = trueLiteralId
-                )
+                    objectId = trueLiteralId,
+                ),
             )
         }
         return state

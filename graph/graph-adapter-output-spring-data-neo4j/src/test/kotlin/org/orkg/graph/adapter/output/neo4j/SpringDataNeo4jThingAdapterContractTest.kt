@@ -19,8 +19,8 @@ import org.orkg.testing.annotations.Neo4jContainerUnitTest
         SpringDataNeo4jPredicateAdapter::class,
         SpringDataNeo4jLiteralAdapter::class,
         GraphNeo4jConfiguration::class,
-        CypherQueryBuilderConfiguration::class
-    ]
+        CypherQueryBuilderConfiguration::class,
+    ],
 )
 internal class SpringDataNeo4jThingAdapterContractTest(
     private val springDataNeo4jThingAdapter: ThingRepository,
@@ -36,7 +36,7 @@ internal class SpringDataNeo4jThingAdapterContractTest(
                 springDataNeo4jResourceAdapter,
                 springDataNeo4jPredicateAdapter,
                 springDataNeo4jLiteralAdapter,
-            )
+            ),
         )
 
         afterSpec {

@@ -27,7 +27,7 @@ class ComparisonVersionDoiPublisher(
         SingleStatementPropertyCreator(unsafeLiteralUseCases, unsafeStatementUseCases),
         comparisonRepository,
         doiService,
-        comparisonPublishBaseUri
+        comparisonPublishBaseUri,
     )
 
     override fun invoke(command: PublishComparisonCommand, state: State): State {
@@ -46,14 +46,14 @@ class ComparisonVersionDoiPublisher(
                 creators = command.authors,
                 resourceType = Classes.comparison.value,
                 resourceTypeGeneral = "Dataset",
-                relatedIdentifiers = comparisonRepository.findAllDOIsRelatedToComparison(comparison.id).toList()
-            )
+                relatedIdentifiers = comparisonRepository.findAllDOIsRelatedToComparison(comparison.id).toList(),
+            ),
         )
         singleStatementPropertyCreator.create(
             contributorId = command.contributorId,
             subjectId = comparisonVersionId,
             predicateId = Predicates.hasDOI,
-            label = doi.value
+            label = doi.value,
         )
         return state
     }

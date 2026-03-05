@@ -39,7 +39,7 @@ internal class PublicationInfoCreatorUnitTest : MockkBaseTest {
         unsafeResourceUseCases,
         resourceRepository,
         unsafeStatementUseCases,
-        unsafeLiteralUseCases
+        unsafeLiteralUseCases,
     )
 
     @Test
@@ -51,10 +51,10 @@ internal class PublicationInfoCreatorUnitTest : MockkBaseTest {
             publishedMonth = month,
             publishedYear = null,
             publishedIn = null,
-            url = null
+            url = null,
         )
         val state = CreatePaperState(
-            paperId = paperId
+            paperId = paperId,
         )
         val monthLiteralId = ThingId("L1")
 
@@ -63,8 +63,8 @@ internal class PublicationInfoCreatorUnitTest : MockkBaseTest {
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = contributorId,
                     label = month.toString(),
-                    datatype = Literals.XSD.INT.prefixedUri
-                )
+                    datatype = Literals.XSD.INT.prefixedUri,
+                ),
             )
         } returns monthLiteralId
         every {
@@ -73,8 +73,8 @@ internal class PublicationInfoCreatorUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     subjectId = state.paperId!!,
                     predicateId = Predicates.monthPublished,
-                    objectId = monthLiteralId
-                )
+                    objectId = monthLiteralId,
+                ),
             )
         } returns StatementId("S1")
 
@@ -85,8 +85,8 @@ internal class PublicationInfoCreatorUnitTest : MockkBaseTest {
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = contributorId,
                     label = month.toString(),
-                    datatype = Literals.XSD.INT.prefixedUri
-                )
+                    datatype = Literals.XSD.INT.prefixedUri,
+                ),
             )
         }
         verify(exactly = 1) {
@@ -95,8 +95,8 @@ internal class PublicationInfoCreatorUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     subjectId = state.paperId!!,
                     predicateId = Predicates.monthPublished,
-                    objectId = monthLiteralId
-                )
+                    objectId = monthLiteralId,
+                ),
             )
         }
     }
@@ -110,7 +110,7 @@ internal class PublicationInfoCreatorUnitTest : MockkBaseTest {
             publishedMonth = null,
             publishedYear = year,
             publishedIn = null,
-            url = null
+            url = null,
         )
         val yearLiteralId = ThingId("L1")
 
@@ -119,8 +119,8 @@ internal class PublicationInfoCreatorUnitTest : MockkBaseTest {
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = contributorId,
                     label = year.toString(),
-                    datatype = Literals.XSD.INT.prefixedUri
-                )
+                    datatype = Literals.XSD.INT.prefixedUri,
+                ),
             )
         } returns yearLiteralId
         every {
@@ -129,8 +129,8 @@ internal class PublicationInfoCreatorUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     subjectId = paperId,
                     predicateId = Predicates.yearPublished,
-                    objectId = yearLiteralId
-                )
+                    objectId = yearLiteralId,
+                ),
             )
         } returns StatementId("S1")
 
@@ -141,8 +141,8 @@ internal class PublicationInfoCreatorUnitTest : MockkBaseTest {
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = contributorId,
                     label = year.toString(),
-                    datatype = Literals.XSD.INT.prefixedUri
-                )
+                    datatype = Literals.XSD.INT.prefixedUri,
+                ),
             )
         }
         verify(exactly = 1) {
@@ -151,8 +151,8 @@ internal class PublicationInfoCreatorUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     subjectId = paperId,
                     predicateId = Predicates.yearPublished,
-                    objectId = yearLiteralId
-                )
+                    objectId = yearLiteralId,
+                ),
             )
         }
     }
@@ -166,7 +166,7 @@ internal class PublicationInfoCreatorUnitTest : MockkBaseTest {
             publishedMonth = null,
             publishedYear = null,
             publishedIn = venue,
-            url = null
+            url = null,
         )
         val venueResource = createResource(label = venue)
 
@@ -174,7 +174,7 @@ internal class PublicationInfoCreatorUnitTest : MockkBaseTest {
             resourceRepository.findAll(
                 includeClasses = setOf(Classes.venue),
                 label = any(),
-                pageable = PageRequests.SINGLE
+                pageable = PageRequests.SINGLE,
             )
         } returns pageOf(venueResource)
         every {
@@ -183,8 +183,8 @@ internal class PublicationInfoCreatorUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     subjectId = paperId,
                     predicateId = Predicates.hasVenue,
-                    objectId = venueResource.id
-                )
+                    objectId = venueResource.id,
+                ),
             )
         } returns StatementId("S1")
 
@@ -197,7 +197,7 @@ internal class PublicationInfoCreatorUnitTest : MockkBaseTest {
                     it.shouldBeInstanceOf<ExactSearchString>()
                     it.input shouldBeEqualIgnoringCase venue
                 },
-                pageable = PageRequests.SINGLE
+                pageable = PageRequests.SINGLE,
             )
         }
         verify(exactly = 1) {
@@ -206,8 +206,8 @@ internal class PublicationInfoCreatorUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     subjectId = paperId,
                     predicateId = Predicates.hasVenue,
-                    objectId = venueResource.id
-                )
+                    objectId = venueResource.id,
+                ),
             )
         }
     }
@@ -221,12 +221,12 @@ internal class PublicationInfoCreatorUnitTest : MockkBaseTest {
             publishedMonth = null,
             publishedYear = null,
             publishedIn = venue,
-            url = null
+            url = null,
         )
         val resourceCreateCommand = CreateResourceUseCase.CreateCommand(
             contributorId = contributorId,
             label = venue,
-            classes = setOf(Classes.venue)
+            classes = setOf(Classes.venue),
         )
         val venueId = ThingId("R456")
 
@@ -234,7 +234,7 @@ internal class PublicationInfoCreatorUnitTest : MockkBaseTest {
             resourceRepository.findAll(
                 includeClasses = setOf(Classes.venue),
                 label = any(),
-                pageable = PageRequests.SINGLE
+                pageable = PageRequests.SINGLE,
             )
         } returns Page.empty()
         every { unsafeResourceUseCases.create(resourceCreateCommand) } returns venueId
@@ -244,8 +244,8 @@ internal class PublicationInfoCreatorUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     subjectId = paperId,
                     predicateId = Predicates.hasVenue,
-                    objectId = venueId
-                )
+                    objectId = venueId,
+                ),
             )
         } returns StatementId("S1")
 
@@ -258,7 +258,7 @@ internal class PublicationInfoCreatorUnitTest : MockkBaseTest {
                     it.shouldBeInstanceOf<ExactSearchString>()
                     it.input shouldBeEqualIgnoringCase venue
                 },
-                pageable = PageRequests.SINGLE
+                pageable = PageRequests.SINGLE,
             )
         }
         verify(exactly = 1) { unsafeResourceUseCases.create(resourceCreateCommand) }
@@ -268,8 +268,8 @@ internal class PublicationInfoCreatorUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     subjectId = paperId,
                     predicateId = Predicates.hasVenue,
-                    objectId = venueId
-                )
+                    objectId = venueId,
+                ),
             )
         }
     }
@@ -283,7 +283,7 @@ internal class PublicationInfoCreatorUnitTest : MockkBaseTest {
             publishedMonth = null,
             publishedYear = null,
             publishedIn = null,
-            url = url
+            url = url,
         )
         val urlLiteralId = ThingId("L1")
 
@@ -292,8 +292,8 @@ internal class PublicationInfoCreatorUnitTest : MockkBaseTest {
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = contributorId,
                     label = url.toString(),
-                    datatype = Literals.XSD.URI.prefixedUri
-                )
+                    datatype = Literals.XSD.URI.prefixedUri,
+                ),
             )
         } returns urlLiteralId
         every {
@@ -302,8 +302,8 @@ internal class PublicationInfoCreatorUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     subjectId = paperId,
                     predicateId = Predicates.hasURL,
-                    objectId = urlLiteralId
-                )
+                    objectId = urlLiteralId,
+                ),
             )
         } returns StatementId("S1")
 
@@ -314,8 +314,8 @@ internal class PublicationInfoCreatorUnitTest : MockkBaseTest {
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = contributorId,
                     label = url.toString(),
-                    datatype = Literals.XSD.URI.prefixedUri
-                )
+                    datatype = Literals.XSD.URI.prefixedUri,
+                ),
             )
         }
         verify(exactly = 1) {
@@ -324,8 +324,8 @@ internal class PublicationInfoCreatorUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     subjectId = paperId,
                     predicateId = Predicates.hasURL,
-                    objectId = urlLiteralId
-                )
+                    objectId = urlLiteralId,
+                ),
             )
         }
     }

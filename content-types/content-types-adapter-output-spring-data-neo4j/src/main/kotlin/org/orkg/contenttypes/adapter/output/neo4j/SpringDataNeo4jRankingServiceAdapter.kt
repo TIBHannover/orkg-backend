@@ -16,7 +16,7 @@ class SpringDataNeo4jRankingServiceAdapter(
             """
             MATCH (:Paper:Resource {id: ${'$'}id})-[r:RELATED]->(n:Thing)
             RETURN r.predicate_id AS predicate, n.id AS id
-            """.trimIndent()
+            """.trimIndent(),
         ).bindAll(mapOf("id" to id.value))
             .mappedBy { _, record -> ThingId(record["predicate"].asString()) to ThingId(record["id"].asString()) }
             .all()
@@ -29,7 +29,7 @@ class SpringDataNeo4jRankingServiceAdapter(
             MATCH (n:Contribution:Resource {id: id})-[r:RELATED]->()
             WITH COUNT(DISTINCT r.predicate_id) AS pid, n
             RETURN SUM(pid) AS count
-            """.trimIndent()
+            """.trimIndent(),
         ).bindAll(mapOf("ids" to contributionIds.map { it.value }))
             .fetchAs<Long>()
             .one() ?: 0
@@ -39,7 +39,7 @@ class SpringDataNeo4jRankingServiceAdapter(
             """
             MATCH (n:ComparisonPublished:LatestVersion)-[:RELATED {predicate_id: "compareContribution"}]->(:Contribution)<-[:RELATED {predicate_id: "P31"}]-(:Paper:Resource {id: ${'$'}id})
             RETURN COUNT(DISTINCT n.id) AS count
-            """.trimIndent()
+            """.trimIndent(),
         ).bindAll(mapOf("id" to id.value))
             .fetchAs<Long>()
             .one() ?: 0
@@ -49,7 +49,7 @@ class SpringDataNeo4jRankingServiceAdapter(
             """
             MATCH (n:LiteratureList:Resource)-[:RELATED {predicate_id: "HasSection"}]->(:ListSection:Resource)-[:RELATED {predicate_id:"HasEntry"}]->(:Resource)-[:RELATED {predicate_id:"HasLink"}]->(:Paper:Resource {id: ${'$'}id})
             RETURN COUNT(n) AS count
-            """.trimIndent()
+            """.trimIndent(),
         ).bindAll(mapOf("id" to id.value))
             .fetchAs<Long>()
             .one() ?: 0
@@ -59,7 +59,7 @@ class SpringDataNeo4jRankingServiceAdapter(
             """
             MATCH (:Resource {id: ${'$'}id})<-[:CONTEXT]-(n:RosettaStoneStatement:LatestVersion)
             RETURN COUNT(DISTINCT n.id) AS count
-            """.trimIndent()
+            """.trimIndent(),
         ).bindAll(mapOf("id" to id.value))
             .fetchAs<Long>()
             .one() ?: 0

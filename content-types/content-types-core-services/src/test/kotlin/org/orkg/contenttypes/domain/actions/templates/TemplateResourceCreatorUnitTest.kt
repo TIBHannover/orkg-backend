@@ -30,7 +30,7 @@ internal class TemplateResourceCreatorUnitTest : MockkBaseTest {
             classes = setOf(Classes.nodeShape),
             extractionMethod = command.extractionMethod,
             observatoryId = command.observatories.firstOrNull(),
-            organizationId = command.organizations.firstOrNull()
+            organizationId = command.organizations.firstOrNull(),
         )
         val id = ThingId("Template")
 

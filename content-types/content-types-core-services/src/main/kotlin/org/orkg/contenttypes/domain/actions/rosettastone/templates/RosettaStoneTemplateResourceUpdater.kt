@@ -17,8 +17,8 @@ class RosettaStoneTemplateResourceUpdater(
                 contributorId = command.contributorId,
                 label = command.label,
                 observatoryId = command.observatories?.ifEmpty { listOf(ObservatoryId.UNKNOWN) }?.singleOrNull(),
-                organizationId = command.organizations?.ifEmpty { listOf(OrganizationId.UNKNOWN) }?.singleOrNull()
-            )
+                organizationId = command.organizations?.ifEmpty { listOf(OrganizationId.UNKNOWN) }?.singleOrNull(),
+            ),
         )
         return state
     }

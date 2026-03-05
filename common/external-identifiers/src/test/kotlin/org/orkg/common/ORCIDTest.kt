@@ -45,7 +45,7 @@ internal class ORCIDTest {
         @JvmStatic
         fun validORCIDs(): Stream<Arguments> = Stream.of(
             Arguments.of("0000-0001-5109-3700", "https://orcid.org/0000-0001-5109-3700"),
-            Arguments.of("0000-0001-5109-370X", "https://orcid.org/0000-0001-5109-370X")
+            Arguments.of("0000-0001-5109-370X", "https://orcid.org/0000-0001-5109-370X"),
         )
 
         @JvmStatic
@@ -57,7 +57,7 @@ internal class ORCIDTest {
             // Longer than 19 characters
             Arguments.of("0000-0001-5109-37000", "https://orcid.org/A000-0001-5109-37000"),
             // Does not follow scheme at all
-            Arguments.of("example", "https://example.com/")
+            Arguments.of("example", "https://example.com/"),
         )
     }
 }

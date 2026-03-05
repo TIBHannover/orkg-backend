@@ -30,7 +30,7 @@ private val reservedRosettaStoneStatementLabels = setOf(
     Classes.thing,
     Classes.resource,
     Classes.rosettaStoneStatement,
-    Classes.latestVersion
+    Classes.latestVersion,
 )
 
 data class RosettaStoneStatementMapper(
@@ -91,7 +91,7 @@ data class RosettaStoneStatementMapper(
                         ?.let(::ContributorId),
                     deletedAt = metadata["deleted_at"].takeUnless { it.isNull }
                         ?.asString()
-                        ?.let { OffsetDateTime.parse(it, ISO_OFFSET_DATE_TIME) }
+                        ?.let { OffsetDateTime.parse(it, ISO_OFFSET_DATE_TIME) },
                 )
             }
             .sortedBy { it.first }
@@ -108,7 +108,7 @@ data class RosettaStoneStatementMapper(
             extractionMethod = latest.extractionMethod,
             visibility = latest.visibility,
             unlistedBy = latest.unlistedBy,
-            modifiable = latest.modifiable
+            modifiable = latest.modifiable,
         )
     }
 
@@ -141,8 +141,8 @@ internal fun matchLiteratureList(
         else -> call(
             unionAll(
                 matchPublishedLiteratureLists(node, patternGenerator).returning(node).build(),
-                matchUnpublishedLiteratureLists(node, patternGenerator).returning(node).build()
-            )
+                matchUnpublishedLiteratureLists(node, patternGenerator).returning(node).build(),
+            ),
         ).with(node)
     }
 
@@ -171,8 +171,8 @@ internal fun matchSmartReview(
         else -> call(
             unionAll(
                 matchPublishedSmartReviews(node, patternGenerator).returning(node).build(),
-                matchUnpublishedSmartReviews(node, patternGenerator).returning(node).build()
-            )
+                matchUnpublishedSmartReviews(node, patternGenerator).returning(node).build(),
+            ),
         ).with(node)
     }
 
@@ -201,8 +201,8 @@ internal fun matchComparison(
         else -> call(
             unionAll(
                 matchPublishedComparisons(node, patternGenerator).returning(node).build(),
-                matchUnpublishedComparisons(node, patternGenerator).returning(node).build()
-            )
+                matchUnpublishedComparisons(node, patternGenerator).returning(node).build(),
+            ),
         ).with(node)
     }
 

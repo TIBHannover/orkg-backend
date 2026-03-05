@@ -12,7 +12,7 @@ internal class InMemoryStatementAdapterContractTest :
                 InMemoryClassRepository(inMemoryGraph),
                 InMemoryLiteralRepository(inMemoryGraph),
                 InMemoryResourceRepository(inMemoryGraph),
-                InMemoryPredicateRepository(inMemoryGraph)
-            )
+                InMemoryPredicateRepository(inMemoryGraph),
+            ),
         )
     })

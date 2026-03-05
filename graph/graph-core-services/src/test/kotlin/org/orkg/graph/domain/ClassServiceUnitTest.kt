@@ -35,7 +35,7 @@ internal class ClassServiceUnitTest : MockkBaseTest {
             id = id,
             contributorId = ContributorId(MockUserId.USER),
             label = "label",
-            modifiable = false
+            modifiable = false,
         )
 
         every { repository.findById(id) } returns Optional.empty()
@@ -52,7 +52,7 @@ internal class ClassServiceUnitTest : MockkBaseTest {
         val id = ThingId("R123")
         val command = CreateClassUseCase.CreateCommand(
             contributorId = ContributorId(MockUserId.USER),
-            label = "label"
+            label = "label",
         )
 
         every { unsafeClassUseCases.create(command) } returns id
@@ -68,7 +68,7 @@ internal class ClassServiceUnitTest : MockkBaseTest {
         val command = CreateClassUseCase.CreateCommand(
             id = mockClassId,
             contributorId = ContributorId(MockUserId.USER),
-            label = "irrelevant"
+            label = "irrelevant",
         )
 
         every { repository.findById(mockClassId) } returns createClass(id = mockClassId).toOptional()
@@ -84,7 +84,7 @@ internal class ClassServiceUnitTest : MockkBaseTest {
         val command = CreateClassUseCase.CreateCommand(
             id = reservedClassIds.first(),
             contributorId = contributorId,
-            label = "irrelevant"
+            label = "irrelevant",
         )
         assertThrows<ReservedClassId> { service.create(command) }
     }
@@ -93,7 +93,7 @@ internal class ClassServiceUnitTest : MockkBaseTest {
     fun `Given a class is created, when the label is invalid, then an exception is thrown`() {
         val command = CreateClassUseCase.CreateCommand(
             contributorId = ContributorId(MockUserId.USER),
-            label = " \t "
+            label = " \t ",
         )
         assertThrows<InvalidLabel> { service.create(command) }
     }
@@ -103,7 +103,7 @@ internal class ClassServiceUnitTest : MockkBaseTest {
         val command = CreateClassUseCase.CreateCommand(
             contributorId = ContributorId(MockUserId.USER),
             label = "irrelevant",
-            uri = ParsedIRI.create("invalid")
+            uri = ParsedIRI.create("invalid"),
         )
         assertThrows<URINotAbsolute> { service.create(command) }
     }
@@ -114,7 +114,7 @@ internal class ClassServiceUnitTest : MockkBaseTest {
         val command = CreateClassUseCase.CreateCommand(
             contributorId = ContributorId(MockUserId.USER),
             label = "irrelevant",
-            uri = mockClass.uri
+            uri = mockClass.uri,
         )
 
         every { repository.findByUri(mockClass.uri.toString()) } returns mockClass.toOptional()
@@ -131,7 +131,7 @@ internal class ClassServiceUnitTest : MockkBaseTest {
         val command = UpdateClassUseCase.UpdateCommand(
             id = id,
             contributorId = contributorId,
-            label = "new label"
+            label = "new label",
         )
 
         every { repository.findById(any()) } returns Optional.empty()
@@ -160,7 +160,7 @@ internal class ClassServiceUnitTest : MockkBaseTest {
                 label = label,
                 uri = uri,
                 modifiable = modifiable,
-            )
+            ),
         )
 
         verify(exactly = 1) { repository.findById(`class`.id) }
@@ -174,7 +174,7 @@ internal class ClassServiceUnitTest : MockkBaseTest {
                     it.createdAt shouldBe `class`.createdAt
                     it.createdBy shouldBe `class`.createdBy
                     it.modifiable shouldBe modifiable
-                }
+                },
             )
         }
     }
@@ -187,7 +187,7 @@ internal class ClassServiceUnitTest : MockkBaseTest {
         val command = UpdateClassUseCase.UpdateCommand(
             id = originalClass.id,
             contributorId = contributorId,
-            label = "new label"
+            label = "new label",
         )
 
         every { repository.findById(originalClass.id) } returns Optional.of(originalClass)
@@ -204,7 +204,7 @@ internal class ClassServiceUnitTest : MockkBaseTest {
         val command = UpdateClassUseCase.UpdateCommand(
             id = ThingId("OK"),
             contributorId = ContributorId(MockUserId.USER),
-            label = "some\ninvalid\nlabel"
+            label = "some\ninvalid\nlabel",
         )
         assertThrows<InvalidLabel> { service.update(command) }
     }
@@ -217,7 +217,7 @@ internal class ClassServiceUnitTest : MockkBaseTest {
         val command = UpdateClassUseCase.UpdateCommand(
             id = id,
             contributorId = contributorId,
-            label = "some label"
+            label = "some label",
         )
 
         every { repository.findById(id) } returns Optional.of(originalClass)
@@ -234,7 +234,7 @@ internal class ClassServiceUnitTest : MockkBaseTest {
         val command = UpdateClassUseCase.UpdateCommand(
             id = originalClass.id,
             contributorId = contributorId,
-            label = "some label"
+            label = "some label",
         )
 
         every { repository.findById(originalClass.id) } returns Optional.of(originalClass)
@@ -251,7 +251,7 @@ internal class ClassServiceUnitTest : MockkBaseTest {
         val command = UpdateClassUseCase.UpdateCommand(
             id = id,
             contributorId = contributorId,
-            uri = ParsedIRI.create("https://example.org/foo")
+            uri = ParsedIRI.create("https://example.org/foo"),
         )
 
         every { repository.findById(id) } returns Optional.empty()
@@ -269,7 +269,7 @@ internal class ClassServiceUnitTest : MockkBaseTest {
         val command = UpdateClassUseCase.UpdateCommand(
             id = originalClass.id,
             contributorId = contributorId,
-            uri = ParsedIRI.create("https://example.org/NEW")
+            uri = ParsedIRI.create("https://example.org/NEW"),
         )
 
         every { repository.findById(originalClass.id) } returns Optional.of(originalClass)
@@ -292,7 +292,7 @@ internal class ClassServiceUnitTest : MockkBaseTest {
         val command = UpdateClassUseCase.UpdateCommand(
             id = originalClass.id,
             contributorId = contributorId,
-            uri = ParsedIRI.create("https://example.org/NEW")
+            uri = ParsedIRI.create("https://example.org/NEW"),
         )
 
         every { repository.findById(originalClass.id) } returns Optional.of(originalClass)
@@ -311,7 +311,7 @@ internal class ClassServiceUnitTest : MockkBaseTest {
         val command = UpdateClassUseCase.UpdateCommand(
             id = originalClass.id,
             contributorId = contributorId,
-            uri = ParsedIRI.create("https://example.org/DIFFERENT")
+            uri = ParsedIRI.create("https://example.org/DIFFERENT"),
         )
 
         every { repository.findById(originalClass.id) } returns Optional.of(originalClass)
@@ -335,7 +335,7 @@ internal class ClassServiceUnitTest : MockkBaseTest {
         val command = UpdateClassUseCase.UpdateCommand(
             id = originalClass.id,
             contributorId = contributorId,
-            uri = ParsedIRI.create("https://example.com/DIFFERENT")
+            uri = ParsedIRI.create("https://example.com/DIFFERENT"),
         )
 
         every { repository.findById(originalClass.id) } returns Optional.of(originalClass)
@@ -364,7 +364,7 @@ internal class ClassServiceUnitTest : MockkBaseTest {
                 label = label,
                 uri = uri,
                 modifiable = modifiable,
-            )
+            ),
         )
 
         verify(exactly = 1) { repository.findById(`class`.id) }
@@ -378,7 +378,7 @@ internal class ClassServiceUnitTest : MockkBaseTest {
                     it.createdAt shouldBe `class`.createdAt
                     it.createdBy shouldBe `class`.createdBy
                     it.modifiable shouldBe modifiable
-                }
+                },
             )
         }
     }

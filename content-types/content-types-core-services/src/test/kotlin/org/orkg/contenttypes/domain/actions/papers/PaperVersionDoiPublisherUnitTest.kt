@@ -27,7 +27,7 @@ internal class PaperVersionDoiPublisherUnitTest : MockkBaseTest {
     private val paperVersionArchiver = PaperVersionDoiPublisher(
         singleStatementPropertyCreator = singleStatementPropertyCreator,
         doiService = doiService,
-        paperPublishBaseUri = "https://orkg.org/paper/"
+        paperPublishBaseUri = "https://orkg.org/paper/",
     )
 
     @Test
@@ -37,7 +37,7 @@ internal class PaperVersionDoiPublisherUnitTest : MockkBaseTest {
         val paperVersionId = ThingId("R321")
         val state = PublishPaperState(
             paper = paper,
-            paperVersionId = paperVersionId
+            paperVersionId = paperVersionId,
         )
         val doi = "10.1000/182"
 
@@ -61,7 +61,7 @@ internal class PaperVersionDoiPublisherUnitTest : MockkBaseTest {
                     it.resourceType shouldBe Classes.paper.value
                     it.resourceTypeGeneral shouldBe "Dataset"
                     it.relatedIdentifiers shouldBe emptyList()
-                }
+                },
             )
         }
         verify(exactly = 1) {
@@ -69,7 +69,7 @@ internal class PaperVersionDoiPublisherUnitTest : MockkBaseTest {
                 contributorId = command.contributorId,
                 subjectId = paperVersionId,
                 predicateId = Predicates.hasDOI,
-                label = doi
+                label = doi,
             )
         }
     }

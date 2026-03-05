@@ -19,7 +19,7 @@ class IdentifierMapRequestDeserializer : ValueDeserializer<IdentifierMapRequest>
                 it ?: throw MismatchedInputException.from(
                     p,
                     String::class.java,
-                    """Field "${fieldPath(p, key, index)}" is either missing, "null", of invalid type, or contains "null" values."""
+                    """Field "${fieldPath(p, key, index)}" is either missing, "null", of invalid type, or contains "null" values.""",
                 )
             }
         }

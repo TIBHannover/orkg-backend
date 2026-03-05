@@ -40,7 +40,7 @@ class ObservatoryResourceController(
             observatoryId = id,
             filters = objectMapper.parseFilterConfig(filterConfig),
             visibility = visibility ?: VisibilityFilter.ALL_LISTED,
-            pageable = pageable
+            pageable = pageable,
         ).mapToResourceRepresentation(capabilities)
 }
 

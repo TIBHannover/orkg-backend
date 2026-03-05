@@ -18,6 +18,6 @@ interface ComparisonTableRowRepresentationAdapter : ThingReferenceRepresentation
     fun ComparisonTableRow.toComparisonTableRowRepresentation(): ComparisonTableRowRepresentation =
         ComparisonTableRowRepresentation(
             values = values.map { it?.toThingReferenceRepresentation() },
-            children = children.mapValues { (_, value) -> value.mapToComparisonTableRowRepresentation() }
+            children = children.mapValues { (_, value) -> value.mapToComparisonTableRowRepresentation() },
         )
 }

@@ -14,5 +14,5 @@ fun createTemplateBasedResourceSnapshotV1() = TemplateBasedResourceSnapshotV1(
     data = createTemplateInstance(),
     resourceId = ThingId("R54631"),
     templateId = ThingId("R45168"),
-    handle = Handle.of("20.154665/1a2b3c")
+    handle = Handle.of("20.154665/1a2b3c"),
 )

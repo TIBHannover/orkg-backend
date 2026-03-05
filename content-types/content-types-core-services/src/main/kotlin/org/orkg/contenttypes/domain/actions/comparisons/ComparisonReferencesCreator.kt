@@ -21,7 +21,7 @@ class ComparisonReferencesCreator(
                 contributorId = command.contributorId,
                 subjectId = state.comparisonId!!,
                 predicateId = Predicates.reference,
-                labels = command.references
+                labels = command.references,
             )
         }
 }

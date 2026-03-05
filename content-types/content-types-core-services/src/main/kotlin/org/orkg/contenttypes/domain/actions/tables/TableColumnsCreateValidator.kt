@@ -14,7 +14,7 @@ class TableColumnsCreateValidator(
             validationCache = abstractTableColumnsValidator.validate(
                 rows = command.rows,
                 thingCommands = command.all(),
-                validationCacheIn = state.validationCache
-            )
+                validationCacheIn = state.validationCache,
+            ),
         )
 }

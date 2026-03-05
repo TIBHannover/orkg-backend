@@ -45,8 +45,8 @@ internal fun Thing.toThingCommandPart(statementRepository: StatementRepository? 
                     pageable = PageRequests.SINGLE,
                     subjectId = id,
                     predicateId = Predicates.description,
-                    objectClasses = setOf(Classes.literal)
-                )?.singleOrNull()?.`object`?.label
+                    objectClasses = setOf(Classes.literal),
+                )?.singleOrNull()?.`object`?.label,
             )
         }
 

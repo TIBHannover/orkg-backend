@@ -36,7 +36,7 @@ class RosettaStoneStatementCreator(
             organizations = command.organizations,
             extractionMethod = command.extractionMethod,
             visibility = command.visibility,
-            modifiable = command.modifiable
+            modifiable = command.modifiable,
         )
         val statement = RosettaStoneStatement(
             id = rosettaStoneStatementRepository.nextIdentity(),

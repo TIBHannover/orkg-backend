@@ -14,7 +14,7 @@ class TableRowsCreator(
         unsafeStatementUseCases: UnsafeStatementUseCases,
         unsafeLiteralUseCases: UnsafeLiteralUseCases,
     ) : this(
-        AbstractTableRowCreator(unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases)
+        AbstractTableRowCreator(unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases),
     )
 
     override fun invoke(command: CreateTableCommand, state: State): State {
@@ -23,7 +23,7 @@ class TableRowsCreator(
                 contributorId = command.contributorId,
                 tableId = state.tableId!!,
                 index = index,
-                label = row.label
+                label = row.label,
             )
         }
         return state.copy(rows = rows.toList())

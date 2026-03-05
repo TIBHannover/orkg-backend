@@ -39,7 +39,7 @@ class AbstractTemplatePropertyUpdater(
         statementService,
         unsafeStatementUseCases,
         unsafeResourceUseCases,
-        SingleStatementPropertyUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases)
+        SingleStatementPropertyUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases),
     )
 
     internal fun update(
@@ -54,8 +54,8 @@ class AbstractTemplatePropertyUpdater(
                 UpdateResourceUseCase.UpdateCommand(
                     id = oldProperty.id,
                     contributorId = contributorId,
-                    label = newProperty.label
-                )
+                    label = newProperty.label,
+                ),
             )
         }
 
@@ -65,7 +65,7 @@ class AbstractTemplatePropertyUpdater(
                 contributorId = contributorId,
                 subjectId = oldProperty.id,
                 predicateId = Predicates.placeholder,
-                label = newProperty.placeholder
+                label = newProperty.placeholder,
             )
         }
 
@@ -75,7 +75,7 @@ class AbstractTemplatePropertyUpdater(
                 contributorId = contributorId,
                 subjectId = oldProperty.id,
                 predicateId = Predicates.description,
-                label = newProperty.description
+                label = newProperty.description,
             )
         }
 
@@ -86,7 +86,7 @@ class AbstractTemplatePropertyUpdater(
                 subjectId = oldProperty.id,
                 predicateId = Predicates.shMinCount,
                 label = newProperty.minCount.toString(),
-                datatype = Literals.XSD.INT.prefixedUri
+                datatype = Literals.XSD.INT.prefixedUri,
             )
         }
 
@@ -97,7 +97,7 @@ class AbstractTemplatePropertyUpdater(
                 subjectId = oldProperty.id,
                 predicateId = Predicates.shMaxCount,
                 label = newProperty.maxCount.toString(),
-                datatype = Literals.XSD.INT.prefixedUri
+                datatype = Literals.XSD.INT.prefixedUri,
             )
         }
 
@@ -109,7 +109,7 @@ class AbstractTemplatePropertyUpdater(
                     contributorId = contributorId,
                     subjectId = oldProperty.id,
                     predicateId = Predicates.shPattern,
-                    label = newProperty.pattern
+                    label = newProperty.pattern,
                 )
             }
         } else if (oldProperty is StringLiteralTemplateProperty) {
@@ -129,7 +129,7 @@ class AbstractTemplatePropertyUpdater(
                     predicateId = Predicates.shMinInclusive,
                     label = newProperty.minInclusive.toString(),
                     datatype = Literals.XSD.fromClass(newProperty.datatype)?.prefixedUri
-                        ?: Literals.XSD.DECIMAL.prefixedUri
+                        ?: Literals.XSD.DECIMAL.prefixedUri,
                 )
             }
             val oldMaxInclusive = if (oldProperty is NumberLiteralTemplateProperty) oldProperty.maxInclusive else null
@@ -141,7 +141,7 @@ class AbstractTemplatePropertyUpdater(
                     predicateId = Predicates.shMaxInclusive,
                     label = newProperty.maxInclusive.toString(),
                     datatype = Literals.XSD.fromClass(newProperty.datatype)?.prefixedUri
-                        ?: Literals.XSD.DECIMAL.prefixedUri
+                        ?: Literals.XSD.DECIMAL.prefixedUri,
                 )
             }
         } else if (oldProperty is NumberLiteralTemplateProperty) {
@@ -162,8 +162,8 @@ class AbstractTemplatePropertyUpdater(
                         contributorId = contributorId,
                         subjectId = oldProperty.id,
                         predicateId = Predicates.shDatatype,
-                        objectId = newProperty.datatype
-                    )
+                        objectId = newProperty.datatype,
+                    ),
                 )
             }
         } else if (newProperty is ResourceTemplatePropertyCommand) {
@@ -177,8 +177,8 @@ class AbstractTemplatePropertyUpdater(
                         contributorId = contributorId,
                         subjectId = oldProperty.id,
                         predicateId = Predicates.shClass,
-                        objectId = newProperty.`class`
-                    )
+                        objectId = newProperty.`class`,
+                    ),
                 )
             }
         } else if (newProperty is UntypedPropertyCommand && oldProperty !is UntypedTemplateProperty) {
@@ -194,7 +194,7 @@ class AbstractTemplatePropertyUpdater(
                 contributorId = contributorId,
                 subjectId = oldProperty.id,
                 predicateId = Predicates.shPath,
-                objectId = newProperty.path
+                objectId = newProperty.path,
             )
         }
 
@@ -205,7 +205,7 @@ class AbstractTemplatePropertyUpdater(
                 subjectId = oldProperty.id,
                 predicateId = Predicates.shOrder,
                 label = order.toString(),
-                datatype = Literals.XSD.INT.prefixedUri
+                datatype = Literals.XSD.INT.prefixedUri,
             )
         }
     }

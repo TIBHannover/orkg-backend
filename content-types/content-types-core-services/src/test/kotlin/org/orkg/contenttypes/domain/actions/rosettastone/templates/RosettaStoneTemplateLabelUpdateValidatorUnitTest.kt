@@ -45,7 +45,7 @@ internal class RosettaStoneTemplateLabelUpdateValidatorUnitTest {
         val command = updateRosettaStoneTemplateCommand()
         val state = UpdateRosettaStoneTemplateState(
             rosettaStoneTemplate = rosettaStoneTemplate,
-            isUsedInRosettaStoneStatement = true
+            isUsedInRosettaStoneStatement = true,
         )
 
         assertThrows<RosettaStoneTemplateInUse> { rosettaStoneTemplateLabelUpdateValidator(command, state) }
@@ -57,7 +57,7 @@ internal class RosettaStoneTemplateLabelUpdateValidatorUnitTest {
         val command = updateRosettaStoneTemplateCommand().copy(label = null)
         val state = UpdateRosettaStoneTemplateState(
             rosettaStoneTemplate = rosettaStoneTemplate,
-            isUsedInRosettaStoneStatement = true
+            isUsedInRosettaStoneStatement = true,
         )
 
         assertDoesNotThrow { rosettaStoneTemplateLabelUpdateValidator(command, state) }
@@ -69,7 +69,7 @@ internal class RosettaStoneTemplateLabelUpdateValidatorUnitTest {
         val command = updateRosettaStoneTemplateCommand().copy(label = "\n")
         val state = UpdateRosettaStoneTemplateState(
             rosettaStoneTemplate = rosettaStoneTemplate,
-            isUsedInRosettaStoneStatement = true
+            isUsedInRosettaStoneStatement = true,
         )
 
         assertThrows<RosettaStoneTemplateInUse> { rosettaStoneTemplateLabelUpdateValidator(command, state) }

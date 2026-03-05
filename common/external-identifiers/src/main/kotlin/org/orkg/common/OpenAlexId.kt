@@ -8,7 +8,7 @@ value class OpenAlexId private constructor(override val value: String) : Identif
     companion object : IdentifierValueFactory<OpenAlexId>(
         fn = ::OpenAlexId,
         validationRegex = VALID_OPEN_ALEX_ID_REGEX,
-        uriValidationRegex = VALID_OPEN_ALEX_ID_URI_REGEX
+        uriValidationRegex = VALID_OPEN_ALEX_ID_URI_REGEX,
     )
 
     override val uri: String get() = "https://openalex.org/$value"

@@ -15,12 +15,12 @@ internal class TableRowsValidatorUnitTest {
         val rows = listOf(
             CreateRowCommand(
                 label = null,
-                data = emptyList()
+                data = emptyList(),
             ),
             CreateRowCommand(
                 label = "contents",
-                data = emptyList()
-            )
+                data = emptyList(),
+            ),
         )
         tableRowsValidator(rows, Unit)
     }
@@ -30,8 +30,8 @@ internal class TableRowsValidatorUnitTest {
         val rows = listOf(
             CreateRowCommand(
                 label = "\n",
-                data = emptyList()
-            )
+                data = emptyList(),
+            ),
         )
         shouldThrow<InvalidLabel> { tableRowsValidator(rows, Unit) }.asClue {
             it.property shouldBe "rows[0].label"

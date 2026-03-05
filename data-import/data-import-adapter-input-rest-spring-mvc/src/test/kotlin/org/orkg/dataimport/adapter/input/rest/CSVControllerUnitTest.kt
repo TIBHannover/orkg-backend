@@ -72,8 +72,8 @@ import java.util.Optional
         JobResultRepresentationFactory::class,
         ImportPaperCSVJobResultRepresentationFormatter::class,
         ValidatePaperCSVJobResultRepresentationFormatter::class,
-        DataImportControllerUnitTestConfiguration::class
-    ]
+        DataImportControllerUnitTestConfiguration::class,
+    ],
 )
 @TestPropertySource(properties = ["orkg.import.csv.enabled=true"])
 @WebMvcTest(controllers = [CSVController::class])
@@ -110,7 +110,7 @@ internal class CSVControllerUnitTest : MockMvcBaseTest("csvs") {
                     2. Only CSVs created by the active user can be fetched.
                     3. Contents of a CSV need to be fetched separately. See <<csvs-data,Fetching CSV data>>.
                     ====
-                    """
+                    """,
                 )
                 pathParameters(
                     parameterWithName("id").description("The identifier of the CSV to retrieve."),
@@ -142,7 +142,7 @@ internal class CSVControllerUnitTest : MockMvcBaseTest("csvs") {
                 description(
                     """
                     A `GET` request returns the contents of a CSV.
-                    """
+                    """,
                 )
                 pathParameters(
                     parameterWithName("id").description("The identifier of the CSV to retrieve."),
@@ -181,7 +181,7 @@ internal class CSVControllerUnitTest : MockMvcBaseTest("csvs") {
                     2. Only CSVs created by the active user can be listed.
                     3. Contents of each CSV need to be fetched separately. See <<csvs-data,Fetching CSV data>>.
                     ====
-                    """
+                    """,
                 )
                 pagedQueryParameters()
                 pagedResponseFields<CSVRepresentation>(csvResponseFields())
@@ -218,7 +218,7 @@ internal class CSVControllerUnitTest : MockMvcBaseTest("csvs") {
                     A `POST` request creates a new CSV.
                     The response status will be `201 Created` when successful.
                     The CSV can be retrieved by following the URI in the `Location` header field.
-                    """
+                    """,
                 )
                 responseHeaders(
                     headerWithName("Location").description("The uri path where the CSV metadata can be fetched from."),
@@ -227,7 +227,7 @@ internal class CSVControllerUnitTest : MockMvcBaseTest("csvs") {
                     "CreateCSVRequest",
                     partWithName("file").description("The CSV file."),
                     partWithName("type").description("The type of the CSV. See <<csv-types,CSV Types>>."),
-                    partWithName("format").description("The format of the CSV. See <<csv-formats,CSV Formats>>. (optional, default: `${CSV.Format.DEFAULT.name}`)")
+                    partWithName("format").description("The format of the CSV. See <<csv-formats,CSV Formats>>. (optional, default: `${CSV.Format.DEFAULT.name}`)"),
                 )
                 throws(CSVCannotBeBlank::class, CSVAlreadyExists::class)
             }
@@ -240,7 +240,7 @@ internal class CSVControllerUnitTest : MockMvcBaseTest("csvs") {
                     it.format shouldBe format
                     it.type shouldBe type
                     it.data shouldBe data
-                }
+                },
             )
         }
     }
@@ -277,7 +277,7 @@ internal class CSVControllerUnitTest : MockMvcBaseTest("csvs") {
                     1. A CSV can only be updated as long as the import was not started yet.
                     2. Updating a CSV will reset the state of the CSV to `UPLOADED`.
                     ====
-                    """
+                    """,
                 )
                 pathParameters(
                     parameterWithName("id").description("The identifier of the CSV to update."),
@@ -300,7 +300,7 @@ internal class CSVControllerUnitTest : MockMvcBaseTest("csvs") {
                     it.format shouldBe format
                     it.type shouldBe type
                     it.data shouldBe data
-                }
+                },
             )
         }
     }
@@ -324,7 +324,7 @@ internal class CSVControllerUnitTest : MockMvcBaseTest("csvs") {
                     """
                     A `DELETE` request deletes a CSV associated with the given id.
                     The response status will be `204 NO CONTENT` when successful.
-                    """
+                    """,
                 )
                 pathParameters(
                     parameterWithName("id").description("The identifier of the CSV to delete."),
@@ -345,7 +345,7 @@ internal class CSVControllerUnitTest : MockMvcBaseTest("csvs") {
         val csv = createCSV().copy(validationJobId = jobId)
         val status = createJobStatus().copy(
             jobName = JobNames.VALIDATE_PAPER_CSV,
-            context = mapOf("csv_id" to id)
+            context = mapOf("csv_id" to id),
         )
 
         every { csvUseCases.findByIdAndCreatedBy(id, contributorId) } returns Optional.of(csv)
@@ -366,7 +366,7 @@ internal class CSVControllerUnitTest : MockMvcBaseTest("csvs") {
                     1. This endpoint requires authentication.
                     2. Only jobs started by the active user can be fetched.
                     ====
-                    """
+                    """,
                 )
                 pathParameters(
                     parameterWithName("id").description("The identifier of the CSV to fetch the vaidation job status for."),
@@ -390,7 +390,7 @@ internal class CSVControllerUnitTest : MockMvcBaseTest("csvs") {
         val jobResult = createJobResult(
             jobId = jobId,
             jobName = JobNames.VALIDATE_PAPER_CSV,
-            value = Optional.of(pageOf(createPaperCSVRecord()))
+            value = Optional.of(pageOf(createPaperCSVRecord())),
         )
 
         every { csvUseCases.findByIdAndCreatedBy(id, contributorId) } returns Optional.of(csv)
@@ -413,7 +413,7 @@ internal class CSVControllerUnitTest : MockMvcBaseTest("csvs") {
                     3. Results are only available for completed validation jobs.
                     4. The response status will be `400 BAD REQUEST` with response body contents of type orkg:problem:job_execution_exception, if the validation ran into an error.
                     ====
-                    """
+                    """,
                 )
                 pathParameters(
                     parameterWithName("id").description("The identifier of the CSV to retrieve the validation job results for."),
@@ -447,7 +447,7 @@ internal class CSVControllerUnitTest : MockMvcBaseTest("csvs") {
                     """
                     A `POST` request queues a new job to validate a CSV.
                     The response status will be `202 Accepted` when successful.
-                    """
+                    """,
                 )
                 pathParameters(
                     parameterWithName("id").description("The identifier of the CSV to validate."),
@@ -491,7 +491,7 @@ internal class CSVControllerUnitTest : MockMvcBaseTest("csvs") {
                     1. This endpoint requires authentication.
                     2. Only jobs started by the active user can be stopped.
                     ====
-                    """
+                    """,
                 )
                 pathParameters(
                     parameterWithName("id").description("The identifier of the CSV to stop the validation job for."),
@@ -513,7 +513,7 @@ internal class CSVControllerUnitTest : MockMvcBaseTest("csvs") {
         val csv = createCSV().copy(importJobId = jobId)
         val status = createJobStatus().copy(
             jobName = JobNames.VALIDATE_PAPER_CSV,
-            context = mapOf("csv_id" to id)
+            context = mapOf("csv_id" to id),
         )
 
         every { csvUseCases.findByIdAndCreatedBy(id, contributorId) } returns Optional.of(csv)
@@ -534,7 +534,7 @@ internal class CSVControllerUnitTest : MockMvcBaseTest("csvs") {
                     1. This endpoint requires authentication.
                     2. Only jobs started by the active user can be fetched.
                     ====
-                    """
+                    """,
                 )
                 pathParameters(
                     parameterWithName("id").description("The identifier of the CSV to fetch the vaidation job status for."),
@@ -558,7 +558,7 @@ internal class CSVControllerUnitTest : MockMvcBaseTest("csvs") {
         val jobResult = createJobResult(
             jobId = jobId,
             jobName = JobNames.IMPORT_PAPER_CSV,
-            value = Optional.of(pageOf(createPaperCSVRecordImportResult()))
+            value = Optional.of(pageOf(createPaperCSVRecordImportResult())),
         )
 
         every { csvUseCases.findByIdAndCreatedBy(id, contributorId) } returns Optional.of(csv)
@@ -581,7 +581,7 @@ internal class CSVControllerUnitTest : MockMvcBaseTest("csvs") {
                     3. Results are only available for completed imports.
                     4. The response status will be `400 BAD REQUEST` with response body contents of type orkg:problem:job_execution_exception, if the import ran into an error.
                     ====
-                    """
+                    """,
                 )
                 pathParameters(
                     parameterWithName("id").description("The identifier of the CSV to retrieve the import job results for."),
@@ -615,7 +615,7 @@ internal class CSVControllerUnitTest : MockMvcBaseTest("csvs") {
                     """
                     A `POST` request queues a new job to import a CSV.
                     The response status will be `202 Accepted` when successful.
-                    """
+                    """,
                 )
                 pathParameters(
                     parameterWithName("id").description("The identifier of the CSV to import."),
@@ -660,7 +660,7 @@ internal class CSVControllerUnitTest : MockMvcBaseTest("csvs") {
                     1. This endpoint requires authentication.
                     2. Only jobs started by the active user can be stopped.
                     ====
-                    """
+                    """,
                 )
                 pathParameters(
                     parameterWithName("id").description("The identifier of the CSV to stop the import job for."),

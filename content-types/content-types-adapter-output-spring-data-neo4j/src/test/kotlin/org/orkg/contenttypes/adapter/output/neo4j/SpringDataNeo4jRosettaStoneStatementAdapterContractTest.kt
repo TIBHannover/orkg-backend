@@ -32,8 +32,8 @@ import org.orkg.testing.configuration.FixedClockConfig
         GraphNeo4jConfiguration::class,
         ContentTypesNeo4jConfiguration::class,
         CypherQueryBuilderConfiguration::class,
-        FixedClockConfig::class
-    ]
+        FixedClockConfig::class,
+    ],
 )
 internal class SpringDataNeo4jRosettaStoneStatementAdapterContractTest(
     private val springDataNeo4jRosettaStoneStatementAdapter: RosettaStoneStatementRepository,
@@ -50,7 +50,7 @@ internal class SpringDataNeo4jRosettaStoneStatementAdapterContractTest(
                 springDataNeo4jPredicateAdapter,
                 springDataNeo4jClassAdapter,
                 springDataNeo4jLiteralAdapter,
-                springDataNeo4jStatementAdapter
-            )
+                springDataNeo4jStatementAdapter,
+            ),
         )
     })

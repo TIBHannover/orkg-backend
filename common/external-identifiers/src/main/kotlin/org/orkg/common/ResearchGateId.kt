@@ -8,7 +8,7 @@ value class ResearchGateId private constructor(override val value: String) : Ide
     companion object : IdentifierValueFactory<ResearchGateId>(
         fn = ::ResearchGateId,
         validationRegex = VALID_RESEARCH_GATE_ID_REGEX,
-        uriValidationRegex = VALID_RESEARCH_GATE_ID_URI_REGEX
+        uriValidationRegex = VALID_RESEARCH_GATE_ID_URI_REGEX,
     )
 
     override val uri: String get() = "https://researchgate.net/profile/$value"

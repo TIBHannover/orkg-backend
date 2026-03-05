@@ -85,7 +85,7 @@ class TableController(
             createdAtStart = createdAtStart,
             createdAtEnd = createdAtEnd,
             observatoryId = observatoryId,
-            organizationId = organizationId
+            organizationId = organizationId,
         ).mapToTableRepresentation()
 
     @RequireLogin
@@ -281,7 +281,7 @@ class TableController(
                 rows = rows.map { it.toCreateRowCommand() },
                 observatories = observatories,
                 organizations = organizations,
-                extractionMethod = extractionMethod
+                extractionMethod = extractionMethod,
             )
     }
 
@@ -323,7 +323,7 @@ class TableController(
                 observatories = observatories,
                 organizations = organizations,
                 extractionMethod = extractionMethod,
-                visibility = visibility
+                visibility = visibility,
             )
     }
 

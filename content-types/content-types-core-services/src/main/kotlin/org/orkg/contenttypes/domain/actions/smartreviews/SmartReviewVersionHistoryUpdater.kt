@@ -19,16 +19,16 @@ class SmartReviewVersionHistoryUpdater(
                 contributorId = command.contributorId,
                 subjectId = state.smartReview!!.id,
                 predicateId = Predicates.hasPublishedVersion,
-                objectId = state.smartReviewVersionId!!
-            )
+                objectId = state.smartReviewVersionId!!,
+            ),
         )
         state.smartReview.versions.published.firstOrNull()?.let { latestVersion ->
             unsafeResourceUseCases.update(
                 UpdateResourceUseCase.UpdateCommand(
                     id = latestVersion.id,
                     contributorId = command.contributorId,
-                    classes = setOf(Classes.smartReviewPublished)
-                )
+                    classes = setOf(Classes.smartReviewPublished),
+                ),
             )
         }
         return state

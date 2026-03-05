@@ -92,10 +92,10 @@ internal class ClassHierarchyControllerUnitTest : MockMvcBaseTest("class-hierarc
                     ====
                     1. If the class does not exist, the return status will be `404 NOT FOUND`.
                     ====
-                    """
+                    """,
                 )
                 pathParameters(
-                    parameterWithName("id").description("The identifier of the parent class.")
+                    parameterWithName("id").description("The identifier of the parent class."),
                 )
                 pagedQueryParameters()
                 pagedResponseFields<ChildClassRepresentation>(
@@ -135,7 +135,7 @@ internal class ClassHierarchyControllerUnitTest : MockMvcBaseTest("class-hierarc
                 pageable = PageRequests.SINGLE,
                 subjectId = parentId,
                 predicateId = Predicates.description,
-                objectClasses = setOf(Classes.literal)
+                objectClasses = setOf(Classes.literal),
             )
         } returns pageOf()
 
@@ -155,10 +155,10 @@ internal class ClassHierarchyControllerUnitTest : MockMvcBaseTest("class-hierarc
                     1. If the class does not exist, the return status will be `404 NOT FOUND`.
                     2. If the class does not have a parent class, the return status will be `204 NO CONTENT`.
                     ====
-                    """
+                    """,
                 )
                 pathParameters(
-                    parameterWithName("id").description("The identifier of the child class.")
+                    parameterWithName("id").description("The identifier of the child class."),
                 )
                 responseFields<ClassRepresentation>(classResponseFields())
                 throws(ClassNotFound::class)
@@ -170,7 +170,7 @@ internal class ClassHierarchyControllerUnitTest : MockMvcBaseTest("class-hierarc
                 pageable = PageRequests.SINGLE,
                 subjectId = parentId,
                 predicateId = Predicates.description,
-                objectClasses = setOf(Classes.literal)
+                objectClasses = setOf(Classes.literal),
             )
         }
     }
@@ -213,7 +213,7 @@ internal class ClassHierarchyControllerUnitTest : MockMvcBaseTest("class-hierarc
                 pageable = PageRequests.SINGLE,
                 subjectId = rootId,
                 predicateId = Predicates.description,
-                objectClasses = setOf(Classes.literal)
+                objectClasses = setOf(Classes.literal),
             )
         } returns pageOf()
 
@@ -233,10 +233,10 @@ internal class ClassHierarchyControllerUnitTest : MockMvcBaseTest("class-hierarc
                     1. If the class does not exist, the return status will be `404 NOT FOUND`.
                     2. If the class does not have a root class, the return status will be `204 NO CONTENT`.
                     ====
-                    """
+                    """,
                 )
                 pathParameters(
-                    parameterWithName("id").description("The identifier of the class.")
+                    parameterWithName("id").description("The identifier of the class."),
                 )
                 responseFields<ClassRepresentation>(classResponseFields())
                 throws(ClassNotFound::class)
@@ -248,7 +248,7 @@ internal class ClassHierarchyControllerUnitTest : MockMvcBaseTest("class-hierarc
                 pageable = PageRequests.SINGLE,
                 subjectId = rootId,
                 predicateId = Predicates.description,
-                objectClasses = setOf(Classes.literal)
+                objectClasses = setOf(Classes.literal),
             )
         }
     }
@@ -290,7 +290,7 @@ internal class ClassHierarchyControllerUnitTest : MockMvcBaseTest("class-hierarc
         val command = CreateClassHierarchyUseCase.CreateCommand(
             contributorId = ContributorId(MockUserId.CURATOR),
             parentId = parentId,
-            childIds = setOf(childId)
+            childIds = setOf(childId),
         )
 
         every { classHierarchyService.create(command) } just runs
@@ -313,16 +313,16 @@ internal class ClassHierarchyControllerUnitTest : MockMvcBaseTest("class-hierarc
                     3. If one child class is the same as the parent class, the return status will be `400 BAD REQUEST`.
                     4. If one child class already has a parent class, the return status will be `400 BAD REQUEST`.
                     ====
-                    """
+                    """,
                 )
                 pathParameters(
-                    parameterWithName("id").description("The identifier of the parent class.")
+                    parameterWithName("id").description("The identifier of the parent class."),
                 )
                 responseHeaders(
-                    headerWithName("Location").description("The uri path where the updated list of child classes can be fetched from.")
+                    headerWithName("Location").description("The uri path where the updated list of child classes can be fetched from."),
                 )
                 requestFields<CreateChildRelationsRequest>(
-                    fieldWithPath("child_ids[]").description("The list of child class ids.")
+                    fieldWithPath("child_ids[]").description("The list of child class ids."),
                 )
                 throws(ClassNotFound::class, InvalidSubclassRelation::class, ParentClassAlreadyExists::class, InvalidSubclassRelation::class)
             }
@@ -339,7 +339,7 @@ internal class ClassHierarchyControllerUnitTest : MockMvcBaseTest("class-hierarc
         val command = CreateClassHierarchyUseCase.CreateCommand(
             contributorId = ContributorId(MockUserId.CURATOR),
             parentId = parentId,
-            childIds = setOf(childId)
+            childIds = setOf(childId),
         )
 
         every { classHierarchyService.create(command) } throws ClassNotFound.withThingId(childId)
@@ -361,7 +361,7 @@ internal class ClassHierarchyControllerUnitTest : MockMvcBaseTest("class-hierarc
         val command = CreateClassHierarchyUseCase.CreateCommand(
             contributorId = ContributorId(MockUserId.CURATOR),
             parentId = classId,
-            childIds = setOf(classId)
+            childIds = setOf(classId),
         )
 
         every { classHierarchyService.create(command) } throws InvalidSubclassRelation(classId, classId)
@@ -385,7 +385,7 @@ internal class ClassHierarchyControllerUnitTest : MockMvcBaseTest("class-hierarc
         val command = CreateClassHierarchyUseCase.CreateCommand(
             contributorId = ContributorId(MockUserId.CURATOR),
             parentId = parentId,
-            childIds = setOf(childId)
+            childIds = setOf(childId),
         )
 
         every { classHierarchyService.create(command) } throws ParentClassAlreadyExists(childId, otherParentId)
@@ -409,7 +409,7 @@ internal class ClassHierarchyControllerUnitTest : MockMvcBaseTest("class-hierarc
         val command = CreateClassHierarchyUseCase.CreateCommand(
             contributorId = ContributorId(MockUserId.CURATOR),
             parentId = parentId,
-            childIds = setOf(childId)
+            childIds = setOf(childId),
         )
 
         every { classHierarchyService.create(command) } returns Unit
@@ -432,16 +432,16 @@ internal class ClassHierarchyControllerUnitTest : MockMvcBaseTest("class-hierarc
                     3. If one child class is the same as the parent class, the return status will be `400 BAD REQUEST`.
                     4. If one child class already has a parent class, the return status will be `400 BAD REQUEST`.
                     ====
-                    """
+                    """,
                 )
                 pathParameters(
-                    parameterWithName("id").description("The identifier of the parent class.")
+                    parameterWithName("id").description("The identifier of the parent class."),
                 )
                 responseHeaders(
-                    headerWithName("Location").description("The uri path where the updated list of child classes can be fetched from.")
+                    headerWithName("Location").description("The uri path where the updated list of child classes can be fetched from."),
                 )
                 requestFields<CreateChildRelationsRequest>(
-                    fieldWithPath("child_ids[]").description("The updated list of child class ids.")
+                    fieldWithPath("child_ids[]").description("The updated list of child class ids."),
                 )
                 throws(ClassNotFound::class, InvalidSubclassRelation::class, ParentClassAlreadyExists::class, InvalidSubclassRelation::class)
             }
@@ -458,7 +458,7 @@ internal class ClassHierarchyControllerUnitTest : MockMvcBaseTest("class-hierarc
         val command = CreateClassHierarchyUseCase.CreateCommand(
             contributorId = ContributorId(MockUserId.CURATOR),
             parentId = parentId,
-            childIds = setOf(childId)
+            childIds = setOf(childId),
         )
 
         every { classHierarchyService.create(command) } throws ClassNotFound.withThingId(childId)
@@ -480,7 +480,7 @@ internal class ClassHierarchyControllerUnitTest : MockMvcBaseTest("class-hierarc
         val command = CreateClassHierarchyUseCase.CreateCommand(
             contributorId = ContributorId(MockUserId.CURATOR),
             parentId = classId,
-            childIds = setOf(classId)
+            childIds = setOf(classId),
         )
 
         every { classHierarchyService.create(command) } throws InvalidSubclassRelation(classId, classId)
@@ -504,7 +504,7 @@ internal class ClassHierarchyControllerUnitTest : MockMvcBaseTest("class-hierarc
         val command = CreateClassHierarchyUseCase.CreateCommand(
             contributorId = ContributorId(MockUserId.CURATOR),
             parentId = parentId,
-            childIds = setOf(childId)
+            childIds = setOf(childId),
         )
 
         every { classHierarchyService.create(command) } throws ParentClassAlreadyExists(childId, otherParentId)
@@ -541,10 +541,10 @@ internal class ClassHierarchyControllerUnitTest : MockMvcBaseTest("class-hierarc
                     1. If the performing user is not a curator, the return status will be `403 FORBIDDEN`.
                     2. If the class does not exist, the return status will be `404 NOT FOUND`.
                     ====
-                    """
+                    """,
                 )
                 pathParameters(
-                    parameterWithName("id").description("The identifier of the child class.")
+                    parameterWithName("id").description("The identifier of the child class."),
                 )
                 throws(ClassNotFound::class)
             }
@@ -577,7 +577,7 @@ internal class ClassHierarchyControllerUnitTest : MockMvcBaseTest("class-hierarc
         val command = CreateClassHierarchyUseCase.CreateCommand(
             contributorId = ContributorId(MockUserId.CURATOR),
             parentId = parentId,
-            childIds = setOf(childId)
+            childIds = setOf(childId),
         )
 
         every { classHierarchyService.create(command) } returns Unit
@@ -600,16 +600,16 @@ internal class ClassHierarchyControllerUnitTest : MockMvcBaseTest("class-hierarc
                     3. If the child class and the parent class are the same, the return status will be `400 BAD REQUEST`.
                     4. If the child class already has a parent class, the return status will be `400 BAD REQUEST`.
                     ====
-                    """
+                    """,
                 )
                 pathParameters(
-                    parameterWithName("id").description("The identifier of the child class.")
+                    parameterWithName("id").description("The identifier of the child class."),
                 )
                 responseHeaders(
-                    headerWithName("Location").description("The uri path where the updated list of child classes can be fetched from.")
+                    headerWithName("Location").description("The uri path where the updated list of child classes can be fetched from."),
                 )
                 requestFields<CreateParentRelationRequest>(
-                    fieldWithPath("parent_id").description("The id of the parent class.")
+                    fieldWithPath("parent_id").description("The id of the parent class."),
                 )
                 throws(ClassNotFound::class, InvalidSubclassRelation::class, ParentClassAlreadyExists::class, InvalidSubclassRelation::class)
             }
@@ -626,7 +626,7 @@ internal class ClassHierarchyControllerUnitTest : MockMvcBaseTest("class-hierarc
         val command = CreateClassHierarchyUseCase.CreateCommand(
             contributorId = ContributorId(MockUserId.CURATOR),
             parentId = parentId,
-            childIds = setOf(childId)
+            childIds = setOf(childId),
         )
 
         every { classHierarchyService.create(command) } throws ClassNotFound.withThingId(childId)
@@ -648,7 +648,7 @@ internal class ClassHierarchyControllerUnitTest : MockMvcBaseTest("class-hierarc
         val command = CreateClassHierarchyUseCase.CreateCommand(
             contributorId = ContributorId(MockUserId.CURATOR),
             parentId = classId,
-            childIds = setOf(classId)
+            childIds = setOf(classId),
         )
 
         every { classHierarchyService.create(command) } throws InvalidSubclassRelation(classId, classId)
@@ -672,7 +672,7 @@ internal class ClassHierarchyControllerUnitTest : MockMvcBaseTest("class-hierarc
         val command = CreateClassHierarchyUseCase.CreateCommand(
             contributorId = ContributorId(MockUserId.CURATOR),
             parentId = parentId,
-            childIds = setOf(childId)
+            childIds = setOf(childId),
         )
 
         every { classHierarchyService.create(command) } throws ParentClassAlreadyExists(childId, otherParentId)
@@ -707,13 +707,13 @@ internal class ClassHierarchyControllerUnitTest : MockMvcBaseTest("class-hierarc
                     ====
                     1. If the class does not exist, the return status will be `404 NOT FOUND`.
                     ====
-                    """
+                    """,
                 )
                 pathParameters(
-                    parameterWithName("id").description("The identifier of the class.")
+                    parameterWithName("id").description("The identifier of the class."),
                 )
                 responseFields<CountResponse>(
-                    fieldWithPath("count").description("The count of class instances including subclass instances.")
+                    fieldWithPath("count").description("The count of class instances including subclass instances."),
                 )
                 throws(ClassNotFound::class)
             }
@@ -744,8 +744,8 @@ internal class ClassHierarchyControllerUnitTest : MockMvcBaseTest("class-hierarc
 
         every { classHierarchyService.findClassHierarchy(childId, any()) } returns PageImpl(
             listOf(
-                ClassHierarchyEntry(childClass, parentId)
-            )
+                ClassHierarchyEntry(childClass, parentId),
+            ),
         )
         every { statementService.findAllDescriptionsById(any()) } returns emptyMap()
 
@@ -766,10 +766,10 @@ internal class ClassHierarchyControllerUnitTest : MockMvcBaseTest("class-hierarc
                     ====
                     1. If the class does not exist, the return status will be `404 NOT FOUND`.
                     ====
-                    """
+                    """,
                 )
                 pathParameters(
-                    parameterWithName("id").description("The identifier of the class.")
+                    parameterWithName("id").description("The identifier of the class."),
                 )
                 pagedQueryParameters()
                 pagedResponseFields<ClassHierarchyEntryRepresentation>(
@@ -819,7 +819,7 @@ internal class ClassHierarchyControllerUnitTest : MockMvcBaseTest("class-hierarc
                     ====
                     1. If the class does not exist, the return status will be `404 NOT FOUND`.
                     ====
-                    """.trimIndent()
+                    """.trimIndent(),
                 )
                 pagedQueryParameters()
                 pagedResponseFields<ClassRepresentation>(classResponseFields())

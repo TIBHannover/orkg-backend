@@ -24,8 +24,8 @@ class RosettaStoneTemplatePropertiesUpdater(
             resourceService,
             unsafeResourceUseCases,
             statementService,
-            unsafeStatementUseCases
-        )
+            unsafeStatementUseCases,
+        ),
     )
 
     override fun invoke(command: UpdateRosettaStoneTemplateCommand, state: State): State {
@@ -35,7 +35,7 @@ class RosettaStoneTemplatePropertiesUpdater(
                 subjectId = command.templateId,
                 newProperties = properties,
                 oldProperties = state.rosettaStoneTemplate!!.properties,
-                statements = state.statements
+                statements = state.statements,
             )
         }
         return state

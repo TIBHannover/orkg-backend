@@ -46,8 +46,8 @@ internal class SpringDataNeo4jContributionComparisonAdapterContractTest(
                 springDataNeo4jClassAdapter,
                 springDataNeo4jLiteralAdapter,
                 springDataNeo4jResourceAdapter,
-                springDataNeo4jPredicateAdapter
-            )
+                springDataNeo4jPredicateAdapter,
+            ),
         )
 
         afterSpec {

@@ -241,7 +241,7 @@ data class AuthorRequest(
             id = id,
             name = name,
             identifiers = identifiers?.values,
-            homepage = homepage
+            homepage = homepage,
         )
 }
 
@@ -262,7 +262,7 @@ data class PublicationInfoRequest(
             publishedMonth = publishedMonth,
             publishedYear = publishedYear,
             publishedIn = publishedIn,
-            url = url
+            url = url,
         )
 }
 
@@ -469,13 +469,13 @@ data class LiteratureListRepresentation(
 @JsonTypeInfo(
     use = JsonTypeInfo.Id.NAME,
     include = JsonTypeInfo.As.PROPERTY,
-    property = "type"
+    property = "type",
 )
 @JsonSubTypes(
     value = [
         JsonSubTypes.Type(LiteratureListListSectionRepresentation::class),
-        JsonSubTypes.Type(LiteratureListTextSectionRepresentation::class)
-    ]
+        JsonSubTypes.Type(LiteratureListTextSectionRepresentation::class),
+    ],
 )
 sealed interface LiteratureListSectionRepresentation {
     val id: ThingId
@@ -533,7 +533,7 @@ data class SmartReviewRepresentation(
 @JsonTypeInfo(
     use = JsonTypeInfo.Id.NAME,
     include = JsonTypeInfo.As.PROPERTY,
-    property = "type"
+    property = "type",
 )
 @JsonSubTypes(
     value = [
@@ -542,8 +542,8 @@ data class SmartReviewRepresentation(
         JsonSubTypes.Type(SmartReviewResourceSectionRepresentation::class),
         JsonSubTypes.Type(SmartReviewPredicateSectionRepresentation::class),
         JsonSubTypes.Type(SmartReviewOntologySectionRepresentation::class),
-        JsonSubTypes.Type(SmartReviewTextSectionRepresentation::class)
-    ]
+        JsonSubTypes.Type(SmartReviewTextSectionRepresentation::class),
+    ],
 )
 sealed interface SmartReviewSectionRepresentation {
     val id: ThingId
@@ -637,7 +637,7 @@ data class RosettaStoneStatementRepresentation(
 @JsonTypeInfo(
     use = JsonTypeInfo.Id.NAME,
     include = JsonTypeInfo.As.PROPERTY,
-    property = "_class"
+    property = "_class",
 )
 @JsonSubTypes(
     value = [
@@ -645,7 +645,7 @@ data class RosettaStoneStatementRepresentation(
         JsonSubTypes.Type(ClassReference::class),
         JsonSubTypes.Type(LiteralReference::class),
         JsonSubTypes.Type(ResourceReference::class),
-    ]
+    ],
 )
 sealed interface ThingReferenceRepresentation {
     val id: ThingId?

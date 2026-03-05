@@ -43,7 +43,7 @@ internal class SmartReviewSDGUpdaterUnitTest : MockkBaseTest {
     @Test
     fun `Given a smart review update command, when SDGs are unchanged, it does nothing`() {
         val smartReview = createSmartReview().copy(
-            sustainableDevelopmentGoals = setOf(ObjectIdAndLabel(ThingId("SDG_3"), "Good health and well-being"))
+            sustainableDevelopmentGoals = setOf(ObjectIdAndLabel(ThingId("SDG_3"), "Good health and well-being")),
         )
         val command = updateSmartReviewCommand()
         val state = UpdateSmartReviewState(smartReview = smartReview)
@@ -64,17 +64,17 @@ internal class SmartReviewSDGUpdaterUnitTest : MockkBaseTest {
         val statements = listOf(
             createStatement(
                 subject = createResource(command.smartReviewId),
-                predicate = createPredicate(Predicates.sustainableDevelopmentGoal)
+                predicate = createPredicate(Predicates.sustainableDevelopmentGoal),
             ),
             createStatement(
                 subject = createResource(command.smartReviewId),
-                predicate = createPredicate(Predicates.hasContent)
+                predicate = createPredicate(Predicates.hasContent),
             ),
-            createStatement(subject = createResource())
+            createStatement(subject = createResource()),
         ).groupBy { it.subject.id }
         val state = UpdateSmartReviewState(
             smartReview = smartReview,
-            statements = statements
+            statements = statements,
         )
 
         every {
@@ -83,7 +83,7 @@ internal class SmartReviewSDGUpdaterUnitTest : MockkBaseTest {
                 contributorId = command.contributorId,
                 subjectId = command.smartReviewId,
                 predicateId = Predicates.sustainableDevelopmentGoal,
-                objects = command.sustainableDevelopmentGoals!!.toSet()
+                objects = command.sustainableDevelopmentGoals!!.toSet(),
             )
         } just runs
 
@@ -101,7 +101,7 @@ internal class SmartReviewSDGUpdaterUnitTest : MockkBaseTest {
                 contributorId = command.contributorId,
                 subjectId = command.smartReviewId,
                 predicateId = Predicates.sustainableDevelopmentGoal,
-                objects = command.sustainableDevelopmentGoals!!.toSet()
+                objects = command.sustainableDevelopmentGoals!!.toSet(),
             )
         }
     }

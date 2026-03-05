@@ -18,7 +18,7 @@ class TableColumnsUpdater(
         unsafeLiteralUseCases: UnsafeLiteralUseCases,
     ) : this(
         unsafeStatementUseCases,
-        AbstractTableColumnCreator(unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases)
+        AbstractTableColumnCreator(unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases),
     )
 
     override fun invoke(command: UpdateTableCommand, state: State): State {
@@ -42,8 +42,8 @@ class TableColumnsUpdater(
                         contributorId = command.contributorId,
                         subjectId = columnGraph.columnId,
                         predicateId = Predicates.csvwTitles,
-                        objectId = state.resolve(value!!)!!
-                    )
+                        objectId = state.resolve(value!!)!!,
+                    ),
                 )
             }
         }
@@ -56,7 +56,7 @@ class TableColumnsUpdater(
                     contributorId = command.contributorId,
                     tableId = command.tableId,
                     index = index,
-                    titleLiteralId = state.resolve(value!!)!!
+                    titleLiteralId = state.resolve(value!!)!!,
                 )
             }
 
@@ -71,7 +71,7 @@ class TableColumnsUpdater(
         return state.copy(
             columns = columns,
             thingsToDelete = thingsToDelete,
-            statementsToDelete = statementsToDelete
+            statementsToDelete = statementsToDelete,
         )
     }
 }

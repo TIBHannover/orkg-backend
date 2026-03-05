@@ -59,7 +59,7 @@ class SpringDataNeo4jLiteralAdapter(
         evict = [
             CacheEvict(key = "#literal.id", cacheNames = [LITERAL_ID_TO_LITERAL_CACHE]),
             CacheEvict(key = "#literal.id", cacheNames = [THING_ID_TO_THING_CACHE]),
-        ]
+        ],
     )
     override fun save(literal: Literal) {
         neo4jRepository.save(literal.toNeo4jLiteral())
@@ -69,7 +69,7 @@ class SpringDataNeo4jLiteralAdapter(
         evict = [
             CacheEvict(allEntries = true),
             CacheEvict(allEntries = true, cacheNames = [THING_ID_TO_THING_CACHE]),
-        ]
+        ],
     )
     override fun deleteAll() {
         neo4jRepository.deleteAll()
@@ -120,8 +120,8 @@ class SpringDataNeo4jLiteralAdapter(
                     orderByOptimizations(
                         node = node,
                         sort = sort,
-                        properties = arrayOf("id", "label", "created_at", "created_by")
-                    )
+                        properties = arrayOf("id", "label", "created_at", "created_by"),
+                    ),
                 )
                 .with(variables)
                 .orderBy(
@@ -129,14 +129,14 @@ class SpringDataNeo4jLiteralAdapter(
                         listOf(
                             size(node.property("label")).ascending(),
                             score.descending(),
-                            node.property("created_at").ascending()
+                            node.property("created_at").ascending(),
                         )
                     } else {
                         sort.toSortItems(
                             node = node,
-                            knownProperties = arrayOf("id", "label", "created_at", "created_by")
+                            knownProperties = arrayOf("id", "label", "created_at", "created_by"),
                         )
-                    }
+                    },
                 )
                 .returning(node)
         }

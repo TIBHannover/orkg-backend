@@ -30,6 +30,6 @@ interface TemplateRepresentationAdapter :
             observatories = observatories,
             extractionMethod = extractionMethod,
             visibility = visibility,
-            unlistedBy = unlistedBy
+            unlistedBy = unlistedBy,
         )
 }

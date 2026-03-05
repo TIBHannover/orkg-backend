@@ -38,7 +38,7 @@ data class LiteratureList(
                 published = directStatements.wherePredicate(Predicates.hasPublishedVersion)
                     .sortedByDescending { it.createdAt }
                     .objects()
-                    .map { PublishedVersion(it, statements[it.id]?.wherePredicate(Predicates.description)?.firstObjectLabel()) }
+                    .map { PublishedVersion(it, statements[it.id]?.wherePredicate(Predicates.description)?.firstObjectLabel()) },
             )
             val sections = directStatements.wherePredicate(Predicates.hasSection)
                 .filter { it.`object` is Resource }
@@ -47,7 +47,7 @@ data class LiteratureList(
             val contributors = listOf(
                 versions.head.createdBy,
                 *versions.published.map { it.createdBy }.toTypedArray(),
-                *sections.flatMap { LiteratureListSection.contributors(it, statements) }.toTypedArray()
+                *sections.flatMap { LiteratureListSection.contributors(it, statements) }.toTypedArray(),
             )
             return LiteratureList(
                 id = resource.id,
@@ -72,7 +72,7 @@ data class LiteratureList(
                 sections = sections.map { LiteratureListSection.from(it, statements) },
                 acknowledgements = contributors.groupingBy { it }
                     .eachCount()
-                    .mapValues { (_, value) -> value.toDouble() / contributors.size }
+                    .mapValues { (_, value) -> value.toDouble() / contributors.size },
             )
         }
     }
@@ -123,10 +123,10 @@ data class LiteratureListListSection(
                         hasLink?.let {
                             Entry(
                                 ResourceReference(it.`object` as Resource),
-                                entryStatements.wherePredicate(Predicates.description).singleObjectLabel()
+                                entryStatements.wherePredicate(Predicates.description).singleObjectLabel(),
                             )
                         }
-                    }.orEmpty()
+                    }.orEmpty(),
             )
 
         fun contributors(root: Resource, statements: Map<ThingId, List<GeneralStatement>>): List<ContributorId> =
@@ -162,7 +162,7 @@ data class LiteratureListTextSection(
                 text = statements[root.id]
                     ?.wherePredicate(Predicates.hasContent)
                     ?.singleObjectLabel()
-                    .orEmpty()
+                    .orEmpty(),
             )
 
         fun contributors(root: Resource): List<ContributorId> =

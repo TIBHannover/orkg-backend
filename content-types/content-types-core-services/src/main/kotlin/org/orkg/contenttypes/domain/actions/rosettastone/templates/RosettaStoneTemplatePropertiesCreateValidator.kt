@@ -12,7 +12,7 @@ class RosettaStoneTemplatePropertiesCreateValidator(
         predicateRepository: PredicateRepository,
         classRepository: ClassRepository,
     ) : this(
-        AbstractRosettaStoneTemplatePropertiesValidator(predicateRepository, classRepository)
+        AbstractRosettaStoneTemplatePropertiesValidator(predicateRepository, classRepository),
     )
 
     override fun invoke(command: CreateRosettaStoneTemplateCommand, state: State): State =

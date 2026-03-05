@@ -38,17 +38,17 @@ internal class AbstractTableColumnsValidatorUnitTest : MockkBaseTest {
         val l456 = createLiteral(ThingId("L456"))
         val temp1 = CreateLiteralCommandPart("header1")
         val thingCommands = mapOf<String, CreateThingCommandPart>(
-            "#temp1" to temp1
+            "#temp1" to temp1,
         )
         val rows = listOf(
             CreateRowCommand(
                 label = "header",
-                data = listOf("L123", "L456", "#temp1")
-            )
+                data = listOf("L123", "L456", "#temp1"),
+            ),
         )
         val validationCache = mapOf<String, Either<CreateThingCommandPart, Thing>>(
             "L123" to Either.right(l123),
-            "#temp1" to Either.left(temp1)
+            "#temp1" to Either.left(temp1),
         )
 
         every { thingRepository.findById(ThingId("L456")) } returns Optional.of(l456)
@@ -58,7 +58,7 @@ internal class AbstractTableColumnsValidatorUnitTest : MockkBaseTest {
         result shouldBe mapOf(
             "L123" to Either.right(l123),
             "L456" to Either.right(l456),
-            "#temp1" to Either.left(temp1)
+            "#temp1" to Either.left(temp1),
         )
 
         verify(exactly = 1) { thingRepository.findById(ThingId("L456")) }
@@ -70,8 +70,8 @@ internal class AbstractTableColumnsValidatorUnitTest : MockkBaseTest {
         val rows = listOf(
             CreateRowCommand(
                 label = "header",
-                data = listOf("#temp1")
-            )
+                data = listOf("#temp1"),
+            ),
         )
         val validationCache = emptyMap<String, Either<CreateThingCommandPart, Thing>>()
 
@@ -86,8 +86,8 @@ internal class AbstractTableColumnsValidatorUnitTest : MockkBaseTest {
         val rows = listOf(
             CreateRowCommand(
                 label = "header",
-                data = listOf("L123")
-            )
+                data = listOf("L123"),
+            ),
         )
         val validationCache = emptyMap<String, Either<CreateThingCommandPart, Thing>>()
 
@@ -107,8 +107,8 @@ internal class AbstractTableColumnsValidatorUnitTest : MockkBaseTest {
         val rows = listOf(
             CreateRowCommand(
                 label = "header",
-                data = listOf(thing.id.value)
-            )
+                data = listOf(thing.id.value),
+            ),
         )
         val validationCache = emptyMap<String, Either<CreateThingCommandPart, Thing>>()
 
@@ -128,8 +128,8 @@ internal class AbstractTableColumnsValidatorUnitTest : MockkBaseTest {
         val rows = listOf(
             CreateRowCommand(
                 label = "header",
-                data = listOf(literal.id.value)
-            )
+                data = listOf(literal.id.value),
+            ),
         )
         val validationCache = emptyMap<String, Either<CreateThingCommandPart, Thing>>()
 

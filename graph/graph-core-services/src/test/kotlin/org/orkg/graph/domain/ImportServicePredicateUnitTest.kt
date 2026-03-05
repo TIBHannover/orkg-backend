@@ -50,7 +50,7 @@ internal class ImportServicePredicateUnitTest : AbstractImportServiceUnitTest() 
         val externalThing = ExternalThing(
             uri = ParsedIRI.create("https://example.org/predicates/$ontologyId/$shortForm"),
             label = "predicate label",
-            description = "predicate description"
+            description = "predicate description",
         )
         val existingId = ThingId("existing")
 
@@ -62,10 +62,10 @@ internal class ImportServicePredicateUnitTest : AbstractImportServiceUnitTest() 
                 subjectClasses = setOf(Classes.predicate),
                 predicateId = Predicates.sameAs,
                 objectLabel = externalThing.uri.toString(),
-                objectClasses = setOf(Classes.literal)
+                objectClasses = setOf(Classes.literal),
             )
         } returns pageOf(
-            createStatement(subject = createPredicate(existingId))
+            createStatement(subject = createPredicate(existingId)),
         )
 
         val result = service.importPredicateByShortForm(ContributorId(MockUserId.USER), ontologyId, shortForm)
@@ -79,7 +79,7 @@ internal class ImportServicePredicateUnitTest : AbstractImportServiceUnitTest() 
                 subjectClasses = setOf(Classes.predicate),
                 predicateId = Predicates.sameAs,
                 objectLabel = externalThing.uri.toString(),
-                objectClasses = setOf(Classes.literal)
+                objectClasses = setOf(Classes.literal),
             )
         }
     }
@@ -91,7 +91,7 @@ internal class ImportServicePredicateUnitTest : AbstractImportServiceUnitTest() 
         val externalThing = ExternalThing(
             uri = ParsedIRI.create("https://example.org/predicates/$ontologyId/$shortForm"),
             label = "predicate label",
-            description = "predicate description"
+            description = "predicate description",
         )
         val contributorId = ContributorId(MockUserId.USER)
         val predicateId = ThingId("newPredicateId")
@@ -104,7 +104,7 @@ internal class ImportServicePredicateUnitTest : AbstractImportServiceUnitTest() 
                 subjectClasses = setOf(Classes.predicate),
                 predicateId = Predicates.sameAs,
                 objectLabel = externalThing.uri.toString(),
-                objectClasses = setOf(Classes.literal)
+                objectClasses = setOf(Classes.literal),
             )
         } returns pageOf()
         mockPredicateCreation(contributorId, externalThing, predicateId)
@@ -120,7 +120,7 @@ internal class ImportServicePredicateUnitTest : AbstractImportServiceUnitTest() 
                 subjectClasses = setOf(Classes.predicate),
                 predicateId = Predicates.sameAs,
                 objectLabel = externalThing.uri.toString(),
-                objectClasses = setOf(Classes.literal)
+                objectClasses = setOf(Classes.literal),
             )
         }
         verifyPredicateCreation(contributorId, externalThing, predicateId)
@@ -138,10 +138,10 @@ internal class ImportServicePredicateUnitTest : AbstractImportServiceUnitTest() 
                 subjectClasses = setOf(Classes.predicate),
                 predicateId = Predicates.sameAs,
                 objectLabel = uri.toString(),
-                objectClasses = setOf(Classes.literal)
+                objectClasses = setOf(Classes.literal),
             )
         } returns pageOf(
-            createStatement(subject = createPredicate(existingId))
+            createStatement(subject = createPredicate(existingId)),
         )
 
         val result = service.importPredicateByURI(ContributorId(MockUserId.USER), ontologyId, uri)
@@ -153,7 +153,7 @@ internal class ImportServicePredicateUnitTest : AbstractImportServiceUnitTest() 
                 subjectClasses = setOf(Classes.predicate),
                 predicateId = Predicates.sameAs,
                 objectLabel = uri.toString(),
-                objectClasses = setOf(Classes.literal)
+                objectClasses = setOf(Classes.literal),
             )
         }
     }
@@ -169,7 +169,7 @@ internal class ImportServicePredicateUnitTest : AbstractImportServiceUnitTest() 
                 subjectClasses = setOf(Classes.predicate),
                 predicateId = Predicates.sameAs,
                 objectLabel = uri.toString(),
-                objectClasses = setOf(Classes.literal)
+                objectClasses = setOf(Classes.literal),
             )
         } returns pageOf()
         every { externalPredicateService.supportsOntology(any()) } returns false
@@ -184,7 +184,7 @@ internal class ImportServicePredicateUnitTest : AbstractImportServiceUnitTest() 
                 subjectClasses = setOf(Classes.predicate),
                 predicateId = Predicates.sameAs,
                 objectLabel = uri.toString(),
-                objectClasses = setOf(Classes.literal)
+                objectClasses = setOf(Classes.literal),
             )
         }
         verify(exactly = 1) { externalPredicateService.supportsOntology(ontologyId) }
@@ -201,7 +201,7 @@ internal class ImportServicePredicateUnitTest : AbstractImportServiceUnitTest() 
                 subjectClasses = setOf(Classes.predicate),
                 predicateId = Predicates.sameAs,
                 objectLabel = uri.toString(),
-                objectClasses = setOf(Classes.literal)
+                objectClasses = setOf(Classes.literal),
             )
         } returns pageOf()
         every { externalPredicateService.supportsOntology(any()) } returns true
@@ -217,7 +217,7 @@ internal class ImportServicePredicateUnitTest : AbstractImportServiceUnitTest() 
                 subjectClasses = setOf(Classes.predicate),
                 predicateId = Predicates.sameAs,
                 objectLabel = uri.toString(),
-                objectClasses = setOf(Classes.literal)
+                objectClasses = setOf(Classes.literal),
             )
         }
         verify(exactly = 1) { externalPredicateService.supportsOntology(ontologyId) }
@@ -231,7 +231,7 @@ internal class ImportServicePredicateUnitTest : AbstractImportServiceUnitTest() 
         val externalThing = ExternalThing(
             uri = uri,
             label = "predicate label",
-            description = "predicate description"
+            description = "predicate description",
         )
         val contributorId = ContributorId(MockUserId.USER)
         val predicateId = ThingId("newPredicateId")
@@ -242,7 +242,7 @@ internal class ImportServicePredicateUnitTest : AbstractImportServiceUnitTest() 
                 subjectClasses = setOf(Classes.predicate),
                 predicateId = Predicates.sameAs,
                 objectLabel = uri.toString(),
-                objectClasses = setOf(Classes.literal)
+                objectClasses = setOf(Classes.literal),
             )
         } returns pageOf()
         every { externalPredicateService.supportsOntology(any()) } returns true
@@ -257,7 +257,7 @@ internal class ImportServicePredicateUnitTest : AbstractImportServiceUnitTest() 
                 subjectClasses = setOf(Classes.predicate),
                 predicateId = Predicates.sameAs,
                 objectLabel = uri.toString(),
-                objectClasses = setOf(Classes.literal)
+                objectClasses = setOf(Classes.literal),
             )
         }
         verify(exactly = 1) { externalPredicateService.supportsOntology(ontologyId) }
@@ -271,7 +271,7 @@ internal class ImportServicePredicateUnitTest : AbstractImportServiceUnitTest() 
                 CreatePredicateUseCase.CreateCommand(
                     contributorId = contributorId,
                     label = externalThing.label,
-                )
+                ),
             )
         } returns predicateId
         mockDescriptionCreation(contributorId, externalThing, predicateId)
@@ -285,7 +285,7 @@ internal class ImportServicePredicateUnitTest : AbstractImportServiceUnitTest() 
                 CreatePredicateUseCase.CreateCommand(
                     contributorId = contributorId,
                     label = externalThing.label,
-                )
+                ),
             )
         }
         verifyDescriptionCreation(contributorId, externalThing, subjectId)

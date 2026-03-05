@@ -19,7 +19,7 @@ internal class PaperTitleCreateValidatorUnitTest : MockkBaseTest {
     private val resourceService: ResourceUseCases = mockk()
 
     private val paperTitleCreateValidator = PaperTitleCreateValidator(
-        resourceService = resourceService
+        resourceService = resourceService,
     )
 
     @Test

@@ -36,7 +36,7 @@ private fun Neo4jAuthorOfComparison.toComparisonAuthor() =
             ComparisonAuthorInfo(
                 paperId = ThingId(it.paper),
                 it.index.toInt(),
-                it.year?.toInt()
+                it.year?.toInt(),
             )
-        }
+        },
     )

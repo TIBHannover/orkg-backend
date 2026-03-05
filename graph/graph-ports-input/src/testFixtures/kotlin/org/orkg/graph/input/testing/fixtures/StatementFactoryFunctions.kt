@@ -13,7 +13,7 @@ fun createStatementCommand(): CreateStatementUseCase.CreateCommand =
         subjectId = ThingId("R123"),
         predicateId = ThingId("P123"),
         objectId = ThingId("L123"),
-        modifiable = true
+        modifiable = true,
     )
 
 fun updateStatementCommand(): UpdateStatementUseCase.UpdateCommand =
@@ -23,5 +23,5 @@ fun updateStatementCommand(): UpdateStatementUseCase.UpdateCommand =
         subjectId = ThingId("R123"),
         predicateId = ThingId("P123"),
         objectId = ThingId("L123"),
-        modifiable = true
+        modifiable = true,
     )

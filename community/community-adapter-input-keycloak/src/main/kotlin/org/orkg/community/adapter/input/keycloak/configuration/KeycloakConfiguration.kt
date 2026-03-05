@@ -32,7 +32,7 @@ class KeycloakConfiguration {
                     })
                     .readTimeout(5, TimeUnit.SECONDS)
                     .connectTimeout(5, TimeUnit.SECONDS)
-                    .build()
+                    .build(),
             )
             .serverUrl(host)
             .realm(realm)

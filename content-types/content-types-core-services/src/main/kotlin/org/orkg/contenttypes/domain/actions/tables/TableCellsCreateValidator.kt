@@ -14,7 +14,7 @@ class TableCellsCreateValidator(
             validationCache = abstractTableCellsValidator.validate(
                 rows = command.rows,
                 thingCommands = command.all(),
-                validationCacheIn = state.validationCache
-            )
+                validationCacheIn = state.validationCache,
+            ),
         )
 }

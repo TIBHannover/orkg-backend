@@ -65,7 +65,7 @@ internal class TemplateInstanceServiceUnitTest : MockkBaseTest {
         listService,
         statementRepository,
         classRepository,
-        classHierarchyRepository
+        classHierarchyRepository,
     )
 
     @Test
@@ -88,7 +88,7 @@ internal class TemplateInstanceServiceUnitTest : MockkBaseTest {
             expected.statements[stringLiteralPropertyId]!!.single().toStatement(expected.root, stringLiteralPropertyId),
             expected.statements[numberLiteralPropertyId]!!.single().toStatement(expected.root, numberLiteralPropertyId),
             expected.statements[otherLiteralPropertyId]!!.single().toStatement(expected.root, otherLiteralPropertyId),
-            expected.statements[resourcePropertyId]!!.single().toStatement(expected.root, resourcePropertyId)
+            expected.statements[resourcePropertyId]!!.single().toStatement(expected.root, resourcePropertyId),
         )
 
         val actual = service.findById(template.id, expected.root.id)
@@ -117,14 +117,14 @@ internal class TemplateInstanceServiceUnitTest : MockkBaseTest {
                 createStringLiteralTemplateProperty().copy(
                     order = 0,
                     pattern = null,
-                    path = ObjectIdAndLabel(Predicates.hasDOI, "has doi")
+                    path = ObjectIdAndLabel(Predicates.hasDOI, "has doi"),
                 ),
                 createStringLiteralTemplateProperty().copy(
                     order = 1,
                     pattern = null,
-                    path = ObjectIdAndLabel(Predicates.hasWikidataId, "has wikidata id")
-                )
-            )
+                    path = ObjectIdAndLabel(Predicates.hasWikidataId, "has wikidata id"),
+                ),
+            ),
         )
         val expected = createNestedTemplateInstance()
 
@@ -144,7 +144,7 @@ internal class TemplateInstanceServiceUnitTest : MockkBaseTest {
             expected.statements[stringLiteralPropertyId]!!.single().toStatement(expected.root, stringLiteralPropertyId),
             expected.statements[numberLiteralPropertyId]!!.single().toStatement(expected.root, numberLiteralPropertyId),
             expected.statements[otherLiteralPropertyId]!!.single().toStatement(expected.root, otherLiteralPropertyId),
-            hasAuthor.toStatement(expected.root, resourcePropertyId)
+            hasAuthor.toStatement(expected.root, resourcePropertyId),
         )
         every {
             templateService.findAll(targetClass = ThingId("C28"), pageable = PageRequests.SINGLE)
@@ -207,6 +207,6 @@ internal class TemplateInstanceServiceUnitTest : MockkBaseTest {
             predicate = createPredicate(predicateId),
             `object` = thing,
             createdAt = createdAt,
-            createdBy = createdBy
+            createdBy = createdBy,
         )
 }

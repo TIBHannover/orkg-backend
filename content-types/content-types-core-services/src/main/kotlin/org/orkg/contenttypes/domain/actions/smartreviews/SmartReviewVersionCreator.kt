@@ -33,20 +33,20 @@ class SmartReviewVersionCreator(
             organizations = smartReview.organizations,
             extractionMethod = smartReview.extractionMethod,
             sections = emptyList(),
-            references = smartReview.references
+            references = smartReview.references,
         )
         val steps = listOf(
             SmartReviewAuthorListCreateValidator(resourceRepository, statementRepository),
             SmartReviewVersionResourceCreator(unsafeResourceUseCases),
             SmartReviewResearchFieldCreator(unsafeLiteralUseCases, unsafeStatementUseCases),
             SmartReviewAuthorListCreator(unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases, listService),
-            SmartReviewSDGCreator(unsafeLiteralUseCases, unsafeStatementUseCases)
+            SmartReviewSDGCreator(unsafeLiteralUseCases, unsafeStatementUseCases),
         )
         return state.copy(
             smartReviewVersionId = steps.execute(
                 createSmartReviewCommand,
-                CreateSmartReviewState()
-            ).smartReviewId!!
+                CreateSmartReviewState(),
+            ).smartReviewId!!,
         )
     }
 }

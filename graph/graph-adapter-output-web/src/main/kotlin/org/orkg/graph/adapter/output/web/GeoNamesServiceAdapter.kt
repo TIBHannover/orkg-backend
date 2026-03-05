@@ -47,7 +47,7 @@ class GeoNamesServiceAdapter(
                 uri = ParsedIRI.create("https://sws.geonames.org/$shortForm"),
                 label = objectMapper.readTree(response).path("name").asString(null)
                     ?: return@send null,
-                description = null
+                description = null,
             )
         }
     }

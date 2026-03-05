@@ -32,7 +32,7 @@ class SpringDataJpaTemplateBasedResourceSnapshotAdapter(
     override fun findAllByResourceId(resourceId: ThingId, pageable: Pageable): Page<TemplateBasedResourceSnapshot<*>> =
         postgresTemplateBasedResourceSnapshotRepository.findAllByResourceId(
             resourceId = resourceId.value,
-            pageable = pageable.withDefaultSort { Sort.by("createdAt") } // FIXME: Sorting properties should be snake_case
+            pageable = pageable.withDefaultSort { Sort.by("createdAt") }, // FIXME: Sorting properties should be snake_case
         ).map { it.toTemplateBasedResourceSnapshot(objectMapper) }
 
     override fun findAllByResourceIdAndTemplateId(
@@ -43,7 +43,7 @@ class SpringDataJpaTemplateBasedResourceSnapshotAdapter(
         postgresTemplateBasedResourceSnapshotRepository.findAllByResourceIdAndTemplateId(
             resourceId = resourceId.value,
             templateId = templateId.value,
-            pageable = pageable.withDefaultSort { Sort.by("createdAt") } // FIXME: Sorting properties should be snake_case
+            pageable = pageable.withDefaultSort { Sort.by("createdAt") }, // FIXME: Sorting properties should be snake_case
         ).map { it.toTemplateBasedResourceSnapshot(objectMapper) }
 
     override fun deleteAll() = postgresTemplateBasedResourceSnapshotRepository.deleteAll()

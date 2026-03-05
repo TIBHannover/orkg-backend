@@ -131,7 +131,7 @@ class TableService(
             createdAtEnd = createdAtEnd,
             observatoryId = observatoryId,
             organizationId = organizationId,
-            includeClasses = setOf(Classes.table)
+            includeClasses = setOf(Classes.table),
         ).map { it.toTable() }
 
     override fun create(command: CreateTableCommand): ThingId {
@@ -149,7 +149,7 @@ class TableService(
             TableThingsCommandCreateCreator(unsafeClassUseCases, unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases, unsafePredicateUseCases, statementRepository, listService),
             TableColumnsCreator(unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases),
             TableRowsCreator(unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases),
-            TableCellsCreator(unsafeResourceUseCases, unsafeStatementUseCases)
+            TableCellsCreator(unsafeResourceUseCases, unsafeStatementUseCases),
         )
         return steps.execute(command, CreateTableState()).tableId!!
     }
@@ -256,13 +256,13 @@ class TableService(
                 minLevel = null,
                 maxLevel = 3,
                 blacklist = emptyList(),
-                whitelist = emptyList()
+                whitelist = emptyList(),
             ),
-            sort = Sort.unsorted()
+            sort = Sort.unsorted(),
         )
         return ContentTypeSubgraph(
             root = resource.id,
-            statements = statements.groupBy { it.subject.id }
+            statements = statements.groupBy { it.subject.id },
         )
     }
 

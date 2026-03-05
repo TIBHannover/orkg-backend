@@ -48,7 +48,7 @@ fun createResource(
     visibility = visibility,
     verified = verified,
     unlistedBy = unlistedBy,
-    modifiable = modifiable
+    modifiable = modifiable,
 )
 
 fun createClass(

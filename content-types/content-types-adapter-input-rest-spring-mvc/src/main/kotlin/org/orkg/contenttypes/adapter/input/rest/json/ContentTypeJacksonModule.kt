@@ -23,14 +23,14 @@ class ContentTypeJacksonModule : SimpleModule() {
                 addDeserializer(TemplatePropertyRepresentation::class.java, TemplatePropertyRepresentationDeserializer())
                 addDeserializer(SnapshotId::class.java, SnapshotIdDeserializer())
                 addDeserializer(DynamicLabel::class.java, DynamicLabelDeserializer())
-            }
+            },
         )
         context?.addSerializers(
             SimpleSerializers().apply {
                 addSerializer(IdentifierMapRequest::class.java, IdentifierMapRequestSerializer())
                 addSerializer(SnapshotId::class.java, SnapshotIdSerializer())
                 addSerializer(DynamicLabel::class.java, DynamicLabelSerializer())
-            }
+            },
         )
         context?.setMixIn(LegacyComparisonConfig::class.java, ComparisonConfigMixin::class.java)
         context?.setMixIn(ComparisonHeaderCell::class.java, ComparisonHeaderCellMixin::class.java)

@@ -33,7 +33,7 @@ internal class TemplatePropertiesValidatorUnitTest : MockkBaseTest {
         TemplatePropertiesValidator<List<TemplatePropertyCommand>, List<TemplateProperty>>(
             abstractTemplatePropertyValidator = abstractTemplatePropertyValidator,
             newValueSelector = { it },
-            oldValueSelector = { it }
+            oldValueSelector = { it },
         )
 
     @Test
@@ -43,7 +43,7 @@ internal class TemplatePropertiesValidatorUnitTest : MockkBaseTest {
             updateStringLiteralTemplatePropertyCommand(),
             updateNumberLiteralTemplatePropertyCommand(),
             updateOtherLiteralTemplatePropertyCommand(),
-            updateResourceTemplatePropertyCommand()
+            updateResourceTemplatePropertyCommand(),
         )
         val state = emptyList<TemplateProperty>()
 
@@ -65,14 +65,14 @@ internal class TemplatePropertiesValidatorUnitTest : MockkBaseTest {
             updateStringLiteralTemplatePropertyCommand(),
             updateNumberLiteralTemplatePropertyCommand(),
             updateOtherLiteralTemplatePropertyCommand(),
-            updateResourceTemplatePropertyCommand()
+            updateResourceTemplatePropertyCommand(),
         )
         val state = listOf(
             createUntypedTemplateProperty(),
             createStringLiteralTemplateProperty(),
             createNumberLiteralTemplateProperty(),
             createOtherLiteralTemplateProperty(),
-            createResourceTemplateProperty()
+            createResourceTemplateProperty(),
         )
 
         command.forEach {
@@ -93,7 +93,7 @@ internal class TemplatePropertiesValidatorUnitTest : MockkBaseTest {
             createStringLiteralTemplateProperty(),
             createNumberLiteralTemplateProperty(),
             createOtherLiteralTemplateProperty(),
-            createResourceTemplateProperty()
+            createResourceTemplateProperty(),
         )
         val command = state.map { it.toTemplatePropertyCommand() }
 

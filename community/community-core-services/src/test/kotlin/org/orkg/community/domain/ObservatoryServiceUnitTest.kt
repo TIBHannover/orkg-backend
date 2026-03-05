@@ -70,10 +70,10 @@ internal class ObservatoryServiceUnitTest : MockkBaseTest {
     @Test
     fun `Finding several observatories by research field`() {
         val researchField = createResource(
-            classes = setOf(Classes.researchField)
+            classes = setOf(Classes.researchField),
         )
         val observatory = createObservatory(setOf(OrganizationId(UUID.randomUUID()))).copy(
-            researchField = researchField.id
+            researchField = researchField.id,
         )
         val page: Page<Observatory> = PageImpl(listOf(observatory))
         val researchFieldId = researchField.id
@@ -127,7 +127,7 @@ internal class ObservatoryServiceUnitTest : MockkBaseTest {
             organizations = setOf(organization.id!!),
             researchField = researchField.id,
             displayId = "observatory_display_id",
-            sustainableDevelopmentGoals = setOf(sdg.id)
+            sustainableDevelopmentGoals = setOf(sdg.id),
         )
         every { repository.findByName(command.name) } returns Optional.empty()
         every { repository.findByDisplayId(command.displayId) } returns Optional.empty()
@@ -153,7 +153,7 @@ internal class ObservatoryServiceUnitTest : MockkBaseTest {
                     it.researchField shouldBe command.researchField
                     it.displayId shouldBe command.displayId
                     it.sustainableDevelopmentGoals shouldBe command.sustainableDevelopmentGoals
-                }
+                },
             )
         }
     }
@@ -169,7 +169,7 @@ internal class ObservatoryServiceUnitTest : MockkBaseTest {
             organizations = setOf(organization.id!!),
             researchField = researchField.id,
             displayId = "observatory_display_id",
-            sustainableDevelopmentGoals = emptySet()
+            sustainableDevelopmentGoals = emptySet(),
         )
         every { repository.findByName(command.name) } returns Optional.empty()
         every { repository.findByDisplayId(command.displayId) } returns Optional.empty()
@@ -193,7 +193,7 @@ internal class ObservatoryServiceUnitTest : MockkBaseTest {
                     it.researchField shouldBe command.researchField
                     it.displayId shouldBe command.displayId
                     it.sustainableDevelopmentGoals shouldBe command.sustainableDevelopmentGoals
-                }
+                },
             )
         }
     }
@@ -207,7 +207,7 @@ internal class ObservatoryServiceUnitTest : MockkBaseTest {
             organizations = setOf(OrganizationId("d02073bc-30fd-481e-9167-f3fc3595d590")),
             researchField = ThingId("R456"),
             displayId = "observatory_display_id",
-            sustainableDevelopmentGoals = emptySet()
+            sustainableDevelopmentGoals = emptySet(),
         )
         every { repository.findByName(command.name) } returns Optional.of(createObservatory())
 
@@ -225,7 +225,7 @@ internal class ObservatoryServiceUnitTest : MockkBaseTest {
             organizations = setOf(OrganizationId("d02073bc-30fd-481e-9167-f3fc3595d590")),
             researchField = ThingId("R456"),
             displayId = "already_taken",
-            sustainableDevelopmentGoals = emptySet()
+            sustainableDevelopmentGoals = emptySet(),
         )
         every { repository.findByName(command.name) } returns Optional.empty()
         every { repository.findByDisplayId(command.displayId) } returns Optional.of(createObservatory())
@@ -246,7 +246,7 @@ internal class ObservatoryServiceUnitTest : MockkBaseTest {
             organizations = setOf(organizationId),
             researchField = ThingId("R456"),
             displayId = "observatory_display_id",
-            sustainableDevelopmentGoals = emptySet()
+            sustainableDevelopmentGoals = emptySet(),
         )
         every { repository.findByName(command.name) } returns Optional.empty()
         every { repository.findByDisplayId(command.displayId) } returns Optional.empty()
@@ -270,7 +270,7 @@ internal class ObservatoryServiceUnitTest : MockkBaseTest {
             organizations = setOf(organization.id!!),
             researchField = researchFieldId,
             displayId = "observatory_display_id",
-            sustainableDevelopmentGoals = emptySet()
+            sustainableDevelopmentGoals = emptySet(),
         )
         every { repository.findByName(command.name) } returns Optional.empty()
         every { repository.findByDisplayId(command.displayId) } returns Optional.empty()
@@ -296,7 +296,7 @@ internal class ObservatoryServiceUnitTest : MockkBaseTest {
             organizations = setOf(organization.id!!),
             researchField = someResource.id,
             displayId = "observatory_display_id",
-            sustainableDevelopmentGoals = emptySet()
+            sustainableDevelopmentGoals = emptySet(),
         )
         every { repository.findByName(command.name) } returns Optional.empty()
         every { repository.findByDisplayId(command.displayId) } returns Optional.empty()
@@ -323,7 +323,7 @@ internal class ObservatoryServiceUnitTest : MockkBaseTest {
             organizations = setOf(organization.id!!),
             researchField = researchField.id,
             displayId = "observatory_display_id",
-            sustainableDevelopmentGoals = setOf(sdgId)
+            sustainableDevelopmentGoals = setOf(sdgId),
         )
         every { repository.findByName(command.name) } returns Optional.empty()
         every { repository.findByDisplayId(command.displayId) } returns Optional.empty()
@@ -350,7 +350,7 @@ internal class ObservatoryServiceUnitTest : MockkBaseTest {
             organizations = setOf(organization.id!!),
             description = "new description",
             researchField = researchField.id,
-            sustainableDevelopmentGoals = setOf(sdg.id)
+            sustainableDevelopmentGoals = setOf(sdg.id),
         )
         every { repository.findById(observatory.id) } returns Optional.of(observatory)
         every { organizationRepository.findById(organization.id!!) } returns Optional.of(organization)
@@ -372,7 +372,7 @@ internal class ObservatoryServiceUnitTest : MockkBaseTest {
                     it.researchField shouldBe command.researchField
                     it.displayId shouldBe observatory.displayId
                     it.sustainableDevelopmentGoals shouldBe command.sustainableDevelopmentGoals
-                }
+                },
             )
         }
     }
@@ -382,7 +382,7 @@ internal class ObservatoryServiceUnitTest : MockkBaseTest {
         val observatory = createObservatory()
         val command = UpdateCommand(
             id = observatory.id,
-            name = "new name"
+            name = "new name",
         )
         every { repository.findById(observatory.id) } returns Optional.of(observatory)
         every { repository.save(any()) } just runs
@@ -400,7 +400,7 @@ internal class ObservatoryServiceUnitTest : MockkBaseTest {
                     it.researchField shouldBe observatory.researchField
                     it.displayId shouldBe observatory.displayId
                     it.sustainableDevelopmentGoals shouldBe observatory.sustainableDevelopmentGoals
-                }
+                },
             )
         }
     }
@@ -431,7 +431,7 @@ internal class ObservatoryServiceUnitTest : MockkBaseTest {
                     it.researchField shouldBe observatory.researchField
                     it.displayId shouldBe observatory.displayId
                     it.sustainableDevelopmentGoals shouldBe observatory.sustainableDevelopmentGoals
-                }
+                },
             )
         }
     }
@@ -459,7 +459,7 @@ internal class ObservatoryServiceUnitTest : MockkBaseTest {
                     it.researchField shouldBe observatory.researchField
                     it.displayId shouldBe observatory.displayId
                     it.sustainableDevelopmentGoals shouldBe observatory.sustainableDevelopmentGoals
-                }
+                },
             )
         }
     }
@@ -470,7 +470,7 @@ internal class ObservatoryServiceUnitTest : MockkBaseTest {
         val researchField = createResource(ThingId("R456"), classes = setOf(Classes.researchField))
         val command = UpdateCommand(
             id = observatory.id,
-            researchField = researchField.id
+            researchField = researchField.id,
         )
         every { repository.findById(observatory.id) } returns Optional.of(observatory)
         every { resourceRepository.findById(researchField.id) } returns Optional.of(researchField)
@@ -490,7 +490,7 @@ internal class ObservatoryServiceUnitTest : MockkBaseTest {
                     it.researchField shouldBe command.researchField
                     it.displayId shouldBe observatory.displayId
                     it.sustainableDevelopmentGoals shouldBe observatory.sustainableDevelopmentGoals
-                }
+                },
             )
         }
     }
@@ -501,7 +501,7 @@ internal class ObservatoryServiceUnitTest : MockkBaseTest {
         val sdg = createResource(ThingId("SDG_1"), classes = setOf(Classes.sustainableDevelopmentGoal))
         val command = UpdateCommand(
             id = observatory.id,
-            sustainableDevelopmentGoals = setOf(sdg.id)
+            sustainableDevelopmentGoals = setOf(sdg.id),
         )
         every { repository.findById(observatory.id) } returns Optional.of(observatory)
         every { repository.save(any()) } just runs
@@ -519,7 +519,7 @@ internal class ObservatoryServiceUnitTest : MockkBaseTest {
                     it.researchField shouldBe observatory.researchField
                     it.displayId shouldBe observatory.displayId
                     it.sustainableDevelopmentGoals shouldBe command.sustainableDevelopmentGoals
-                }
+                },
             )
         }
     }
@@ -565,7 +565,7 @@ internal class ObservatoryServiceUnitTest : MockkBaseTest {
         val researchFieldId = ThingId("R456")
         val command = UpdateCommand(
             id = observatory.id,
-            researchField = researchFieldId
+            researchField = researchFieldId,
         )
         every { repository.findById(observatory.id) } returns Optional.of(observatory)
         every { resourceRepository.findById(researchFieldId) } returns Optional.empty()
@@ -582,7 +582,7 @@ internal class ObservatoryServiceUnitTest : MockkBaseTest {
         val researchField = createResource(ThingId("R456"))
         val command = UpdateCommand(
             id = observatory.id,
-            researchField = researchField.id
+            researchField = researchField.id,
         )
         every { repository.findById(observatory.id) } returns Optional.of(observatory)
         every { resourceRepository.findById(researchField.id) } returns Optional.of(researchField)
@@ -599,7 +599,7 @@ internal class ObservatoryServiceUnitTest : MockkBaseTest {
         val sdg = ThingId("Invalid")
         val command = UpdateCommand(
             id = observatory.id,
-            sustainableDevelopmentGoals = setOf(sdg)
+            sustainableDevelopmentGoals = setOf(sdg),
         )
         every { repository.findById(observatory.id) } returns Optional.of(observatory)
 
@@ -614,7 +614,7 @@ internal class ObservatoryServiceUnitTest : MockkBaseTest {
         val sdgId = ThingId("SDG1")
         val observatory = createObservatory(
             organizationIds = setOf(organizationId),
-            sustainableDevelopmentGoals = setOf(sdgId)
+            sustainableDevelopmentGoals = setOf(sdgId),
         )
         val command = UpdateCommand(
             id = observatory.id,
@@ -622,7 +622,7 @@ internal class ObservatoryServiceUnitTest : MockkBaseTest {
             organizations = observatory.organizationIds,
             description = observatory.description,
             researchField = observatory.researchField,
-            sustainableDevelopmentGoals = observatory.sustainableDevelopmentGoals
+            sustainableDevelopmentGoals = observatory.sustainableDevelopmentGoals,
         )
         every { repository.findById(observatory.id) } returns Optional.of(observatory)
 

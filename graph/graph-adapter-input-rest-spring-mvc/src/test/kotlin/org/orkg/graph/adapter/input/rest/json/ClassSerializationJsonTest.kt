@@ -96,7 +96,7 @@ internal class ClassSerializationJsonTest {
             uri = ParsedIRI.create("http://purl.org/linked-data/cube#Observation"),
             createdAt = OffsetDateTime.parse("2019-01-06T15:04:07.692Z"),
             createdBy = ContributorId("29ed99d5-9135-41e2-8626-2bbd4e6797bf"),
-            modifiable = true
+            modifiable = true,
         )
 
         val expected = modelJson("orkg/class")

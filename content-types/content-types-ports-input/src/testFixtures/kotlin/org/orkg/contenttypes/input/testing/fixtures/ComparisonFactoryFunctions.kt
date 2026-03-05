@@ -24,38 +24,38 @@ fun createComparisonCommand() = CreateComparisonUseCase.CreateCommand(
     authors = listOf(
         Author(
             id = ThingId("R123"),
-            name = "Author with id"
+            name = "Author with id",
         ),
         Author(
             name = "Author with orcid",
-            identifiers = mapOf("orcid" to listOf("0000-1111-2222-3333"))
+            identifiers = mapOf("orcid" to listOf("0000-1111-2222-3333")),
         ),
         Author(
             id = ThingId("R456"),
             name = "Author with id and orcid",
-            identifiers = mapOf("orcid" to listOf("1111-2222-3333-4444"))
+            identifiers = mapOf("orcid" to listOf("1111-2222-3333-4444")),
         ),
         Author(
             name = "Author with homepage",
-            homepage = ParsedIRI.create("https://example.org/author")
+            homepage = ParsedIRI.create("https://example.org/author"),
         ),
         Author(
-            name = "Author that just has a name"
-        )
+            name = "Author that just has a name",
+        ),
     ),
     sustainableDevelopmentGoals = setOf(ThingId("SDG_1"), ThingId("SDG_2")),
     sources = listOf(
         ComparisonDataSource(ThingId("R6541"), ComparisonDataSource.Type.THING),
         ComparisonDataSource(ThingId("R5364"), ComparisonDataSource.Type.THING),
         ComparisonDataSource(ThingId("R9786"), ComparisonDataSource.Type.THING),
-        ComparisonDataSource(ThingId("R3120"), ComparisonDataSource.Type.THING)
+        ComparisonDataSource(ThingId("R3120"), ComparisonDataSource.Type.THING),
     ),
     visualizations = listOf(ThingId("R63845")),
     references = listOf("https://orkg.org/resources/R1000", "paper citation"),
     observatories = listOf(ObservatoryId("eeb1ab0f-0ef5-4bee-aba2-2d5cea2f0174")),
     organizations = listOf(OrganizationId("f9965b2a-5222-45e1-8ef8-dbd8ce1f57bc")),
     isAnonymized = false,
-    extractionMethod = ExtractionMethod.UNKNOWN
+    extractionMethod = ExtractionMethod.UNKNOWN,
 )
 
 fun updateComparisonCommand() = UpdateComparisonUseCase.UpdateCommand(
@@ -67,31 +67,31 @@ fun updateComparisonCommand() = UpdateComparisonUseCase.UpdateCommand(
     authors = listOf(
         Author(
             id = ThingId("R123"),
-            name = "Author with id"
+            name = "Author with id",
         ),
         Author(
             name = "Author with orcid",
-            identifiers = mapOf("orcid" to listOf("0000-1111-2222-3333"))
+            identifiers = mapOf("orcid" to listOf("0000-1111-2222-3333")),
         ),
         Author(
             id = ThingId("R456"),
             name = "Author with id and orcid",
-            identifiers = mapOf("orcid" to listOf("1111-2222-3333-4444"))
+            identifiers = mapOf("orcid" to listOf("1111-2222-3333-4444")),
         ),
         Author(
             name = "Author with homepage",
-            homepage = ParsedIRI.create("https://example.org/author")
+            homepage = ParsedIRI.create("https://example.org/author"),
         ),
         Author(
-            name = "Author that just has a name"
-        )
+            name = "Author that just has a name",
+        ),
     ),
     sustainableDevelopmentGoals = setOf(ThingId("SDG_2"), ThingId("SDG_3")),
     sources = listOf(
         ComparisonDataSource(ThingId("R6541"), ComparisonDataSource.Type.THING),
         ComparisonDataSource(ThingId("R5364"), ComparisonDataSource.Type.THING),
         ComparisonDataSource(ThingId("R9786"), ComparisonDataSource.Type.THING),
-        ComparisonDataSource(ThingId("R3120"), ComparisonDataSource.Type.THING)
+        ComparisonDataSource(ThingId("R3120"), ComparisonDataSource.Type.THING),
     ),
     visualizations = listOf(ThingId("R63845")),
     references = listOf("https://orkg.org/resources/R1000", "paper citation"),
@@ -99,7 +99,7 @@ fun updateComparisonCommand() = UpdateComparisonUseCase.UpdateCommand(
     organizations = listOf(OrganizationId("f9965b2a-5222-45e1-8ef8-dbd8ce1f57bc")),
     isAnonymized = false,
     extractionMethod = ExtractionMethod.UNKNOWN,
-    visibility = Visibility.DEFAULT
+    visibility = Visibility.DEFAULT,
 )
 
 fun publishComparisonCommand() = PublishComparisonUseCase.PublishCommand(
@@ -112,22 +112,22 @@ fun publishComparisonCommand() = PublishComparisonUseCase.PublishCommand(
             id = null,
             name = "Author 1",
             identifiers = emptyMap(),
-            homepage = null
+            homepage = null,
         ),
         Author(
             id = ThingId("R132564"),
             name = "Author 2",
             identifiers = mapOf(
-                "orcid" to listOf("0000-1111-2222-3333")
+                "orcid" to listOf("0000-1111-2222-3333"),
             ),
-            homepage = ParsedIRI.create("https://example.org")
-        )
+            homepage = ParsedIRI.create("https://example.org"),
+        ),
     ),
-    assignDOI = true
+    assignDOI = true,
 )
 
 fun updateComparisonTableCommand() = UpdateComparisonTableUseCase.UpdateCommand(
     comparisonId = ThingId("R16453"),
     contributorId = ContributorId("0b3d7108-ea98-448f-85ef-e67a63a8b32b"),
-    selectedPaths = createSimpleComparisonPaths()
+    selectedPaths = createSimpleComparisonPaths(),
 )

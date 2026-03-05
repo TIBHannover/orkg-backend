@@ -42,21 +42,21 @@ internal class PaperCSVStatementObjectProcessorUnitTest : MockkBaseTest {
             statements = setOf(
                 ContributionStatement(
                     predicate = Either.left(Predicates.employs),
-                    `object` = TypedValue(namespace = "resource", value = "DOI", type = Classes.resource)
+                    `object` = TypedValue(namespace = "resource", value = "DOI", type = Classes.resource),
                 ),
                 ContributionStatement(
                     predicate = Either.left(Predicates.employs),
-                    `object` = TypedValue(namespace = null, value = "New Problem", type = Classes.problem)
+                    `object` = TypedValue(namespace = null, value = "New Problem", type = Classes.problem),
                 ),
                 ContributionStatement(
                     predicate = Either.left(Predicates.employs),
-                    `object` = TypedValue(namespace = "orkg", value = "R123", type = Classes.thing)
+                    `object` = TypedValue(namespace = "orkg", value = "R123", type = Classes.thing),
                 ),
                 ContributionStatement(
                     predicate = Either.right("result"),
-                    `object` = TypedValue(namespace = null, value = "5", type = Classes.integer)
+                    `object` = TypedValue(namespace = null, value = "5", type = Classes.integer),
                 ),
-            )
+            ),
         )
         val contributorId = ContributorId(MockUserId.USER)
         val jobParameters = JobParametersBuilder().add(CONTRIBUTOR_ID_FIELD, contributorId).toJobParameters()
@@ -80,7 +80,7 @@ internal class PaperCSVStatementObjectProcessorUnitTest : MockkBaseTest {
         val createLiteralCommand = CreateLiteralUseCase.CreateCommand(
             contributorId = contributorId,
             label = "5",
-            datatype = Literals.XSD.INT.prefixedUri
+            datatype = Literals.XSD.INT.prefixedUri,
         )
 
         paperCSVStatementObjectProcessor.beforeStep(stepExecution)
@@ -93,21 +93,21 @@ internal class PaperCSVStatementObjectProcessorUnitTest : MockkBaseTest {
             statements = setOf(
                 ContributionStatement(
                     predicate = Either.left(Predicates.employs),
-                    `object` = TypedValue(namespace = "orkg", value = resourceId.value, type = Classes.thing)
+                    `object` = TypedValue(namespace = "orkg", value = resourceId.value, type = Classes.thing),
                 ),
                 ContributionStatement(
                     predicate = Either.left(Predicates.employs),
-                    `object` = TypedValue(namespace = "orkg", value = newProblemId.value, type = Classes.thing)
+                    `object` = TypedValue(namespace = "orkg", value = newProblemId.value, type = Classes.thing),
                 ),
                 ContributionStatement(
                     predicate = Either.left(Predicates.employs),
-                    `object` = TypedValue(namespace = "orkg", value = "R123", type = Classes.thing)
+                    `object` = TypedValue(namespace = "orkg", value = "R123", type = Classes.thing),
                 ),
                 ContributionStatement(
                     predicate = Either.right("result"),
-                    `object` = TypedValue(namespace = "orkg", value = literalId.value, type = Classes.thing)
+                    `object` = TypedValue(namespace = "orkg", value = literalId.value, type = Classes.thing),
                 ),
-            )
+            ),
         )
 
         verify(exactly = 1) { unsafeResourceUseCases.create(createResourceCommand) }

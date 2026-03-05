@@ -46,7 +46,7 @@ internal class ComparisonRelatedResourceUpdaterUnitTest : MockkBaseTest {
         comparisonRelatedResourceUseCases,
         resourceService,
         statementService,
-        singleStatementPropertyUpdater
+        singleStatementPropertyUpdater,
     )
 
     @Test
@@ -59,7 +59,7 @@ internal class ComparisonRelatedResourceUpdaterUnitTest : MockkBaseTest {
         every {
             comparisonRelatedResourceUseCases.findByIdAndComparisonId(
                 comparisonId = command.comparisonId,
-                id = command.comparisonRelatedResourceId
+                id = command.comparisonRelatedResourceId,
             )
         } returns Optional.of(comparisonRelatedResource)
 
@@ -69,7 +69,7 @@ internal class ComparisonRelatedResourceUpdaterUnitTest : MockkBaseTest {
         verify(exactly = 1) {
             comparisonRelatedResourceUseCases.findByIdAndComparisonId(
                 comparisonId = command.comparisonId,
-                id = command.comparisonRelatedResourceId
+                id = command.comparisonRelatedResourceId,
             )
         }
     }
@@ -129,7 +129,7 @@ internal class ComparisonRelatedResourceUpdaterUnitTest : MockkBaseTest {
         every {
             comparisonRelatedResourceUseCases.findByIdAndComparisonId(
                 comparisonId = command.comparisonId,
-                id = command.comparisonRelatedResourceId
+                id = command.comparisonRelatedResourceId,
             )
         } returns Optional.empty()
 
@@ -139,7 +139,7 @@ internal class ComparisonRelatedResourceUpdaterUnitTest : MockkBaseTest {
         verify(exactly = 1) {
             comparisonRelatedResourceUseCases.findByIdAndComparisonId(
                 comparisonId = command.comparisonId,
-                id = command.comparisonRelatedResourceId
+                id = command.comparisonRelatedResourceId,
             )
         }
     }
@@ -161,12 +161,12 @@ internal class ComparisonRelatedResourceUpdaterUnitTest : MockkBaseTest {
     fun `Given a comparison related resource update command, when label has changed, it updates the label`() {
         val comparisonRelatedResource = createComparisonRelatedResource()
         val command = comparisonRelatedResource.toComparisonRelatedResourceUpdateCommand().copy(
-            label = "updated label"
+            label = "updated label",
         )
         val updateResourceCommand = UpdateResourceUseCase.UpdateCommand(
             id = comparisonRelatedResource.id,
             contributorId = command.contributorId,
-            label = command.label
+            label = command.label,
         )
         val comparison = createResource(classes = setOf(Classes.comparison))
 
@@ -174,7 +174,7 @@ internal class ComparisonRelatedResourceUpdaterUnitTest : MockkBaseTest {
         every {
             comparisonRelatedResourceUseCases.findByIdAndComparisonId(
                 comparisonId = command.comparisonId,
-                id = command.comparisonRelatedResourceId
+                id = command.comparisonRelatedResourceId,
             )
         } returns Optional.of(comparisonRelatedResource)
         every { resourceService.update(updateResourceCommand) } just runs
@@ -185,7 +185,7 @@ internal class ComparisonRelatedResourceUpdaterUnitTest : MockkBaseTest {
         verify(exactly = 1) {
             comparisonRelatedResourceUseCases.findByIdAndComparisonId(
                 comparisonId = command.comparisonId,
-                id = command.comparisonRelatedResourceId
+                id = command.comparisonRelatedResourceId,
             )
         }
         verify(exactly = 1) { resourceService.update(updateResourceCommand) }
@@ -195,11 +195,11 @@ internal class ComparisonRelatedResourceUpdaterUnitTest : MockkBaseTest {
     fun `Given a comparison related resource update command, when image has changed, it updates the image`() {
         val comparisonRelatedResource = createComparisonRelatedResource()
         val command = comparisonRelatedResource.toComparisonRelatedResourceUpdateCommand().copy(
-            image = "https://orkg.org/path/to/new/image.png"
+            image = "https://orkg.org/path/to/new/image.png",
         )
         val statements = listOf(
             createStatement(StatementId("S123")),
-            createStatement(StatementId("S456"))
+            createStatement(StatementId("S456")),
         )
         val comparison = createResource(classes = setOf(Classes.comparison))
 
@@ -207,13 +207,13 @@ internal class ComparisonRelatedResourceUpdaterUnitTest : MockkBaseTest {
         every {
             comparisonRelatedResourceUseCases.findByIdAndComparisonId(
                 comparisonId = command.comparisonId,
-                id = command.comparisonRelatedResourceId
+                id = command.comparisonRelatedResourceId,
             )
         } returns Optional.of(comparisonRelatedResource)
         every {
             statementService.findAll(
                 subjectId = command.comparisonRelatedResourceId,
-                pageable = PageRequests.ALL
+                pageable = PageRequests.ALL,
             )
         } returns pageOf(statements)
         every {
@@ -222,7 +222,7 @@ internal class ComparisonRelatedResourceUpdaterUnitTest : MockkBaseTest {
                 contributorId = command.contributorId,
                 subjectId = command.comparisonRelatedResourceId,
                 predicateId = Predicates.hasImage,
-                label = command.image
+                label = command.image,
             )
         } just runs
 
@@ -232,13 +232,13 @@ internal class ComparisonRelatedResourceUpdaterUnitTest : MockkBaseTest {
         verify(exactly = 1) {
             comparisonRelatedResourceUseCases.findByIdAndComparisonId(
                 comparisonId = command.comparisonId,
-                id = command.comparisonRelatedResourceId
+                id = command.comparisonRelatedResourceId,
             )
         }
         verify(exactly = 1) {
             statementService.findAll(
                 subjectId = command.comparisonRelatedResourceId,
-                pageable = PageRequests.ALL
+                pageable = PageRequests.ALL,
             )
         }
         verify(exactly = 1) {
@@ -247,7 +247,7 @@ internal class ComparisonRelatedResourceUpdaterUnitTest : MockkBaseTest {
                 contributorId = command.contributorId,
                 subjectId = command.comparisonRelatedResourceId,
                 predicateId = Predicates.hasImage,
-                label = command.image
+                label = command.image,
             )
         }
     }
@@ -256,11 +256,11 @@ internal class ComparisonRelatedResourceUpdaterUnitTest : MockkBaseTest {
     fun `Given a comparison related resource update command, when url has changed, it updates the url`() {
         val comparisonRelatedResource = createComparisonRelatedResource()
         val command = comparisonRelatedResource.toComparisonRelatedResourceUpdateCommand().copy(
-            url = "https://orkg.org/path/to/new/url"
+            url = "https://orkg.org/path/to/new/url",
         )
         val statements = listOf(
             createStatement(StatementId("S123")),
-            createStatement(StatementId("S456"))
+            createStatement(StatementId("S456")),
         )
         val comparison = createResource(classes = setOf(Classes.comparison))
 
@@ -268,13 +268,13 @@ internal class ComparisonRelatedResourceUpdaterUnitTest : MockkBaseTest {
         every {
             comparisonRelatedResourceUseCases.findByIdAndComparisonId(
                 comparisonId = command.comparisonId,
-                id = command.comparisonRelatedResourceId
+                id = command.comparisonRelatedResourceId,
             )
         } returns Optional.of(comparisonRelatedResource)
         every {
             statementService.findAll(
                 subjectId = command.comparisonRelatedResourceId,
-                pageable = PageRequests.ALL
+                pageable = PageRequests.ALL,
             )
         } returns pageOf(statements)
         every {
@@ -283,7 +283,7 @@ internal class ComparisonRelatedResourceUpdaterUnitTest : MockkBaseTest {
                 contributorId = command.contributorId,
                 subjectId = command.comparisonRelatedResourceId,
                 predicateId = Predicates.hasURL,
-                label = command.url
+                label = command.url,
             )
         } just runs
 
@@ -293,13 +293,13 @@ internal class ComparisonRelatedResourceUpdaterUnitTest : MockkBaseTest {
         verify(exactly = 1) {
             comparisonRelatedResourceUseCases.findByIdAndComparisonId(
                 comparisonId = command.comparisonId,
-                id = command.comparisonRelatedResourceId
+                id = command.comparisonRelatedResourceId,
             )
         }
         verify(exactly = 1) {
             statementService.findAll(
                 subjectId = command.comparisonRelatedResourceId,
-                pageable = PageRequests.ALL
+                pageable = PageRequests.ALL,
             )
         }
         verify(exactly = 1) {
@@ -308,7 +308,7 @@ internal class ComparisonRelatedResourceUpdaterUnitTest : MockkBaseTest {
                 contributorId = command.contributorId,
                 subjectId = command.comparisonRelatedResourceId,
                 predicateId = Predicates.hasURL,
-                label = command.url
+                label = command.url,
             )
         }
     }
@@ -317,11 +317,11 @@ internal class ComparisonRelatedResourceUpdaterUnitTest : MockkBaseTest {
     fun `Given a comparison related resource update command, when description has changed, it updates the description`() {
         val comparisonRelatedResource = createComparisonRelatedResource()
         val command = comparisonRelatedResource.toComparisonRelatedResourceUpdateCommand().copy(
-            description = "updated description"
+            description = "updated description",
         )
         val statements = listOf(
             createStatement(StatementId("S123")),
-            createStatement(StatementId("S456"))
+            createStatement(StatementId("S456")),
         )
         val comparison = createResource(classes = setOf(Classes.comparison))
 
@@ -329,13 +329,13 @@ internal class ComparisonRelatedResourceUpdaterUnitTest : MockkBaseTest {
         every {
             comparisonRelatedResourceUseCases.findByIdAndComparisonId(
                 comparisonId = command.comparisonId,
-                id = command.comparisonRelatedResourceId
+                id = command.comparisonRelatedResourceId,
             )
         } returns Optional.of(comparisonRelatedResource)
         every {
             statementService.findAll(
                 subjectId = command.comparisonRelatedResourceId,
-                pageable = PageRequests.ALL
+                pageable = PageRequests.ALL,
             )
         } returns pageOf(statements)
         every {
@@ -344,7 +344,7 @@ internal class ComparisonRelatedResourceUpdaterUnitTest : MockkBaseTest {
                 contributorId = command.contributorId,
                 subjectId = command.comparisonRelatedResourceId,
                 predicateId = Predicates.description,
-                label = command.description
+                label = command.description,
             )
         } just runs
 
@@ -354,13 +354,13 @@ internal class ComparisonRelatedResourceUpdaterUnitTest : MockkBaseTest {
         verify(exactly = 1) {
             comparisonRelatedResourceUseCases.findByIdAndComparisonId(
                 comparisonId = command.comparisonId,
-                id = command.comparisonRelatedResourceId
+                id = command.comparisonRelatedResourceId,
             )
         }
         verify(exactly = 1) {
             statementService.findAll(
                 subjectId = command.comparisonRelatedResourceId,
-                pageable = PageRequests.ALL
+                pageable = PageRequests.ALL,
             )
         }
         verify(exactly = 1) {
@@ -369,7 +369,7 @@ internal class ComparisonRelatedResourceUpdaterUnitTest : MockkBaseTest {
                 contributorId = command.contributorId,
                 subjectId = command.comparisonRelatedResourceId,
                 predicateId = Predicates.description,
-                label = command.description
+                label = command.description,
             )
         }
     }
@@ -382,6 +382,6 @@ internal class ComparisonRelatedResourceUpdaterUnitTest : MockkBaseTest {
             label = label,
             image = image,
             url = url,
-            description = description
+            description = description,
         )
 }

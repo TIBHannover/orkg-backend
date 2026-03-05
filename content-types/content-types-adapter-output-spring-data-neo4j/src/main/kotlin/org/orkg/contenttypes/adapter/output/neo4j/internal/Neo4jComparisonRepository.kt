@@ -16,7 +16,7 @@ interface Neo4jComparisonRepository : Neo4jRepository<Neo4jResource, ThingId> {
         """
 MATCH (h:Comparison)-[:RELATED {predicate_id: "hasPublishedVersion"}]->(:ComparisonPublished {id: $ID})
 MATCH (h)-[:RELATED {predicate_id: "hasPublishedVersion"}]->(p:ComparisonPublished)
-RETURN h AS head, COLLECT(p) AS published"""
+RETURN h AS head, COLLECT(p) AS published""",
     )
     fun findVersionHistoryForPublishedComparison(id: ThingId): Neo4jVersionInfo
 
@@ -44,7 +44,7 @@ CALL () {
     RETURN node
 }
 WITH node
-RETURN COUNT(node)"""
+RETURN COUNT(node)""",
     )
     fun findAllCurrentListedAndUnpublishedComparisons(pageable: Pageable): Page<Neo4jResource>
 }

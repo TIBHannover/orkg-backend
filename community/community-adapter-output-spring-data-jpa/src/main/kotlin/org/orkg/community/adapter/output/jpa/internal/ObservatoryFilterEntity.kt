@@ -58,5 +58,5 @@ fun ObservatoryFilterEntity.toObservatoryFilter() =
         path = path!!.split(",").map(::ThingId),
         range = ThingId(range!!),
         exact = exact!!,
-        featured = featured!!
+        featured = featured!!,
     )

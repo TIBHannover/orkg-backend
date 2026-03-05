@@ -43,7 +43,7 @@ class ValidatePaperCSVJobResultRepresentationFormatter :
             doi = doi,
             researchFieldId = researchFieldId,
             extractionMethod = extractionMethod,
-            statements = statements.mapToContributionStatementRepresentation()
+            statements = statements.mapToContributionStatementRepresentation(),
         )
 
     override fun jobNames(): Set<String> = setOf(JobNames.VALIDATE_PAPER_CSV)

@@ -56,7 +56,7 @@ class ObservatoryService(
             researchField = command.researchField,
             organizationIds = command.organizations,
             displayId = command.displayId,
-            sustainableDevelopmentGoals = command.sustainableDevelopmentGoals
+            sustainableDevelopmentGoals = command.sustainableDevelopmentGoals,
         )
         postgresObservatoryRepository.save(observatory)
         return id
@@ -90,7 +90,7 @@ class ObservatoryService(
             organizationIds = command.organizations ?: observatory.organizationIds,
             description = command.description ?: observatory.description,
             researchField = command.researchField ?: observatory.researchField,
-            sustainableDevelopmentGoals = command.sustainableDevelopmentGoals ?: observatory.sustainableDevelopmentGoals
+            sustainableDevelopmentGoals = command.sustainableDevelopmentGoals ?: observatory.sustainableDevelopmentGoals,
         )
         if (updated != observatory) {
             postgresObservatoryRepository.save(updated)

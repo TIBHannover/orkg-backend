@@ -52,7 +52,7 @@ class ExportComparisonService(
                         name = author.name,
                         nameIdentifiers = author.identifiers?.get("orcid")
                             .orEmpty()
-                            .map(NameIdentifier::fromORCID)
+                            .map(NameIdentifier::fromORCID),
                     )
                 },
                 titles = listOf(Title(title)),
@@ -63,8 +63,8 @@ class ExportComparisonService(
                     .map { RelatedIdentifier.fromDOI(it) },
                 rightsList = listOf(Rights.CC_BY_SA_4_0),
                 descriptions = description?.let { listOf(Description(it)) }.orEmpty(),
-                url = URI.create("$comparisonPublishBaseUri/").resolve(id.value)
-            )
+                url = URI.create("$comparisonPublishBaseUri/").resolve(id.value),
+            ),
         )
 
     private fun <T : Any> ((Pageable) -> Page<T>).forEachChunked(chunkSize: Int = 100, action: (T) -> Unit) {

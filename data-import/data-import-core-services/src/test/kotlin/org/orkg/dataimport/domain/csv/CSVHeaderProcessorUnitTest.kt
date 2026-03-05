@@ -44,8 +44,8 @@ internal class CSVHeaderProcessorUnitTest : MockkBaseTest {
                 namespace = "orkg",
                 column = 1,
                 name = predicateId.value,
-                columnType = null
-            )
+                columnType = null,
+            ),
         )
         val jobParameters = JobParametersBuilder().add(CSV_TYPE_FIELD, CSV.Type.PAPER).toJobParameters()
         val jobExecution = createJobExecution(jobParameters = jobParameters).apply {
@@ -74,8 +74,8 @@ internal class CSVHeaderProcessorUnitTest : MockkBaseTest {
                 namespace = "orkg",
                 column = 1,
                 name = predicateId.value,
-                columnType = null
-            )
+                columnType = null,
+            ),
         )
         val jobParameters = JobParametersBuilder().add(CSV_TYPE_FIELD, CSV.Type.PAPER).toJobParameters()
         val jobExecution = createJobExecution(jobParameters = jobParameters).apply {
@@ -99,8 +99,8 @@ internal class CSVHeaderProcessorUnitTest : MockkBaseTest {
                 namespace = "paper",
                 column = 1,
                 name = "title",
-                columnType = null
-            )
+                columnType = null,
+            ),
         )
         val jobParameters = JobParametersBuilder().add(CSV_TYPE_FIELD, CSV.Type.PAPER).toJobParameters()
         val jobExecution = createJobExecution(jobParameters = jobParameters).apply {
@@ -125,8 +125,8 @@ internal class CSVHeaderProcessorUnitTest : MockkBaseTest {
                 namespace = "some-open-namespace",
                 column = 1,
                 name = label,
-                columnType = null
-            )
+                columnType = null,
+            ),
         )
         val jobParameters = JobParametersBuilder().add(CSV_TYPE_FIELD, CSV.Type.PAPER).toJobParameters()
         val jobExecution = createJobExecution(jobParameters = jobParameters).apply {
@@ -150,7 +150,7 @@ internal class CSVHeaderProcessorUnitTest : MockkBaseTest {
                     it.shouldBeInstanceOf<ExactSearchString>()
                     it.input shouldBe label
                 },
-                pageable = PageRequests.SINGLE
+                pageable = PageRequests.SINGLE,
             )
         }
     }
@@ -164,8 +164,8 @@ internal class CSVHeaderProcessorUnitTest : MockkBaseTest {
                 namespace = "some-open-namespace",
                 column = 1,
                 name = label,
-                columnType = null
-            )
+                columnType = null,
+            ),
         )
         val jobParameters = JobParametersBuilder().add(CSV_TYPE_FIELD, CSV.Type.PAPER).toJobParameters()
         val jobExecution = createJobExecution(jobParameters = jobParameters).apply {
@@ -188,7 +188,7 @@ internal class CSVHeaderProcessorUnitTest : MockkBaseTest {
                     it.shouldBeInstanceOf<ExactSearchString>()
                     it.input shouldBe label
                 },
-                pageable = PageRequests.SINGLE
+                pageable = PageRequests.SINGLE,
             )
         }
     }

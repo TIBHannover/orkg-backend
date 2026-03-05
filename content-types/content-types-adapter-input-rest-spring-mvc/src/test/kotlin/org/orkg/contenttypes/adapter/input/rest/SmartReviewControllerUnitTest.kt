@@ -141,7 +141,7 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
                 description(
                     """
                     A `GET` request provides information about a smart review.
-                    """
+                    """,
                 )
                 pathParameters(
                     parameterWithName("id").description("The identifier of the smart review to retrieve."),
@@ -219,7 +219,7 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
                     """
                     A `GET` request returns a <<sorting-and-pagination,paged>> list of <<smart-reviews-fetch,smart reviews>>.
                     If no paging request parameters are provided, the default values will be used.
-                    """
+                    """,
                 )
                 pagedQueryParameters(
                     parameterWithName("title").description("A search term that must be contained in the title of the smart review. (optional)").optional(),
@@ -254,7 +254,7 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
                 researchField = researchFieldId,
                 includeSubfields = includeSubfields,
                 published = published,
-                sustainableDevelopmentGoal = sdg
+                sustainableDevelopmentGoal = sdg,
             )
         }
     }
@@ -299,7 +299,7 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
                     A `POST` request creates a new smart review with all the given parameters.
                     The response will be `201 Created` when successful.
                     The smart review (object) can be retrieved by following the URI in the `Location` header field.
-                    """
+                    """,
                 )
                 responseHeaders(
                     headerWithName("Location").description("The uri path where the updated smart review can be fetched from."),
@@ -364,7 +364,7 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
                     A `POST` request creates a new comparison section and adds it to the specified smart review.
                     The response will be `201 Created` when successful.
                     The updated smart review (object) can be retrieved by following the URI in the `Location` header field.
-                    """
+                    """,
                 )
                 pathParameters(
                     parameterWithName("id").description("The id of the smart review to which the new section should be appended to."),
@@ -389,7 +389,7 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
                 withArg<CreateSmartReviewSectionUseCase.CreateComparisonSectionCommand> {
                     it.shouldBeInstanceOf<CreateSmartReviewSectionUseCase.CreateComparisonSectionCommand>()
                     it.index shouldBe null
-                }
+                },
             )
         }
     }
@@ -419,7 +419,7 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
                     A `POST` request creates a new comparison section and adds it to the specified smart review.
                     The response will be `201 Created` when successful.
                     The updated smart review (object) can be retrieved by following the URI in the `Location` header field.
-                    """
+                    """,
                 )
                 pathParameters(
                     parameterWithName("id").description("The id of the smart review to which the new section should be appended to."),
@@ -445,7 +445,7 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
                 withArg<CreateSmartReviewSectionUseCase.CreateComparisonSectionCommand> {
                     it.shouldBeInstanceOf<CreateSmartReviewSectionUseCase.CreateComparisonSectionCommand>()
                     it.index shouldBe index
-                }
+                },
             )
         }
     }
@@ -474,7 +474,7 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
                     A `POST` request creates a new visualization section and adds it to the specified smart review.
                     The response will be `201 Created` when successful.
                     The updated smart review (object) can be retrieved by following the URI in the `Location` header field.
-                    """
+                    """,
                 )
                 pathParameters(
                     parameterWithName("id").description("The id of the smart review to which the new section should be appended to."),
@@ -499,7 +499,7 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
                 withArg<CreateSmartReviewSectionUseCase.CreateVisualizationSectionCommand> {
                     it.shouldBeInstanceOf<CreateSmartReviewSectionUseCase.CreateVisualizationSectionCommand>()
                     it.index shouldBe null
-                }
+                },
             )
         }
     }
@@ -529,7 +529,7 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
                     A `POST` request creates a new visualization section and adds it to the specified smart review.
                     The response will be `201 Created` when successful.
                     The updated smart review (object) can be retrieved by following the URI in the `Location` header field.
-                    """
+                    """,
                 )
                 pathParameters(
                     parameterWithName("id").description("The id of the smart review to which the new section should be appended to."),
@@ -555,7 +555,7 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
                 withArg<CreateSmartReviewSectionUseCase.CreateVisualizationSectionCommand> {
                     it.shouldBeInstanceOf<CreateSmartReviewSectionUseCase.CreateVisualizationSectionCommand>()
                     it.index shouldBe index
-                }
+                },
             )
         }
     }
@@ -584,7 +584,7 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
                     A `POST` request creates a new resource section and adds it to the specified smart review.
                     The response will be `201 Created` when successful.
                     The updated smart review (object) can be retrieved by following the URI in the `Location` header field.
-                    """
+                    """,
                 )
                 pathParameters(
                     parameterWithName("id").description("The id of the smart review to which the new section should be appended to."),
@@ -609,7 +609,7 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
                 withArg<CreateSmartReviewSectionUseCase.CreateResourceSectionCommand> {
                     it.shouldBeInstanceOf<CreateSmartReviewSectionUseCase.CreateResourceSectionCommand>()
                     it.index shouldBe null
-                }
+                },
             )
         }
     }
@@ -639,7 +639,7 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
                     A `POST` request creates a new resource section and adds it to the specified smart review.
                     The response will be `201 Created` when successful.
                     The updated smart review (object) can be retrieved by following the URI in the `Location` header field.
-                    """
+                    """,
                 )
                 pathParameters(
                     parameterWithName("id").description("The id of the smart review to which the new section should be appended to."),
@@ -665,7 +665,7 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
                 withArg<CreateSmartReviewSectionUseCase.CreateResourceSectionCommand> {
                     it.shouldBeInstanceOf<CreateSmartReviewSectionUseCase.CreateResourceSectionCommand>()
                     it.index shouldBe index
-                }
+                },
             )
         }
     }
@@ -694,7 +694,7 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
                     A `POST` request creates a new predicate section and adds it to the specified smart review.
                     The response will be `201 Created` when successful.
                     The updated smart review (object) can be retrieved by following the URI in the `Location` header field.
-                    """
+                    """,
                 )
                 pathParameters(
                     parameterWithName("id").description("The id of the smart review to which the new section should be appended to."),
@@ -719,7 +719,7 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
                 withArg<CreateSmartReviewSectionUseCase.CreatePredicateSectionCommand> {
                     it.shouldBeInstanceOf<CreateSmartReviewSectionUseCase.CreatePredicateSectionCommand>()
                     it.index shouldBe null
-                }
+                },
             )
         }
     }
@@ -749,7 +749,7 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
                     A `POST` request creates a new predicate section and adds it to the specified smart review.
                     The response will be `201 Created` when successful.
                     The updated smart review (object) can be retrieved by following the URI in the `Location` header field.
-                    """
+                    """,
                 )
                 pathParameters(
                     parameterWithName("id").description("The id of the smart review to which the new section should be appended to."),
@@ -775,7 +775,7 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
                 withArg<CreateSmartReviewSectionUseCase.CreatePredicateSectionCommand> {
                     it.shouldBeInstanceOf<CreateSmartReviewSectionUseCase.CreatePredicateSectionCommand>()
                     it.index shouldBe index
-                }
+                },
             )
         }
     }
@@ -804,7 +804,7 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
                     A `POST` request creates a new ontology section and adds it to the specified smart review.
                     The response will be `201 Created` when successful.
                     The updated smart review (object) can be retrieved by following the URI in the `Location` header field.
-                    """
+                    """,
                 )
                 pathParameters(
                     parameterWithName("id").description("The id of the smart review to which the new section should be appended to."),
@@ -831,7 +831,7 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
                 withArg<CreateSmartReviewSectionUseCase.CreateOntologySectionCommand> {
                     it.shouldBeInstanceOf<CreateSmartReviewSectionUseCase.CreateOntologySectionCommand>()
                     it.index shouldBe null
-                }
+                },
             )
         }
     }
@@ -861,7 +861,7 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
                     A `POST` request creates a new ontology section and adds it to the specified smart review.
                     The response will be `201 Created` when successful.
                     The updated smart review (object) can be retrieved by following the URI in the `Location` header field.
-                    """
+                    """,
                 )
                 pathParameters(
                     parameterWithName("id").description("The id of the smart review to which the new section should be appended to."),
@@ -873,7 +873,7 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
                 requestFields<SmartReviewOntologySectionRequest>(
                     fieldWithPath("heading").description("The heading of the ontology section."),
                     fieldWithPath("entities[]").description("The id of the entities that should be shown in the ontology section."),
-                    fieldWithPath("predicates[]").description("The ids of the predicates that should be shown in the ontology section.")
+                    fieldWithPath("predicates[]").description("The ids of the predicates that should be shown in the ontology section."),
                 )
                 throws(
                     SmartReviewNotFound::class,
@@ -889,7 +889,7 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
                 withArg<CreateSmartReviewSectionUseCase.CreateOntologySectionCommand> {
                     it.shouldBeInstanceOf<CreateSmartReviewSectionUseCase.CreateOntologySectionCommand>()
                     it.index shouldBe index
-                }
+                },
             )
         }
     }
@@ -918,7 +918,7 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
                     A `POST` request creates a new text section and adds it to the specified smart review.
                     The response will be `201 Created` when successful.
                     The updated smart review (object) can be retrieved by following the URI in the `Location` header field.
-                    """
+                    """,
                 )
                 pathParameters(
                     parameterWithName("id").description("The id of the smart review to which the new section should be appended to."),
@@ -945,7 +945,7 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
                 withArg<CreateSmartReviewSectionUseCase.CreateTextSectionCommand> {
                     it.shouldBeInstanceOf<CreateSmartReviewSectionUseCase.CreateTextSectionCommand>()
                     it.index shouldBe null
-                }
+                },
             )
         }
     }
@@ -975,7 +975,7 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
                     A `POST` request creates a new text section and adds it to the specified smart review.
                     The response will be `201 Created` when successful.
                     The updated smart review (object) can be retrieved by following the URI in the `Location` header field.
-                    """
+                    """,
                 )
                 pathParameters(
                     parameterWithName("id").description("The id of the smart review to which the new section should be appended to."),
@@ -1003,7 +1003,7 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
                 withArg<CreateSmartReviewSectionUseCase.CreateTextSectionCommand> {
                     it.shouldBeInstanceOf<CreateSmartReviewSectionUseCase.CreateTextSectionCommand>()
                     it.index shouldBe index
-                }
+                },
             )
         }
     }
@@ -1037,7 +1037,7 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
                     ====
                     
                     WARNING: Author names will not be updated if a resource id is specified for a given author.
-                    """
+                    """,
                 )
                 pathParameters(
                     parameterWithName("id").description("The identifier of the smart review."),
@@ -1110,7 +1110,7 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
                     A `PUT` request updates an existing comparison section with all the given parameters.
                     The response will be `204 No Content` when successful.
                     The updated smart review (object) can be retrieved by following the URI in the `Location` header field.
-                    """
+                    """,
                 )
                 pathParameters(
                     parameterWithName("id").description("The id of the smart review to which the new section should be appended to."),
@@ -1162,7 +1162,7 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
                     A `PUT` request updates an existing visualization section with all the given parameters.
                     The response will be `204 No Content` when successful.
                     The updated smart review (object) can be retrieved by following the URI in the `Location` header field.
-                    """
+                    """,
                 )
                 pathParameters(
                     parameterWithName("id").description("The id of the smart review to which the new section should be appended to."),
@@ -1214,7 +1214,7 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
                     A `PUT` request updates an existing resource section with all the given parameters.
                     The response will be `204 No Content` when successful.
                     The updated smart review (object) can be retrieved by following the URI in the `Location` header field.
-                    """
+                    """,
                 )
                 pathParameters(
                     parameterWithName("id").description("The id of the smart review to which the new section should be appended to."),
@@ -1225,7 +1225,7 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
                 )
                 requestFields<SmartReviewResourceSectionRequest>(
                     fieldWithPath("heading").description("The heading of the resource section."),
-                    fieldWithPath("resource").description("The id of the linked resource. (optional)").optional()
+                    fieldWithPath("resource").description("The id of the linked resource. (optional)").optional(),
                 )
                 throws(
                     SmartReviewNotModifiable::class,
@@ -1266,7 +1266,7 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
                     A `PUT` request updates an existing predicate section with all the given parameters.
                     The response will be `204 No Content` when successful.
                     The updated smart review (object) can be retrieved by following the URI in the `Location` header field.
-                    """
+                    """,
                 )
                 pathParameters(
                     parameterWithName("id").description("The id of the smart review to which the new section should be appended to."),
@@ -1277,7 +1277,7 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
                 )
                 requestFields<SmartReviewPredicateSectionRequest>(
                     fieldWithPath("heading").description("The heading of the predicate section."),
-                    fieldWithPath("predicate").description("The id of the linked predicate. (optional)").optional()
+                    fieldWithPath("predicate").description("The id of the linked predicate. (optional)").optional(),
                 )
                 throws(
                     SmartReviewNotModifiable::class,
@@ -1318,7 +1318,7 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
                     A `PUT` request updates an existing ontology section with all the given parameters.
                     The response will be `204 No Content` when successful.
                     The updated smart review (object) can be retrieved by following the URI in the `Location` header field.
-                    """
+                    """,
                 )
                 pathParameters(
                     parameterWithName("id").description("The id of the smart review to which the new section should be appended to."),
@@ -1372,7 +1372,7 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
                     A `PUT` request updates an existing text section with all the given parameters.
                     The response will be `204 No Content` when successful.
                     The updated smart review (object) can be retrieved by following the URI in the `Location` header field.
-                    """
+                    """,
                 )
                 pathParameters(
                     parameterWithName("id").description("The id of the smart review to which the new section should be appended to."),
@@ -1411,7 +1411,7 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
         val command = DeleteSmartReviewSectionUseCase.DeleteCommand(
             id,
             sectionId,
-            ContributorId(MockUserId.USER)
+            ContributorId(MockUserId.USER),
         )
         every { smartReviewService.delete(command) } just runs
 
@@ -1427,7 +1427,7 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
                     A `DELETE` request deletes a smart review section by ID.
                     The response will be `204 No Content` when successful.
                     The updated smart review (object) can be retrieved by following the URI in the `Location` header field.
-                    """
+                    """,
                 )
                 pathParameters(
                     parameterWithName("id").description("The id of the smart review the section belongs to."),
@@ -1461,11 +1461,11 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
                 description(
                     """
                     A `GET` request returns contents of an already published smart review, at the state of publishing.
-                    """
+                    """,
                 )
                 pathParameters(
                     parameterWithName("id").description("The id of the published smart review."),
-                    parameterWithName("contentId").description("The id of the resource to fetch.")
+                    parameterWithName("contentId").description("The id of the resource to fetch."),
                 )
                 responseFields<StatementListRepresentation>(statementListResponseFields())
                 throws(SmartReviewNotFound::class, PublishedSmartReviewContentNotFound::class)
@@ -1493,11 +1493,11 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
                 description(
                     """
                     A `GET` request returns contents of an already published smart review, at the state of publishing.
-                    """
+                    """,
                 )
                 pathParameters(
                     parameterWithName("id").description("The id of the published smart review."),
-                    parameterWithName("contentId").description("The id of the resource to fetch.")
+                    parameterWithName("contentId").description("The id of the resource to fetch."),
                 )
                 responseFields<ComparisonRepresentation>(comparisonResponseFields())
                 throws(SmartReviewNotFound::class, PublishedSmartReviewContentNotFound::class)
@@ -1523,11 +1523,11 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
                 description(
                     """
                     A `GET` request returns contents of an already published smart review, at the state of publishing.
-                    """
+                    """,
                 )
                 pathParameters(
                     parameterWithName("id").description("The id of the published smart review."),
-                    parameterWithName("contentId").description("The id of the resource to fetch.")
+                    parameterWithName("contentId").description("The id of the resource to fetch."),
                 )
                 responseFields<VisualizationRepresentation>(visualizationResponseFields())
                 throws(SmartReviewNotFound::class, PublishedSmartReviewContentNotFound::class)
@@ -1547,7 +1547,7 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
         val request = mapOf(
             "changelog" to changelog,
             "assign_doi" to assignDOI,
-            "description" to description
+            "description" to description,
         )
         val smartReviewVersionId = ThingId("R456")
 
@@ -1570,10 +1570,10 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
                     Optionally, a DOI can be assigned to the published smart review resource.
                     The response will be `201 Created` when successful.
                     The published smart review (object) can be retrieved by following the URI in the `Location` header field.
-                    """
+                    """,
                 )
                 pathParameters(
-                    parameterWithName("id").description("The identifier of the smart review to publish.")
+                    parameterWithName("id").description("The identifier of the smart review to publish."),
                 )
                 responseHeaders(
                     headerWithName("Location").description("The uri path where the published smart review can be fetched from."),
@@ -1602,7 +1602,7 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
                     it.changelog shouldBe changelog
                     it.assignDOI shouldBe assignDOI
                     it.description shouldBe description
-                }
+                },
             )
         }
     }
@@ -1616,42 +1616,42 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
                     id = ThingId("R123"),
                     name = "Author with id",
                     identifiers = null,
-                    homepage = null
+                    homepage = null,
                 ),
                 AuthorRequest(
                     id = null,
                     name = "Author with orcid",
                     identifiers = IdentifierMapRequest(mapOf("orcid" to listOf("0000-1111-2222-3333"))),
-                    homepage = null
+                    homepage = null,
                 ),
                 AuthorRequest(
                     id = ThingId("R456"),
                     name = "Author with id and orcid",
                     identifiers = IdentifierMapRequest(mapOf("orcid" to listOf("1111-2222-3333-4444"))),
-                    homepage = null
+                    homepage = null,
                 ),
                 AuthorRequest(
                     id = null,
                     name = "Author with homepage",
                     identifiers = null,
-                    homepage = ParsedIRI.create("https://example.org/author")
+                    homepage = ParsedIRI.create("https://example.org/author"),
                 ),
                 AuthorRequest(
                     id = null,
                     name = "Author that just has a name",
                     identifiers = null,
-                    homepage = null
-                )
+                    homepage = null,
+                ),
             ),
             sustainableDevelopmentGoals = setOf(
                 ThingId("SDG_3"),
-                ThingId("SDG_4")
+                ThingId("SDG_4"),
             ),
             observatories = listOf(
-                ObservatoryId("1afefdd0-5c09-4c9c-b718-2b35316b56f3")
+                ObservatoryId("1afefdd0-5c09-4c9c-b718-2b35316b56f3"),
             ),
             organizations = listOf(
-                OrganizationId("edc18168-c4ee-4cb8-a98a-136f748e912e")
+                OrganizationId("edc18168-c4ee-4cb8-a98a-136f748e912e"),
             ),
             extractionMethod = ExtractionMethod.MANUAL,
             sections = listOf(
@@ -1660,12 +1660,12 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
                 resourceSectionRequest(),
                 predicateSectionRequest(),
                 ontologySectionRequest(),
-                textSectionRequest()
+                textSectionRequest(),
             ),
             references = listOf(
                 "reference 1",
-                "reference 2"
-            )
+                "reference 2",
+            ),
         )
 
     private fun updateSmartReviewRequest() =
@@ -1677,42 +1677,42 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
                     id = ThingId("R123"),
                     name = "Author with id",
                     identifiers = null,
-                    homepage = null
+                    homepage = null,
                 ),
                 AuthorRequest(
                     id = null,
                     name = "Author with orcid",
                     identifiers = IdentifierMapRequest(mapOf("orcid" to listOf("0000-1111-2222-3333"))),
-                    homepage = null
+                    homepage = null,
                 ),
                 AuthorRequest(
                     id = ThingId("R456"),
                     name = "Author with id and orcid",
                     identifiers = IdentifierMapRequest(mapOf("orcid" to listOf("1111-2222-3333-4444"))),
-                    homepage = null
+                    homepage = null,
                 ),
                 AuthorRequest(
                     id = null,
                     name = "Author with homepage",
                     identifiers = null,
-                    homepage = ParsedIRI.create("https://example.org/author")
+                    homepage = ParsedIRI.create("https://example.org/author"),
                 ),
                 AuthorRequest(
                     id = null,
                     name = "Author that just has a name",
                     identifiers = null,
-                    homepage = null
-                )
+                    homepage = null,
+                ),
             ),
             sustainableDevelopmentGoals = setOf(
                 ThingId("SDG_3"),
-                ThingId("SDG_4")
+                ThingId("SDG_4"),
             ),
             observatories = listOf(
-                ObservatoryId("1afefdd0-5c09-4c9c-b718-2b35316b56f3")
+                ObservatoryId("1afefdd0-5c09-4c9c-b718-2b35316b56f3"),
             ),
             organizations = listOf(
-                OrganizationId("edc18168-c4ee-4cb8-a98a-136f748e912e")
+                OrganizationId("edc18168-c4ee-4cb8-a98a-136f748e912e"),
             ),
             extractionMethod = ExtractionMethod.MANUAL,
             sections = listOf(
@@ -1721,50 +1721,50 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
                 resourceSectionRequest(),
                 predicateSectionRequest(),
                 ontologySectionRequest(),
-                textSectionRequest()
+                textSectionRequest(),
             ),
             references = listOf(
                 "updated reference 1",
-                "updated reference 2"
+                "updated reference 2",
             ),
-            visibility = Visibility.FEATURED
+            visibility = Visibility.FEATURED,
         )
 
     private fun comparisonSectionRequest() =
         SmartReviewComparisonSectionRequest(
             heading = "comparison section heading",
-            comparison = ThingId("comparisonId")
+            comparison = ThingId("comparisonId"),
         )
 
     private fun visualizationSectionRequest() =
         SmartReviewVisualizationSectionRequest(
             heading = "visualization section heading",
-            visualization = ThingId("visualizationId")
+            visualization = ThingId("visualizationId"),
         )
 
     private fun resourceSectionRequest() =
         SmartReviewResourceSectionRequest(
             heading = "resource section heading",
-            resource = ThingId("resourceId")
+            resource = ThingId("resourceId"),
         )
 
     private fun predicateSectionRequest() =
         SmartReviewPredicateSectionRequest(
             heading = "predicate section heading",
-            predicate = ThingId("predicateId")
+            predicate = ThingId("predicateId"),
         )
 
     private fun ontologySectionRequest() =
         SmartReviewOntologySectionRequest(
             heading = "ontology section heading",
             entities = listOf(ThingId("resourceId")),
-            predicates = listOf(ThingId("predicateId"))
+            predicates = listOf(ThingId("predicateId")),
         )
 
     private fun textSectionRequest() =
         SmartReviewTextSectionRequest(
             heading = "text section heading",
             `class` = Classes.epilogue,
-            text = "epilogue"
+            text = "epilogue",
         )
 }

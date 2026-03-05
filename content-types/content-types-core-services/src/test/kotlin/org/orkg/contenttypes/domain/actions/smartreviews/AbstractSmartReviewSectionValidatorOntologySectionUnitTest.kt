@@ -79,7 +79,7 @@ internal class AbstractSmartReviewSectionValidatorOntologySectionUnitTest : Abst
     @Test
     fun `Given an ontology section command, when heading is invalid, it throws an exception`() {
         val section = smartReviewOntologySectionCommand().copy(
-            heading = "a".repeat(MAX_LABEL_LENGTH + 1)
+            heading = "a".repeat(MAX_LABEL_LENGTH + 1),
         )
         val validationCache = mutableSetOf<ThingId>()
 

@@ -22,7 +22,7 @@ internal class StatementNTripleSerializationTest {
         val statement = createStatement(
             subject = createResource(id = ThingId("R100"), label = "subject"),
             predicate = createPredicate(id = ThingId("P200")),
-            `object` = createResource(id = ThingId("R300"), label = "object")
+            `object` = createResource(id = ThingId("R300"), label = "object"),
         )
         assertThat(statement::toNTriple.asString()).isEqualTo(expectedOutput)
     }
@@ -36,7 +36,7 @@ internal class StatementNTripleSerializationTest {
         val statement = createStatement(
             subject = createResource(id = ThingId("R100"), label = "subject"),
             predicate = createPredicate(id = ThingId("P200")),
-            `object` = createLiteral(id = ThingId("L300"), label = "object")
+            `object` = createLiteral(id = ThingId("L300"), label = "object"),
         )
         assertThat(statement::toNTriple.asString()).isEqualTo(expectedOutput)
     }
@@ -50,7 +50,7 @@ internal class StatementNTripleSerializationTest {
         val statement = createStatement(
             subject = createResource(id = ThingId("R100"), label = "subject"),
             predicate = createPredicate(id = ThingId("P200")),
-            `object` = createLiteral(id = ThingId("L300"), label = "object", datatype = "xsd:integer")
+            `object` = createLiteral(id = ThingId("L300"), label = "object", datatype = "xsd:integer"),
         )
         assertThat(statement::toNTriple.asString()).isEqualTo(expectedOutput)
     }
@@ -67,8 +67,8 @@ internal class StatementNTripleSerializationTest {
             `object` = createLiteral(
                 id = ThingId("L300"),
                 label = "object",
-                datatype = "http://example.org/myDataType"
-            )
+                datatype = "http://example.org/myDataType",
+            ),
         )
         assertThat(statement::toNTriple.asString()).isEqualTo(expectedOutput)
     }
@@ -82,7 +82,7 @@ internal class StatementNTripleSerializationTest {
         val statement = createStatement(
             subject = createResource(id = ThingId("R100"), label = "subject", classes = setOf(Classes.list)),
             predicate = createPredicate(id = Predicates.hasListElement),
-            `object` = createLiteral(id = ThingId("L300"), label = "object")
+            `object` = createLiteral(id = ThingId("L300"), label = "object"),
         ).copy(index = 5)
         assertThat(statement::toNTriple.asString()).isEqualTo(expectedOutput)
     }
@@ -96,7 +96,7 @@ internal class StatementNTripleSerializationTest {
         val statement = createStatement(
             subject = createResource(id = ThingId("R100"), label = "subject"),
             predicate = createPredicate(id = Predicates.hasListElement),
-            `object` = createLiteral(id = ThingId("L300"), label = "object")
+            `object` = createLiteral(id = ThingId("L300"), label = "object"),
         )
         assertThat(statement::toNTriple.asString()).isEqualTo(expectedOutput)
     }

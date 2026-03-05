@@ -40,8 +40,8 @@ internal class ResourceServiceIntegrationTest {
             CreateResourceUseCase.CreateCommand(
                 id = ThingId("someID"),
                 contributorId = ContributorId(MockUserId.USER),
-                label = "Some Concept"
-            )
+                label = "Some Concept",
+            ),
         )
 
         assertThat(resource.value).isEqualTo("someID")
@@ -55,7 +55,7 @@ internal class ResourceServiceIntegrationTest {
 
         val result = service.findAll(
             label = SearchString.of(label, exactMatch = true),
-            pageable = PageRequest.of(0, 10)
+            pageable = PageRequest.of(0, 10),
         )
 
         assertThat(result).hasSize(1)
@@ -70,7 +70,7 @@ internal class ResourceServiceIntegrationTest {
 
         val result = service.findAll(
             label = SearchString.of("  $label\t ", exactMatch = true),
-            pageable = PageRequest.of(0, 10)
+            pageable = PageRequest.of(0, 10),
         )
 
         assertThat(result).hasSize(1)
@@ -85,7 +85,7 @@ internal class ResourceServiceIntegrationTest {
 
         val result = service.findAll(
             label = SearchString.of("label with", exactMatch = false),
-            pageable = PageRequest.of(0, 10)
+            pageable = PageRequest.of(0, 10),
         )
 
         assertThat(result).hasSize(1)
@@ -100,7 +100,7 @@ internal class ResourceServiceIntegrationTest {
 
         val result = service.findAll(
             label = SearchString.of("label \t  with", exactMatch = false),
-            pageable = PageRequest.of(0, 10)
+            pageable = PageRequest.of(0, 10),
         )
 
         assertThat(result).hasSize(1)
@@ -115,7 +115,7 @@ internal class ResourceServiceIntegrationTest {
 
         val result = service.findAll(
             label = SearchString.of("one two three four", exactMatch = false),
-            pageable = PageRequest.of(0, 10)
+            pageable = PageRequest.of(0, 10),
         )
 
         assertThat(result).hasSize(1)
@@ -144,7 +144,7 @@ internal class ResourceServiceIntegrationTest {
 
         val result = service.findAll(
             label = SearchString.of("not in the list", exactMatch = true),
-            pageable = pagination
+            pageable = pagination,
         )
 
         assertThat(result).isEmpty()
@@ -161,7 +161,7 @@ internal class ResourceServiceIntegrationTest {
 
         val result = service.findAll(
             label = SearchString.of("same", exactMatch = true),
-            pageable = pagination
+            pageable = pagination,
         )
 
         assertThat(result).hasSize(2)
@@ -185,7 +185,7 @@ internal class ResourceServiceIntegrationTest {
         val pagination = PageRequest.of(0, 10)
         val result = service.findAll(
             label = SearchString.of("part", exactMatch = false),
-            pageable = pagination
+            pageable = pagination,
         )
 
         assertThat(result).hasSize(3)
@@ -208,7 +208,7 @@ internal class ResourceServiceIntegrationTest {
         val res = service.createResource(label = "C\$razy LAb(el. he*r?")
         val found = service.findAll(
             label = SearchString.of("LAb(el.", exactMatch = false),
-            pageable = PageRequest.of(1, 10)
+            pageable = PageRequest.of(1, 10),
         )
         assertThat(found).isNotNull
         assertThat(found.map(Resource::id).contains(res))
@@ -224,7 +224,7 @@ internal class ResourceServiceIntegrationTest {
                     contributorId = ContributorId(MockUserId.USER),
                     label = "Testing the Darwin's naturalisation hypothesis in invasion biology",
                     classes = setOf(researchProblemClass),
-                )
+                ),
             ).let { service.findById(it).get() }
         }
         assertThat(service.findAll(PageRequest.of(0, 10_000)).totalElements).isEqualTo(5)
@@ -233,7 +233,7 @@ internal class ResourceServiceIntegrationTest {
         val found = service.findAll(
             includeClasses = setOf(researchProblemClass),
             label = SearchString.of("Testing the Darwin", exactMatch = false),
-            pageable = page
+            pageable = page,
         ).map(Resource::id)
 
         assertThat(found.totalElements).isEqualTo(5)

@@ -44,13 +44,13 @@ internal class LiteratureListVersionArchiverUnitTest : MockkBaseTest {
         val literatureListVersionId = ThingId("R321")
         val state = PublishLiteratureListState(
             literatureList = literatureList,
-            literatureListVersionId = literatureListVersionId
+            literatureListVersionId = literatureListVersionId,
         )
         val bundleConfiguration = BundleConfiguration(
             minLevel = null,
             maxLevel = 10,
             blacklist = listOf(Classes.researchField),
-            whitelist = emptyList()
+            whitelist = emptyList(),
         )
         val snapshotId = SnapshotId("ABC")
 
@@ -59,11 +59,11 @@ internal class LiteratureListVersionArchiverUnitTest : MockkBaseTest {
                 thingId = literatureList.id,
                 configuration = bundleConfiguration,
                 includeFirst = true,
-                sort = Sort.unsorted()
+                sort = Sort.unsorted(),
             )
         } returns Bundle(
             rootId = literatureList.id,
-            bundle = mutableListOf(createStatement())
+            bundle = mutableListOf(createStatement()),
         )
         every { snapshotIdGenerator.nextIdentity() } returns snapshotId
         every { literatureListSnapshotRepository.save(any()) } just runs
@@ -78,7 +78,7 @@ internal class LiteratureListVersionArchiverUnitTest : MockkBaseTest {
                 thingId = literatureList.id,
                 configuration = bundleConfiguration,
                 includeFirst = true,
-                sort = Sort.unsorted()
+                sort = Sort.unsorted(),
             )
         }
         verify(exactly = 1) { snapshotIdGenerator.nextIdentity() }
@@ -91,7 +91,7 @@ internal class LiteratureListVersionArchiverUnitTest : MockkBaseTest {
                     it.resourceId shouldBe state.literatureListVersionId!!
                     it.rootId shouldBe command.id
                     it.subgraph shouldBe listOf(createStatement())
-                }
+                },
             )
         }
     }

@@ -34,7 +34,7 @@ interface TemplatePropertyRepresentationAdapter : ThingReferenceRepresentationAd
                 maxCount,
                 path,
                 createdAt,
-                createdBy
+                createdBy,
             )
 
             is StringLiteralTemplateProperty -> StringLiteralTemplatePropertyRepresentation(
@@ -49,7 +49,7 @@ interface TemplatePropertyRepresentationAdapter : ThingReferenceRepresentationAd
                 path,
                 createdAt,
                 createdBy,
-                datatype.toClassReferenceRepresentation()
+                datatype.toClassReferenceRepresentation(),
             )
 
             is NumberLiteralTemplateProperty -> NumberLiteralTemplatePropertyRepresentation(
@@ -65,7 +65,7 @@ interface TemplatePropertyRepresentationAdapter : ThingReferenceRepresentationAd
                 path,
                 createdAt,
                 createdBy,
-                datatype.toClassReferenceRepresentation()
+                datatype.toClassReferenceRepresentation(),
             )
 
             is OtherLiteralTemplateProperty -> OtherLiteralTemplatePropertyRepresentation(
@@ -79,7 +79,7 @@ interface TemplatePropertyRepresentationAdapter : ThingReferenceRepresentationAd
                 path,
                 createdAt,
                 createdBy,
-                datatype.toClassReferenceRepresentation()
+                datatype.toClassReferenceRepresentation(),
             )
 
             is ResourceTemplateProperty -> ResourceTemplatePropertyRepresentation(
@@ -93,7 +93,7 @@ interface TemplatePropertyRepresentationAdapter : ThingReferenceRepresentationAd
                 path,
                 createdAt,
                 createdBy,
-                `class`
+                `class`,
             )
         }
 }

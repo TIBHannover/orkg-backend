@@ -21,7 +21,7 @@ internal class PaperTitleUpdateValidatorUnitTest : MockkBaseTest {
     private val resourceService: ResourceUseCases = mockk()
 
     private val paperTitleUpdateValidator = PaperTitleUpdateValidator(
-        resourceService = resourceService
+        resourceService = resourceService,
     )
 
     @Test
@@ -30,7 +30,7 @@ internal class PaperTitleUpdateValidatorUnitTest : MockkBaseTest {
         val state = UpdatePaperState(paper = createPaper())
 
         every { resourceService.findAllPapersByTitle(command.title) } returns listOf(
-            createResource(id = command.paperId, label = command.title!!)
+            createResource(id = command.paperId, label = command.title!!),
         )
 
         val result = paperTitleUpdateValidator(command, state)
@@ -51,7 +51,7 @@ internal class PaperTitleUpdateValidatorUnitTest : MockkBaseTest {
 
         every { resourceService.findAllPapersByTitle(command.title) } returns listOf(
             createResource(id = command.paperId, label = command.title!!),
-            createResource(id = ThingId("R12346"), label = command.title!!)
+            createResource(id = ThingId("R12346"), label = command.title!!),
         )
 
         assertThrows<PaperAlreadyExists> { paperTitleUpdateValidator(command, state) }.message shouldBe expected.message

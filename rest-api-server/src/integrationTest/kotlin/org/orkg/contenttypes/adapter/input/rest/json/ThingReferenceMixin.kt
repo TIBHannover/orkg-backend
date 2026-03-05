@@ -13,7 +13,7 @@ import org.orkg.contenttypes.domain.ResourceReference
         JsonSubTypes.Type(ResourceReference::class),
         JsonSubTypes.Type(LiteralReference::class),
         JsonSubTypes.Type(PredicateReference::class),
-        JsonSubTypes.Type(ClassReference::class)
-    ]
+        JsonSubTypes.Type(ClassReference::class),
+    ],
 )
 class ThingReferenceMixin

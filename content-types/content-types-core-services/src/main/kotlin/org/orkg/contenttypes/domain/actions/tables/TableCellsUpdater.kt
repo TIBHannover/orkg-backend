@@ -20,7 +20,7 @@ class TableCellsUpdater(
     ) : this(
         unsafeResourceUseCases,
         unsafeStatementUseCases,
-        AbstractTableCellCreator(unsafeResourceUseCases, unsafeStatementUseCases)
+        AbstractTableCellCreator(unsafeResourceUseCases, unsafeStatementUseCases),
     )
 
     override fun invoke(command: UpdateTableCommand, state: State): State {
@@ -59,8 +59,8 @@ class TableCellsUpdater(
                                 contributorId = command.contributorId,
                                 subjectId = cellGraph.cellId,
                                 predicateId = Predicates.csvwValue,
-                                objectId = state.resolve(value)!!
-                            )
+                                objectId = state.resolve(value)!!,
+                            ),
                         )
                     }
                 }

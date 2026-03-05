@@ -25,7 +25,7 @@ class AbstractSmartReviewSectionCreator(
     private val unsafeLiteralUseCases: UnsafeLiteralUseCases,
     private val statementCollectionPropertyCreator: StatementCollectionPropertyCreator = StatementCollectionPropertyCreator(
         unsafeLiteralUseCases,
-        unsafeStatementUseCases
+        unsafeStatementUseCases,
     ),
 ) {
     internal fun create(
@@ -49,8 +49,8 @@ class AbstractSmartReviewSectionCreator(
             CreateResourceUseCase.CreateCommand(
                 contributorId = contributorId,
                 label = section.heading,
-                classes = setOf(Classes.comparisonSection)
-            )
+                classes = setOf(Classes.comparisonSection),
+            ),
         )
         section.comparison?.also { comparisonId ->
             unsafeStatementUseCases.create(
@@ -58,8 +58,8 @@ class AbstractSmartReviewSectionCreator(
                     contributorId = contributorId,
                     subjectId = sectionId,
                     predicateId = Predicates.hasLink,
-                    objectId = comparisonId
-                )
+                    objectId = comparisonId,
+                ),
             )
         }
         return sectionId
@@ -73,8 +73,8 @@ class AbstractSmartReviewSectionCreator(
             CreateResourceUseCase.CreateCommand(
                 contributorId = contributorId,
                 label = section.heading,
-                classes = setOf(Classes.visualizationSection)
-            )
+                classes = setOf(Classes.visualizationSection),
+            ),
         )
         section.visualization?.also { visualizationId ->
             unsafeStatementUseCases.create(
@@ -82,8 +82,8 @@ class AbstractSmartReviewSectionCreator(
                     contributorId = contributorId,
                     subjectId = sectionId,
                     predicateId = Predicates.hasLink,
-                    objectId = visualizationId
-                )
+                    objectId = visualizationId,
+                ),
             )
         }
         return sectionId
@@ -97,8 +97,8 @@ class AbstractSmartReviewSectionCreator(
             CreateResourceUseCase.CreateCommand(
                 contributorId = contributorId,
                 label = section.heading,
-                classes = setOf(Classes.resourceSection)
-            )
+                classes = setOf(Classes.resourceSection),
+            ),
         )
         section.resource?.also { resourceId ->
             unsafeStatementUseCases.create(
@@ -106,8 +106,8 @@ class AbstractSmartReviewSectionCreator(
                     contributorId = contributorId,
                     subjectId = sectionId,
                     predicateId = Predicates.hasLink,
-                    objectId = resourceId
-                )
+                    objectId = resourceId,
+                ),
             )
         }
         return sectionId
@@ -121,8 +121,8 @@ class AbstractSmartReviewSectionCreator(
             CreateResourceUseCase.CreateCommand(
                 contributorId = contributorId,
                 label = section.heading,
-                classes = setOf(Classes.propertySection)
-            )
+                classes = setOf(Classes.propertySection),
+            ),
         )
         section.predicate?.also { predicateId ->
             unsafeStatementUseCases.create(
@@ -130,8 +130,8 @@ class AbstractSmartReviewSectionCreator(
                     contributorId = contributorId,
                     subjectId = sectionId,
                     predicateId = Predicates.hasLink,
-                    objectId = predicateId
-                )
+                    objectId = predicateId,
+                ),
             )
         }
         return sectionId
@@ -145,20 +145,20 @@ class AbstractSmartReviewSectionCreator(
             CreateResourceUseCase.CreateCommand(
                 contributorId = contributorId,
                 label = section.heading,
-                classes = setOf(Classes.ontologySection)
-            )
+                classes = setOf(Classes.ontologySection),
+            ),
         )
         statementCollectionPropertyCreator.create(
             contributorId = contributorId,
             subjectId = sectionId,
             predicateId = Predicates.hasEntity,
-            objects = section.entities
+            objects = section.entities,
         )
         statementCollectionPropertyCreator.create(
             contributorId = contributorId,
             subjectId = sectionId,
             predicateId = Predicates.showProperty,
-            objects = section.predicates
+            objects = section.predicates,
         )
         return sectionId
     }
@@ -171,22 +171,22 @@ class AbstractSmartReviewSectionCreator(
             CreateResourceUseCase.CreateCommand(
                 contributorId = contributorId,
                 label = section.heading,
-                classes = setOfNotNull(Classes.section, section.`class`)
-            )
+                classes = setOfNotNull(Classes.section, section.`class`),
+            ),
         )
         val textId = unsafeLiteralUseCases.create(
             CreateLiteralUseCase.CreateCommand(
                 contributorId = contributorId,
-                label = section.text
-            )
+                label = section.text,
+            ),
         )
         unsafeStatementUseCases.create(
             CreateStatementUseCase.CreateCommand(
                 contributorId = contributorId,
                 subjectId = sectionId,
                 predicateId = Predicates.hasContent,
-                objectId = textId
-            )
+                objectId = textId,
+            ),
         )
         return sectionId
     }

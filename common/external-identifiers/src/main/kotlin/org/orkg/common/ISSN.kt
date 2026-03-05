@@ -8,7 +8,7 @@ value class ISSN private constructor(override val value: String) : IdentifierVal
     companion object : IdentifierValueFactory<ISSN>(
         fn = ::ISSN,
         validationRegex = VALID_ISSN_REGEX,
-        uriValidationRegex = VALID_ISSN_URI_REGEX
+        uriValidationRegex = VALID_ISSN_URI_REGEX,
     )
 
     override val uri: String get() = "https://portal.issn.org/resource/ISSN/$value"

@@ -86,10 +86,10 @@ internal class ListControllerUnitTest : MockMvcBaseTest("lists") {
                 description(
                     """
                     A `GET` request provides information about a list.
-                    """
+                    """,
                 )
                 pathParameters(
-                    parameterWithName("id").description("The identifier of the list.")
+                    parameterWithName("id").description("The identifier of the list."),
                 )
                 responseFields<ListRepresentation>(
                     // The order here determines the order in the generated table. More relevant items should be up.
@@ -130,11 +130,11 @@ internal class ListControllerUnitTest : MockMvcBaseTest("lists") {
         val list = createList(
             id = id,
             label = "List label",
-            elements = listOf(ThingId("R1"))
+            elements = listOf(ThingId("R1")),
         )
         val request = mapOf(
             "label" to list.label,
-            "elements" to list.elements
+            "elements" to list.elements,
         )
 
         every { listService.create(any()) } returns id
@@ -151,14 +151,14 @@ internal class ListControllerUnitTest : MockMvcBaseTest("lists") {
                     A `POST` request creates a new list with all the given parameters.
                     The response will be `201 Created` when successful.
                     The list resource (object) can be retrieved by following the URI in the `Location` header field.
-                    """
+                    """,
                 )
                 responseHeaders(
-                    headerWithName("Location").description("The uri path where the newly created list can be fetched from.")
+                    headerWithName("Location").description("The uri path where the newly created list can be fetched from."),
                 )
                 requestFields<CreateListRequest>(
                     fieldWithPath("label").description("The label of the list."),
-                    fieldWithPath("elements[]").description("The ids of the elements of the list.")
+                    fieldWithPath("elements[]").description("The ids of the elements of the list."),
                 )
                 throws(InvalidLabel::class, ThingAlreadyExists::class, ListElementNotFound::class)
             }
@@ -172,7 +172,7 @@ internal class ListControllerUnitTest : MockMvcBaseTest("lists") {
         val id = ThingId("List1")
         val request = mapOf(
             "label" to "List label",
-            "elements" to listOf(ThingId("R1"))
+            "elements" to listOf(ThingId("R1")),
         )
         val exception = InvalidLabel()
 
@@ -194,7 +194,7 @@ internal class ListControllerUnitTest : MockMvcBaseTest("lists") {
         val id = ThingId("List1")
         val request = mapOf(
             "label" to "List label",
-            "elements" to listOf(ThingId("R1"))
+            "elements" to listOf(ThingId("R1")),
         )
         val exception = ListElementNotFound()
 
@@ -218,11 +218,11 @@ internal class ListControllerUnitTest : MockMvcBaseTest("lists") {
         val list = createList(
             id = id,
             label = "List label",
-            elements = listOf(ThingId("R1"))
+            elements = listOf(ThingId("R1")),
         )
         val request = mapOf(
             "label" to list.label,
-            "elements" to list.elements
+            "elements" to list.elements,
         )
 
         every { listService.update(any()) } just runs
@@ -238,17 +238,17 @@ internal class ListControllerUnitTest : MockMvcBaseTest("lists") {
                     """
                     A `PATCH` request updates a list with all the given parameters.
                     The response will be `204 No Content` when successful.
-                    """
+                    """,
                 )
                 pathParameters(
-                    parameterWithName("id").description("The identifier of the list.")
+                    parameterWithName("id").description("The identifier of the list."),
                 )
                 responseHeaders(
-                    headerWithName("Location").description("The uri path where the updated list can be fetched from.")
+                    headerWithName("Location").description("The uri path where the updated list can be fetched from."),
                 )
                 requestFields<UpdateListRequest>(
                     fieldWithPath("label").description("The new label of the list. (optional)").optional(),
-                    fieldWithPath("elements[]").description("The new ids of the elements of the list. (optional)").optional()
+                    fieldWithPath("elements[]").description("The new ids of the elements of the list. (optional)").optional(),
                 )
                 throws(ListNotFound::class, ListNotModifiable::class, InvalidLabel::class, ListElementNotFound::class)
             }
@@ -262,7 +262,7 @@ internal class ListControllerUnitTest : MockMvcBaseTest("lists") {
         val id = ThingId("List1")
         val request = mapOf(
             "label" to "List label",
-            "elements" to listOf(ThingId("R1"))
+            "elements" to listOf(ThingId("R1")),
         )
         val exception = InvalidLabel()
 
@@ -284,7 +284,7 @@ internal class ListControllerUnitTest : MockMvcBaseTest("lists") {
         val id = ThingId("List1")
         val request = mapOf(
             "label" to "List label",
-            "elements" to listOf(ThingId("R1"))
+            "elements" to listOf(ThingId("R1")),
         )
         val exception = ListElementNotFound()
 
@@ -308,7 +308,7 @@ internal class ListControllerUnitTest : MockMvcBaseTest("lists") {
             createResource(),
             createLiteral(),
             createClass(),
-            createPredicate()
+            createPredicate(),
         )
 
         every { listService.findAllElementsById(id, any()) } returns PageImpl(elements)
@@ -332,10 +332,10 @@ internal class ListControllerUnitTest : MockMvcBaseTest("lists") {
                     """
                     A `GET` request returns a <<sorting-and-pagination,paged>> list of elements, in order, with their full representations (see <<resources,resources>>, <<classes,classes>>, <<predicates,predicates>>, <<literals,literals>>), that are part of the list.
                     If no paging request parameters are provided, the default values will be used.
-                    """
+                    """,
                 )
                 pathParameters(
-                    parameterWithName("id").description("The identifier of the list.")
+                    parameterWithName("id").description("The identifier of the list."),
                 )
                 pagedQueryParameters()
                 pagedResponseFields<ThingRepresentation>(thingResponseFields())

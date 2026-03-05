@@ -88,7 +88,7 @@ internal class PaperServiceUnitTest : MockkBaseTest {
         classRepository = classRepository,
         contributorRepository = contributorRepository,
         paperPublishedRepository = paperPublishedRepository,
-        paperPublishBaseUri = "https://orkg.org/paper/"
+        paperPublishBaseUri = "https://orkg.org/paper/",
     )
 
     @Test
@@ -96,7 +96,7 @@ internal class PaperServiceUnitTest : MockkBaseTest {
         val expected = createResource(
             classes = setOf(Classes.comparison),
             organizationId = OrganizationId(UUID.randomUUID()),
-            observatoryId = ObservatoryId(UUID.randomUUID())
+            observatoryId = ObservatoryId(UUID.randomUUID()),
         )
         val researchFieldId = ThingId("R20")
         val resourceAuthorId = ThingId("R132564")
@@ -112,13 +112,13 @@ internal class PaperServiceUnitTest : MockkBaseTest {
             minLevel = null,
             maxLevel = 3,
             blacklist = listOf(Classes.researchField, Classes.contribution, Classes.venue),
-            whitelist = emptyList()
+            whitelist = emptyList(),
         )
         val secondBundleConfiguration = BundleConfiguration(
             minLevel = null,
             maxLevel = 1,
             blacklist = emptyList(),
-            whitelist = listOf(Classes.researchField, Classes.contribution, Classes.venue)
+            whitelist = listOf(Classes.researchField, Classes.contribution, Classes.venue),
         )
 
         every { resourceRepository.findPaperById(expected.id) } returns Optional.of(expected)
@@ -126,53 +126,53 @@ internal class PaperServiceUnitTest : MockkBaseTest {
             statementRepository.fetchAsBundle(
                 id = expected.id,
                 configuration = firstBundleConfiguration,
-                sort = Sort.unsorted()
+                sort = Sort.unsorted(),
             )
         } returns pageOf(
             createStatement(
                 subject = expected,
                 predicate = createPredicate(Predicates.hasDOI),
-                `object` = createLiteral(label = doi)
+                `object` = createLiteral(label = doi),
             ),
             createStatement(
                 subject = expected,
                 predicate = createPredicate(Predicates.yearPublished),
-                `object` = createLiteral(label = publishedYear.toString(), datatype = Literals.XSD.DECIMAL.prefixedUri)
+                `object` = createLiteral(label = publishedYear.toString(), datatype = Literals.XSD.DECIMAL.prefixedUri),
             ),
             createStatement(
                 subject = expected,
                 predicate = createPredicate(Predicates.monthPublished),
-                `object` = createLiteral(label = publishedMonth.toString(), datatype = Literals.XSD.INT.prefixedUri)
+                `object` = createLiteral(label = publishedMonth.toString(), datatype = Literals.XSD.INT.prefixedUri),
             ),
             createStatement(
                 subject = expected,
                 predicate = createPredicate(Predicates.hasURL),
-                `object` = createLiteral(label = publishedUrl, datatype = Literals.XSD.URI.prefixedUri)
+                `object` = createLiteral(label = publishedUrl, datatype = Literals.XSD.URI.prefixedUri),
             ),
             createStatement(
                 subject = expected,
                 predicate = createPredicate(Predicates.hasAuthors),
-                `object` = authorList
+                `object` = authorList,
             ),
             createStatement(
                 subject = authorList,
                 predicate = createPredicate(Predicates.hasListElement),
-                `object` = createLiteral(label = "Author 1")
+                `object` = createLiteral(label = "Author 1"),
             ),
             createStatement(
                 subject = authorList,
                 predicate = createPredicate(Predicates.hasListElement),
-                `object` = resourceAuthor
+                `object` = resourceAuthor,
             ),
             createStatement(
                 subject = resourceAuthor,
                 predicate = createPredicate(Predicates.hasORCID),
-                `object` = createLiteral(label = "0000-1111-2222-3333")
+                `object` = createLiteral(label = "0000-1111-2222-3333"),
             ),
             createStatement(
                 subject = resourceAuthor,
                 predicate = createPredicate(Predicates.hasWebsite),
-                `object` = createLiteral(label = "https://example.org", datatype = Literals.XSD.URI.prefixedUri)
+                `object` = createLiteral(label = "https://example.org", datatype = Literals.XSD.URI.prefixedUri),
             ),
             createStatement(
                 subject = expected,
@@ -180,8 +180,8 @@ internal class PaperServiceUnitTest : MockkBaseTest {
                 `object` = createResource(
                     classes = setOf(Classes.sustainableDevelopmentGoal),
                     label = "No poverty",
-                    id = ThingId("SDG_1")
-                )
+                    id = ThingId("SDG_1"),
+                ),
             ),
             createStatement(
                 subject = expected,
@@ -189,15 +189,15 @@ internal class PaperServiceUnitTest : MockkBaseTest {
                 `object` = createResource(
                     classes = setOf(Classes.paper),
                     label = "Some paper",
-                    id = ThingId("R159")
-                )
-            )
+                    id = ThingId("R159"),
+                ),
+            ),
         )
         every {
             statementRepository.fetchAsBundle(
                 id = expected.id,
                 configuration = secondBundleConfiguration,
-                sort = Sort.unsorted()
+                sort = Sort.unsorted(),
             )
         } returns pageOf(
             createStatement(
@@ -206,8 +206,8 @@ internal class PaperServiceUnitTest : MockkBaseTest {
                 `object` = createResource(
                     id = researchFieldId,
                     classes = setOf(Classes.researchField),
-                    label = "Research Field 1"
-                )
+                    label = "Research Field 1",
+                ),
             ),
             createStatement(
                 subject = expected,
@@ -215,14 +215,14 @@ internal class PaperServiceUnitTest : MockkBaseTest {
                 `object` = createResource(
                     classes = setOf(Classes.contribution),
                     label = "Contribution",
-                    id = ThingId("Contribution123")
-                )
+                    id = ThingId("Contribution123"),
+                ),
             ),
             createStatement(
                 subject = expected,
                 predicate = createPredicate(Predicates.hasVenue),
-                `object` = createResource(publishedInId, label = publishedIn)
-            )
+                `object` = createResource(publishedInId, label = publishedIn),
+            ),
         )
 
         val actual = service.findById(expected.id)
@@ -234,11 +234,11 @@ internal class PaperServiceUnitTest : MockkBaseTest {
             paper.title shouldBe expected.label
             paper.researchFields shouldNotBe null
             paper.researchFields shouldBe listOf(
-                ObjectIdAndLabel(id = researchFieldId, label = "Research Field 1")
+                ObjectIdAndLabel(id = researchFieldId, label = "Research Field 1"),
             )
             paper.identifiers shouldNotBe null
             paper.identifiers shouldBe mapOf(
-                "doi" to listOf(doi)
+                "doi" to listOf(doi),
             )
             paper.publicationInfo shouldNotBe null
             paper.publicationInfo.asClue { publicationInfo ->
@@ -253,30 +253,30 @@ internal class PaperServiceUnitTest : MockkBaseTest {
                     id = null,
                     name = "Author 1",
                     identifiers = emptyMap(),
-                    homepage = null
+                    homepage = null,
                 ),
                 Author(
                     id = resourceAuthorId,
                     name = "Author 2",
                     identifiers = mapOf(
-                        "orcid" to listOf("0000-1111-2222-3333")
+                        "orcid" to listOf("0000-1111-2222-3333"),
                     ),
-                    homepage = ParsedIRI.create("https://example.org")
-                )
+                    homepage = ParsedIRI.create("https://example.org"),
+                ),
             )
             paper.contributions shouldNotBe null
             paper.contributions shouldBe listOf(
-                ObjectIdAndLabel(ThingId("Contribution123"), "Contribution")
+                ObjectIdAndLabel(ThingId("Contribution123"), "Contribution"),
             )
             paper.sustainableDevelopmentGoals shouldBe setOf(
-                ObjectIdAndLabel(ThingId("SDG_1"), "No poverty")
+                ObjectIdAndLabel(ThingId("SDG_1"), "No poverty"),
             )
             paper.mentionings shouldBe setOf(
                 ResourceReference(
                     id = ThingId("R159"),
                     label = "Some paper",
-                    classes = setOf(Classes.paper)
-                )
+                    classes = setOf(Classes.paper),
+                ),
             )
             paper.observatories shouldBe setOf(expected.observatoryId)
             paper.organizations shouldBe setOf(expected.organizationId)
@@ -293,14 +293,14 @@ internal class PaperServiceUnitTest : MockkBaseTest {
             statementRepository.fetchAsBundle(
                 id = expected.id,
                 configuration = firstBundleConfiguration,
-                sort = Sort.unsorted()
+                sort = Sort.unsorted(),
             )
         }
         verify(exactly = 1) {
             statementRepository.fetchAsBundle(
                 id = expected.id,
                 configuration = secondBundleConfiguration,
-                sort = Sort.unsorted()
+                sort = Sort.unsorted(),
             )
         }
     }

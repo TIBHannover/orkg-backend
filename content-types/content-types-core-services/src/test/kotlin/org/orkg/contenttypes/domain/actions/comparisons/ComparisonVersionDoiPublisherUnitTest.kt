@@ -30,7 +30,7 @@ internal class ComparisonVersionDoiPublisherUnitTest : MockkBaseTest {
         singleStatementPropertyCreator = singleStatementPropertyCreator,
         comparisonRepository = comparisonRepository,
         doiService = doiService,
-        comparisonPublishBaseUri = "https://orkg.org/review/"
+        comparisonPublishBaseUri = "https://orkg.org/review/",
     )
 
     @Test
@@ -63,7 +63,7 @@ internal class ComparisonVersionDoiPublisherUnitTest : MockkBaseTest {
                     it.resourceType shouldBe Classes.comparison.value
                     it.resourceTypeGeneral shouldBe "Dataset"
                     it.relatedIdentifiers shouldBe relatedDOIs
-                }
+                },
             )
         }
         verify(exactly = 1) {
@@ -71,7 +71,7 @@ internal class ComparisonVersionDoiPublisherUnitTest : MockkBaseTest {
                 contributorId = command.contributorId,
                 subjectId = comparisonVersionId,
                 predicateId = Predicates.hasDOI,
-                label = doi
+                label = doi,
             )
         }
         verify(exactly = 1) {

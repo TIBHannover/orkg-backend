@@ -16,8 +16,8 @@ class RosettaStoneTemplateResourceCreator(
                 label = command.label,
                 classes = setOf(Classes.rosettaNodeShape),
                 observatoryId = command.observatories.firstOrNull(),
-                organizationId = command.organizations.firstOrNull()
-            )
+                organizationId = command.organizations.firstOrNull(),
+            ),
         )
         return state.copy(rosettaStoneTemplateId = rosettaStoneTemplateId)
     }

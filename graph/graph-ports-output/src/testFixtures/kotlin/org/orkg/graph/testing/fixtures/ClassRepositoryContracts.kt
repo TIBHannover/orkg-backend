@@ -35,10 +35,10 @@ fun <
     val fabricator = Fabrikate(
         FabricatorConfig(
             collectionSizes = 12..12,
-            nullableStrategy = FabricatorConfig.NullableStrategy.NeverSetToNull // FIXME: because "id" is nullable
+            nullableStrategy = FabricatorConfig.NullableStrategy.NeverSetToNull, // FIXME: because "id" is nullable
         )
             .withStandardMappings()
-            .withGraphMappings()
+            .withGraphMappings(),
     )
 
     describe("saving a class") {
@@ -138,7 +138,7 @@ fun <
                     classes.forEach(repository::save)
                     val result = repository.findAll(
                         pageable = PageRequest.of(0, 5),
-                        label = SearchString.of("label find", exactMatch = false)
+                        label = SearchString.of("label find", exactMatch = false),
                     )
 
                     it("returns the correct result") {
@@ -172,7 +172,7 @@ fun <
                 val expected = classes.take(expectedCount)
                 val result = repository.findAll(
                     pageable = PageRequest.of(0, 5),
-                    createdBy = createdBy
+                    createdBy = createdBy,
                 )
 
                 it("returns the correct result") {
@@ -197,7 +197,7 @@ fun <
                 val expectedCount = 3
                 val classes = fabricator.random<List<Class>>().mapIndexed { index, `class` ->
                     `class`.copy(
-                        createdAt = OffsetDateTime.now(fixedClock).minusHours(index.toLong())
+                        createdAt = OffsetDateTime.now(fixedClock).minusHours(index.toLong()),
                     )
                 }
                 classes.forEach(repository::save)
@@ -205,7 +205,7 @@ fun <
                 val expected = classes.take(expectedCount)
                 val result = repository.findAll(
                     pageable = PageRequest.of(0, 5),
-                    createdAtStart = expected.last().createdAt
+                    createdAtStart = expected.last().createdAt,
                 )
 
                 it("returns the correct result") {
@@ -230,7 +230,7 @@ fun <
                 val expectedCount = 3
                 val classes = fabricator.random<List<Class>>().mapIndexed { index, `class` ->
                     `class`.copy(
-                        createdAt = OffsetDateTime.now(fixedClock).plusHours(index.toLong())
+                        createdAt = OffsetDateTime.now(fixedClock).plusHours(index.toLong()),
                     )
                 }
                 classes.forEach(repository::save)
@@ -238,7 +238,7 @@ fun <
                 val expected = classes.take(expectedCount)
                 val result = repository.findAll(
                     pageable = PageRequest.of(0, 5),
-                    createdAtEnd = expected.last().createdAt
+                    createdAtEnd = expected.last().createdAt,
                 )
 
                 it("returns the correct result") {
@@ -379,7 +379,7 @@ fun <
     describe("finding a class") {
         context("by uri") {
             val expected = fabricator.random<Class>().copy(
-                uri = ParsedIRI.create("https://example.org/uri/to/find")
+                uri = ParsedIRI.create("https://example.org/uri/to/find"),
             )
             val classes = fabricator.random<List<Class>>().plus(expected)
 

@@ -96,6 +96,6 @@ fun createConferenceSeries(
     displayId: String = "some display id",
     metadata: Metadata = Metadata(
         startDate = LocalDate.parse("2023-10-17"),
-        reviewType = PeerReviewType.SINGLE_BLIND
+        reviewType = PeerReviewType.SINGLE_BLIND,
     ),
 ) = ConferenceSeries(id, organizationId, name, homepage, displayId, metadata)

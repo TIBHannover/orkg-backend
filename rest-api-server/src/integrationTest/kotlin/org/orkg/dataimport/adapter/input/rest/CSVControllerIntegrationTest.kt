@@ -55,7 +55,7 @@ import tools.jackson.module.kotlin.readValue
         ValidatePaperCSVStepConfiguration::class,
         SpringBatchTestConfiguration::class,
         JpaTransactionManagerConfiguration::class,
-    ]
+    ],
 )
 internal class CSVControllerIntegrationTest : MockMvcBaseTest("csvs") {
     @Autowired
@@ -188,27 +188,27 @@ internal class CSVControllerIntegrationTest : MockMvcBaseTest("csvs") {
                     it.statements shouldBe setOf(
                         NewPredicateContributionStatementRepresentation(
                             `object` = TypedValueRepresentation(null, "Handbook", Classes.resource),
-                            predicateLabel = "category"
+                            predicateLabel = "category",
                         ),
                         ExistingPredicateContributionStatementRepresentation(
                             `object` = TypedValueRepresentation("resource", "DOI", Classes.resource),
-                            predicateId = ThingId("P2")
+                            predicateId = ThingId("P2"),
                         ),
                         NewPredicateContributionStatementRepresentation(
                             `object` = TypedValueRepresentation("resource", "Result", Classes.resource),
-                            predicateLabel = "result"
+                            predicateLabel = "result",
                         ),
                         NewPredicateContributionStatementRepresentation(
                             `object` = TypedValueRepresentation(null, "5", Classes.integer),
-                            predicateLabel = "numericValue"
+                            predicateLabel = "numericValue",
                         ),
                         ExistingPredicateContributionStatementRepresentation(
                             `object` = TypedValueRepresentation(null, "DOI Handbook", Classes.string),
-                            predicateId = ThingId("description")
+                            predicateId = ThingId("description"),
                         ),
                         ExistingPredicateContributionStatementRepresentation(
                             `object` = TypedValueRepresentation(null, "Complicated Research Problem", Classes.problem),
-                            predicateId = ThingId("P32")
+                            predicateId = ThingId("P32"),
                         ),
                     )
                 }
@@ -236,27 +236,27 @@ internal class CSVControllerIntegrationTest : MockMvcBaseTest("csvs") {
                     it.statements shouldBe setOf(
                         NewPredicateContributionStatementRepresentation(
                             `object` = TypedValueRepresentation(null, "Book", Classes.resource),
-                            predicateLabel = "category"
+                            predicateLabel = "category",
                         ),
                         ExistingPredicateContributionStatementRepresentation(
                             `object` = TypedValueRepresentation("resource", "ORKG", Classes.resource),
-                            predicateId = ThingId("P2")
+                            predicateId = ThingId("P2"),
                         ),
                         NewPredicateContributionStatementRepresentation(
                             `object` = TypedValueRepresentation("resource", "New Result", Classes.resource),
-                            predicateLabel = "result"
+                            predicateLabel = "result",
                         ),
                         NewPredicateContributionStatementRepresentation(
                             `object` = TypedValueRepresentation(null, "10", Classes.integer),
-                            predicateLabel = "numericValue"
+                            predicateLabel = "numericValue",
                         ),
                         ExistingPredicateContributionStatementRepresentation(
                             `object` = TypedValueRepresentation(null, "Some description", Classes.string),
-                            predicateId = ThingId("description")
+                            predicateId = ThingId("description"),
                         ),
                         ExistingPredicateContributionStatementRepresentation(
                             `object` = TypedValueRepresentation(null, "Super Complicated Research Problem", Classes.problem),
-                            predicateId = ThingId("P32")
+                            predicateId = ThingId("P32"),
                         ),
                     )
                 }

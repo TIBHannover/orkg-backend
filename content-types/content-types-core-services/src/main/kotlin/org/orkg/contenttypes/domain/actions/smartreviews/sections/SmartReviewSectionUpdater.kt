@@ -34,8 +34,8 @@ class SmartReviewSectionUpdater(
             unsafeLiteralUseCases,
             unsafeResourceUseCases,
             statementService,
-            unsafeStatementUseCases
-        )
+            unsafeStatementUseCases,
+        ),
     )
 
     override fun invoke(command: UpdateSmartReviewSectionCommand, state: State): State {
@@ -46,42 +46,42 @@ class SmartReviewSectionUpdater(
                     contributorId = command.contributorId,
                     newSection = command,
                     oldSection = section as SmartReviewComparisonSection,
-                    statements = state.statements
+                    statements = state.statements,
                 )
 
                 is AbstractSmartReviewVisualizationSectionCommand -> abstractSmartReviewSectionUpdater.updateVisualizationSection(
                     contributorId = command.contributorId,
                     newSection = command,
                     oldSection = section as SmartReviewVisualizationSection,
-                    statements = state.statements
+                    statements = state.statements,
                 )
 
                 is AbstractSmartReviewResourceSectionCommand -> abstractSmartReviewSectionUpdater.updateResourceSection(
                     contributorId = command.contributorId,
                     newSection = command,
                     oldSection = section as SmartReviewResourceSection,
-                    statements = state.statements
+                    statements = state.statements,
                 )
 
                 is AbstractSmartReviewPredicateSectionCommand -> abstractSmartReviewSectionUpdater.updatePredicateSection(
                     contributorId = command.contributorId,
                     newSection = command,
                     oldSection = section as SmartReviewPredicateSection,
-                    statements = state.statements
+                    statements = state.statements,
                 )
 
                 is AbstractSmartReviewOntologySectionCommand -> abstractSmartReviewSectionUpdater.updateOntologySection(
                     contributorId = command.contributorId,
                     newSection = command,
                     oldSection = section as SmartReviewOntologySection,
-                    statements = state.statements
+                    statements = state.statements,
                 )
 
                 is AbstractSmartReviewTextSectionCommand -> abstractSmartReviewSectionUpdater.updateTextSection(
                     contributorId = command.contributorId,
                     newSection = command,
                     oldSection = section as SmartReviewTextSection,
-                    statements = state.statements
+                    statements = state.statements,
                 )
             }
         }

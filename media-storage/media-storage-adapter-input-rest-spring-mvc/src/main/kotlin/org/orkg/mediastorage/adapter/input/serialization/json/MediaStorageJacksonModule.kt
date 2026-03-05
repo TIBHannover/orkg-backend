@@ -10,12 +10,12 @@ class MediaStorageJacksonModule : SimpleModule() {
         context?.addSerializers(
             SimpleSerializers().apply {
                 addSerializer(ImageId::class.java, ImageIdSerializer())
-            }
+            },
         )
         context?.addDeserializers(
             SimpleDeserializers().apply {
                 addDeserializer(ImageId::class.java, ImageIdDeserializer())
-            }
+            },
         )
     }
 }

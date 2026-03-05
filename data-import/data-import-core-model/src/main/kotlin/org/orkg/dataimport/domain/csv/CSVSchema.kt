@@ -50,7 +50,7 @@ data class CSVSchema(
                 properties = scope.properties,
                 columnValueType = scope.columnValueType,
                 columnValueConstraint = scope.columnValueConstraint,
-                headerValueValidator = scope.headerValueValidator
+                headerValueValidator = scope.headerValueValidator,
             )
             headers[namespace.name] = namespace
         }

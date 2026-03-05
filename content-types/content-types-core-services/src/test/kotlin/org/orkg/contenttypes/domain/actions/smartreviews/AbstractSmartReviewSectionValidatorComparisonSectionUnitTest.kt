@@ -68,7 +68,7 @@ internal class AbstractSmartReviewSectionValidatorComparisonSectionUnitTest : Ab
     @Test
     fun `Given a comparison section command, when heading is invalid, it throws an exception`() {
         val section = smartReviewComparisonSectionCommand().copy(
-            heading = "a".repeat(MAX_LABEL_LENGTH + 1)
+            heading = "a".repeat(MAX_LABEL_LENGTH + 1),
         )
         val validationCache = mutableSetOf<ThingId>()
 

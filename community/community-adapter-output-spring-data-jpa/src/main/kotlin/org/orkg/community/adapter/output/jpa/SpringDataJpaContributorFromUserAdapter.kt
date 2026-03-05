@@ -60,7 +60,7 @@ class SpringDataJpaContributorFromUserAdapter(
                 emailMultiHash = contributor.emailHash.toHex()
                 curator = contributor.isCurator
                 admin = contributor.isAdmin
-            }
+            },
         )
     }
 

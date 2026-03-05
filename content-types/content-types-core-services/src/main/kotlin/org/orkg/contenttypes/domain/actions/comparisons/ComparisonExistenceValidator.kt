@@ -27,7 +27,7 @@ class ComparisonExistenceValidator(
         val comparison = Comparison.from(
             resource = resource,
             statements = subgraph.statements,
-            versionInfo = versionInfo
+            versionInfo = versionInfo,
         )
         return state.copy(comparison = comparison, statements = subgraph.statements)
     }

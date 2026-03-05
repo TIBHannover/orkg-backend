@@ -28,17 +28,17 @@ internal class SmartReviewSectionsUpdaterUnitTest : MockkBaseTest {
     private val smartReviewSectionsUpdater = SmartReviewSectionsUpdater(
         abstractSmartReviewSectionCreator,
         abstractSmartReviewSectionDeleter,
-        statementCollectionPropertyUpdater
+        statementCollectionPropertyUpdater,
     )
 
     @Test
     fun `Given a smart review update command, when sections are not set, it does nothing`() {
         val smartReview = createSmartReview()
         val command = updateSmartReviewCommand().copy(
-            sections = null
+            sections = null,
         )
         val state = UpdateSmartReviewState(
-            smartReview = smartReview
+            smartReview = smartReview,
         )
 
         smartReviewSectionsUpdater(command, state)
@@ -48,10 +48,10 @@ internal class SmartReviewSectionsUpdaterUnitTest : MockkBaseTest {
     fun `Given a smart review update command, when sections are unchanged, it does nothing`() {
         val smartReview = createSmartReview()
         val command = updateSmartReviewCommand().copy(
-            sections = smartReview.sections.map { it.toSmartReviewSectionCommand() }
+            sections = smartReview.sections.map { it.toSmartReviewSectionCommand() },
         )
         val state = UpdateSmartReviewState(
-            smartReview = smartReview
+            smartReview = smartReview,
         )
 
         smartReviewSectionsUpdater(command, state)
@@ -61,7 +61,7 @@ internal class SmartReviewSectionsUpdaterUnitTest : MockkBaseTest {
     fun `Given a smart review update command, when a section is removed, it deletes the old section`() {
         val smartReview = createSmartReview()
         val command = updateSmartReviewCommand().copy(
-            sections = smartReview.sections.dropLast(1).map { it.toSmartReviewSectionCommand() }
+            sections = smartReview.sections.dropLast(1).map { it.toSmartReviewSectionCommand() },
         )
         val contributionId = ThingId("R1144651")
         val contributionResource = createResource(contributionId, classes = setOf(Classes.contributionSmartReview))
@@ -71,11 +71,11 @@ internal class SmartReviewSectionsUpdaterUnitTest : MockkBaseTest {
                 createStatement(
                     subject = createResource(command.smartReviewId),
                     predicate = createPredicate(Predicates.hasContribution),
-                    `object` = contributionResource
+                    `object` = contributionResource,
                 ),
                 createStatement(subject = contributionResource, predicate = createPredicate(Predicates.hasSection)),
-                createStatement(subject = contributionResource, predicate = createPredicate(Predicates.hasLink))
-            ).groupBy { it.subject.id }
+                createStatement(subject = contributionResource, predicate = createPredicate(Predicates.hasLink)),
+            ).groupBy { it.subject.id },
         )
 
         every {
@@ -84,7 +84,7 @@ internal class SmartReviewSectionsUpdaterUnitTest : MockkBaseTest {
                 contributorId = command.contributorId,
                 subjectId = contributionId,
                 predicateId = Predicates.hasSection,
-                objects = any<List<ThingId>>()
+                objects = any<List<ThingId>>(),
             )
         } just runs
         every {
@@ -92,7 +92,7 @@ internal class SmartReviewSectionsUpdaterUnitTest : MockkBaseTest {
                 contributorId = command.contributorId,
                 contributionId = contributionId,
                 section = smartReview.sections.last(),
-                statements = state.statements
+                statements = state.statements,
             )
         } just runs
 
@@ -104,7 +104,7 @@ internal class SmartReviewSectionsUpdaterUnitTest : MockkBaseTest {
                 contributorId = command.contributorId,
                 subjectId = contributionId,
                 predicateId = Predicates.hasSection,
-                objects = smartReview.sections.dropLast(1).map { it.id }
+                objects = smartReview.sections.dropLast(1).map { it.id },
             )
         }
         verify(exactly = 1) {
@@ -112,7 +112,7 @@ internal class SmartReviewSectionsUpdaterUnitTest : MockkBaseTest {
                 contributorId = command.contributorId,
                 contributionId = contributionId,
                 section = smartReview.sections.last(),
-                statements = state.statements
+                statements = state.statements,
             )
         }
     }
@@ -123,7 +123,7 @@ internal class SmartReviewSectionsUpdaterUnitTest : MockkBaseTest {
         val newSection = smartReviewTextSectionCommand().copy(text = "new section")
         val contributionId = ThingId("R1144651")
         val command = updateSmartReviewCommand().copy(
-            sections = smartReview.sections.map { it.toSmartReviewSectionCommand() } + newSection
+            sections = smartReview.sections.map { it.toSmartReviewSectionCommand() } + newSection,
         )
         val contributionResource = createResource(contributionId, classes = setOf(Classes.contributionSmartReview))
         val state = UpdateSmartReviewState(
@@ -132,11 +132,11 @@ internal class SmartReviewSectionsUpdaterUnitTest : MockkBaseTest {
                 createStatement(
                     subject = createResource(command.smartReviewId),
                     predicate = createPredicate(Predicates.hasContribution),
-                    `object` = contributionResource
+                    `object` = contributionResource,
                 ),
                 createStatement(subject = contributionResource, predicate = createPredicate(Predicates.hasSection)),
-                createStatement(subject = contributionResource, predicate = createPredicate(Predicates.hasLink))
-            ).groupBy { it.subject.id }
+                createStatement(subject = contributionResource, predicate = createPredicate(Predicates.hasLink)),
+            ).groupBy { it.subject.id },
         )
         val newSectionId = ThingId("irrelevant")
 
@@ -149,7 +149,7 @@ internal class SmartReviewSectionsUpdaterUnitTest : MockkBaseTest {
                 contributorId = command.contributorId,
                 subjectId = contributionId,
                 predicateId = Predicates.hasSection,
-                objects = any<List<ThingId>>()
+                objects = any<List<ThingId>>(),
             )
         } just runs
 
@@ -162,7 +162,7 @@ internal class SmartReviewSectionsUpdaterUnitTest : MockkBaseTest {
                 contributorId = command.contributorId,
                 subjectId = contributionId,
                 predicateId = Predicates.hasSection,
-                objects = smartReview.sections.map { it.id } + newSectionId
+                objects = smartReview.sections.map { it.id } + newSectionId,
             )
         }
     }
@@ -173,7 +173,7 @@ internal class SmartReviewSectionsUpdaterUnitTest : MockkBaseTest {
         val newSection = smartReviewTextSectionCommand().copy(text = "new section")
         val contributionId = ThingId("R1144651")
         val command = updateSmartReviewCommand().copy(
-            sections = smartReview.sections.dropLast(1).map { it.toSmartReviewSectionCommand() } + newSection
+            sections = smartReview.sections.dropLast(1).map { it.toSmartReviewSectionCommand() } + newSection,
         )
         val contributionResource = createResource(contributionId, classes = setOf(Classes.contributionSmartReview))
         val state = UpdateSmartReviewState(
@@ -182,11 +182,11 @@ internal class SmartReviewSectionsUpdaterUnitTest : MockkBaseTest {
                 createStatement(
                     subject = createResource(command.smartReviewId),
                     predicate = createPredicate(Predicates.hasContribution),
-                    `object` = contributionResource
+                    `object` = contributionResource,
                 ),
                 createStatement(subject = contributionResource, predicate = createPredicate(Predicates.hasSection)),
-                createStatement(subject = contributionResource, predicate = createPredicate(Predicates.hasLink))
-            ).groupBy { it.subject.id }
+                createStatement(subject = contributionResource, predicate = createPredicate(Predicates.hasLink)),
+            ).groupBy { it.subject.id },
         )
         val newSectionId = ThingId("irrelevant")
 
@@ -199,7 +199,7 @@ internal class SmartReviewSectionsUpdaterUnitTest : MockkBaseTest {
                 contributorId = command.contributorId,
                 subjectId = contributionId,
                 predicateId = Predicates.hasSection,
-                objects = any<List<ThingId>>()
+                objects = any<List<ThingId>>(),
             )
         } just runs
         every {
@@ -207,7 +207,7 @@ internal class SmartReviewSectionsUpdaterUnitTest : MockkBaseTest {
                 contributorId = command.contributorId,
                 contributionId = contributionId,
                 section = smartReview.sections.last(),
-                statements = state.statements
+                statements = state.statements,
             )
         } just runs
 
@@ -220,7 +220,7 @@ internal class SmartReviewSectionsUpdaterUnitTest : MockkBaseTest {
                 contributorId = command.contributorId,
                 subjectId = contributionId,
                 predicateId = Predicates.hasSection,
-                objects = smartReview.sections.dropLast(1).map { it.id } + newSectionId
+                objects = smartReview.sections.dropLast(1).map { it.id } + newSectionId,
             )
         }
         verify(exactly = 1) {
@@ -228,7 +228,7 @@ internal class SmartReviewSectionsUpdaterUnitTest : MockkBaseTest {
                 contributorId = command.contributorId,
                 contributionId = contributionId,
                 section = smartReview.sections.last(),
-                statements = state.statements
+                statements = state.statements,
             )
         }
     }

@@ -23,7 +23,7 @@ class PaperVersionDoiPublisher(
     ) : this(
         SingleStatementPropertyCreator(unsafeLiteralUseCases, unsafeStatementUseCases),
         doiService,
-        paperPublishBaseUri
+        paperPublishBaseUri,
     )
 
     override fun invoke(command: PublishPaperCommand, state: State): State {
@@ -39,14 +39,14 @@ class PaperVersionDoiPublisher(
                 creators = paper.authors,
                 resourceType = Classes.paper.value,
                 resourceTypeGeneral = "Dataset",
-                relatedIdentifiers = emptyList()
-            )
+                relatedIdentifiers = emptyList(),
+            ),
         )
         singleStatementPropertyCreator.create(
             contributorId = command.contributorId,
             subjectId = paperVersionId,
             predicateId = Predicates.hasDOI,
-            label = doi.value
+            label = doi.value,
         )
         return state
     }

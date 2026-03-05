@@ -20,7 +20,7 @@ fun CSV.apply(command: UpdateCSVUseCase.UpdateCommand): CSV =
         name = command.name ?: name,
         data = command.data?.takeIf { it.isNotBlank() } ?: data,
         type = command.type ?: type,
-        format = command.format ?: format
+        format = command.format ?: format,
     )
 
 internal inline fun <reified T : Any> JobParametersBuilder.add(name: String, value: T, identifying: Boolean = true) =

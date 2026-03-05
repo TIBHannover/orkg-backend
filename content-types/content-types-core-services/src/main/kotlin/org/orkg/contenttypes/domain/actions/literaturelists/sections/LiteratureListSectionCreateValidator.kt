@@ -12,13 +12,13 @@ class LiteratureListSectionCreateValidator(
     constructor(
         resourceRepository: ResourceRepository,
     ) : this(
-        AbstractLiteratureListSectionValidator(resourceRepository)
+        AbstractLiteratureListSectionValidator(resourceRepository),
     )
 
     override fun invoke(command: CreateLiteratureListSectionCommand, state: State): State {
         abstractLiteratureListSectionValidator.validate(
             section = command as AbstractLiteratureListSectionCommand,
-            validationCache = mutableSetOf()
+            validationCache = mutableSetOf(),
         )
         return state
     }

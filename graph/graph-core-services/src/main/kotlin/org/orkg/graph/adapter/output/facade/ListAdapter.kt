@@ -39,13 +39,13 @@ class ListAdapter(
             label = list.label,
             createdAt = list.createdAt,
             createdBy = list.createdBy,
-            modifiable = list.modifiable
+            modifiable = list.modifiable,
         )
         resourceRepository.save(listResource)
         val existingStatements = statementRepository.findAll(
             subjectId = list.id,
             predicateId = Predicates.hasListElement,
-            pageable = PageRequests.ALL
+            pageable = PageRequests.ALL,
         )
             .filter { it.index != null }
             .sortedBy { it.index }
@@ -74,7 +74,7 @@ class ListAdapter(
                     `object` = thingRepository.findById(entry.key).get(),
                     createdAt = OffsetDateTime.now(clock),
                     createdBy = contributorId,
-                    index = entry.value
+                    index = entry.value,
                 )
             }
             statementRepository.saveAll(statements)
@@ -93,7 +93,7 @@ class ListAdapter(
         statementRepository.findAll(
             subjectId = id,
             predicateId = Predicates.hasListElement,
-            pageable = PageRequest.of(pageable.pageNumber, pageable.pageSize, Sort.by("index"))
+            pageable = PageRequest.of(pageable.pageNumber, pageable.pageSize, Sort.by("index")),
         ).map { it.`object` }
 
     override fun nextIdentity(): ThingId = resourceRepository.nextIdentity()
@@ -109,7 +109,7 @@ class ListAdapter(
             val statements = statementRepository.findAll(
                 subjectId = id,
                 predicateId = Predicates.hasListElement,
-                pageable = PageRequests.ALL
+                pageable = PageRequests.ALL,
             )
             statementRepository.deleteByStatementIds(statements.map { it.id }.toSet())
             // delete root resource
@@ -123,13 +123,13 @@ class ListAdapter(
         elements = statementRepository.findAll(
             subjectId = id,
             predicateId = Predicates.hasListElement,
-            pageable = PageRequests.ALL
+            pageable = PageRequests.ALL,
         )
             .filter { it.index != null }
             .sortedBy { it.index }
             .map { it.`object`.id },
         createdAt = createdAt,
         createdBy = createdBy,
-        modifiable = modifiable
+        modifiable = modifiable,
     )
 }

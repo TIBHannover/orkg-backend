@@ -107,7 +107,7 @@ class SmartReviewController(
             researchField = researchField,
             includeSubfields = includeSubfields,
             published = published,
-            sustainableDevelopmentGoal = sustainableDevelopmentGoal
+            sustainableDevelopmentGoal = sustainableDevelopmentGoal,
         ).mapToSmartReviewRepresentation()
 
     @GetMapping("/{id}/published-contents/{contentId}", produces = [MediaType.APPLICATION_JSON_VALUE])
@@ -254,7 +254,7 @@ class SmartReviewController(
                 organizations = organizations.orEmpty(),
                 extractionMethod = extractionMethod,
                 sections = sections?.map { it.toSmartReviewSectionCommand() }.orEmpty(),
-                references = references.orEmpty()
+                references = references.orEmpty(),
             )
     }
 
@@ -293,7 +293,7 @@ class SmartReviewController(
                 extractionMethod = extractionMethod,
                 sections = sections?.map { it.toSmartReviewSectionCommand() },
                 references = references,
-                visibility = visibility
+                visibility = visibility,
             )
     }
 
@@ -306,7 +306,7 @@ class SmartReviewController(
             JsonSubTypes.Type(SmartReviewPredicateSectionRequest::class),
             JsonSubTypes.Type(SmartReviewOntologySectionRequest::class),
             JsonSubTypes.Type(SmartReviewTextSectionRequest::class),
-        ]
+        ],
     )
     sealed interface SmartReviewSectionRequest {
         val heading: String
@@ -343,7 +343,7 @@ class SmartReviewController(
                 smartReviewId,
                 index,
                 heading,
-                comparison
+                comparison,
             )
 
         override fun toUpdateCommand(
@@ -356,7 +356,7 @@ class SmartReviewController(
                 contributorId,
                 smartReviewId,
                 heading,
-                comparison
+                comparison,
             )
     }
 
@@ -377,7 +377,7 @@ class SmartReviewController(
                 smartReviewId,
                 index,
                 heading,
-                visualization
+                visualization,
             )
 
         override fun toUpdateCommand(
@@ -390,7 +390,7 @@ class SmartReviewController(
                 contributorId,
                 smartReviewId,
                 heading,
-                visualization
+                visualization,
             )
     }
 
@@ -411,7 +411,7 @@ class SmartReviewController(
                 smartReviewId,
                 index,
                 heading,
-                resource
+                resource,
             )
 
         override fun toUpdateCommand(
@@ -424,7 +424,7 @@ class SmartReviewController(
                 contributorId,
                 smartReviewId,
                 heading,
-                resource
+                resource,
             )
     }
 
@@ -445,7 +445,7 @@ class SmartReviewController(
                 smartReviewId,
                 index,
                 heading,
-                predicate
+                predicate,
             )
 
         override fun toUpdateCommand(
@@ -458,7 +458,7 @@ class SmartReviewController(
                 contributorId,
                 smartReviewId,
                 heading,
-                predicate
+                predicate,
             )
     }
 
@@ -481,7 +481,7 @@ class SmartReviewController(
                 index,
                 heading,
                 entities,
-                predicates
+                predicates,
             )
 
         override fun toUpdateCommand(
@@ -495,7 +495,7 @@ class SmartReviewController(
                 smartReviewId,
                 heading,
                 entities,
-                predicates
+                predicates,
             )
     }
 
@@ -518,7 +518,7 @@ class SmartReviewController(
                 index,
                 heading,
                 `class`,
-                text
+                text,
             )
 
         override fun toUpdateCommand(
@@ -532,7 +532,7 @@ class SmartReviewController(
                 smartReviewId,
                 heading,
                 `class`,
-                text
+                text,
             )
     }
 

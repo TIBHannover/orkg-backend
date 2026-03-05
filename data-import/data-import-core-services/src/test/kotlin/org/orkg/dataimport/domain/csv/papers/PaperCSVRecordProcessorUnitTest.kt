@@ -50,7 +50,7 @@ internal class PaperCSVRecordProcessorUnitTest : MockkBaseTest {
             contributorId = contributorId,
             paperId = paperId,
             extractionMethod = record.extractionMethod,
-            contribution = createContributionCommandPart()
+            contribution = createContributionCommandPart(),
         )
 
         paperCSVRecordProcessor.beforeStep(stepExecution)
@@ -89,7 +89,7 @@ internal class PaperCSVRecordProcessorUnitTest : MockkBaseTest {
             contributorId = contributorId,
             paperId = paperId,
             extractionMethod = record.extractionMethod,
-            contribution = createContributionCommandPart()
+            contribution = createContributionCommandPart(),
         )
 
         paperCSVRecordProcessor.beforeStep(stepExecution)
@@ -132,7 +132,7 @@ internal class PaperCSVRecordProcessorUnitTest : MockkBaseTest {
                 publishedMonth = record.publicationMonth,
                 publishedYear = record.publicationYear,
                 publishedIn = record.publishedIn,
-                url = record.url
+                url = record.url,
             ),
             authors = record.authors,
             sustainableDevelopmentGoals = emptySet(),
@@ -140,7 +140,7 @@ internal class PaperCSVRecordProcessorUnitTest : MockkBaseTest {
             observatories = emptyList(),
             organizations = emptyList(),
             contents = CreatePaperUseCase.CreateCommand.PaperContents(
-                contributions = listOf(createContributionCommandPart())
+                contributions = listOf(createContributionCommandPart()),
             ),
             extractionMethod = record.extractionMethod,
         )
@@ -173,13 +173,13 @@ internal class PaperCSVRecordProcessorUnitTest : MockkBaseTest {
         statements = setOf(
             ContributionStatement(
                 predicate = Either.left(Predicates.employs),
-                `object` = TypedValue(namespace = "orkg", value = "R789", type = Classes.resource)
+                `object` = TypedValue(namespace = "orkg", value = "R789", type = Classes.resource),
             ),
             ContributionStatement(
                 predicate = Either.left(ThingId("result")),
-                `object` = TypedValue(namespace = "orkg", value = "R369", type = Classes.resource)
-            )
-        )
+                `object` = TypedValue(namespace = "orkg", value = "R369", type = Classes.resource),
+            ),
+        ),
     )
 
     private fun createContributionCommandPart(): CreateContributionCommandPart = CreateContributionCommandPart(
@@ -187,6 +187,6 @@ internal class PaperCSVRecordProcessorUnitTest : MockkBaseTest {
         statements = mapOf(
             "P2" to listOf(CreateContributionCommandPart.StatementObject("R789")),
             "result" to listOf(CreateContributionCommandPart.StatementObject("R369")),
-        )
+        ),
     )
 }

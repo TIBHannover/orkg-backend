@@ -21,7 +21,7 @@ class SimCompPaperPublishedAdapter(
         repository.save(
             id = paper.id,
             type = ThingType.PAPER_VERSION,
-            data = paper.toPublishedContentTypeRepresentation(MediaTypeCapabilities.EMPTY)
+            data = paper.toPublishedContentTypeRepresentation(MediaTypeCapabilities.EMPTY),
         )
     }
 }

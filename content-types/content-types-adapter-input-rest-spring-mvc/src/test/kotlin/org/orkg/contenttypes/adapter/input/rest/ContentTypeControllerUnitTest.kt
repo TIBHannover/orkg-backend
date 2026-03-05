@@ -81,7 +81,7 @@ internal class ContentTypeControllerUnitTest : MockMvcBaseTest("content-types") 
             createVisualization(),
             createTemplate(),
             createLiteratureList(),
-            createSmartReview()
+            createSmartReview(),
         )
 
         documentedGetRequestTo("/api/content-types")
@@ -112,7 +112,7 @@ internal class ContentTypeControllerUnitTest : MockMvcBaseTest("content-types") 
             createVisualization(),
             createTemplate(),
             createLiteratureList(),
-            createSmartReview()
+            createSmartReview(),
         )
 
         val classes = ContentTypeClass.entries.toSet()
@@ -156,7 +156,7 @@ internal class ContentTypeControllerUnitTest : MockMvcBaseTest("content-types") 
                     If no paging request parameters are provided, the default values will be used.
                     
                     NOTE: Whenever possible, individual content-type endpoints should be used, to optimize performance.
-                    """
+                    """,
                 )
                 pagedQueryParameters(*queryParametersFindAll().toTypedArray())
                 pagedResponseFields<ContentTypeRepresentation>(commonContentTypeResponseFields())
@@ -177,7 +177,7 @@ internal class ContentTypeControllerUnitTest : MockMvcBaseTest("content-types") 
                 includeSubfields = includeSubfields,
                 sustainableDevelopmentGoal = sdg,
                 authorId = authorId,
-                authorName = null
+                authorName = null,
             )
         }
     }
@@ -291,7 +291,7 @@ internal class ContentTypeControllerUnitTest : MockMvcBaseTest("content-types") 
                     If no paging request parameters are provided, the default values will be used.
                     
                     NOTE: Whenever possible, individual content-type endpoints should be used, to optimize performance.
-                    """
+                    """,
                 )
                 pagedQueryParameters(*queryParametersFindAll().toTypedArray())
                 pagedResponseFields<ResourceRepresentation>(resourceResponseFields())
@@ -312,7 +312,7 @@ internal class ContentTypeControllerUnitTest : MockMvcBaseTest("content-types") 
                 includeSubfields = includeSubfields,
                 sustainableDevelopmentGoal = sdg,
                 authorId = authorId,
-                authorName = null
+                authorName = null,
             )
         }
         verify(exactly = 1) { statementService.countAllIncomingStatementsById(any()) }

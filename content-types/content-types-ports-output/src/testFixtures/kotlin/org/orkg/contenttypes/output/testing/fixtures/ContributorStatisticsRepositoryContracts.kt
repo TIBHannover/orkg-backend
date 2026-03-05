@@ -54,10 +54,10 @@ fun <
     val fabricator = Fabrikate(
         FabricatorConfig(
             collectionSizes = 12..12,
-            nullableStrategy = FabricatorConfig.NullableStrategy.NeverSetToNull // FIXME: because "id" is nullable
+            nullableStrategy = FabricatorConfig.NullableStrategy.NeverSetToNull, // FIXME: because "id" is nullable
         )
             .withStandardMappings()
-            .withGraphMappings()
+            .withGraphMappings(),
     )
 
     val saveThing: (Thing) -> Unit = {
@@ -96,14 +96,14 @@ fun <
         val paper = fabricator.random<Resource>().copy(
             createdBy = contributorId,
             classes = setOf(Classes.paper),
-            createdAt = createdAt
+            createdAt = createdAt,
         )
         saveStatement(
             fabricator.random<GeneralStatement>().copy(
                 subject = paper,
                 predicate = hasResearchField,
-                `object` = this
-            )
+                `object` = this,
+            ),
         )
         return paper
     }
@@ -112,14 +112,14 @@ fun <
         val contribution = fabricator.random<Resource>().copy(
             createdBy = contributorId,
             classes = setOf(Classes.contribution),
-            createdAt = createdAt
+            createdAt = createdAt,
         )
         saveStatement(
             fabricator.random<GeneralStatement>().copy(
                 subject = this,
                 predicate = hasContribution,
-                `object` = contribution
-            )
+                `object` = contribution,
+            ),
         )
         return contribution
     }
@@ -128,14 +128,14 @@ fun <
         val comparison = fabricator.random<Resource>().copy(
             createdBy = contributorId,
             classes = setOf(Classes.comparisonPublished),
-            createdAt = createdAt
+            createdAt = createdAt,
         )
         saveStatement(
             fabricator.random<GeneralStatement>().copy(
                 subject = comparison,
                 predicate = comparesContribution,
-                `object` = this
-            )
+                `object` = this,
+            ),
         )
         return comparison
     }
@@ -145,8 +145,8 @@ fun <
             fabricator.random<GeneralStatement>().copy(
                 subject = this,
                 predicate = hasResearchProblem,
-                `object` = researchProblem
-            )
+                `object` = researchProblem,
+            ),
         )
         return researchProblem
     }
@@ -155,14 +155,14 @@ fun <
         val visualization = fabricator.random<Resource>().copy(
             createdBy = contributorId,
             classes = setOf(Classes.visualization),
-            createdAt = createdAt
+            createdAt = createdAt,
         )
         saveStatement(
             fabricator.random<GeneralStatement>().copy(
                 subject = this,
                 predicate = hasVisualization,
-                `object` = visualization
-            )
+                `object` = visualization,
+            ),
         )
         return visualization
     }
@@ -173,7 +173,7 @@ fun <
                 subject = researchField,
                 predicate = hasSubfield,
                 `object` = childResearchField,
-            )
+            ),
         )
 
         val researchProblem = fabricator.random<Resource>().copy(
@@ -193,7 +193,7 @@ fun <
                 subject = childResearchProblem,
                 predicate = subProblem,
                 `object` = researchProblem,
-            )
+            ),
         )
 
         // contributor 1
@@ -311,7 +311,7 @@ fun <
                         contributionCount = 0,
                         researchProblemCount = 0,
                         visualizationCount = 0,
-                        totalCount = 1
+                        totalCount = 1,
                     ),
                 )
                 val result = repository.findAll(

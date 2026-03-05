@@ -19,17 +19,17 @@ internal class LiteratureListSectionsCreatorUnitTest : MockkBaseTest {
 
     private val literatureListSectionsCreator = LiteratureListSectionsCreator(
         unsafeStatementUseCases,
-        abstractLiteratureListSectionCreator
+        abstractLiteratureListSectionCreator,
     )
 
     @Test
     fun `Given a literature list create command, when sections are empty, it does nothing`() {
         val literatureListId = ThingId("R123")
         val command = createLiteratureListCommand().copy(
-            sections = emptyList()
+            sections = emptyList(),
         )
         val state = CreateLiteratureListState(
-            literatureListId = literatureListId
+            literatureListId = literatureListId,
         )
 
         literatureListSectionsCreator(command, state)
@@ -40,7 +40,7 @@ internal class LiteratureListSectionsCreatorUnitTest : MockkBaseTest {
         val literatureListId = ThingId("R123")
         val command = createLiteratureListCommand()
         val state = CreateLiteratureListState(
-            literatureListId = literatureListId
+            literatureListId = literatureListId,
         )
         val sectionId1 = ThingId("R456")
         val sectionId2 = ThingId("R789")
@@ -59,8 +59,8 @@ internal class LiteratureListSectionsCreatorUnitTest : MockkBaseTest {
                     contributorId = command.contributorId,
                     subjectId = state.literatureListId!!,
                     predicateId = Predicates.hasSection,
-                    objectId = sectionId1
-                )
+                    objectId = sectionId1,
+                ),
             )
         }
         verify(exactly = 1) {
@@ -72,8 +72,8 @@ internal class LiteratureListSectionsCreatorUnitTest : MockkBaseTest {
                     contributorId = command.contributorId,
                     subjectId = state.literatureListId!!,
                     predicateId = Predicates.hasSection,
-                    objectId = sectionId2
-                )
+                    objectId = sectionId2,
+                ),
             )
         }
     }

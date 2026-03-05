@@ -81,7 +81,7 @@ internal class OrganizationServiceUnitTest : MockkBaseTest {
             name = null,
             url = null,
             type = null,
-            logo = null
+            logo = null,
         )
 
         every { repository.findById(id) } returns Optional.empty()
@@ -103,7 +103,7 @@ internal class OrganizationServiceUnitTest : MockkBaseTest {
             name = "newName",
             url = null,
             type = null,
-            logo = null
+            logo = null,
         )
 
         every { repository.findById(id) } returns Optional.of(organization)
@@ -120,7 +120,7 @@ internal class OrganizationServiceUnitTest : MockkBaseTest {
                     assertEquals(organization.homepage, it.homepage)
                     assertEquals(organization.type, it.type)
                     assertEquals(organization.logoId, it.logoId)
-                }
+                },
             )
         }
     }
@@ -135,7 +135,7 @@ internal class OrganizationServiceUnitTest : MockkBaseTest {
             name = null,
             url = "https://example.org",
             type = null,
-            logo = null
+            logo = null,
         )
 
         every { repository.findById(id) } returns Optional.of(organization)
@@ -152,7 +152,7 @@ internal class OrganizationServiceUnitTest : MockkBaseTest {
                     assertEquals("https://example.org", it.homepage)
                     assertEquals(organization.type, it.type)
                     assertEquals(organization.logoId, it.logoId)
-                }
+                },
             )
         }
     }
@@ -167,7 +167,7 @@ internal class OrganizationServiceUnitTest : MockkBaseTest {
             name = null,
             url = null,
             type = OrganizationType.GENERAL,
-            logo = null
+            logo = null,
         )
 
         every { repository.findById(id) } returns Optional.of(organization)
@@ -184,7 +184,7 @@ internal class OrganizationServiceUnitTest : MockkBaseTest {
                     assertEquals(organization.homepage, it.homepage)
                     assertEquals(OrganizationType.GENERAL, it.type)
                     assertEquals(organization.logoId, it.logoId)
-                }
+                },
             )
         }
     }
@@ -201,7 +201,7 @@ internal class OrganizationServiceUnitTest : MockkBaseTest {
             name = null,
             url = null,
             type = null,
-            logo = image
+            logo = image,
         )
         val createImageCommand = CreateImageUseCase.CreateCommand(image.data, image.mimeType, contributorId)
 
@@ -220,7 +220,7 @@ internal class OrganizationServiceUnitTest : MockkBaseTest {
                     assertEquals(organization.homepage, it.homepage)
                     assertEquals(organization.type, it.type)
                     assertEquals(imageId, it.logoId)
-                }
+                },
             )
         }
         verify(exactly = 1) { imageService.create(createImageCommand) }
@@ -238,7 +238,7 @@ internal class OrganizationServiceUnitTest : MockkBaseTest {
             name = "newName",
             url = "https://example.org",
             type = OrganizationType.CONFERENCE,
-            logo = image
+            logo = image,
         )
 
         every { repository.findById(id) } returns Optional.of(organization)
@@ -256,7 +256,7 @@ internal class OrganizationServiceUnitTest : MockkBaseTest {
                     assertEquals("https://example.org", it.homepage)
                     assertEquals(OrganizationType.CONFERENCE, it.type)
                     assertEquals(imageId, it.logoId)
-                }
+                },
             )
         }
         verify(exactly = 1) { imageService.create(CreateImageUseCase.CreateCommand(image.data, image.mimeType, contributorId)) }
@@ -278,7 +278,7 @@ internal class OrganizationServiceUnitTest : MockkBaseTest {
             name = "newName",
             url = null,
             type = null,
-            logo = null
+            logo = null,
         )
 
         every { repository.findById(id) } returns Optional.of(organization)
@@ -295,7 +295,7 @@ internal class OrganizationServiceUnitTest : MockkBaseTest {
                     assertEquals("https://example.org", it.homepage)
                     assertEquals(OrganizationType.CONFERENCE, it.type)
                     assertEquals(imageId, it.logoId)
-                }
+                },
             )
         }
     }

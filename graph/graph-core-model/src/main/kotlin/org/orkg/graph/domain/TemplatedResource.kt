@@ -56,14 +56,14 @@ data class TemplatedResource(
         matches.forEach {
             val predId = format.substring(
                 startIndex = it.groups.first()!!.range.first + 1,
-                endIndex = it.groups.first()!!.range.last
+                endIndex = it.groups.first()!!.range.last,
             )
             if (components.containsKey(predId)) {
                 formattedString =
                     formattedString.replaceFirst(
                         "{$predId}",
                         components[predId]
-                            ?: error("Format pattern contains predicate {$predId}, that doesn't exists in the statements")
+                            ?: error("Format pattern contains predicate {$predId}, that doesn't exists in the statements"),
                     )
             }
         }

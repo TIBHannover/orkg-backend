@@ -75,7 +75,7 @@ class SpringDataNeo4jContentTypeAdapter(
             includeSubfields = includeSubfields,
             sustainableDevelopmentGoal = sustainableDevelopmentGoal,
             authorId = authorId,
-            authorName = authorName
+            authorName = authorName,
         ).fetch(pageable, false)
 
     override fun count(
@@ -104,7 +104,7 @@ class SpringDataNeo4jContentTypeAdapter(
             includeSubfields = includeSubfields,
             sustainableDevelopmentGoal = sustainableDevelopmentGoal,
             authorId = authorId,
-            authorName = authorName
+            authorName = authorName,
         ).count()
 
     private fun buildFindAllQuery(
@@ -153,7 +153,7 @@ class SpringDataNeo4jContentTypeAdapter(
                                 .withProperties("predicate_id", literalOf<String>(Predicates.hasAuthors.value))
                                 .relationshipTo(node(Classes.thing).withProperties("label", anonParameter(it)), RELATED)
                                 .properties("predicate_id", literalOf<String>(Predicates.hasListElement.value))
-                        }
+                        },
                     )
                 }
                 contentType.match(node, patterns)
@@ -166,7 +166,7 @@ class SpringDataNeo4jContentTypeAdapter(
                         createdAtStart.toCondition { node.property("created_at").gte(anonParameter(it.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))) },
                         createdAtEnd.toCondition { node.property("created_at").lte(anonParameter(it.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))) },
                         observatoryId.toCondition { node.property("observatory_id").eq(anonParameter(it.value.toString())) },
-                        organizationId.toCondition { node.property("organization_id").eq(anonParameter(it.value.toString())) }
+                        organizationId.toCondition { node.property("organization_id").eq(anonParameter(it.value.toString())) },
                     )
                     .returning(node)
                     .build()
@@ -178,8 +178,8 @@ class SpringDataNeo4jContentTypeAdapter(
             commonQuery.orderBy(
                 sort.toSortItems(
                     node = node,
-                    knownProperties = arrayOf("id", "label", "created_at", "created_by", "visibility")
-                )
+                    knownProperties = arrayOf("id", "label", "created_at", "created_by", "visibility"),
+                ),
             )
                 .returningDistinct(node)
         }

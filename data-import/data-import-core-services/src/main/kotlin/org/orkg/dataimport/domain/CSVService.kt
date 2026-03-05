@@ -92,7 +92,7 @@ class CSVService(
                 updated.copy(
                     state = CSV.State.UPLOADED,
                     validationJobId = null,
-                )
+                ),
             )
         }
     }

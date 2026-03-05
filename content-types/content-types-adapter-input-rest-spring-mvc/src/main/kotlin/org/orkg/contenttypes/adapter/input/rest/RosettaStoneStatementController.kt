@@ -83,7 +83,7 @@ class RosettaStoneStatementController(
             createdAtStart = createdAtStart,
             createdAtEnd = createdAtEnd,
             observatoryId = observatoryId,
-            organizationId = organizationId
+            organizationId = organizationId,
         ).mapToRosettaStoneStatementRepresentation()
 
     @RequireLogin
@@ -184,7 +184,7 @@ class RosettaStoneStatementController(
                 classes = classes?.mapValues { it.value.toCreateCommand() }.orEmpty(),
                 lists = lists?.mapValues { it.value.toCreateCommand() }.orEmpty(),
                 observatories = observatories,
-                organizations = organizations
+                organizations = organizations,
             )
     }
 
@@ -227,7 +227,7 @@ class RosettaStoneStatementController(
                 classes = classes?.mapValues { it.value.toCreateCommand() }.orEmpty(),
                 lists = lists?.mapValues { it.value.toCreateCommand() }.orEmpty(),
                 observatories = observatories,
-                organizations = organizations
+                organizations = organizations,
             )
     }
 }

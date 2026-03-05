@@ -16,12 +16,12 @@ internal class TableDimensionsValidatorUnitTest {
         val rows = listOf(
             CreateRowCommand(
                 label = null,
-                data = listOf("1", "2", "3")
+                data = listOf("1", "2", "3"),
             ),
             CreateRowCommand(
                 label = "contents",
-                data = listOf(null, "content", "other")
-            )
+                data = listOf(null, "content", "other"),
+            ),
         )
         tableDimensionsValidator(rows, Unit)
     }
@@ -41,8 +41,8 @@ internal class TableDimensionsValidatorUnitTest {
         val rows = listOf(
             CreateRowCommand(
                 label = null,
-                data = listOf("1", null, "3")
-            )
+                data = listOf("1", null, "3"),
+            ),
         )
         shouldThrow<MissingTableHeaderValue> { tableDimensionsValidator(rows, Unit) }
     }
@@ -52,8 +52,8 @@ internal class TableDimensionsValidatorUnitTest {
         val rows = listOf(
             CreateRowCommand(
                 label = null,
-                data = listOf("1", "2", "")
-            )
+                data = listOf("1", "2", ""),
+            ),
         )
         shouldThrow<MissingTableHeaderValue> { tableDimensionsValidator(rows, Unit) }
     }
@@ -63,12 +63,12 @@ internal class TableDimensionsValidatorUnitTest {
         val rows = listOf(
             CreateRowCommand(
                 label = null,
-                data = listOf("1", "2", "3")
+                data = listOf("1", "2", "3"),
             ),
             CreateRowCommand(
                 label = "contents",
-                data = listOf("1", "2", "3", "too many")
-            )
+                data = listOf("1", "2", "3", "too many"),
+            ),
         )
         shouldThrow<TooManyTableRowValues> { tableDimensionsValidator(rows, Unit) }
     }
@@ -78,12 +78,12 @@ internal class TableDimensionsValidatorUnitTest {
         val rows = listOf(
             CreateRowCommand(
                 label = null,
-                data = listOf("1", "2", "3")
+                data = listOf("1", "2", "3"),
             ),
             CreateRowCommand(
                 label = "contents",
-                data = listOf("too", "few")
-            )
+                data = listOf("too", "few"),
+            ),
         )
         shouldThrow<MissingTableRowValues> { tableDimensionsValidator(rows, Unit) }
     }

@@ -10,7 +10,7 @@ class InvalidMimeType : SimpleMessageException {
             status = HttpStatus.BAD_REQUEST,
             message = """Invalid mime type "$mimeType".""",
             cause = cause,
-            properties = if (mimeType != null) mapOf("mime_type" to mimeType) else emptyMap()
+            properties = if (mimeType != null) mapOf("mime_type" to mimeType) else emptyMap(),
         )
     constructor(mimeType: MimeType) :
         this(mimeType.toString())

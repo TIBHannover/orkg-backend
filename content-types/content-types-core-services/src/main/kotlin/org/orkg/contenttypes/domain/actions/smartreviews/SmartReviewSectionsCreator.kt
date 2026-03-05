@@ -18,7 +18,7 @@ class SmartReviewSectionsCreator(
         unsafeStatementUseCases: UnsafeStatementUseCases,
     ) : this(
         unsafeStatementUseCases,
-        AbstractSmartReviewSectionCreator(unsafeStatementUseCases, unsafeResourceUseCases, unsafeLiteralUseCases)
+        AbstractSmartReviewSectionCreator(unsafeStatementUseCases, unsafeResourceUseCases, unsafeLiteralUseCases),
     )
 
     override fun invoke(command: CreateSmartReviewCommand, state: State): State {
@@ -28,8 +28,8 @@ class SmartReviewSectionsCreator(
                     contributorId = command.contributorId,
                     subjectId = state.contributionId!!,
                     predicateId = Predicates.hasSection,
-                    objectId = abstractSmartReviewSectionCreator.create(command.contributorId, section)
-                )
+                    objectId = abstractSmartReviewSectionCreator.create(command.contributorId, section),
+                ),
             )
         }
         return state

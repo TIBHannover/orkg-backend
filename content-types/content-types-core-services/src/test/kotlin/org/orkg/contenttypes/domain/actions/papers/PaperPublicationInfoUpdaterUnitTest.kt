@@ -38,7 +38,7 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
     fun `Given a paper update command, when updating with empty publication info, it does nothing`() {
         val paper = createPaper()
         val command = updatePaperCommand().copy(
-            publicationInfo = null
+            publicationInfo = null,
         )
         val state = UpdatePaperState(paper)
 
@@ -56,13 +56,13 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
             publishedMonth = 5,
             publishedYear = null,
             publishedIn = null,
-            url = null
+            url = null,
         )
         val paper = createPaper().copy(
-            publicationInfo = publicationInfo
+            publicationInfo = publicationInfo,
         )
         val command = updatePaperCommand().copy(
-            publicationInfo = publicationInfo.toPublicationInfoCommand()
+            publicationInfo = publicationInfo.toPublicationInfoCommand(),
         )
         val state = UpdatePaperState(paper)
 
@@ -81,16 +81,16 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
                 publishedMonth = 5,
                 publishedYear = null,
                 publishedIn = null,
-                url = null
-            )
+                url = null,
+            ),
         )
         val command = updatePaperCommand().copy(
             publicationInfo = PublicationInfoCommand(
                 publishedMonth = null,
                 publishedYear = null,
                 publishedIn = null,
-                url = null
-            )
+                url = null,
+            ),
         )
         val monthLiteral = createLiteral(label = paper.publicationInfo.publishedMonth.toString())
         val statementId = StatementId("S1")
@@ -99,8 +99,8 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
                 id = statementId,
                 subject = createResource(command.paperId),
                 predicate = createPredicate(Predicates.monthPublished),
-                `object` = monthLiteral
-            )
+                `object` = monthLiteral,
+            ),
         ).groupBy { it.subject.id }
         val state = UpdatePaperState(paper, statements)
 
@@ -123,8 +123,8 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
                 publishedMonth = null,
                 publishedYear = null,
                 publishedIn = null,
-                url = null
-            )
+                url = null,
+            ),
         )
         val month = 5
         val command = updatePaperCommand().copy(
@@ -132,8 +132,8 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
                 publishedMonth = month,
                 publishedYear = null,
                 publishedIn = null,
-                url = null
-            )
+                url = null,
+            ),
         )
         val state = UpdatePaperState(paper)
 
@@ -141,7 +141,7 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
             publicationInfoCreator.linkPublicationMonth(
                 contributorId = command.contributorId,
                 subjectId = command.paperId,
-                publishedMonth = month
+                publishedMonth = month,
             )
         } just runs
 
@@ -156,7 +156,7 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
             publicationInfoCreator.linkPublicationMonth(
                 contributorId = command.contributorId,
                 subjectId = command.paperId,
-                publishedMonth = month
+                publishedMonth = month,
             )
         }
     }
@@ -168,20 +168,20 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
                 publishedMonth = 5,
                 publishedYear = null,
                 publishedIn = null,
-                url = null
-            )
+                url = null,
+            ),
         )
         val command = updatePaperCommand().copy(
             publicationInfo = PublicationInfoCommand(
                 publishedMonth = 6,
                 publishedYear = null,
                 publishedIn = null,
-                url = null
-            )
+                url = null,
+            ),
         )
         val oldMonthLiteral = createLiteral(
             label = paper.publicationInfo.publishedMonth.toString(),
-            datatype = Literals.XSD.INT.prefixedUri
+            datatype = Literals.XSD.INT.prefixedUri,
         )
         val statementId = StatementId("S1")
         val statements = listOf(
@@ -189,8 +189,8 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
                 id = statementId,
                 subject = createResource(command.paperId),
                 predicate = createPredicate(Predicates.monthPublished),
-                `object` = oldMonthLiteral
-            )
+                `object` = oldMonthLiteral,
+            ),
         ).groupBy { it.subject.id }
         val state = UpdatePaperState(paper, statements)
 
@@ -199,7 +199,7 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
             publicationInfoCreator.linkPublicationMonth(
                 contributorId = command.contributorId,
                 subjectId = command.paperId,
-                publishedMonth = command.publicationInfo!!.publishedMonth!!
+                publishedMonth = command.publicationInfo!!.publishedMonth!!,
             )
         } just runs
 
@@ -215,7 +215,7 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
             publicationInfoCreator.linkPublicationMonth(
                 contributorId = command.contributorId,
                 subjectId = command.paperId,
-                publishedMonth = command.publicationInfo!!.publishedMonth!!
+                publishedMonth = command.publicationInfo!!.publishedMonth!!,
             )
         }
     }
@@ -226,13 +226,13 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
             publishedMonth = null,
             publishedYear = 2023,
             publishedIn = null,
-            url = null
+            url = null,
         )
         val paper = createPaper().copy(
-            publicationInfo = publicationInfo
+            publicationInfo = publicationInfo,
         )
         val command = updatePaperCommand().copy(
-            publicationInfo = publicationInfo.toPublicationInfoCommand()
+            publicationInfo = publicationInfo.toPublicationInfoCommand(),
         )
         val state = UpdatePaperState(paper)
 
@@ -251,16 +251,16 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
                 publishedMonth = null,
                 publishedYear = 2023,
                 publishedIn = null,
-                url = null
-            )
+                url = null,
+            ),
         )
         val command = updatePaperCommand().copy(
             publicationInfo = PublicationInfoCommand(
                 publishedMonth = null,
                 publishedYear = null,
                 publishedIn = null,
-                url = null
-            )
+                url = null,
+            ),
         )
         val yearLiteral = createLiteral(label = paper.publicationInfo.publishedYear.toString())
         val statementId = StatementId("S1")
@@ -269,8 +269,8 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
                 id = statementId,
                 subject = createResource(command.paperId),
                 predicate = createPredicate(Predicates.yearPublished),
-                `object` = yearLiteral
-            )
+                `object` = yearLiteral,
+            ),
         ).groupBy { it.subject.id }
         val state = UpdatePaperState(paper, statements)
 
@@ -293,8 +293,8 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
                 publishedMonth = null,
                 publishedYear = null,
                 publishedIn = null,
-                url = null
-            )
+                url = null,
+            ),
         )
         val year: Long = 2023
         val command = updatePaperCommand().copy(
@@ -302,8 +302,8 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
                 publishedMonth = null,
                 publishedYear = year,
                 publishedIn = null,
-                url = null
-            )
+                url = null,
+            ),
         )
         val state = UpdatePaperState(paper)
 
@@ -311,7 +311,7 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
             publicationInfoCreator.linkPublicationYear(
                 contributorId = command.contributorId,
                 subjectId = command.paperId,
-                publishedYear = year
+                publishedYear = year,
             )
         } just runs
 
@@ -326,7 +326,7 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
             publicationInfoCreator.linkPublicationYear(
                 contributorId = command.contributorId,
                 subjectId = command.paperId,
-                publishedYear = year
+                publishedYear = year,
             )
         }
     }
@@ -338,20 +338,20 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
                 publishedMonth = null,
                 publishedYear = 2022,
                 publishedIn = null,
-                url = null
-            )
+                url = null,
+            ),
         )
         val command = updatePaperCommand().copy(
             publicationInfo = PublicationInfoCommand(
                 publishedMonth = null,
                 publishedYear = 2023,
                 publishedIn = null,
-                url = null
-            )
+                url = null,
+            ),
         )
         val oldYearLiteral = createLiteral(
             label = paper.publicationInfo.publishedYear.toString(),
-            datatype = Literals.XSD.INT.prefixedUri
+            datatype = Literals.XSD.INT.prefixedUri,
         )
         val statementId = StatementId("S1")
         val statements = listOf(
@@ -359,8 +359,8 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
                 id = statementId,
                 subject = createResource(command.paperId),
                 predicate = createPredicate(Predicates.yearPublished),
-                `object` = oldYearLiteral
-            )
+                `object` = oldYearLiteral,
+            ),
         ).groupBy { it.subject.id }
         val state = UpdatePaperState(paper, statements)
 
@@ -369,7 +369,7 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
             publicationInfoCreator.linkPublicationYear(
                 contributorId = command.contributorId,
                 subjectId = command.paperId,
-                publishedYear = command.publicationInfo!!.publishedYear!!
+                publishedYear = command.publicationInfo!!.publishedYear!!,
             )
         } just runs
 
@@ -385,7 +385,7 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
             publicationInfoCreator.linkPublicationYear(
                 contributorId = command.contributorId,
                 subjectId = command.paperId,
-                publishedYear = command.publicationInfo!!.publishedYear!!
+                publishedYear = command.publicationInfo!!.publishedYear!!,
             )
         }
     }
@@ -396,13 +396,13 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
             publishedMonth = null,
             publishedYear = null,
             publishedIn = ObjectIdAndLabel(ThingId("irrelevant"), "Conference"),
-            url = null
+            url = null,
         )
         val paper = createPaper().copy(
-            publicationInfo = publicationInfo
+            publicationInfo = publicationInfo,
         )
         val command = updatePaperCommand().copy(
-            publicationInfo = publicationInfo.toPublicationInfoCommand()
+            publicationInfo = publicationInfo.toPublicationInfoCommand(),
         )
         val state = UpdatePaperState(paper)
 
@@ -421,20 +421,20 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
                 publishedMonth = null,
                 publishedYear = null,
                 publishedIn = ObjectIdAndLabel(ThingId("irrelevant"), "Conference"),
-                url = null
-            )
+                url = null,
+            ),
         )
         val command = updatePaperCommand().copy(
             publicationInfo = PublicationInfoCommand(
                 publishedMonth = null,
                 publishedYear = null,
                 publishedIn = null,
-                url = null
-            )
+                url = null,
+            ),
         )
         val venueResource = createResource(
             label = paper.publicationInfo.publishedIn.toString(),
-            classes = setOf(Classes.venue)
+            classes = setOf(Classes.venue),
         )
         val statementId = StatementId("S1")
         val statements = listOf(
@@ -442,8 +442,8 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
                 id = statementId,
                 subject = createResource(command.paperId),
                 predicate = createPredicate(Predicates.hasVenue),
-                `object` = venueResource
-            )
+                `object` = venueResource,
+            ),
         ).groupBy { it.subject.id }
         val state = UpdatePaperState(paper, statements)
 
@@ -466,8 +466,8 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
                 publishedMonth = null,
                 publishedYear = null,
                 publishedIn = null,
-                url = null
-            )
+                url = null,
+            ),
         )
         val venue = "Conference"
         val command = updatePaperCommand().copy(
@@ -475,8 +475,8 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
                 publishedMonth = null,
                 publishedYear = null,
                 publishedIn = venue,
-                url = null
-            )
+                url = null,
+            ),
         )
         val state = UpdatePaperState(paper)
 
@@ -484,7 +484,7 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
             publicationInfoCreator.linkPublicationVenue(
                 contributorId = command.contributorId,
                 subjectId = command.paperId,
-                publishedIn = venue
+                publishedIn = venue,
             )
         } just runs
 
@@ -499,7 +499,7 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
             publicationInfoCreator.linkPublicationVenue(
                 contributorId = command.contributorId,
                 subjectId = command.paperId,
-                publishedIn = venue
+                publishedIn = venue,
             )
         }
     }
@@ -510,13 +510,13 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
             publishedMonth = null,
             publishedYear = null,
             publishedIn = null,
-            url = ParsedIRI.create("https://orkg.org/")
+            url = ParsedIRI.create("https://orkg.org/"),
         )
         val paper = createPaper().copy(
-            publicationInfo = publicationInfo
+            publicationInfo = publicationInfo,
         )
         val command = updatePaperCommand().copy(
-            publicationInfo = publicationInfo.toPublicationInfoCommand()
+            publicationInfo = publicationInfo.toPublicationInfoCommand(),
         )
         val state = UpdatePaperState(paper)
 
@@ -535,16 +535,16 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
                 publishedMonth = null,
                 publishedYear = null,
                 publishedIn = null,
-                url = ParsedIRI.create("https://orkg.org/")
-            )
+                url = ParsedIRI.create("https://orkg.org/"),
+            ),
         )
         val command = updatePaperCommand().copy(
             publicationInfo = PublicationInfoCommand(
                 publishedMonth = null,
                 publishedYear = null,
                 publishedIn = null,
-                url = null
-            )
+                url = null,
+            ),
         )
         val urlLiteral = createLiteral(label = paper.publicationInfo.url.toString())
         val statementId = StatementId("S1")
@@ -553,8 +553,8 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
                 id = statementId,
                 subject = createResource(command.paperId),
                 predicate = createPredicate(Predicates.hasURL),
-                `object` = urlLiteral
-            )
+                `object` = urlLiteral,
+            ),
         ).groupBy { it.subject.id }
         val state = UpdatePaperState(paper, statements)
 
@@ -577,8 +577,8 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
                 publishedMonth = null,
                 publishedYear = null,
                 publishedIn = null,
-                url = null
-            )
+                url = null,
+            ),
         )
         val url = ParsedIRI.create("https://orkg.org/")
         val command = updatePaperCommand().copy(
@@ -586,8 +586,8 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
                 publishedMonth = null,
                 publishedYear = null,
                 publishedIn = null,
-                url = url
-            )
+                url = url,
+            ),
         )
         val state = UpdatePaperState(paper)
 
@@ -595,7 +595,7 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
             publicationInfoCreator.linkPublicationUrl(
                 contributorId = command.contributorId,
                 subjectId = command.paperId,
-                url = url
+                url = url,
             )
         } just runs
 
@@ -610,7 +610,7 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
             publicationInfoCreator.linkPublicationUrl(
                 contributorId = command.contributorId,
                 subjectId = command.paperId,
-                url = url
+                url = url,
             )
         }
     }
@@ -622,20 +622,20 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
                 publishedMonth = null,
                 publishedYear = null,
                 publishedIn = null,
-                url = ParsedIRI.create("https://example.org")
-            )
+                url = ParsedIRI.create("https://example.org"),
+            ),
         )
         val command = updatePaperCommand().copy(
             publicationInfo = PublicationInfoCommand(
                 publishedMonth = null,
                 publishedYear = null,
                 publishedIn = null,
-                url = ParsedIRI.create("https://orkg.org")
-            )
+                url = ParsedIRI.create("https://orkg.org"),
+            ),
         )
         val oldUrlLiteral = createLiteral(
             label = paper.publicationInfo.url.toString(),
-            datatype = Literals.XSD.URI.prefixedUri
+            datatype = Literals.XSD.URI.prefixedUri,
         )
         val statementId = StatementId("S1")
         val statements = listOf(
@@ -643,8 +643,8 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
                 id = statementId,
                 subject = createResource(command.paperId),
                 predicate = createPredicate(Predicates.hasURL),
-                `object` = oldUrlLiteral
-            )
+                `object` = oldUrlLiteral,
+            ),
         ).groupBy { it.subject.id }
         val state = UpdatePaperState(paper, statements)
 
@@ -653,7 +653,7 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
             publicationInfoCreator.linkPublicationUrl(
                 contributorId = command.contributorId,
                 subjectId = command.paperId,
-                url = command.publicationInfo!!.url!!
+                url = command.publicationInfo!!.url!!,
             )
         } just runs
 
@@ -669,7 +669,7 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
             publicationInfoCreator.linkPublicationUrl(
                 contributorId = command.contributorId,
                 subjectId = command.paperId,
-                url = command.publicationInfo!!.url!!
+                url = command.publicationInfo!!.url!!,
             )
         }
     }
@@ -679,6 +679,6 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
             publishedMonth = publishedMonth,
             publishedYear = publishedYear,
             publishedIn = publishedIn?.label,
-            url = url
+            url = url,
         )
 }

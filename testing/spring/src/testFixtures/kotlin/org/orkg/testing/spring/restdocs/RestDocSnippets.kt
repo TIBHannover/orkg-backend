@@ -60,7 +60,7 @@ fun pagedResponseFields(
 fun timestampFieldWithPath(path: String, suffix: String): FieldDescriptor = fieldWithPath(path)
     .description(
         "The <<timestamp-representation,timestamp>> when $suffix. " +
-            "(Also see https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/OffsetDateTime.html[JavaDoc])."
+            "(Also see https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/OffsetDateTime.html[JavaDoc]).",
     )
     .type<OffsetDateTime>()
 

@@ -133,7 +133,7 @@ data class SchemaBasedCSVRecordParser(
             column = column,
             namespace = namespace?.name,
             name = value,
-            columnType = namespace?.typeForValue(value) ?: parsed.type
+            columnType = namespace?.typeForValue(value) ?: parsed.type,
         )
     }
 

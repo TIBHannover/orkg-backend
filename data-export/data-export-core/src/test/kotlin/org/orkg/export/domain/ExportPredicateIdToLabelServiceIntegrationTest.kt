@@ -23,7 +23,7 @@ internal class ExportPredicateIdToLabelServiceIntegrationTest :
         val service = ExportPredicateIdToLabelService(
             predicateRepository = predicateRepository,
             fileExportService = fileExportService,
-            objectMapper = objectMapper
+            objectMapper = objectMapper,
         )
 
         val targetDir = tempdir()

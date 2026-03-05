@@ -71,7 +71,7 @@ class TemplateBasedResourceSnapshotService(
             data = templateInstance,
             resourceId = resource.id,
             templateId = template.id,
-            handle = handle
+            handle = handle,
         )
         templateBasedResourceSnapshotRepository.save(templateSnapshot)
         return id

@@ -17,7 +17,7 @@ class TableColumnsUpdateValidator(
         val validationCache = abstractTableColumnsValidator.validate(
             rows = command.rows!!,
             thingCommands = command.all(),
-            validationCacheIn = state.validationCache
+            validationCacheIn = state.validationCache,
         )
         val headerIndexToStatements = parseColumnGraphs(command.tableId, state.statements)
         val existingColumns = headerIndexToStatements.map { it.second }

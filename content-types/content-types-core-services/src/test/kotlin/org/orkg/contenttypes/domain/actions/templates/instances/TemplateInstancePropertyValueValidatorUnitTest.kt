@@ -41,7 +41,7 @@ internal class TemplateInstancePropertyValueValidatorUnitTest : MockkBaseTest {
         ThingIdValidator(thingRepository), // it is easier to mock thingRepository calls than thingIdValidator calls
         classRepository,
         statementRepository,
-        abstractTemplatePropertyValueValidator
+        abstractTemplatePropertyValueValidator,
     )
 
     @Test
@@ -49,7 +49,7 @@ internal class TemplateInstancePropertyValueValidatorUnitTest : MockkBaseTest {
         val temp1 = CreateLiteralCommandPart("1") // datatype is irrelevant, as it will be re-assigned by the service
         val temp2 = CreateResourceCommandPart(
             label = "MOTO",
-            classes = setOf(ThingId("C28"))
+            classes = setOf(ThingId("C28")),
         )
         val command = updateTemplateInstanceCommand().copy(
             statements = mapOf(
@@ -57,17 +57,17 @@ internal class TemplateInstancePropertyValueValidatorUnitTest : MockkBaseTest {
                 Predicates.description to listOf("L123"),
                 Predicates.hasHeadingLevel to listOf("#temp1"),
                 Predicates.hasWikidataId to listOf("L123"),
-                Predicates.hasAuthor to listOf("#temp2", "R1", "R123")
+                Predicates.hasAuthor to listOf("#temp2", "R1", "R123"),
             ),
             resources = mapOf(
-                "#temp2" to temp2
+                "#temp2" to temp2,
             ),
             literals = mapOf(
-                "#temp1" to temp1
+                "#temp1" to temp1,
             ),
             predicates = emptyMap(),
             lists = emptyMap(),
-            classes = emptyMap()
+            classes = emptyMap(),
         )
         val state = UpdateTemplateInstanceState(
             template = createTemplate(),
@@ -77,23 +77,23 @@ internal class TemplateInstancePropertyValueValidatorUnitTest : MockkBaseTest {
                     createResource(
                         id = ThingId("R123"),
                         label = "word",
-                        classes = setOf(ThingId("C28"))
-                    )
+                        classes = setOf(ThingId("C28")),
+                    ),
                 ),
                 "R1" to Either.right(
                     createResource(
                         label = "other",
-                        classes = setOf(ThingId("C28"))
-                    )
+                        classes = setOf(ThingId("C28")),
+                    ),
                 ),
                 "L123" to Either.right(
                     createLiteral(
                         id = ThingId("L123"),
                         label = "10",
-                        datatype = Literals.XSD.DECIMAL.prefixedUri
-                    )
-                )
-            )
+                        datatype = Literals.XSD.DECIMAL.prefixedUri,
+                    ),
+                ),
+            ),
         )
 
         every { abstractTemplatePropertyValueValidator.validateCardinality(any(), any()) } just runs
@@ -106,7 +106,7 @@ internal class TemplateInstancePropertyValueValidatorUnitTest : MockkBaseTest {
             it.templateInstance shouldBe state.templateInstance
             it.validationCache shouldBe state.validationCache + mapOf(
                 "#temp2" from command,
-                "#temp1" from command
+                "#temp1" from command,
             )
             it.statementsToAdd shouldBe setOf(
                 BakedStatement("R54631", Predicates.field.value, "#temp1"),
@@ -115,19 +115,19 @@ internal class TemplateInstancePropertyValueValidatorUnitTest : MockkBaseTest {
                 BakedStatement("R54631", Predicates.hasHeadingLevel.value, "#temp1"),
                 BakedStatement("R54631", Predicates.hasWikidataId.value, "L123"),
                 BakedStatement("R54631", Predicates.hasAuthor.value, "#temp2"),
-                BakedStatement("R54631", Predicates.hasAuthor.value, "R123")
+                BakedStatement("R54631", Predicates.hasAuthor.value, "R123"),
             )
             it.statementsToRemove shouldBe setOf(
                 BakedStatement("R54631", Predicates.field.value, "L1"),
                 BakedStatement("R54631", Predicates.description.value, "L1"),
                 BakedStatement("R54631", Predicates.hasHeadingLevel.value, "L1"),
-                BakedStatement("R54631", Predicates.hasWikidataId.value, "L1")
+                BakedStatement("R54631", Predicates.hasWikidataId.value, "L1"),
             )
             it.literals shouldBe mapOf(
                 "#temp1" to CreateLiteralCommandPart(
                     label = "1",
-                    dataType = Literals.XSD.INT.prefixedUri
-                )
+                    dataType = Literals.XSD.INT.prefixedUri,
+                ),
             )
         }
 
@@ -139,17 +139,17 @@ internal class TemplateInstancePropertyValueValidatorUnitTest : MockkBaseTest {
     fun `Given a template instance update command, when provided property is not defined by template, it throws an exception`() {
         val command = updateTemplateInstanceCommand().copy(
             statements = mapOf(
-                ThingId("Unknown") to listOf("L123")
+                ThingId("Unknown") to listOf("L123"),
             ),
             resources = emptyMap(),
             literals = emptyMap(),
             predicates = emptyMap(),
             lists = emptyMap(),
-            classes = emptyMap()
+            classes = emptyMap(),
         )
         val state = UpdateTemplateInstanceState(
             template = createTemplate(),
-            templateInstance = createTemplateInstance()
+            templateInstance = createTemplateInstance(),
         )
 
         shouldThrow<UnknownTemplateProperties> { templateInstancePropertyValueValidator(command, state) }.asClue {

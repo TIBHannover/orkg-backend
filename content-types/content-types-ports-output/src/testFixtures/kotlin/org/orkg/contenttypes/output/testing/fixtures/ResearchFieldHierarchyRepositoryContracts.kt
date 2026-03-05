@@ -47,8 +47,8 @@ fun <
                 createResource(
                     id = ThingId("${it + 1}"),
                     classes = setOf(Classes.researchField),
-                    createdAt = OffsetDateTime.parse("2023-02-17T12:48:28.709687300+01:00")
-                )
+                    createdAt = OffsetDateTime.parse("2023-02-17T12:48:28.709687300+01:00"),
+                ),
             )
         }
 
@@ -59,7 +59,7 @@ fun <
         createStatement(
             subject = resourceRepository.findById(parentId).get(),
             predicate = predicateRepository.findById(Predicates.hasSubfield).get(),
-            `object` = resourceRepository.findById(childId).get()
+            `object` = resourceRepository.findById(childId).get(),
         ).copy(id = StatementId("S$parentId-$childId"))
 
     //      1     4
@@ -73,8 +73,8 @@ fun <
                 createRelation(ThingId("1"), ThingId("2")),
                 createRelation(ThingId("1"), ThingId("3")),
                 createRelation(ThingId("3"), ThingId("5")),
-                createRelation(ThingId("3"), ThingId("6"))
-            )
+                createRelation(ThingId("3"), ThingId("6")),
+            ),
         )
     }
 
@@ -109,7 +109,7 @@ fun <
                 result.content.size shouldBe 2
                 result.content shouldContainAll setOf(
                     ResearchFieldWithChildCount(resourceRepository.findById(ThingId("2")).get(), 0),
-                    ResearchFieldWithChildCount(resourceRepository.findById(ThingId("3")).get(), 2)
+                    ResearchFieldWithChildCount(resourceRepository.findById(ThingId("3")).get(), 2),
                 )
             }
             it("pages the result correctly") {
@@ -136,7 +136,7 @@ fun <
                 result.content shouldNotBe null
                 result.content.size shouldBe 1
                 result.content shouldContainAll setOf(
-                    resourceRepository.findById(ThingId("1")).get()
+                    resourceRepository.findById(ThingId("1")).get(),
                 )
             }
             it("pages the result correctly") {
@@ -179,7 +179,7 @@ fun <
                 result.content shouldNotBe null
                 result.content.size shouldBe 1
                 result.content shouldContainAll setOf(
-                    resourceRepository.findById(ThingId("1")).get()
+                    resourceRepository.findById(ThingId("1")).get(),
                 )
             }
             it("pages the result correctly") {
@@ -203,7 +203,7 @@ fun <
                 result.content shouldNotBe null
                 result.content.size shouldBe 1
                 result.content shouldContainAll setOf(
-                    resourceRepository.findById(ThingId("1")).get()
+                    resourceRepository.findById(ThingId("1")).get(),
                 )
             }
             it("pages the result correctly") {
@@ -269,7 +269,7 @@ fun <
                 result.content shouldNotBe null
                 result.content.size shouldBe 1
                 result.content shouldContainAll setOf(
-                    ResearchFieldHierarchyEntry(resourceRepository.findById(ThingId("1")).get(), setOf())
+                    ResearchFieldHierarchyEntry(resourceRepository.findById(ThingId("1")).get(), setOf()),
                 )
             }
             it("pages the result correctly") {
@@ -294,7 +294,7 @@ fun <
                 result.content.size shouldBe 2
                 result.content shouldContainAll setOf(
                     ResearchFieldHierarchyEntry(resourceRepository.findById(ThingId("1")).get(), setOf()),
-                    ResearchFieldHierarchyEntry(resourceRepository.findById(ThingId("3")).get(), setOf(ThingId("1")))
+                    ResearchFieldHierarchyEntry(resourceRepository.findById(ThingId("3")).get(), setOf(ThingId("1"))),
                 )
             }
             it("pages the result correctly") {
@@ -318,7 +318,7 @@ fun <
                 result.content shouldNotBe null
                 result.content.size shouldBe 1
                 result.content shouldContainAll setOf(
-                    ResearchFieldHierarchyEntry(resourceRepository.findById(ThingId("4")).get(), setOf())
+                    ResearchFieldHierarchyEntry(resourceRepository.findById(ThingId("4")).get(), setOf()),
                 )
             }
             it("pages the result correctly") {

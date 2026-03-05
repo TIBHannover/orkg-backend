@@ -25,7 +25,7 @@ internal class AbstractSmartReviewSectionValidatorLiteratureListTextSectionUnitT
     @Test
     fun `Given a text section command, when heading is invalid, it throws an exception`() {
         val section = smartReviewTextSectionCommand().copy(
-            heading = "a".repeat(MAX_LABEL_LENGTH + 1)
+            heading = "a".repeat(MAX_LABEL_LENGTH + 1),
         )
         val validationCache = mutableSetOf<ThingId>()
 
@@ -35,7 +35,7 @@ internal class AbstractSmartReviewSectionValidatorLiteratureListTextSectionUnitT
     @Test
     fun `Given a text section command, when text is invalid, it throws an exception`() {
         val section = smartReviewTextSectionCommand().copy(
-            text = "a".repeat(MAX_LABEL_LENGTH + 1)
+            text = "a".repeat(MAX_LABEL_LENGTH + 1),
         )
         val validationCache = mutableSetOf<ThingId>()
 
@@ -45,7 +45,7 @@ internal class AbstractSmartReviewSectionValidatorLiteratureListTextSectionUnitT
     @Test
     fun `Given a text section command, when type is invalid, it throws an exception`() {
         val section = smartReviewTextSectionCommand().copy(
-            `class` = Classes.comparison
+            `class` = Classes.comparison,
         )
         val validationCache = mutableSetOf<ThingId>()
 

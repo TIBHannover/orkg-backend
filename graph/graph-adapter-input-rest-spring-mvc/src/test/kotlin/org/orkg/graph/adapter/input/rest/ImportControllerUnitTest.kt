@@ -42,7 +42,7 @@ internal class ImportControllerUnitTest : MockMvcBaseTest("import") {
         val id = ThingId("R123")
         val request = ImportByURIRequest(
             uri = ParsedIRI.create("https://www.wikidata.org/entity/Q42"),
-            ontology = "wikidata"
+            ontology = "wikidata",
         )
 
         every { service.importResourceByURI(any(), any(), any()) } returns id
@@ -59,10 +59,10 @@ internal class ImportControllerUnitTest : MockMvcBaseTest("import") {
                     """
                     A `POST` request imports a resource from an external ontology by a given URI.
                     The response will be `201 Created` when successful, even when the resource was already imported previously.
-                    """
+                    """,
                 )
                 responseHeaders(
-                    headerWithName("Location").description("The uri path where the imported resource can be fetched from.")
+                    headerWithName("Location").description("The uri path where the imported resource can be fetched from."),
                 )
                 requestFields<ImportByURIRequest>(
                     fieldWithPath("ontology").description("The identifier of the ontology. See <<external-sources,External Sources>> for more information."),
@@ -75,7 +75,7 @@ internal class ImportControllerUnitTest : MockMvcBaseTest("import") {
             service.importResourceByURI(
                 contributorId = ContributorId(MockUserId.USER),
                 ontologyId = request.ontology,
-                uri = request.uri
+                uri = request.uri,
             )
         }
     }
@@ -87,7 +87,7 @@ internal class ImportControllerUnitTest : MockMvcBaseTest("import") {
         val id = ThingId("R123")
         val request = ImportByShortFormRequest(
             shortForm = "Q42",
-            ontology = "wikidata"
+            ontology = "wikidata",
         )
 
         every { service.importResourceByShortForm(any(), any(), any()) } returns id
@@ -104,10 +104,10 @@ internal class ImportControllerUnitTest : MockMvcBaseTest("import") {
                     """
                     A `POST` request imports a resource from an external ontology by a given short form id.
                     The response will be `201 Created` when successful, even when the resource was already imported.
-                    """
+                    """,
                 )
                 responseHeaders(
-                    headerWithName("Location").description("The uri path where the imported resource can be fetched from.")
+                    headerWithName("Location").description("The uri path where the imported resource can be fetched from."),
                 )
                 requestFields<ImportByShortFormRequest>(
                     fieldWithPath("ontology").description("The identifier of the ontology. See <<external-sources,External Sources>> for more information."),
@@ -120,7 +120,7 @@ internal class ImportControllerUnitTest : MockMvcBaseTest("import") {
             service.importResourceByShortForm(
                 contributorId = ContributorId(MockUserId.USER),
                 ontologyId = request.ontology,
-                shortForm = request.shortForm
+                shortForm = request.shortForm,
             )
         }
     }
@@ -132,7 +132,7 @@ internal class ImportControllerUnitTest : MockMvcBaseTest("import") {
         val id = ThingId("P123")
         val request = ImportByURIRequest(
             uri = ParsedIRI.create("https://www.wikidata.org/entity/P30"),
-            ontology = "wikidata"
+            ontology = "wikidata",
         )
 
         every { service.importPredicateByURI(any(), any(), any()) } returns id
@@ -149,10 +149,10 @@ internal class ImportControllerUnitTest : MockMvcBaseTest("import") {
                     """
                     A `POST` request imports a predicate from an external ontology by a given URI.
                     The response will be `201 Created` when successful, even when the predicate was already imported previously.
-                    """
+                    """,
                 )
                 responseHeaders(
-                    headerWithName("Location").description("The uri path where the imported predicate can be fetched from.")
+                    headerWithName("Location").description("The uri path where the imported predicate can be fetched from."),
                 )
                 requestFields<ImportByURIRequest>(
                     fieldWithPath("ontology").description("The identifier of the ontology. See <<external-sources,External Sources>> for more information."),
@@ -165,7 +165,7 @@ internal class ImportControllerUnitTest : MockMvcBaseTest("import") {
             service.importPredicateByURI(
                 contributorId = ContributorId(MockUserId.USER),
                 ontologyId = request.ontology,
-                uri = request.uri
+                uri = request.uri,
             )
         }
     }
@@ -177,7 +177,7 @@ internal class ImportControllerUnitTest : MockMvcBaseTest("import") {
         val id = ThingId("P123")
         val request = ImportByShortFormRequest(
             shortForm = "P30",
-            ontology = "wikidata"
+            ontology = "wikidata",
         )
 
         every { service.importPredicateByShortForm(any(), any(), any()) } returns id
@@ -194,10 +194,10 @@ internal class ImportControllerUnitTest : MockMvcBaseTest("import") {
                     """
                     A `POST` request imports a predicate from an external ontology by a given short form id.
                     The response will be `201 Created` when successful, even when the predicate was already imported previously.
-                    """
+                    """,
                 )
                 responseHeaders(
-                    headerWithName("Location").description("The uri path where the imported predicate can be fetched from.")
+                    headerWithName("Location").description("The uri path where the imported predicate can be fetched from."),
                 )
                 requestFields<ImportByShortFormRequest>(
                     fieldWithPath("ontology").description("The identifier of the ontology. See <<external-sources,External Sources>> for more information."),
@@ -210,7 +210,7 @@ internal class ImportControllerUnitTest : MockMvcBaseTest("import") {
             service.importPredicateByShortForm(
                 contributorId = ContributorId(MockUserId.USER),
                 ontologyId = request.ontology,
-                shortForm = request.shortForm
+                shortForm = request.shortForm,
             )
         }
     }
@@ -222,7 +222,7 @@ internal class ImportControllerUnitTest : MockMvcBaseTest("import") {
         val id = ThingId("C123")
         val request = ImportByURIRequest(
             uri = ParsedIRI.create("https://www.wikidata.org/entity/Q42"),
-            ontology = "wikidata"
+            ontology = "wikidata",
         )
 
         every { service.importClassByURI(any(), any(), any()) } returns id
@@ -239,10 +239,10 @@ internal class ImportControllerUnitTest : MockMvcBaseTest("import") {
                     """
                     A `POST` request imports a class from an external ontology by a given URI.
                     The response will be `201 Created` when successful, even when the class was already imported.
-                    """
+                    """,
                 )
                 responseHeaders(
-                    headerWithName("Location").description("The uri path where the imported class can be fetched from.")
+                    headerWithName("Location").description("The uri path where the imported class can be fetched from."),
                 )
                 requestFields<ImportByURIRequest>(
                     fieldWithPath("ontology").description("The identifier of the ontology. See <<external-sources,External Sources>> for more information."),
@@ -255,7 +255,7 @@ internal class ImportControllerUnitTest : MockMvcBaseTest("import") {
             service.importClassByURI(
                 contributorId = ContributorId(MockUserId.USER),
                 ontologyId = request.ontology,
-                uri = request.uri
+                uri = request.uri,
             )
         }
     }
@@ -267,7 +267,7 @@ internal class ImportControllerUnitTest : MockMvcBaseTest("import") {
         val id = ThingId("C123")
         val request = ImportByShortFormRequest(
             shortForm = "Q42",
-            ontology = "wikidata"
+            ontology = "wikidata",
         )
 
         every { service.importClassByShortForm(any(), any(), any()) } returns id
@@ -284,10 +284,10 @@ internal class ImportControllerUnitTest : MockMvcBaseTest("import") {
                     """
                     A `POST` request imports a class from an external ontology by a given short form id.
                     The response will be `201 Created` when successful, even when the class was already imported.
-                    """
+                    """,
                 )
                 responseHeaders(
-                    headerWithName("Location").description("The uri path where the imported class can be fetched from.")
+                    headerWithName("Location").description("The uri path where the imported class can be fetched from."),
                 )
                 requestFields<ImportByShortFormRequest>(
                     fieldWithPath("ontology").description("The identifier of the ontology. See <<external-sources,External Sources>> for more information."),
@@ -300,7 +300,7 @@ internal class ImportControllerUnitTest : MockMvcBaseTest("import") {
             service.importClassByShortForm(
                 contributorId = ContributorId(MockUserId.USER),
                 ontologyId = request.ontology,
-                shortForm = request.shortForm
+                shortForm = request.shortForm,
             )
         }
     }

@@ -49,7 +49,7 @@ interface SmartReviewRepresentationAdapter :
             published = published,
             sections = sections.map { it.toSmartReviewSectionRepresentation() },
             references = references,
-            acknowledgements = acknowledgements
+            acknowledgements = acknowledgements,
         )
 
     private fun SmartReviewSection.toSmartReviewSectionRepresentation(): SmartReviewSectionRepresentation =
@@ -57,32 +57,32 @@ interface SmartReviewRepresentationAdapter :
             is SmartReviewComparisonSection -> SmartReviewComparisonSectionRepresentation(
                 id = id,
                 heading = heading,
-                comparison = comparison?.toResourceReferenceRepresentation()
+                comparison = comparison?.toResourceReferenceRepresentation(),
             )
 
             is SmartReviewVisualizationSection -> SmartReviewVisualizationSectionRepresentation(
                 id = id,
                 heading = heading,
-                visualization = visualization?.toResourceReferenceRepresentation()
+                visualization = visualization?.toResourceReferenceRepresentation(),
             )
 
             is SmartReviewResourceSection -> SmartReviewResourceSectionRepresentation(
                 id = id,
                 heading = heading,
-                resource = resource?.toResourceReferenceRepresentation()
+                resource = resource?.toResourceReferenceRepresentation(),
             )
 
             is SmartReviewPredicateSection -> SmartReviewPredicateSectionRepresentation(
                 id = id,
                 heading = heading,
-                predicate = predicate?.toPredicateReferenceRepresentation()
+                predicate = predicate?.toPredicateReferenceRepresentation(),
             )
 
             is SmartReviewOntologySection -> SmartReviewOntologySectionRepresentation(
                 id = id,
                 heading = heading,
                 entities = entities.map { it.toThingReferenceRepresentation() },
-                predicates = predicates.map { it.toPredicateReferenceRepresentation() }
+                predicates = predicates.map { it.toPredicateReferenceRepresentation() },
             )
 
             is SmartReviewTextSection -> SmartReviewTextSectionRepresentation(id, heading, classes, text)

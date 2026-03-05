@@ -15,7 +15,7 @@ class SmartReviewSectionsCreateValidator(
         predicateRepository: PredicateRepository,
         thingRepository: ThingRepository,
     ) : this(
-        AbstractSmartReviewSectionValidator(resourceRepository, predicateRepository, thingRepository)
+        AbstractSmartReviewSectionValidator(resourceRepository, predicateRepository, thingRepository),
     )
 
     override fun invoke(command: CreateSmartReviewCommand, state: State): State {

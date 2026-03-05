@@ -21,7 +21,7 @@ internal class RosettaStoneTemplatePropertiesCreatorUnitTest : MockkBaseTest {
     fun `Given a rosetta stone create template command, when creating template properties, it returns success`() {
         val command = createRosettaStoneTemplateCommand()
         val state = CreateRosettaStoneTemplateState(
-            rosettaStoneTemplateId = ThingId("R123")
+            rosettaStoneTemplateId = ThingId("R123"),
         )
 
         every {

@@ -60,7 +60,7 @@ fun paperCSVRecordResponseFields() = listOf(
         polymorphicResponseFields(
             existingPredicateContributionStatementResponseFields(),
             newPredicateContributionStatementResponseFields(),
-        )
+        ),
     ).toTypedArray(),
     *authorListFields(type = "parsed paper record").toTypedArray(),
 )

@@ -107,10 +107,10 @@ internal class ComparisonControllerUnitTest : MockMvcBaseTest("comparisons") {
                 description(
                     """
                     A `GET` request provides information about a comparison.
-                    """
+                    """,
                 )
                 pathParameters(
-                    parameterWithName("id").description("The identifier of the comparison to retrieve.")
+                    parameterWithName("id").description("The identifier of the comparison to retrieve."),
                 )
                 responseFields<ComparisonRepresentation>(comparisonResponseFields())
                 throws(ComparisonNotFound::class)
@@ -151,7 +151,7 @@ internal class ComparisonControllerUnitTest : MockMvcBaseTest("comparisons") {
                 includeSubfields = any(),
                 published = any(),
                 sustainableDevelopmentGoal = any(),
-                researchProblem = any()
+                researchProblem = any(),
             )
         } returns pageOf(createComparison())
 
@@ -179,7 +179,7 @@ internal class ComparisonControllerUnitTest : MockMvcBaseTest("comparisons") {
                 includeSubfields = any(),
                 published = any(),
                 sustainableDevelopmentGoal = any(),
-                researchProblem = any()
+                researchProblem = any(),
             )
         }
     }
@@ -202,7 +202,7 @@ internal class ComparisonControllerUnitTest : MockMvcBaseTest("comparisons") {
                 includeSubfields = any(),
                 published = any(),
                 sustainableDevelopmentGoal = any(),
-                researchProblem = any()
+                researchProblem = any(),
             )
         } returns pageOf(createComparison())
 
@@ -250,7 +250,7 @@ internal class ComparisonControllerUnitTest : MockMvcBaseTest("comparisons") {
                     If no paging request parameters are provided, the default values will be used.
                     
                     NOTE: Fetching comparisons by DOI, title or contributor does also return previous versions of comparisons.
-                    """
+                    """,
                 )
                 pagedQueryParameters(
                     parameterWithName("title").description("A search term that must be contained in the title of the comparison. (optional)").optional(),
@@ -289,7 +289,7 @@ internal class ComparisonControllerUnitTest : MockMvcBaseTest("comparisons") {
                 includeSubfields = includeSubfields,
                 published = published,
                 sustainableDevelopmentGoal = sdg,
-                researchProblem = researchProblemId
+                researchProblem = researchProblemId,
             )
         }
     }
@@ -312,7 +312,7 @@ internal class ComparisonControllerUnitTest : MockMvcBaseTest("comparisons") {
                 includeSubfields = any(),
                 published = any(),
                 sustainableDevelopmentGoal = any(),
-                researchProblem = any()
+                researchProblem = any(),
             )
         } throws exception
 
@@ -338,7 +338,7 @@ internal class ComparisonControllerUnitTest : MockMvcBaseTest("comparisons") {
                 includeSubfields = any(),
                 published = any(),
                 sustainableDevelopmentGoal = any(),
-                researchProblem = any()
+                researchProblem = any(),
             )
         }
     }
@@ -356,7 +356,7 @@ internal class ComparisonControllerUnitTest : MockMvcBaseTest("comparisons") {
             "subject" to subject,
             "description" to description,
             "authors" to authors,
-            "assign_doi" to assignDOI
+            "assign_doi" to assignDOI,
         )
 
         every { comparisonService.publish(any()) } returns comparisonVersionId
@@ -376,13 +376,13 @@ internal class ComparisonControllerUnitTest : MockMvcBaseTest("comparisons") {
                     Optionally, a DOI can be assigned to the comparison resource.
                     The response will be `201 Created` when successful.
                     The published comparison (object) can be retrieved by following the URI in the `Location` header field.
-                    """
+                    """,
                 )
                 pathParameters(
-                    parameterWithName("id").description("The identifier of the comparison to publish.")
+                    parameterWithName("id").description("The identifier of the comparison to publish."),
                 )
                 responseHeaders(
-                    headerWithName("Location").description("The uri path where the published created comparison can be fetched from.")
+                    headerWithName("Location").description("The uri path where the published created comparison can be fetched from."),
                 )
                 requestFields<PublishComparisonRequest>(
                     fieldWithPath("subject").description("The subject of the comparison."),
@@ -410,7 +410,7 @@ internal class ComparisonControllerUnitTest : MockMvcBaseTest("comparisons") {
                     it.subject shouldBe subject
                     it.authors shouldBe authors
                     it.assignDOI shouldBe assignDOI
-                }
+                },
             )
         }
     }
@@ -427,7 +427,7 @@ internal class ComparisonControllerUnitTest : MockMvcBaseTest("comparisons") {
             "subject" to subject,
             "description" to description,
             "authors" to authors,
-            "assign_doi" to assignDOI
+            "assign_doi" to assignDOI,
         )
         val exception = ComparisonNotFound(id)
 
@@ -448,7 +448,7 @@ internal class ComparisonControllerUnitTest : MockMvcBaseTest("comparisons") {
                     it.subject shouldBe subject
                     it.authors shouldBe authors
                     it.assignDOI shouldBe assignDOI
-                }
+                },
             )
         }
     }
@@ -465,7 +465,7 @@ internal class ComparisonControllerUnitTest : MockMvcBaseTest("comparisons") {
             "subject" to subject,
             "description" to description,
             "authors" to authors,
-            "assign_doi" to assignDOI
+            "assign_doi" to assignDOI,
         )
         val exception = ServiceUnavailable.create("DOI", 500, "Internal error")
 
@@ -486,7 +486,7 @@ internal class ComparisonControllerUnitTest : MockMvcBaseTest("comparisons") {
                     it.subject shouldBe subject
                     it.authors shouldBe authors
                     it.assignDOI shouldBe assignDOI
-                }
+                },
             )
         }
     }
@@ -512,10 +512,10 @@ internal class ComparisonControllerUnitTest : MockMvcBaseTest("comparisons") {
                     A `POST` request creates a new comparison with all the given parameters.
                     The response will be `201 Created` when successful.
                     The comparison (object) can be retrieved by following the URI in the `Location` header field.
-                    """
+                    """,
                 )
                 responseHeaders(
-                    headerWithName("Location").description("The uri path where the newly created comparison can be fetched from.")
+                    headerWithName("Location").description("The uri path where the newly created comparison can be fetched from."),
                 )
                 requestFields<CreateComparisonRequest>(
                     fieldWithPath("title").description("The title of the comparison."),
@@ -680,8 +680,8 @@ internal class ComparisonControllerUnitTest : MockMvcBaseTest("comparisons") {
             Author(
                 id = ThingId("R123"),
                 name = "author",
-                identifiers = mapOf("orcid" to listOf("0000-1111-2222-3333"))
-            )
+                identifiers = mapOf("orcid" to listOf("0000-1111-2222-3333")),
+            ),
         )
         every { comparisonService.create(any()) } throws exception
 
@@ -725,13 +725,13 @@ internal class ComparisonControllerUnitTest : MockMvcBaseTest("comparisons") {
                     ====
                     
                     WARNING: Author names will not be updated if a resource id is specified for a given author.
-                    """
+                    """,
                 )
                 pathParameters(
-                    parameterWithName("id").description("The identifier of the comparison.")
+                    parameterWithName("id").description("The identifier of the comparison."),
                 )
                 responseHeaders(
-                    headerWithName("Location").description("The uri path where the updated comparison can be fetched from.")
+                    headerWithName("Location").description("The uri path where the updated comparison can be fetched from."),
                 )
                 requestFields<UpdateComparisonRequest>(
                     fieldWithPath("title").description("The title of the comparison. (optional)").optional(),
@@ -785,49 +785,49 @@ internal class ComparisonControllerUnitTest : MockMvcBaseTest("comparisons") {
                     id = ThingId("R123"),
                     name = "Author with id",
                     identifiers = null,
-                    homepage = null
+                    homepage = null,
                 ),
                 AuthorRequest(
                     id = null,
                     name = "Author with orcid",
                     identifiers = IdentifierMapRequest(mapOf("orcid" to listOf("0000-1111-2222-3333"))),
-                    homepage = null
+                    homepage = null,
                 ),
                 AuthorRequest(
                     id = ThingId("R456"),
                     name = "Author with id and orcid",
                     identifiers = IdentifierMapRequest(mapOf("orcid" to listOf("1111-2222-3333-4444"))),
-                    homepage = null
+                    homepage = null,
                 ),
                 AuthorRequest(
                     id = null,
                     name = "Author with homepage",
                     identifiers = null,
-                    homepage = ParsedIRI.create("https://example.org/author")
+                    homepage = ParsedIRI.create("https://example.org/author"),
                 ),
                 AuthorRequest(
                     id = null,
                     name = "Author that just has a name",
                     identifiers = null,
-                    homepage = null
-                )
+                    homepage = null,
+                ),
             ),
             sustainableDevelopmentGoals = setOf(
                 ThingId("SDG_1"),
-                ThingId("SDG_2")
+                ThingId("SDG_2"),
             ),
             sources = listOf(
                 ComparisonDataSource(ThingId("R6541"), ComparisonDataSource.Type.THING),
                 ComparisonDataSource(ThingId("R5364"), ComparisonDataSource.Type.THING),
                 ComparisonDataSource(ThingId("R9786"), ComparisonDataSource.Type.THING),
-                ComparisonDataSource(ThingId("R3120"), ComparisonDataSource.Type.ROSETTA_STONE_STATEMENT)
+                ComparisonDataSource(ThingId("R3120"), ComparisonDataSource.Type.ROSETTA_STONE_STATEMENT),
             ),
             visualizations = listOf(ThingId("R63845")),
             references = listOf("https://orkg.org/resources/R1000", "paper citation"),
             observatories = listOf(ObservatoryId("eeb1ab0f-0ef5-4bee-aba2-2d5cea2f0174")),
             organizations = listOf(OrganizationId("f9965b2a-5222-45e1-8ef8-dbd8ce1f57bc")),
             isAnonymized = false,
-            extractionMethod = ExtractionMethod.UNKNOWN
+            extractionMethod = ExtractionMethod.UNKNOWN,
         )
 
     private fun updateComparisonRequest() =
@@ -840,42 +840,42 @@ internal class ComparisonControllerUnitTest : MockMvcBaseTest("comparisons") {
                     id = ThingId("R123"),
                     name = "Author with id",
                     identifiers = null,
-                    homepage = null
+                    homepage = null,
                 ),
                 AuthorRequest(
                     id = null,
                     name = "Author with orcid",
                     identifiers = IdentifierMapRequest(mapOf("orcid" to listOf("0000-1111-2222-3333"))),
-                    homepage = null
+                    homepage = null,
                 ),
                 AuthorRequest(
                     id = ThingId("R456"),
                     name = "Author with id and orcid",
                     identifiers = IdentifierMapRequest(mapOf("orcid" to listOf("1111-2222-3333-4444"))),
-                    homepage = null
+                    homepage = null,
                 ),
                 AuthorRequest(
                     id = null,
                     name = "Author with homepage",
                     identifiers = null,
-                    homepage = ParsedIRI.create("https://example.org/author")
+                    homepage = ParsedIRI.create("https://example.org/author"),
                 ),
                 AuthorRequest(
                     id = null,
                     name = "Author that just has a name",
                     identifiers = null,
-                    homepage = null
-                )
+                    homepage = null,
+                ),
             ),
             sustainableDevelopmentGoals = setOf(
                 ThingId("SDG_1"),
-                ThingId("SDG_2")
+                ThingId("SDG_2"),
             ),
             sources = listOf(
                 ComparisonDataSource(ThingId("R6541"), ComparisonDataSource.Type.THING),
                 ComparisonDataSource(ThingId("R5364"), ComparisonDataSource.Type.THING),
                 ComparisonDataSource(ThingId("R9786"), ComparisonDataSource.Type.THING),
-                ComparisonDataSource(ThingId("R3120"), ComparisonDataSource.Type.ROSETTA_STONE_STATEMENT)
+                ComparisonDataSource(ThingId("R3120"), ComparisonDataSource.Type.ROSETTA_STONE_STATEMENT),
             ),
             visualizations = listOf(ThingId("R63845")),
             references = listOf("https://orkg.org/resources/R1000", "paper citation"),
@@ -883,6 +883,6 @@ internal class ComparisonControllerUnitTest : MockMvcBaseTest("comparisons") {
             organizations = listOf(OrganizationId("f9965b2a-5222-45e1-8ef8-dbd8ce1f57bc")),
             isAnonymized = false,
             extractionMethod = ExtractionMethod.UNKNOWN,
-            visibility = Visibility.FEATURED
+            visibility = Visibility.FEATURED,
         )
 }

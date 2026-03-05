@@ -17,8 +17,8 @@ class SmartReviewResourceCreator(
                 classes = setOf(Classes.smartReview),
                 extractionMethod = command.extractionMethod,
                 observatoryId = command.observatories.singleOrNull(),
-                organizationId = command.organizations.singleOrNull()
-            )
+                organizationId = command.organizations.singleOrNull(),
+            ),
         )
         return state.copy(smartReviewId = smartReviewId)
     }

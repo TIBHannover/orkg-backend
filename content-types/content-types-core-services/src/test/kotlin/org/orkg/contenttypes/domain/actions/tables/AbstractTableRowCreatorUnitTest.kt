@@ -28,7 +28,7 @@ internal class AbstractTableRowCreatorUnitTest : MockkBaseTest {
     private val abstractTableRowCreator = AbstractTableRowCreator(
         unsafeResourceUseCases,
         unsafeStatementUseCases,
-        unsafeLiteralUseCases
+        unsafeLiteralUseCases,
     )
 
     @Test
@@ -49,29 +49,29 @@ internal class AbstractTableRowCreatorUnitTest : MockkBaseTest {
         val createRowNumberLiteralCommand = CreateLiteralUseCase.CreateCommand(
             contributorId = contributorId,
             label = "${index + 1}",
-            datatype = Literals.XSD.INT.prefixedUri
+            datatype = Literals.XSD.INT.prefixedUri,
         )
         val createRowNumberStatementCommand = CreateStatementUseCase.CreateCommand(
             contributorId = contributorId,
             subjectId = rowId,
             predicateId = Predicates.csvwNumber,
-            objectId = rowNumberLiteralId
+            objectId = rowNumberLiteralId,
         )
         val createRowLabelLiteralCommand = CreateLiteralUseCase.CreateCommand(
             contributorId = contributorId,
-            label = label
+            label = label,
         )
         val createRowTitleStatementCommand = CreateStatementUseCase.CreateCommand(
             contributorId = contributorId,
             subjectId = rowId,
             predicateId = Predicates.csvwTitles,
-            objectId = rowLabelLiteralId
+            objectId = rowLabelLiteralId,
         )
         val createRowStatementCommand = CreateStatementUseCase.CreateCommand(
             contributorId = contributorId,
             subjectId = tableId,
             predicateId = Predicates.csvwRows,
-            objectId = rowId
+            objectId = rowId,
         )
 
         every { unsafeResourceUseCases.create(createRowResourceCommand) } returns rowId
@@ -110,19 +110,19 @@ internal class AbstractTableRowCreatorUnitTest : MockkBaseTest {
         val createRowNumberLiteralCommand = CreateLiteralUseCase.CreateCommand(
             contributorId = contributorId,
             label = "${index + 1}",
-            datatype = Literals.XSD.INT.prefixedUri
+            datatype = Literals.XSD.INT.prefixedUri,
         )
         val createRowNumberStatementCommand = CreateStatementUseCase.CreateCommand(
             contributorId = contributorId,
             subjectId = rowId,
             predicateId = Predicates.csvwNumber,
-            objectId = rowNumberLiteralId
+            objectId = rowNumberLiteralId,
         )
         val createRowStatementCommand = CreateStatementUseCase.CreateCommand(
             contributorId = contributorId,
             subjectId = tableId,
             predicateId = Predicates.csvwRows,
-            objectId = rowId
+            objectId = rowId,
         )
 
         every { unsafeResourceUseCases.create(createRowResourceCommand) } returns rowId

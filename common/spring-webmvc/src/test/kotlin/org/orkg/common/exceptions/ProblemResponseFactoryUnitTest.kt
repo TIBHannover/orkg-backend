@@ -28,7 +28,7 @@ internal class ProblemResponseFactoryUnitTest : MockkBaseTest {
         },
         errorResponseCustomizer<SuperSpecificException> { _, problemDetail, _ ->
             problemDetail.title = "Not 'Custom title'"
-        }
+        },
     )
     private val messageSource: MessageSource = mockk()
 
@@ -41,7 +41,7 @@ internal class ProblemResponseFactoryUnitTest : MockkBaseTest {
         val result = problemResponseFactory.createProblemResponse(
             exception = ExtendsErrorResponse(),
             status = HttpStatus.BAD_REQUEST,
-            instance = "/path/to/endpoint"
+            instance = "/path/to/endpoint",
         )
 
         result.problemDetail.asClue {
@@ -62,7 +62,7 @@ internal class ProblemResponseFactoryUnitTest : MockkBaseTest {
         val result = problemResponseFactory.createProblemResponse(
             exception = NotExtendsErrorResponse("Not Extends Error Response"),
             status = HttpStatus.INTERNAL_SERVER_ERROR,
-            instance = "/path/to/endpoint"
+            instance = "/path/to/endpoint",
         )
 
         result.problemDetail.asClue {
@@ -81,7 +81,7 @@ internal class ProblemResponseFactoryUnitTest : MockkBaseTest {
         val result = problemResponseFactory.createProblemResponse(
             exception = SpecificException("Specific Exception"),
             status = HttpStatus.BAD_REQUEST,
-            instance = "/path/to/endpoint"
+            instance = "/path/to/endpoint",
         )
 
         result.problemDetail.asClue {
@@ -102,7 +102,7 @@ internal class ProblemResponseFactoryUnitTest : MockkBaseTest {
         val result = problemResponseFactory.createProblemResponse(
             exception = SuperSpecificException("Super Specific Exception"),
             status = HttpStatus.INTERNAL_SERVER_ERROR,
-            instance = "/path/to/endpoint"
+            instance = "/path/to/endpoint",
         )
 
         result.problemDetail.asClue {

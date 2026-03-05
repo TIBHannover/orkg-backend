@@ -21,7 +21,6 @@ ij_formatter_tags_enabled = true
 # See https://github.com/diffplug/spotless/issues/1924 before configuring
 ktlint_code_style = ktlint_official
 ktlint_standard_max-line-length = disabled
-ktlint_standard_trailing-comma-on-call-site = disabled
 ktlint_standard_chain-method-continuation = disabled
 ktlint_standard_multiline-expression-wrapping = disabled
 ktlint_standard_function-signature = disabled

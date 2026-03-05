@@ -51,7 +51,7 @@ val reservedLabels = setOf(
     Classes.`class`,
     Classes.predicate,
     Classes.resource,
-    Classes.thing
+    Classes.thing,
 )
 
 val reservedLabelsAsStrings = reservedLabels.map { it.value }
@@ -82,7 +82,7 @@ data class StatementMapper(
             subject = record[subject].asNode().toThing(),
             `object` = record[`object`].asNode().toThing(),
             index = relation["index"].asNullableInt(),
-            modifiable = relation["modifiable"].asBoolean()
+            modifiable = relation["modifiable"].asBoolean(),
         )
     }
 }
@@ -123,7 +123,7 @@ fun Node.toLiteral() = Literal(
     datatype = this["datatype"]?.asString() ?: "xsd:string",
     createdAt = this["created_at"].toOffsetDateTime(),
     createdBy = this["created_by"].toContributorId(),
-    modifiable = this["modifiable"].asBoolean()
+    modifiable = this["modifiable"].asBoolean(),
 )
 
 fun Node.toThing(): Thing = when {
@@ -140,7 +140,7 @@ fun Node.toClass() = Class(
     uri = this["uri"].toIRI(),
     createdAt = this["created_at"].toOffsetDateTime(),
     createdBy = this["created_by"].toContributorId(),
-    modifiable = this["modifiable"].asBoolean()
+    modifiable = this["modifiable"].asBoolean(),
 )
 
 fun Node.toResource() = Resource(
@@ -155,7 +155,7 @@ fun Node.toResource() = Resource(
     visibility = this["visibility"].toVisibility(),
     unlistedBy = this["unlisted_by"].toNullableContributorId(),
     verified = this["verified"].asNullableBoolean(),
-    modifiable = this["modifiable"].asBoolean()
+    modifiable = this["modifiable"].asBoolean(),
 )
 
 fun Node.toPredicate() = Predicate(
@@ -163,7 +163,7 @@ fun Node.toPredicate() = Predicate(
     label = this["label"].asString(),
     createdAt = this["created_at"].toOffsetDateTime(),
     createdBy = this["created_by"].toContributorId(),
-    modifiable = this["modifiable"].asBoolean()
+    modifiable = this["modifiable"].asBoolean(),
 )
 
 internal fun Value.asNullableBoolean(): Boolean? = if (isNull) null else isTrue
@@ -215,7 +215,7 @@ fun ExposesWith.withSortableFields(node: SymbolicName) =
         node,
         node.property("label").`as`("label"),
         node.property("id").`as`("id"),
-        node.property("created_at").`as`("created_at")
+        node.property("created_at").`as`("created_at"),
     )
 
 fun Sort.toSortItems(
@@ -223,7 +223,7 @@ fun Sort.toSortItems(
     vararg knownProperties: String,
 ): List<SortItem> = toSortItems(
     propertyMappings = knownProperties.associateWith { node.property(it) },
-    knownProperties = knownProperties
+    knownProperties = knownProperties,
 )
 
 fun Sort.toSortItems(
@@ -297,7 +297,7 @@ fun orderByOptimizations(
 ): kotlin.collections.List<Condition> = orderByOptimizations(
     propertyMappings = properties.associateWith { node.property(it) },
     sort = sort,
-    properties = properties
+    properties = properties,
 )
 
 fun orderByOptimizations(

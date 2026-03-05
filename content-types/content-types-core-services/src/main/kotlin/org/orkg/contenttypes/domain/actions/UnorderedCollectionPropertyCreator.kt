@@ -21,16 +21,16 @@ class UnorderedCollectionPropertyCreator(
             val literal = unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = contributorId,
-                    label = label
-                )
+                    label = label,
+                ),
             )
             unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = contributorId,
                     subjectId = subjectId,
                     predicateId = predicateId,
-                    objectId = literal
-                )
+                    objectId = literal,
+                ),
             )
         }
     }

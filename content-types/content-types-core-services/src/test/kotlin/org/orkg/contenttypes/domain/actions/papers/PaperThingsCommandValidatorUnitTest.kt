@@ -26,7 +26,7 @@ internal class PaperThingsCommandValidatorUnitTest : MockkBaseTest {
         val command = createPaperCommand()
         val state = CreatePaperState()
         val validationCache = mapOf<String, Either<CreateThingCommandPart, Thing>>(
-            "R2000" to Either.right(createClass(ThingId("R2000")))
+            "R2000" to Either.right(createClass(ThingId("R2000"))),
         )
 
         every { thingsCommandValidator.validate(command.contents!!, state.validationCache) } returns validationCache

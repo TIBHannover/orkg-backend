@@ -53,7 +53,7 @@ internal class ResearchGateIdTest {
             // Illegal character #
             Arguments.of("FirstName-LastName-#", "https://researchgate.net/profile/FirstName-LastName-#"),
             // Does not follow scheme at all
-            Arguments.of("example~", "https://example.com/")
+            Arguments.of("example~", "https://example.com/"),
         )
     }
 }

@@ -60,11 +60,11 @@ fun <
     val fabricator = Fabrikate(
         FabricatorConfig(
             collectionSizes = 12..12,
-            nullableStrategy = FabricatorConfig.NullableStrategy.NeverSetToNull // FIXME: because "id" is nullable
+            nullableStrategy = FabricatorConfig.NullableStrategy.NeverSetToNull, // FIXME: because "id" is nullable
         )
             .withStandardMappings()
             .withGraphMappings()
-            .withRosettaStoneStatementMappings()
+            .withRosettaStoneStatementMappings(),
     )
 
     val saveThing: (Thing) -> Unit = {
@@ -111,7 +111,7 @@ fun <
         val rosettaStoneTemplate1 = fabricator.random<Resource>().copy(
             id = ThingId("Template1"),
             label = "rosettaStoneTemplate1",
-            classes = setOf(Classes.rosettaNodeShape)
+            classes = setOf(Classes.rosettaNodeShape),
         )
         val templateProperty1 = fabricator.random<Resource>().copy(id = ThingId("TP1"), classes = setOf(Classes.propertyShape))
         val templateProperty2 = fabricator.random<Resource>().copy(id = ThingId("TP2"), classes = setOf(Classes.propertyShape))
@@ -236,7 +236,7 @@ fun <
                 label = hasOtherResult.label,
                 description = hasOtherResultDescription.label,
                 type = ComparisonPath.Type.PREDICATE,
-                children = emptyList()
+                children = emptyList(),
             ),
             LabeledComparisonPath(
                 id = hasResult.id,
@@ -256,8 +256,8 @@ fun <
                                 description = null,
                                 type = ComparisonPath.Type.PREDICATE,
                                 children = emptyList(),
-                            )
-                        )
+                            ),
+                        ),
                     ),
                     LabeledComparisonPath(
                         id = hasResult.id,
@@ -271,10 +271,10 @@ fun <
                                 description = hasOtherResultDescription.label,
                                 type = ComparisonPath.Type.PREDICATE,
                                 children = emptyList(),
-                            )
-                        )
-                    )
-                )
+                            ),
+                        ),
+                    ),
+                ),
             ),
             LabeledComparisonPath(
                 id = rosettaStoneTemplate1.id,
@@ -287,23 +287,23 @@ fun <
                         label = templateProperty1Placeholder.label,
                         description = null,
                         type = ComparisonPath.Type.ROSETTA_STONE_STATEMENT_VALUE,
-                        children = emptyList()
+                        children = emptyList(),
                     ),
                     LabeledComparisonPath(
                         id = ThingId("hasObjectPosition1"),
                         label = templateProperty2Placeholder.label,
                         description = templateProperty2Description.label,
                         type = ComparisonPath.Type.ROSETTA_STONE_STATEMENT_VALUE,
-                        children = emptyList()
+                        children = emptyList(),
                     ),
                     LabeledComparisonPath(
                         id = ThingId("hasObjectPosition2"),
                         label = templateProperty3Placeholder.label,
                         description = null,
                         type = ComparisonPath.Type.ROSETTA_STONE_STATEMENT_VALUE,
-                        children = emptyList()
-                    )
-                )
+                        children = emptyList(),
+                    ),
+                ),
             ),
         )
 
@@ -334,13 +334,13 @@ fun <
                     SimpleComparisonPath(
                         id = ThingId("Missing"),
                         type = ComparisonPath.Type.PREDICATE,
-                        children = emptyList()
+                        children = emptyList(),
                     ),
                     SimpleComparisonPath(
                         id = ThingId("MissingTemplate"),
                         type = ComparisonPath.Type.ROSETTA_STONE_STATEMENT,
                         children = emptyList(),
-                    )
+                    ),
                 )
 
                 val result = comparisonAuxiliaryRepository.findAllLabeledComparisonPathsBySimpleComparionPaths(simplePaths)
@@ -364,11 +364,11 @@ fun <
             val r1 = fabricator.random<Resource>().copy(id = ThingId("R1"), classes = setOf(Classes.contribution))
             val r2 = fabricator.random<Resource>().copy(
                 id = ThingId("R2"),
-                label = "first"
+                label = "first",
             )
             val r3 = fabricator.random<Resource>().copy(
                 id = ThingId("R3"),
-                label = "second"
+                label = "second",
             )
             val r4 = fabricator.random<Resource>().copy(id = ThingId("R4"))
             val r5 = fabricator.random<Resource>().copy(id = ThingId("R5"))
@@ -395,14 +395,14 @@ fun <
                                     id = hasResult.id,
                                     type = ComparisonPath.Type.PREDICATE,
                                     children = emptyList(),
-                                )
+                                ),
                             ),
                         ),
                         SimpleComparisonPath(
                             id = description.id,
                             type = ComparisonPath.Type.PREDICATE,
-                            children = emptyList()
-                        )
+                            children = emptyList(),
+                        ),
                     ),
                 ),
             )
@@ -466,10 +466,10 @@ fun <
                                         description.id to listOf(
                                             ComparisonTableValue(
                                                 value = l1,
-                                                children = emptyMap()
-                                            )
-                                        )
-                                    )
+                                                children = emptyMap(),
+                                            ),
+                                        ),
+                                    ),
                                 ),
                                 ComparisonTableValue(
                                     value = r3,
@@ -477,13 +477,13 @@ fun <
                                         description.id to listOf(
                                             ComparisonTableValue(
                                                 value = l2,
-                                                children = emptyMap()
-                                            )
-                                        )
-                                    )
-                                )
-                            )
-                        )
+                                                children = emptyMap(),
+                                            ),
+                                        ),
+                                    ),
+                                ),
+                            ),
+                        ),
                     ),
                     r4.id to ComparisonColumnData(
                         title = r4,
@@ -500,28 +500,28 @@ fun <
                                                     hasResult.id to listOf(
                                                         ComparisonTableValue(
                                                             value = r7,
-                                                            children = emptyMap()
-                                                        )
-                                                    )
-                                                )
-                                            )
+                                                            children = emptyMap(),
+                                                        ),
+                                                    ),
+                                                ),
+                                            ),
                                         ),
                                         description.id to listOf(
                                             ComparisonTableValue(
                                                 value = l3,
-                                                children = emptyMap()
-                                            )
-                                        )
-                                    )
-                                )
-                            )
-                        )
+                                                children = emptyMap(),
+                                            ),
+                                        ),
+                                    ),
+                                ),
+                            ),
+                        ),
                     ),
                     r8.id to ComparisonColumnData(
                         title = r8,
                         subtitle = null,
-                        values = emptyMap()
-                    )
+                        values = emptyMap(),
+                    ),
                 )
 
                 val result = comparisonAuxiliaryRepository.findComparisonColumnDataByRootIdsAndPaths(rootIds, paths)
@@ -544,7 +544,7 @@ fun <
                 val expected = mapOf(
                     r1.id to ComparisonColumnData(paper, r1, emptyMap()),
                     r4.id to ComparisonColumnData(r4, null, emptyMap()),
-                    r8.id to ComparisonColumnData(r8, null, emptyMap())
+                    r8.id to ComparisonColumnData(r8, null, emptyMap()),
                 )
                 val result = comparisonAuxiliaryRepository.findComparisonColumnDataByRootIdsAndPaths(rootIds, emptyList())
 

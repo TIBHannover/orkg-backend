@@ -123,7 +123,7 @@ fun paperResponseFields() = listOf(
     *authorListFields("paper").toTypedArray(),
     *publicationInfoResponseFields().toTypedArray(),
     *sustainableDevelopmentGoalsResponseFields("paper").toTypedArray(),
-    *paperIdentifierFields().toTypedArray()
+    *paperIdentifierFields().toTypedArray(),
 )
 
 fun benchmarkSummaryResponseFields() = listOf(
@@ -179,7 +179,7 @@ fun comparisonRelatedFigureResponseFields() = listOf(
     fieldWithPath("description").description("The description of the comparison related figure. (optional)").optional(),
     timestampFieldWithPath("created_at", "the comparison related figure was created"),
     // TODO: Add links to documentation of special user UUIDs.
-    fieldWithPath("created_by").description("The UUID of the user or service who created this comparison related figure.")
+    fieldWithPath("created_by").description("The UUID of the user or service who created this comparison related figure."),
 )
 
 fun comparisonRelatedResourceResponseFields() = listOf(
@@ -190,7 +190,7 @@ fun comparisonRelatedResourceResponseFields() = listOf(
     fieldWithPath("description").description("The description of the comparison related resource. (optional)").optional(),
     timestampFieldWithPath("created_at", "the comparison related resource was created"),
     // TODO: Add links to documentation of special user UUIDs.
-    fieldWithPath("created_by").description("The UUID of the user or service who created this comparison related resource.")
+    fieldWithPath("created_by").description("The UUID of the user or service who created this comparison related resource."),
 )
 
 fun contributionResponseFields() = listOf(
@@ -205,7 +205,7 @@ fun contributionResponseFields() = listOf(
     // TODO: Add links to documentation of special user UUIDs.
     fieldWithPath("created_by").description("The UUID of the user or service who created this contribution."),
     fieldWithPath("visibility").description("""Visibility of the contribution. Can be one of $allowedVisibilityValues."""),
-    fieldWithPath("unlisted_by").type("String").description("The UUID of the user or service who unlisted this contribution.").optional()
+    fieldWithPath("unlisted_by").type("String").description("The UUID of the user or service who unlisted this contribution.").optional(),
 )
 
 fun datasetResponseFields() = listOf(
@@ -250,7 +250,7 @@ fun literatureListResponseFields() = listOf(
         polymorphicResponseFields(
             literatureListTextSectionResponseFields(),
             literatureListListSectionResponseFields(),
-        )
+        ),
     ).toTypedArray(),
     fieldWithPath("acknowledgements").description("A key-value map of contributor ids to an estimated contribution percentage, ranging from 0 to 1."),
     fieldWithPath("acknowledgements.*").description("The estimated contribution percentage."),
@@ -360,7 +360,7 @@ fun smartReviewResponseFields() = listOf(
             smartReviewPropertySectionResponseFields(),
             smartReviewOntologySectionResponseFields(),
             smartReviewTextSectionResponseFields(),
-        )
+        ),
     ).toTypedArray(),
     fieldWithPath("references").description("The list of bibtex references of the smart review."),
     fieldWithPath("acknowledgements").description("A key-value map of contributor ids to an estimated contribution percentage, ranging from 0 to 1."),
@@ -690,7 +690,7 @@ fun labeledComparisonPathResponseFields() = listOf(
     fieldWithPath("label").description("The label of the path."),
     fieldWithPath("description").description("The description of the predicate or rosetta stone statement template.").optional(),
     fieldWithPath("type").description("The type of the path. Either of $allowedComparisonPathTypeValues"),
-    subsectionWithPath("children[]").description("A list of nested predicate paths originating from this predicate path or the list of nested rosetta stone statement input positions.")
+    subsectionWithPath("children[]").description("A list of nested predicate paths originating from this predicate path or the list of nested rosetta stone statement input positions."),
 )
 
 fun simpleComparisonPathResponseFields() = listOf(

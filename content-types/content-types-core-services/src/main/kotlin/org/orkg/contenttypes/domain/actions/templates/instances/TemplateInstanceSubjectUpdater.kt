@@ -14,8 +14,8 @@ class TemplateInstanceSubjectUpdater(
             resourceRepository.save(updated)
             return state.copy(
                 templateInstance = state.templateInstance.copy(
-                    root = updated
-                )
+                    root = updated,
+                ),
             )
         }
         return state

@@ -17,7 +17,7 @@ class PaperPublicationInfoCreator(
         unsafeStatementUseCases: UnsafeStatementUseCases,
         unsafeLiteralUseCases: UnsafeLiteralUseCases,
     ) : this(
-        PublicationInfoCreator(unsafeResourceUseCases, resourceRepository, unsafeStatementUseCases, unsafeLiteralUseCases)
+        PublicationInfoCreator(unsafeResourceUseCases, resourceRepository, unsafeStatementUseCases, unsafeLiteralUseCases),
     )
 
     override fun invoke(command: CreatePaperCommand, state: State): State {
@@ -25,7 +25,7 @@ class PaperPublicationInfoCreator(
             publicationInfoCreator.create(
                 contributorId = command.contributorId,
                 publicationInfo = command.publicationInfo!!,
-                subjectId = state.paperId!!
+                subjectId = state.paperId!!,
             )
         }
         return state

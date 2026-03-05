@@ -32,8 +32,8 @@ class TableThingsCommandUpdateCreator(
             unsafeLiteralUseCases,
             unsafePredicateUseCases,
             statementRepository,
-            listService
-        )
+            listService,
+        ),
     )
 
     override fun invoke(command: UpdateTableCommand, state: State): State {
@@ -46,7 +46,7 @@ class TableThingsCommandUpdateCreator(
             validationCache = state.validationCache,
             contributorId = command.contributorId,
             extractionMethod = command.extractionMethod ?: ExtractionMethod.UNKNOWN,
-            lookup = tempIdToThingId
+            lookup = tempIdToThingId,
         )
         return state.copy(tempIdToThingId = tempIdToThingId)
     }

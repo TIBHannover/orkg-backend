@@ -38,7 +38,7 @@ data class Visualization(
                 createdAt = resource.createdAt,
                 createdBy = resource.createdBy,
                 visibility = resource.visibility,
-                unlistedBy = resource.unlistedBy
+                unlistedBy = resource.unlistedBy,
             )
         }
     }

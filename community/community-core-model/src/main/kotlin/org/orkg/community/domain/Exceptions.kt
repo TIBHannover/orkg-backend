@@ -11,13 +11,13 @@ class ObservatoryNotFound : SimpleMessageException {
     constructor(id: ObservatoryId) : super(
         HttpStatus.NOT_FOUND,
         """Observatory "$id" not found.""",
-        properties = mapOf("observatory_id" to id)
+        properties = mapOf("observatory_id" to id),
     )
 
     constructor(displayId: String) : super(
         HttpStatus.NOT_FOUND,
         """Observatory with display id "$displayId" not found.""",
-        properties = mapOf("observatory_display_id" to displayId)
+        properties = mapOf("observatory_display_id" to displayId),
     )
 }
 
@@ -25,14 +25,14 @@ class ContributorNotFound(id: ContributorId) :
     SimpleMessageException(
         HttpStatus.NOT_FOUND,
         """Contributor "$id" not found.""",
-        properties = mapOf("contributor_id" to id)
+        properties = mapOf("contributor_id" to id),
     )
 
 class ContributorAlreadyExists(id: ContributorId) :
     SimpleMessageException(
         HttpStatus.BAD_REQUEST,
         """Contributor "$id" already exists.""",
-        properties = mapOf("contributor_id" to id)
+        properties = mapOf("contributor_id" to id),
     )
 
 class ContributorIdentifierAlreadyExists(
@@ -41,20 +41,20 @@ class ContributorIdentifierAlreadyExists(
 ) : SimpleMessageException(
         HttpStatus.BAD_REQUEST,
         """Identifier "$value" for contributor "$contributorId" already exists.""",
-        properties = mapOf("contributor_id" to contributorId, "identifier_value" to value)
+        properties = mapOf("contributor_id" to contributorId, "identifier_value" to value),
     )
 
 class OrganizationNotFound : SimpleMessageException {
     constructor(id: OrganizationId) : super(
         HttpStatus.NOT_FOUND,
         """Organization "$id" not found.""",
-        properties = mapOf("organization_id" to id)
+        properties = mapOf("organization_id" to id),
     )
 
     constructor(displayId: String) : super(
         HttpStatus.NOT_FOUND,
         """Organization with display id "$displayId" not found.""",
-        properties = mapOf("organization_display_id" to displayId)
+        properties = mapOf("organization_display_id" to displayId),
     )
 }
 
@@ -62,7 +62,7 @@ class ObservatoryFilterNotFound(id: ObservatoryFilterId) :
     SimpleMessageException(
         HttpStatus.NOT_FOUND,
         """Observatory filter "$id" not found.""",
-        properties = mapOf("observatory_filter_id" to id)
+        properties = mapOf("observatory_filter_id" to id),
     )
 
 class OrganizationAlreadyExists private constructor(
@@ -75,14 +75,14 @@ class OrganizationAlreadyExists private constructor(
             OrganizationAlreadyExists(
                 status = HttpStatus.BAD_REQUEST,
                 message = """Organization with name "$name" already exists.""",
-                properties = mapOf("organization_name" to name)
+                properties = mapOf("organization_name" to name),
             )
 
         fun withDisplayId(displayId: String) =
             OrganizationAlreadyExists(
                 status = HttpStatus.BAD_REQUEST,
                 message = """Organization with display id "$displayId" already exists.""",
-                properties = mapOf("organization_display_id" to displayId)
+                properties = mapOf("organization_display_id" to displayId),
             )
     }
 }
@@ -91,7 +91,7 @@ class LogoNotFound(id: OrganizationId) :
     SimpleMessageException(
         HttpStatus.NOT_FOUND,
         """Logo for organization "$id" not found.""",
-        properties = mapOf("organization_id" to id)
+        properties = mapOf("organization_id" to id),
     )
 
 class ObservatoryAlreadyExists private constructor(
@@ -104,21 +104,21 @@ class ObservatoryAlreadyExists private constructor(
             ObservatoryAlreadyExists(
                 status = HttpStatus.BAD_REQUEST,
                 message = """Observatory with id "$id" already exists.""",
-                properties = mapOf("observatory_id" to id)
+                properties = mapOf("observatory_id" to id),
             )
 
         fun withName(name: String) =
             ObservatoryAlreadyExists(
                 status = HttpStatus.BAD_REQUEST,
                 message = """Observatory with name "$name" already exists.""",
-                properties = mapOf("observatory_name" to name)
+                properties = mapOf("observatory_name" to name),
             )
 
         fun withDisplayId(displayId: String) =
             ObservatoryAlreadyExists(
                 status = HttpStatus.BAD_REQUEST,
                 message = """Observatory with display id "$displayId" already exists.""",
-                properties = mapOf("observatory_display_id" to displayId)
+                properties = mapOf("observatory_display_id" to displayId),
             )
     }
 }
@@ -133,14 +133,14 @@ class ConferenceSeriesAlreadyExists private constructor(
             ConferenceSeriesAlreadyExists(
                 status = HttpStatus.BAD_REQUEST,
                 message = """Conference series with name "$name" already exists.""",
-                properties = mapOf("conference_series_name" to name)
+                properties = mapOf("conference_series_name" to name),
             )
 
         fun withDisplayId(displayId: String) =
             ConferenceSeriesAlreadyExists(
                 status = HttpStatus.BAD_REQUEST,
                 message = """Conference series with display id "$displayId" already exists.""",
-                properties = mapOf("conference_series_display_id" to displayId)
+                properties = mapOf("conference_series_display_id" to displayId),
             )
     }
 }
@@ -149,33 +149,33 @@ class ConferenceSeriesNotFound(id: String) :
     SimpleMessageException(
         HttpStatus.NOT_FOUND,
         """Conference series "$id" not found.""",
-        properties = mapOf("conference_series_id" to id)
+        properties = mapOf("conference_series_id" to id),
     )
 
 class InvalidImageEncoding :
     SimpleMessageException(
         HttpStatus.BAD_REQUEST,
-        """Invalid image encoding."""
+        """Invalid image encoding.""",
     )
 
 class InvalidPeerReviewType(badValue: String) :
     SimpleMessageException(
         HttpStatus.BAD_REQUEST,
         """The value "$badValue" is not a valid peer review type.""",
-        properties = mapOf("peer_review_type" to badValue)
+        properties = mapOf("peer_review_type" to badValue),
     )
 
 class InvalidFilterConfig :
     SimpleMessageException(
         HttpStatus.BAD_REQUEST,
-        """Invalid filter config."""
+        """Invalid filter config.""",
     )
 
 class ObservatoryFilterAlreadyExists(id: ObservatoryFilterId) :
     SimpleMessageException(
         HttpStatus.BAD_REQUEST,
         """Observatory filter "$id" already exists.""",
-        properties = mapOf("observatory_filter_id" to id)
+        properties = mapOf("observatory_filter_id" to id),
     )
 
 // TODO: Replace with ContributorNotFound?
@@ -183,12 +183,12 @@ class ObservatoryMemberNotFound(userId: UUID) :
     SimpleMessageException(
         HttpStatus.NOT_FOUND,
         """Observatory member "$userId" not found.""",
-        properties = mapOf("contributor_id" to userId)
+        properties = mapOf("contributor_id" to userId),
     )
 
 class UnknownIdentifierType(type: String) :
     SimpleMessageException(
         HttpStatus.BAD_REQUEST,
         """Unknown identifier type "$type".""",
-        properties = mapOf("identifier_type" to type)
+        properties = mapOf("identifier_type" to type),
     )

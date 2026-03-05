@@ -22,7 +22,7 @@ RETURN ds AS dataset, COUNT(DISTINCT m) AS totalModels, COUNT(DISTINCT l) AS tot
         countQuery = """
 MATCH (:Problem {id: $ID})<-[:RELATED {predicate_id: 'P32'}]-(cont:Contribution)<-[:RELATED {predicate_id: 'P31'}]-(p:Paper)
 MATCH (cont)-[:RELATED {predicate_id: '$BENCHMARK_PREDICATE'}]->(:$BENCHMARK_CLASS)-[:RELATED {predicate_id: '$DATASET_PREDICATE'}]->(ds:$DATASET_CLASS)
-RETURN COUNT(ds) AS cnt"""
+RETURN COUNT(ds) AS cnt""",
     )
     fun findAllDatasetsByResearchProblemId(id: ThingId, pageable: Pageable): Page<Neo4jDataset>
 
@@ -42,7 +42,7 @@ MATCH (ds:$DATASET_CLASS {id: $ID})<-[:RELATED {predicate_id: '$DATASET_PREDICAT
 MATCH (b)-[:RELATED {predicate_id: '$QUANTITY_PREDICATE'}]->(q:$QUANTITY_CLASS)
 MATCH (s:Literal)<-[:RELATED {predicate_id: '$NUMERIC_VALUE_PREDICATE'}]-(qv:$QUANTITY_VALUE_CLASS)<-[:RELATED {predicate_id: '$QUANTITY_VALUE_PREDICATE'}]-(q)-[:RELATED {predicate_id: '$QUANTITY_KIND_PREDICATE'}]->(mt:$QUANTITY_KIND_CLASS)
 MATCH (c)<-[:RELATED {predicate_id: 'P31'}]-(p:Paper)
-RETURN COUNT(p) as cnt"""
+RETURN COUNT(p) as cnt""",
     )
     fun findAllDatasetSummariesByIdAndResearchProblemId(id: ThingId, problemId: ThingId, pageable: Pageable): Page<Neo4jDatasetSummary>
 }

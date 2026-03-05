@@ -36,13 +36,13 @@ internal class TableRowsUpdaterUnitTest : MockkBaseTest {
             rows = listOf(
                 CreateRowCommand(
                     label = "header",
-                    data = listOf("Column_1_Title", "Column_2_Title", "Column_3_Title")
+                    data = listOf("Column_1_Title", "Column_2_Title", "Column_3_Title"),
                 ),
                 CreateRowCommand(
                     label = "Row Row_1 Label",
-                    data = listOf("R123", "R456", "R789")
-                )
-            )
+                    data = listOf("R123", "R456", "R789"),
+                ),
+            ),
         )
         val existingRows = listOf(
             createRowGraph(
@@ -51,12 +51,12 @@ internal class TableRowsUpdaterUnitTest : MockkBaseTest {
                     createResource(ThingId("R123")),
                     createResource(ThingId("R456")),
                     createResource(ThingId("R789")),
-                )
+                ),
             ),
         )
         val state = UpdateTableState().copy(
             existingRows = existingRows,
-            statementsToDelete = setOf(StatementId("SalreadyExists"))
+            statementsToDelete = setOf(StatementId("SalreadyExists")),
         )
         val expectedRowIds = listOf(ThingId("Row_1"))
 
@@ -83,13 +83,13 @@ internal class TableRowsUpdaterUnitTest : MockkBaseTest {
             rows = listOf(
                 CreateRowCommand(
                     label = "header",
-                    data = listOf("Column_1_Title", "Column_2_Title", "Column_3_Title")
+                    data = listOf("Column_1_Title", "Column_2_Title", "Column_3_Title"),
                 ),
                 CreateRowCommand(
                     label = null,
-                    data = listOf("R123", "R456", "R789")
-                )
-            )
+                    data = listOf("R123", "R456", "R789"),
+                ),
+            ),
         )
         val existingRows = listOf(
             createRowGraph(
@@ -98,12 +98,12 @@ internal class TableRowsUpdaterUnitTest : MockkBaseTest {
                     createResource(ThingId("R123")),
                     createResource(ThingId("R456")),
                     createResource(ThingId("R789")),
-                )
+                ),
             ),
         )
         val state = UpdateTableState().copy(
             existingRows = existingRows,
-            statementsToDelete = setOf(StatementId("SalreadyExists"))
+            statementsToDelete = setOf(StatementId("SalreadyExists")),
         )
         val expectedRowIds = listOf(ThingId("Row_1"))
         val expectedStatementsToDelete = state.statementsToDelete + StatementId("S_Row_1--CSVW_Titles--Row_1_Title")
@@ -131,13 +131,13 @@ internal class TableRowsUpdaterUnitTest : MockkBaseTest {
             rows = listOf(
                 CreateRowCommand(
                     label = "header",
-                    data = listOf("Column_1_Title", "Column_2_Title", "Column_3_Title")
+                    data = listOf("Column_1_Title", "Column_2_Title", "Column_3_Title"),
                 ),
                 CreateRowCommand(
                     label = "New row title",
-                    data = listOf("R123", "R456", "R789")
-                )
-            )
+                    data = listOf("R123", "R456", "R789"),
+                ),
+            ),
         )
         val existingRows = listOf(
             createRowGraph(
@@ -146,12 +146,12 @@ internal class TableRowsUpdaterUnitTest : MockkBaseTest {
                     createResource(ThingId("R123")),
                     createResource(ThingId("R456")),
                     createResource(ThingId("R789")),
-                )
+                ),
             ).copy(labelStatement = null),
         )
         val state = UpdateTableState().copy(
             existingRows = existingRows,
-            statementsToDelete = setOf(StatementId("SalreadyExists"))
+            statementsToDelete = setOf(StatementId("SalreadyExists")),
         )
         val expectedRowIds = listOf(ThingId("Row_1"))
         val rowTitleLiteralId = ThingId("Row_1_Title")
@@ -180,8 +180,8 @@ internal class TableRowsUpdaterUnitTest : MockkBaseTest {
             unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = command.contributorId,
-                    label = "New row title"
-                )
+                    label = "New row title",
+                ),
             )
         }
         verify(exactly = 1) {
@@ -190,8 +190,8 @@ internal class TableRowsUpdaterUnitTest : MockkBaseTest {
                     contributorId = command.contributorId,
                     subjectId = ThingId("Row_1"),
                     predicateId = Predicates.csvwTitles,
-                    objectId = rowTitleLiteralId
-                )
+                    objectId = rowTitleLiteralId,
+                ),
             )
         }
     }
@@ -202,13 +202,13 @@ internal class TableRowsUpdaterUnitTest : MockkBaseTest {
             rows = listOf(
                 CreateRowCommand(
                     label = "header",
-                    data = listOf("Column_1_Title", "Column_2_Title", "Column_3_Title")
+                    data = listOf("Column_1_Title", "Column_2_Title", "Column_3_Title"),
                 ),
                 CreateRowCommand(
                     label = "New row title",
-                    data = listOf("R123", "R456", "R789")
-                )
-            )
+                    data = listOf("R123", "R456", "R789"),
+                ),
+            ),
         )
         val existingRows = listOf(
             createRowGraph(
@@ -217,12 +217,12 @@ internal class TableRowsUpdaterUnitTest : MockkBaseTest {
                     createResource(ThingId("R123")),
                     createResource(ThingId("R456")),
                     createResource(ThingId("R789")),
-                )
-            )
+                ),
+            ),
         )
         val state = UpdateTableState().copy(
             existingRows = existingRows,
-            statementsToDelete = setOf(StatementId("SalreadyExists"))
+            statementsToDelete = setOf(StatementId("SalreadyExists")),
         )
         val expectedRowIds = listOf(ThingId("Row_1"))
 
@@ -250,7 +250,7 @@ internal class TableRowsUpdaterUnitTest : MockkBaseTest {
                     id = ThingId("Row_1_Title"),
                     contributorId = command.contributorId,
                     label = "New row title",
-                )
+                ),
             )
         }
     }
@@ -261,17 +261,17 @@ internal class TableRowsUpdaterUnitTest : MockkBaseTest {
             rows = listOf(
                 CreateRowCommand(
                     label = "header",
-                    data = listOf("Column_1_Title", "Column_2_Title", "Column_3_Title")
+                    data = listOf("Column_1_Title", "Column_2_Title", "Column_3_Title"),
                 ),
                 CreateRowCommand(
                     label = "Row Row_1 Label",
-                    data = listOf("R123", "R456", "R789")
+                    data = listOf("R123", "R456", "R789"),
                 ),
                 CreateRowCommand(
                     label = "New row2 label",
-                    data = listOf("R123", "R456", "R789")
-                )
-            )
+                    data = listOf("R123", "R456", "R789"),
+                ),
+            ),
         )
         val existingRows = listOf(
             createRowGraph(
@@ -280,12 +280,12 @@ internal class TableRowsUpdaterUnitTest : MockkBaseTest {
                     createResource(ThingId("R123")),
                     createResource(ThingId("R456")),
                     createResource(ThingId("R789")),
-                )
-            )
+                ),
+            ),
         )
         val state = UpdateTableState().copy(
             existingRows = existingRows,
-            statementsToDelete = setOf(StatementId("SalreadyExists"))
+            statementsToDelete = setOf(StatementId("SalreadyExists")),
         )
         val expectedRowIds = listOf(ThingId("Row_1"), ThingId("Row_2"))
 
@@ -294,7 +294,7 @@ internal class TableRowsUpdaterUnitTest : MockkBaseTest {
                 contributorId = command.contributorId,
                 tableId = command.tableId,
                 index = 1,
-                label = "New row2 label"
+                label = "New row2 label",
             )
         } returns ThingId("Row_2")
 
@@ -319,7 +319,7 @@ internal class TableRowsUpdaterUnitTest : MockkBaseTest {
                 contributorId = command.contributorId,
                 tableId = command.tableId,
                 index = 1,
-                label = "New row2 label"
+                label = "New row2 label",
             )
         }
     }
@@ -330,13 +330,13 @@ internal class TableRowsUpdaterUnitTest : MockkBaseTest {
             rows = listOf(
                 CreateRowCommand(
                     label = "header",
-                    data = listOf("Column_1_Title", "Column_2_Title", "Column_3_Title")
+                    data = listOf("Column_1_Title", "Column_2_Title", "Column_3_Title"),
                 ),
                 CreateRowCommand(
                     label = "Row Row_1 Label",
-                    data = listOf("R123", "R456", "R789")
-                )
-            )
+                    data = listOf("R123", "R456", "R789"),
+                ),
+            ),
         )
         val existingRows = listOf(
             createRowGraph(
@@ -345,7 +345,7 @@ internal class TableRowsUpdaterUnitTest : MockkBaseTest {
                     createResource(ThingId("R123")),
                     createResource(ThingId("R456")),
                     createResource(ThingId("R789")),
-                )
+                ),
             ),
             createRowGraph(
                 ThingId("Row_2"),
@@ -353,12 +353,12 @@ internal class TableRowsUpdaterUnitTest : MockkBaseTest {
                     createResource(ThingId("R123")),
                     createResource(ThingId("R456")),
                     createResource(ThingId("R789")),
-                )
-            )
+                ),
+            ),
         )
         val state = UpdateTableState().copy(
             existingRows = existingRows,
-            statementsToDelete = setOf(StatementId("SalreadyExists"))
+            statementsToDelete = setOf(StatementId("SalreadyExists")),
         )
         val expectedRowIds = listOf(ThingId("Row_1"))
         val expectedThingsToDelete = state.thingsToDelete + existingRows.last().rowId

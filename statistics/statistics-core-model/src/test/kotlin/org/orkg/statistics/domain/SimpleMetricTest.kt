@@ -19,7 +19,7 @@ internal class SimpleMetricTest : MockkBaseTest {
             name = "test",
             group = "test",
             description = "test description",
-            supplier = mockMetricSupplier
+            supplier = mockMetricSupplier,
         )
         val parameters = LinkedMultiValueMap<String, String>()
 
@@ -37,14 +37,14 @@ internal class SimpleMetricTest : MockkBaseTest {
             name = "test",
             description = "test description",
             type = Int::class,
-            parser = { it.toInt() }
+            parser = { it.toInt() },
         )
         val metric = SimpleMetric(
             name = "test",
             group = "test",
             description = "test description",
             parameterSpecs = mapOf("id" to intParameterSpec),
-            supplier = mockMetricSupplier
+            supplier = mockMetricSupplier,
         )
         val parameters = MultiValueMap.fromSingleValue(mapOf("id" to "123"))
 
@@ -62,14 +62,14 @@ internal class SimpleMetricTest : MockkBaseTest {
             name = "test",
             description = "test description",
             type = Int::class,
-            parser = { it.toInt() }
+            parser = { it.toInt() },
         )
         val metric = SimpleMetric(
             name = "test",
             group = "test",
             description = "test description",
             parameterSpecs = mapOf("id" to intParameterSpec),
-            supplier = mockMetricSupplier
+            supplier = mockMetricSupplier,
         )
         val parameters = LinkedMultiValueMap<String, String>().apply {
             put("id", listOf("123", "456"))
@@ -89,7 +89,7 @@ internal class SimpleMetricTest : MockkBaseTest {
             name = "test",
             group = "test",
             description = "test description",
-            supplier = mockMetricSupplier
+            supplier = mockMetricSupplier,
         )
         val parameters = MultiValueMap.fromSingleValue(mapOf("id" to "R123"))
 

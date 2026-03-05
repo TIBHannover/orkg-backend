@@ -14,7 +14,7 @@ private const val ORDER_BY_PAGE_PARAMS = ":#{orderBy(#pageable)} SKIP ${'$'}skip
 interface Neo4jThingRepository : Neo4jRepository<Neo4jThing, ThingId> {
     @Query(
         """MATCH (n:Thing) RETURN n $ORDER_BY_PAGE_PARAMS""",
-        countQuery = """MATCH (n:Thing) RETURN COUNT(n)"""
+        countQuery = """MATCH (n:Thing) RETURN COUNT(n)""",
     )
     override fun findAll(pageable: Pageable): Page<Neo4jThing>
 
@@ -22,7 +22,7 @@ interface Neo4jThingRepository : Neo4jRepository<Neo4jThing, ThingId> {
         """
 UNWIND $IDS AS id
 MATCH (node:Thing {id: id})
-RETURN apoc.coll.containsAll(collect(node.id), $IDS) AS result"""
+RETURN apoc.coll.containsAll(collect(node.id), $IDS) AS result""",
     )
     fun existsAll(ids: Set<ThingId>): Boolean
 
@@ -36,7 +36,7 @@ CALL () {
     RETURN r
 }
 WITH r
-RETURN COUNT(r) > 0 AS count"""
+RETURN COUNT(r) > 0 AS count""",
     )
     fun isUsedAsObject(id: ThingId): Boolean
 }

@@ -30,7 +30,7 @@ internal class ExportComparisonServiceIntegrationTest :
             comparisonRepository = comparisonRepository,
             fileExportService = fileExportService,
             objectMapper = objectMapper,
-            comparisonPublishBaseUri = "https://orkg.org/comparison/"
+            comparisonPublishBaseUri = "https://orkg.org/comparison/",
         )
 
         val targetDir = tempdir()

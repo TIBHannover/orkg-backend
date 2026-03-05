@@ -18,16 +18,16 @@ class RosettaStoneTemplateClosedCreator(
             CreateLiteralUseCase.CreateCommand(
                 contributorId = command.contributorId,
                 label = "true",
-                datatype = Literals.XSD.BOOLEAN.prefixedUri
-            )
+                datatype = Literals.XSD.BOOLEAN.prefixedUri,
+            ),
         )
         unsafeStatementUseCases.create(
             CreateStatementUseCase.CreateCommand(
                 contributorId = command.contributorId,
                 subjectId = state.rosettaStoneTemplateId!!,
                 predicateId = Predicates.shClosed,
-                objectId = literalId
-            )
+                objectId = literalId,
+            ),
         )
         return state
     }

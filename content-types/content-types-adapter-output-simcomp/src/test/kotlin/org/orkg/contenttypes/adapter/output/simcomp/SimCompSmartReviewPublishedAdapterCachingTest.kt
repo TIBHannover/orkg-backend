@@ -23,7 +23,7 @@ import org.springframework.test.util.AopTestUtils
 import java.util.Optional
 
 private val allCacheNames: Array<out String> = arrayOf(
-    THING_ID_TO_PUBLISHED_SMART_REVIEW_CACHE
+    THING_ID_TO_PUBLISHED_SMART_REVIEW_CACHE,
 )
 
 @ContextConfiguration

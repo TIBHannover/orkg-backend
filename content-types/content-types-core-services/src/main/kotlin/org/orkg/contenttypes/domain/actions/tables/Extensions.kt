@@ -10,7 +10,7 @@ import org.orkg.graph.domain.Predicates
 internal fun Table.Row.toCreateRowCommand(): CreateRowCommand =
     CreateRowCommand(
         label = label,
-        data = data.map { it?.id?.value }
+        data = data.map { it?.id?.value },
     )
 
 internal fun parseRowGraphs(rootId: ThingId, statements: Map<ThingId, List<GeneralStatement>>, headerIndices: List<Int>): List<RowGraph> =

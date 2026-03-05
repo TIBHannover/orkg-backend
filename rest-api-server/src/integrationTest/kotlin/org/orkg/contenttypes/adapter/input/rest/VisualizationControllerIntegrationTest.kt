@@ -82,7 +82,7 @@ internal class VisualizationControllerIntegrationTest : MockMvcBaseTest("visuali
             Predicates.reference,
             Predicates.hasWebsite,
             Predicates.description,
-            Predicates.hasListElement
+            Predicates.hasListElement,
         )
 
         classService.createClasses(
@@ -91,7 +91,7 @@ internal class VisualizationControllerIntegrationTest : MockMvcBaseTest("visuali
             Classes.problem,
             Classes.researchField,
             Classes.author,
-            Classes.venue
+            Classes.venue,
         )
 
         // Example specific entities
@@ -101,7 +101,7 @@ internal class VisualizationControllerIntegrationTest : MockMvcBaseTest("visuali
         resourceService.createResource(
             id = ThingId("R12"),
             label = "Computer Science",
-            classes = setOf(Classes.researchField)
+            classes = setOf(Classes.researchField),
         )
 
         resourceService.createResource(id = ThingId("R123"), label = "Author with id", classes = setOf(Classes.author))
@@ -110,33 +110,33 @@ internal class VisualizationControllerIntegrationTest : MockMvcBaseTest("visuali
             subject = resourceService.createResource(
                 id = ThingId("R456"),
                 label = "Author with id and orcid",
-                classes = setOf(Classes.author)
+                classes = setOf(Classes.author),
             ),
             predicate = Predicates.hasORCID,
-            `object` = literalService.createLiteral(label = "1111-2222-3333-4444")
+            `object` = literalService.createLiteral(label = "1111-2222-3333-4444"),
         )
 
         statementService.createStatement(
             subject = resourceService.createResource(
                 id = ThingId("R4567"),
                 label = "Author with orcid",
-                classes = setOf(Classes.author)
+                classes = setOf(Classes.author),
             ),
             predicate = Predicates.hasORCID,
-            `object` = literalService.createLiteral(label = "0000-1111-2222-3333")
+            `object` = literalService.createLiteral(label = "0000-1111-2222-3333"),
         )
 
         val contributorId = contributorService.createContributor()
 
         organizationService.createOrganization(
             createdBy = contributorId,
-            id = OrganizationId("edc18168-c4ee-4cb8-a98a-136f748e912e")
+            id = OrganizationId("edc18168-c4ee-4cb8-a98a-136f748e912e"),
         )
 
         observatoryService.createObservatory(
             organizations = setOf(OrganizationId("edc18168-c4ee-4cb8-a98a-136f748e912e")),
             researchField = ThingId("R12"),
-            id = ObservatoryId("1afefdd0-5c09-4c9c-b718-2b35316b56f3")
+            id = ObservatoryId("1afefdd0-5c09-4c9c-b718-2b35316b56f3"),
         )
     }
 

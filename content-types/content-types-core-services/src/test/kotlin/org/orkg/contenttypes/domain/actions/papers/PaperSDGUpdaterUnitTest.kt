@@ -45,8 +45,8 @@ internal class PaperSDGUpdaterUnitTest : MockkBaseTest {
         val paper = createPaper().copy(
             sustainableDevelopmentGoals = setOf(
                 ObjectIdAndLabel(ThingId("SDG_3"), "Good health and well-being"),
-                ObjectIdAndLabel(ThingId("SDG_4"), "Quality Education")
-            )
+                ObjectIdAndLabel(ThingId("SDG_4"), "Quality Education"),
+            ),
         )
         val command = updatePaperCommand()
         val state = UpdatePaperState(paper)
@@ -67,13 +67,13 @@ internal class PaperSDGUpdaterUnitTest : MockkBaseTest {
         val statements = listOf(
             createStatement(
                 subject = createResource(command.paperId),
-                predicate = createPredicate(Predicates.sustainableDevelopmentGoal)
+                predicate = createPredicate(Predicates.sustainableDevelopmentGoal),
             ),
             createStatement(
                 subject = createResource(command.paperId),
-                predicate = createPredicate(Predicates.hasContent)
+                predicate = createPredicate(Predicates.hasContent),
             ),
-            createStatement(subject = createResource())
+            createStatement(subject = createResource()),
         ).groupBy { it.subject.id }
         val state = UpdatePaperState(paper, statements)
 
@@ -83,7 +83,7 @@ internal class PaperSDGUpdaterUnitTest : MockkBaseTest {
                 contributorId = command.contributorId,
                 subjectId = command.paperId,
                 predicateId = Predicates.sustainableDevelopmentGoal,
-                objects = command.sustainableDevelopmentGoals!!
+                objects = command.sustainableDevelopmentGoals!!,
             )
         } just runs
 
@@ -101,7 +101,7 @@ internal class PaperSDGUpdaterUnitTest : MockkBaseTest {
                 contributorId = command.contributorId,
                 subjectId = command.paperId,
                 predicateId = Predicates.sustainableDevelopmentGoal,
-                objects = command.sustainableDevelopmentGoals!!
+                objects = command.sustainableDevelopmentGoals!!,
             )
         }
     }

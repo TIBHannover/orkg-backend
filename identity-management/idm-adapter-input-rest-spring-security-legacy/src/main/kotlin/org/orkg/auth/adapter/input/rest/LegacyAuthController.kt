@@ -113,7 +113,7 @@ class LegacyAuthController(
                 }
                 return BasicAuthorizationToken(
                     username = decoded.substring(0, colonIndex),
-                    secret = decoded.substring(colonIndex + 1)
+                    secret = decoded.substring(colonIndex + 1),
                 )
             }
         }
@@ -129,7 +129,7 @@ class LegacyAuthController(
                 "error" to errorCode,
                 "error_description" to message,
             ),
-            type = createProblemURI(errorCode)
+            type = createProblemURI(errorCode),
         )
 
     @JsonIgnoreProperties(ignoreUnknown = true)

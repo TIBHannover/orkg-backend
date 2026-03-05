@@ -129,8 +129,8 @@ internal class LegacyComparisonControllerIntegrationTest : MockMvcBaseTest("comp
             .andExpect(
                 jsonPath(
                     "$.content[0].info[?(@.paper_id == '$paper2')][0].paper_year",
-                    anyOf(nullValue(), `is`<List<Int?>>(emptyList()))
-                )
+                    anyOf(nullValue(), `is`<List<Int?>>(emptyList())),
+                ),
             )
     }
 }

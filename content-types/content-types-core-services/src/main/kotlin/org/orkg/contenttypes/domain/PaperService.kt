@@ -193,7 +193,7 @@ class PaperService(
             PaperAuthorListCreator(unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases, listService),
             PaperResearchFieldCreator(unsafeLiteralUseCases, unsafeStatementUseCases),
             PaperPublicationInfoCreator(unsafeResourceUseCases, resourceRepository, unsafeStatementUseCases, unsafeLiteralUseCases),
-            PaperContributionCreator(unsafeClassUseCases, unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases, unsafePredicateUseCases, statementRepository, listService)
+            PaperContributionCreator(unsafeClassUseCases, unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases, unsafePredicateUseCases, statementRepository, listService),
         )
         return steps.execute(command, CreatePaperState()).paperId!!
     }
@@ -219,7 +219,7 @@ class PaperService(
             PaperResearchFieldUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases),
             PaperPublicationInfoUpdater(statementService, unsafeResourceUseCases, resourceRepository, unsafeStatementUseCases, unsafeLiteralUseCases),
             PaperSDGUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases),
-            PaperMentioningsUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases)
+            PaperMentioningsUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases),
         )
         steps.execute(command, UpdatePaperState())
     }
@@ -241,7 +241,7 @@ class PaperService(
             PaperVersionCreator(resourceRepository, statementRepository, unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases, listService),
             PaperVersionArchiver(statementService, paperPublishedRepository),
             PaperVersionHistoryUpdater(statementService, unsafeStatementUseCases),
-            PaperVersionDoiPublisher(unsafeStatementUseCases, unsafeLiteralUseCases, doiService, paperPublishBaseUri)
+            PaperVersionDoiPublisher(unsafeStatementUseCases, unsafeLiteralUseCases, doiService, paperPublishBaseUri),
         )
         return steps.execute(command, PublishPaperState()).paperVersionId!!
     }
@@ -261,22 +261,22 @@ class PaperService(
                 minLevel = null,
                 maxLevel = 3,
                 blacklist = listOf(Classes.researchField, Classes.contribution, Classes.venue),
-                whitelist = emptyList()
+                whitelist = emptyList(),
             ),
-            sort = Sort.unsorted()
+            sort = Sort.unsorted(),
         ) + statementRepository.fetchAsBundle(
             id = resource.id,
             configuration = BundleConfiguration(
                 minLevel = null,
                 maxLevel = 1,
                 blacklist = emptyList(),
-                whitelist = listOf(Classes.researchField, Classes.contribution, Classes.venue)
+                whitelist = listOf(Classes.researchField, Classes.contribution, Classes.venue),
             ),
-            sort = Sort.unsorted()
+            sort = Sort.unsorted(),
         )
         return ContentTypeSubgraph(
             root = resource.id,
-            statements = statements.groupBy { it.subject.id }
+            statements = statements.groupBy { it.subject.id },
         )
     }
 

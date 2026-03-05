@@ -52,7 +52,7 @@ internal class AbstractSmartReviewSectionValidatorPredicateSectionUnitTest : Abs
     @Test
     fun `Given a predicate section command, when heading is invalid, it throws an exception`() {
         val section = smartReviewPredicateSectionCommand().copy(
-            heading = "a".repeat(MAX_LABEL_LENGTH + 1)
+            heading = "a".repeat(MAX_LABEL_LENGTH + 1),
         )
         val validationCache = mutableSetOf<ThingId>()
 

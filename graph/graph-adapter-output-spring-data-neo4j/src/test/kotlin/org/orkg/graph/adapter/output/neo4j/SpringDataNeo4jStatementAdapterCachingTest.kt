@@ -154,7 +154,7 @@ internal class SpringDataNeo4jStatementAdapterCachingTest : MockkBaseTest {
             cacheManager = cacheManager,
             // We need to provide those, but do not care about them. (Except for not being called.)
             neo4jStatementIdGenerator = mockk(),
-            predicateRepository = mockk()
+            predicateRepository = mockk(),
         )
 
         @Bean
@@ -165,7 +165,7 @@ internal class SpringDataNeo4jStatementAdapterCachingTest : MockkBaseTest {
             SpringDataNeo4jLiteralAdapter(
                 neo4jRepository = neo4jLiteralRepository,
                 neo4jLiteralIdGenerator = mockk(),
-                cypherQueryBuilderFactory(neo4jClient)
+                cypherQueryBuilderFactory(neo4jClient),
             )
 
         // The "real" repositories used by both adapters, where we want to mock the interaction.

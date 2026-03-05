@@ -18,7 +18,7 @@ class CommonJacksonModule : SimpleModule() {
                 addSerializer(OrganizationId::class.java, OrganizationIdSerializer())
                 addSerializer(ThingId::class.java, ThingIdSerializer())
                 addSerializer(ParsedIRI::class.java, ParsedIRISerializer())
-            }
+            },
         )
         context?.addDeserializers(
             SimpleDeserializers().apply {
@@ -27,7 +27,7 @@ class CommonJacksonModule : SimpleModule() {
                 addDeserializer(OrganizationId::class.java, OrganizationIdDeserializer())
                 addDeserializer(ThingId::class.java, ThingIdDeserializer())
                 addDeserializer(ParsedIRI::class.java, ParsedIRIDeserializer())
-            }
+            },
         )
     }
 }

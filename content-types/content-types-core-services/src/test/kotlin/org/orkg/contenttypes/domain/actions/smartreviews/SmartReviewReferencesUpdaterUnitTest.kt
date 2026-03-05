@@ -45,8 +45,8 @@ internal class SmartReviewReferencesUpdaterUnitTest : MockkBaseTest {
         val smartReview = createSmartReview().copy(
             references = listOf(
                 "@misc{R123456,title = {Fancy title of a super important paper}",
-                "@misc{R456789,title = {Another super important paper}"
-            )
+                "@misc{R456789,title = {Another super important paper}",
+            ),
         )
         val contributionId = ThingId("R2457")
         val command = updateSmartReviewCommand()
@@ -56,9 +56,9 @@ internal class SmartReviewReferencesUpdaterUnitTest : MockkBaseTest {
                 createStatement(
                     subject = createResource(command.smartReviewId, classes = setOf(Classes.smartReview)),
                     predicate = createPredicate(Predicates.hasContribution),
-                    `object` = createResource(contributionId, classes = setOf(Classes.contributionSmartReview))
-                )
-            ).groupBy { it.subject.id }
+                    `object` = createResource(contributionId, classes = setOf(Classes.contributionSmartReview)),
+                ),
+            ).groupBy { it.subject.id },
         )
 
         val result = smartReviewReferencesUpdater(command, state)
@@ -81,12 +81,12 @@ internal class SmartReviewReferencesUpdaterUnitTest : MockkBaseTest {
                 createStatement(
                     subject = createResource(command.smartReviewId, classes = setOf(Classes.smartReview)),
                     predicate = createPredicate(Predicates.hasContribution),
-                    `object` = createResource(contributionId, classes = setOf(Classes.contributionSmartReview))
+                    `object` = createResource(contributionId, classes = setOf(Classes.contributionSmartReview)),
                 ),
                 createStatement(subject = createResource(contributionId), predicate = createPredicate(Predicates.hasReference)),
                 createStatement(subject = createResource(contributionId), predicate = createPredicate(Predicates.hasContent)),
-                createStatement(subject = createResource())
-            ).groupBy { it.subject.id }
+                createStatement(subject = createResource()),
+            ).groupBy { it.subject.id },
         )
 
         every {
@@ -95,7 +95,7 @@ internal class SmartReviewReferencesUpdaterUnitTest : MockkBaseTest {
                 contributorId = command.contributorId,
                 subjectId = contributionId,
                 predicateId = Predicates.hasReference,
-                literals = command.references!!
+                literals = command.references!!,
             )
         } just runs
 
@@ -113,7 +113,7 @@ internal class SmartReviewReferencesUpdaterUnitTest : MockkBaseTest {
                 contributorId = command.contributorId,
                 subjectId = contributionId,
                 predicateId = Predicates.hasReference,
-                literals = command.references!!
+                literals = command.references!!,
             )
         }
     }

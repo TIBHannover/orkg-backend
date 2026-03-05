@@ -71,8 +71,8 @@ class SubgraphCreator(
                     CreateClassUseCase.CreateCommand(
                         contributorId = contributorId,
                         label = it.value.label,
-                        uri = it.value.uri
-                    )
+                        uri = it.value.uri,
+                    ),
                 )
             }
         }
@@ -92,8 +92,8 @@ class SubgraphCreator(
                         contributorId = contributorId,
                         label = it.value.label,
                         classes = it.value.classes,
-                        extractionMethod = extractionMethod
-                    )
+                        extractionMethod = extractionMethod,
+                    ),
                 )
             }
         }
@@ -111,8 +111,8 @@ class SubgraphCreator(
                     CreateLiteralUseCase.CreateCommand(
                         contributorId = contributorId,
                         label = it.value.label,
-                        datatype = it.value.dataType
-                    )
+                        datatype = it.value.dataType,
+                    ),
                 )
             }
         }
@@ -129,24 +129,24 @@ class SubgraphCreator(
                 val predicate = unsafePredicateUseCases.create(
                     CreatePredicateUseCase.CreateCommand(
                         contributorId = contributorId,
-                        label = it.value.label
-                    )
+                        label = it.value.label,
+                    ),
                 )
                 lookup[it.key] = predicate
                 it.value.description?.also { description ->
                     val literal = unsafeLiteralUseCases.create(
                         CreateLiteralUseCase.CreateCommand(
                             contributorId = contributorId,
-                            label = description
-                        )
+                            label = description,
+                        ),
                     )
                     unsafeStatementUseCases.create(
                         CreateStatementUseCase.CreateCommand(
                             contributorId = contributorId,
                             subjectId = predicate,
                             predicateId = Predicates.description,
-                            objectId = literal
-                        )
+                            objectId = literal,
+                        ),
                     )
                 }
             }
@@ -166,8 +166,8 @@ class SubgraphCreator(
                 CreateListUseCase.CreateCommand(
                     label = it.value.label,
                     elements = emptyList(),
-                    contributorId = contributorId
-                )
+                    contributorId = contributorId,
+                ),
             )
         }
         lists.forEach {
@@ -176,7 +176,7 @@ class SubgraphCreator(
                     id = lookup[it.key]!!,
                     contributorId = contributorId,
                     elements = it.value.elements.map { id -> resolve(id, lookup) },
-                )
+                ),
             )
         }
     }
@@ -197,8 +197,8 @@ class SubgraphCreator(
                         contributorId = contributorId,
                         subjectId = subject,
                         predicateId = predicate,
-                        objectId = `object`
-                    )
+                        objectId = `object`,
+                    ),
                 )
             }
         }

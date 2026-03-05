@@ -52,15 +52,15 @@ import java.util.Base64
         "orkg.oauth.legacy-client-secret=secret",
         "orkg.oauth.token-endpoint=http://localhost:1234/path/to/token/endpoint",
         "orkg.oauth.registration-endpoint=http://localhost:1234/path/to/registration/endpoint",
-    ]
+    ],
 )
 @ContextConfiguration(
     classes = [
         LegacyAuthController::class,
         FixedClockConfig::class,
         LegacyAuthControllerUnitTest.LegacyAuthControllerTestConfiguration::class,
-        ExceptionTestConfiguration::class
-    ]
+        ExceptionTestConfiguration::class,
+    ],
 )
 @WebMvcTest(controllers = [LegacyAuthController::class])
 internal class LegacyAuthControllerUnitTest : MockMvcBaseTest("legacy-auth") {
@@ -111,8 +111,8 @@ internal class LegacyAuthControllerUnitTest : MockMvcBaseTest("legacy-auth") {
                 "token_type" to tokenType,
                 "not-before-policy" to 0,
                 "session_state" to "StateUUID",
-                "scope" to scope
-            )
+                "scope" to scope,
+            ),
         )
 
         every { httpClient.send(any(), any<HttpResponse.BodyHandler<String>>()) } returns response
@@ -150,12 +150,12 @@ internal class LegacyAuthControllerUnitTest : MockMvcBaseTest("legacy-auth") {
                                 "username" to username,
                                 "password" to password,
                                 "grant_type" to grantType,
-                                "client_id" to clientId
+                                "client_id" to clientId,
                             )
                         }
                     }
                 },
-                any<HttpResponse.BodyHandler<String>>()
+                any<HttpResponse.BodyHandler<String>>(),
             )
         }
         verify(exactly = 1) { response.statusCode() }
@@ -177,7 +177,7 @@ internal class LegacyAuthControllerUnitTest : MockMvcBaseTest("legacy-auth") {
                     "username" to username,
                     "password" to password,
                     "client_id" to "orkg-client",
-                )
+                ),
             )
             .perform()
             .andExpect(status().isBadRequest)
@@ -221,8 +221,8 @@ internal class LegacyAuthControllerUnitTest : MockMvcBaseTest("legacy-auth") {
         val keycloakResponse = objectMapper.writeValueAsString(
             mapOf(
                 "error" to error,
-                "error_description" to errorDescription
-            )
+                "error_description" to errorDescription,
+            ),
         )
 
         every { httpClient.send(any(), any<HttpResponse.BodyHandler<String>>()) } returns response
@@ -258,12 +258,12 @@ internal class LegacyAuthControllerUnitTest : MockMvcBaseTest("legacy-auth") {
                                 "username" to username,
                                 "password" to password,
                                 "grant_type" to grantType,
-                                "client_id" to clientId
+                                "client_id" to clientId,
                             )
                         }
                     }
                 },
-                any<HttpResponse.BodyHandler<String>>()
+                any<HttpResponse.BodyHandler<String>>(),
             )
         }
         verify(exactly = 2) { response.statusCode() }
@@ -284,8 +284,8 @@ internal class LegacyAuthControllerUnitTest : MockMvcBaseTest("legacy-auth") {
         val keycloakResponse = objectMapper.writeValueAsString(
             mapOf(
                 "error" to error,
-                "error_description" to errorDescription
-            )
+                "error_description" to errorDescription,
+            ),
         )
 
         every { httpClient.send(any(), any<HttpResponse.BodyHandler<String>>()) } returns response
@@ -319,12 +319,12 @@ internal class LegacyAuthControllerUnitTest : MockMvcBaseTest("legacy-auth") {
                             requestParameters shouldContainExactly mapOf(
                                 "password" to password,
                                 "grant_type" to grantType,
-                                "client_id" to clientId
+                                "client_id" to clientId,
                             )
                         }
                     }
                 },
-                any<HttpResponse.BodyHandler<String>>()
+                any<HttpResponse.BodyHandler<String>>(),
             )
         }
         verify(exactly = 2) { response.statusCode() }
@@ -345,8 +345,8 @@ internal class LegacyAuthControllerUnitTest : MockMvcBaseTest("legacy-auth") {
         val keycloakResponse = objectMapper.writeValueAsString(
             mapOf(
                 "error" to error,
-                "error_description" to errorDescription
-            )
+                "error_description" to errorDescription,
+            ),
         )
 
         every { httpClient.send(any(), any<HttpResponse.BodyHandler<String>>()) } returns response
@@ -380,12 +380,12 @@ internal class LegacyAuthControllerUnitTest : MockMvcBaseTest("legacy-auth") {
                             requestParameters shouldContainExactly mapOf(
                                 "username" to username,
                                 "grant_type" to grantType,
-                                "client_id" to clientId
+                                "client_id" to clientId,
                             )
                         }
                     }
                 },
-                any<HttpResponse.BodyHandler<String>>()
+                any<HttpResponse.BodyHandler<String>>(),
             )
         }
         verify(exactly = 2) { response.statusCode() }

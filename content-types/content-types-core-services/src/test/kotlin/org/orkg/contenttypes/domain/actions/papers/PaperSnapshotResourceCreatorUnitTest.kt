@@ -30,7 +30,7 @@ internal class PaperSnapshotResourceCreatorUnitTest : MockkBaseTest {
             classes = setOf(Classes.paperVersion),
             extractionMethod = command.extractionMethod,
             observatoryId = command.observatories.firstOrNull(),
-            organizationId = command.organizations.firstOrNull()
+            organizationId = command.organizations.firstOrNull(),
         )
         val id = ThingId("R123")
 

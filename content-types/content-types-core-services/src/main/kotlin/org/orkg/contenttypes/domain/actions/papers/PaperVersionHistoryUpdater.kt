@@ -25,8 +25,8 @@ class PaperVersionHistoryUpdater(
                     contributorId = command.contributorId,
                     subjectId = state.paperVersionId!!,
                     predicateId = Predicates.hasPreviousVersion,
-                    objectId = hasPreviousVersionStatements.first().`object`.id
-                )
+                    objectId = hasPreviousVersionStatements.first().`object`.id,
+                ),
             )
         }
         unsafeStatementUseCases.create(
@@ -34,8 +34,8 @@ class PaperVersionHistoryUpdater(
                 contributorId = command.contributorId,
                 subjectId = command.id,
                 predicateId = Predicates.hasPreviousVersion,
-                objectId = state.paperVersionId!!
-            )
+                objectId = state.paperVersionId!!,
+            ),
         )
         return state
     }

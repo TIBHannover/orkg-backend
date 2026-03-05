@@ -95,7 +95,7 @@ internal class KeyCloakIntegrationTest : KeycloakTestContainersBaseTest() {
             .body(
                 UserRepresentation().apply {
                     requiredActions = listOf()
-                }
+                },
             )
             .auth().oauth2(adminAccessToken)
             .`when`().put(userId)

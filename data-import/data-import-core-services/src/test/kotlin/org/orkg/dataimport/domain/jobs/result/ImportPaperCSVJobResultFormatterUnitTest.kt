@@ -39,7 +39,7 @@ internal class ImportPaperCSVJobResultFormatterUnitTest : MockkBaseTest {
             jobExecution = jobExecution,
             status = Status.PENDING,
             pageable = PageRequest.of(0, 10),
-            objectMapper = objectMapper
+            objectMapper = objectMapper,
         )
         result shouldBe Optional.empty()
     }
@@ -52,7 +52,7 @@ internal class ImportPaperCSVJobResultFormatterUnitTest : MockkBaseTest {
             jobExecution = jobExecution,
             status = Status.RUNNING,
             pageable = PageRequest.of(0, 10),
-            objectMapper = objectMapper
+            objectMapper = objectMapper,
         )
         result shouldBe Optional.empty()
     }
@@ -65,7 +65,7 @@ internal class ImportPaperCSVJobResultFormatterUnitTest : MockkBaseTest {
             jobExecution = jobExecution,
             status = Status.STOPPED,
             pageable = PageRequest.of(0, 10),
-            objectMapper = objectMapper
+            objectMapper = objectMapper,
         )
         result shouldBe Optional.empty()
     }
@@ -113,7 +113,7 @@ internal class ImportPaperCSVJobResultFormatterUnitTest : MockkBaseTest {
             jobExecution = jobExecution,
             status = Status.DONE,
             pageable = pageable,
-            objectMapper = objectMapper
+            objectMapper = objectMapper,
         )
         result shouldBe Optional.of(expected)
 

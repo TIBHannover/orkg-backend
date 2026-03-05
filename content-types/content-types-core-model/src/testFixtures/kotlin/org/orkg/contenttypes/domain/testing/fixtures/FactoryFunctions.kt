@@ -32,23 +32,23 @@ fun createPublishedContentType(
                 observatoryId = ObservatoryId.UNKNOWN,
                 extractionMethod = ExtractionMethod.UNKNOWN,
                 organizationId = OrganizationId.UNKNOWN,
-                visibility = Visibility.DEFAULT
+                visibility = Visibility.DEFAULT,
             ),
             predicate = Predicate(
                 id = Predicates.hasPaper,
                 label = "has paper",
                 createdAt = OffsetDateTime.parse("2021-04-26T16:57:34.745465+02:00"),
-                createdBy = ContributorId.UNKNOWN
+                createdBy = ContributorId.UNKNOWN,
             ),
             `object` = Class(
                 id = ThingId("C12457"),
                 label = "Some class",
                 uri = ParsedIRI.create("https://orkg.org/class/C12457"),
                 createdAt = OffsetDateTime.parse("2022-02-22T08:01:13.261082+01:00"),
-                createdBy = ContributorId("d5416c16-1a45-4aee-8069-be1b6097478b")
+                createdBy = ContributorId("d5416c16-1a45-4aee-8069-be1b6097478b"),
             ),
             createdAt = OffsetDateTime.parse("2022-02-22T08:01:15.253502+01:00"),
-            createdBy = ContributorId("d5416c16-1a45-4aee-8069-be1b6097478b")
+            createdBy = ContributorId("d5416c16-1a45-4aee-8069-be1b6097478b"),
         ),
         GeneralStatement(
             id = StatementId("S5436"),
@@ -61,23 +61,23 @@ fun createPublishedContentType(
                 observatoryId = ObservatoryId.UNKNOWN,
                 extractionMethod = ExtractionMethod.MANUAL,
                 organizationId = OrganizationId.UNKNOWN,
-                visibility = Visibility.FEATURED
+                visibility = Visibility.FEATURED,
             ),
             predicate = Predicate(
                 id = Predicates.hasPaper,
                 label = "has paper",
                 createdAt = OffsetDateTime.parse("2021-04-26T16:57:34.745465+02:00"),
-                createdBy = ContributorId.UNKNOWN
+                createdBy = ContributorId.UNKNOWN,
             ),
             `object` = Literal(
                 id = ThingId("L354354"),
                 label = "Some literal",
                 datatype = "xsd:string",
                 createdAt = OffsetDateTime.parse("2022-02-22T08:01:12.709843+01:00"),
-                createdBy = ContributorId("d5416c16-1a45-4aee-8069-be1b6097478b")
+                createdBy = ContributorId("d5416c16-1a45-4aee-8069-be1b6097478b"),
             ),
             createdAt = OffsetDateTime.parse("2023-02-22T08:01:15.253502+01:00"),
-            createdBy = ContributorId("d5416c16-1a45-4aee-8069-be1b6097478b")
-        )
+            createdBy = ContributorId("d5416c16-1a45-4aee-8069-be1b6097478b"),
+        ),
     ),
 ): PublishedContentType = PublishedContentType(id, rootId, subgraph)

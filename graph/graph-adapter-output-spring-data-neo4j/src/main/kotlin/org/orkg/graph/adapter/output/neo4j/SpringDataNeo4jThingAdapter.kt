@@ -72,7 +72,7 @@ class SpringDataNeo4jThingAdapter(
             includeClasses = includeClasses,
             excludeClasses = excludeClasses,
             observatoryId = observatoryId,
-            organizationId = organizationId
+            organizationId = organizationId,
         ).fetch(pageable, false)
 
     override fun count(
@@ -95,7 +95,7 @@ class SpringDataNeo4jThingAdapter(
             includeClasses = includeClasses,
             excludeClasses = excludeClasses,
             observatoryId = observatoryId,
-            organizationId = organizationId
+            organizationId = organizationId,
         ).count()
 
     private fun buildFindAllQuery(
@@ -157,8 +157,8 @@ class SpringDataNeo4jThingAdapter(
                     orderByOptimizations(
                         node = node,
                         sort = sort,
-                        properties = arrayOf("id", "label", "created_at", "created_by", "visibility")
-                    )
+                        properties = arrayOf("id", "label", "created_at", "created_by", "visibility"),
+                    ),
                 )
                 .with(variables)
                 .orderBy(
@@ -166,14 +166,14 @@ class SpringDataNeo4jThingAdapter(
                         listOf(
                             size(node.property("label")).ascending(),
                             score.descending(),
-                            node.property("created_at").ascending()
+                            node.property("created_at").ascending(),
                         )
                     } else {
                         sort.toSortItems(
                             node = node,
-                            knownProperties = arrayOf("id", "label", "created_at", "created_by", "visibility")
+                            knownProperties = arrayOf("id", "label", "created_at", "created_by", "visibility"),
                         )
-                    }
+                    },
                 )
                 .returning(node)
         }

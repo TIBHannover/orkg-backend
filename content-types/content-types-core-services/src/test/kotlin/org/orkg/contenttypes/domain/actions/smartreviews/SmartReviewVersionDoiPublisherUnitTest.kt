@@ -26,7 +26,7 @@ internal class SmartReviewVersionDoiPublisherUnitTest : MockkBaseTest {
     private val smartReviewVersionArchiver = SmartReviewVersionDoiPublisher(
         singleStatementPropertyCreator = singleStatementPropertyCreator,
         doiService = doiService,
-        smartReviewPublishBaseUri = "https://orkg.org/review/"
+        smartReviewPublishBaseUri = "https://orkg.org/review/",
     )
 
     @Test
@@ -36,7 +36,7 @@ internal class SmartReviewVersionDoiPublisherUnitTest : MockkBaseTest {
         val smartReviewVersionId = ThingId("R321")
         val state = PublishSmartReviewState(
             smartReview = smartReview,
-            smartReviewVersionId = smartReviewVersionId
+            smartReviewVersionId = smartReviewVersionId,
         )
         val doi = "10.1000/182"
 
@@ -60,7 +60,7 @@ internal class SmartReviewVersionDoiPublisherUnitTest : MockkBaseTest {
                     it.resourceType shouldBe "Review"
                     it.resourceTypeGeneral shouldBe "Preprint"
                     it.relatedIdentifiers shouldBe emptyList()
-                }
+                },
             )
         }
         verify(exactly = 1) {
@@ -68,7 +68,7 @@ internal class SmartReviewVersionDoiPublisherUnitTest : MockkBaseTest {
                 contributorId = command.contributorId,
                 subjectId = smartReviewVersionId,
                 predicateId = Predicates.hasDOI,
-                label = doi
+                label = doi,
             )
         }
     }
@@ -80,7 +80,7 @@ internal class SmartReviewVersionDoiPublisherUnitTest : MockkBaseTest {
         val smartReviewVersionId = ThingId("R321")
         val state = PublishSmartReviewState(
             smartReview = smartReview,
-            smartReviewVersionId = smartReviewVersionId
+            smartReviewVersionId = smartReviewVersionId,
         )
 
         smartReviewVersionArchiver(command, state).asClue {

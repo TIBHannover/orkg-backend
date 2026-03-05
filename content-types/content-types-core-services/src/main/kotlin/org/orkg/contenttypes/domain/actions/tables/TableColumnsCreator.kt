@@ -14,7 +14,7 @@ class TableColumnsCreator(
         unsafeStatementUseCases: UnsafeStatementUseCases,
         unsafeLiteralUseCases: UnsafeLiteralUseCases,
     ) : this(
-        AbstractTableColumnCreator(unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases)
+        AbstractTableColumnCreator(unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases),
     )
 
     override fun invoke(command: CreateTableCommand, state: State): State {
@@ -24,7 +24,7 @@ class TableColumnsCreator(
                 contributorId = command.contributorId,
                 tableId = state.tableId!!,
                 index = index,
-                titleLiteralId = state.resolve(value!!)!!
+                titleLiteralId = state.resolve(value!!)!!,
             )
         }
         return state.copy(columns = columns)

@@ -39,7 +39,7 @@ class InMemoryPredicateRepository(val inMemoryGraph: InMemoryGraph) :
             label = null,
             createdBy = null,
             createdAtStart = null,
-            createdAtEnd = null
+            createdAtEnd = null,
         )
 
     override fun findAll(
@@ -61,7 +61,7 @@ class InMemoryPredicateRepository(val inMemoryGraph: InMemoryGraph) :
                     (createdBy == null || it.createdBy == createdBy) &&
                     (createdAtStart == null || it.createdAt >= createdAtStart) &&
                     (createdAtEnd == null || it.createdAt <= createdAtEnd)
-            }
+            },
         )
 
     override fun deleteById(id: ThingId) {

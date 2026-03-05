@@ -184,7 +184,7 @@ internal class DynamicLabelTest {
             TextComponent("text "),
             SectionComponent("key", "pre", "post"),
             TextComponent(" "),
-            PlaceholderComponent("placeholder")
+            PlaceholderComponent("placeholder"),
         )
     }
 
@@ -210,7 +210,7 @@ internal class DynamicLabelTest {
     fun `Given a dynamic label template, when parsing a string that contains an unfinished section without a preposition and without a position, it just parses it as text`() {
         val dynamicLabel = DynamicLabel("""[{unfinished}""")
         dynamicLabel.components shouldBe listOf(
-            TextComponent("[{unfinished}")
+            TextComponent("[{unfinished}"),
         )
     }
 
@@ -218,7 +218,7 @@ internal class DynamicLabelTest {
     fun `Given a dynamic label template, when parsing a string that contains an unfinished section with a preposition but without a postposition, it just parses it as text`() {
         val dynamicLabel = DynamicLabel("""[preposition{unfinished}""")
         dynamicLabel.components shouldBe listOf(
-            TextComponent("""[preposition{unfinished}""")
+            TextComponent("""[preposition{unfinished}"""),
         )
     }
 
@@ -226,7 +226,7 @@ internal class DynamicLabelTest {
     fun `Given a dynamic label template, when parsing a string that contains an unfinished section with a preposition and a postposition, it just parses it as text`() {
         val dynamicLabel = DynamicLabel("""[preposition{unfinished}postposition""")
         dynamicLabel.components shouldBe listOf(
-            TextComponent("""[preposition{unfinished}postposition""")
+            TextComponent("""[preposition{unfinished}postposition"""),
         )
     }
 
@@ -266,7 +266,7 @@ internal class DynamicLabelTest {
             "1" to listOf("train"),
             "2" to listOf("Hanover"),
             "3" to listOf("Berlin"),
-            "4" to listOf("29.07.2024")
+            "4" to listOf("29.07.2024"),
         )
         dynamicLabel.render(valueMap) shouldBe """Person travels by train from Hanover to Berlin on 29.07.2024"""
     }
@@ -277,7 +277,7 @@ internal class DynamicLabelTest {
         val valueMap = mapOf(
             "0" to listOf("Person"),
             "1" to listOf("train"),
-            "2" to listOf("Hanover")
+            "2" to listOf("Hanover"),
         )
         dynamicLabel.render(valueMap) shouldBe """Person travels by train from Hanover"""
     }
@@ -286,7 +286,7 @@ internal class DynamicLabelTest {
     fun `Given a dynamic label template, when rendering, it formats placeholders correctly`() {
         val dynamicLabel = DynamicLabel("""{0} {1}""")
         val valueMap = mapOf(
-            "0" to listOf("Person")
+            "0" to listOf("Person"),
         )
         dynamicLabel.render(valueMap) shouldBe """Person {1}"""
     }
@@ -298,7 +298,7 @@ internal class DynamicLabelTest {
             "0" to listOf("Person 1", "Person 2", "Person 3"),
             "1" to listOf("Train", "Bus", "Bike"),
             "2" to listOf("Berlin", "Hannover"),
-            "3" to listOf("29.07.2024", "30.07.2024")
+            "3" to listOf("29.07.2024", "30.07.2024"),
         )
         dynamicLabel.render(valueMap) shouldBe """Person 1, Person 2 and Person 3 travel by Train, Bus and Bike to Berlin and Hannover on 29.07.2024 and 30.07.2024"""
     }

@@ -30,7 +30,7 @@ internal class AbstractLiteratureListSectionCreatorUnitTest : MockkBaseTest {
     private val abstractLiteratureListSectionCreator = AbstractLiteratureListSectionCreator(
         unsafeStatementUseCases,
         unsafeResourceUseCases,
-        unsafeLiteralUseCases
+        unsafeLiteralUseCases,
     )
 
     @Test
@@ -38,7 +38,7 @@ internal class AbstractLiteratureListSectionCreatorUnitTest : MockkBaseTest {
         val entry = ThingId("R2315")
         val description = "test description"
         val section = literatureListListSectionCommand().copy(
-            entries = listOf(AbstractLiteratureListListSectionCommand.Entry(entry, description))
+            entries = listOf(AbstractLiteratureListListSectionCommand.Entry(entry, description)),
         )
         val contributorId = ContributorId(UUID.randomUUID())
         val sectionId = ThingId("R123")
@@ -50,8 +50,8 @@ internal class AbstractLiteratureListSectionCreatorUnitTest : MockkBaseTest {
                 CreateResourceUseCase.CreateCommand(
                     contributorId = contributorId,
                     label = "",
-                    classes = setOf(Classes.listSection)
-                )
+                    classes = setOf(Classes.listSection),
+                ),
             )
         } returns sectionId
         every {
@@ -59,8 +59,8 @@ internal class AbstractLiteratureListSectionCreatorUnitTest : MockkBaseTest {
                 CreateResourceUseCase.CreateCommand(
                     contributorId = contributorId,
                     label = "Entry",
-                    classes = setOf(Classes.listSection)
-                )
+                    classes = setOf(Classes.listSection),
+                ),
             )
         } returns entryId
         every {
@@ -69,8 +69,8 @@ internal class AbstractLiteratureListSectionCreatorUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     subjectId = sectionId,
                     predicateId = Predicates.hasEntry,
-                    objectId = entryId
-                )
+                    objectId = entryId,
+                ),
             )
         } returns StatementId("S1")
         every {
@@ -79,8 +79,8 @@ internal class AbstractLiteratureListSectionCreatorUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     subjectId = entryId,
                     predicateId = Predicates.hasLink,
-                    objectId = entry
-                )
+                    objectId = entry,
+                ),
             )
         } returns StatementId("S2")
         every { unsafeLiteralUseCases.create(any()) } returns descriptionId
@@ -90,8 +90,8 @@ internal class AbstractLiteratureListSectionCreatorUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     subjectId = entryId,
                     predicateId = Predicates.description,
-                    objectId = descriptionId
-                )
+                    objectId = descriptionId,
+                ),
             )
         } returns StatementId("S3")
 
@@ -102,8 +102,8 @@ internal class AbstractLiteratureListSectionCreatorUnitTest : MockkBaseTest {
                 CreateResourceUseCase.CreateCommand(
                     contributorId = contributorId,
                     label = "",
-                    classes = setOf(Classes.listSection)
-                )
+                    classes = setOf(Classes.listSection),
+                ),
             )
         }
         verify(exactly = 1) {
@@ -111,8 +111,8 @@ internal class AbstractLiteratureListSectionCreatorUnitTest : MockkBaseTest {
                 CreateResourceUseCase.CreateCommand(
                     contributorId = contributorId,
                     label = "Entry",
-                    classes = setOf(Classes.listSection)
-                )
+                    classes = setOf(Classes.listSection),
+                ),
             )
         }
         verify(exactly = 1) {
@@ -121,8 +121,8 @@ internal class AbstractLiteratureListSectionCreatorUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     subjectId = sectionId,
                     predicateId = Predicates.hasEntry,
-                    objectId = entryId
-                )
+                    objectId = entryId,
+                ),
             )
         }
         verify(exactly = 1) {
@@ -131,16 +131,16 @@ internal class AbstractLiteratureListSectionCreatorUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     subjectId = entryId,
                     predicateId = Predicates.hasLink,
-                    objectId = entry
-                )
+                    objectId = entry,
+                ),
             )
         }
         verify(exactly = 1) {
             unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = contributorId,
-                    label = description
-                )
+                    label = description,
+                ),
             )
         }
         verify(exactly = 1) {
@@ -149,8 +149,8 @@ internal class AbstractLiteratureListSectionCreatorUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     subjectId = entryId,
                     predicateId = Predicates.description,
-                    objectId = descriptionId
-                )
+                    objectId = descriptionId,
+                ),
             )
         }
     }
@@ -159,7 +159,7 @@ internal class AbstractLiteratureListSectionCreatorUnitTest : MockkBaseTest {
     fun `Given a list section command, when creating a section entry without a description, it returns success`() {
         val entry = ThingId("R2315")
         val section = literatureListListSectionCommand().copy(
-            entries = listOf(AbstractLiteratureListListSectionCommand.Entry(entry))
+            entries = listOf(AbstractLiteratureListListSectionCommand.Entry(entry)),
         )
         val contributorId = ContributorId(UUID.randomUUID())
         val sectionId = ThingId("R123")
@@ -170,8 +170,8 @@ internal class AbstractLiteratureListSectionCreatorUnitTest : MockkBaseTest {
                 CreateResourceUseCase.CreateCommand(
                     contributorId = contributorId,
                     label = "",
-                    classes = setOf(Classes.listSection)
-                )
+                    classes = setOf(Classes.listSection),
+                ),
             )
         } returns sectionId
         every {
@@ -179,8 +179,8 @@ internal class AbstractLiteratureListSectionCreatorUnitTest : MockkBaseTest {
                 CreateResourceUseCase.CreateCommand(
                     contributorId = contributorId,
                     label = "Entry",
-                    classes = setOf(Classes.listSection)
-                )
+                    classes = setOf(Classes.listSection),
+                ),
             )
         } returns entryId
         every {
@@ -189,8 +189,8 @@ internal class AbstractLiteratureListSectionCreatorUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     subjectId = sectionId,
                     predicateId = Predicates.hasEntry,
-                    objectId = entryId
-                )
+                    objectId = entryId,
+                ),
             )
         } returns StatementId("S1")
         every {
@@ -199,8 +199,8 @@ internal class AbstractLiteratureListSectionCreatorUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     subjectId = entryId,
                     predicateId = Predicates.hasLink,
-                    objectId = entry
-                )
+                    objectId = entry,
+                ),
             )
         } returns StatementId("S2")
 
@@ -211,8 +211,8 @@ internal class AbstractLiteratureListSectionCreatorUnitTest : MockkBaseTest {
                 CreateResourceUseCase.CreateCommand(
                     contributorId = contributorId,
                     label = "",
-                    classes = setOf(Classes.listSection)
-                )
+                    classes = setOf(Classes.listSection),
+                ),
             )
         }
         verify(exactly = 1) {
@@ -220,8 +220,8 @@ internal class AbstractLiteratureListSectionCreatorUnitTest : MockkBaseTest {
                 CreateResourceUseCase.CreateCommand(
                     contributorId = contributorId,
                     label = "Entry",
-                    classes = setOf(Classes.listSection)
-                )
+                    classes = setOf(Classes.listSection),
+                ),
             )
         }
         verify(exactly = 1) {
@@ -230,8 +230,8 @@ internal class AbstractLiteratureListSectionCreatorUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     subjectId = sectionId,
                     predicateId = Predicates.hasEntry,
-                    objectId = entryId
-                )
+                    objectId = entryId,
+                ),
             )
         }
         verify(exactly = 1) {
@@ -240,8 +240,8 @@ internal class AbstractLiteratureListSectionCreatorUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     subjectId = entryId,
                     predicateId = Predicates.hasLink,
-                    objectId = entry
-                )
+                    objectId = entry,
+                ),
             )
         }
     }
@@ -259,8 +259,8 @@ internal class AbstractLiteratureListSectionCreatorUnitTest : MockkBaseTest {
                 CreateResourceUseCase.CreateCommand(
                     contributorId = contributorId,
                     label = section.heading,
-                    classes = setOf(Classes.textSection)
-                )
+                    classes = setOf(Classes.textSection),
+                ),
             )
         } returns sectionId
         every {
@@ -268,8 +268,8 @@ internal class AbstractLiteratureListSectionCreatorUnitTest : MockkBaseTest {
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = contributorId,
                     label = section.headingSize.toString(),
-                    datatype = Literals.XSD.INT.prefixedUri
-                )
+                    datatype = Literals.XSD.INT.prefixedUri,
+                ),
             )
         } returns headingSizeId
         every {
@@ -278,16 +278,16 @@ internal class AbstractLiteratureListSectionCreatorUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     subjectId = sectionId,
                     predicateId = Predicates.hasHeadingLevel,
-                    objectId = headingSizeId
-                )
+                    objectId = headingSizeId,
+                ),
             )
         } returns StatementId("S1")
         every {
             unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = contributorId,
-                    label = section.text
-                )
+                    label = section.text,
+                ),
             )
         } returns textId
         every {
@@ -296,8 +296,8 @@ internal class AbstractLiteratureListSectionCreatorUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     subjectId = sectionId,
                     predicateId = Predicates.hasContent,
-                    objectId = textId
-                )
+                    objectId = textId,
+                ),
             )
         } returns StatementId("S2")
 
@@ -308,8 +308,8 @@ internal class AbstractLiteratureListSectionCreatorUnitTest : MockkBaseTest {
                 CreateResourceUseCase.CreateCommand(
                     contributorId = contributorId,
                     label = section.heading,
-                    classes = setOf(Classes.textSection)
-                )
+                    classes = setOf(Classes.textSection),
+                ),
             )
         }
         verify(exactly = 1) {
@@ -317,8 +317,8 @@ internal class AbstractLiteratureListSectionCreatorUnitTest : MockkBaseTest {
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = contributorId,
                     label = section.headingSize.toString(),
-                    datatype = Literals.XSD.INT.prefixedUri
-                )
+                    datatype = Literals.XSD.INT.prefixedUri,
+                ),
             )
         }
         verify(exactly = 1) {
@@ -327,16 +327,16 @@ internal class AbstractLiteratureListSectionCreatorUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     subjectId = sectionId,
                     predicateId = Predicates.hasHeadingLevel,
-                    objectId = headingSizeId
-                )
+                    objectId = headingSizeId,
+                ),
             )
         }
         verify(exactly = 1) {
             unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = contributorId,
-                    label = section.text
-                )
+                    label = section.text,
+                ),
             )
         }
         verify(exactly = 1) {
@@ -345,8 +345,8 @@ internal class AbstractLiteratureListSectionCreatorUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     subjectId = sectionId,
                     predicateId = Predicates.hasContent,
-                    objectId = textId
-                )
+                    objectId = textId,
+                ),
             )
         }
     }

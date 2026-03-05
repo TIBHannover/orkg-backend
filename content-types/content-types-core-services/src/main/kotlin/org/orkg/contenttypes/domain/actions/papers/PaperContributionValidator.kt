@@ -17,7 +17,7 @@ class PaperContributionValidator(
         val result = contributionValidator.validate(
             validationCacheIn = state.validationCache,
             thingCommands = command.contents!!.all(),
-            contributionCommands = command.contents!!.contributions
+            contributionCommands = command.contents!!.contributions,
         )
         return state.copy(bakedStatements = result.bakedStatements, validationCache = result.validationCache)
     }

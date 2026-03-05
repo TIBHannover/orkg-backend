@@ -50,7 +50,7 @@ internal class ImportServiceResourceUnitTest : AbstractImportServiceUnitTest() {
         val externalThing = ExternalThing(
             uri = ParsedIRI.create("https://example.org/resources/$ontologyId/$shortForm"),
             label = "resource label",
-            description = "resource description"
+            description = "resource description",
         )
         val existingId = ThingId("existing")
 
@@ -62,10 +62,10 @@ internal class ImportServiceResourceUnitTest : AbstractImportServiceUnitTest() {
                 subjectClasses = setOf(Classes.resource),
                 predicateId = Predicates.sameAs,
                 objectLabel = externalThing.uri.toString(),
-                objectClasses = setOf(Classes.literal)
+                objectClasses = setOf(Classes.literal),
             )
         } returns pageOf(
-            createStatement(subject = createResource(existingId))
+            createStatement(subject = createResource(existingId)),
         )
 
         val result = service.importResourceByShortForm(ContributorId(MockUserId.USER), ontologyId, shortForm)
@@ -79,7 +79,7 @@ internal class ImportServiceResourceUnitTest : AbstractImportServiceUnitTest() {
                 subjectClasses = setOf(Classes.resource),
                 predicateId = Predicates.sameAs,
                 objectLabel = externalThing.uri.toString(),
-                objectClasses = setOf(Classes.literal)
+                objectClasses = setOf(Classes.literal),
             )
         }
     }
@@ -91,7 +91,7 @@ internal class ImportServiceResourceUnitTest : AbstractImportServiceUnitTest() {
         val externalThing = ExternalThing(
             uri = ParsedIRI.create("https://example.org/resources/$ontologyId/$shortForm"),
             label = "resource label",
-            description = "resource description"
+            description = "resource description",
         )
         val contributorId = ContributorId(MockUserId.USER)
         val resourceId = ThingId("newResourceId")
@@ -104,7 +104,7 @@ internal class ImportServiceResourceUnitTest : AbstractImportServiceUnitTest() {
                 subjectClasses = setOf(Classes.resource),
                 predicateId = Predicates.sameAs,
                 objectLabel = externalThing.uri.toString(),
-                objectClasses = setOf(Classes.literal)
+                objectClasses = setOf(Classes.literal),
             )
         } returns pageOf()
         mockResourceCreation(contributorId, externalThing, resourceId)
@@ -120,7 +120,7 @@ internal class ImportServiceResourceUnitTest : AbstractImportServiceUnitTest() {
                 subjectClasses = setOf(Classes.resource),
                 predicateId = Predicates.sameAs,
                 objectLabel = externalThing.uri.toString(),
-                objectClasses = setOf(Classes.literal)
+                objectClasses = setOf(Classes.literal),
             )
         }
         verifyResourceCreation(contributorId, externalThing, resourceId)
@@ -138,10 +138,10 @@ internal class ImportServiceResourceUnitTest : AbstractImportServiceUnitTest() {
                 subjectClasses = setOf(Classes.resource),
                 predicateId = Predicates.sameAs,
                 objectLabel = uri.toString(),
-                objectClasses = setOf(Classes.literal)
+                objectClasses = setOf(Classes.literal),
             )
         } returns pageOf(
-            createStatement(subject = createResource(existingId))
+            createStatement(subject = createResource(existingId)),
         )
 
         val result = service.importResourceByURI(ContributorId(MockUserId.USER), ontologyId, uri)
@@ -153,7 +153,7 @@ internal class ImportServiceResourceUnitTest : AbstractImportServiceUnitTest() {
                 subjectClasses = setOf(Classes.resource),
                 predicateId = Predicates.sameAs,
                 objectLabel = uri.toString(),
-                objectClasses = setOf(Classes.literal)
+                objectClasses = setOf(Classes.literal),
             )
         }
     }
@@ -169,7 +169,7 @@ internal class ImportServiceResourceUnitTest : AbstractImportServiceUnitTest() {
                 subjectClasses = setOf(Classes.resource),
                 predicateId = Predicates.sameAs,
                 objectLabel = uri.toString(),
-                objectClasses = setOf(Classes.literal)
+                objectClasses = setOf(Classes.literal),
             )
         } returns pageOf()
         every { externalResourceService.supportsOntology(any()) } returns false
@@ -184,7 +184,7 @@ internal class ImportServiceResourceUnitTest : AbstractImportServiceUnitTest() {
                 subjectClasses = setOf(Classes.resource),
                 predicateId = Predicates.sameAs,
                 objectLabel = uri.toString(),
-                objectClasses = setOf(Classes.literal)
+                objectClasses = setOf(Classes.literal),
             )
         }
         verify(exactly = 1) { externalResourceService.supportsOntology(ontologyId) }
@@ -201,7 +201,7 @@ internal class ImportServiceResourceUnitTest : AbstractImportServiceUnitTest() {
                 subjectClasses = setOf(Classes.resource),
                 predicateId = Predicates.sameAs,
                 objectLabel = uri.toString(),
-                objectClasses = setOf(Classes.literal)
+                objectClasses = setOf(Classes.literal),
             )
         } returns pageOf()
         every { externalResourceService.supportsOntology(any()) } returns true
@@ -217,7 +217,7 @@ internal class ImportServiceResourceUnitTest : AbstractImportServiceUnitTest() {
                 subjectClasses = setOf(Classes.resource),
                 predicateId = Predicates.sameAs,
                 objectLabel = uri.toString(),
-                objectClasses = setOf(Classes.literal)
+                objectClasses = setOf(Classes.literal),
             )
         }
         verify(exactly = 1) { externalResourceService.supportsOntology(ontologyId) }
@@ -231,7 +231,7 @@ internal class ImportServiceResourceUnitTest : AbstractImportServiceUnitTest() {
         val externalThing = ExternalThing(
             uri = uri,
             label = "resource label",
-            description = "resource description"
+            description = "resource description",
         )
         val contributorId = ContributorId(MockUserId.USER)
         val resourceId = ThingId("newResourceId")
@@ -242,7 +242,7 @@ internal class ImportServiceResourceUnitTest : AbstractImportServiceUnitTest() {
                 subjectClasses = setOf(Classes.resource),
                 predicateId = Predicates.sameAs,
                 objectLabel = uri.toString(),
-                objectClasses = setOf(Classes.literal)
+                objectClasses = setOf(Classes.literal),
             )
         } returns pageOf()
         every { externalResourceService.supportsOntology(any()) } returns true
@@ -257,7 +257,7 @@ internal class ImportServiceResourceUnitTest : AbstractImportServiceUnitTest() {
                 subjectClasses = setOf(Classes.resource),
                 predicateId = Predicates.sameAs,
                 objectLabel = uri.toString(),
-                objectClasses = setOf(Classes.literal)
+                objectClasses = setOf(Classes.literal),
             )
         }
         verify(exactly = 1) { externalResourceService.supportsOntology(ontologyId) }
@@ -271,7 +271,7 @@ internal class ImportServiceResourceUnitTest : AbstractImportServiceUnitTest() {
                 CreateResourceUseCase.CreateCommand(
                     contributorId = contributorId,
                     label = externalThing.label,
-                )
+                ),
             )
         } returns resourceId
         mockDescriptionCreation(contributorId, externalThing, resourceId)
@@ -285,7 +285,7 @@ internal class ImportServiceResourceUnitTest : AbstractImportServiceUnitTest() {
                 CreateResourceUseCase.CreateCommand(
                     contributorId = contributorId,
                     label = externalThing.label,
-                )
+                ),
             )
         }
         verifyDescriptionCreation(contributorId, externalThing, subjectId)

@@ -46,7 +46,7 @@ internal class DOITest {
         fun validDOIs(): Stream<Arguments> = Stream.of(
             Arguments.of("10.48366/r609337", "https://doi.org/10.48366/r609337"),
             Arguments.of("10.1093/ajae/aaq063", "https://doi.org/10.1093/ajae/aaq063"),
-            Arguments.of("10.1080/10509585.2015.1092083", "https://doi.org/10.1080/10509585.2015.1092083")
+            Arguments.of("10.1080/10509585.2015.1092083", "https://doi.org/10.1080/10509585.2015.1092083"),
         )
 
         @JvmStatic
@@ -58,7 +58,7 @@ internal class DOITest {
             // Letters used in prefix
             Arguments.of("10.XYZ/10509585.2015.1092083", "https://doi.org/10.XYZ/10509585.2015.1092083"),
             // Does not follow scheme at all
-            Arguments.of("example", "https://example.com/")
+            Arguments.of("example", "https://example.com/"),
         )
     }
 }

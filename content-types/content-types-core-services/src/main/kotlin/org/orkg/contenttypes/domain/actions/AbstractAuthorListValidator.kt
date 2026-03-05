@@ -37,7 +37,7 @@ class AbstractAuthorListValidator(
                         predicateId = identifier.predicateId,
                         objectClasses = setOf(Classes.literal),
                         objectLabel = value,
-                        pageable = PageRequests.ALL
+                        pageable = PageRequests.ALL,
                     )
                     if (authorsWithIdentifier.isEmpty) {
                         missingIdentifiers.computeIfAbsent(identifier.id) { mutableSetOf() } += value
@@ -59,7 +59,7 @@ class AbstractAuthorListValidator(
                 id = resources.singleOrNull(),
                 identifiers = missingIdentifiers
                     .mapValues { (_, value) -> value.toList() }
-                    .ifEmpty { null }
+                    .ifEmpty { null },
             )
         }
         return validatedAuthors

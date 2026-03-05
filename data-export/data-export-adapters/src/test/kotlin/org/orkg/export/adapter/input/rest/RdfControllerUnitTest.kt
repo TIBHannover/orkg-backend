@@ -37,7 +37,7 @@ internal class RdfControllerUnitTest : MockMvcBaseTest("rdf-hints") {
             .andExpect(header().string("Location", endsWith("/files/rdf-dumps/rdf-export-orkg.nt")))
             .andDocument {
                 responseHeaders(
-                    headerWithName("Location").description("Location to the rdf dump.")
+                    headerWithName("Location").description("Location to the rdf dump."),
                 )
             }
     }
@@ -58,7 +58,7 @@ internal class RdfControllerUnitTest : MockMvcBaseTest("rdf-hints") {
                     Dumps are created automatically by the system, but can also be triggered manually using a `POST` request.
                     
                     NOTE: This endpoint requires the admin role.
-                    """
+                    """,
                 )
             }
 

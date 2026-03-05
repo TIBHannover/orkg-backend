@@ -53,6 +53,6 @@ class ConferenceSeriesEntity {
             name = name!!,
             homepage = url!!,
             displayId = displayId!!,
-            metadata = Metadata(startDate!!, reviewType!!)
+            metadata = Metadata(startDate!!, reviewType!!),
         )
 }

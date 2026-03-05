@@ -45,10 +45,10 @@ fun <
     val fabricator = Fabrikate(
         FabricatorConfig(
             collectionSizes = 12..12,
-            nullableStrategy = FabricatorConfig.NullableStrategy.NeverSetToNull // FIXME: because "id" is nullable
+            nullableStrategy = FabricatorConfig.NullableStrategy.NeverSetToNull, // FIXME: because "id" is nullable
         )
             .withStandardMappings()
-            .withGraphMappings()
+            .withGraphMappings(),
     )
 
     val pageable = PageRequest.of(0, 10)
@@ -110,8 +110,8 @@ fun <
                     cont.label,
                     paper.label,
                     year?.label?.toIntOrNull(),
-                    ThingId(paper.id.value)
-                )
+                    ThingId(paper.id.value),
+                ),
             )
             val contPredicate = predicateRepository.findById(Predicates.hasContribution).get()
             statementRepository.save(
@@ -121,8 +121,8 @@ fun <
                     predicate = contPredicate,
                     `object` = cont,
                     createdAt = OffsetDateTime.now(fixedClock),
-                    createdBy = ContributorId("34da5516-7901-4b0d-94c5-b062082e11a7")
-                )
+                    createdBy = ContributorId("34da5516-7901-4b0d-94c5-b062082e11a7"),
+                ),
             )
             if (year != null) {
                 val yearPredicate = predicateRepository.findById(Predicates.yearPublished).get()
@@ -133,8 +133,8 @@ fun <
                         predicate = yearPredicate,
                         `object` = year,
                         createdAt = OffsetDateTime.now(fixedClock),
-                        createdBy = ContributorId("34da5516-7901-4b0d-94c5-b062082e11a7")
-                    )
+                        createdBy = ContributorId("34da5516-7901-4b0d-94c5-b062082e11a7"),
+                    ),
                 )
             }
         }

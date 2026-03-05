@@ -98,7 +98,7 @@ class RosettaStoneStatementService(
             createdAtStart = createdAtStart,
             createdAtEnd = createdAtEnd,
             observatoryId = observatoryId,
-            organizationId = organizationId
+            organizationId = organizationId,
         )
 
     override fun create(command: CreateRosettaStoneStatementCommand): ThingId {
@@ -111,7 +111,7 @@ class RosettaStoneStatementService(
             RosettaStoneStatementThingsCommandCreateValidator(thingRepository, classRepository),
             RosettaStoneStatementPropertyValueCreateValidator(thingRepository, statementRepository, classHierarchyRepository, this),
             RosettaStoneStatementThingsCommandCreateCreator(unsafeClassUseCases, unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases, unsafePredicateUseCases, statementRepository, listService),
-            RosettaStoneStatementCreator(repository, thingRepository, clock)
+            RosettaStoneStatementCreator(repository, thingRepository, clock),
         )
         return steps.execute(command, CreateRosettaStoneStatementState()).rosettaStoneStatementId!!
     }
@@ -127,7 +127,7 @@ class RosettaStoneStatementService(
             RosettaStoneStatementThingsCommandUpdateValidator(thingRepository, classRepository),
             RosettaStoneStatementPropertyValueUpdateValidator(thingRepository, statementRepository, classHierarchyRepository, this),
             RosettaStoneStatementThingsCommandUpdateCreator(unsafeClassUseCases, unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases, unsafePredicateUseCases, statementRepository, listService),
-            RosettaStoneStatementUpdater(repository, thingRepository, clock)
+            RosettaStoneStatementUpdater(repository, thingRepository, clock),
         )
         return steps.execute(command, UpdateRosettaStoneStatementState()).rosettaStoneStatementId!!
     }

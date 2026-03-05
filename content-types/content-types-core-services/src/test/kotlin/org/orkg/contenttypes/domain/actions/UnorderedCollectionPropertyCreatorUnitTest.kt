@@ -27,7 +27,7 @@ internal class UnorderedCollectionPropertyCreatorUnitTest : MockkBaseTest {
             contributorId = ContributorId(UUID.randomUUID()),
             subjectId = ThingId("R123"),
             predicateId = Predicates.description,
-            labels = emptyList()
+            labels = emptyList(),
         )
     }
 
@@ -42,8 +42,8 @@ internal class UnorderedCollectionPropertyCreatorUnitTest : MockkBaseTest {
             unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = contributorId,
-                    label = description
-                )
+                    label = description,
+                ),
             )
         } returns literal
         every {
@@ -52,8 +52,8 @@ internal class UnorderedCollectionPropertyCreatorUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     subjectId = subjectId,
                     predicateId = Predicates.description,
-                    objectId = literal
-                )
+                    objectId = literal,
+                ),
             )
         } returns StatementId("S1")
 
@@ -63,8 +63,8 @@ internal class UnorderedCollectionPropertyCreatorUnitTest : MockkBaseTest {
             unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = contributorId,
-                    label = description
-                )
+                    label = description,
+                ),
             )
         }
         verify(exactly = 1) {
@@ -73,8 +73,8 @@ internal class UnorderedCollectionPropertyCreatorUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     subjectId = subjectId,
                     predicateId = Predicates.description,
-                    objectId = literal
-                )
+                    objectId = literal,
+                ),
             )
         }
     }

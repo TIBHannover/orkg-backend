@@ -25,7 +25,7 @@ internal class TemplateDescriptionCreatorUnitTest : MockkBaseTest {
         val command = createTemplateCommand()
         val templateId = ThingId("R123")
         val state = CreateTemplateState(
-            templateId = templateId
+            templateId = templateId,
         )
 
         every {
@@ -33,7 +33,7 @@ internal class TemplateDescriptionCreatorUnitTest : MockkBaseTest {
                 contributorId = command.contributorId,
                 subjectId = state.templateId!!,
                 predicateId = Predicates.description,
-                label = command.description!!
+                label = command.description!!,
             )
         } just runs
 
@@ -48,7 +48,7 @@ internal class TemplateDescriptionCreatorUnitTest : MockkBaseTest {
                 contributorId = command.contributorId,
                 subjectId = state.templateId!!,
                 predicateId = Predicates.description,
-                label = command.description!!
+                label = command.description!!,
             )
         }
     }
@@ -56,11 +56,11 @@ internal class TemplateDescriptionCreatorUnitTest : MockkBaseTest {
     @Test
     fun `Given a template create command, when description is null, it does not create a statement`() {
         val command = createTemplateCommand().copy(
-            description = null
+            description = null,
         )
         val templateId = ThingId("R123")
         val state = CreateTemplateState(
-            templateId = templateId
+            templateId = templateId,
         )
 
         val result = templateDescriptionCreator(command, state)

@@ -44,7 +44,7 @@ internal class TemplatePropertyExistenceUpdateValidatorUnitTest : MockkBaseTest 
         val root = createResource(
             id = template.id,
             label = template.label,
-            classes = setOf(Classes.nodeShape)
+            classes = setOf(Classes.nodeShape),
         )
         val statements = listOf(createStatement()).groupBy { it.subject.id }
 
@@ -83,7 +83,7 @@ internal class TemplatePropertyExistenceUpdateValidatorUnitTest : MockkBaseTest 
             Arguments.of(updateStringLiteralTemplatePropertyCommand()),
             Arguments.of(updateNumberLiteralTemplatePropertyCommand()),
             Arguments.of(updateOtherLiteralTemplatePropertyCommand()),
-            Arguments.of(updateResourceTemplatePropertyCommand())
+            Arguments.of(updateResourceTemplatePropertyCommand()),
         )
     }
 }

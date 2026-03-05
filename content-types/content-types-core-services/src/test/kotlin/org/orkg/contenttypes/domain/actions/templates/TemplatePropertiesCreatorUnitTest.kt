@@ -21,7 +21,7 @@ internal class TemplatePropertiesCreatorUnitTest : MockkBaseTest {
     fun `Given a create template command, when creating template properties, it returns success`() {
         val command = createTemplateCommand()
         val state = CreateTemplateState(
-            templateId = ThingId("R123")
+            templateId = ThingId("R123"),
         )
 
         every {

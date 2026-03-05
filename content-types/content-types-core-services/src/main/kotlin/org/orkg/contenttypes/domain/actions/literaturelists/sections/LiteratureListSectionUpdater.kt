@@ -29,8 +29,8 @@ class LiteratureListSectionUpdater(
             resourceService,
             unsafeResourceUseCases,
             statementService,
-            unsafeStatementUseCases
-        )
+            unsafeStatementUseCases,
+        ),
     )
 
     override fun invoke(command: UpdateLiteratureListSectionCommand, state: State): State {
@@ -41,14 +41,14 @@ class LiteratureListSectionUpdater(
                     contributorId = command.contributorId,
                     newSection = command,
                     oldSection = section as LiteratureListListSection,
-                    statements = state.statements
+                    statements = state.statements,
                 )
 
                 is AbstractLiteratureListTextSectionCommand -> abstractLiteratureListSectionUpdater.updateTextSection(
                     contributorId = command.contributorId,
                     newSection = command,
                     oldSection = section as LiteratureListTextSection,
-                    statements = state.statements
+                    statements = state.statements,
                 )
             }
         }

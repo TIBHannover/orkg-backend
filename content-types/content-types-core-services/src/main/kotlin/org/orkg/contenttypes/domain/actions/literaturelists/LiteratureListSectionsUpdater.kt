@@ -24,7 +24,7 @@ class LiteratureListSectionsUpdater(
     ) : this(
         AbstractLiteratureListSectionCreator(unsafeStatementUseCases, unsafeResourceUseCases, unsafeLiteralUseCases),
         AbstractLiteratureListSectionDeleter(statementService, resourceService),
-        StatementCollectionPropertyUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases)
+        StatementCollectionPropertyUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases),
     )
 
     override fun invoke(command: UpdateLiteratureListCommand, state: State): State {
@@ -42,7 +42,7 @@ class LiteratureListSectionsUpdater(
                     contributorId = command.contributorId,
                     subjectId = command.literatureListId,
                     predicateId = Predicates.hasSection,
-                    objects = sectionIds
+                    objects = sectionIds,
                 )
                 oldSections.forEach {
                     abstractLiteratureListSectionDeleter.delete(command.contributorId, command.literatureListId, it, state.statements)

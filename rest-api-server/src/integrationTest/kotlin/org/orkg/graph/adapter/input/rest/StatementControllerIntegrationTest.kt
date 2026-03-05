@@ -103,7 +103,7 @@ internal class StatementControllerIntegrationTest : MockMvcBaseTest("statements"
         val body = mapOf(
             "subject_id" to r1,
             "predicate_id" to p,
-            "object_id" to r2
+            "object_id" to r2,
         )
 
         post("/api/statements")
@@ -122,7 +122,7 @@ internal class StatementControllerIntegrationTest : MockMvcBaseTest("statements"
         val body = mapOf(
             "subject_id" to r,
             "predicate_id" to p,
-            "object_id" to l
+            "object_id" to l,
         )
 
         post("/api/statements")
@@ -144,7 +144,7 @@ internal class StatementControllerIntegrationTest : MockMvcBaseTest("statements"
 
         val body = mapOf(
             "predicate_id" to p2,
-            "object_id" to o2
+            "object_id" to o2,
         )
 
         put("/api/statements/{id}", st)
@@ -164,7 +164,7 @@ internal class StatementControllerIntegrationTest : MockMvcBaseTest("statements"
         val p2 = predicateService.createPredicate(label = "made with love from")
 
         val body = mapOf(
-            "predicate_id" to p2
+            "predicate_id" to p2,
         )
         put("/api/statements/{id}", st)
             .content(body)

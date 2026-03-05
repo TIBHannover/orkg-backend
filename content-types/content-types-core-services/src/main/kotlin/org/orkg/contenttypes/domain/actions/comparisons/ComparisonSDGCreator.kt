@@ -20,7 +20,7 @@ class ComparisonSDGCreator(
             contributorId = command.contributorId,
             subjectId = state.comparisonId!!,
             predicateId = Predicates.sustainableDevelopmentGoal,
-            objects = command.sustainableDevelopmentGoals.toList()
+            objects = command.sustainableDevelopmentGoals.toList(),
         )
         return state
     }

@@ -19,11 +19,11 @@ import org.springframework.data.domain.PageRequest
 private val fabricator = Fabrikate(
     FabricatorConfig(
         collectionSizes = 12..12,
-        nullableStrategy = FabricatorConfig.NullableStrategy.NeverSetToNull // FIXME: because "id" is nullable
+        nullableStrategy = FabricatorConfig.NullableStrategy.NeverSetToNull, // FIXME: because "id" is nullable
     )
         .withStandardMappings()
         .withGraphMappings()
-        .withDataImportMappings()
+        .withDataImportMappings(),
 )
 
 interface PaperCSVRecordRepositoryContracts {
@@ -66,7 +66,7 @@ interface PaperCSVRecordRepositoryContracts {
 
         val result = repository.findAllByCSVID(
             csvId = csvId,
-            pageable = PageRequest.of(0, 15)
+            pageable = PageRequest.of(0, 15),
         )
 
         result shouldNotBe null

@@ -48,7 +48,7 @@ class ComparisonRelatedFigureService(
             subjectId = comparisonId,
             predicateId = Predicates.hasRelatedFigure,
             objectId = id,
-            pageable = PageRequests.SINGLE
+            pageable = PageRequests.SINGLE,
         )
             .filter { it.`object` is Resource && Classes.comparisonRelatedFigure in (it.`object` as Resource).classes }
             .singleOrNull()
@@ -70,16 +70,16 @@ class ComparisonRelatedFigureService(
             CreateResourceUseCase.CreateCommand(
                 contributorId = command.contributorId,
                 label = command.label,
-                classes = setOf(Classes.comparisonRelatedFigure)
-            )
+                classes = setOf(Classes.comparisonRelatedFigure),
+            ),
         )
         unsafeStatementUseCases.create(
             CreateStatementUseCase.CreateCommand(
                 contributorId = command.contributorId,
                 subjectId = command.comparisonId,
                 predicateId = Predicates.hasRelatedFigure,
-                objectId = figureId
-            )
+                objectId = figureId,
+            ),
         )
         if (command.image != null) {
             unsafeStatementUseCases.create(
@@ -90,10 +90,10 @@ class ComparisonRelatedFigureService(
                     objectId = unsafeLiteralUseCases.create(
                         CreateLiteralUseCase.CreateCommand(
                             contributorId = command.contributorId,
-                            label = command.image!!
-                        )
-                    )
-                )
+                            label = command.image!!,
+                        ),
+                    ),
+                ),
             )
         }
         if (command.description != null) {
@@ -105,10 +105,10 @@ class ComparisonRelatedFigureService(
                     objectId = unsafeLiteralUseCases.create(
                         CreateLiteralUseCase.CreateCommand(
                             contributorId = command.contributorId,
-                            label = command.description!!
-                        )
-                    )
-                )
+                            label = command.description!!,
+                        ),
+                    ),
+                ),
             )
         }
         return figureId
@@ -120,7 +120,7 @@ class ComparisonRelatedFigureService(
             resourceService = resourceService,
             unsafeLiteralUseCases = unsafeLiteralUseCases,
             statementService = statementService,
-            unsafeStatementUseCases = unsafeStatementUseCases
+            unsafeStatementUseCases = unsafeStatementUseCases,
         ).execute(command)
     }
 
@@ -143,7 +143,7 @@ class ComparisonRelatedFigureService(
             image = statements.wherePredicate(Predicates.hasImage).firstObjectLabel(),
             description = statements.wherePredicate(Predicates.description).firstObjectLabel(),
             createdAt = createdAt,
-            createdBy = createdBy
+            createdBy = createdBy,
         )
     }
 }

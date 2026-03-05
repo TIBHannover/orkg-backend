@@ -17,8 +17,8 @@ class LiteratureListResourceCreator(
                 classes = setOf(Classes.literatureList),
                 extractionMethod = command.extractionMethod,
                 observatoryId = command.observatories.singleOrNull(),
-                organizationId = command.organizations.singleOrNull()
-            )
+                organizationId = command.organizations.singleOrNull(),
+            ),
         )
         return state.copy(literatureListId = literatureListId)
     }

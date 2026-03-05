@@ -43,7 +43,7 @@ internal class SmartReviewResearchFieldUpdaterUnitTest : MockkBaseTest {
     @Test
     fun `Given a smart review update command, when research fields are unchanged, it does nothing`() {
         val smartReview = createSmartReview().copy(
-            researchFields = listOf(ObjectIdAndLabel(ThingId("R12"), "Science"))
+            researchFields = listOf(ObjectIdAndLabel(ThingId("R12"), "Science")),
         )
         val command = updateSmartReviewCommand()
         val state = UpdateSmartReviewState(smartReview = smartReview)
@@ -66,8 +66,8 @@ internal class SmartReviewResearchFieldUpdaterUnitTest : MockkBaseTest {
             statements = listOf(
                 createStatement(subject = createResource(command.smartReviewId), predicate = createPredicate(Predicates.hasResearchField)),
                 createStatement(subject = createResource(command.smartReviewId), predicate = createPredicate(Predicates.hasContent)),
-                createStatement(subject = createResource())
-            ).groupBy { it.subject.id }
+                createStatement(subject = createResource()),
+            ).groupBy { it.subject.id },
         )
 
         every {
@@ -76,7 +76,7 @@ internal class SmartReviewResearchFieldUpdaterUnitTest : MockkBaseTest {
                 contributorId = command.contributorId,
                 subjectId = command.smartReviewId,
                 predicateId = Predicates.hasResearchField,
-                objects = command.researchFields!!.toSet()
+                objects = command.researchFields!!.toSet(),
             )
         } just runs
 
@@ -94,7 +94,7 @@ internal class SmartReviewResearchFieldUpdaterUnitTest : MockkBaseTest {
                 contributorId = command.contributorId,
                 subjectId = command.smartReviewId,
                 predicateId = Predicates.hasResearchField,
-                objects = command.researchFields!!.toSet()
+                objects = command.researchFields!!.toSet(),
             )
         }
     }

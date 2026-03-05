@@ -106,7 +106,7 @@ internal class ObservatoryControllerUnitTest : MockMvcBaseTest("observatories") 
             description = "test observatory",
             researchField = ThingId("R45"),
             displayId = "test",
-            sustainableDevelopmentGoals = setOf(ThingId("SDG1"))
+            sustainableDevelopmentGoals = setOf(ThingId("SDG1")),
         )
 
         post("/api/observatories")
@@ -223,7 +223,7 @@ internal class ObservatoryControllerUnitTest : MockMvcBaseTest("observatories") 
         val resource = createResource(
             id = id,
             label = label,
-            classes = setOf(Classes.researchField)
+            classes = setOf(Classes.researchField),
         )
 
         every { observatoryUseCases.findAllResearchFields(any()) } returns page
@@ -248,7 +248,7 @@ internal class ObservatoryControllerUnitTest : MockMvcBaseTest("observatories") 
         val observatory = createObservatory(
             id = id,
             organizationIds = setOf(OrganizationId("a700c55f-aae2-4696-b7d5-6e8b89f66a8f")),
-            sustainableDevelopmentGoals = setOf(sdg)
+            sustainableDevelopmentGoals = setOf(sdg),
         )
         val request = CreateObservatoryRequest(
             name = observatory.name,
@@ -256,7 +256,7 @@ internal class ObservatoryControllerUnitTest : MockMvcBaseTest("observatories") 
             description = observatory.description!!,
             researchField = observatory.researchField!!,
             displayId = observatory.displayId,
-            sustainableDevelopmentGoals = observatory.sustainableDevelopmentGoals
+            sustainableDevelopmentGoals = observatory.sustainableDevelopmentGoals,
         )
 
         every { observatoryUseCases.create(any()) } returns observatory.id
@@ -273,7 +273,7 @@ internal class ObservatoryControllerUnitTest : MockMvcBaseTest("observatories") 
                     A `POST` request creates a new observatory with the given parameters.
                     The response will be `201 Created` when successful.
                     The observatory can be retrieved by following the URI in the `Location` header field.
-                    """
+                    """,
                 )
                 responseHeaders(
                     headerWithName("Location").description("The uri path where the newly created observatory can be fetched from."),
@@ -304,7 +304,7 @@ internal class ObservatoryControllerUnitTest : MockMvcBaseTest("observatories") 
                     it.researchField shouldBe observatory.researchField
                     it.displayId shouldBe observatory.displayId
                     it.sustainableDevelopmentGoals shouldBe observatory.sustainableDevelopmentGoals
-                }
+                },
             )
         }
     }
@@ -319,7 +319,7 @@ internal class ObservatoryControllerUnitTest : MockMvcBaseTest("observatories") 
             organizations = setOf(OrganizationId("a700c55f-aae2-4696-b7d5-6e8b89f66a8f")),
             description = "new observatory description",
             researchField = ThingId("R123"),
-            sustainableDevelopmentGoals = setOf(ThingId("SDG1"))
+            sustainableDevelopmentGoals = setOf(ThingId("SDG1")),
         )
 
         every { observatoryUseCases.update(any()) } just runs
@@ -339,7 +339,7 @@ internal class ObservatoryControllerUnitTest : MockMvcBaseTest("observatories") 
                     The updated observatory (object) can be retrieved by following the URI in the `Location` header field.
                     
                     NOTE: This endpoint can only be accessed by curators.
-                    """
+                    """,
                 )
                 pathParameters(
                     parameterWithName("id").description("The identifier of the observatory."),
@@ -371,7 +371,7 @@ internal class ObservatoryControllerUnitTest : MockMvcBaseTest("observatories") 
                     it.description shouldBe "new observatory description"
                     it.researchField shouldBe ThingId("R123")
                     it.sustainableDevelopmentGoals shouldBe setOf(ThingId("SDG1"))
-                }
+                },
             )
         }
     }

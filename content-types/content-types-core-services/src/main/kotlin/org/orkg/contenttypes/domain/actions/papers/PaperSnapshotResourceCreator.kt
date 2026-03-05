@@ -17,8 +17,8 @@ class PaperSnapshotResourceCreator(
                 classes = setOf(Classes.paperVersion),
                 extractionMethod = command.extractionMethod,
                 observatoryId = command.observatories.singleOrNull(),
-                organizationId = command.organizations.singleOrNull()
-            )
+                organizationId = command.organizations.singleOrNull(),
+            ),
         )
         return state.copy(paperId = paperId)
     }

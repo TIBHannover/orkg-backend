@@ -44,7 +44,7 @@ internal class RosettaStoneTemplateDynamicLabelUpdateValidatorUnitTest {
     fun `Given a rosetta stone template update command, when formatted label did not change, it does nothing`() {
         val rosettaStoneTemplate = createRosettaStoneTemplate()
         val command = updateRosettaStoneTemplateCommand().copy(
-            dynamicLabel = rosettaStoneTemplate.dynamicLabel
+            dynamicLabel = rosettaStoneTemplate.dynamicLabel,
         )
         val state = UpdateRosettaStoneTemplateState(rosettaStoneTemplate = rosettaStoneTemplate)
 
@@ -76,7 +76,7 @@ internal class RosettaStoneTemplateDynamicLabelUpdateValidatorUnitTest {
     fun `Given a rosetta stone template update command, when formatted label placeholder is missing, it throws an exception`() {
         val rosettaStoneTemplate = createRosettaStoneTemplate()
         val command = updateRosettaStoneTemplateCommand().copy(
-            dynamicLabel = DynamicLabel("placeholder missing")
+            dynamicLabel = DynamicLabel("placeholder missing"),
         )
         val state = UpdateRosettaStoneTemplateState(rosettaStoneTemplate = rosettaStoneTemplate)
 
@@ -90,7 +90,7 @@ internal class RosettaStoneTemplateDynamicLabelUpdateValidatorUnitTest {
         val rosettaStoneTemplate = createRosettaStoneTemplate()
         val command = updateRosettaStoneTemplateCommand().copy(
             dynamicLabel = DynamicLabel("placeholder missing"),
-            properties = listOf(createResourceObjectPositionTemplatePropertyCommand().copy(placeholder = null))
+            properties = listOf(createResourceObjectPositionTemplatePropertyCommand().copy(placeholder = null)),
         )
         val state = UpdateRosettaStoneTemplateState(rosettaStoneTemplate = rosettaStoneTemplate)
 
@@ -102,19 +102,19 @@ internal class RosettaStoneTemplateDynamicLabelUpdateValidatorUnitTest {
     @Test
     fun `Given a rosetta stone template update command, when validating the formatted label and template is used in a rosetta stone statement, it returns success`() {
         val rosettaStoneTemplate = createRosettaStoneTemplate().copy(
-            dynamicLabel = DynamicLabel("[{0}] travels [to {1}]")
+            dynamicLabel = DynamicLabel("[{0}] travels [to {1}]"),
         )
         val command = updateRosettaStoneTemplateCommand().copy(
             dynamicLabel = DynamicLabel("[{0}] travels [to {1}][by {2}]"),
             properties = listOf(
                 createSubjectPositionTemplatePropertyCommand(),
                 createStringLiteralObjectPositionTemplatePropertyCommand(),
-                createResourceObjectPositionTemplatePropertyCommand()
-            )
+                createResourceObjectPositionTemplatePropertyCommand(),
+            ),
         )
         val state = UpdateRosettaStoneTemplateState(
             rosettaStoneTemplate = rosettaStoneTemplate,
-            isUsedInRosettaStoneStatement = true
+            isUsedInRosettaStoneStatement = true,
         )
 
         val result = rosettaStoneTemplateDynamicLabelUpdateValidator(command, state)
@@ -132,7 +132,7 @@ internal class RosettaStoneTemplateDynamicLabelUpdateValidatorUnitTest {
         val command = updateRosettaStoneTemplateCommand().copy(properties = null)
         val state = UpdateRosettaStoneTemplateState(
             rosettaStoneTemplate = rosettaStoneTemplate,
-            isUsedInRosettaStoneStatement = true
+            isUsedInRosettaStoneStatement = true,
         )
 
         assertThrows<RosettaStoneTemplateLabelUpdateRequiresNewTemplateProperties> {
@@ -147,11 +147,11 @@ internal class RosettaStoneTemplateDynamicLabelUpdateValidatorUnitTest {
             properties = listOf(
                 createSubjectPositionTemplatePropertyCommand(),
                 createUntypedObjectPositionTemplatePropertyCommand(),
-            )
+            ),
         )
         val state = UpdateRosettaStoneTemplateState(
             rosettaStoneTemplate = rosettaStoneTemplate,
-            isUsedInRosettaStoneStatement = true
+            isUsedInRosettaStoneStatement = true,
         )
 
         assertThrows<RosettaStoneTemplateLabelUpdateRequiresNewTemplateProperties> {
@@ -163,19 +163,19 @@ internal class RosettaStoneTemplateDynamicLabelUpdateValidatorUnitTest {
     @DisplayName("Given a rosetta stone template update command, when template is used in a rosetta stone statement and new formatted label has less sections than before, it throws an exception")
     fun lessSectionThanBefore_throwsError() {
         val rosettaStoneTemplate = createRosettaStoneTemplate().copy(
-            dynamicLabel = DynamicLabel("Entity [{0}] travels [to {1}] by car")
+            dynamicLabel = DynamicLabel("Entity [{0}] travels [to {1}] by car"),
         )
         val command = updateRosettaStoneTemplateCommand().copy(
             dynamicLabel = DynamicLabel("[{0}][to {1}][on {2}]"),
             properties = listOf(
                 createSubjectPositionTemplatePropertyCommand(),
                 createStringLiteralObjectPositionTemplatePropertyCommand(),
-                createResourceObjectPositionTemplatePropertyCommand()
-            )
+                createResourceObjectPositionTemplatePropertyCommand(),
+            ),
         )
         val state = UpdateRosettaStoneTemplateState(
             rosettaStoneTemplate = rosettaStoneTemplate,
-            isUsedInRosettaStoneStatement = true
+            isUsedInRosettaStoneStatement = true,
         )
 
         assertThrows<RosettaStoneTemplateLabelMustStartWithPreviousVersion> {
@@ -188,19 +188,19 @@ internal class RosettaStoneTemplateDynamicLabelUpdateValidatorUnitTest {
     @DisplayName("Given a rosetta stone template update command, when template is used in a rosetta stone statement and new formatted label does not start with previous formatted label sections, it throws an exception")
     fun doesNotStartWithPreviousDynamicLabel_throwsError(newDynamicLabelPattern: String) {
         val rosettaStoneTemplate = createRosettaStoneTemplate().copy(
-            dynamicLabel = DynamicLabel("Entity [{0}] travels [to {1}] by car")
+            dynamicLabel = DynamicLabel("Entity [{0}] travels [to {1}] by car"),
         )
         val command = updateRosettaStoneTemplateCommand().copy(
             dynamicLabel = DynamicLabel(newDynamicLabelPattern),
             properties = listOf(
                 createSubjectPositionTemplatePropertyCommand(),
                 createStringLiteralObjectPositionTemplatePropertyCommand(),
-                createResourceObjectPositionTemplatePropertyCommand()
-            )
+                createResourceObjectPositionTemplatePropertyCommand(),
+            ),
         )
         val state = UpdateRosettaStoneTemplateState(
             rosettaStoneTemplate = rosettaStoneTemplate,
-            isUsedInRosettaStoneStatement = true
+            isUsedInRosettaStoneStatement = true,
         )
 
         assertThrows<RosettaStoneTemplateLabelMustStartWithPreviousVersion> {
@@ -212,19 +212,19 @@ internal class RosettaStoneTemplateDynamicLabelUpdateValidatorUnitTest {
     @DisplayName("Given a rosetta stone template update command, when template is used in a rosetta stone statement and new formatted label defines more than one new section per new template property, it throws an exception")
     fun moreThanOneNewSectionPerTemplateProperty_throwsException() {
         val rosettaStoneTemplate = createRosettaStoneTemplate().copy(
-            dynamicLabel = DynamicLabel("Entity [{0}] travels [to {1}]")
+            dynamicLabel = DynamicLabel("Entity [{0}] travels [to {1}]"),
         )
         val command = updateRosettaStoneTemplateCommand().copy(
             dynamicLabel = DynamicLabel("Entity [{0}] travels [to {1}][on {2}] by car"),
             properties = listOf(
                 createSubjectPositionTemplatePropertyCommand(),
                 createStringLiteralObjectPositionTemplatePropertyCommand(),
-                createResourceObjectPositionTemplatePropertyCommand()
-            )
+                createResourceObjectPositionTemplatePropertyCommand(),
+            ),
         )
         val state = UpdateRosettaStoneTemplateState(
             rosettaStoneTemplate = rosettaStoneTemplate,
-            isUsedInRosettaStoneStatement = true
+            isUsedInRosettaStoneStatement = true,
         )
 
         assertThrows<TooManyNewRosettaStoneTemplateLabelSections> {
@@ -236,19 +236,19 @@ internal class RosettaStoneTemplateDynamicLabelUpdateValidatorUnitTest {
     @DisplayName("Given a rosetta stone template update command, when template is used in a rosetta stone statement and new formatted label defines a new section that is not optional, it throws an exception")
     fun newSectionIsNotOptional_throwsException() {
         val rosettaStoneTemplate = createRosettaStoneTemplate().copy(
-            dynamicLabel = DynamicLabel("Entity [{0}] travels [to {1}]")
+            dynamicLabel = DynamicLabel("Entity [{0}] travels [to {1}]"),
         )
         val command = updateRosettaStoneTemplateCommand().copy(
             dynamicLabel = DynamicLabel("Entity [{0}] travels [to {1}]{2}"),
             properties = listOf(
                 createSubjectPositionTemplatePropertyCommand(),
                 createStringLiteralObjectPositionTemplatePropertyCommand(),
-                createResourceObjectPositionTemplatePropertyCommand()
-            )
+                createResourceObjectPositionTemplatePropertyCommand(),
+            ),
         )
         val state = UpdateRosettaStoneTemplateState(
             rosettaStoneTemplate = rosettaStoneTemplate,
-            isUsedInRosettaStoneStatement = true
+            isUsedInRosettaStoneStatement = true,
         )
 
         assertThrows<NewRosettaStoneTemplateLabelSectionsMustBeOptional> {
@@ -261,11 +261,11 @@ internal class RosettaStoneTemplateDynamicLabelUpdateValidatorUnitTest {
         val rosettaStoneTemplate = createRosettaStoneTemplate()
         val command = updateRosettaStoneTemplateCommand().copy(
             dynamicLabel = null,
-            properties = listOf(createResourceObjectPositionTemplatePropertyCommand())
+            properties = listOf(createResourceObjectPositionTemplatePropertyCommand()),
         )
         val state = UpdateRosettaStoneTemplateState(
             rosettaStoneTemplate = rosettaStoneTemplate,
-            isUsedInRosettaStoneStatement = true
+            isUsedInRosettaStoneStatement = true,
         )
 
         assertThrows<RosettaStoneTemplateLabelMustBeUpdated> {

@@ -17,14 +17,14 @@ class AbstractTemplatePropertyDeleter(
     ) : this(
         resourceService,
         statementService,
-        ContentTypePartDeleter(statementService)
+        ContentTypePartDeleter(statementService),
     )
 
     internal fun delete(contributorId: ContributorId, templateId: ThingId, propertyId: ThingId) =
         contentTypePartDeleter.delete(templateId, propertyId) { incomingStatements ->
             val outgoingStatements = statementService.findAll(
                 subjectId = propertyId,
-                pageable = PageRequests.ALL
+                pageable = PageRequests.ALL,
             )
             statementService.deleteAllById(outgoingStatements.map { it.id }.toSet() + incomingStatements.single().id)
             resourceService.tryDelete(propertyId, contributorId)

@@ -19,14 +19,14 @@ internal class SmartReviewSectionsCreatorUnitTest : MockkBaseTest {
 
     private val smartReviewSectionsCreator = SmartReviewSectionsCreator(
         unsafeStatementUseCases,
-        abstractSmartReviewSectionCreator
+        abstractSmartReviewSectionCreator,
     )
 
     @Test
     fun `Given a smart review create command, when sections are empty, it does nothing`() {
         val contributionId = ThingId("R123")
         val command = createSmartReviewCommand().copy(
-            sections = emptyList()
+            sections = emptyList(),
         )
         val state = CreateSmartReviewState(contributionId = contributionId)
 
@@ -48,8 +48,8 @@ internal class SmartReviewSectionsCreatorUnitTest : MockkBaseTest {
                         contributorId = command.contributorId,
                         subjectId = contributionId,
                         predicateId = Predicates.hasSection,
-                        objectId = sectionId
-                    )
+                        objectId = sectionId,
+                    ),
                 )
             } returns StatementId("S1")
         }
@@ -66,8 +66,8 @@ internal class SmartReviewSectionsCreatorUnitTest : MockkBaseTest {
                         contributorId = command.contributorId,
                         subjectId = contributionId,
                         predicateId = Predicates.hasSection,
-                        objectId = ThingId("Section$index")
-                    )
+                        objectId = ThingId("Section$index"),
+                    ),
                 )
             }
         }

@@ -29,8 +29,8 @@ import org.springframework.beans.factory.annotation.Autowired
         SpringDataNeo4jClassAdapter::class,
         GraphNeo4jConfiguration::class,
         ContentTypesNeo4jConfiguration::class,
-        CypherQueryBuilderConfiguration::class
-    ]
+        CypherQueryBuilderConfiguration::class,
+    ],
 )
 internal class SpringDataNeo4jResearchFieldAdapterContractTest(
     @param:Autowired private val springDataNeo4jResearchFieldAdapter: ResearchFieldRepository,
@@ -48,7 +48,7 @@ internal class SpringDataNeo4jResearchFieldAdapterContractTest(
                 springDataNeo4jLiteralAdapter,
                 springDataNeo4jResourceAdapter,
                 springDataNeo4jPredicateAdapter,
-            )
+            ),
         )
 
         afterSpec {

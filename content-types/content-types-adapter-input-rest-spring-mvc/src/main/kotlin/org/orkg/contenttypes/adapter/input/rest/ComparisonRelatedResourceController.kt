@@ -117,7 +117,7 @@ class ComparisonRelatedResourceController(
                 label = label,
                 image = image,
                 url = url,
-                description = description
+                description = description,
             )
     }
 
@@ -138,7 +138,7 @@ class ComparisonRelatedResourceController(
                 label = label,
                 image = image,
                 url = url,
-                description = description
+                description = description,
             )
     }
 }

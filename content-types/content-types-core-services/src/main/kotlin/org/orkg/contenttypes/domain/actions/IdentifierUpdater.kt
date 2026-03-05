@@ -20,8 +20,8 @@ class IdentifierUpdater(
         StatementCollectionPropertyUpdater(
             unsafeLiteralUseCases,
             statementService,
-            unsafeStatementUseCases
-        )
+            unsafeStatementUseCases,
+        ),
     )
 
     internal fun update(
@@ -44,7 +44,7 @@ class IdentifierUpdater(
                 contributorId = contributorId,
                 subjectId = subjectId,
                 predicateId = identifier.predicateId,
-                literals = newIdentifiers[identifier.id].orEmpty().toSet()
+                literals = newIdentifiers[identifier.id].orEmpty().toSet(),
             )
         }
     }

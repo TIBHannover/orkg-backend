@@ -87,7 +87,7 @@ class TemplateController(
             includeSubfields = includeSubfields,
             researchProblem = researchProblem,
             targetClass = targetClass,
-            pageable = pageable
+            pageable = pageable,
         ).mapToTemplateRepresentation()
 
     @RequireLogin
@@ -193,7 +193,7 @@ class TemplateController(
                 isClosed = isClosed,
                 observatories = observatories,
                 organizations = organizations,
-                extractionMethod = extractionMethod
+                extractionMethod = extractionMethod,
             )
     }
 
@@ -236,7 +236,7 @@ class TemplateController(
                 observatories = observatories,
                 organizations = organizations,
                 extractionMethod = extractionMethod,
-                visibility = visibility
+                visibility = visibility,
             )
     }
 
@@ -277,7 +277,7 @@ class TemplateController(
             description,
             minCount,
             maxCount,
-            path
+            path,
         )
 
     private fun UntypedPropertyRequest.toUpdateCommand(
@@ -294,7 +294,7 @@ class TemplateController(
             description,
             minCount,
             maxCount,
-            path
+            path,
         )
 
     private fun StringLiteralPropertyRequest.toCreateCommand(
@@ -311,7 +311,7 @@ class TemplateController(
             maxCount,
             pattern,
             path,
-            datatype
+            datatype,
         )
 
     private fun StringLiteralPropertyRequest.toUpdateCommand(
@@ -330,7 +330,7 @@ class TemplateController(
             maxCount,
             pattern,
             path,
-            datatype
+            datatype,
         )
 
     private fun NumberLiteralPropertyRequest.toCreateCommand(
@@ -348,7 +348,7 @@ class TemplateController(
             minInclusive,
             maxInclusive,
             path,
-            datatype
+            datatype,
         )
 
     private fun NumberLiteralPropertyRequest.toUpdateCommand(
@@ -368,7 +368,7 @@ class TemplateController(
             minInclusive,
             maxInclusive,
             path,
-            datatype
+            datatype,
         )
 
     private fun OtherLiteralPropertyRequest.toCreateCommand(
@@ -384,7 +384,7 @@ class TemplateController(
             minCount,
             maxCount,
             path,
-            datatype
+            datatype,
         )
 
     private fun OtherLiteralPropertyRequest.toUpdateCommand(
@@ -402,7 +402,7 @@ class TemplateController(
             minCount,
             maxCount,
             path,
-            datatype
+            datatype,
         )
 
     private fun ResourcePropertyRequest.toCreateCommand(
@@ -418,7 +418,7 @@ class TemplateController(
             minCount,
             maxCount,
             path,
-            `class`
+            `class`,
         )
 
     private fun ResourcePropertyRequest.toUpdateCommand(
@@ -436,7 +436,7 @@ class TemplateController(
             minCount,
             maxCount,
             path,
-            `class`
+            `class`,
         )
 
     data class TemplateRelationsRequestPart(

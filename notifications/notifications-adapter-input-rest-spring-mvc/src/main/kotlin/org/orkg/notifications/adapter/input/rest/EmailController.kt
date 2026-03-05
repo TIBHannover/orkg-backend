@@ -30,7 +30,7 @@ class EmailController(
         val name = jwt.getClaim<String>("preferred_username")!!
         notificationUseCases.sendTestEmail(
             recipient = Recipient(email, name),
-            message = request.message
+            message = request.message,
         )
         return noContent().build()
     }

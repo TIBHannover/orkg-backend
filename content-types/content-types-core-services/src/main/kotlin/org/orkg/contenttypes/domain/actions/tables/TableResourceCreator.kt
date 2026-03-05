@@ -17,8 +17,8 @@ class TableResourceCreator(
                 contributorId = command.contributorId,
                 observatoryId = command.observatories.firstOrNull(),
                 organizationId = command.organizations.firstOrNull(),
-                extractionMethod = command.extractionMethod
-            )
+                extractionMethod = command.extractionMethod,
+            ),
         )
         return state.copy(tableId = tableId)
     }

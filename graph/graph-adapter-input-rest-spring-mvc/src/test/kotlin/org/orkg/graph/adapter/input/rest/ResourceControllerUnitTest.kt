@@ -112,7 +112,7 @@ internal class ResourceControllerUnitTest : MockMvcBaseTest("resources") {
                 description(
                     """
                     A `GET` request provides information about a resource.
-                    """
+                    """,
                 )
                 pathParameters(
                     parameterWithName("id").description("The identifier of the resource to retrieve."),
@@ -130,12 +130,12 @@ internal class ResourceControllerUnitTest : MockMvcBaseTest("resources") {
         val id = ThingId("R123")
         val resourceContributors = listOf(
             ResourceContributor(ContributorId(MockUserId.USER), OffsetDateTime.now(clock)),
-            ResourceContributor(ContributorId(MockUserId.ADMIN), OffsetDateTime.now(clock))
+            ResourceContributor(ContributorId(MockUserId.ADMIN), OffsetDateTime.now(clock)),
         )
         val timeline = PageImpl(
             resourceContributors,
             PageRequest.of(0, 25),
-            resourceContributors.size.toLong()
+            resourceContributors.size.toLong(),
         )
         every { resourceService.findTimelineByResourceId(id, any()) } returns timeline
 
@@ -168,12 +168,12 @@ internal class ResourceControllerUnitTest : MockMvcBaseTest("resources") {
         val command = CreateResourceRequest(
             id = null,
             label = "irrelevant",
-            classes = setOf(Classes.list)
+            classes = setOf(Classes.list),
         )
         val exception = InvalidClassCollection(command.classes)
 
         every { contributorService.findById(any()) } returns Optional.of(
-            createContributor(id = ContributorId(MockUserId.USER))
+            createContributor(id = ContributorId(MockUserId.USER)),
         )
         every { resourceService.create(any<CreateCommand>()) } throws exception
 
@@ -244,7 +244,7 @@ internal class ResourceControllerUnitTest : MockMvcBaseTest("resources") {
                     """
                     A `GET` request returns a <<sorting-and-pagination,paged>> list of <<resources-fetch,resources>>.
                     If no paging request parameters are provided, the default values will be used.
-                    """
+                    """,
                 )
                 pagedQueryParameters(
                     parameterWithName("q").description("A search term that must be contained in the label. (optional)").optional(),
@@ -277,7 +277,7 @@ internal class ResourceControllerUnitTest : MockMvcBaseTest("resources") {
                 excludeClasses = excludeClasses,
                 baseClass = baseClass,
                 observatoryId = observatoryId,
-                organizationId = organizationId
+                organizationId = organizationId,
             )
         }
         verify(exactly = 1) { statementService.countAllIncomingStatementsById(any<Set<ThingId>>()) }
@@ -318,7 +318,7 @@ internal class ResourceControllerUnitTest : MockMvcBaseTest("resources") {
             "extraction_method" to resource.extractionMethod,
             "visibility" to resource.visibility,
             "observatory_id" to resource.observatoryId,
-            "organization_id" to resource.organizationId
+            "organization_id" to resource.organizationId,
         )
 
         every { resourceService.update(command) } just runs
@@ -344,13 +344,13 @@ internal class ResourceControllerUnitTest : MockMvcBaseTest("resources") {
                     4. If the target visibility is `DELETED` the performing user is not the owner of the resource and not a curator, the return status will be `403 FORBIDDEN`.
                     5. If the target visibility is `DEFAULT` and the original visibility is `DELETED` and the performing user is not the owner of the resource and not a curator, the return status will be `403 FORBIDDEN`.
                     ====
-                    """
+                    """,
                 )
                 pathParameters(
-                    parameterWithName("id").description("The identifier of the resource.")
+                    parameterWithName("id").description("The identifier of the resource."),
                 )
                 responseHeaders(
-                    headerWithName("Location").description("The uri path where the updated resource can be fetched from.")
+                    headerWithName("Location").description("The uri path where the updated resource can be fetched from."),
                 )
                 requestFields<UpdateResourceRequest>(
                     fieldWithPath("label").description("The updated resource label. (optional)").optional(),
@@ -385,7 +385,7 @@ internal class ResourceControllerUnitTest : MockMvcBaseTest("resources") {
         val command = UpdateResourceUseCase.UpdateCommand(
             id = id,
             contributorId = ContributorId(MockUserId.USER),
-            classes = setOf(Classes.list)
+            classes = setOf(Classes.list),
         )
         val exception = InvalidClassCollection(command.classes!!)
 
@@ -410,7 +410,7 @@ internal class ResourceControllerUnitTest : MockMvcBaseTest("resources") {
             id = id,
             label = "foo",
             classes = setOf(Classes.dataset),
-            extractionMethod = ExtractionMethod.MANUAL
+            extractionMethod = ExtractionMethod.MANUAL,
         )
 
         every { resourceService.create(any()) } returns id
@@ -429,7 +429,7 @@ internal class ResourceControllerUnitTest : MockMvcBaseTest("resources") {
                     An optional set of classes can be provided.
                     The response will be `201 Created` when successful.
                     The resource can be retrieved by following the URI in the `Location` header field.
-                    """
+                    """,
                 )
                 responseHeaders(
                     headerWithName("Location").description("The uri path where the created resource can be fetched from."),
@@ -438,7 +438,7 @@ internal class ResourceControllerUnitTest : MockMvcBaseTest("resources") {
                     fieldWithPath("id").description("The id for the resource. (optional)").optional(),
                     fieldWithPath("label").description("The resource label."),
                     fieldWithPath("classes[]").type("Array").description("The classes of the resource. (optional)").optional(),
-                    fieldWithPath("extraction_method").type("Enum").description("""The method used to extract the resource. Can be one of $allowedExtractionMethodValues. (optional, default: `UNKNOWN`)""").optional()
+                    fieldWithPath("extraction_method").type("Enum").description("""The method used to extract the resource. Can be one of $allowedExtractionMethodValues. (optional, default: `UNKNOWN`)""").optional(),
                 )
                 throws(InvalidLabel::class, ReservedClass::class, InvalidClassCollection::class, ResourceAlreadyExists::class)
             }
@@ -451,7 +451,7 @@ internal class ResourceControllerUnitTest : MockMvcBaseTest("resources") {
                     it.label shouldBe command.label
                     it.classes shouldBe command.classes
                     it.extractionMethod shouldBe command.extractionMethod
-                }
+                },
             )
         }
         verify(exactly = 1) { contributorService.findById(any()) }
@@ -482,17 +482,17 @@ internal class ResourceControllerUnitTest : MockMvcBaseTest("resources") {
                     3. If the resource is used as an object in a statement, the return status will be `403 FORBIDDEN`.
                     4. If the performing user is not the creator of the resource and does not have the curator role, the return status will be `403 FORBIDDEN`.
                     ====
-                    """
+                    """,
                 )
                 pathParameters(
-                    parameterWithName("id").description("The identifier of the resource.")
+                    parameterWithName("id").description("The identifier of the resource."),
                 )
                 throws(
                     ResourceNotFound::class,
                     ResourceNotModifiable::class,
                     ResourceInUse::class,
                     ContributorNotFound::class,
-                    NeitherOwnerNorCurator::class
+                    NeitherOwnerNorCurator::class,
                 )
             }
 

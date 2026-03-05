@@ -20,7 +20,7 @@ internal class FormattedLabelServiceUnitTest : MockkBaseTest {
         val resources = listOf(
             createResource(id = ThingId("R1"), classes = setOf(Classes.paper)),
             createResource(id = ThingId("R2"), classes = setOf(Classes.comparison)),
-            createResource(id = ThingId("R3"))
+            createResource(id = ThingId("R3")),
         )
 
         val templatedResources = listOf(
@@ -31,7 +31,7 @@ internal class FormattedLabelServiceUnitTest : MockkBaseTest {
                 classId = Classes.paper.value,
                 format = "some {P32}",
                 predicates = listOf("P32"),
-                values = listOf("paper")
+                values = listOf("paper"),
             ),
             TemplatedResource(
                 id = ThingId("R2"),
@@ -40,8 +40,8 @@ internal class FormattedLabelServiceUnitTest : MockkBaseTest {
                 classId = Classes.comparison.value,
                 format = "{P1} text {P2}",
                 predicates = listOf("P1", "P2"),
-                values = listOf("this", "is formatted")
-            )
+                values = listOf("this", "is formatted"),
+            ),
         )
         every { repository.findTemplateSpecs(any()) } returns templatedResources.associateBy { it.id }
 
@@ -50,7 +50,7 @@ internal class FormattedLabelServiceUnitTest : MockkBaseTest {
             it shouldBe mapOf(
                 ThingId("R1") to FormattedLabel.of("some paper"),
                 ThingId("R2") to FormattedLabel.of("this text is formatted"),
-                ThingId("R3") to null
+                ThingId("R3") to null,
             )
         }
 
@@ -58,8 +58,8 @@ internal class FormattedLabelServiceUnitTest : MockkBaseTest {
             repository.findTemplateSpecs(
                 mapOf(
                     ThingId("R1") to Classes.paper,
-                    ThingId("R2") to Classes.comparison
-                )
+                    ThingId("R2") to Classes.comparison,
+                ),
             )
         }
     }
@@ -68,7 +68,7 @@ internal class FormattedLabelServiceUnitTest : MockkBaseTest {
     fun `given a list of resources without classes, when fetching formatted labels, then it does not query the repository and formatted labels are returned`() {
         val resources = listOf(
             createResource(id = ThingId("R1")),
-            createResource(id = ThingId("R2"))
+            createResource(id = ThingId("R2")),
         )
 
         service.findFormattedLabels(resources) shouldBe resources.associate { it.id to null }

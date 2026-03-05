@@ -20,7 +20,7 @@ class SpringDataJpaKeycloakEventStateAdapter(
             KeycloakEventStateEntity().apply {
                 this@apply.eventType = id
                 this@apply.counter = counter
-            }
+            },
         )
     }
 }

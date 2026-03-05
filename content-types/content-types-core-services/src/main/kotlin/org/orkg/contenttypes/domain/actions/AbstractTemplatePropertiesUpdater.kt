@@ -25,7 +25,7 @@ class AbstractTemplatePropertiesUpdater(
     ) : this(
         AbstractTemplatePropertyCreator(unsafeResourceUseCases, unsafeLiteralUseCases, unsafeStatementUseCases),
         AbstractTemplatePropertyUpdater(unsafeLiteralUseCases, unsafeResourceUseCases, statementService, unsafeStatementUseCases),
-        AbstractTemplatePropertyDeleter(resourceService, statementService)
+        AbstractTemplatePropertyDeleter(resourceService, statementService),
     )
 
     internal fun update(
@@ -48,7 +48,7 @@ class AbstractTemplatePropertiesUpdater(
                         contributorId = contributorId,
                         order = index,
                         newProperty = newProperty,
-                        oldProperty = oldProperty
+                        oldProperty = oldProperty,
                     )
                 }
             } else {
@@ -56,7 +56,7 @@ class AbstractTemplatePropertiesUpdater(
                     contributorId = contributorId,
                     templateId = subjectId,
                     order = index,
-                    property = newProperty
+                    property = newProperty,
                 )
             }
         }

@@ -32,10 +32,10 @@ internal class RosettaStoneTemplateModifiableValidatorUnitTest : MockkBaseTest {
         every {
             rosettaStoneStatementRepository.findAll(
                 templateId = command.templateId,
-                pageable = PageRequests.SINGLE
+                pageable = PageRequests.SINGLE,
             )
         } returns pageOf(
-            createRosettaStoneStatement()
+            createRosettaStoneStatement(),
         )
 
         rosettaStoneTemplateModifiableValidator(command, state).asClue {
@@ -47,7 +47,7 @@ internal class RosettaStoneTemplateModifiableValidatorUnitTest : MockkBaseTest {
         verify(exactly = 1) {
             rosettaStoneStatementRepository.findAll(
                 templateId = command.templateId,
-                pageable = PageRequests.SINGLE
+                pageable = PageRequests.SINGLE,
             )
         }
     }
@@ -61,7 +61,7 @@ internal class RosettaStoneTemplateModifiableValidatorUnitTest : MockkBaseTest {
         every {
             rosettaStoneStatementRepository.findAll(
                 templateId = command.templateId,
-                pageable = PageRequests.SINGLE
+                pageable = PageRequests.SINGLE,
             )
         } returns pageOf()
 
@@ -74,7 +74,7 @@ internal class RosettaStoneTemplateModifiableValidatorUnitTest : MockkBaseTest {
         verify(exactly = 1) {
             rosettaStoneStatementRepository.findAll(
                 templateId = command.templateId,
-                pageable = PageRequests.SINGLE
+                pageable = PageRequests.SINGLE,
             )
         }
     }

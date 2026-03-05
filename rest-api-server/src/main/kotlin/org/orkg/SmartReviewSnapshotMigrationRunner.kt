@@ -40,7 +40,7 @@ class SmartReviewSnapshotMigrationRunner(
         forEachResource(setOf(Classes.smartReviewPublished)) { resource ->
             smartReviewPublishedRepository.findById(resource.id).ifPresentOrElse(
                 { migrateSmartReviewSnapshot(it, resource) },
-                { logger.warn("Could not find table for published smart review ${resource.id}") }
+                { logger.warn("Could not find table for published smart review ${resource.id}") },
             )
         }
 
@@ -57,7 +57,7 @@ class SmartReviewSnapshotMigrationRunner(
                     resourceId = smartReviewPublished.id,
                     rootId = smartReviewPublished.rootId,
                     subgraph = smartReviewPublished.subgraph,
-                )
+                ),
             )
         } catch (e: Throwable) {
             logger.error("Failed to migrate snapshot for smart review ${smartReviewPublished.id}", e)
@@ -70,7 +70,7 @@ class SmartReviewSnapshotMigrationRunner(
         do {
             page = resourceRepository.findAll(
                 pageable = PageRequest.of(pageNumber++, CHUNK_SIZE),
-                includeClasses = includeClasses
+                includeClasses = includeClasses,
             )
             page.forEach(action)
         }

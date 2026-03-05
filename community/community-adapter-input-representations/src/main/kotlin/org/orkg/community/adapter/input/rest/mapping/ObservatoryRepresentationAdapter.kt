@@ -20,7 +20,7 @@ interface ObservatoryRepresentationAdapter : ResearchFieldRepresentationAdapter 
                 resourceRepository.findById(it)
                     .filter { resource -> Classes.researchField in resource.classes }
                     .orElse(null)
-            }
+            },
         )
 
     fun Observatory.toObservatoryRepresentation(researchField: Resource? = null) =
@@ -32,6 +32,6 @@ interface ObservatoryRepresentationAdapter : ResearchFieldRepresentationAdapter 
             members = members,
             organizationIds = organizationIds,
             displayId = displayId,
-            sustainableDevelopmentGoals = sustainableDevelopmentGoals
+            sustainableDevelopmentGoals = sustainableDevelopmentGoals,
         )
 }

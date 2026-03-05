@@ -48,7 +48,7 @@ class VocabController(
             "application/trig", "application/x-trig", // TriG
             "application/n-quads", "text/x-nquads", "text/nquads", // N-Quads
             "text/turtle", "application/x-turtle", // Turtle
-        ]
+        ],
     )
     fun resource(
         @PathVariable id: ThingId,
@@ -75,7 +75,7 @@ class VocabController(
             "application/trig", "application/x-trig", // TriG
             "application/n-quads", "text/x-nquads", "text/nquads", // N-Quads
             "text/turtle", "application/x-turtle", // Turtle
-        ]
+        ],
     )
     fun predicate(
         @PathVariable id: ThingId,
@@ -102,7 +102,7 @@ class VocabController(
             "application/trig", "application/x-trig", // TriG
             "application/n-quads", "text/x-nquads", "text/nquads", // N-Quads
             "text/turtle", "application/x-turtle", // Turtle
-        ]
+        ],
     )
     fun `class`(
         @PathVariable id: ThingId,
@@ -130,7 +130,7 @@ class VocabController(
                 .uri(URI.create(rdfConfiguration.frontendUri!!))
                 .path("/$destination/{id}")
                 .buildAndExpand(id)
-                .toUri()
+                .toUri(),
         ).build()
 
     private fun getRdfSerialization(model: Model, accept: String): String {

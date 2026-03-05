@@ -30,8 +30,8 @@ import org.springframework.data.neo4j.core.fetchAs
         SpringDataNeo4jLiteralAdapter::class,
         SpringDataNeo4jClassAdapter::class,
         GraphNeo4jConfiguration::class,
-        CypherQueryBuilderConfiguration::class
-    ]
+        CypherQueryBuilderConfiguration::class,
+    ],
 )
 internal class SpringDataNeo4jPredicateAdapterContractTests(
     private val springDataNeo4jPredicateAdapter: PredicateRepository,
@@ -47,8 +47,8 @@ internal class SpringDataNeo4jPredicateAdapterContractTests(
                 springDataNeo4jStatementAdapter,
                 springDataNeo4jClassAdapter,
                 springDataNeo4jLiteralAdapter,
-                springDataNeo4jResourceAdapter
-            )
+                springDataNeo4jResourceAdapter,
+            ),
         )
         include(neo4jPredicateRepositoryContract(springDataNeo4jPredicateAdapter, neo4jClient))
 

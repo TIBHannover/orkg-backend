@@ -14,7 +14,7 @@ class RosettaStoneTemplateDescriptionCreator(
         unsafeLiteralUseCases: UnsafeLiteralUseCases,
         unsafeStatementUseCases: UnsafeStatementUseCases,
     ) : this(
-        SingleStatementPropertyCreator(unsafeLiteralUseCases, unsafeStatementUseCases)
+        SingleStatementPropertyCreator(unsafeLiteralUseCases, unsafeStatementUseCases),
     )
 
     override fun invoke(command: CreateRosettaStoneTemplateCommand, state: State): State {
@@ -22,7 +22,7 @@ class RosettaStoneTemplateDescriptionCreator(
             contributorId = command.contributorId,
             subjectId = state.rosettaStoneTemplateId!!,
             predicateId = Predicates.description,
-            label = command.description
+            label = command.description,
         )
         return state
     }

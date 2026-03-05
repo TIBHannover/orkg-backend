@@ -81,7 +81,7 @@ class ClassController(
                 contributorId = currentUser.contributorId(),
                 label = request.label,
                 uri = request.uri,
-            )
+            ),
         )
         val location = uriComponentsBuilder
             .path("/api/classes/{id}")
@@ -103,8 +103,8 @@ class ClassController(
                 id = id,
                 contributorId = currentUser.contributorId(),
                 label = request.label,
-                uri = request.uri
-            )
+                uri = request.uri,
+            ),
         )
         val location = uriComponentsBuilder
             .path("/api/classes/{id}")
@@ -126,8 +126,8 @@ class ClassController(
                 id = id,
                 contributorId = currentUser.contributorId(),
                 label = request.label,
-                uri = request.uri
-            )
+                uri = request.uri,
+            ),
         )
         val location = uriComponentsBuilder
             .path("/api/classes/{id}")

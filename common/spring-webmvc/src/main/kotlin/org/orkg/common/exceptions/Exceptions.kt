@@ -71,7 +71,7 @@ class MissingParameter private constructor(
     companion object {
         fun requiresAtLeastOneOf(parameter: String, vararg parameters: String) = MissingParameter(
             "Missing parameter: At least one parameter out of ${formatParameters(parameter, *parameters)} is required.",
-            mapOf("parameter_names" to listOf(parameter, *parameters))
+            mapOf("parameter_names" to listOf(parameter, *parameters)),
         )
     }
 }
@@ -83,12 +83,12 @@ class TooManyParameters private constructor(
     companion object {
         fun requiresExactlyOneOf(first: String, second: String, vararg parameters: String) = TooManyParameters(
             "Too many parameters: Only exactly one out of ${formatParameters(first, second, *parameters)} is allowed.",
-            mapOf("parameter_names" to listOf(first, second, *parameters))
+            mapOf("parameter_names" to listOf(first, second, *parameters)),
         )
 
         fun atMostOneOf(first: String, second: String, vararg parameters: String) = TooManyParameters(
             "Too many parameters: At most one out of ${formatParameters(first, second, *parameters)} is allowed.",
-            mapOf("parameter_names" to listOf(first, second, *parameters))
+            mapOf("parameter_names" to listOf(first, second, *parameters)),
         )
     }
 }
@@ -97,14 +97,14 @@ class UnknownParameter(parameter: String) :
     SimpleMessageException(
         HttpStatus.BAD_REQUEST,
         """Unknown parameter "$parameter".""",
-        properties = mapOf("parameter_name" to parameter)
+        properties = mapOf("parameter_name" to parameter),
     )
 
 class UnknownSortingProperty(property: String) :
     SimpleMessageException(
         HttpStatus.BAD_REQUEST,
         """Unknown sorting property "$property".""",
-        properties = mapOf("property_name" to property)
+        properties = mapOf("property_name" to property),
     )
 
 private fun formatParameters(vararg parameters: String) =
@@ -130,12 +130,12 @@ class ServiceUnavailable private constructor(
 ) : LoggedMessageException(HttpStatus.SERVICE_UNAVAILABLE, "Service unavailable.", cause) {
     companion object {
         fun create(serviceName: String, status: Int, responseMessage: String) = ServiceUnavailable(
-            internalMessage = """$serviceName service returned status $status with error response: "$responseMessage"."""
+            internalMessage = """$serviceName service returned status $status with error response: "$responseMessage".""",
         )
 
         fun create(serviceName: String, cause: Throwable) = ServiceUnavailable(
             internalMessage = """$serviceName service threw an exception.""",
-            cause = cause
+            cause = cause,
         )
     }
 }

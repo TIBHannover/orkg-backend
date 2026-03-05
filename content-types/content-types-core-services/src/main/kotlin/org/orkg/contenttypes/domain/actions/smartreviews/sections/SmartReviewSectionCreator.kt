@@ -25,13 +25,13 @@ class SmartReviewSectionCreator(
     ) : this(
         unsafeStatementUseCases,
         AbstractSmartReviewSectionCreator(unsafeStatementUseCases, unsafeResourceUseCases, unsafeLiteralUseCases),
-        StatementCollectionPropertyUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases)
+        StatementCollectionPropertyUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases),
     )
 
     override fun invoke(command: CreateSmartReviewSectionCommand, state: State): State {
         val sectionId = abstractSmartReviewSectionCreator.create(
             contributorId = command.contributorId,
-            section = command as AbstractSmartReviewSectionCommand
+            section = command as AbstractSmartReviewSectionCommand,
         )
         if (command.index != null && command.index!! >= 0) {
             val sectionStatements = state.statements[state.contributionId!!].orEmpty()
@@ -41,7 +41,7 @@ class SmartReviewSectionCreator(
                 subjectId = state.contributionId,
                 predicateId = Predicates.hasSection,
                 objects = sectionStatements.mapTo(mutableListOf()) { it.`object`.id }
-                    .also { it.add(command.index!!.coerceAtMost(it.size), sectionId) }
+                    .also { it.add(command.index!!.coerceAtMost(it.size), sectionId) },
             )
         } else {
             unsafeStatementUseCases.create(
@@ -49,8 +49,8 @@ class SmartReviewSectionCreator(
                     contributorId = command.contributorId,
                     subjectId = state.contributionId!!,
                     predicateId = Predicates.hasSection,
-                    objectId = sectionId
-                )
+                    objectId = sectionId,
+                ),
             )
         }
         return state.copy(smartReviewSectionId = sectionId)

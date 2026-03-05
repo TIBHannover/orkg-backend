@@ -42,11 +42,11 @@ internal class PaperDeleterUnitTest : MockkBaseTest {
                     id = StatementId("S1"),
                     subject = paper,
                     predicate = createPredicate(Predicates.hasAuthors),
-                    `object` = authorList
+                    `object` = authorList,
                 ),
                 createStatement(
                     id = StatementId("S2"),
-                    subject = paper
+                    subject = paper,
                 ),
                 createStatement(
                     id = StatementId("S3"),
@@ -63,7 +63,7 @@ internal class PaperDeleterUnitTest : MockkBaseTest {
                     id = StatementId("S5"),
                     subject = contribution,
                 ),
-            ).groupBy { it.subject.id }
+            ).groupBy { it.subject.id },
         )
         val statementsToDelete = setOf(
             StatementId("S1"),
@@ -96,7 +96,7 @@ internal class PaperDeleterUnitTest : MockkBaseTest {
             statements = listOf(
                 createStatement(
                     id = StatementId("S2"),
-                    subject = paper
+                    subject = paper,
                 ),
                 createStatement(
                     id = StatementId("S4"),
@@ -108,7 +108,7 @@ internal class PaperDeleterUnitTest : MockkBaseTest {
                     id = StatementId("S5"),
                     subject = contribution,
                 ),
-            ).groupBy { it.subject.id }
+            ).groupBy { it.subject.id },
         )
         val statementsToDelete = setOf(StatementId("S2"), StatementId("S4"), StatementId("S5"))
 
@@ -135,11 +135,11 @@ internal class PaperDeleterUnitTest : MockkBaseTest {
                     id = StatementId("S1"),
                     subject = paper,
                     predicate = createPredicate(Predicates.hasAuthors),
-                    `object` = authorList
+                    `object` = authorList,
                 ),
                 createStatement(
                     id = StatementId("S2"),
-                    subject = paper
+                    subject = paper,
                 ),
                 createStatement(
                     id = StatementId("S4"),
@@ -151,7 +151,7 @@ internal class PaperDeleterUnitTest : MockkBaseTest {
                     id = StatementId("S5"),
                     subject = contribution,
                 ),
-            ).groupBy { it.subject.id }
+            ).groupBy { it.subject.id },
         )
         val statementsToDelete = setOf(StatementId("S1"), StatementId("S2"), StatementId("S4"), StatementId("S5"))
 

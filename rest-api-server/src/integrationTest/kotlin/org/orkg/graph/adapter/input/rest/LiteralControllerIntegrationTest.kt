@@ -94,7 +94,7 @@ internal class LiteralControllerIntegrationTest : MockMvcBaseTest("literals") {
     fun update() {
         val literalId = service.createLiteral(
             label = "foo",
-            datatype = "dt:old"
+            datatype = "dt:old",
         )
 
         val update = mapOf("label" to "bar", "datatype" to "dt:new")

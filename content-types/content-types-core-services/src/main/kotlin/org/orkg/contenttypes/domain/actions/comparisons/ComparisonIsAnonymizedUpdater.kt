@@ -26,7 +26,7 @@ class ComparisonIsAnonymizedUpdater(
                 subjectId = command.comparisonId,
                 predicateId = Predicates.isAnonymized,
                 label = command.isAnonymized!!.toString(),
-                datatype = Literals.XSD.BOOLEAN.prefixedUri
+                datatype = Literals.XSD.BOOLEAN.prefixedUri,
             )
         }
         return state

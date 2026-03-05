@@ -26,7 +26,7 @@ internal class TemplatePropertyValidatorUnitTest : MockkBaseTest {
             abstractTemplatePropertyValidator = abstractTemplatePropertyValidator,
             existingTemplatePropertiesSelector = { it.first },
             newValueSelector = { it },
-            oldValueSelector = { it.second }
+            oldValueSelector = { it.second },
         )
 
     @Test

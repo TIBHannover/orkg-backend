@@ -16,7 +16,7 @@ class ComparisonResearchFieldUpdater(
         statementService: StatementUseCases,
         unsafeStatementUseCases: UnsafeStatementUseCases,
     ) : this(
-        StatementCollectionPropertyUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases)
+        StatementCollectionPropertyUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases),
     )
 
     override fun invoke(command: UpdateComparisonCommand, state: State): State {
@@ -26,7 +26,7 @@ class ComparisonResearchFieldUpdater(
                 contributorId = command.contributorId,
                 subjectId = command.comparisonId,
                 predicateId = Predicates.hasSubject,
-                objects = command.researchFields!!
+                objects = command.researchFields!!,
             )
         }
         return state

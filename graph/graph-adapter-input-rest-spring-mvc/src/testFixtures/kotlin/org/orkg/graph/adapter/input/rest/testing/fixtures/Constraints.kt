@@ -12,5 +12,5 @@ val statementIdConstraint = Constraint(
         "message" to "{jakarta.validation.constraints.Pattern.message}",
         "groups" to emptyArray<Class<*>>(),
         "payload" to emptyArray<Class<out Payload>>(),
-    )
+    ),
 )

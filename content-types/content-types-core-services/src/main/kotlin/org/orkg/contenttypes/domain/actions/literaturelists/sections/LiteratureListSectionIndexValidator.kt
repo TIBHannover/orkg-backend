@@ -14,7 +14,7 @@ class LiteratureListSectionIndexValidator(
             val statements = statementRepository.findAll(
                 pageable = PageRequests.ALL,
                 subjectId = command.literatureListId,
-                predicateId = Predicates.hasSection
+                predicateId = Predicates.hasSection,
             )
             return state.copy(statements = statements.content.groupBy { it.subject.id })
         }

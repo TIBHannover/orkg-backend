@@ -47,7 +47,7 @@ class CachedMetric private constructor(
                 group = group,
                 parameterSpecs = parameterSpecs,
                 cache = cacheManager?.getCache(METRICS_NAME_AND_PARAMETERS_TO_VALUE_CACHE),
-                supplier = supplier
+                supplier = supplier,
             )
     }
 }

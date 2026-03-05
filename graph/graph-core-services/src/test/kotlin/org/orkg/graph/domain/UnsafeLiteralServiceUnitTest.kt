@@ -31,7 +31,7 @@ internal class UnsafeLiteralServiceUnitTest {
         val command = CreateCommand(
             contributorId = contributorId,
             label = "irrelevant",
-            datatype = "%§&invalid$§/"
+            datatype = "%§&invalid$§/",
         )
 
         every { literalRepository.nextIdentity() } returns id
@@ -48,7 +48,7 @@ internal class UnsafeLiteralServiceUnitTest {
                     it.datatype shouldBe command.datatype
                     it.label shouldBe command.label
                     it.modifiable shouldBe true
-                }
+                },
             )
         }
     }
@@ -60,7 +60,7 @@ internal class UnsafeLiteralServiceUnitTest {
         val command = CreateCommand(
             contributorId = contributorId,
             label = "irrelevant",
-            datatype = "foo_bar:string"
+            datatype = "foo_bar:string",
         )
 
         every { literalRepository.nextIdentity() } returns id
@@ -77,7 +77,7 @@ internal class UnsafeLiteralServiceUnitTest {
                     it.datatype shouldBe command.datatype
                     it.label shouldBe command.label
                     it.modifiable shouldBe true
-                }
+                },
             )
         }
     }
@@ -89,7 +89,7 @@ internal class UnsafeLiteralServiceUnitTest {
         val tooLong = "x".repeat(MAX_LABEL_LENGTH + 1)
         val command = CreateCommand(
             contributorId = contributorId,
-            label = tooLong
+            label = tooLong,
         )
 
         every { literalRepository.nextIdentity() } returns id
@@ -106,7 +106,7 @@ internal class UnsafeLiteralServiceUnitTest {
                     it.datatype shouldBe command.datatype
                     it.label shouldBe command.label
                     it.modifiable shouldBe true
-                }
+                },
             )
         }
     }
@@ -119,7 +119,7 @@ internal class UnsafeLiteralServiceUnitTest {
         val command = CreateCommand(
             contributorId = contributorId,
             label = notANumber,
-            datatype = Literals.XSD.DECIMAL.prefixedUri
+            datatype = Literals.XSD.DECIMAL.prefixedUri,
         )
 
         every { literalRepository.nextIdentity() } returns id
@@ -136,7 +136,7 @@ internal class UnsafeLiteralServiceUnitTest {
                     it.datatype shouldBe command.datatype
                     it.label shouldBe command.label
                     it.modifiable shouldBe true
-                }
+                },
             )
         }
     }
@@ -148,7 +148,7 @@ internal class UnsafeLiteralServiceUnitTest {
         val command = CreateCommand(
             id = id,
             contributorId = contributorId,
-            label = "value"
+            label = "value",
         )
 
         every { literalRepository.save(any()) } just runs
@@ -163,7 +163,7 @@ internal class UnsafeLiteralServiceUnitTest {
                     it.datatype shouldBe command.datatype
                     it.label shouldBe command.label
                     it.modifiable shouldBe true
-                }
+                },
             )
         }
     }
@@ -180,8 +180,8 @@ internal class UnsafeLiteralServiceUnitTest {
                 contributorId = contributorId,
                 label = "3.141593",
                 datatype = "xsd:float",
-                modifiable = false
-            )
+                modifiable = false,
+            ),
         )
 
         result shouldBe randomId
@@ -195,7 +195,7 @@ internal class UnsafeLiteralServiceUnitTest {
                     it.datatype shouldBe "xsd:float"
                     it.label shouldBe "3.141593"
                     it.modifiable shouldBe false
-                }
+                },
             )
         }
     }
@@ -207,7 +207,7 @@ internal class UnsafeLiteralServiceUnitTest {
         val command = UpdateLiteralUseCase.UpdateCommand(
             id = literal.id,
             contributorId = contributorId,
-            label = "new label"
+            label = "new label",
         )
 
         every { literalRepository.findById(literal.id) } returns Optional.of(literal)
@@ -224,7 +224,7 @@ internal class UnsafeLiteralServiceUnitTest {
                     it.datatype shouldBe literal.datatype
                     it.label shouldBe command.label
                     it.modifiable shouldBe false
-                }
+                },
             )
         }
     }
@@ -244,7 +244,7 @@ internal class UnsafeLiteralServiceUnitTest {
         val command = UpdateLiteralUseCase.UpdateCommand(
             id = literal.id,
             contributorId = contributorId,
-            label = "a".repeat(MAX_LABEL_LENGTH + 1)
+            label = "a".repeat(MAX_LABEL_LENGTH + 1),
         )
 
         every { literalRepository.findById(literal.id) } returns Optional.of(literal)
@@ -261,7 +261,7 @@ internal class UnsafeLiteralServiceUnitTest {
                     it.datatype shouldBe literal.datatype
                     it.label shouldBe command.label
                     it.modifiable shouldBe literal.modifiable
-                }
+                },
             )
         }
     }
@@ -271,7 +271,7 @@ internal class UnsafeLiteralServiceUnitTest {
         val command = UpdateLiteralUseCase.UpdateCommand(
             id = ThingId("L123"),
             contributorId = ContributorId(MockUserId.USER),
-            label = "new label"
+            label = "new label",
         )
 
         every { literalRepository.findById(any()) } returns Optional.empty()
@@ -288,7 +288,7 @@ internal class UnsafeLiteralServiceUnitTest {
             id = literal.id,
             contributorId = ContributorId(MockUserId.USER),
             label = "irrelevant",
-            datatype = "%§&invalid$§/"
+            datatype = "%§&invalid$§/",
         )
 
         every { literalRepository.findById(literal.id) } returns Optional.of(literal)
@@ -305,7 +305,7 @@ internal class UnsafeLiteralServiceUnitTest {
                     it.datatype shouldBe command.datatype
                     it.label shouldBe command.label
                     it.modifiable shouldBe literal.modifiable
-                }
+                },
             )
         }
     }
@@ -317,7 +317,7 @@ internal class UnsafeLiteralServiceUnitTest {
             id = literal.id,
             contributorId = ContributorId(MockUserId.USER),
             label = "irrelevant",
-            datatype = "foo_bar:string"
+            datatype = "foo_bar:string",
         )
 
         every { literalRepository.findById(literal.id) } returns Optional.of(literal)
@@ -334,7 +334,7 @@ internal class UnsafeLiteralServiceUnitTest {
                     it.datatype shouldBe command.datatype
                     it.label shouldBe command.label
                     it.modifiable shouldBe literal.modifiable
-                }
+                },
             )
         }
     }
@@ -347,7 +347,7 @@ internal class UnsafeLiteralServiceUnitTest {
             id = literal.id,
             contributorId = ContributorId(MockUserId.USER),
             label = notANumber,
-            datatype = Literals.XSD.DECIMAL.prefixedUri
+            datatype = Literals.XSD.DECIMAL.prefixedUri,
         )
 
         every { literalRepository.findById(literal.id) } returns Optional.of(literal)
@@ -364,7 +364,7 @@ internal class UnsafeLiteralServiceUnitTest {
                     it.datatype shouldBe command.datatype
                     it.label shouldBe command.label
                     it.modifiable shouldBe literal.modifiable
-                }
+                },
             )
         }
     }
@@ -382,8 +382,8 @@ internal class UnsafeLiteralServiceUnitTest {
                 contributorId = contributorId,
                 label = literal.label,
                 datatype = literal.datatype,
-                modifiable = literal.modifiable
-            )
+                modifiable = literal.modifiable,
+            ),
         )
 
         verify(exactly = 1) { literalRepository.findById(literal.id) }
@@ -406,8 +406,8 @@ internal class UnsafeLiteralServiceUnitTest {
                 contributorId = contributorId,
                 label = label,
                 datatype = datatype,
-                modifiable = modifiable
-            )
+                modifiable = modifiable,
+            ),
         )
 
         verify(exactly = 1) { literalRepository.findById(literal.id) }
@@ -420,7 +420,7 @@ internal class UnsafeLiteralServiceUnitTest {
                     it.createdAt shouldBe literal.createdAt
                     it.createdBy shouldBe literal.createdBy
                     it.modifiable shouldBe modifiable
-                }
+                },
             )
         }
     }

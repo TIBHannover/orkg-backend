@@ -43,7 +43,7 @@ abstract class AbstractImportServiceUnitTest : MockkBaseTest {
         resourceService = resourceService,
         classService = classService,
         predicateService = predicateService,
-        literalService = literalService
+        literalService = literalService,
     )
 
     protected fun mockDescriptionCreation(
@@ -58,8 +58,8 @@ abstract class AbstractImportServiceUnitTest : MockkBaseTest {
                 literalService.create(
                     CreateLiteralUseCase.CreateCommand(
                         contributorId = contributorId,
-                        label = description
-                    )
+                        label = description,
+                    ),
                 )
             } returns descriptionId
             every {
@@ -68,8 +68,8 @@ abstract class AbstractImportServiceUnitTest : MockkBaseTest {
                         contributorId = contributorId,
                         subjectId = subjectId,
                         predicateId = Predicates.description,
-                        objectId = descriptionId
-                    )
+                        objectId = descriptionId,
+                    ),
                 )
             } returns statementId
         }
@@ -85,8 +85,8 @@ abstract class AbstractImportServiceUnitTest : MockkBaseTest {
                 literalService.create(
                     CreateLiteralUseCase.CreateCommand(
                         contributorId = contributorId,
-                        label = description
-                    )
+                        label = description,
+                    ),
                 )
             }
             verify(exactly = 1) {
@@ -95,8 +95,8 @@ abstract class AbstractImportServiceUnitTest : MockkBaseTest {
                         contributorId = contributorId,
                         subjectId = subjectId,
                         predicateId = Predicates.description,
-                        objectId = ThingId("newDescriptionId")
-                    )
+                        objectId = ThingId("newDescriptionId"),
+                    ),
                 )
             }
         }
@@ -114,8 +114,8 @@ abstract class AbstractImportServiceUnitTest : MockkBaseTest {
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = contributorId,
                     label = externalThing.uri.toString(),
-                    datatype = Literals.XSD.URI.prefixedUri
-                )
+                    datatype = Literals.XSD.URI.prefixedUri,
+                ),
             )
         } returns sameAsLiteralId
         every {
@@ -124,8 +124,8 @@ abstract class AbstractImportServiceUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     subjectId = subjectId,
                     predicateId = Predicates.sameAs,
-                    objectId = sameAsLiteralId
-                )
+                    objectId = sameAsLiteralId,
+                ),
             )
         } returns statementId
     }
@@ -140,8 +140,8 @@ abstract class AbstractImportServiceUnitTest : MockkBaseTest {
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = contributorId,
                     label = externalThing.uri.toString(),
-                    datatype = Literals.XSD.URI.prefixedUri
-                )
+                    datatype = Literals.XSD.URI.prefixedUri,
+                ),
             )
         }
         verify(exactly = 1) {
@@ -150,8 +150,8 @@ abstract class AbstractImportServiceUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     subjectId = subjectId,
                     predicateId = Predicates.sameAs,
-                    objectId = ThingId("newSameAsLiteralId")
-                )
+                    objectId = ThingId("newSameAsLiteralId"),
+                ),
             )
         }
     }

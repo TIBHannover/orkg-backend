@@ -30,10 +30,10 @@ internal class TemplateRelationsUpdaterUnitTest : MockkBaseTest {
     fun `Given a template update command, when updating with empty relations, it does nothing`() {
         val template = createTemplate()
         val command = updateTemplateCommand().copy(
-            relations = null
+            relations = null,
         )
         val state = UpdateTemplateState(
-            template = template
+            template = template,
         )
 
         val result = templateRelationsUpdater(command, state)
@@ -48,20 +48,20 @@ internal class TemplateRelationsUpdaterUnitTest : MockkBaseTest {
         val relations = TemplateRelations(
             researchFields = listOf(
                 ObjectIdAndLabel(ThingId("R123"), "irrelevant"),
-                ObjectIdAndLabel(ThingId("R456"), "irrelevant")
+                ObjectIdAndLabel(ThingId("R456"), "irrelevant"),
             ),
             researchProblems = listOf(
                 ObjectIdAndLabel(ThingId("R123"), "irrelevant"),
-                ObjectIdAndLabel(ThingId("R456"), "irrelevant")
+                ObjectIdAndLabel(ThingId("R456"), "irrelevant"),
             ),
-            predicate = ObjectIdAndLabel(ThingId("P456"), "irrelevant")
+            predicate = ObjectIdAndLabel(ThingId("P456"), "irrelevant"),
         )
         val template = createTemplate().copy(relations = relations)
         val command = updateTemplateCommand()
         val statements = listOf(createStatement())
         val state = UpdateTemplateState(
             template = template,
-            statements = mapOf(command.templateId to statements)
+            statements = mapOf(command.templateId to statements),
         )
 
         every {
@@ -70,7 +70,7 @@ internal class TemplateRelationsUpdaterUnitTest : MockkBaseTest {
                 contributorId = command.contributorId,
                 subjectId = command.templateId,
                 predicateId = any(),
-                objects = any<List<ThingId>>()
+                objects = any<List<ThingId>>(),
             )
         } just runs
         every {
@@ -79,7 +79,7 @@ internal class TemplateRelationsUpdaterUnitTest : MockkBaseTest {
                 contributorId = command.contributorId,
                 subjectId = command.templateId,
                 predicateId = any(),
-                objectId = any()
+                objectId = any(),
             )
         } just runs
 
@@ -95,7 +95,7 @@ internal class TemplateRelationsUpdaterUnitTest : MockkBaseTest {
                 contributorId = command.contributorId,
                 subjectId = command.templateId,
                 predicateId = Predicates.templateOfResearchField,
-                objects = command.relations!!.researchFields
+                objects = command.relations!!.researchFields,
             )
         }
         verify(exactly = 1) {
@@ -104,7 +104,7 @@ internal class TemplateRelationsUpdaterUnitTest : MockkBaseTest {
                 contributorId = command.contributorId,
                 subjectId = command.templateId,
                 predicateId = Predicates.templateOfResearchProblem,
-                objects = command.relations!!.researchProblems
+                objects = command.relations!!.researchProblems,
             )
         }
         verify(exactly = 1) {
@@ -113,7 +113,7 @@ internal class TemplateRelationsUpdaterUnitTest : MockkBaseTest {
                 contributorId = command.contributorId,
                 subjectId = command.templateId,
                 predicateId = Predicates.templateOfPredicate,
-                objectId = command.relations!!.predicate
+                objectId = command.relations!!.predicate,
             )
         }
     }

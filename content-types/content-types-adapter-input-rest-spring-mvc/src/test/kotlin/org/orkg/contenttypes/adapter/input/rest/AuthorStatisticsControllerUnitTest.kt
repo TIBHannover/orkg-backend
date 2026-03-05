@@ -50,7 +50,7 @@ internal class AuthorStatisticsControllerUnitTest : MockMvcBaseTest("author-stat
                 description(
                     """
                     A `GET` request returns a <<sorting-and-pagination,paged>> list of author records for the given research problem.
-                    """
+                    """,
                 )
                 pagedQueryParameters(
                     parameterWithName("after").description("Filter for the 'created at' timestamp, limiting exploration to resources that were created after the specified date. (optional)").optional(),

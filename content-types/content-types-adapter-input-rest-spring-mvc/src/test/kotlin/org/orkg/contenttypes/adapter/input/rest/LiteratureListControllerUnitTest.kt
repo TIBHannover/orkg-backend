@@ -127,7 +127,7 @@ internal class LiteratureListControllerUnitTest : MockMvcBaseTest("literature-li
                 description(
                     """
                     A `GET` request provides information about a literature list.
-                    """
+                    """,
                 )
                 pathParameters(
                     parameterWithName("id").description("The identifier of the literature list to retrieve."),
@@ -205,7 +205,7 @@ internal class LiteratureListControllerUnitTest : MockMvcBaseTest("literature-li
                     """
                     A `GET` request returns a <<sorting-and-pagination,paged>> list of <<literature-lists-fetch,literature lists>>.
                     If no paging request parameters are provided, the default values will be used.
-                    """
+                    """,
                 )
                 pagedQueryParameters(
                     parameterWithName("title").description("A search term that must be contained in the title of the literature list. (optional)").optional(),
@@ -240,7 +240,7 @@ internal class LiteratureListControllerUnitTest : MockMvcBaseTest("literature-li
                 researchField = researchFieldId,
                 includeSubfields = includeSubfields,
                 published = published,
-                sustainableDevelopmentGoal = sdg
+                sustainableDevelopmentGoal = sdg,
             )
         }
     }
@@ -285,7 +285,7 @@ internal class LiteratureListControllerUnitTest : MockMvcBaseTest("literature-li
                     A `POST` request creates a new literature list with all the given parameters.
                     The response will be `201 Created` when successful.
                     The literature list (object) can be retrieved by following the URI in the `Location` header field.
-                    """
+                    """,
                 )
                 responseHeaders(
                     headerWithName("Location").description("The uri path where the literature list can be fetched from."),
@@ -330,8 +330,8 @@ internal class LiteratureListControllerUnitTest : MockMvcBaseTest("literature-li
         val request = LiteratureListListSectionRequest(
             entries = listOf(
                 ListSectionEntry(ThingId("R123")),
-                ListSectionEntry(ThingId("R456"))
-            )
+                ListSectionEntry(ThingId("R456")),
+            ),
         )
         every { literatureListService.create(any<CreateLiteratureListSectionUseCase.CreateListSectionCommand>()) } returns sectionId
 
@@ -349,7 +349,7 @@ internal class LiteratureListControllerUnitTest : MockMvcBaseTest("literature-li
                     A `POST` request creates a new list section and adds it to the specified literature list.
                     The response will be `201 Created` when successful.
                     The updated literature list (object) can be retrieved by following the URI in the `Location` header field.
-                    """
+                    """,
                 )
                 pathParameters(
                     parameterWithName("id").description("The id of the literature list to which the new section should be appended to."),
@@ -376,7 +376,7 @@ internal class LiteratureListControllerUnitTest : MockMvcBaseTest("literature-li
                 withArg<CreateLiteratureListSectionUseCase.CreateListSectionCommand> {
                     it.shouldBeInstanceOf<CreateLiteratureListSectionUseCase.CreateListSectionCommand>()
                     it.index shouldBe null
-                }
+                },
             )
         }
     }
@@ -391,8 +391,8 @@ internal class LiteratureListControllerUnitTest : MockMvcBaseTest("literature-li
         val request = LiteratureListListSectionRequest(
             entries = listOf(
                 ListSectionEntry(ThingId("R123")),
-                ListSectionEntry(ThingId("R456"))
-            )
+                ListSectionEntry(ThingId("R456")),
+            ),
         )
         every { literatureListService.create(any<CreateLiteratureListSectionUseCase.CreateListSectionCommand>()) } returns sectionId
 
@@ -410,7 +410,7 @@ internal class LiteratureListControllerUnitTest : MockMvcBaseTest("literature-li
                     A `POST` request creates a new list section and adds it to the specified literature list.
                     The response will be `201 Created` when successful.
                     The updated literature list (object) can be retrieved by following the URI in the `Location` header field.
-                    """
+                    """,
                 )
                 pathParameters(
                     parameterWithName("id").description("The id of the literature list to which the new section should be appended to."),
@@ -438,7 +438,7 @@ internal class LiteratureListControllerUnitTest : MockMvcBaseTest("literature-li
                 withArg<CreateLiteratureListSectionUseCase.CreateListSectionCommand> {
                     it.shouldBeInstanceOf<CreateLiteratureListSectionUseCase.CreateListSectionCommand>()
                     it.index shouldBe index
-                }
+                },
             )
         }
     }
@@ -452,7 +452,7 @@ internal class LiteratureListControllerUnitTest : MockMvcBaseTest("literature-li
         val request = LiteratureListTextSectionRequest(
             heading = "heading",
             headingSize = 2,
-            text = "text contents"
+            text = "text contents",
         )
         every { literatureListService.create(any<CreateLiteratureListSectionUseCase.CreateTextSectionCommand>()) } returns sectionId
 
@@ -470,7 +470,7 @@ internal class LiteratureListControllerUnitTest : MockMvcBaseTest("literature-li
                     A `POST` request creates a new text section and adds it to the specified literature list.
                     The response will be `201 Created` when successful.
                     The updated literature list (object) can be retrieved by following the URI in the `Location` header field.
-                    """
+                    """,
                 )
                 pathParameters(
                     parameterWithName("id").description("The id of the literature list to which the new section should be appended to."),
@@ -497,7 +497,7 @@ internal class LiteratureListControllerUnitTest : MockMvcBaseTest("literature-li
                 withArg<CreateLiteratureListSectionUseCase.CreateTextSectionCommand> {
                     it.shouldBeInstanceOf<CreateLiteratureListSectionUseCase.CreateTextSectionCommand>()
                     it.index shouldBe null
-                }
+                },
             )
         }
     }
@@ -512,7 +512,7 @@ internal class LiteratureListControllerUnitTest : MockMvcBaseTest("literature-li
         val request = LiteratureListTextSectionRequest(
             heading = "heading",
             headingSize = 2,
-            text = "text contents"
+            text = "text contents",
         )
         every { literatureListService.create(any<CreateLiteratureListSectionUseCase.CreateTextSectionCommand>()) } returns sectionId
 
@@ -530,7 +530,7 @@ internal class LiteratureListControllerUnitTest : MockMvcBaseTest("literature-li
                     A `POST` request creates a new text section and adds it to the specified literature list.
                     The response will be `201 Created` when successful.
                     The updated literature list (object) can be retrieved by following the URI in the `Location` header field.
-                    """
+                    """,
                 )
                 pathParameters(
                     parameterWithName("id").description("The id of the literature list to which the new section should be appended to."),
@@ -558,7 +558,7 @@ internal class LiteratureListControllerUnitTest : MockMvcBaseTest("literature-li
                 withArg<CreateLiteratureListSectionUseCase.CreateTextSectionCommand> {
                     it.shouldBeInstanceOf<CreateLiteratureListSectionUseCase.CreateTextSectionCommand>()
                     it.index shouldBe index
-                }
+                },
             )
         }
     }
@@ -592,7 +592,7 @@ internal class LiteratureListControllerUnitTest : MockMvcBaseTest("literature-li
                     ====
                     
                     WARNING: Author names will not be updated if a resource id is specified for a given author.
-                    """
+                    """,
                 )
                 pathParameters(
                     parameterWithName("id").description("The identifier of the literature list."),
@@ -633,7 +633,7 @@ internal class LiteratureListControllerUnitTest : MockMvcBaseTest("literature-li
         val id = ThingId("R3541")
         val sectionId = ThingId("R123")
         val request = LiteratureListListSectionRequest(
-            entries = listOf(ListSectionEntry(ThingId("R123")), ListSectionEntry(ThingId("R456")))
+            entries = listOf(ListSectionEntry(ThingId("R123")), ListSectionEntry(ThingId("R456"))),
         )
         every { literatureListService.update(any<UpdateLiteratureListSectionUseCase.UpdateCommand>()) } just runs
 
@@ -651,7 +651,7 @@ internal class LiteratureListControllerUnitTest : MockMvcBaseTest("literature-li
                     A `PUT` request updates an existing list section with all the given parameters.
                     The response will be `204 No Content` when successful.
                     The updated literature list (object) can be retrieved by following the URI in the `Location` header field.
-                    """
+                    """,
                 )
                 pathParameters(
                     parameterWithName("id").description("The id of the literature list the section belongs to."),
@@ -688,7 +688,7 @@ internal class LiteratureListControllerUnitTest : MockMvcBaseTest("literature-li
         val request = LiteratureListTextSectionRequest(
             heading = "updated heading",
             headingSize = 3,
-            text = "updated text contents"
+            text = "updated text contents",
         )
         every { literatureListService.update(any<UpdateLiteratureListSectionUseCase.UpdateCommand>()) } just runs
 
@@ -706,7 +706,7 @@ internal class LiteratureListControllerUnitTest : MockMvcBaseTest("literature-li
                     A `PUT` request updates an existing text section with all the given parameters.
                     The response will be `204 No Content` when successful.
                     The updated literature list (object) can be retrieved by following the URI in the `Location` header field.
-                    """
+                    """,
                 )
                 pathParameters(
                     parameterWithName("id").description("The id of the literature list the section belongs to."),
@@ -743,7 +743,7 @@ internal class LiteratureListControllerUnitTest : MockMvcBaseTest("literature-li
         val command = DeleteLiteratureListSectionUseCase.DeleteCommand(
             id,
             sectionId,
-            ContributorId(MockUserId.USER)
+            ContributorId(MockUserId.USER),
         )
         every { literatureListService.delete(command) } just runs
 
@@ -759,7 +759,7 @@ internal class LiteratureListControllerUnitTest : MockMvcBaseTest("literature-li
                     A `DELETE` request deletes a literature list section by ID.
                     The response will be `204 No Content` when successful.
                     The updated literature list (object) can be retrieved by following the URI in the `Location` header field.
-                    """
+                    """,
                 )
                 pathParameters(
                     parameterWithName("id").description("The id of the literature list the section belongs to."),
@@ -791,7 +791,7 @@ internal class LiteratureListControllerUnitTest : MockMvcBaseTest("literature-li
                 description(
                     """
                     A `GET` request returns contents of an already published literature list, at the state of publishing.
-                    """
+                    """,
                 )
                 pathParameters(
                     parameterWithName("id").description("The id of the published literature list."),
@@ -822,7 +822,7 @@ internal class LiteratureListControllerUnitTest : MockMvcBaseTest("literature-li
                 description(
                     """
                     A `GET` request returns contents of an already published literature list, at the state of publishing.
-                    """
+                    """,
                 )
                 pathParameters(
                     parameterWithName("id").description("The id of the published literature list."),
@@ -843,7 +843,7 @@ internal class LiteratureListControllerUnitTest : MockMvcBaseTest("literature-li
         val id = ThingId("R123")
         val changelog = "new papers added"
         val request = mapOf(
-            "changelog" to changelog
+            "changelog" to changelog,
         )
         val literatureListVersionId = ThingId("R456")
 
@@ -865,13 +865,13 @@ internal class LiteratureListControllerUnitTest : MockMvcBaseTest("literature-li
                     All statements containing the sections of the original literature list are archived in a separate database.
                     The response will be `201 Created` when successful.
                     The published literature list (object) can be retrieved by following the URI in the `Location` header field.
-                    """
+                    """,
                 )
                 pathParameters(
-                    parameterWithName("id").description("The identifier of the literature list to publish.")
+                    parameterWithName("id").description("The identifier of the literature list to publish."),
                 )
                 responseHeaders(
-                    headerWithName("Location").description("The uri path where the published literature list can be fetched from.")
+                    headerWithName("Location").description("The uri path where the published literature list can be fetched from."),
                 )
                 requestFields<PublishLiteratureListRequest>(
                     fieldWithPath("changelog").description("The description of changes that have been made since the previous version."),
@@ -889,7 +889,7 @@ internal class LiteratureListControllerUnitTest : MockMvcBaseTest("literature-li
                     it.id shouldBe id
                     it.contributorId shouldBe ContributorId(MockUserId.USER)
                     it.changelog shouldBe changelog
-                }
+                },
             )
         }
     }
@@ -903,48 +903,48 @@ internal class LiteratureListControllerUnitTest : MockMvcBaseTest("literature-li
                     id = ThingId("R123"),
                     name = "Author with id",
                     identifiers = null,
-                    homepage = null
+                    homepage = null,
                 ),
                 AuthorRequest(
                     id = null,
                     name = "Author with orcid",
                     identifiers = IdentifierMapRequest(mapOf("orcid" to listOf("0000-1111-2222-3333"))),
-                    homepage = null
+                    homepage = null,
                 ),
                 AuthorRequest(
                     id = ThingId("R456"),
                     name = "Author with id and orcid",
                     identifiers = IdentifierMapRequest(mapOf("orcid" to listOf("1111-2222-3333-4444"))),
-                    homepage = null
+                    homepage = null,
                 ),
                 AuthorRequest(
                     id = null,
                     name = "Author with homepage",
                     identifiers = null,
-                    homepage = ParsedIRI.create("https://example.org/author")
+                    homepage = ParsedIRI.create("https://example.org/author"),
                 ),
                 AuthorRequest(
                     id = null,
                     name = "Author that just has a name",
                     identifiers = null,
-                    homepage = null
-                )
+                    homepage = null,
+                ),
             ),
             sustainableDevelopmentGoals = setOf(
                 ThingId("SDG_3"),
-                ThingId("SDG_4")
+                ThingId("SDG_4"),
             ),
             observatories = listOf(
-                ObservatoryId("1afefdd0-5c09-4c9c-b718-2b35316b56f3")
+                ObservatoryId("1afefdd0-5c09-4c9c-b718-2b35316b56f3"),
             ),
             organizations = listOf(
-                OrganizationId("edc18168-c4ee-4cb8-a98a-136f748e912e")
+                OrganizationId("edc18168-c4ee-4cb8-a98a-136f748e912e"),
             ),
             extractionMethod = ExtractionMethod.MANUAL,
             sections = listOf(
                 textSectionRequest(),
-                listSectionRequest()
-            )
+                listSectionRequest(),
+            ),
         )
 
     private fun updateLiteratureListRequest() =
@@ -956,63 +956,63 @@ internal class LiteratureListControllerUnitTest : MockMvcBaseTest("literature-li
                     id = ThingId("R123"),
                     name = "Author with id",
                     identifiers = null,
-                    homepage = null
+                    homepage = null,
                 ),
                 AuthorRequest(
                     id = null,
                     name = "Author with orcid",
                     identifiers = IdentifierMapRequest(mapOf("orcid" to listOf("0000-1111-2222-3333"))),
-                    homepage = null
+                    homepage = null,
                 ),
                 AuthorRequest(
                     id = ThingId("R456"),
                     name = "Author with id and orcid",
                     identifiers = IdentifierMapRequest(mapOf("orcid" to listOf("1111-2222-3333-4444"))),
-                    homepage = null
+                    homepage = null,
                 ),
                 AuthorRequest(
                     id = null,
                     name = "Author with homepage",
                     identifiers = null,
-                    homepage = ParsedIRI.create("https://example.org/author")
+                    homepage = ParsedIRI.create("https://example.org/author"),
                 ),
                 AuthorRequest(
                     id = null,
                     name = "Author that just has a name",
                     identifiers = null,
-                    homepage = null
-                )
+                    homepage = null,
+                ),
             ),
             sustainableDevelopmentGoals = setOf(
                 ThingId("SDG_3"),
-                ThingId("SDG_4")
+                ThingId("SDG_4"),
             ),
             observatories = listOf(
-                ObservatoryId("1afefdd0-5c09-4c9c-b718-2b35316b56f3")
+                ObservatoryId("1afefdd0-5c09-4c9c-b718-2b35316b56f3"),
             ),
             organizations = listOf(
-                OrganizationId("edc18168-c4ee-4cb8-a98a-136f748e912e")
+                OrganizationId("edc18168-c4ee-4cb8-a98a-136f748e912e"),
             ),
             extractionMethod = ExtractionMethod.MANUAL,
             sections = listOf(
                 textSectionRequest(),
-                listSectionRequest()
+                listSectionRequest(),
             ),
-            visibility = Visibility.FEATURED
+            visibility = Visibility.FEATURED,
         )
 
     private fun textSectionRequest() =
         LiteratureListTextSectionRequest(
             heading = "heading",
             headingSize = 1,
-            text = "text contents"
+            text = "text contents",
         )
 
     private fun listSectionRequest() =
         LiteratureListListSectionRequest(
             entries = listOf(
                 ListSectionEntry(ThingId("R123"), "Example description of an entry"),
-                ListSectionEntry(ThingId("R456"))
-            )
+                ListSectionEntry(ThingId("R456")),
+            ),
         )
 }

@@ -41,7 +41,7 @@ import java.util.Optional
         RdfConfiguration::class,
         RDFService::class,
         DataExportControllerUnitTestConfiguration::class,
-    ]
+    ],
 )
 @WebMvcTest(VocabController::class)
 internal class VocabControllerUnitTest : MockMvcBaseTest("rdf-vocab") {
@@ -69,7 +69,7 @@ internal class VocabControllerUnitTest : MockMvcBaseTest("rdf-vocab") {
 
         every { resourceRepository.findById(resourceId) } returns Optional.of(resource)
         every { statementRepository.findAll(subjectId = resourceId, pageable = any()) } returns pageOf(
-            createStatement(subject = resource, `object` = createLiteral())
+            createStatement(subject = resource, `object` = createLiteral()),
         )
 
         get("/api/vocab/resource/{id}", resourceId)
@@ -83,7 +83,7 @@ internal class VocabControllerUnitTest : MockMvcBaseTest("rdf-vocab") {
                 description(
                     """
                     A `GET` request to get the description of an ORKG resource.
-                    """
+                    """,
                 )
                 requestHeaders(
                     headerWithName("Accept").description("The RDF media type to return.").optional(),
@@ -159,7 +159,7 @@ internal class VocabControllerUnitTest : MockMvcBaseTest("rdf-vocab") {
                 description(
                     """
                     A `GET` request to get the description of an ORKG predicate.
-                    """
+                    """,
                 )
                 requestHeaders(
                     headerWithName("Accept").description("The RDF media type to return.").optional(),
@@ -234,7 +234,7 @@ internal class VocabControllerUnitTest : MockMvcBaseTest("rdf-vocab") {
                 description(
                     """
                     A `GET` request to get the description of an ORKG class.
-                    """
+                    """,
                 )
                 requestHeaders(
                     headerWithName("Accept").description("The RDF media type to return.").optional(),

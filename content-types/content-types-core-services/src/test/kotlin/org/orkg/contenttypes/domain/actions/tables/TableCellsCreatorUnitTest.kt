@@ -29,23 +29,23 @@ internal class TableCellsCreatorUnitTest : MockkBaseTest {
                 "#temp4" from command,
                 "#temp5" from command,
                 "#temp6" from command,
-                "#temp7" from command
+                "#temp7" from command,
             ),
             tempIdToThingId = mapOf(
                 "#temp4" to ThingId("R1"),
                 "#temp5" to ThingId("P2"),
                 "#temp6" to ThingId("C3"),
-                "#temp7" to ThingId("L4")
+                "#temp7" to ThingId("L4"),
             ),
             columns = listOf(
                 ThingId("Column1"),
                 ThingId("Column2"),
-                ThingId("Column3")
+                ThingId("Column3"),
             ),
             rows = listOf(
                 ThingId("Row1"),
-                ThingId("Row2")
-            )
+                ThingId("Row2"),
+            ),
         )
 
         every {

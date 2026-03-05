@@ -67,7 +67,7 @@ class PathComparisonTableMigrator(
                     label = proto.label,
                     description = proto.description,
                     type = ComparisonPath.Type.PREDICATE,
-                    children = children
+                    children = children,
                 )
                 parent.add(path)
                 parent = children

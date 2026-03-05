@@ -40,8 +40,8 @@ internal class SmartReviewVersionHistoryUpdaterUnitTest : MockkBaseTest {
                     contributorId = command.contributorId,
                     subjectId = smartReview.id,
                     predicateId = Predicates.hasPublishedVersion,
-                    objectId = smartReviewVersionId
-                )
+                    objectId = smartReviewVersionId,
+                ),
             )
         } returns StatementId("S1")
         every { unsafeResourceUseCases.update(any()) } just runs
@@ -57,8 +57,8 @@ internal class SmartReviewVersionHistoryUpdaterUnitTest : MockkBaseTest {
                     contributorId = command.contributorId,
                     subjectId = smartReview.id,
                     predicateId = Predicates.hasPublishedVersion,
-                    objectId = smartReviewVersionId
-                )
+                    objectId = smartReviewVersionId,
+                ),
             )
         }
         verify(exactly = 1) {
@@ -66,8 +66,8 @@ internal class SmartReviewVersionHistoryUpdaterUnitTest : MockkBaseTest {
                 UpdateResourceUseCase.UpdateCommand(
                     id = smartReview.versions.published.first().id,
                     contributorId = command.contributorId,
-                    classes = setOf(Classes.smartReviewPublished)
-                )
+                    classes = setOf(Classes.smartReviewPublished),
+                ),
             )
         }
     }
@@ -87,8 +87,8 @@ internal class SmartReviewVersionHistoryUpdaterUnitTest : MockkBaseTest {
                     contributorId = command.contributorId,
                     subjectId = smartReview.id,
                     predicateId = Predicates.hasPublishedVersion,
-                    objectId = smartReviewVersionId
-                )
+                    objectId = smartReviewVersionId,
+                ),
             )
         } returns StatementId("S1")
 
@@ -103,8 +103,8 @@ internal class SmartReviewVersionHistoryUpdaterUnitTest : MockkBaseTest {
                     contributorId = command.contributorId,
                     subjectId = smartReview.id,
                     predicateId = Predicates.hasPublishedVersion,
-                    objectId = smartReviewVersionId
-                )
+                    objectId = smartReviewVersionId,
+                ),
             )
         }
     }

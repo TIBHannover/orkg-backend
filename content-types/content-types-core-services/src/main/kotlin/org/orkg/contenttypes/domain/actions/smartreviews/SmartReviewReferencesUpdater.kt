@@ -16,7 +16,7 @@ class SmartReviewReferencesUpdater(
         statementService: StatementUseCases,
         unsafeStatementUseCases: UnsafeStatementUseCases,
     ) : this(
-        StatementCollectionPropertyUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases)
+        StatementCollectionPropertyUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases),
     )
 
     override fun invoke(command: UpdateSmartReviewCommand, state: State): State {
@@ -28,7 +28,7 @@ class SmartReviewReferencesUpdater(
                     contributorId = command.contributorId,
                     subjectId = contributionId,
                     predicateId = Predicates.hasReference,
-                    literals = command.references!!
+                    literals = command.references!!,
                 )
             }
         }

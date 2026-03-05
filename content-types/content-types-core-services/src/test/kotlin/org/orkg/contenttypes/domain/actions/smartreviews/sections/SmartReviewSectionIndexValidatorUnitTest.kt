@@ -46,7 +46,7 @@ internal class SmartReviewSectionIndexValidatorUnitTest : MockkBaseTest {
             statementRepository.findAll(
                 subjectId = state.contributionId,
                 predicateId = Predicates.hasSection,
-                pageable = PageRequests.ALL
+                pageable = PageRequests.ALL,
             )
         } returns pageOf(statements)
 
@@ -62,7 +62,7 @@ internal class SmartReviewSectionIndexValidatorUnitTest : MockkBaseTest {
             statementRepository.findAll(
                 subjectId = state.contributionId,
                 predicateId = Predicates.hasSection,
-                pageable = PageRequests.ALL
+                pageable = PageRequests.ALL,
             )
         }
     }

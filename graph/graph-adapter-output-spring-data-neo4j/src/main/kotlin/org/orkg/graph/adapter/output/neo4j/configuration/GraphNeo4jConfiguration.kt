@@ -36,9 +36,9 @@ class GraphNeo4jConfiguration {
             AttributeConverter(
                 kClass = OffsetDateTime::class,
                 deserializer = { OffsetDateTime.parse(it, ISO_OFFSET_DATE_TIME) },
-                serializer = { (it as OffsetDateTime).format(ISO_OFFSET_DATE_TIME) }
-            )
-        )
+                serializer = { (it as OffsetDateTime).format(ISO_OFFSET_DATE_TIME) },
+            ),
+        ),
     )
 
     @Bean

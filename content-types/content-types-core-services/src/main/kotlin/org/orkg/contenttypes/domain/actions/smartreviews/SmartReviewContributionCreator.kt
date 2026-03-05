@@ -21,16 +21,16 @@ class SmartReviewContributionCreator(
                 classes = setOf(Classes.contribution, Classes.contributionSmartReview),
                 extractionMethod = command.extractionMethod,
                 observatoryId = command.observatories.singleOrNull(),
-                organizationId = command.organizations.singleOrNull()
-            )
+                organizationId = command.organizations.singleOrNull(),
+            ),
         )
         unsafeStatementUseCases.create(
             CreateStatementUseCase.CreateCommand(
                 contributorId = command.contributorId,
                 subjectId = state.smartReviewId!!,
                 predicateId = Predicates.hasContribution,
-                objectId = contributionId
-            )
+                objectId = contributionId,
+            ),
         )
         return state.copy(contributionId = contributionId)
     }

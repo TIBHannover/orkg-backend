@@ -25,18 +25,18 @@ internal class TableColumnsCreatorUnitTest : MockkBaseTest {
             validationCache = mapOf(
                 "#temp1" from command,
                 "#temp2" from command,
-                "#temp3" from command
+                "#temp3" from command,
             ),
             tempIdToThingId = mapOf(
                 "#temp1" to ThingId("L1"),
                 "#temp2" to ThingId("L2"),
-                "#temp3" to ThingId("L3")
-            )
+                "#temp3" to ThingId("L3"),
+            ),
         )
         val columns = listOf(
             ThingId("Column1"),
             ThingId("Column2"),
-            ThingId("Column3")
+            ThingId("Column3"),
         )
 
         every { abstractTableColumnCreator.create(any(), any(), any(), any()) } returnsMany columns
@@ -56,7 +56,7 @@ internal class TableColumnsCreatorUnitTest : MockkBaseTest {
                 contributorId = command.contributorId,
                 tableId = state.tableId!!,
                 index = 0,
-                titleLiteralId = ThingId("L1")
+                titleLiteralId = ThingId("L1"),
             )
         }
         verify(exactly = 1) {
@@ -64,7 +64,7 @@ internal class TableColumnsCreatorUnitTest : MockkBaseTest {
                 contributorId = command.contributorId,
                 tableId = state.tableId!!,
                 index = 1,
-                titleLiteralId = ThingId("L2")
+                titleLiteralId = ThingId("L2"),
             )
         }
         verify(exactly = 1) {
@@ -72,7 +72,7 @@ internal class TableColumnsCreatorUnitTest : MockkBaseTest {
                 contributorId = command.contributorId,
                 tableId = state.tableId!!,
                 index = 2,
-                titleLiteralId = ThingId("L3")
+                titleLiteralId = ThingId("L3"),
             )
         }
     }

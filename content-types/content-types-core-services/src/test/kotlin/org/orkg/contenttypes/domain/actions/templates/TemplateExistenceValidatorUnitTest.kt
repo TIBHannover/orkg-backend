@@ -36,7 +36,7 @@ internal class TemplateExistenceValidatorUnitTest : MockkBaseTest {
         val root = createResource(
             id = template.id,
             label = template.label,
-            classes = setOf(Classes.nodeShape)
+            classes = setOf(Classes.nodeShape),
         )
         val statements = listOf(createStatement()).groupBy { it.subject.id }
 

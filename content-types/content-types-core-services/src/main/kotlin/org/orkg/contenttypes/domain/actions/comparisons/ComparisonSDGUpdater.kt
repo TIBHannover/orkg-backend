@@ -16,7 +16,7 @@ class ComparisonSDGUpdater(
         statementService: StatementUseCases,
         unsafeStatementUseCases: UnsafeStatementUseCases,
     ) : this(
-        StatementCollectionPropertyUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases)
+        StatementCollectionPropertyUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases),
     )
 
     override fun invoke(command: UpdateComparisonCommand, state: State): State {
@@ -26,7 +26,7 @@ class ComparisonSDGUpdater(
                 contributorId = command.contributorId,
                 subjectId = command.comparisonId,
                 predicateId = Predicates.sustainableDevelopmentGoal,
-                objects = command.sustainableDevelopmentGoals!!
+                objects = command.sustainableDevelopmentGoals!!,
             )
         }
         return state

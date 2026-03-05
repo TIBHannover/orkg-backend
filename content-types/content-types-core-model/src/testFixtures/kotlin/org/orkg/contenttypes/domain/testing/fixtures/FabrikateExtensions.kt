@@ -30,7 +30,7 @@ class RosettaStoneStatementVersionFabricator : Fabricator<RosettaStoneStatementV
         objects = listOf(
             listOf(fabrikate.random<Resource>(), fabrikate.random<Predicate>(), fabrikate.random<Class>()),
             listOf(fabrikate.random<Resource>(), fabrikate.random<Predicate>(), fabrikate.random<Class>()),
-            listOf(fabrikate.random<Resource>(), fabrikate.random<Predicate>(), fabrikate.random<Class>())
+            listOf(fabrikate.random<Resource>(), fabrikate.random<Predicate>(), fabrikate.random<Class>()),
         ),
         createdAt = fabrikate.random(),
         createdBy = fabrikate.random(),
@@ -41,7 +41,7 @@ class RosettaStoneStatementVersionFabricator : Fabricator<RosettaStoneStatementV
         extractionMethod = fabrikate.random(),
         visibility = fabrikate.random(),
         unlistedBy = null,
-        modifiable = true
+        modifiable = true,
     )
 }
 
@@ -58,7 +58,7 @@ class RosettaStoneStatementFabricator : Fabricator<RosettaStoneStatement> {
         extractionMethod = fabrikate.random(),
         visibility = fabrikate.random(),
         unlistedBy = null,
-        modifiable = true
+        modifiable = true,
     )
 }
 
@@ -67,7 +67,7 @@ class EmbeddedStatementFabricator : Fabricator<EmbeddedStatement> {
         thing = fabrikate.random(),
         createdAt = fabrikate.random(),
         createdBy = fabrikate.random(),
-        statements = emptyMap()
+        statements = emptyMap(),
     )
 }
 

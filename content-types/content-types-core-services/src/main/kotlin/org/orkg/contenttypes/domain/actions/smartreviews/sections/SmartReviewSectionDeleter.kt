@@ -14,7 +14,7 @@ class SmartReviewSectionDeleter(
         statementService: StatementUseCases,
         resourceService: ResourceUseCases,
     ) : this(
-        AbstractSmartReviewSectionDeleter(statementService, resourceService)
+        AbstractSmartReviewSectionDeleter(statementService, resourceService),
     )
 
     override fun invoke(command: DeleteSmartReviewSectionCommand, state: State): State {
@@ -24,7 +24,7 @@ class SmartReviewSectionDeleter(
                 contributorId = command.contributorId,
                 contributionId = state.statements.findContributionId(command.smartReviewId)!!,
                 section = section,
-                statements = state.statements
+                statements = state.statements,
             )
         }
         return state

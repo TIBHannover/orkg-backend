@@ -44,13 +44,13 @@ internal class SmartReviewVersionArchiverUnitTest : MockkBaseTest {
         val smartReviewVersionId = ThingId("R321")
         val state = PublishSmartReviewState(
             smartReview = smartReview,
-            smartReviewVersionId = smartReviewVersionId
+            smartReviewVersionId = smartReviewVersionId,
         )
         val bundleConfiguration = BundleConfiguration(
             minLevel = null,
             maxLevel = 10,
             blacklist = listOf(Classes.researchField),
-            whitelist = emptyList()
+            whitelist = emptyList(),
         )
         val snapshotId = SnapshotId("ABC")
 
@@ -59,11 +59,11 @@ internal class SmartReviewVersionArchiverUnitTest : MockkBaseTest {
                 thingId = smartReview.id,
                 configuration = bundleConfiguration,
                 includeFirst = true,
-                sort = Sort.unsorted()
+                sort = Sort.unsorted(),
             )
         } returns Bundle(
             rootId = smartReview.id,
-            bundle = mutableListOf(createStatement())
+            bundle = mutableListOf(createStatement()),
         )
         every { snapshotIdGenerator.nextIdentity() } returns snapshotId
         every { smartReviewSnapshotRepository.save(any()) } just runs
@@ -78,7 +78,7 @@ internal class SmartReviewVersionArchiverUnitTest : MockkBaseTest {
                 thingId = smartReview.id,
                 configuration = bundleConfiguration,
                 includeFirst = true,
-                sort = Sort.unsorted()
+                sort = Sort.unsorted(),
             )
         }
         verify(exactly = 1) { snapshotIdGenerator.nextIdentity() }
@@ -91,7 +91,7 @@ internal class SmartReviewVersionArchiverUnitTest : MockkBaseTest {
                     it.resourceId shouldBe state.smartReviewVersionId!!
                     it.rootId shouldBe command.smartReviewId
                     it.subgraph shouldBe listOf(createStatement())
-                }
+                },
             )
         }
     }

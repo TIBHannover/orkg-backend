@@ -59,7 +59,7 @@ internal class HandleTest {
             // Illegal characters in prefix
             Arguments.of("20.15641.5/1", "https://hdl.handle.net/20.15641.5/1"),
             // Does not follow scheme at all
-            Arguments.of("example", "https://example.com/")
+            Arguments.of("example", "https://example.com/"),
         )
     }
 }

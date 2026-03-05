@@ -13,6 +13,6 @@ interface ContributionStatementRepresentationAdapter : TypedValueRepresentationA
     fun ContributionStatement.toContributionStatementRepresentation(): ContributionStatementRepresentation =
         predicate.map(
             leftMapper = { ExistingPredicateContributionStatementRepresentation(it, `object`.toTypedValueRepresentation()) },
-            rightMapper = { NewPredicateContributionStatementRepresentation(it, `object`.toTypedValueRepresentation()) }
+            rightMapper = { NewPredicateContributionStatementRepresentation(it, `object`.toTypedValueRepresentation()) },
         ).merge()
 }

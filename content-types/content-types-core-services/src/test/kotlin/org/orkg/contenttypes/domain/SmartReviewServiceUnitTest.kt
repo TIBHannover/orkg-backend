@@ -91,7 +91,7 @@ internal class SmartReviewServiceUnitTest : MockkBaseTest {
         contributorRepository = contributorRepository,
         doiService = doiService,
         clock = fixedClock,
-        smartReviewPublishBaseUri = "https://orkg.org/review/"
+        smartReviewPublishBaseUri = "https://orkg.org/review/",
     )
 
     @Test
@@ -99,50 +99,50 @@ internal class SmartReviewServiceUnitTest : MockkBaseTest {
         val expected = createResource(
             classes = setOf(Classes.smartReview),
             organizationId = OrganizationId(UUID.randomUUID()),
-            observatoryId = ObservatoryId(UUID.randomUUID())
+            observatoryId = ObservatoryId(UUID.randomUUID()),
         )
         val researchFieldId = ThingId("R20")
         val publishedVersion1 = createResource(
             id = ThingId("R235467"),
             label = "published1",
-            classes = setOf(Classes.smartReviewPublished)
+            classes = setOf(Classes.smartReviewPublished),
         )
         val changelog1 = createLiteral(id = ThingId("L13546"), label = "changelog1")
         val publishedVersion2 = createResource(
             id = ThingId("R154687"),
             label = "published2",
-            classes = setOf(Classes.smartReviewPublished)
+            classes = setOf(Classes.smartReviewPublished),
         )
         val changelog2 = createLiteral(id = ThingId("L5753"), label = "changelog2")
         val contribution = createResource(id = ThingId("R4596"), classes = setOf(Classes.contributionSmartReview))
         val comparisonSection = createResource(
             id = ThingId("R963"),
             label = "comparison section heading",
-            classes = setOf(Classes.comparisonSection)
+            classes = setOf(Classes.comparisonSection),
         )
         val comparison = createResource(id = ThingId("R1546878"), classes = setOf(Classes.comparison))
         val visualizationSection = createResource(
             id = ThingId("R852"),
             label = "visualization section heading",
-            classes = setOf(Classes.visualizationSection)
+            classes = setOf(Classes.visualizationSection),
         )
         val visualization = createResource(id = ThingId("R31256"), classes = setOf(Classes.visualization))
         val resourceSection = createResource(
             id = ThingId("R741"),
             label = "resource section heading",
-            classes = setOf(Classes.resourceSection)
+            classes = setOf(Classes.resourceSection),
         )
         val resource = createResource(id = ThingId("R5641"), classes = setOf(Classes.problem))
         val propertySection = createResource(
             id = ThingId("R852"),
             label = "property section heading",
-            classes = setOf(Classes.propertySection)
+            classes = setOf(Classes.propertySection),
         )
         val property = createPredicate(id = ThingId("P7689"))
         val ontologySection = createResource(
             id = ThingId("R159"),
             label = "ontology section heading",
-            classes = setOf(Classes.ontologySection)
+            classes = setOf(Classes.ontologySection),
         )
         val ontologyResourceEntity = createResource(id = ThingId("R13457"), classes = setOf(Classes.author))
         val ontologyPredicateEntity = createPredicate(id = ThingId("P6148"))
@@ -155,7 +155,7 @@ internal class SmartReviewServiceUnitTest : MockkBaseTest {
             minLevel = null,
             maxLevel = 3,
             blacklist = listOf(Classes.researchField, Classes.venue),
-            whitelist = emptyList()
+            whitelist = emptyList(),
         )
 
         every { resourceRepository.findById(expected.id) } returns Optional.of(expected)
@@ -163,7 +163,7 @@ internal class SmartReviewServiceUnitTest : MockkBaseTest {
             statementRepository.fetchAsBundle(
                 id = expected.id,
                 configuration = bundleConfiguration,
-                sort = Sort.unsorted()
+                sort = Sort.unsorted(),
             )
         } returns pageOf(
             createStatement(
@@ -172,147 +172,147 @@ internal class SmartReviewServiceUnitTest : MockkBaseTest {
                 `object` = createResource(
                     classes = setOf(Classes.sustainableDevelopmentGoal),
                     label = "No poverty",
-                    id = ThingId("SDG_1")
-                )
+                    id = ThingId("SDG_1"),
+                ),
             ),
             createStatement(
                 subject = expected,
                 predicate = createPredicate(Predicates.hasPublishedVersion),
                 `object` = publishedVersion1,
-                createdAt = OffsetDateTime.now(fixedClock).minusDays(2)
+                createdAt = OffsetDateTime.now(fixedClock).minusDays(2),
             ),
             createStatement(
                 subject = publishedVersion1,
                 predicate = createPredicate(Predicates.description),
-                `object` = changelog1
+                `object` = changelog1,
             ),
             createStatement(
                 subject = expected,
                 predicate = createPredicate(Predicates.hasPublishedVersion),
                 `object` = publishedVersion2,
-                createdAt = OffsetDateTime.now(fixedClock).minusDays(1)
+                createdAt = OffsetDateTime.now(fixedClock).minusDays(1),
             ),
             createStatement(
                 subject = publishedVersion2,
                 predicate = createPredicate(Predicates.description),
-                `object` = changelog2
+                `object` = changelog2,
             ),
             createStatement(
                 subject = expected,
                 predicate = createPredicate(Predicates.hasContribution),
-                `object` = contribution
+                `object` = contribution,
             ),
             createStatement(
                 subject = contribution,
                 predicate = createPredicate(Predicates.hasSection),
-                `object` = textSection
+                `object` = textSection,
             ),
             createStatement(
                 subject = textSection,
                 predicate = createPredicate(Predicates.hasContent),
-                `object` = createLiteral(label = textContent)
+                `object` = createLiteral(label = textContent),
             ),
             createStatement(
                 subject = contribution,
                 predicate = createPredicate(Predicates.hasSection),
-                `object` = comparisonSection
+                `object` = comparisonSection,
             ),
             createStatement(
                 subject = comparisonSection,
                 predicate = createPredicate(Predicates.hasLink),
-                `object` = comparison
+                `object` = comparison,
             ),
             createStatement(
                 subject = contribution,
                 predicate = createPredicate(Predicates.hasSection),
-                `object` = visualizationSection
+                `object` = visualizationSection,
             ),
             createStatement(
                 subject = visualizationSection,
                 predicate = createPredicate(Predicates.hasLink),
-                `object` = visualization
+                `object` = visualization,
             ),
             createStatement(
                 subject = contribution,
                 predicate = createPredicate(Predicates.hasSection),
-                `object` = resourceSection
+                `object` = resourceSection,
             ),
             createStatement(
                 subject = resourceSection,
                 predicate = createPredicate(Predicates.hasLink),
-                `object` = resource
+                `object` = resource,
             ),
             createStatement(
                 subject = contribution,
                 predicate = createPredicate(Predicates.hasSection),
-                `object` = propertySection
+                `object` = propertySection,
             ),
             createStatement(
                 subject = propertySection,
                 predicate = createPredicate(Predicates.hasLink),
-                `object` = property
+                `object` = property,
             ),
             createStatement(
                 subject = contribution,
                 predicate = createPredicate(Predicates.hasSection),
-                `object` = ontologySection
+                `object` = ontologySection,
             ),
             createStatement(
                 subject = ontologySection,
                 predicate = createPredicate(Predicates.hasEntity),
-                `object` = ontologyResourceEntity
+                `object` = ontologyResourceEntity,
             ),
             createStatement(
                 subject = ontologySection,
                 predicate = createPredicate(Predicates.hasEntity),
-                `object` = ontologyPredicateEntity
+                `object` = ontologyPredicateEntity,
             ),
             createStatement(
                 subject = ontologySection,
                 predicate = createPredicate(Predicates.showProperty),
-                `object` = ontologyPredicate
+                `object` = ontologyPredicate,
             ),
             createStatement(
                 subject = expected,
                 predicate = createPredicate(Predicates.hasAuthors),
-                `object` = authorList
+                `object` = authorList,
             ),
             createStatement(
                 subject = authorList,
                 predicate = createPredicate(Predicates.hasListElement),
-                `object` = createLiteral(label = "Author 1")
+                `object` = createLiteral(label = "Author 1"),
             ),
             createStatement(
                 subject = authorList,
                 predicate = createPredicate(Predicates.hasListElement),
-                `object` = resourceAuthor
+                `object` = resourceAuthor,
             ),
             createStatement(
                 subject = resourceAuthor,
                 predicate = createPredicate(Predicates.hasORCID),
-                `object` = createLiteral(label = "0000-1111-2222-3333")
+                `object` = createLiteral(label = "0000-1111-2222-3333"),
             ),
             createStatement(
                 subject = resourceAuthor,
                 predicate = createPredicate(Predicates.hasWebsite),
-                `object` = createLiteral(label = "https://example.org", datatype = Literals.XSD.URI.prefixedUri)
+                `object` = createLiteral(label = "https://example.org", datatype = Literals.XSD.URI.prefixedUri),
             ),
             createStatement(
                 subject = contribution,
                 predicate = createPredicate(Predicates.hasReference),
-                `object` = createLiteral(label = "reference 1")
+                `object` = createLiteral(label = "reference 1"),
             ),
             createStatement(
                 subject = contribution,
                 predicate = createPredicate(Predicates.hasReference),
-                `object` = createLiteral(label = "reference 2")
-            )
+                `object` = createLiteral(label = "reference 2"),
+            ),
         )
         every {
             statementRepository.findAll(
                 subjectId = expected.id,
                 objectClasses = setOf(Classes.researchField),
-                pageable = PageRequests.ALL
+                pageable = PageRequests.ALL,
             )
         } returns pageOf(
             createStatement(
@@ -321,9 +321,9 @@ internal class SmartReviewServiceUnitTest : MockkBaseTest {
                 `object` = createResource(
                     id = researchFieldId,
                     classes = setOf(Classes.researchField),
-                    label = "Research Field 1"
-                )
-            )
+                    label = "Research Field 1",
+                ),
+            ),
         )
 
         val actual = service.findById(expected.id)
@@ -334,7 +334,7 @@ internal class SmartReviewServiceUnitTest : MockkBaseTest {
             it.id shouldBe expected.id
             it.title shouldBe expected.label
             it.researchFields shouldBe listOf(
-                ObjectIdAndLabel(id = researchFieldId, label = "Research Field 1")
+                ObjectIdAndLabel(id = researchFieldId, label = "Research Field 1"),
             )
             it.authors shouldNotBe null
             it.authors shouldBe listOf(
@@ -342,26 +342,26 @@ internal class SmartReviewServiceUnitTest : MockkBaseTest {
                     id = null,
                     name = "Author 1",
                     identifiers = emptyMap(),
-                    homepage = null
+                    homepage = null,
                 ),
                 Author(
                     id = resourceAuthor.id,
                     name = "Author 2",
                     identifiers = mapOf(
-                        "orcid" to listOf("0000-1111-2222-3333")
+                        "orcid" to listOf("0000-1111-2222-3333"),
                     ),
-                    homepage = ParsedIRI.create("https://example.org")
-                )
+                    homepage = ParsedIRI.create("https://example.org"),
+                ),
             )
             it.versions shouldBe VersionInfo(
                 head = HeadVersion(expected),
                 published = listOf(
                     PublishedVersion(publishedVersion2, changelog2.label),
-                    PublishedVersion(publishedVersion1, changelog1.label)
-                )
+                    PublishedVersion(publishedVersion1, changelog1.label),
+                ),
             )
             it.sustainableDevelopmentGoals shouldBe setOf(
-                ObjectIdAndLabel(ThingId("SDG_1"), "No poverty")
+                ObjectIdAndLabel(ThingId("SDG_1"), "No poverty"),
             )
             it.observatories shouldBe setOf(expected.observatoryId)
             it.organizations shouldBe setOf(expected.organizationId)
@@ -381,13 +381,13 @@ internal class SmartReviewServiceUnitTest : MockkBaseTest {
                     id = ontologySection.id,
                     heading = "ontology section heading",
                     entities = listOf(ResourceReference(ontologyResourceEntity), PredicateReference(ontologyPredicateEntity)),
-                    predicates = listOf(PredicateReference(ontologyPredicate))
-                )
+                    predicates = listOf(PredicateReference(ontologyPredicate)),
+                ),
             )
             it.references shouldBe listOf("reference 1", "reference 2")
             it.acknowledgements shouldBe mapOf(
                 ContributorId.UNKNOWN to 0.875,
-                ContributorId("a56cfd65-8d29-4eae-a252-1b806fe88d3c") to 0.125
+                ContributorId("a56cfd65-8d29-4eae-a252-1b806fe88d3c") to 0.125,
             )
         }
 
@@ -396,14 +396,14 @@ internal class SmartReviewServiceUnitTest : MockkBaseTest {
             statementRepository.fetchAsBundle(
                 id = expected.id,
                 configuration = bundleConfiguration,
-                sort = Sort.unsorted()
+                sort = Sort.unsorted(),
             )
         }
         verify(exactly = 1) {
             statementRepository.findAll(
                 subjectId = expected.id,
                 objectClasses = setOf(Classes.researchField),
-                pageable = PageRequests.ALL
+                pageable = PageRequests.ALL,
             )
         }
     }
@@ -418,14 +418,14 @@ internal class SmartReviewServiceUnitTest : MockkBaseTest {
             label = "published1",
             classes = setOf(Classes.smartReviewPublished),
             organizationId = OrganizationId(UUID.randomUUID()),
-            observatoryId = ObservatoryId(UUID.randomUUID())
+            observatoryId = ObservatoryId(UUID.randomUUID()),
         )
         val changelog1 = createLiteral(id = ThingId("L13546"), label = "changelog1")
 
         val expected = createResource(
             id = ThingId("R154687"),
             label = "published2",
-            classes = setOf(Classes.smartReviewPublished)
+            classes = setOf(Classes.smartReviewPublished),
         )
         val changelog = createLiteral(id = ThingId("L5753"), label = "changelog2")
 
@@ -434,31 +434,31 @@ internal class SmartReviewServiceUnitTest : MockkBaseTest {
         val comparisonSection = createResource(
             id = ThingId("R963"),
             label = "comparison section heading",
-            classes = setOf(Classes.comparisonSection)
+            classes = setOf(Classes.comparisonSection),
         )
         val comparison = createResource(id = ThingId("R1546878"), classes = setOf(Classes.comparison))
         val visualizationSection = createResource(
             id = ThingId("R852"),
             label = "visualization section heading",
-            classes = setOf(Classes.visualizationSection)
+            classes = setOf(Classes.visualizationSection),
         )
         val visualization = createResource(id = ThingId("R31256"), classes = setOf(Classes.visualization))
         val resourceSection = createResource(
             id = ThingId("R741"),
             label = "resource section heading",
-            classes = setOf(Classes.resourceSection)
+            classes = setOf(Classes.resourceSection),
         )
         val resource = createResource(id = ThingId("R5641"), classes = setOf(Classes.problem))
         val propertySection = createResource(
             id = ThingId("R852"),
             label = "property section heading",
-            classes = setOf(Classes.propertySection)
+            classes = setOf(Classes.propertySection),
         )
         val property = createPredicate(id = ThingId("P7689"))
         val ontologySection = createResource(
             id = ThingId("R159"),
             label = "ontology section heading",
-            classes = setOf(Classes.ontologySection)
+            classes = setOf(Classes.ontologySection),
         )
         val ontologyResourceEntity = createResource(id = ThingId("R13457"), classes = setOf(Classes.author))
         val ontologyPredicateEntity = createPredicate(id = ThingId("P6148"))
@@ -471,7 +471,7 @@ internal class SmartReviewServiceUnitTest : MockkBaseTest {
             minLevel = null,
             maxLevel = 2,
             blacklist = emptyList(),
-            whitelist = listOf(Classes.smartReview, Classes.smartReviewPublished, Classes.literal)
+            whitelist = listOf(Classes.smartReview, Classes.smartReviewPublished, Classes.literal),
         )
 
         every { resourceRepository.findById(expected.id) } returns Optional.of(expected)
@@ -489,8 +489,8 @@ internal class SmartReviewServiceUnitTest : MockkBaseTest {
                         `object` = createResource(
                             classes = setOf(Classes.sustainableDevelopmentGoal),
                             label = "No poverty",
-                            id = ThingId("SDG_1")
-                        )
+                            id = ThingId("SDG_1"),
+                        ),
                     ),
                     createStatement(
                         subject = unpublished,
@@ -498,152 +498,152 @@ internal class SmartReviewServiceUnitTest : MockkBaseTest {
                         `object` = createResource(
                             id = researchFieldId,
                             classes = setOf(Classes.researchField),
-                            label = "Research Field 1"
-                        )
+                            label = "Research Field 1",
+                        ),
                     ),
                     createStatement(
                         subject = unpublished,
                         predicate = createPredicate(Predicates.hasContribution),
-                        `object` = contribution
+                        `object` = contribution,
                     ),
                     createStatement(
                         subject = contribution,
                         predicate = createPredicate(Predicates.hasSection),
-                        `object` = textSection
+                        `object` = textSection,
                     ),
                     createStatement(
                         subject = textSection,
                         predicate = createPredicate(Predicates.hasContent),
-                        `object` = createLiteral(label = textContent)
+                        `object` = createLiteral(label = textContent),
                     ),
                     createStatement(
                         subject = contribution,
                         predicate = createPredicate(Predicates.hasSection),
-                        `object` = comparisonSection
+                        `object` = comparisonSection,
                     ),
                     createStatement(
                         subject = comparisonSection,
                         predicate = createPredicate(Predicates.hasLink),
-                        `object` = comparison
+                        `object` = comparison,
                     ),
                     createStatement(
                         subject = contribution,
                         predicate = createPredicate(Predicates.hasSection),
-                        `object` = visualizationSection
+                        `object` = visualizationSection,
                     ),
                     createStatement(
                         subject = visualizationSection,
                         predicate = createPredicate(Predicates.hasLink),
-                        `object` = visualization
+                        `object` = visualization,
                     ),
                     createStatement(
                         subject = contribution,
                         predicate = createPredicate(Predicates.hasSection),
-                        `object` = resourceSection
+                        `object` = resourceSection,
                     ),
                     createStatement(
                         subject = resourceSection,
                         predicate = createPredicate(Predicates.hasLink),
-                        `object` = resource
+                        `object` = resource,
                     ),
                     createStatement(
                         subject = contribution,
                         predicate = createPredicate(Predicates.hasSection),
-                        `object` = propertySection
+                        `object` = propertySection,
                     ),
                     createStatement(
                         subject = propertySection,
                         predicate = createPredicate(Predicates.hasLink),
-                        `object` = property
+                        `object` = property,
                     ),
                     createStatement(
                         subject = contribution,
                         predicate = createPredicate(Predicates.hasSection),
-                        `object` = ontologySection
+                        `object` = ontologySection,
                     ),
                     createStatement(
                         subject = ontologySection,
                         predicate = createPredicate(Predicates.hasEntity),
-                        `object` = ontologyResourceEntity
+                        `object` = ontologyResourceEntity,
                     ),
                     createStatement(
                         subject = ontologySection,
                         predicate = createPredicate(Predicates.hasEntity),
-                        `object` = ontologyPredicateEntity
+                        `object` = ontologyPredicateEntity,
                     ),
                     createStatement(
                         subject = ontologySection,
                         predicate = createPredicate(Predicates.showProperty),
-                        `object` = ontologyPredicate
+                        `object` = ontologyPredicate,
                     ),
                     createStatement(
                         subject = unpublished,
                         predicate = createPredicate(Predicates.hasAuthors),
-                        `object` = authorList
+                        `object` = authorList,
                     ),
                     createStatement(
                         subject = authorList,
                         predicate = createPredicate(Predicates.hasListElement),
-                        `object` = createLiteral(label = "Author 1")
+                        `object` = createLiteral(label = "Author 1"),
                     ),
                     createStatement(
                         subject = authorList,
                         predicate = createPredicate(Predicates.hasListElement),
-                        `object` = resourceAuthor
+                        `object` = resourceAuthor,
                     ),
                     createStatement(
                         subject = resourceAuthor,
                         predicate = createPredicate(Predicates.hasORCID),
-                        `object` = createLiteral(label = "0000-1111-2222-3333")
+                        `object` = createLiteral(label = "0000-1111-2222-3333"),
                     ),
                     createStatement(
                         subject = resourceAuthor,
                         predicate = createPredicate(Predicates.hasWebsite),
-                        `object` = createLiteral(label = "https://example.org", datatype = Literals.XSD.URI.prefixedUri)
+                        `object` = createLiteral(label = "https://example.org", datatype = Literals.XSD.URI.prefixedUri),
                     ),
                     createStatement(
                         subject = contribution,
                         predicate = createPredicate(Predicates.hasReference),
-                        `object` = createLiteral(label = "reference 1")
+                        `object` = createLiteral(label = "reference 1"),
                     ),
                     createStatement(
                         subject = contribution,
                         predicate = createPredicate(Predicates.hasReference),
-                        `object` = createLiteral(label = "reference 2")
-                    )
-                )
-            )
+                        `object` = createLiteral(label = "reference 2"),
+                    ),
+                ),
+            ),
         )
 
         every {
             statementRepository.fetchAsBundle(
                 id = unpublished.id,
                 configuration = bundleConfiguration,
-                sort = Sort.unsorted()
+                sort = Sort.unsorted(),
             )
         } returns pageOf(
             createStatement(
                 subject = unpublished,
                 predicate = createPredicate(Predicates.hasPublishedVersion),
                 `object` = publishedVersion1,
-                createdAt = OffsetDateTime.now(fixedClock).minusDays(2)
+                createdAt = OffsetDateTime.now(fixedClock).minusDays(2),
             ),
             createStatement(
                 subject = publishedVersion1,
                 predicate = createPredicate(Predicates.description),
-                `object` = changelog1
+                `object` = changelog1,
             ),
             createStatement(
                 subject = unpublished,
                 predicate = createPredicate(Predicates.hasPublishedVersion),
                 `object` = expected,
-                createdAt = OffsetDateTime.now(fixedClock).minusDays(1)
+                createdAt = OffsetDateTime.now(fixedClock).minusDays(1),
             ),
             createStatement(
                 subject = expected,
                 predicate = createPredicate(Predicates.description),
-                `object` = changelog
-            )
+                `object` = changelog,
+            ),
         )
 
         val actual = service.findById(expected.id)
@@ -654,7 +654,7 @@ internal class SmartReviewServiceUnitTest : MockkBaseTest {
             it.id shouldBe expected.id
             it.title shouldBe expected.label
             it.researchFields shouldBe listOf(
-                ObjectIdAndLabel(id = researchFieldId, label = "Research Field 1")
+                ObjectIdAndLabel(id = researchFieldId, label = "Research Field 1"),
             )
             it.authors shouldNotBe null
             it.authors shouldBe listOf(
@@ -662,26 +662,26 @@ internal class SmartReviewServiceUnitTest : MockkBaseTest {
                     id = null,
                     name = "Author 1",
                     identifiers = emptyMap(),
-                    homepage = null
+                    homepage = null,
                 ),
                 Author(
                     id = resourceAuthor.id,
                     name = "Author 2",
                     identifiers = mapOf(
-                        "orcid" to listOf("0000-1111-2222-3333")
+                        "orcid" to listOf("0000-1111-2222-3333"),
                     ),
-                    homepage = ParsedIRI.create("https://example.org")
-                )
+                    homepage = ParsedIRI.create("https://example.org"),
+                ),
             )
             it.versions shouldBe VersionInfo(
                 head = HeadVersion(unpublished),
                 published = listOf(
                     PublishedVersion(expected, changelog.label),
-                    PublishedVersion(publishedVersion1, changelog1.label)
-                )
+                    PublishedVersion(publishedVersion1, changelog1.label),
+                ),
             )
             it.sustainableDevelopmentGoals shouldBe setOf(
-                ObjectIdAndLabel(ThingId("SDG_1"), "No poverty")
+                ObjectIdAndLabel(ThingId("SDG_1"), "No poverty"),
             )
             it.observatories shouldBe setOf(expected.observatoryId)
             it.organizations shouldBe setOf(expected.organizationId)
@@ -701,13 +701,13 @@ internal class SmartReviewServiceUnitTest : MockkBaseTest {
                     id = ontologySection.id,
                     heading = "ontology section heading",
                     entities = listOf(ResourceReference(ontologyResourceEntity), PredicateReference(ontologyPredicateEntity)),
-                    predicates = listOf(PredicateReference(ontologyPredicate))
-                )
+                    predicates = listOf(PredicateReference(ontologyPredicate)),
+                ),
             )
             it.references shouldBe listOf("reference 1", "reference 2")
             it.acknowledgements shouldBe mapOf(
                 ContributorId.UNKNOWN to 0.875,
-                ContributorId("a56cfd65-8d29-4eae-a252-1b806fe88d3c") to 0.125
+                ContributorId("a56cfd65-8d29-4eae-a252-1b806fe88d3c") to 0.125,
             )
         }
 
@@ -717,7 +717,7 @@ internal class SmartReviewServiceUnitTest : MockkBaseTest {
             statementRepository.fetchAsBundle(
                 id = unpublished.id,
                 configuration = bundleConfiguration,
-                sort = Sort.unsorted()
+                sort = Sort.unsorted(),
             )
         }
     }
@@ -740,10 +740,10 @@ internal class SmartReviewServiceUnitTest : MockkBaseTest {
                     createStatement(
                         subject = createResource(classes = setOf(Classes.comparisonSection)),
                         predicate = createPredicate(Predicates.hasLink),
-                        `object` = content
-                    )
-                )
-            )
+                        `object` = content,
+                    ),
+                ),
+            ),
         )
         every { statementRepository.fetchAsBundle(any(), any(), any()) } returns emptyList()
         every { with(comparisonService) { content.findVersionInfo(any()) } } returns versions
@@ -788,10 +788,10 @@ internal class SmartReviewServiceUnitTest : MockkBaseTest {
                     createStatement(
                         subject = createResource(classes = setOf(Classes.visualizationSection)),
                         predicate = createPredicate(Predicates.hasLink),
-                        `object` = content
-                    )
-                )
-            )
+                        `object` = content,
+                    ),
+                ),
+            ),
         )
         every { statementRepository.fetchAsBundle(any(), any(), any()) } returns emptyList()
 
@@ -833,12 +833,12 @@ internal class SmartReviewServiceUnitTest : MockkBaseTest {
                     createStatement(
                         subject = createResource(classes = setOf(Classes.section)),
                         predicate = createPredicate(Predicates.hasLink),
-                        `object` = content
+                        `object` = content,
                     ),
                     createStatement(subject = content),
-                    createStatement(subject = createResource(ThingId("unrelated")))
-                )
-            )
+                    createStatement(subject = createResource(ThingId("unrelated"))),
+                ),
+            ),
         )
         every { statementRepository.fetchAsBundle(any(), any(), any()) } returns emptyList()
 
@@ -894,8 +894,8 @@ internal class SmartReviewServiceUnitTest : MockkBaseTest {
                 createdAt = OffsetDateTime.parse("2023-11-30T09:25:14.049085776+01:00"),
                 resourceId = smartReview.id,
                 rootId = ThingId("R456"),
-                subgraph = listOf()
-            )
+                subgraph = listOf(),
+            ),
         )
         every { statementRepository.fetchAsBundle(any(), any(), any()) } returns emptyList()
 
@@ -921,8 +921,8 @@ internal class SmartReviewServiceUnitTest : MockkBaseTest {
                 createdAt = OffsetDateTime.parse("2023-11-30T09:25:14.049085776+01:00"),
                 resourceId = smartReview.id,
                 rootId = ThingId("R456"),
-                subgraph = listOf()
-            )
+                subgraph = listOf(),
+            ),
         )
         every { statementRepository.fetchAsBundle(any(), any(), any()) } returns emptyList()
 

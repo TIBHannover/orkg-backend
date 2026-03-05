@@ -34,7 +34,7 @@ val doiConstraint = Constraint(
         "message" to "{jakarta.validation.constraints.Pattern.message}",
         "groups" to emptyArray<Class<*>>(),
         "payload" to emptyArray<Class<out Payload>>(),
-    )
+    ),
 )
 
 val googleScholarIdConstraint = Constraint(
@@ -45,7 +45,7 @@ val googleScholarIdConstraint = Constraint(
         "message" to "{jakarta.validation.constraints.Pattern.message}",
         "groups" to emptyArray<Class<*>>(),
         "payload" to emptyArray<Class<out Payload>>(),
-    )
+    ),
 )
 
 val handleConstraint = Constraint(
@@ -56,7 +56,7 @@ val handleConstraint = Constraint(
         "message" to "{jakarta.validation.constraints.Pattern.message}",
         "groups" to emptyArray<Class<*>>(),
         "payload" to emptyArray<Class<out Payload>>(),
-    )
+    ),
 )
 
 val isbnConstraint = Constraint(
@@ -67,7 +67,7 @@ val isbnConstraint = Constraint(
         "message" to "{jakarta.validation.constraints.Pattern.message}",
         "groups" to emptyArray<Class<*>>(),
         "payload" to emptyArray<Class<out Payload>>(),
-    )
+    ),
 )
 
 val issnConstraint = Constraint(
@@ -78,7 +78,7 @@ val issnConstraint = Constraint(
         "message" to "{jakarta.validation.constraints.Pattern.message}",
         "groups" to emptyArray<Class<*>>(),
         "payload" to emptyArray<Class<out Payload>>(),
-    )
+    ),
 )
 
 val linkedInIdConstraint = Constraint(
@@ -89,7 +89,7 @@ val linkedInIdConstraint = Constraint(
         "message" to "{jakarta.validation.constraints.Pattern.message}",
         "groups" to emptyArray<Class<*>>(),
         "payload" to emptyArray<Class<out Payload>>(),
-    )
+    ),
 )
 
 val openAlexIdConstraint = Constraint(
@@ -100,7 +100,7 @@ val openAlexIdConstraint = Constraint(
         "message" to "{jakarta.validation.constraints.Pattern.message}",
         "groups" to emptyArray<Class<*>>(),
         "payload" to emptyArray<Class<out Payload>>(),
-    )
+    ),
 )
 
 val orcidConstraint = Constraint(
@@ -111,7 +111,7 @@ val orcidConstraint = Constraint(
         "message" to "{jakarta.validation.constraints.Pattern.message}",
         "groups" to emptyArray<Class<*>>(),
         "payload" to emptyArray<Class<out Payload>>(),
-    )
+    ),
 )
 
 val researcherIdConstraint = Constraint(
@@ -122,7 +122,7 @@ val researcherIdConstraint = Constraint(
         "message" to "{jakarta.validation.constraints.Pattern.message}",
         "groups" to emptyArray<Class<*>>(),
         "payload" to emptyArray<Class<out Payload>>(),
-    )
+    ),
 )
 
 val researchGateIdConstraint = Constraint(
@@ -133,7 +133,7 @@ val researchGateIdConstraint = Constraint(
         "message" to "{jakarta.validation.constraints.Pattern.message}",
         "groups" to emptyArray<Class<*>>(),
         "payload" to emptyArray<Class<out Payload>>(),
-    )
+    ),
 )
 
 val wikidataIdConstraint = Constraint(
@@ -144,7 +144,7 @@ val wikidataIdConstraint = Constraint(
         "message" to "{jakarta.validation.constraints.Pattern.message}",
         "groups" to emptyArray<Class<*>>(),
         "payload" to emptyArray<Class<out Payload>>(),
-    )
+    ),
 )
 
 private fun oneOf(vararg patterns: Regex): String =

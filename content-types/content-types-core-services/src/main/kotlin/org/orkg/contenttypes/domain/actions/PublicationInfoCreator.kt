@@ -47,16 +47,16 @@ class PublicationInfoCreator(
             CreateLiteralUseCase.CreateCommand(
                 contributorId = contributorId,
                 label = publishedMonth.toString(),
-                datatype = Literals.XSD.INT.prefixedUri
-            )
+                datatype = Literals.XSD.INT.prefixedUri,
+            ),
         )
         unsafeStatementUseCases.create(
             CreateStatementUseCase.CreateCommand(
                 contributorId = contributorId,
                 subjectId = subjectId,
                 predicateId = Predicates.monthPublished,
-                objectId = monthLiteralId
-            )
+                objectId = monthLiteralId,
+            ),
         )
     }
 
@@ -69,16 +69,16 @@ class PublicationInfoCreator(
             CreateLiteralUseCase.CreateCommand(
                 contributorId = contributorId,
                 label = publishedYear.toString(),
-                datatype = Literals.XSD.INT.prefixedUri
-            )
+                datatype = Literals.XSD.INT.prefixedUri,
+            ),
         )
         unsafeStatementUseCases.create(
             CreateStatementUseCase.CreateCommand(
                 contributorId = contributorId,
                 subjectId = subjectId,
                 predicateId = Predicates.yearPublished,
-                objectId = yearLiteralId
-            )
+                objectId = yearLiteralId,
+            ),
         )
     }
 
@@ -90,21 +90,21 @@ class PublicationInfoCreator(
         val venueId = resourceRepository.findAll(
             includeClasses = setOf(Classes.venue),
             label = SearchString.of(publishedIn, exactMatch = true),
-            pageable = PageRequests.SINGLE
+            pageable = PageRequests.SINGLE,
         ).content.singleOrNull()?.id ?: unsafeResourceUseCases.create(
             CreateResourceUseCase.CreateCommand(
                 contributorId = contributorId,
                 label = publishedIn,
-                classes = setOf(Classes.venue)
-            )
+                classes = setOf(Classes.venue),
+            ),
         )
         unsafeStatementUseCases.create(
             CreateStatementUseCase.CreateCommand(
                 contributorId = contributorId,
                 subjectId = subjectId,
                 predicateId = Predicates.hasVenue,
-                objectId = venueId
-            )
+                objectId = venueId,
+            ),
         )
     }
 
@@ -117,16 +117,16 @@ class PublicationInfoCreator(
             CreateLiteralUseCase.CreateCommand(
                 contributorId = contributorId,
                 label = url.toString(),
-                datatype = Literals.XSD.URI.prefixedUri
-            )
+                datatype = Literals.XSD.URI.prefixedUri,
+            ),
         )
         unsafeStatementUseCases.create(
             CreateStatementUseCase.CreateCommand(
                 contributorId = contributorId,
                 subjectId = subjectId,
                 predicateId = Predicates.hasURL,
-                objectId = urlLiteralId
-            )
+                objectId = urlLiteralId,
+            ),
         )
     }
 }

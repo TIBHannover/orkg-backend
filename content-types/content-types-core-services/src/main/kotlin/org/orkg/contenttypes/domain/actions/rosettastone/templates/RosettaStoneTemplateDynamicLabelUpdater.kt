@@ -16,7 +16,7 @@ class RosettaStoneTemplateDynamicLabelUpdater(
         statementService: StatementUseCases,
         unsafeStatementUseCases: UnsafeStatementUseCases,
     ) : this(
-        SingleStatementPropertyUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases)
+        SingleStatementPropertyUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases),
     )
 
     override fun invoke(command: UpdateRosettaStoneTemplateCommand, state: State): State {
@@ -26,7 +26,7 @@ class RosettaStoneTemplateDynamicLabelUpdater(
                 contributorId = command.contributorId,
                 subjectId = command.templateId,
                 predicateId = Predicates.templateLabelFormat,
-                label = command.dynamicLabel?.template
+                label = command.dynamicLabel?.template,
             )
         }
         return state

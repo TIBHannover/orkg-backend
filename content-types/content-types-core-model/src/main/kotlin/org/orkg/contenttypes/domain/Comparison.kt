@@ -81,7 +81,7 @@ data class Comparison(
                     ?.`object`?.label.toBoolean(),
                 visibility = resource.visibility,
                 published = published,
-                unlistedBy = resource.unlistedBy
+                unlistedBy = resource.unlistedBy,
             )
         }
     }

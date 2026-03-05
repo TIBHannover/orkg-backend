@@ -23,7 +23,7 @@ class Metrics {
         name = "resource-count",
         description = "Number of resources in the graph.",
         group = "things",
-        supplier = { statisticsRepository.countNodes("Resource") }
+        supplier = { statisticsRepository.countNodes("Resource") },
     )
 
     @Bean
@@ -35,7 +35,7 @@ class Metrics {
         name = "predicate-count",
         description = "Number of predicates in the graph.",
         group = "things",
-        supplier = { statisticsRepository.countNodes("Predicate") }
+        supplier = { statisticsRepository.countNodes("Predicate") },
     )
 
     @Bean
@@ -47,7 +47,7 @@ class Metrics {
         name = "literal-count",
         description = "Number of literals in the graph.",
         group = "things",
-        supplier = { statisticsRepository.countNodes("Literal") }
+        supplier = { statisticsRepository.countNodes("Literal") },
     )
 
     @Bean
@@ -59,7 +59,7 @@ class Metrics {
         name = "class-count",
         description = "Number of classes in the graph.",
         group = "things",
-        supplier = { statisticsRepository.countNodes("Class") }
+        supplier = { statisticsRepository.countNodes("Class") },
     )
 
     @Bean
@@ -71,7 +71,7 @@ class Metrics {
         name = "orphan-count",
         description = "Number of orphaned nodes in the graph.",
         group = "things",
-        supplier = { statisticsRepository.countOrphanNodes("Thing") }
+        supplier = { statisticsRepository.countOrphanNodes("Thing") },
     )
 
     @Bean
@@ -83,7 +83,7 @@ class Metrics {
         name = "orphan-resource-count",
         description = "Number of orphan resources in the graph.",
         group = "things",
-        supplier = { statisticsRepository.countOrphanNodes("Resource") }
+        supplier = { statisticsRepository.countOrphanNodes("Resource") },
     )
 
     @Bean
@@ -95,7 +95,7 @@ class Metrics {
         name = "orphan-predicate-count",
         description = "Number of orphan predicates in the graph.",
         group = "things",
-        supplier = { statisticsRepository.countOrphanNodes("Predicate") }
+        supplier = { statisticsRepository.countOrphanNodes("Predicate") },
     )
 
     @Bean
@@ -107,7 +107,7 @@ class Metrics {
         name = "orphan-literal-count",
         description = "Number of orphan literals in the graph.",
         group = "things",
-        supplier = { statisticsRepository.countOrphanNodes("Literal") }
+        supplier = { statisticsRepository.countOrphanNodes("Literal") },
     )
 
     @Bean
@@ -119,7 +119,7 @@ class Metrics {
         name = "orphan-class-count",
         description = "Number of orphan classes in the graph.",
         group = "things",
-        supplier = { statisticsRepository.countOrphanNodes("Class") }
+        supplier = { statisticsRepository.countOrphanNodes("Class") },
     )
 
     @Bean
@@ -131,7 +131,7 @@ class Metrics {
         name = "unused-resource-count",
         description = "Number of unused resources in the graph.",
         group = "things",
-        supplier = { statisticsRepository.countUnusedNodes("Resource") }
+        supplier = { statisticsRepository.countUnusedNodes("Resource") },
     )
 
     @Bean
@@ -143,7 +143,7 @@ class Metrics {
         name = "unused-predicate-count",
         description = "Number of unused predicates in the graph.",
         group = "things",
-        supplier = { statisticsRepository.countUnusedNodes("Predicate") }
+        supplier = { statisticsRepository.countUnusedNodes("Predicate") },
     )
 
     @Bean
@@ -155,7 +155,7 @@ class Metrics {
         name = "unused-literal-count",
         description = "Number of unused literals in the graph.",
         group = "things",
-        supplier = { statisticsRepository.countUnusedNodes("Literal") }
+        supplier = { statisticsRepository.countUnusedNodes("Literal") },
     )
 
     @Bean
@@ -167,7 +167,7 @@ class Metrics {
         name = "unused-class-count",
         description = "Number of unused classes in the graph.",
         group = "things",
-        supplier = { statisticsRepository.countUnusedNodes("Class") }
+        supplier = { statisticsRepository.countUnusedNodes("Class") },
     )
 
     //
@@ -183,7 +183,7 @@ class Metrics {
         name = "contribution-count",
         description = "Number of contributions in the graph.",
         group = "content-types",
-        supplier = { statisticsRepository.countNodes("Contribution") }
+        supplier = { statisticsRepository.countNodes("Contribution") },
     )
 
     @Bean
@@ -195,7 +195,7 @@ class Metrics {
         name = "published-comparison-version-count",
         description = "Number of individual published comparison versions in the graph.",
         group = "content-types",
-        supplier = { statisticsRepository.countNodes("ComparisonPublished") }
+        supplier = { statisticsRepository.countNodes("ComparisonPublished") },
     )
 
     @Bean
@@ -207,7 +207,7 @@ class Metrics {
         name = "published-literature-list-version-count",
         description = "Number of individual published literature list versions in the graph.",
         group = "content-types",
-        supplier = { statisticsRepository.countNodes("LiteratureListPublished") }
+        supplier = { statisticsRepository.countNodes("LiteratureListPublished") },
     )
 
     @Bean
@@ -219,7 +219,7 @@ class Metrics {
         name = "published-smart-review-version-count",
         description = "Number of individual published smart review versions in the graph.",
         group = "content-types",
-        supplier = { statisticsRepository.countNodes("SmartReviewPublished") }
+        supplier = { statisticsRepository.countNodes("SmartReviewPublished") },
     )
 
     @Bean
@@ -231,7 +231,7 @@ class Metrics {
         name = "research-field-count",
         description = "Number of research fields in the graph.",
         group = "content-types",
-        supplier = { statisticsRepository.countNodes("ResearchField") }
+        supplier = { statisticsRepository.countNodes("ResearchField") },
     )
 
     @Bean
@@ -243,7 +243,7 @@ class Metrics {
         name = "problem-count",
         description = "Number of problems in the graph.",
         group = "content-types",
-        supplier = { statisticsRepository.countNodes("Problem") }
+        supplier = { statisticsRepository.countNodes("Problem") },
     )
 
     @Bean
@@ -255,7 +255,7 @@ class Metrics {
         name = "benchmark-count",
         description = "Number of benchmarks in the graph.",
         group = "content-types",
-        supplier = { statisticsRepository.countNodes("C14022") }
+        supplier = { statisticsRepository.countNodes("C14022") },
     )
 
     //
@@ -271,7 +271,7 @@ class Metrics {
         name = "contributors-count",
         description = "Number of contributors.",
         group = "community",
-        supplier = { contributorRepository.count() }
+        supplier = { contributorRepository.count() },
     )
 
     @Bean
@@ -283,7 +283,7 @@ class Metrics {
         name = "organization-count",
         description = "Number of organizations.",
         group = "community",
-        supplier = { organizationRepository.count() }
+        supplier = { organizationRepository.count() },
     )
 
     @Bean
@@ -295,6 +295,6 @@ class Metrics {
         name = "observatory-count",
         description = "Number of observatories.",
         group = "community",
-        supplier = { observatoryRepository.count() }
+        supplier = { observatoryRepository.count() },
     )
 }

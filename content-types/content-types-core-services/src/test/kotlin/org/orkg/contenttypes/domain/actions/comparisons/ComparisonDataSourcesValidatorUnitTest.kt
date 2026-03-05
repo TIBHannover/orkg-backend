@@ -32,7 +32,7 @@ internal class ComparisonDataSourcesValidatorUnitTest : MockkBaseTest {
         )
         shouldThrow<DuplicateComparisonDataSources> { comparisonDataSourcesValidator(command, Unit) }.asClue {
             it.duplicates shouldBe mapOf(
-                command.first() to 2
+                command.first() to 2,
             )
         }
     }

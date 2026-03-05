@@ -8,7 +8,7 @@ value class LinkedInId private constructor(override val value: String) : Identif
     companion object : IdentifierValueFactory<LinkedInId>(
         fn = ::LinkedInId,
         validationRegex = VALID_LINKED_IN_ID_REGEX,
-        uriValidationRegex = VALID_LINKED_IN_ID_URI_REGEX
+        uriValidationRegex = VALID_LINKED_IN_ID_URI_REGEX,
     )
 
     override val uri: String get() = "https://www.linkedin.com/in/$value/"

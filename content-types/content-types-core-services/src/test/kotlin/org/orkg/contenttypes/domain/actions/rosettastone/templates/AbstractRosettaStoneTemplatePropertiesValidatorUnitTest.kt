@@ -37,7 +37,7 @@ internal class AbstractRosettaStoneTemplatePropertiesValidatorUnitTest : MockkBa
             createStringLiteralObjectPositionTemplatePropertyCommand(),
             createNumberLiteralObjectPositionTemplatePropertyCommand(),
             createOtherLiteralObjectPositionTemplatePropertyCommand(),
-            createResourceObjectPositionTemplatePropertyCommand()
+            createResourceObjectPositionTemplatePropertyCommand(),
         )
 
         every { abstractTemplatePropertyValidator.validate(any()) } just runs
@@ -60,7 +60,7 @@ internal class AbstractRosettaStoneTemplatePropertiesValidatorUnitTest : MockkBa
     fun `Given a list of template properties, when object position has a missing placeholder, it throws an exception`() {
         val properties = listOf(
             createSubjectPositionTemplatePropertyCommand(),
-            createUntypedObjectPositionTemplatePropertyCommand().copy(placeholder = null)
+            createUntypedObjectPositionTemplatePropertyCommand().copy(placeholder = null),
         )
 
         every { abstractTemplatePropertyValidator.validate(any()) } just runs
@@ -74,7 +74,7 @@ internal class AbstractRosettaStoneTemplatePropertiesValidatorUnitTest : MockkBa
     fun `Given a list of template properties, when object position has an invalid path, it throws an exception`() {
         val properties = listOf(
             createSubjectPositionTemplatePropertyCommand(),
-            createSubjectPositionTemplatePropertyCommand()
+            createSubjectPositionTemplatePropertyCommand(),
         )
 
         assertThrows<InvalidObjectPositionPath> { abstractRosettaStoneTemplatePropertiesValidator.validate(properties) }
@@ -93,7 +93,7 @@ internal class AbstractRosettaStoneTemplatePropertiesValidatorUnitTest : MockkBa
     fun `Given a list of template properties, when subject position has a minimum cardinality of less than one, it throws an exception`() {
         val properties = listOf(
             createSubjectPositionTemplatePropertyCommand().copy(minCount = 0),
-            createUntypedObjectPositionTemplatePropertyCommand()
+            createUntypedObjectPositionTemplatePropertyCommand(),
         )
 
         assertThrows<InvalidSubjectPositionCardinality> { abstractRosettaStoneTemplatePropertiesValidator.validate(properties) }
@@ -103,7 +103,7 @@ internal class AbstractRosettaStoneTemplatePropertiesValidatorUnitTest : MockkBa
     fun `Given a list of template properties, when subject position has a literal type, it throws an exception`() {
         val properties = listOf(
             createStringLiteralObjectPositionTemplatePropertyCommand().copy(path = Predicates.hasSubjectPosition),
-            createUntypedObjectPositionTemplatePropertyCommand()
+            createUntypedObjectPositionTemplatePropertyCommand(),
         )
 
         assertThrows<InvalidSubjectPositionType> { abstractRosettaStoneTemplatePropertiesValidator.validate(properties) }
@@ -113,7 +113,7 @@ internal class AbstractRosettaStoneTemplatePropertiesValidatorUnitTest : MockkBa
     fun `Given a list of template properties, when subject position has a missing placeholder, it throws an exception`() {
         val properties = listOf(
             createSubjectPositionTemplatePropertyCommand().copy(placeholder = null),
-            createUntypedObjectPositionTemplatePropertyCommand()
+            createUntypedObjectPositionTemplatePropertyCommand(),
         )
 
         assertThrows<MissingPropertyPlaceholder> { abstractRosettaStoneTemplatePropertiesValidator.validate(properties) }

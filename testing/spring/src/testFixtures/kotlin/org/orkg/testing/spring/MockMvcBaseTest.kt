@@ -115,7 +115,7 @@ abstract class MockMvcBaseTest(val prefix: String) : MockkBaseTest {
                 documentationConfiguration(restDocumentation)
                     .operationPreprocessors()
                     .and()
-                    .uris().withScheme("https").withHost("incubating.orkg.org").withPort(443)
+                    .uris().withScheme("https").withHost("incubating.orkg.org").withPort(443),
             )
             .build()
     }

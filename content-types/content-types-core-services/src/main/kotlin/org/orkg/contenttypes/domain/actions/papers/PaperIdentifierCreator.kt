@@ -14,7 +14,7 @@ class PaperIdentifierCreator(
         unsafeStatementUseCases: UnsafeStatementUseCases,
         unsafeLiteralUseCases: UnsafeLiteralUseCases,
     ) : this(
-        IdentifierCreator(unsafeStatementUseCases, unsafeLiteralUseCases)
+        IdentifierCreator(unsafeStatementUseCases, unsafeLiteralUseCases),
     )
 
     override fun invoke(command: CreatePaperCommand, state: State): State {
@@ -22,7 +22,7 @@ class PaperIdentifierCreator(
             contributorId = command.contributorId,
             identifiers = command.identifiers,
             identifierDefinitions = Identifiers.paper,
-            subjectId = state.paperId!!
+            subjectId = state.paperId!!,
         )
         return state
     }

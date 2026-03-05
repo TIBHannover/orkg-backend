@@ -37,7 +37,7 @@ internal class RosettaStoneTemplateExistenceValidatorUnitTest : MockkBaseTest {
         val root = createResource(
             id = rosettaStoneTemplate.id,
             label = rosettaStoneTemplate.label,
-            classes = setOf(Classes.rosettaNodeShape)
+            classes = setOf(Classes.rosettaNodeShape),
         )
         val statements = listOf(createStatement()).groupBy { it.subject.id }
 

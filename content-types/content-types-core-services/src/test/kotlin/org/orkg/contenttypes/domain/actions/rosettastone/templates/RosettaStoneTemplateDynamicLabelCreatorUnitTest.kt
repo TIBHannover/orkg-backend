@@ -28,7 +28,7 @@ internal class RosettaStoneTemplateDynamicLabelCreatorUnitTest : MockkBaseTest {
         val command = createRosettaStoneTemplateCommand()
         val rosettaStoneTemplateId = ThingId("R123")
         val state = CreateRosettaStoneTemplateState(
-            rosettaStoneTemplateId = rosettaStoneTemplateId
+            rosettaStoneTemplateId = rosettaStoneTemplateId,
         )
         val dynamicLabelLiteralId = ThingId("R124")
 
@@ -36,8 +36,8 @@ internal class RosettaStoneTemplateDynamicLabelCreatorUnitTest : MockkBaseTest {
             unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = command.contributorId,
-                    label = command.dynamicLabel.template
-                )
+                    label = command.dynamicLabel.template,
+                ),
             )
         } returns dynamicLabelLiteralId
         every {
@@ -46,8 +46,8 @@ internal class RosettaStoneTemplateDynamicLabelCreatorUnitTest : MockkBaseTest {
                     contributorId = command.contributorId,
                     subjectId = state.rosettaStoneTemplateId!!,
                     predicateId = Predicates.templateLabelFormat,
-                    objectId = dynamicLabelLiteralId
-                )
+                    objectId = dynamicLabelLiteralId,
+                ),
             )
         } returns StatementId("S1")
 
@@ -61,8 +61,8 @@ internal class RosettaStoneTemplateDynamicLabelCreatorUnitTest : MockkBaseTest {
             unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = command.contributorId,
-                    label = command.dynamicLabel.template
-                )
+                    label = command.dynamicLabel.template,
+                ),
             )
         }
         verify(exactly = 1) {
@@ -71,8 +71,8 @@ internal class RosettaStoneTemplateDynamicLabelCreatorUnitTest : MockkBaseTest {
                     contributorId = command.contributorId,
                     subjectId = state.rosettaStoneTemplateId!!,
                     predicateId = Predicates.templateLabelFormat,
-                    objectId = dynamicLabelLiteralId
-                )
+                    objectId = dynamicLabelLiteralId,
+                ),
             )
         }
     }

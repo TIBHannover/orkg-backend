@@ -15,7 +15,7 @@ class RosettaStoneTemplateModifiableValidator(
         }
         val statements = rosettaStoneStatementRepository.findAll(
             templateId = command.templateId,
-            pageable = PageRequests.SINGLE
+            pageable = PageRequests.SINGLE,
         )
         return state.copy(isUsedInRosettaStoneStatement = statements.totalElements > 0)
     }

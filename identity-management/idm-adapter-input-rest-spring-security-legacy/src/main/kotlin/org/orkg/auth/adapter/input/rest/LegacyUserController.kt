@@ -68,7 +68,7 @@ class LegacyUserController(
                     created = contributor.joinedAt,
                     organizationId = contributor.organizationId.takeUnless { it == OrganizationId.UNKNOWN },
                     observatoryId = contributor.observatoryId.takeUnless { it == ObservatoryId.UNKNOWN },
-                    isCurationAllowed = contributor.isCurator || contributor.isAdmin
+                    isCurationAllowed = contributor.isCurator || contributor.isAdmin,
                 )
         }
     }

@@ -42,8 +42,8 @@ internal class TableUpdateValidationCacheInitializerUnitTest {
             validationCache = mapOf(
                 "#temp1" from command,
                 "#temp2" from command,
-                "#temp3" from command
-            )
+                "#temp3" from command,
+            ),
         )
         val expected = state.validationCache + mapOf(
             "R1" to Either.right(r1),

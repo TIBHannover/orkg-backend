@@ -14,7 +14,7 @@ class SmartReviewChangelogCreator(
         unsafeLiteralUseCases: UnsafeLiteralUseCases,
         unsafeStatementUseCases: UnsafeStatementUseCases,
     ) : this(
-        SingleStatementPropertyCreator(unsafeLiteralUseCases, unsafeStatementUseCases)
+        SingleStatementPropertyCreator(unsafeLiteralUseCases, unsafeStatementUseCases),
     )
 
     override fun invoke(command: PublishSmartReviewCommand, state: State): State {
@@ -22,7 +22,7 @@ class SmartReviewChangelogCreator(
             contributorId = command.contributorId,
             subjectId = state.smartReviewVersionId!!,
             predicateId = Predicates.description,
-            label = command.changelog
+            label = command.changelog,
         )
         return state
     }

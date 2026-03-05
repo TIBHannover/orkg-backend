@@ -40,7 +40,7 @@ internal class ComparisonRelatedFigureDeleterUnitTest : MockkBaseTest {
         val hasRelatedFigure = createStatement(
             subject = comparison,
             predicate = createPredicate(Predicates.hasRelatedFigure),
-            `object` = comparisonRelatedFigure
+            `object` = comparisonRelatedFigure,
         )
 
         every {
@@ -49,7 +49,7 @@ internal class ComparisonRelatedFigureDeleterUnitTest : MockkBaseTest {
                 predicateId = Predicates.hasRelatedFigure,
                 objectId = comparisonRelatedFigureId,
                 objectClasses = setOf(Classes.comparisonRelatedFigure),
-                pageable = PageRequests.SINGLE
+                pageable = PageRequests.SINGLE,
             )
         } returns pageOf(hasRelatedFigure)
         every {
@@ -57,23 +57,23 @@ internal class ComparisonRelatedFigureDeleterUnitTest : MockkBaseTest {
                 subjectClasses = setOf(Classes.comparison),
                 predicateId = Predicates.hasPreviousVersion,
                 objectId = comparisonId,
-                pageable = PageRequests.SINGLE
+                pageable = PageRequests.SINGLE,
             )
         } returns pageOf()
         every {
             statementService.findAll(
                 objectId = comparisonRelatedFigureId,
-                pageable = PageRequests.ALL
+                pageable = PageRequests.ALL,
             )
         } returns pageOf(hasRelatedFigure)
         every {
             statementService.findAll(
                 subjectId = comparisonRelatedFigureId,
-                pageable = PageRequests.ALL
+                pageable = PageRequests.ALL,
             )
         } returns pageOf(
             createStatement(StatementId("Statement1")),
-            createStatement(StatementId("Statement2"))
+            createStatement(StatementId("Statement2")),
         )
         every { statementService.deleteAllById(any<Set<StatementId>>()) } just runs
         every { resourceService.delete(comparisonRelatedFigureId, contributorId) } just runs
@@ -86,7 +86,7 @@ internal class ComparisonRelatedFigureDeleterUnitTest : MockkBaseTest {
                 predicateId = Predicates.hasRelatedFigure,
                 objectId = comparisonRelatedFigureId,
                 objectClasses = setOf(Classes.comparisonRelatedFigure),
-                pageable = PageRequests.SINGLE
+                pageable = PageRequests.SINGLE,
             )
         }
         verify(exactly = 1) {
@@ -94,24 +94,24 @@ internal class ComparisonRelatedFigureDeleterUnitTest : MockkBaseTest {
                 subjectClasses = setOf(Classes.comparison),
                 predicateId = Predicates.hasPreviousVersion,
                 objectId = comparisonId,
-                pageable = PageRequests.SINGLE
+                pageable = PageRequests.SINGLE,
             )
         }
         verify(exactly = 1) {
             statementService.findAll(
                 objectId = comparisonRelatedFigureId,
-                pageable = PageRequests.ALL
+                pageable = PageRequests.ALL,
             )
         }
         verify(exactly = 1) {
             statementService.findAll(
                 subjectId = comparisonRelatedFigureId,
-                pageable = PageRequests.ALL
+                pageable = PageRequests.ALL,
             )
         }
         verify(exactly = 1) {
             statementService.deleteAllById(
-                setOf(hasRelatedFigure.id, StatementId("Statement1"), StatementId("Statement2"))
+                setOf(hasRelatedFigure.id, StatementId("Statement1"), StatementId("Statement2")),
             )
         }
         verify(exactly = 1) { resourceService.delete(comparisonRelatedFigureId, contributorId) }
@@ -129,7 +129,7 @@ internal class ComparisonRelatedFigureDeleterUnitTest : MockkBaseTest {
                 predicateId = Predicates.hasRelatedFigure,
                 objectId = comparisonRelatedFigureId,
                 objectClasses = setOf(Classes.comparisonRelatedFigure),
-                pageable = PageRequests.SINGLE
+                pageable = PageRequests.SINGLE,
             )
         } returns pageOf()
 
@@ -143,7 +143,7 @@ internal class ComparisonRelatedFigureDeleterUnitTest : MockkBaseTest {
                 predicateId = Predicates.hasRelatedFigure,
                 objectId = comparisonRelatedFigureId,
                 objectClasses = setOf(Classes.comparisonRelatedFigure),
-                pageable = PageRequests.SINGLE
+                pageable = PageRequests.SINGLE,
             )
         }
     }
@@ -158,7 +158,7 @@ internal class ComparisonRelatedFigureDeleterUnitTest : MockkBaseTest {
         val hasRelatedFigure = createStatement(
             subject = comparison,
             predicate = createPredicate(Predicates.hasRelatedFigure),
-            `object` = comparisonRelatedFigure
+            `object` = comparisonRelatedFigure,
         )
 
         every {
@@ -167,7 +167,7 @@ internal class ComparisonRelatedFigureDeleterUnitTest : MockkBaseTest {
                 predicateId = Predicates.hasRelatedFigure,
                 objectId = comparisonRelatedFigureId,
                 objectClasses = setOf(Classes.comparisonRelatedFigure),
-                pageable = PageRequests.SINGLE
+                pageable = PageRequests.SINGLE,
             )
         } returns pageOf(hasRelatedFigure)
         every {
@@ -175,10 +175,10 @@ internal class ComparisonRelatedFigureDeleterUnitTest : MockkBaseTest {
                 subjectClasses = setOf(Classes.comparison),
                 predicateId = Predicates.hasPreviousVersion,
                 objectId = comparisonId,
-                pageable = PageRequests.SINGLE
+                pageable = PageRequests.SINGLE,
             )
         } returns pageOf(
-            createStatement(subject = createResource(classes = setOf(Classes.comparison)), `object` = comparison)
+            createStatement(subject = createResource(classes = setOf(Classes.comparison)), `object` = comparison),
         )
 
         assertThrows<ComparisonRelatedFigureNotModifiable> {
@@ -191,7 +191,7 @@ internal class ComparisonRelatedFigureDeleterUnitTest : MockkBaseTest {
                 predicateId = Predicates.hasRelatedFigure,
                 objectId = comparisonRelatedFigureId,
                 objectClasses = setOf(Classes.comparisonRelatedFigure),
-                pageable = PageRequests.SINGLE
+                pageable = PageRequests.SINGLE,
             )
         }
         verify(exactly = 1) {
@@ -199,7 +199,7 @@ internal class ComparisonRelatedFigureDeleterUnitTest : MockkBaseTest {
                 subjectClasses = setOf(Classes.comparison),
                 predicateId = Predicates.hasPreviousVersion,
                 objectId = comparisonId,
-                pageable = PageRequests.SINGLE
+                pageable = PageRequests.SINGLE,
             )
         }
     }
@@ -213,12 +213,12 @@ internal class ComparisonRelatedFigureDeleterUnitTest : MockkBaseTest {
         val comparisonRelatedFigure = createResource(
             comparisonRelatedFigureId,
             classes = setOf(Classes.comparisonRelatedFigure),
-            modifiable = false
+            modifiable = false,
         )
         val hasRelatedFigure = createStatement(
             subject = comparison,
             predicate = createPredicate(Predicates.hasRelatedFigure),
-            `object` = comparisonRelatedFigure
+            `object` = comparisonRelatedFigure,
         )
 
         every {
@@ -227,7 +227,7 @@ internal class ComparisonRelatedFigureDeleterUnitTest : MockkBaseTest {
                 predicateId = Predicates.hasRelatedFigure,
                 objectId = comparisonRelatedFigureId,
                 objectClasses = setOf(Classes.comparisonRelatedFigure),
-                pageable = PageRequests.SINGLE
+                pageable = PageRequests.SINGLE,
             )
         } returns pageOf(hasRelatedFigure)
         every {
@@ -235,7 +235,7 @@ internal class ComparisonRelatedFigureDeleterUnitTest : MockkBaseTest {
                 subjectClasses = setOf(Classes.comparison),
                 predicateId = Predicates.hasPreviousVersion,
                 objectId = comparisonId,
-                pageable = PageRequests.SINGLE
+                pageable = PageRequests.SINGLE,
             )
         } returns pageOf()
 
@@ -249,7 +249,7 @@ internal class ComparisonRelatedFigureDeleterUnitTest : MockkBaseTest {
                 predicateId = Predicates.hasRelatedFigure,
                 objectId = comparisonRelatedFigureId,
                 objectClasses = setOf(Classes.comparisonRelatedFigure),
-                pageable = PageRequests.SINGLE
+                pageable = PageRequests.SINGLE,
             )
         }
         verify(exactly = 1) {
@@ -257,7 +257,7 @@ internal class ComparisonRelatedFigureDeleterUnitTest : MockkBaseTest {
                 subjectClasses = setOf(Classes.comparison),
                 predicateId = Predicates.hasPreviousVersion,
                 objectId = comparisonId,
-                pageable = PageRequests.SINGLE
+                pageable = PageRequests.SINGLE,
             )
         }
     }
@@ -272,7 +272,7 @@ internal class ComparisonRelatedFigureDeleterUnitTest : MockkBaseTest {
         val hasRelatedFigure = createStatement(
             subject = comparison,
             predicate = createPredicate(Predicates.hasRelatedFigure),
-            `object` = comparisonRelatedFigure
+            `object` = comparisonRelatedFigure,
         )
 
         every {
@@ -281,7 +281,7 @@ internal class ComparisonRelatedFigureDeleterUnitTest : MockkBaseTest {
                 predicateId = Predicates.hasRelatedFigure,
                 objectId = comparisonRelatedFigureId,
                 objectClasses = setOf(Classes.comparisonRelatedFigure),
-                pageable = PageRequests.SINGLE
+                pageable = PageRequests.SINGLE,
             )
         } returns pageOf(hasRelatedFigure)
         every {
@@ -289,13 +289,13 @@ internal class ComparisonRelatedFigureDeleterUnitTest : MockkBaseTest {
                 subjectClasses = setOf(Classes.comparison),
                 predicateId = Predicates.hasPreviousVersion,
                 objectId = comparisonId,
-                pageable = PageRequests.SINGLE
+                pageable = PageRequests.SINGLE,
             )
         } returns pageOf()
         every {
             statementService.findAll(
                 objectId = comparisonRelatedFigureId,
-                pageable = PageRequests.ALL
+                pageable = PageRequests.ALL,
             )
         } returns pageOf(hasRelatedFigure, createStatement(`object` = comparisonRelatedFigure))
         every { statementService.deleteAllById(any<Set<StatementId>>()) } just runs
@@ -308,7 +308,7 @@ internal class ComparisonRelatedFigureDeleterUnitTest : MockkBaseTest {
                 predicateId = Predicates.hasRelatedFigure,
                 objectId = comparisonRelatedFigureId,
                 objectClasses = setOf(Classes.comparisonRelatedFigure),
-                pageable = PageRequests.SINGLE
+                pageable = PageRequests.SINGLE,
             )
         }
         verify(exactly = 1) {
@@ -316,13 +316,13 @@ internal class ComparisonRelatedFigureDeleterUnitTest : MockkBaseTest {
                 subjectClasses = setOf(Classes.comparison),
                 predicateId = Predicates.hasPreviousVersion,
                 objectId = comparisonId,
-                pageable = PageRequests.SINGLE
+                pageable = PageRequests.SINGLE,
             )
         }
         verify(exactly = 1) {
             statementService.findAll(
                 objectId = comparisonRelatedFigureId,
-                pageable = PageRequests.ALL
+                pageable = PageRequests.ALL,
             )
         }
         verify(exactly = 1) { statementService.deleteAllById(setOf(hasRelatedFigure.id)) }

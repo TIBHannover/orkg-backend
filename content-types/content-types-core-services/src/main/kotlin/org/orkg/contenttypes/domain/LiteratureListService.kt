@@ -136,7 +136,7 @@ class LiteratureListService(
             researchField = researchField,
             includeSubfields = includeSubfields,
             published = published,
-            sustainableDevelopmentGoal = sustainableDevelopmentGoal
+            sustainableDevelopmentGoal = sustainableDevelopmentGoal,
         ).pmap { it.toLiteratureList() }
 
     override fun findPublishedContentById(
@@ -171,7 +171,7 @@ class LiteratureListService(
             LiteratureListResearchFieldCreator(unsafeLiteralUseCases, unsafeStatementUseCases),
             LiteratureListAuthorListCreator(unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases, listService),
             LiteratureListSDGCreator(unsafeLiteralUseCases, unsafeStatementUseCases),
-            LiteratureListSectionsCreator(unsafeLiteralUseCases, unsafeResourceUseCases, unsafeStatementUseCases)
+            LiteratureListSectionsCreator(unsafeLiteralUseCases, unsafeResourceUseCases, unsafeStatementUseCases),
         )
         return steps.execute(command, CreateLiteratureListState()).literatureListId!!
     }
@@ -181,7 +181,7 @@ class LiteratureListService(
             LiteratureListSectionExistenceCreateValidator(resourceRepository),
             LiteratureListSectionIndexValidator(statementRepository),
             LiteratureListSectionCreateValidator(resourceRepository),
-            LiteratureListSectionCreator(unsafeLiteralUseCases, unsafeResourceUseCases, statementService, unsafeStatementUseCases)
+            LiteratureListSectionCreator(unsafeLiteralUseCases, unsafeResourceUseCases, statementService, unsafeStatementUseCases),
         )
         return steps.execute(command, CreateLiteratureListSectionState()).literatureListSectionId!!
     }
@@ -190,7 +190,7 @@ class LiteratureListService(
         val steps = listOf(
             LiteratureListSectionExistenceUpdateValidator(this, resourceRepository),
             LiteratureListSectionUpdateValidator(resourceRepository),
-            LiteratureListSectionUpdater(unsafeLiteralUseCases, resourceService, unsafeResourceUseCases, statementService, unsafeStatementUseCases)
+            LiteratureListSectionUpdater(unsafeLiteralUseCases, resourceService, unsafeResourceUseCases, statementService, unsafeStatementUseCases),
         )
         steps.execute(command, UpdateLiteratureListSectionState())
     }
@@ -198,7 +198,7 @@ class LiteratureListService(
     override fun delete(command: DeleteLiteratureListSectionCommand) {
         val steps = listOf(
             LiteratureListSectionExistenceDeleteValidator(this, resourceRepository),
-            LiteratureListSectionDeleter(statementService, resourceService)
+            LiteratureListSectionDeleter(statementService, resourceService),
         )
         steps.execute(command, DeleteLiteratureListSectionState())
     }
@@ -219,7 +219,7 @@ class LiteratureListService(
             LiteratureListResearchFieldUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases),
             LiteratureListAuthorListUpdater(unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases, listService, listRepository),
             LiteratureListSDGUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases),
-            LiteratureListSectionsUpdater(unsafeLiteralUseCases, resourceService, unsafeResourceUseCases, statementService, unsafeStatementUseCases)
+            LiteratureListSectionsUpdater(unsafeLiteralUseCases, resourceService, unsafeResourceUseCases, statementService, unsafeStatementUseCases),
         )
         steps.execute(command, UpdateLiteratureListState())
     }
@@ -231,7 +231,7 @@ class LiteratureListService(
             LiteratureListVersionCreator(resourceRepository, statementRepository, unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases, listService),
             LiteratureListChangelogCreator(unsafeLiteralUseCases, unsafeStatementUseCases),
             LiteratureListVersionArchiver(statementService, literatureListSnapshotRepository, snapshotIdGenerator, clock),
-            LiteratureListVersionHistoryUpdater(unsafeStatementUseCases, unsafeResourceUseCases)
+            LiteratureListVersionHistoryUpdater(unsafeStatementUseCases, unsafeResourceUseCases),
         )
         return steps.execute(command, PublishLiteratureListState()).literatureListVersionId!!
     }
@@ -249,9 +249,9 @@ class LiteratureListService(
                         minLevel = null,
                         maxLevel = 2,
                         blacklist = emptyList(),
-                        whitelist = listOf(Classes.literatureList, Classes.literatureListPublished, Classes.literal)
+                        whitelist = listOf(Classes.literatureList, Classes.literatureListPublished, Classes.literal),
                     ),
-                    sort = Sort.unsorted()
+                    sort = Sort.unsorted(),
                 )
                 published.subgraph.filter { it.predicate.id != Predicates.hasPublishedVersion } + versions
             }
@@ -263,13 +263,13 @@ class LiteratureListService(
                         minLevel = null,
                         maxLevel = 3,
                         blacklist = listOf(Classes.researchField, Classes.contribution, Classes.venue),
-                        whitelist = emptyList()
+                        whitelist = emptyList(),
                     ),
-                    sort = Sort.unsorted()
+                    sort = Sort.unsorted(),
                 ) + statementRepository.findAll(
                     subjectId = resource.id,
                     objectClasses = setOf(Classes.researchField),
-                    pageable = PageRequests.ALL
+                    pageable = PageRequests.ALL,
                 )
             }
 

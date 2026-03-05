@@ -41,7 +41,7 @@ internal class AbstractSmartReviewSectionUpdaterUnitTest : MockkBaseTest {
     private val abstractSmartReviewSectionUpdater = AbstractSmartReviewSectionUpdater(
         unsafeResourceUseCases,
         singleStatementPropertyUpdater,
-        statementCollectionPropertyUpdater
+        statementCollectionPropertyUpdater,
     )
 
     @Test
@@ -70,8 +70,8 @@ internal class AbstractSmartReviewSectionUpdaterUnitTest : MockkBaseTest {
                 UpdateResourceUseCase.UpdateCommand(
                     id = oldSection.id,
                     contributorId = contributorId,
-                    label = newSection.heading
-                )
+                    label = newSection.heading,
+                ),
             )
         }
     }
@@ -91,7 +91,7 @@ internal class AbstractSmartReviewSectionUpdaterUnitTest : MockkBaseTest {
                 contributorId = contributorId,
                 subjectId = oldSection.id,
                 predicateId = Predicates.hasLink,
-                objectId = newSection.comparison
+                objectId = newSection.comparison,
             )
         } just runs
 
@@ -103,7 +103,7 @@ internal class AbstractSmartReviewSectionUpdaterUnitTest : MockkBaseTest {
                 contributorId = contributorId,
                 subjectId = oldSection.id,
                 predicateId = Predicates.hasLink,
-                objectId = newSection.comparison
+                objectId = newSection.comparison,
             )
         }
     }
@@ -134,8 +134,8 @@ internal class AbstractSmartReviewSectionUpdaterUnitTest : MockkBaseTest {
                 UpdateResourceUseCase.UpdateCommand(
                     id = oldSection.id,
                     contributorId = contributorId,
-                    label = newSection.heading
-                )
+                    label = newSection.heading,
+                ),
             )
         }
     }
@@ -155,7 +155,7 @@ internal class AbstractSmartReviewSectionUpdaterUnitTest : MockkBaseTest {
                 contributorId = contributorId,
                 subjectId = oldSection.id,
                 predicateId = Predicates.hasLink,
-                objectId = newSection.visualization
+                objectId = newSection.visualization,
             )
         } just runs
 
@@ -167,7 +167,7 @@ internal class AbstractSmartReviewSectionUpdaterUnitTest : MockkBaseTest {
                 contributorId = contributorId,
                 subjectId = oldSection.id,
                 predicateId = Predicates.hasLink,
-                objectId = newSection.visualization
+                objectId = newSection.visualization,
             )
         }
     }
@@ -198,8 +198,8 @@ internal class AbstractSmartReviewSectionUpdaterUnitTest : MockkBaseTest {
                 UpdateResourceUseCase.UpdateCommand(
                     id = oldSection.id,
                     contributorId = contributorId,
-                    label = newSection.heading
-                )
+                    label = newSection.heading,
+                ),
             )
         }
     }
@@ -219,7 +219,7 @@ internal class AbstractSmartReviewSectionUpdaterUnitTest : MockkBaseTest {
                 contributorId = contributorId,
                 subjectId = oldSection.id,
                 predicateId = Predicates.hasLink,
-                objectId = newSection.resource
+                objectId = newSection.resource,
             )
         } just runs
 
@@ -231,7 +231,7 @@ internal class AbstractSmartReviewSectionUpdaterUnitTest : MockkBaseTest {
                 contributorId = contributorId,
                 subjectId = oldSection.id,
                 predicateId = Predicates.hasLink,
-                objectId = newSection.resource
+                objectId = newSection.resource,
             )
         }
     }
@@ -262,8 +262,8 @@ internal class AbstractSmartReviewSectionUpdaterUnitTest : MockkBaseTest {
                 UpdateResourceUseCase.UpdateCommand(
                     id = oldSection.id,
                     contributorId = contributorId,
-                    label = newSection.heading
-                )
+                    label = newSection.heading,
+                ),
             )
         }
     }
@@ -283,7 +283,7 @@ internal class AbstractSmartReviewSectionUpdaterUnitTest : MockkBaseTest {
                 contributorId = contributorId,
                 subjectId = oldSection.id,
                 predicateId = Predicates.hasLink,
-                objectId = newSection.predicate
+                objectId = newSection.predicate,
             )
         } just runs
 
@@ -295,7 +295,7 @@ internal class AbstractSmartReviewSectionUpdaterUnitTest : MockkBaseTest {
                 contributorId = contributorId,
                 subjectId = oldSection.id,
                 predicateId = Predicates.hasLink,
-                objectId = newSection.predicate
+                objectId = newSection.predicate,
             )
         }
     }
@@ -326,8 +326,8 @@ internal class AbstractSmartReviewSectionUpdaterUnitTest : MockkBaseTest {
                 UpdateResourceUseCase.UpdateCommand(
                     id = oldSection.id,
                     contributorId = contributorId,
-                    label = newSection.heading
-                )
+                    label = newSection.heading,
+                ),
             )
         }
     }
@@ -337,7 +337,7 @@ internal class AbstractSmartReviewSectionUpdaterUnitTest : MockkBaseTest {
         val contributorId = ContributorId(UUID.randomUUID())
         val oldSection = createSmartReviewOntologySection()
         val newSection = oldSection.toSmartReviewOntologySectionCommand().copy(
-            entities = listOf(ThingId("different"))
+            entities = listOf(ThingId("different")),
         )
         val statements = oldSection.toGroupedStatements()
 
@@ -347,7 +347,7 @@ internal class AbstractSmartReviewSectionUpdaterUnitTest : MockkBaseTest {
                 contributorId = contributorId,
                 subjectId = oldSection.id,
                 predicateId = Predicates.hasEntity,
-                objects = newSection.entities
+                objects = newSection.entities,
             )
         } just runs
 
@@ -359,7 +359,7 @@ internal class AbstractSmartReviewSectionUpdaterUnitTest : MockkBaseTest {
                 contributorId = contributorId,
                 subjectId = oldSection.id,
                 predicateId = Predicates.hasEntity,
-                objects = newSection.entities
+                objects = newSection.entities,
             )
         }
     }
@@ -369,7 +369,7 @@ internal class AbstractSmartReviewSectionUpdaterUnitTest : MockkBaseTest {
         val contributorId = ContributorId(UUID.randomUUID())
         val oldSection = createSmartReviewOntologySection()
         val newSection = oldSection.toSmartReviewOntologySectionCommand().copy(
-            predicates = listOf(ThingId("different"))
+            predicates = listOf(ThingId("different")),
         )
         val statements = oldSection.toGroupedStatements()
 
@@ -379,7 +379,7 @@ internal class AbstractSmartReviewSectionUpdaterUnitTest : MockkBaseTest {
                 contributorId = contributorId,
                 subjectId = oldSection.id,
                 predicateId = Predicates.showProperty,
-                objects = newSection.predicates
+                objects = newSection.predicates,
             )
         } just runs
 
@@ -391,7 +391,7 @@ internal class AbstractSmartReviewSectionUpdaterUnitTest : MockkBaseTest {
                 contributorId = contributorId,
                 subjectId = oldSection.id,
                 predicateId = Predicates.showProperty,
-                objects = newSection.predicates
+                objects = newSection.predicates,
             )
         }
     }
@@ -423,8 +423,8 @@ internal class AbstractSmartReviewSectionUpdaterUnitTest : MockkBaseTest {
                     id = oldSection.id,
                     contributorId = contributorId,
                     label = newSection.heading,
-                    classes = oldSection.classes + Classes.section
-                )
+                    classes = oldSection.classes + Classes.section,
+                ),
             )
         }
     }
@@ -446,8 +446,8 @@ internal class AbstractSmartReviewSectionUpdaterUnitTest : MockkBaseTest {
                     id = oldSection.id,
                     contributorId = contributorId,
                     label = oldSection.heading,
-                    classes = setOfNotNull(newSection.`class`, Classes.section)
-                )
+                    classes = setOfNotNull(newSection.`class`, Classes.section),
+                ),
             )
         }
     }
@@ -465,7 +465,7 @@ internal class AbstractSmartReviewSectionUpdaterUnitTest : MockkBaseTest {
                 contributorId = contributorId,
                 subjectId = oldSection.id,
                 predicateId = Predicates.hasContent,
-                label = newSection.text
+                label = newSection.text,
             )
         } just runs
 
@@ -477,7 +477,7 @@ internal class AbstractSmartReviewSectionUpdaterUnitTest : MockkBaseTest {
                 contributorId = contributorId,
                 subjectId = oldSection.id,
                 predicateId = Predicates.hasContent,
-                label = newSection.text
+                label = newSection.text,
             )
         }
     }

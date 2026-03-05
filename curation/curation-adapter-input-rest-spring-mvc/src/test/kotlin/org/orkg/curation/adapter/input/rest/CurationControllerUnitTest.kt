@@ -45,7 +45,7 @@ internal class CurationControllerUnitTest : MockMvcBaseTest("curation") {
                 description(
                     """
                     A `GET` request returns a <<sorting-and-pagination,paged>> list of <<predicates,predicates>> which do not have a description.
-                    """
+                    """,
                 )
                 pagedQueryParameters()
                 pagedResponseFields<PredicateRepresentation>(predicateResponseFields())
@@ -68,7 +68,7 @@ internal class CurationControllerUnitTest : MockMvcBaseTest("curation") {
                 description(
                     """
                     A `GET` request returns a <<sorting-and-pagination,paged>> list of <<classes,classes>> which do not have a description.
-                    """
+                    """,
                 )
                 pagedQueryParameters()
                 pagedResponseFields<ClassRepresentation>(classResponseFields())

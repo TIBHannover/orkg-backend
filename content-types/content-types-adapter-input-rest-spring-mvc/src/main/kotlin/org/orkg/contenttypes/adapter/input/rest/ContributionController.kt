@@ -84,7 +84,7 @@ class ContributionController(
                 literals = literals?.mapValues { it.value.toCreateCommand() }.orEmpty(),
                 predicates = predicates?.mapValues { it.value.toCreateCommand() }.orEmpty(),
                 lists = lists?.mapValues { it.value.toCreateCommand() }.orEmpty(),
-                contribution = contribution.toCreateCommand()
+                contribution = contribution.toCreateCommand(),
             )
     }
 }

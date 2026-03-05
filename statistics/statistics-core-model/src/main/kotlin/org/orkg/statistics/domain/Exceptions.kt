@@ -7,7 +7,7 @@ class GroupNotFound(id: String) :
     SimpleMessageException(
         HttpStatus.NOT_FOUND,
         """Group "$id" not found.""",
-        properties = mapOf("group_name" to id)
+        properties = mapOf("group_name" to id),
     )
 
 class MetricNotFound(
@@ -19,14 +19,14 @@ class MetricNotFound(
         properties = mapOf(
             "group_name" to group,
             "metric_name" to name,
-        )
+        ),
     )
 
 class TooManyParameterValues(name: String) :
     SimpleMessageException(
         HttpStatus.BAD_REQUEST,
         """Too many values for parameter "$name".""",
-        properties = mapOf("parameter_name" to name)
+        properties = mapOf("parameter_name" to name),
     )
 
 class InvalidParameterValue(
@@ -39,6 +39,6 @@ class InvalidParameterValue(
         properties = mapOf(
             "parameter_name" to parameter,
             "parameter_value" to value,
-            "reason" to cause.message
-        )
+            "reason" to cause.message,
+        ),
     )

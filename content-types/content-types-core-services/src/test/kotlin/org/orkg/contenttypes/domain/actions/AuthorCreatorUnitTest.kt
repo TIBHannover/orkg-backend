@@ -41,22 +41,22 @@ internal class AuthorCreatorUnitTest : MockkBaseTest {
             id = authorId,
             name = "Author",
             identifiers = mapOf(
-                "orcid" to listOf(orcid)
-            )
+                "orcid" to listOf(orcid),
+            ),
         )
         val authorListId = ThingId("R1456")
         val contributorId = ContributorId(UUID.randomUUID())
         val orcidLiteral = createLiteral(
             id = ThingId(UUID.randomUUID().toString()),
-            label = author.name
+            label = author.name,
         )
 
         every {
             unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = contributorId,
-                    label = orcid
-                )
+                    label = orcid,
+                ),
             )
         } returns orcidLiteral.id
         every {
@@ -65,8 +65,8 @@ internal class AuthorCreatorUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     subjectId = authorId,
                     predicateId = Predicates.hasORCID,
-                    objectId = orcidLiteral.id
-                )
+                    objectId = orcidLiteral.id,
+                ),
             )
         } returns StatementId("S1")
         every {
@@ -74,8 +74,8 @@ internal class AuthorCreatorUnitTest : MockkBaseTest {
                 CreateListUseCase.CreateCommand(
                     label = "authors list",
                     elements = listOf(authorId),
-                    contributorId = contributorId
-                )
+                    contributorId = contributorId,
+                ),
             )
         } returns authorListId
         every {
@@ -84,8 +84,8 @@ internal class AuthorCreatorUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     subjectId = subjectId,
                     predicateId = Predicates.hasAuthors,
-                    objectId = authorListId
-                )
+                    objectId = authorListId,
+                ),
             )
         } returns StatementId("S2")
 
@@ -95,8 +95,8 @@ internal class AuthorCreatorUnitTest : MockkBaseTest {
             unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = contributorId,
-                    label = orcid
-                )
+                    label = orcid,
+                ),
             )
         }
         verify(exactly = 1) {
@@ -105,8 +105,8 @@ internal class AuthorCreatorUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     subjectId = authorId,
                     predicateId = Predicates.hasORCID,
-                    objectId = orcidLiteral.id
-                )
+                    objectId = orcidLiteral.id,
+                ),
             )
         }
         verify(exactly = 1) {
@@ -114,8 +114,8 @@ internal class AuthorCreatorUnitTest : MockkBaseTest {
                 CreateListUseCase.CreateCommand(
                     label = "authors list",
                     elements = listOf(authorId),
-                    contributorId = contributorId
-                )
+                    contributorId = contributorId,
+                ),
             )
         }
         verify(exactly = 1) {
@@ -124,8 +124,8 @@ internal class AuthorCreatorUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     subjectId = subjectId,
                     predicateId = Predicates.hasAuthors,
-                    objectId = authorListId
-                )
+                    objectId = authorListId,
+                ),
             )
         }
     }
@@ -134,7 +134,7 @@ internal class AuthorCreatorUnitTest : MockkBaseTest {
     fun `Given a list of authors, it crates a new author literal and links it to the subject resource`() {
         val subjectId = ThingId("R123")
         val author = Author(
-            name = "Author"
+            name = "Author",
         )
         val authorId = ThingId("R456")
         val literal = createLiteral(id = authorId, label = author.name)
@@ -145,8 +145,8 @@ internal class AuthorCreatorUnitTest : MockkBaseTest {
             unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = contributorId,
-                    label = author.name
-                )
+                    label = author.name,
+                ),
             )
         } returns literal.id
         every {
@@ -154,8 +154,8 @@ internal class AuthorCreatorUnitTest : MockkBaseTest {
                 CreateListUseCase.CreateCommand(
                     label = "authors list",
                     elements = listOf(authorId),
-                    contributorId = contributorId
-                )
+                    contributorId = contributorId,
+                ),
             )
         } returns authorListId
         every {
@@ -164,8 +164,8 @@ internal class AuthorCreatorUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     subjectId = subjectId,
                     predicateId = Predicates.hasAuthors,
-                    objectId = authorListId
-                )
+                    objectId = authorListId,
+                ),
             )
         } returns StatementId("S1")
 
@@ -175,8 +175,8 @@ internal class AuthorCreatorUnitTest : MockkBaseTest {
             unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = contributorId,
-                    label = author.name
-                )
+                    label = author.name,
+                ),
             )
         }
         verify(exactly = 1) {
@@ -184,8 +184,8 @@ internal class AuthorCreatorUnitTest : MockkBaseTest {
                 CreateListUseCase.CreateCommand(
                     label = "authors list",
                     elements = listOf(authorId),
-                    contributorId = contributorId
-                )
+                    contributorId = contributorId,
+                ),
             )
         }
         verify(exactly = 1) {
@@ -194,8 +194,8 @@ internal class AuthorCreatorUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     subjectId = subjectId,
                     predicateId = Predicates.hasAuthors,
-                    objectId = authorListId
-                )
+                    objectId = authorListId,
+                ),
             )
         }
     }
@@ -207,16 +207,16 @@ internal class AuthorCreatorUnitTest : MockkBaseTest {
         val author = Author(
             name = "Author",
             identifiers = mapOf(
-                "orcid" to listOf(orcid)
+                "orcid" to listOf(orcid),
             ),
-            homepage = ParsedIRI.create("https://orkg.org")
+            homepage = ParsedIRI.create("https://orkg.org"),
         )
         val authorId = ThingId("R456")
         val contributorId = ContributorId(UUID.randomUUID())
         val resourceCreateCommand = CreateResourceUseCase.CreateCommand(
             contributorId = contributorId,
             label = author.name,
-            classes = setOf(Classes.author)
+            classes = setOf(Classes.author),
         )
         val orcidLiteralId = ThingId("L65412")
         val homepageLiteralId = ThingId("L13254")
@@ -227,8 +227,8 @@ internal class AuthorCreatorUnitTest : MockkBaseTest {
             unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = contributorId,
-                    label = orcid
-                )
+                    label = orcid,
+                ),
             )
         } returns orcidLiteralId
         every {
@@ -237,8 +237,8 @@ internal class AuthorCreatorUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     subjectId = authorId,
                     predicateId = Predicates.hasORCID,
-                    objectId = orcidLiteralId
-                )
+                    objectId = orcidLiteralId,
+                ),
             )
         } returns StatementId("S1")
         every {
@@ -246,8 +246,8 @@ internal class AuthorCreatorUnitTest : MockkBaseTest {
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = contributorId,
                     label = author.homepage.toString(),
-                    datatype = Literals.XSD.URI.prefixedUri
-                )
+                    datatype = Literals.XSD.URI.prefixedUri,
+                ),
             )
         } returns homepageLiteralId
         every {
@@ -256,8 +256,8 @@ internal class AuthorCreatorUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     subjectId = authorId,
                     predicateId = Predicates.hasWebsite,
-                    objectId = homepageLiteralId
-                )
+                    objectId = homepageLiteralId,
+                ),
             )
         } returns StatementId("S2")
         every {
@@ -265,8 +265,8 @@ internal class AuthorCreatorUnitTest : MockkBaseTest {
                 CreateListUseCase.CreateCommand(
                     label = "authors list",
                     elements = listOf(authorId),
-                    contributorId = contributorId
-                )
+                    contributorId = contributorId,
+                ),
             )
         } returns authorListId
         every {
@@ -275,8 +275,8 @@ internal class AuthorCreatorUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     subjectId = subjectId,
                     predicateId = Predicates.hasAuthors,
-                    objectId = authorListId
-                )
+                    objectId = authorListId,
+                ),
             )
         } returns StatementId("S3")
 
@@ -287,8 +287,8 @@ internal class AuthorCreatorUnitTest : MockkBaseTest {
             unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = contributorId,
-                    label = orcid
-                )
+                    label = orcid,
+                ),
             )
         }
         verify(exactly = 1) {
@@ -297,8 +297,8 @@ internal class AuthorCreatorUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     subjectId = authorId,
                     predicateId = Predicates.hasORCID,
-                    objectId = orcidLiteralId
-                )
+                    objectId = orcidLiteralId,
+                ),
             )
         }
         verify(exactly = 1) {
@@ -306,8 +306,8 @@ internal class AuthorCreatorUnitTest : MockkBaseTest {
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = contributorId,
                     label = author.homepage.toString(),
-                    datatype = Literals.XSD.URI.prefixedUri
-                )
+                    datatype = Literals.XSD.URI.prefixedUri,
+                ),
             )
         }
         verify(exactly = 1) {
@@ -316,8 +316,8 @@ internal class AuthorCreatorUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     subjectId = authorId,
                     predicateId = Predicates.hasWebsite,
-                    objectId = homepageLiteralId
-                )
+                    objectId = homepageLiteralId,
+                ),
             )
         }
         verify(exactly = 1) {
@@ -325,8 +325,8 @@ internal class AuthorCreatorUnitTest : MockkBaseTest {
                 CreateListUseCase.CreateCommand(
                     label = "authors list",
                     elements = listOf(authorId),
-                    contributorId = contributorId
-                )
+                    contributorId = contributorId,
+                ),
             )
         }
         verify(exactly = 1) {
@@ -335,8 +335,8 @@ internal class AuthorCreatorUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     subjectId = subjectId,
                     predicateId = Predicates.hasAuthors,
-                    objectId = authorListId
-                )
+                    objectId = authorListId,
+                ),
             )
         }
     }

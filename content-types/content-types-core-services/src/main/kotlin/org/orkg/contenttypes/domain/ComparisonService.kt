@@ -146,7 +146,7 @@ class ComparisonService(
             includeSubfields = includeSubfields,
             published = published,
             sustainableDevelopmentGoal = sustainableDevelopmentGoal,
-            researchProblem = researchProblem
+            researchProblem = researchProblem,
         ).pmap { it.toComparison() }
 
     override fun findAllCurrentAndListedAndUnpublishedComparisons(pageable: Pageable): Page<Comparison> =
@@ -216,7 +216,7 @@ class ComparisonService(
             ComparisonVersionCreator(resourceRepository, statementRepository, unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases, listService, clock),
             ComparisonVersionTableCreator(comparisonTableUseCases, comparisonTableRepository),
             ComparisonVersionHistoryUpdater(unsafeStatementUseCases, unsafeResourceUseCases),
-            ComparisonVersionDoiPublisher(unsafeStatementUseCases, unsafeLiteralUseCases, comparisonRepository, doiService, comparisonPublishBaseUri)
+            ComparisonVersionDoiPublisher(unsafeStatementUseCases, unsafeLiteralUseCases, comparisonRepository, doiService, comparisonPublishBaseUri),
         )
         return steps.execute(command, PublishComparisonState()).comparisonVersionId!!
     }
@@ -233,11 +233,11 @@ class ComparisonService(
                     Classes.visualization,
                     Classes.comparisonRelatedFigure,
                     Classes.comparisonRelatedResource,
-                    Classes.sustainableDevelopmentGoal
+                    Classes.sustainableDevelopmentGoal,
                 ),
-                whitelist = emptyList()
+                whitelist = emptyList(),
             ),
-            sort = Sort.unsorted()
+            sort = Sort.unsorted(),
         ) + statementRepository.fetchAsBundle(
             id = resource.id,
             configuration = BundleConfiguration(
@@ -250,10 +250,10 @@ class ComparisonService(
                     Classes.visualization,
                     Classes.comparisonRelatedFigure,
                     Classes.comparisonRelatedResource,
-                    Classes.sustainableDevelopmentGoal
-                )
+                    Classes.sustainableDevelopmentGoal,
+                ),
             ),
-            sort = Sort.unsorted()
+            sort = Sort.unsorted(),
         )
         return ContentTypeSubgraph(resource.id, statements.groupBy { it.subject.id })
     }
@@ -267,7 +267,7 @@ class ComparisonService(
                 published = statements[id].orEmpty().wherePredicate(Predicates.hasPublishedVersion)
                     .sortedByDescending { it.createdAt }
                     .objects()
-                    .map { PublishedVersion(it, statements[it.id]?.wherePredicate(Predicates.description)?.firstObjectLabel()) }
+                    .map { PublishedVersion(it, statements[it.id]?.wherePredicate(Predicates.description)?.firstObjectLabel()) },
             )
         }
 
@@ -276,7 +276,7 @@ class ComparisonService(
             Comparison.from(
                 resource = this,
                 statements = it.statements,
-                versionInfo = findVersionInfo(it.statements)
+                versionInfo = findVersionInfo(it.statements),
             )
         }
 }

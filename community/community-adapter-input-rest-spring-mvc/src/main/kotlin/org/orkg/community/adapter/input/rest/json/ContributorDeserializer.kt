@@ -28,7 +28,7 @@ class ContributorDeserializer : ValueDeserializer<Contributor>() {
                 } else {
                     Multihash(Type.sha2_256, hash)
                 }
-            }
+            },
         )
     }
 }

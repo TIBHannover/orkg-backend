@@ -23,238 +23,238 @@ internal class PropertyPathResolverUnitTest {
                 fieldType = String::class.java,
                 typeArgument = null,
                 enclosingField = String::class.java,
-                enclosingClass = Example::class.java
+                enclosingClass = Example::class.java,
             ),
             "list" to PropertyPath(
                 fieldName = "list",
                 fieldType = List::class.java,
                 typeArgument = SomeDataClass::class.java,
                 enclosingField = List::class.java,
-                enclosingClass = Example::class.java
+                enclosingClass = Example::class.java,
             ),
             "list[]" to PropertyPath(
                 fieldName = null,
                 fieldType = List::class.java,
                 typeArgument = SomeDataClass::class.java,
                 enclosingField = List::class.java,
-                enclosingClass = Example::class.java
+                enclosingClass = Example::class.java,
             ),
             "list[].first" to PropertyPath(
                 fieldName = "first",
                 fieldType = String::class.java,
                 typeArgument = null,
                 enclosingField = String::class.java,
-                enclosingClass = SomeDataClass::class.java
+                enclosingClass = SomeDataClass::class.java,
             ),
             "array" to PropertyPath(
                 fieldName = "array",
                 fieldType = Array<SomeDataClass>::class.java,
                 typeArgument = SomeDataClass::class.java,
                 enclosingField = Array<SomeDataClass>::class.java,
-                enclosingClass = Example::class.java
+                enclosingClass = Example::class.java,
             ),
             "array[]" to PropertyPath(
                 fieldName = null,
                 fieldType = Array<SomeDataClass>::class.java,
                 typeArgument = SomeDataClass::class.java,
                 enclosingField = Array<SomeDataClass>::class.java,
-                enclosingClass = Example::class.java
+                enclosingClass = Example::class.java,
             ),
             "array[].first" to PropertyPath(
                 fieldName = "first",
                 fieldType = String::class.java,
                 typeArgument = null,
                 enclosingField = String::class.java,
-                enclosingClass = SomeDataClass::class.java
+                enclosingClass = SomeDataClass::class.java,
             ),
             "arrayOfList[]" to PropertyPath(
                 fieldName = null,
                 fieldType = Array::class.java,
                 typeArgument = List::class.java,
                 enclosingField = arrayOf<List<*>>()::class.java, // FIXME: It is not possible to declare an array of lists in Kotlin without using an object instance.
-                enclosingClass = Example::class.java
+                enclosingClass = Example::class.java,
             ),
             "arrayOfList[][]" to PropertyPath(
                 fieldName = null,
                 fieldType = List::class.java,
                 typeArgument = SomeDataClass::class.java,
                 enclosingField = arrayOf<List<*>>()::class.java, // FIXME: It is not possible to declare an array of lists in Kotlin without using an object instance.
-                enclosingClass = Example::class.java
+                enclosingClass = Example::class.java,
             ),
             "arrayOfList[][].first" to PropertyPath(
                 fieldName = "first",
                 fieldType = String::class.java,
                 typeArgument = null,
                 enclosingField = String::class.java,
-                enclosingClass = SomeDataClass::class.java
+                enclosingClass = SomeDataClass::class.java,
             ),
             "listArray[]" to PropertyPath(
                 fieldName = null,
                 fieldType = List::class.java,
                 typeArgument = Array<SomeDataClass>::class.java,
                 enclosingField = List::class.java,
-                enclosingClass = Example::class.java
+                enclosingClass = Example::class.java,
             ),
             "listArray[][]" to PropertyPath(
                 fieldName = null,
                 fieldType = Array<SomeDataClass>::class.java,
                 typeArgument = SomeDataClass::class.java,
                 enclosingField = List::class.java,
-                enclosingClass = Example::class.java
+                enclosingClass = Example::class.java,
             ),
             "listArray[][].first" to PropertyPath(
                 fieldName = "first",
                 fieldType = String::class.java,
                 typeArgument = null,
                 enclosingField = String::class.java,
-                enclosingClass = SomeDataClass::class.java
+                enclosingClass = SomeDataClass::class.java,
             ),
             "nestedList[]" to PropertyPath(
                 fieldName = null,
                 fieldType = List::class.java,
                 typeArgument = List::class.java,
                 enclosingField = List::class.java,
-                enclosingClass = Example::class.java
+                enclosingClass = Example::class.java,
             ),
             "nestedList[][]" to PropertyPath(
                 fieldName = null,
                 fieldType = List::class.java,
                 typeArgument = SomeDataClass::class.java,
                 enclosingField = List::class.java,
-                enclosingClass = Example::class.java
+                enclosingClass = Example::class.java,
             ),
             "nestedList[][].first" to PropertyPath(
                 fieldName = "first",
                 fieldType = String::class.java,
                 typeArgument = null,
                 enclosingField = String::class.java,
-                enclosingClass = SomeDataClass::class.java
+                enclosingClass = SomeDataClass::class.java,
             ),
             "map" to PropertyPath(
                 fieldName = "map",
                 fieldType = Map::class.java,
                 typeArgument = SomeDataClass::class.java,
                 enclosingField = Map::class.java,
-                enclosingClass = Example::class.java
+                enclosingClass = Example::class.java,
             ),
             "map.*" to PropertyPath(
                 fieldName = null,
                 fieldType = Map::class.java,
                 typeArgument = SomeDataClass::class.java,
                 enclosingField = Map::class.java,
-                enclosingClass = Example::class.java
+                enclosingClass = Example::class.java,
             ),
             "map.*.first" to PropertyPath(
                 fieldName = "first",
                 fieldType = String::class.java,
                 typeArgument = null,
                 enclosingField = String::class.java,
-                enclosingClass = SomeDataClass::class.java
+                enclosingClass = SomeDataClass::class.java,
             ),
             "nestedMap" to PropertyPath(
                 fieldName = "nestedMap",
                 fieldType = Map::class.java,
                 typeArgument = List::class.java,
                 enclosingField = Map::class.java,
-                enclosingClass = Example::class.java
+                enclosingClass = Example::class.java,
             ),
             "nestedMap.*" to PropertyPath(
                 fieldName = null,
                 fieldType = Map::class.java,
                 typeArgument = List::class.java,
                 enclosingField = Map::class.java,
-                enclosingClass = Example::class.java
+                enclosingClass = Example::class.java,
             ),
             "nestedMap.*[]" to PropertyPath(
                 fieldName = null,
                 fieldType = List::class.java,
                 typeArgument = List::class.java,
                 enclosingField = Map::class.java,
-                enclosingClass = Example::class.java
+                enclosingClass = Example::class.java,
             ),
             "nestedMap.*[][]" to PropertyPath(
                 fieldName = null,
                 fieldType = List::class.java,
                 typeArgument = SomeDataClass::class.java,
                 enclosingField = Map::class.java,
-                enclosingClass = Example::class.java
+                enclosingClass = Example::class.java,
             ),
             "nestedMap.*[][].first" to PropertyPath(
                 fieldName = "first",
                 fieldType = String::class.java,
                 typeArgument = null,
                 enclosingField = String::class.java,
-                enclosingClass = SomeDataClass::class.java
+                enclosingClass = SomeDataClass::class.java,
             ),
             "nestedArrayMap" to PropertyPath(
                 fieldName = "nestedArrayMap",
                 fieldType = Map::class.java,
                 typeArgument = Array::class.java,
                 enclosingField = Map::class.java,
-                enclosingClass = Example::class.java
+                enclosingClass = Example::class.java,
             ),
             "nestedArrayMap.*" to PropertyPath(
                 fieldName = null,
                 fieldType = Map::class.java,
                 typeArgument = Array::class.java,
                 enclosingField = Map::class.java,
-                enclosingClass = Example::class.java
+                enclosingClass = Example::class.java,
             ),
             "nestedArrayMap.*[]" to PropertyPath(
                 fieldName = null,
                 fieldType = Array::class.java,
                 typeArgument = List::class.java,
                 enclosingField = Map::class.java,
-                enclosingClass = Example::class.java
+                enclosingClass = Example::class.java,
             ),
             "nestedArrayMap.*[][]" to PropertyPath(
                 fieldName = null,
                 fieldType = List::class.java,
                 typeArgument = SomeDataClass::class.java,
                 enclosingField = Map::class.java,
-                enclosingClass = Example::class.java
+                enclosingClass = Example::class.java,
             ),
             "nestedArrayMap.*[][].first" to PropertyPath(
                 fieldName = "first",
                 fieldType = String::class.java,
                 typeArgument = null,
                 enclosingField = String::class.java,
-                enclosingClass = SomeDataClass::class.java
+                enclosingClass = SomeDataClass::class.java,
             ),
             "arrayOfMaps[]" to PropertyPath(
                 fieldName = null,
                 fieldType = Array::class.java,
                 typeArgument = Map::class.java,
                 enclosingField = arrayOf<Map<*, *>>()::class.java, // FIXME: It is not possible to declare an array of maps in Kotlin without using an object instance.
-                enclosingClass = Example::class.java
+                enclosingClass = Example::class.java,
             ),
             "arrayOfMaps[].*" to PropertyPath(
                 fieldName = null,
                 fieldType = Map::class.java,
                 typeArgument = Array::class.java,
                 enclosingField = arrayOf<Map<*, *>>()::class.java, // FIXME: It is not possible to declare an array of maps in Kotlin without using an object instance.
-                enclosingClass = Example::class.java
+                enclosingClass = Example::class.java,
             ),
             "arrayOfMaps[].*[]" to PropertyPath(
                 fieldName = null,
                 fieldType = Array::class.java,
                 typeArgument = List::class.java,
                 enclosingField = arrayOf<Map<*, *>>()::class.java, // FIXME: It is not possible to declare an array of maps in Kotlin without using an object instance.
-                enclosingClass = Example::class.java
+                enclosingClass = Example::class.java,
             ),
             "arrayOfMaps[].*[][]" to PropertyPath(
                 fieldName = null,
                 fieldType = List::class.java,
                 typeArgument = SomeDataClass::class.java,
                 enclosingField = arrayOf<Map<*, *>>()::class.java, // FIXME: It is not possible to declare an array of maps in Kotlin without using an object instance.
-                enclosingClass = Example::class.java
+                enclosingClass = Example::class.java,
             ),
             "arrayOfMaps[].*[][].first" to PropertyPath(
                 fieldName = "first",
                 fieldType = String::class.java,
                 typeArgument = null,
                 enclosingField = String::class.java,
-                enclosingClass = SomeDataClass::class.java
+                enclosingClass = SomeDataClass::class.java,
             ),
         ).map(Arguments::of)
     }

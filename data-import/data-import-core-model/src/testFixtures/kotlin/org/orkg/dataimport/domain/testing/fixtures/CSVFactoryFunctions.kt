@@ -56,13 +56,13 @@ fun createPaperCSVRecord() = PaperCSVRecord(
     statements = setOf(
         ContributionStatement(
             predicate = Either.left(Predicates.employs),
-            `object` = TypedValue(namespace = "resource", value = "DOI", type = Classes.resource)
+            `object` = TypedValue(namespace = "resource", value = "DOI", type = Classes.resource),
         ),
         ContributionStatement(
             predicate = Either.right("result"),
-            `object` = TypedValue(namespace = "resource", value = "Result", type = Classes.resource)
-        )
-    )
+            `object` = TypedValue(namespace = "resource", value = "Result", type = Classes.resource),
+        ),
+    ),
 )
 
 fun createPaperCSVRecordImportResult(
@@ -112,8 +112,8 @@ fun createTypedCSVRecord() = TypedCSVRecord(
         TypedValue(namespace = "resource", value = "DOI", type = Classes.resource),
         TypedValue(namespace = "resource", value = "Result", type = Classes.resource),
         TypedValue(namespace = null, value = "5", type = Classes.integer),
-        TypedValue(namespace = null, value = "DOI Handbook", type = Classes.string)
-    )
+        TypedValue(namespace = null, value = "DOI Handbook", type = Classes.string),
+    ),
 )
 
 fun createCSVRecord() = listOf(

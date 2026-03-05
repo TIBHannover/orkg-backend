@@ -46,7 +46,7 @@ open class PaperCSVStatementObjectProcessor(
                                 contributorId = contributorId,
                                 label = value,
                                 extractionMethod = item.extractionMethod,
-                            )
+                            ),
                         )
                     }
 
@@ -54,8 +54,8 @@ open class PaperCSVStatementObjectProcessor(
                         CreateLiteralUseCase.CreateCommand(
                             contributorId = contributorId,
                             label = value,
-                            datatype = Literals.XSD.fromClass(type)!!.prefixedUri
-                        )
+                            datatype = Literals.XSD.fromClass(type)!!.prefixedUri,
+                        ),
                     )
                 }
                 statement.copy(`object` = TypedValue("orkg", id.value, Classes.thing))

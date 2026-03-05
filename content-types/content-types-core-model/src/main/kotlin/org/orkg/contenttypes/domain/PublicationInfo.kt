@@ -16,7 +16,7 @@ data class PublicationInfo(
             publishedMonth = statements.wherePredicate(Predicates.monthPublished).firstObjectLabel()?.toIntOrNull(),
             publishedYear = statements.wherePredicate(Predicates.yearPublished).firstObjectLabel()?.toLongOrNull(),
             publishedIn = statements.wherePredicate(Predicates.hasVenue).firstOrNull()?.objectIdAndLabel(),
-            url = statements.wherePredicate(Predicates.hasURL).firstObjectLabel()?.toIRIOrNull()
+            url = statements.wherePredicate(Predicates.hasURL).firstObjectLabel()?.toIRIOrNull(),
         )
     }
 }

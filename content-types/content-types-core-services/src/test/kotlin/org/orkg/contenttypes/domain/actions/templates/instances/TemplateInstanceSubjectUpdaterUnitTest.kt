@@ -26,9 +26,9 @@ internal class TemplateInstanceSubjectUpdaterUnitTest : MockkBaseTest {
         val command = updateTemplateInstanceCommand()
         val state = UpdateTemplateInstanceState(
             templateInstance = createTemplateInstance().copy(
-                root = createResource(classes = emptySet())
+                root = createResource(classes = emptySet()),
             ),
-            template = createTemplate()
+            template = createTemplate(),
         )
         val targetResource = state.templateInstance!!.root.copy(classes = setOf(state.template!!.targetClass.id))
 
@@ -39,7 +39,7 @@ internal class TemplateInstanceSubjectUpdaterUnitTest : MockkBaseTest {
         result.asClue {
             it.template shouldBe state.template
             it.templateInstance shouldBe state.templateInstance!!.copy(
-                root = targetResource
+                root = targetResource,
             )
             it.validationCache shouldBe state.validationCache
             it.statementsToAdd shouldBe state.statementsToAdd
@@ -55,7 +55,7 @@ internal class TemplateInstanceSubjectUpdaterUnitTest : MockkBaseTest {
         val command = updateTemplateInstanceCommand()
         val state = UpdateTemplateInstanceState(
             templateInstance = createTemplateInstance(),
-            template = createTemplate()
+            template = createTemplate(),
         )
 
         val result = templateInstanceSubjectUpdater(command, state)

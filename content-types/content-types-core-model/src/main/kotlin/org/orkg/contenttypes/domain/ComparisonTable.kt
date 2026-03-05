@@ -61,7 +61,7 @@ data class ComparisonTable(
         ): Map<ThingId, MutableList<ProtoComparisonTableRow>> =
             children.associate {
                 it.id to mutableListOf(
-                    ProtoComparisonTableRow(MutableList(columnCount) { null }, createChildRow(it.children, columnCount))
+                    ProtoComparisonTableRow(MutableList(columnCount) { null }, createChildRow(it.children, columnCount)),
                 )
             }
 
@@ -97,7 +97,7 @@ data class ComparisonTable(
                     children.mapValues {
                         it.value.filter { !it.values.all { it == null } }
                             .map { it.build() }
-                    }.filter { it.value.isNotEmpty() }
+                    }.filter { it.value.isNotEmpty() },
                 )
         }
     }

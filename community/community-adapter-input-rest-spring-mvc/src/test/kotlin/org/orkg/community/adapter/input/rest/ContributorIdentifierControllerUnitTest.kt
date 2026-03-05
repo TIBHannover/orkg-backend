@@ -39,7 +39,7 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RestController
 
 @ContextConfiguration(
-    classes = [ContributorIdentifierController::class, TestController::class, CommunityControllerUnitTestConfiguration::class]
+    classes = [ContributorIdentifierController::class, TestController::class, CommunityControllerUnitTestConfiguration::class],
 )
 @WebMvcTest(controllers = [ContributorIdentifierController::class, TestController::class])
 internal class ContributorIdentifierControllerUnitTest : MockMvcBaseTest("contributor-identifiers") {
@@ -74,7 +74,7 @@ internal class ContributorIdentifierControllerUnitTest : MockMvcBaseTest("contri
                 description(
                     """
                     A `GET` request returns a <<sorting-and-pagination,paged>> list of <<contributor-identifiers,contributor identifiers>>.
-                    """
+                    """,
                 )
                 pathParameters(
                     parameterWithName("id").description("The identifier of the contributor."),
@@ -106,7 +106,7 @@ internal class ContributorIdentifierControllerUnitTest : MockMvcBaseTest("contri
                     A `POST` request assigns a new identifier to the currently logged in contributor.
                     The response will be `201 Created` when successful.
                     The updated set of contributor identifiers can be retrieved by following the URI in the `Location` header field.
-                    """
+                    """,
                 )
                 pathParameters(
                     parameterWithName("id").description("The identifier of the contributor."),
@@ -144,7 +144,7 @@ internal class ContributorIdentifierControllerUnitTest : MockMvcBaseTest("contri
                     """
                     A `DELETE` request removes an existing identifier of the currently logged in contributor.
                     The response will be `204 No Content` when successful.
-                    """
+                    """,
                 )
                 pathParameters(
                     parameterWithName("id").description("The identifier of the contributor."),
@@ -168,6 +168,6 @@ internal class ContributorIdentifierControllerUnitTest : MockMvcBaseTest("contri
     private fun createContributorIdentifierRequest() =
         CreateContributorIdentifierRequest(
             type = ContributorIdentifier.Type.ORCID,
-            value = "0000-0001-5109-3700"
+            value = "0000-0001-5109-3700",
         )
 }

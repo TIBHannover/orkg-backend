@@ -99,7 +99,7 @@ internal class RosettaStoneTemplateServiceUnitTest : MockkBaseTest {
             label = "rosetta stone template label",
             classes = setOf(Classes.rosettaNodeShape),
             organizationId = OrganizationId(UUID.randomUUID()),
-            observatoryId = ObservatoryId(UUID.randomUUID())
+            observatoryId = ObservatoryId(UUID.randomUUID()),
         )
         val description = "rosetta stone template description"
         val dynamicLabel = DynamicLabel("{P32}")
@@ -111,7 +111,7 @@ internal class RosettaStoneTemplateServiceUnitTest : MockkBaseTest {
         val untypedProperty = createResource(
             id = ThingId("R23"),
             label = "property label",
-            classes = setOf(Classes.propertyShape)
+            classes = setOf(Classes.propertyShape),
         )
         val untypedPropertyPlaceholder = "untyped property placeholder"
         val untypedPropertyDescription = "untyped property description"
@@ -123,7 +123,7 @@ internal class RosettaStoneTemplateServiceUnitTest : MockkBaseTest {
         val stringLiteralProperty = createResource(
             id = ThingId("R26"),
             label = "property label",
-            classes = setOf(Classes.propertyShape)
+            classes = setOf(Classes.propertyShape),
         )
         val stringLiteralPropertyPlaceholder = "string literal property placeholder"
         val stringLiteralPropertyDescription = "string literal property description"
@@ -137,7 +137,7 @@ internal class RosettaStoneTemplateServiceUnitTest : MockkBaseTest {
         val numberLiteralProperty = createResource(
             id = ThingId("R29"),
             label = "property label",
-            classes = setOf(Classes.propertyShape)
+            classes = setOf(Classes.propertyShape),
         )
         val numberLiteralPropertyPlaceholder = "number literal property placeholder"
         val numberLiteralPropertyDescription = "number literal property description"
@@ -152,7 +152,7 @@ internal class RosettaStoneTemplateServiceUnitTest : MockkBaseTest {
         val otherLiteralProperty = createResource(
             id = ThingId("R32"),
             label = "property label",
-            classes = setOf(Classes.propertyShape)
+            classes = setOf(Classes.propertyShape),
         )
         val otherLiteralPropertyPlaceholder = "literal property placeholder"
         val otherLiteralPropertyDescription = "literal property description"
@@ -165,7 +165,7 @@ internal class RosettaStoneTemplateServiceUnitTest : MockkBaseTest {
         val resourceProperty = createResource(
             id = ThingId("R38"),
             label = "property label",
-            classes = setOf(Classes.propertyShape)
+            classes = setOf(Classes.propertyShape),
         )
         val resourcePropertyPlaceholder = "resource property placeholder"
         val resourcePropertyDescription = "resource property description"
@@ -184,304 +184,304 @@ internal class RosettaStoneTemplateServiceUnitTest : MockkBaseTest {
                     minLevel = null,
                     maxLevel = 2,
                     blacklist = emptyList(),
-                    whitelist = emptyList()
+                    whitelist = emptyList(),
                 ),
-                sort = Sort.unsorted()
+                sort = Sort.unsorted(),
             )
         } returns listOf(
             // Statements for template root resource
             createStatement(
                 subject = expected,
                 predicate = createPredicate(Predicates.description),
-                `object` = createLiteral(label = description)
+                `object` = createLiteral(label = description),
             ),
             createStatement(
                 subject = expected,
                 predicate = createPredicate(Predicates.templateLabelFormat),
-                `object` = createLiteral(label = dynamicLabel.template)
+                `object` = createLiteral(label = dynamicLabel.template),
             ),
             createStatement(
                 subject = expected,
                 predicate = createPredicate(Predicates.shTargetClass),
-                `object` = createClass(targetClassId)
+                `object` = createClass(targetClassId),
             ),
             createStatement(
                 subject = createClass(targetClassId),
                 predicate = createPredicate(Predicates.exampleOfUsage),
-                `object` = createLiteral(label = exampleUsage)
+                `object` = createLiteral(label = exampleUsage),
             ),
             createStatement(
                 subject = expected,
                 predicate = createPredicate(Predicates.templateOfPredicate),
-                `object` = createPredicate(predicateId, label = predicateLabel)
+                `object` = createPredicate(predicateId, label = predicateLabel),
             ),
             createStatement(
                 subject = expected,
                 predicate = createPredicate(Predicates.shClosed),
-                `object` = createLiteral(label = "true", datatype = Literals.XSD.BOOLEAN.prefixedUri)
+                `object` = createLiteral(label = "true", datatype = Literals.XSD.BOOLEAN.prefixedUri),
             ),
             createStatement(
                 subject = expected,
                 predicate = createPredicate(Predicates.shProperty),
-                `object` = untypedProperty
+                `object` = untypedProperty,
             ),
             createStatement(
                 subject = expected,
                 predicate = createPredicate(Predicates.shProperty),
-                `object` = stringLiteralProperty
+                `object` = stringLiteralProperty,
             ),
             createStatement(
                 subject = expected,
                 predicate = createPredicate(Predicates.shProperty),
-                `object` = numberLiteralProperty
+                `object` = numberLiteralProperty,
             ),
             createStatement(
                 subject = expected,
                 predicate = createPredicate(Predicates.shProperty),
-                `object` = otherLiteralProperty
+                `object` = otherLiteralProperty,
             ),
             createStatement(
                 subject = expected,
                 predicate = createPredicate(Predicates.shProperty),
-                `object` = resourceProperty
+                `object` = resourceProperty,
             ),
             // Statements for untyped property
             createStatement(
                 subject = untypedProperty,
                 predicate = createPredicate(Predicates.placeholder),
-                `object` = createLiteral(label = untypedPropertyPlaceholder)
+                `object` = createLiteral(label = untypedPropertyPlaceholder),
             ),
             createStatement(
                 subject = untypedProperty,
                 predicate = createPredicate(Predicates.description),
-                `object` = createLiteral(label = untypedPropertyDescription)
+                `object` = createLiteral(label = untypedPropertyDescription),
             ),
             createStatement(
                 subject = untypedProperty,
                 predicate = createPredicate(Predicates.shOrder),
                 `object` = createLiteral(
                     label = untypedPropertyOrder.toString(),
-                    datatype = Literals.XSD.INT.prefixedUri
-                )
+                    datatype = Literals.XSD.INT.prefixedUri,
+                ),
             ),
             createStatement(
                 subject = untypedProperty,
                 predicate = createPredicate(Predicates.shMinCount),
                 `object` = createLiteral(
                     label = untypedPropertyMinCount.toString(),
-                    datatype = Literals.XSD.INT.prefixedUri
-                )
+                    datatype = Literals.XSD.INT.prefixedUri,
+                ),
             ),
             createStatement(
                 subject = untypedProperty,
                 predicate = createPredicate(Predicates.shMaxCount),
                 `object` = createLiteral(
                     label = untypedPropertyMaxCount.toString(),
-                    datatype = Literals.XSD.INT.prefixedUri
-                )
+                    datatype = Literals.XSD.INT.prefixedUri,
+                ),
             ),
             createStatement(
                 subject = untypedProperty,
                 predicate = createPredicate(Predicates.shPath),
-                `object` = untypedPropertyPath
+                `object` = untypedPropertyPath,
             ),
             // Statements for string literal property
             createStatement(
                 subject = stringLiteralProperty,
                 predicate = createPredicate(Predicates.placeholder),
-                `object` = createLiteral(label = stringLiteralPropertyPlaceholder)
+                `object` = createLiteral(label = stringLiteralPropertyPlaceholder),
             ),
             createStatement(
                 subject = stringLiteralProperty,
                 predicate = createPredicate(Predicates.description),
-                `object` = createLiteral(label = stringLiteralPropertyDescription)
+                `object` = createLiteral(label = stringLiteralPropertyDescription),
             ),
             createStatement(
                 subject = stringLiteralProperty,
                 predicate = createPredicate(Predicates.shOrder),
                 `object` = createLiteral(
                     label = stringLiteralPropertyOrder.toString(),
-                    datatype = Literals.XSD.INT.prefixedUri
-                )
+                    datatype = Literals.XSD.INT.prefixedUri,
+                ),
             ),
             createStatement(
                 subject = stringLiteralProperty,
                 predicate = createPredicate(Predicates.shMinCount),
                 `object` = createLiteral(
                     label = stringLiteralPropertyMinCount.toString(),
-                    datatype = Literals.XSD.INT.prefixedUri
-                )
+                    datatype = Literals.XSD.INT.prefixedUri,
+                ),
             ),
             createStatement(
                 subject = stringLiteralProperty,
                 predicate = createPredicate(Predicates.shMaxCount),
                 `object` = createLiteral(
                     label = stringLiteralPropertyMaxCount.toString(),
-                    datatype = Literals.XSD.INT.prefixedUri
-                )
+                    datatype = Literals.XSD.INT.prefixedUri,
+                ),
             ),
             createStatement(
                 subject = stringLiteralProperty,
                 predicate = createPredicate(Predicates.shPattern),
-                `object` = createLiteral(label = stringLiteralPropertyPattern)
+                `object` = createLiteral(label = stringLiteralPropertyPattern),
             ),
             createStatement(
                 subject = stringLiteralProperty,
                 predicate = createPredicate(Predicates.shPath),
-                `object` = stringLiteralPropertyPath
+                `object` = stringLiteralPropertyPath,
             ),
             createStatement(
                 subject = stringLiteralProperty,
                 predicate = createPredicate(Predicates.shDatatype),
-                `object` = stringLiteralPropertyDatatype
+                `object` = stringLiteralPropertyDatatype,
             ),
             // Statements for number literal property
             createStatement(
                 subject = numberLiteralProperty,
                 predicate = createPredicate(Predicates.placeholder),
-                `object` = createLiteral(label = numberLiteralPropertyPlaceholder)
+                `object` = createLiteral(label = numberLiteralPropertyPlaceholder),
             ),
             createStatement(
                 subject = numberLiteralProperty,
                 predicate = createPredicate(Predicates.description),
-                `object` = createLiteral(label = numberLiteralPropertyDescription)
+                `object` = createLiteral(label = numberLiteralPropertyDescription),
             ),
             createStatement(
                 subject = numberLiteralProperty,
                 predicate = createPredicate(Predicates.shOrder),
                 `object` = createLiteral(
                     label = numberLiteralPropertyOrder.toString(),
-                    datatype = Literals.XSD.INT.prefixedUri
-                )
+                    datatype = Literals.XSD.INT.prefixedUri,
+                ),
             ),
             createStatement(
                 subject = numberLiteralProperty,
                 predicate = createPredicate(Predicates.shMinCount),
                 `object` = createLiteral(
                     label = numberLiteralPropertyMinCount.toString(),
-                    datatype = Literals.XSD.INT.prefixedUri
-                )
+                    datatype = Literals.XSD.INT.prefixedUri,
+                ),
             ),
             createStatement(
                 subject = numberLiteralProperty,
                 predicate = createPredicate(Predicates.shMaxCount),
                 `object` = createLiteral(
                     label = numberLiteralPropertyMaxCount.toString(),
-                    datatype = Literals.XSD.INT.prefixedUri
-                )
+                    datatype = Literals.XSD.INT.prefixedUri,
+                ),
             ),
             createStatement(
                 subject = numberLiteralProperty,
                 predicate = createPredicate(Predicates.shMinInclusive),
                 `object` = createLiteral(
                     label = numberLiteralPropertyMinInclusive.toString(),
-                    datatype = Literals.XSD.DECIMAL.prefixedUri
-                )
+                    datatype = Literals.XSD.DECIMAL.prefixedUri,
+                ),
             ),
             createStatement(
                 subject = numberLiteralProperty,
                 predicate = createPredicate(Predicates.shMaxInclusive),
                 `object` = createLiteral(
                     label = numberLiteralPropertyMaxInclusive.toString(),
-                    datatype = Literals.XSD.DECIMAL.prefixedUri
-                )
+                    datatype = Literals.XSD.DECIMAL.prefixedUri,
+                ),
             ),
             createStatement(
                 subject = numberLiteralProperty,
                 predicate = createPredicate(Predicates.shPath),
-                `object` = numberLiteralPropertyPath
+                `object` = numberLiteralPropertyPath,
             ),
             createStatement(
                 subject = numberLiteralProperty,
                 predicate = createPredicate(Predicates.shDatatype),
-                `object` = numberLiteralPropertyDatatype
+                `object` = numberLiteralPropertyDatatype,
             ),
             // Statements for literal property
             createStatement(
                 subject = otherLiteralProperty,
                 predicate = createPredicate(Predicates.placeholder),
-                `object` = createLiteral(label = otherLiteralPropertyPlaceholder)
+                `object` = createLiteral(label = otherLiteralPropertyPlaceholder),
             ),
             createStatement(
                 subject = otherLiteralProperty,
                 predicate = createPredicate(Predicates.description),
-                `object` = createLiteral(label = otherLiteralPropertyDescription)
+                `object` = createLiteral(label = otherLiteralPropertyDescription),
             ),
             createStatement(
                 subject = otherLiteralProperty,
                 predicate = createPredicate(Predicates.shOrder),
                 `object` = createLiteral(
                     label = otherLiteralPropertyOrder.toString(),
-                    datatype = Literals.XSD.INT.prefixedUri
-                )
+                    datatype = Literals.XSD.INT.prefixedUri,
+                ),
             ),
             createStatement(
                 subject = otherLiteralProperty,
                 predicate = createPredicate(Predicates.shMinCount),
                 `object` = createLiteral(
                     label = otherLiteralPropertyMinCount.toString(),
-                    datatype = Literals.XSD.INT.prefixedUri
-                )
+                    datatype = Literals.XSD.INT.prefixedUri,
+                ),
             ),
             createStatement(
                 subject = otherLiteralProperty,
                 predicate = createPredicate(Predicates.shMaxCount),
                 `object` = createLiteral(
                     label = otherLiteralPropertyMaxCount.toString(),
-                    datatype = Literals.XSD.INT.prefixedUri
-                )
+                    datatype = Literals.XSD.INT.prefixedUri,
+                ),
             ),
             createStatement(
                 subject = otherLiteralProperty,
                 predicate = createPredicate(Predicates.shPath),
-                `object` = otherLiteralPropertyPath
+                `object` = otherLiteralPropertyPath,
             ),
             createStatement(
                 subject = otherLiteralProperty,
                 predicate = createPredicate(Predicates.shDatatype),
-                `object` = otherLiteralPropertyDatatype
+                `object` = otherLiteralPropertyDatatype,
             ),
             // Statements for resource property
             createStatement(
                 subject = resourceProperty,
                 predicate = createPredicate(Predicates.placeholder),
-                `object` = createLiteral(label = resourcePropertyPlaceholder)
+                `object` = createLiteral(label = resourcePropertyPlaceholder),
             ),
             createStatement(
                 subject = resourceProperty,
                 predicate = createPredicate(Predicates.description),
-                `object` = createLiteral(label = resourcePropertyDescription)
+                `object` = createLiteral(label = resourcePropertyDescription),
             ),
             createStatement(
                 subject = resourceProperty,
                 predicate = createPredicate(Predicates.shOrder),
-                `object` = createLiteral(label = resourcePropertyOrder.toString(), datatype = Literals.XSD.INT.prefixedUri)
+                `object` = createLiteral(label = resourcePropertyOrder.toString(), datatype = Literals.XSD.INT.prefixedUri),
             ),
             createStatement(
                 subject = resourceProperty,
                 predicate = createPredicate(Predicates.shMinCount),
-                `object` = createLiteral(label = resourcePropertyMinCount.toString(), datatype = Literals.XSD.INT.prefixedUri)
+                `object` = createLiteral(label = resourcePropertyMinCount.toString(), datatype = Literals.XSD.INT.prefixedUri),
             ),
             createStatement(
                 subject = resourceProperty,
                 predicate = createPredicate(Predicates.shMaxCount),
-                `object` = createLiteral(label = resourcePropertyMaxCount.toString(), datatype = Literals.XSD.INT.prefixedUri)
+                `object` = createLiteral(label = resourcePropertyMaxCount.toString(), datatype = Literals.XSD.INT.prefixedUri),
             ),
             createStatement(
                 subject = resourceProperty,
                 predicate = createPredicate(Predicates.shPattern),
-                `object` = createLiteral(label = resourcePropertyPattern)
+                `object` = createLiteral(label = resourcePropertyPattern),
             ),
             createStatement(
                 subject = resourceProperty,
                 predicate = createPredicate(Predicates.shPath),
-                `object` = resourcePropertyPath
+                `object` = resourcePropertyPath,
             ),
             createStatement(
                 subject = resourceProperty,
                 predicate = createPredicate(Predicates.shClass),
-                `object` = resourcePropertyClass
-            )
+                `object` = resourcePropertyClass,
+            ),
         )
 
         val actual = service.findById(expected.id)
@@ -506,7 +506,7 @@ internal class RosettaStoneTemplateServiceUnitTest : MockkBaseTest {
                     maxCount = untypedPropertyMaxCount,
                     path = ObjectIdAndLabel(untypedPropertyPath.id, untypedPropertyPath.label),
                     createdBy = untypedProperty.createdBy,
-                    createdAt = untypedProperty.createdAt
+                    createdAt = untypedProperty.createdAt,
                 ),
                 StringLiteralTemplateProperty(
                     id = stringLiteralProperty.id,
@@ -520,7 +520,7 @@ internal class RosettaStoneTemplateServiceUnitTest : MockkBaseTest {
                     path = ObjectIdAndLabel(stringLiteralPropertyPath.id, stringLiteralPropertyPath.label),
                     createdBy = stringLiteralProperty.createdBy,
                     createdAt = stringLiteralProperty.createdAt,
-                    datatype = ClassReference(stringLiteralPropertyDatatype)
+                    datatype = ClassReference(stringLiteralPropertyDatatype),
                 ),
                 NumberLiteralTemplateProperty(
                     id = numberLiteralProperty.id,
@@ -535,7 +535,7 @@ internal class RosettaStoneTemplateServiceUnitTest : MockkBaseTest {
                     path = ObjectIdAndLabel(numberLiteralPropertyPath.id, numberLiteralPropertyPath.label),
                     createdBy = numberLiteralProperty.createdBy,
                     createdAt = numberLiteralProperty.createdAt,
-                    datatype = ClassReference(numberLiteralPropertyDatatype)
+                    datatype = ClassReference(numberLiteralPropertyDatatype),
                 ),
                 OtherLiteralTemplateProperty(
                     id = otherLiteralProperty.id,
@@ -548,7 +548,7 @@ internal class RosettaStoneTemplateServiceUnitTest : MockkBaseTest {
                     path = ObjectIdAndLabel(otherLiteralPropertyPath.id, otherLiteralPropertyPath.label),
                     createdBy = otherLiteralProperty.createdBy,
                     createdAt = otherLiteralProperty.createdAt,
-                    datatype = ClassReference(otherLiteralPropertyDatatype)
+                    datatype = ClassReference(otherLiteralPropertyDatatype),
                 ),
                 ResourceTemplateProperty(
                     id = resourceProperty.id,
@@ -561,8 +561,8 @@ internal class RosettaStoneTemplateServiceUnitTest : MockkBaseTest {
                     path = ObjectIdAndLabel(resourcePropertyPath.id, resourcePropertyPath.label),
                     createdBy = resourceProperty.createdBy,
                     createdAt = resourceProperty.createdAt,
-                    `class` = ObjectIdAndLabel(resourcePropertyClass.id, resourcePropertyClass.label)
-                )
+                    `class` = ObjectIdAndLabel(resourcePropertyClass.id, resourcePropertyClass.label),
+                ),
             )
             template.createdBy shouldBe expected.createdBy
             template.createdAt shouldBe expected.createdAt
@@ -582,11 +582,11 @@ internal class RosettaStoneTemplateServiceUnitTest : MockkBaseTest {
         val resource = createResource(
             id = template.id,
             classes = setOf(Classes.rosettaNodeShape),
-            createdBy = template.createdBy
+            createdBy = template.createdBy,
         )
         val property = createResource(
             id = ThingId("TemplateProperty"),
-            classes = setOf(Classes.propertyShape)
+            classes = setOf(Classes.propertyShape),
         )
         val targetClass = createClass(ThingId("TargetClass"))
         val contributorId = template.createdBy
@@ -596,58 +596,58 @@ internal class RosettaStoneTemplateServiceUnitTest : MockkBaseTest {
         every {
             rosettaStoneStatementRepository.findAll(
                 templateId = template.id,
-                pageable = PageRequests.SINGLE
+                pageable = PageRequests.SINGLE,
             )
         } returns pageOf()
         every {
             statementRepository.fetchAsBundle(
                 id = resource.id,
                 configuration = any(),
-                sort = Sort.unsorted()
+                sort = Sort.unsorted(),
             )
         } returns listOf(
             createStatement(
                 id = StatementId("S1"),
                 subject = resource,
                 predicate = createPredicate(Predicates.shProperty),
-                `object` = property
+                `object` = property,
             ),
             createStatement(
                 id = StatementId("S2"),
                 subject = resource,
                 predicate = createPredicate(Predicates.description),
-                `object` = createLiteral()
+                `object` = createLiteral(),
             ),
             createStatement(
                 id = StatementId("S3"),
                 subject = resource,
                 predicate = createPredicate(Predicates.shTargetClass),
-                `object` = targetClass
+                `object` = targetClass,
             ),
             createStatement(
                 id = StatementId("S4"),
                 subject = property,
                 predicate = createPredicate(Predicates.shClass),
-                `object` = createClass()
+                `object` = createClass(),
             ),
             createStatement(
                 id = StatementId("S5"),
                 subject = property,
                 predicate = createPredicate(Predicates.shPattern),
-                `object` = createLiteral()
+                `object` = createLiteral(),
             ),
             createStatement(
                 id = StatementId("S6"),
                 subject = property,
                 predicate = createPredicate(Predicates.shPath),
-                `object` = createPredicate()
+                `object` = createPredicate(),
             ),
             createStatement(
                 id = StatementId("S7"),
                 subject = targetClass,
                 predicate = createPredicate(Predicates.exampleOfUsage),
-                `object` = createLiteral()
-            )
+                `object` = createLiteral(),
+            ),
         )
         every { statementRepository.deleteByStatementIds(any()) } just runs
         every { resourceService.delete(any(), contributorId) } just runs
@@ -659,14 +659,14 @@ internal class RosettaStoneTemplateServiceUnitTest : MockkBaseTest {
         verify(exactly = 1) {
             rosettaStoneStatementRepository.findAll(
                 templateId = template.id,
-                pageable = PageRequests.SINGLE
+                pageable = PageRequests.SINGLE,
             )
         }
         verify(exactly = 1) {
             statementRepository.fetchAsBundle(
                 id = resource.id,
                 configuration = any(),
-                sort = Sort.unsorted()
+                sort = Sort.unsorted(),
             )
         }
         verify(exactly = 1) {
@@ -677,8 +677,8 @@ internal class RosettaStoneTemplateServiceUnitTest : MockkBaseTest {
                     StatementId("S3"),
                     StatementId("S4"),
                     StatementId("S5"),
-                    StatementId("S6")
-                )
+                    StatementId("S6"),
+                ),
             )
         }
         verify(exactly = 1) { resourceService.delete(template.id, contributorId) }
@@ -702,7 +702,7 @@ internal class RosettaStoneTemplateServiceUnitTest : MockkBaseTest {
         val template = createRosettaStoneTemplate()
         val resource = createResource(
             id = template.id,
-            createdBy = template.createdBy
+            createdBy = template.createdBy,
         )
         val contributorId = template.createdBy
 
@@ -722,7 +722,7 @@ internal class RosettaStoneTemplateServiceUnitTest : MockkBaseTest {
             id = template.id,
             classes = setOf(Classes.rosettaNodeShape),
             createdBy = template.createdBy,
-            modifiable = false
+            modifiable = false,
         )
         val contributorId = template.createdBy
 
@@ -741,7 +741,7 @@ internal class RosettaStoneTemplateServiceUnitTest : MockkBaseTest {
         val resource = createResource(
             id = template.id,
             classes = setOf(Classes.rosettaNodeShape),
-            createdBy = template.createdBy
+            createdBy = template.createdBy,
         )
         val contributorId = template.createdBy
 
@@ -762,7 +762,7 @@ internal class RosettaStoneTemplateServiceUnitTest : MockkBaseTest {
         val resource = createResource(
             id = template.id,
             classes = setOf(Classes.rosettaNodeShape),
-            createdBy = template.createdBy
+            createdBy = template.createdBy,
         )
         val contributorId = template.createdBy
 
@@ -771,10 +771,10 @@ internal class RosettaStoneTemplateServiceUnitTest : MockkBaseTest {
         every {
             rosettaStoneStatementRepository.findAll(
                 templateId = template.id,
-                pageable = PageRequests.SINGLE
+                pageable = PageRequests.SINGLE,
             )
         } returns pageOf(
-            createRosettaStoneStatement()
+            createRosettaStoneStatement(),
         )
 
         assertThrows<RosettaStoneTemplateInUse> {
@@ -786,7 +786,7 @@ internal class RosettaStoneTemplateServiceUnitTest : MockkBaseTest {
         verify(exactly = 1) {
             rosettaStoneStatementRepository.findAll(
                 templateId = template.id,
-                pageable = PageRequests.SINGLE
+                pageable = PageRequests.SINGLE,
             )
         }
     }
@@ -797,7 +797,7 @@ internal class RosettaStoneTemplateServiceUnitTest : MockkBaseTest {
         val resource = createResource(
             id = template.id,
             classes = setOf(Classes.rosettaNodeShape),
-            createdBy = template.createdBy
+            createdBy = template.createdBy,
         )
         val contributorId = ContributorId(MockUserId.USER)
 
@@ -806,7 +806,7 @@ internal class RosettaStoneTemplateServiceUnitTest : MockkBaseTest {
         every {
             rosettaStoneStatementRepository.findAll(
                 templateId = template.id,
-                pageable = PageRequests.SINGLE
+                pageable = PageRequests.SINGLE,
             )
         } returns pageOf()
         every { contributorRepository.findById(contributorId) } returns Optional.empty()
@@ -820,7 +820,7 @@ internal class RosettaStoneTemplateServiceUnitTest : MockkBaseTest {
         verify(exactly = 1) {
             rosettaStoneStatementRepository.findAll(
                 templateId = template.id,
-                pageable = PageRequests.SINGLE
+                pageable = PageRequests.SINGLE,
             )
         }
         verify(exactly = 1) { contributorRepository.findById(contributorId) }
@@ -832,7 +832,7 @@ internal class RosettaStoneTemplateServiceUnitTest : MockkBaseTest {
         val resource = createResource(
             id = template.id,
             classes = setOf(Classes.rosettaNodeShape),
-            createdBy = template.createdBy
+            createdBy = template.createdBy,
         )
         val contributorId = ContributorId(MockUserId.USER)
         val contributor = createContributor(contributorId)
@@ -842,7 +842,7 @@ internal class RosettaStoneTemplateServiceUnitTest : MockkBaseTest {
         every {
             rosettaStoneStatementRepository.findAll(
                 templateId = template.id,
-                pageable = PageRequests.SINGLE
+                pageable = PageRequests.SINGLE,
             )
         } returns pageOf()
         every { contributorRepository.findById(contributorId) } returns Optional.of(contributor)
@@ -856,7 +856,7 @@ internal class RosettaStoneTemplateServiceUnitTest : MockkBaseTest {
         verify(exactly = 1) {
             rosettaStoneStatementRepository.findAll(
                 templateId = template.id,
-                pageable = PageRequests.SINGLE
+                pageable = PageRequests.SINGLE,
             )
         }
         verify(exactly = 1) { contributorRepository.findById(contributorId) }

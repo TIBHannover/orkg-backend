@@ -28,7 +28,7 @@ internal class TemplateFormattedLabelCreatorUnitTest : MockkBaseTest {
         val command = createTemplateCommand()
         val templateId = ThingId("R123")
         val state = CreateTemplateState(
-            templateId = templateId
+            templateId = templateId,
         )
         val formattedLabelLiteralId = ThingId("R124")
 
@@ -36,8 +36,8 @@ internal class TemplateFormattedLabelCreatorUnitTest : MockkBaseTest {
             unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = command.contributorId,
-                    label = command.formattedLabel!!.value
-                )
+                    label = command.formattedLabel!!.value,
+                ),
             )
         } returns formattedLabelLiteralId
         every {
@@ -46,8 +46,8 @@ internal class TemplateFormattedLabelCreatorUnitTest : MockkBaseTest {
                     contributorId = command.contributorId,
                     subjectId = state.templateId!!,
                     predicateId = Predicates.templateLabelFormat,
-                    objectId = formattedLabelLiteralId
-                )
+                    objectId = formattedLabelLiteralId,
+                ),
             )
         } returns StatementId("S1")
 
@@ -61,8 +61,8 @@ internal class TemplateFormattedLabelCreatorUnitTest : MockkBaseTest {
             unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = command.contributorId,
-                    label = command.formattedLabel!!.value
-                )
+                    label = command.formattedLabel!!.value,
+                ),
             )
         }
         verify(exactly = 1) {
@@ -71,8 +71,8 @@ internal class TemplateFormattedLabelCreatorUnitTest : MockkBaseTest {
                     contributorId = command.contributorId,
                     subjectId = state.templateId!!,
                     predicateId = Predicates.templateLabelFormat,
-                    objectId = formattedLabelLiteralId
-                )
+                    objectId = formattedLabelLiteralId,
+                ),
             )
         }
     }
@@ -80,11 +80,11 @@ internal class TemplateFormattedLabelCreatorUnitTest : MockkBaseTest {
     @Test
     fun `Given a template create command, when formatted label is null, it does not create a statement`() {
         val command = createTemplateCommand().copy(
-            formattedLabel = null
+            formattedLabel = null,
         )
         val templateId = ThingId("R123")
         val state = CreateTemplateState(
-            templateId = templateId
+            templateId = templateId,
         )
 
         val result = templateFormattedLabelCreator(command, state)

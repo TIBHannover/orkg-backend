@@ -23,7 +23,7 @@ class UnsafePredicateService(
             label = command.label,
             createdAt = OffsetDateTime.now(clock),
             createdBy = command.contributorId,
-            modifiable = command.modifiable
+            modifiable = command.modifiable,
         )
         repository.save(predicate)
         return predicate.id

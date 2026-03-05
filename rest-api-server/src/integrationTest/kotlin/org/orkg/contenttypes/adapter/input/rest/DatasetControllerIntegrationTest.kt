@@ -85,17 +85,17 @@ internal class DatasetControllerIntegrationTest : MockMvcBaseTest("datasets") {
         classService.createClass(
             label = "Quantity",
             id = ThingId(labelsAndClasses.quantityClass),
-            uri = ParsedIRI.create("http://qudt.org/2.1/schema/qudt/Quantity")
+            uri = ParsedIRI.create("http://qudt.org/2.1/schema/qudt/Quantity"),
         )
         classService.createClass(
             label = "Quantity",
             id = ThingId(labelsAndClasses.quantityValueClass),
-            uri = ParsedIRI.create("http://qudt.org/2.1/schema/qudt/QuantityValue")
+            uri = ParsedIRI.create("http://qudt.org/2.1/schema/qudt/QuantityValue"),
         )
         classService.createClass(
             label = "Quantity Kind",
             id = ThingId(labelsAndClasses.metricClass),
-            uri = ParsedIRI.create("http://qudt.org/2.1/schema/qudt/QuantityKind")
+            uri = ParsedIRI.create("http://qudt.org/2.1/schema/qudt/QuantityKind"),
         )
         classService.createClass("Dataset", ThingId(labelsAndClasses.datasetClass))
         classService.createClass("Benchmark", ThingId(labelsAndClasses.benchmarkClass))
@@ -147,11 +147,11 @@ internal class DatasetControllerIntegrationTest : MockMvcBaseTest("datasets") {
 
         val contributionOfPaper1 = resourceService.createResource(
             classes = setOf(Classes.contribution),
-            label = "Contribution of Paper 1"
+            label = "Contribution of Paper 1",
         )
         val contributionOfPaper2 = resourceService.createResource(
             classes = setOf(Classes.contribution),
-            label = "Contribution of Paper 2"
+            label = "Contribution of Paper 2",
         )
 
         val benchmark1 = resourceService.createResource(setOf(ThingId(labelsAndClasses.benchmarkClass)), label = "Benchmark P1")
@@ -236,15 +236,15 @@ internal class DatasetControllerIntegrationTest : MockMvcBaseTest("datasets") {
 
         val quantityValueB1E1 = resourceService.createResource(
             classes = setOf(ThingId(labelsAndClasses.quantityValueClass)),
-            label = "Quantity Value 1"
+            label = "Quantity Value 1",
         )
         val quantityValueB1E2 = resourceService.createResource(
             classes = setOf(ThingId(labelsAndClasses.quantityValueClass)),
-            label = "Quantity Value 2"
+            label = "Quantity Value 2",
         )
         val quantityValueB2E1 = resourceService.createResource(
             classes = setOf(ThingId(labelsAndClasses.quantityValueClass)),
-            label = "Quantity Value 3"
+            label = "Quantity Value 3",
         )
 
         statementService.createStatement(benchmark1, ThingId(labelsAndClasses.quantityPredicate), quantityB1E1)
@@ -327,15 +327,15 @@ internal class DatasetControllerIntegrationTest : MockMvcBaseTest("datasets") {
 
         val quantityValueB1E1 = resourceService.createResource(
             classes = setOf(ThingId(labelsAndClasses.quantityValueClass)),
-            label = "Quantity Value 1"
+            label = "Quantity Value 1",
         )
         val quantityValueB1E2 = resourceService.createResource(
             classes = setOf(ThingId(labelsAndClasses.quantityValueClass)),
-            label = "Quantity Value 2"
+            label = "Quantity Value 2",
         )
         val quantityValueB2E1 = resourceService.createResource(
             classes = setOf(ThingId(labelsAndClasses.quantityValueClass)),
-            label = "Quantity Value 3"
+            label = "Quantity Value 3",
         )
 
         statementService.createStatement(benchmark1, ThingId(labelsAndClasses.quantityPredicate), quantityB1E1)
@@ -413,15 +413,15 @@ internal class DatasetControllerIntegrationTest : MockMvcBaseTest("datasets") {
 
         val quantityValueB1E1 = resourceService.createResource(
             classes = setOf(ThingId(labelsAndClasses.quantityValueClass)),
-            label = "Quantity Value 1"
+            label = "Quantity Value 1",
         )
         val quantityValueB1E2 = resourceService.createResource(
             classes = setOf(ThingId(labelsAndClasses.quantityValueClass)),
-            label = "Quantity Value 2"
+            label = "Quantity Value 2",
         )
         val quantityValueB2E1 = resourceService.createResource(
             classes = setOf(ThingId(labelsAndClasses.quantityValueClass)),
-            label = "Quantity Value 3"
+            label = "Quantity Value 3",
         )
 
         statementService.createStatement(benchmark1, ThingId(labelsAndClasses.quantityPredicate), quantityB1E1)

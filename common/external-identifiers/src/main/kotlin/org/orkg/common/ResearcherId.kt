@@ -8,7 +8,7 @@ value class ResearcherId private constructor(override val value: String) : Ident
     companion object : IdentifierValueFactory<ResearcherId>(
         fn = ::ResearcherId,
         validationRegex = VALID_RESEARCHER_ID_REGEX,
-        uriValidationRegex = VALID_RESEARCHER_ID_URI_REGEX
+        uriValidationRegex = VALID_RESEARCHER_ID_URI_REGEX,
     )
 
     override val uri: String get() = "https://www.researcherid.com/rid/$value"

@@ -48,14 +48,14 @@ internal class PaperMentioningsUpdaterUnitTest : MockkBaseTest {
                 ResourceReference(
                     id = ThingId("R591"),
                     label = "Famous Comparison",
-                    classes = setOf(Classes.comparison)
+                    classes = setOf(Classes.comparison),
                 ),
                 ResourceReference(
                     id = ThingId("R357"),
                     label = "Some Paper",
-                    classes = setOf(Classes.paper)
-                )
-            )
+                    classes = setOf(Classes.paper),
+                ),
+            ),
         )
         val command = updatePaperCommand()
         val state = UpdatePaperState(paper)
@@ -76,13 +76,13 @@ internal class PaperMentioningsUpdaterUnitTest : MockkBaseTest {
         val statements = listOf(
             createStatement(
                 subject = createResource(command.paperId),
-                predicate = createPredicate(Predicates.mentions)
+                predicate = createPredicate(Predicates.mentions),
             ),
             createStatement(
                 subject = createResource(command.paperId),
-                predicate = createPredicate(Predicates.hasContent)
+                predicate = createPredicate(Predicates.hasContent),
             ),
-            createStatement(subject = createResource())
+            createStatement(subject = createResource()),
         ).groupBy { it.subject.id }
         val state = UpdatePaperState(paper, statements)
 
@@ -92,7 +92,7 @@ internal class PaperMentioningsUpdaterUnitTest : MockkBaseTest {
                 contributorId = command.contributorId,
                 subjectId = command.paperId,
                 predicateId = Predicates.mentions,
-                objects = command.mentionings!!
+                objects = command.mentionings!!,
             )
         } just runs
 
@@ -110,7 +110,7 @@ internal class PaperMentioningsUpdaterUnitTest : MockkBaseTest {
                 contributorId = command.contributorId,
                 subjectId = command.paperId,
                 predicateId = Predicates.mentions,
-                objects = command.mentionings!!
+                objects = command.mentionings!!,
             )
         }
     }

@@ -32,8 +32,8 @@ internal class AuthorUpdaterUnitTest : MockkBaseTest {
         val authors = listOf(
             Author(
                 id = authorId,
-                name = "Author"
-            )
+                name = "Author",
+            ),
         )
         val contributorId = ContributorId(UUID.randomUUID())
         val statements = emptyMap<ThingId, List<GeneralStatement>>()
@@ -52,8 +52,8 @@ internal class AuthorUpdaterUnitTest : MockkBaseTest {
         val authors = listOf(
             Author(
                 id = authorId,
-                name = "Author"
-            )
+                name = "Author",
+            ),
         )
         val authorListId = ThingId("R1456")
         val contributorId = ContributorId(UUID.randomUUID())
@@ -62,9 +62,9 @@ internal class AuthorUpdaterUnitTest : MockkBaseTest {
                 createStatement(
                     subject = createResource(subjectId),
                     predicate = createPredicate(Predicates.hasAuthors),
-                    `object` = createResource(authorListId, classes = setOf(Classes.list))
-                )
-            )
+                    `object` = createResource(authorListId, classes = setOf(Classes.list)),
+                ),
+            ),
         )
 
         every { listRepository.deleteById(authorListId) } just runs

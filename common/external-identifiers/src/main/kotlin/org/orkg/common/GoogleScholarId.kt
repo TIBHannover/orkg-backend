@@ -8,7 +8,7 @@ value class GoogleScholarId private constructor(override val value: String) : Id
     companion object : IdentifierValueFactory<GoogleScholarId>(
         fn = ::GoogleScholarId,
         validationRegex = VALID_GOOGLE_SCHOLAR_ID_REGEX,
-        uriValidationRegex = VALID_GOOGLE_SCHOLAR_ID_URI_REGEX
+        uriValidationRegex = VALID_GOOGLE_SCHOLAR_ID_URI_REGEX,
     )
 
     override val uri: String get() = "https://scholar.google.com/citations?user=$value"

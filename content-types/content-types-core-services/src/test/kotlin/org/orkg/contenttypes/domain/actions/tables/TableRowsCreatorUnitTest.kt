@@ -20,11 +20,11 @@ internal class TableRowsCreatorUnitTest : MockkBaseTest {
     fun `Given a table create command, when creating table rows, it returns success`() {
         val command = createTableCommand()
         val state = CreateTableState().copy(
-            tableId = ThingId("TableId")
+            tableId = ThingId("TableId"),
         )
         val rows = listOf(
             ThingId("Row1"),
-            ThingId("Row2")
+            ThingId("Row2"),
         )
 
         every { abstractTableRowCreator.create(any(), any(), any(), any()) } returnsMany rows
@@ -44,7 +44,7 @@ internal class TableRowsCreatorUnitTest : MockkBaseTest {
                 contributorId = command.contributorId,
                 tableId = state.tableId!!,
                 index = 0,
-                label = null
+                label = null,
             )
         }
         verify(exactly = 1) {
@@ -52,7 +52,7 @@ internal class TableRowsCreatorUnitTest : MockkBaseTest {
                 contributorId = command.contributorId,
                 tableId = state.tableId!!,
                 index = 1,
-                label = "row 2"
+                label = "row 2",
             )
         }
     }

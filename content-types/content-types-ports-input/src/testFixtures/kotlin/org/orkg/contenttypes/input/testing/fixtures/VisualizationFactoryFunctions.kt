@@ -16,26 +16,26 @@ fun createVisualizationCommand() = CreateVisualizationUseCase.CreateCommand(
     authors = listOf(
         Author(
             id = ThingId("R123"),
-            name = "Author with id"
+            name = "Author with id",
         ),
         Author(
             name = "Author with orcid",
-            identifiers = mapOf("orcid" to listOf("0000-1111-2222-3333"))
+            identifiers = mapOf("orcid" to listOf("0000-1111-2222-3333")),
         ),
         Author(
             id = ThingId("R456"),
             name = "Author with id and orcid",
-            identifiers = mapOf("orcid" to listOf("1111-2222-3333-4444"))
+            identifiers = mapOf("orcid" to listOf("1111-2222-3333-4444")),
         ),
         Author(
             name = "Author with homepage",
-            homepage = ParsedIRI.create("https://example.org/author")
+            homepage = ParsedIRI.create("https://example.org/author"),
         ),
         Author(
-            name = "Author that just has a name"
-        )
+            name = "Author that just has a name",
+        ),
     ),
     observatories = listOf(ObservatoryId("eeb1ab0f-0ef5-4bee-aba2-2d5cea2f0174")),
     organizations = listOf(OrganizationId("f9965b2a-5222-45e1-8ef8-dbd8ce1f57bc")),
-    extractionMethod = ExtractionMethod.UNKNOWN
+    extractionMethod = ExtractionMethod.UNKNOWN,
 )

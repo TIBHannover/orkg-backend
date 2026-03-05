@@ -74,7 +74,7 @@ class RosettaStoneTemplateController(
             createdAtEnd = createdAtEnd,
             observatoryId = observatoryId,
             organizationId = organizationId,
-            pageable = pageable
+            pageable = pageable,
         ).mapToRosettaStoneTemplateRepresentation()
 
     @RequireLogin
@@ -149,7 +149,7 @@ class RosettaStoneTemplateController(
                 exampleUsage = exampleUsage,
                 properties = properties.map { it.toTemplatePropertyCommand() },
                 observatories = observatories,
-                organizations = organizations
+                organizations = organizations,
             )
     }
 
@@ -182,7 +182,7 @@ class RosettaStoneTemplateController(
                 exampleUsage = exampleUsage,
                 properties = properties?.map { it.toTemplatePropertyCommand() },
                 observatories = observatories,
-                organizations = organizations
+                organizations = organizations,
             )
     }
 }

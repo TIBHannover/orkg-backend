@@ -44,7 +44,7 @@ internal class LiteratureListSectionIndexValidatorUnitTest : MockkBaseTest {
             statementRepository.findAll(
                 pageable = PageRequests.ALL,
                 subjectId = command.literatureListId,
-                predicateId = Predicates.hasSection
+                predicateId = Predicates.hasSection,
             )
         } returns pageOf(statements)
 
@@ -59,7 +59,7 @@ internal class LiteratureListSectionIndexValidatorUnitTest : MockkBaseTest {
             statementRepository.findAll(
                 pageable = PageRequests.ALL,
                 subjectId = command.literatureListId,
-                predicateId = Predicates.hasSection
+                predicateId = Predicates.hasSection,
             )
         }
     }

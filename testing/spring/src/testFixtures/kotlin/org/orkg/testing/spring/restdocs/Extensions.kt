@@ -63,8 +63,8 @@ fun <T : AbstractDescriptor<T>> T.min(min: Int): T =
                 "message" to "{jakarta.validation.constraints.Min.message}",
                 "groups" to emptyArray<Class<*>>(),
                 "payload" to emptyArray<Class<out Payload>>(),
-            )
-        )
+            ),
+        ),
     )
 
 fun <T : AbstractDescriptor<T>> T.max(max: Int): T =
@@ -76,8 +76,8 @@ fun <T : AbstractDescriptor<T>> T.max(max: Int): T =
                 "message" to "{jakarta.validation.constraints.Max.message}",
                 "groups" to emptyArray<Class<*>>(),
                 "payload" to emptyArray<Class<out Payload>>(),
-            )
-        )
+            ),
+        ),
     )
 
 fun <T : AbstractDescriptor<T>> T.size(min: Int = 0, max: Int = Integer.MAX_VALUE): T =
@@ -90,8 +90,8 @@ fun <T : AbstractDescriptor<T>> T.size(min: Int = 0, max: Int = Integer.MAX_VALU
                 "message" to "{jakarta.validation.constraints.Size.message}",
                 "groups" to emptyArray<Class<*>>(),
                 "payload" to emptyArray<Class<out Payload>>(),
-            )
-        )
+            ),
+        ),
     )
 
 inline fun <reified T> FieldDescriptor.type() =

@@ -43,8 +43,8 @@ internal class AuthorExceptionUnitTest : MockMvcExceptionBaseTest() {
             id = ThingId("R147"),
             name = "Josiah Stinkney Carberry",
             identifiers = mapOf(
-                "orcid" to listOf("0000-0002-1825-0097")
-            )
+                "orcid" to listOf("0000-0002-1825-0097"),
+            ),
         )
         val type = "orkg:problem:ambiguous_author"
         documentedGetRequestTo(AmbiguousAuthor(author))

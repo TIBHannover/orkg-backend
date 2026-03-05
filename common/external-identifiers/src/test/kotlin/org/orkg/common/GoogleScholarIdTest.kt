@@ -45,7 +45,7 @@ internal class GoogleScholarIdTest {
         @JvmStatic
         fun validGoogleScholarIds(): Stream<Arguments> = Stream.of(
             Arguments.of("CUO0vDcAAAAJ", "https://scholar.google.com/citations?user=CUO0vDcAAAAJ"),
-            Arguments.of("QPdLuj8AAAAJ", "https://scholar.google.com/citations?user=QPdLuj8AAAAJ")
+            Arguments.of("QPdLuj8AAAAJ", "https://scholar.google.com/citations?user=QPdLuj8AAAAJ"),
         )
 
         @JvmStatic
@@ -55,7 +55,7 @@ internal class GoogleScholarIdTest {
             // Longer than 12 characters
             Arguments.of("QPdLuj8AAAAJA", "https://scholar.google.com/citations?user=QPdLuj8AAAAJA"),
             // Does not follow scheme at all
-            Arguments.of("example", "https://example.com/")
+            Arguments.of("example", "https://example.com/"),
         )
     }
 }

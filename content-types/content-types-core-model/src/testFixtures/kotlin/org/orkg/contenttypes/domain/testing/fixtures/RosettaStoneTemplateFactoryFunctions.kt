@@ -26,20 +26,20 @@ fun createRosettaStoneTemplate() = RosettaStoneTemplate(
     exampleUsage = "example sentence of the statement",
     properties = listOf(
         createSubjectPositionTemplateProperty(),
-        createStringLiteralObjectPositionTemplateProperty()
+        createStringLiteralObjectPositionTemplateProperty(),
     ),
     observatories = listOf(
         ObservatoryId("cb71eebf-8afd-4fe3-9aea-d0966d71cece"),
-        ObservatoryId("73b2e081-9b50-4d55-b464-22d94e8a25f6")
+        ObservatoryId("73b2e081-9b50-4d55-b464-22d94e8a25f6"),
     ),
     organizations = listOf(
         OrganizationId("a700c55f-aae2-4696-b7d5-6e8b89f66a8f"),
-        OrganizationId("1f63b1da-3c70-4492-82e0-770ca94287ea")
+        OrganizationId("1f63b1da-3c70-4492-82e0-770ca94287ea"),
     ),
     createdAt = OffsetDateTime.parse("2023-04-12T16:05:05.959539600+02:00"),
     createdBy = ContributorId("dca4080c-e23f-489d-b900-af8bfc2b0620"),
     visibility = Visibility.DEFAULT,
-    modifiable = true
+    modifiable = true,
 )
 
 fun createSubjectPositionTemplateProperty() = ResourceTemplateProperty(
@@ -53,7 +53,7 @@ fun createSubjectPositionTemplateProperty() = ResourceTemplateProperty(
     path = ObjectIdAndLabel(Predicates.hasSubjectPosition, "has subject position"),
     createdAt = OffsetDateTime.parse("2023-11-02T15:57:25.959539600+02:00"),
     createdBy = ContributorId("dca4080c-e23f-489d-b900-af8bfc2b0620"),
-    `class` = ObjectIdAndLabel(ThingId("C28"), "resource property class label")
+    `class` = ObjectIdAndLabel(ThingId("C28"), "resource property class label"),
 )
 
 fun createStringLiteralObjectPositionTemplateProperty() = StringLiteralTemplateProperty(
@@ -68,5 +68,5 @@ fun createStringLiteralObjectPositionTemplateProperty() = StringLiteralTemplateP
     createdAt = OffsetDateTime.parse("2023-11-02T14:57:05.959539600+01:00"),
     createdBy = ContributorId("dca4080c-e23f-489d-b900-af8bfc2b0620"),
     path = ObjectIdAndLabel(Predicates.hasObjectPosition, "has object position"),
-    datatype = ClassReference(Classes.string, "string literal property class label", ParsedIRI.create(Literals.XSD.STRING.uri))
+    datatype = ClassReference(Classes.string, "string literal property class label", ParsedIRI.create(Literals.XSD.STRING.uri)),
 )

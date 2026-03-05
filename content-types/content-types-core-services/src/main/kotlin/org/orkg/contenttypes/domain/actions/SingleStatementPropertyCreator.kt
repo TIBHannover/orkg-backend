@@ -23,16 +23,16 @@ class SingleStatementPropertyCreator(
             CreateLiteralUseCase.CreateCommand(
                 contributorId = contributorId,
                 label = label,
-                datatype = datatype
-            )
+                datatype = datatype,
+            ),
         )
         unsafeStatementUseCases.create(
             CreateStatementUseCase.CreateCommand(
                 contributorId = contributorId,
                 subjectId = subjectId,
                 predicateId = predicateId,
-                objectId = literal
-            )
+                objectId = literal,
+            ),
         )
     }
 }

@@ -18,7 +18,7 @@ internal class ObservatoryEntityTest {
         private val setOfRandomUUIDs = arrayOf(
             UUID.fromString("1804ae87-8ea6-4d29-bdc6-bf008a942471"),
             UUID.fromString("f270f9fe-6326-4b8c-a627-72a45a152a7f"),
-            UUID.fromString("410d7d35-c8cc-43ba-8d84-283be9a20067")
+            UUID.fromString("410d7d35-c8cc-43ba-8d84-283be9a20067"),
         )
         private val setOfOrganizationIds =
             setOfRandomUUIDs.map(::OrganizationId).toTypedArray()

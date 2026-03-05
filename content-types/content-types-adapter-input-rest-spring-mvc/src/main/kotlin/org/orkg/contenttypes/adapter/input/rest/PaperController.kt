@@ -250,7 +250,7 @@ class PaperController(
                     literals = literals?.mapValues { it.value.toCreateCommand() }.orEmpty(),
                     predicates = predicates?.mapValues { it.value.toCreateCommand() }.orEmpty(),
                     lists = lists?.mapValues { it.value.toCreateCommand() }.orEmpty(),
-                    contributions = contributions.map { it.toCreateCommand() }
+                    contributions = contributions.map { it.toCreateCommand() },
                 )
         }
 
@@ -266,7 +266,7 @@ class PaperController(
                 CreateContributionCommandPart(
                     label = label,
                     classes = classes.orEmpty(),
-                    statements = statements.mapValues { it.value.map { statement -> statement.toCreateCommand() } }
+                    statements = statements.mapValues { it.value.map { statement -> statement.toCreateCommand() } },
                 )
 
             data class StatementObjectRequest(
@@ -278,7 +278,7 @@ class PaperController(
                 fun toCreateCommand(): CreateContributionCommandPart.StatementObject =
                     CreateContributionCommandPart.StatementObject(
                         id = id,
-                        statements = statements?.mapValues { it.value.map { statement -> statement.toCreateCommand() } }
+                        statements = statements?.mapValues { it.value.map { statement -> statement.toCreateCommand() } },
                     )
             }
         }
@@ -296,7 +296,7 @@ class PaperController(
                 observatories = observatories,
                 organizations = organizations,
                 contents = contents?.toCreateCommand(),
-                extractionMethod = extractionMethod
+                extractionMethod = extractionMethod,
             )
     }
 
@@ -340,7 +340,7 @@ class PaperController(
                 organizations = organizations,
                 extractionMethod = extractionMethod,
                 visibility = visibility,
-                verified = verified
+                verified = verified,
             )
     }
 
@@ -359,7 +359,7 @@ class PaperController(
                 contributorId = contributorId,
                 subject = subject,
                 description = description,
-                authors = authors.map { it.toAuthor() }
+                authors = authors.map { it.toAuthor() },
             )
     }
 }

@@ -20,7 +20,7 @@ class AbstractRosettaStoneTemplatePropertiesValidator(
         predicateRepository: PredicateRepository,
         classRepository: ClassRepository,
     ) : this(
-        AbstractTemplatePropertyValidator(predicateRepository, classRepository)
+        AbstractTemplatePropertyValidator(predicateRepository, classRepository),
     )
 
     internal fun validate(properties: List<TemplatePropertyCommand>) {

@@ -13,7 +13,7 @@ class TableThingsCommandUpdateValidator(
         thingRepository: ThingRepository,
         classRepository: ClassRepository,
     ) : this(
-        ThingsCommandValidator(thingRepository, classRepository)
+        ThingsCommandValidator(thingRepository, classRepository),
     )
 
     override fun invoke(command: UpdateTableCommand, state: State): State {
@@ -22,7 +22,7 @@ class TableThingsCommandUpdateValidator(
         }
         val validationCache = thingsCommandValidator.validate(
             thingsCommand = command,
-            validationCache = state.validationCache
+            validationCache = state.validationCache,
         )
         return state.copy(validationCache = validationCache)
     }

@@ -21,7 +21,7 @@ internal class OpenApiDocTest : MockMvcOpenApiBaseTest() {
                 oneOf(
                     ExistingPredicateContributionStatementRepresentation::class,
                     NewPredicateContributionStatementRepresentation::class,
-                )
+                ),
             )
         }
     }
@@ -30,7 +30,7 @@ internal class OpenApiDocTest : MockMvcOpenApiBaseTest() {
     fun existingPredicateContributionStatement() {
         document(createExistingPredicateContributionStatementRepresentation()) {
             responseFields<ExistingPredicateContributionStatementRepresentation>(
-                existingPredicateContributionStatementResponseFields()
+                existingPredicateContributionStatementResponseFields(),
             )
         }
     }
@@ -39,7 +39,7 @@ internal class OpenApiDocTest : MockMvcOpenApiBaseTest() {
     fun newPredicateContributionStatement() {
         document(createNewPredicateContributionStatementRepresentation()) {
             responseFields<NewPredicateContributionStatementRepresentation>(
-                newPredicateContributionStatementResponseFields()
+                newPredicateContributionStatementResponseFields(),
             )
         }
     }

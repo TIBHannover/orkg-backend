@@ -34,7 +34,7 @@ open class CSVHeaderProcessor(
                     val label = header.name
                     val predicates = predicateRepository.findAll(
                         label = SearchString.of(label, exactMatch = true),
-                        pageable = PageRequests.SINGLE
+                        pageable = PageRequests.SINGLE,
                     )
                     val predicateId = predicates.singleOrNull()?.id
                     if (predicateId != null) {

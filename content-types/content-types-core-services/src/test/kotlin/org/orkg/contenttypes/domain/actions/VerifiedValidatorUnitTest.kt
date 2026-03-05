@@ -20,7 +20,7 @@ internal class VerifiedValidatorUnitTest : MockkBaseTest {
         contributorRepository = contributorRepository,
         contributorSelector = { (contributorId, _) -> contributorId },
         oldValueSelector = { it },
-        newValueSelector = { (_, verified) -> verified }
+        newValueSelector = { (_, verified) -> verified },
     )
 
     @Test

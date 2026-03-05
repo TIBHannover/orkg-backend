@@ -115,10 +115,10 @@ internal class RosettaStoneStatementControllerUnitTest : MockMvcBaseTest("rosett
                 description(
                     """
                     A `GET` request provides information about a rosetta stone statement or a specific rosetta stone statement version.
-                    """
+                    """,
                 )
                 pathParameters(
-                    parameterWithName("id").description("The identifier of the rosetta stone statement to retrieve.")
+                    parameterWithName("id").description("The identifier of the rosetta stone statement to retrieve."),
                 )
                 responseFields<RosettaStoneStatementRepresentation>(rosettaStoneStatementResponseFields())
                 throws(RosettaStoneStatementNotFound::class, RosettaStoneStatementVersionNotFound::class)
@@ -199,7 +199,7 @@ internal class RosettaStoneStatementControllerUnitTest : MockMvcBaseTest("rosett
                     If no paging request parameters are provided, the default values will be used.
                     
                     NOTE: Only the most recent versions of rosetta stone statements will be returned.
-                    """
+                    """,
                 )
                 pagedQueryParameters(
                     parameterWithName("context").description("Filter for the id of the context that the rosetta stone statement was created with. (optional)").optional(),
@@ -227,7 +227,7 @@ internal class RosettaStoneStatementControllerUnitTest : MockMvcBaseTest("rosett
                 createdAtStart = createdAtStart,
                 createdAtEnd = createdAtEnd,
                 observatoryId = observatoryId,
-                organizationId = organizationId
+                organizationId = organizationId,
             )
         }
     }
@@ -249,10 +249,10 @@ internal class RosettaStoneStatementControllerUnitTest : MockMvcBaseTest("rosett
                 description(
                     """
                     A `GET` request returns a list of <<rosetta-stone-statements-fetch,rosetta stone statement>> versions.
-                    """
+                    """,
                 )
                 pathParameters(
-                    parameterWithName("id").description("The identifier of the rosetta stone statement version.")
+                    parameterWithName("id").description("The identifier of the rosetta stone statement version."),
                 )
                 listResponseFields<RosettaStoneStatementRepresentation>(rosettaStoneStatementResponseFields())
                 throws(RosettaStoneStatementNotFound::class)
@@ -296,7 +296,7 @@ internal class RosettaStoneStatementControllerUnitTest : MockMvcBaseTest("rosett
                     A `POST` request creates a new rosetta stone statement with all the given parameters.
                     The response will be `201 Created` when successful.
                     The rosetta stone statement can be retrieved by following the URI in the `Location` header field.
-                    """
+                    """,
                 )
                 responseHeaders(
                     headerWithName("Location").description("The uri path where the newly created rosetta stone statement can be fetched from."),
@@ -379,13 +379,13 @@ internal class RosettaStoneStatementControllerUnitTest : MockMvcBaseTest("rosett
                     A `POST` request creates a new version of an existing rosetta stone statement with all the given parameters.
                     The response will be `201 Created` when successful.
                     The revised rosetta stone statement (object) can be retrieved by following the URI in the `Location` header field.
-                    """
+                    """,
                 )
                 pathParameters(
-                    parameterWithName("id").description("The identifier of the rosetta stone statement version.")
+                    parameterWithName("id").description("The identifier of the rosetta stone statement version."),
                 )
                 responseHeaders(
-                    headerWithName("Location").description("The uri path where the newly created rosetta stone statement can be fetched from.")
+                    headerWithName("Location").description("The uri path where the newly created rosetta stone statement can be fetched from."),
                 )
                 requestFields<UpdateRosettaStoneStatementRequest>(
                     fieldWithPath("subjects[]").description("The ordered list of subject instance IDs used in the updated rosetta stone statement."),
@@ -458,10 +458,10 @@ internal class RosettaStoneStatementControllerUnitTest : MockMvcBaseTest("rosett
                     """
                     A `DELETE` request soft-deletes a rosetta stone statement with all its versions.
                     The response will be `204 No Content` when successful.
-                    """
+                    """,
                 )
                 pathParameters(
-                    parameterWithName("id").description("The id of the rosetta stone statement to soft-delete.")
+                    parameterWithName("id").description("The id of the rosetta stone statement to soft-delete."),
                 )
                 throws(
                     RosettaStoneStatementNotModifiable::class,
@@ -491,10 +491,10 @@ internal class RosettaStoneStatementControllerUnitTest : MockMvcBaseTest("rosett
                     The response will be `204 No Content` when successful.
                     
                     NOTE: The user performing the action needs to be a curator.
-                    """
+                    """,
                 )
                 pathParameters(
-                    parameterWithName("id").description("The id of the rosetta stone statement to delete.")
+                    parameterWithName("id").description("The id of the rosetta stone statement to delete."),
                 )
                 throws(
                     RosettaStoneStatementNotModifiable::class,
@@ -515,44 +515,44 @@ internal class RosettaStoneStatementControllerUnitTest : MockMvcBaseTest("rosett
             subjects = listOf("R258", "R369", "#temp1"),
             objects = listOf(
                 listOf("R987", "R654", "#temp2", "#temp3"),
-                listOf("R321", "R741", "#temp4", "#temp5")
+                listOf("R321", "R741", "#temp4", "#temp5"),
             ),
             certainty = Certainty.HIGH,
             negated = false,
             resources = mapOf(
                 "#temp1" to CreateResourceRequestPart(
                     label = "MOTO",
-                    classes = setOf(ThingId("Result"))
-                )
+                    classes = setOf(ThingId("Result")),
+                ),
             ),
             literals = mapOf(
-                "#temp2" to CreateLiteralRequestPart("0.1", Literals.XSD.DECIMAL.prefixedUri)
+                "#temp2" to CreateLiteralRequestPart("0.1", Literals.XSD.DECIMAL.prefixedUri),
             ),
             predicates = mapOf(
                 "#temp3" to CreatePredicateRequestPart(
                     label = "hasResult",
-                    description = "has result"
-                )
+                    description = "has result",
+                ),
             ),
             lists = mapOf(
                 "#temp4" to CreateListRequestPart(
                     label = "list",
-                    elements = listOf("#temp1", "C123")
-                )
+                    elements = listOf("#temp1", "C123"),
+                ),
             ),
             classes = mapOf(
                 "#temp5" to CreateClassRequestPart(
                     label = "class",
-                    uri = ParsedIRI.create("https://orkg.org/class/C1")
-                )
+                    uri = ParsedIRI.create("https://orkg.org/class/C1"),
+                ),
             ),
             observatories = listOf(
-                ObservatoryId("cb71eebf-8afd-4fe3-9aea-d0966d71cece")
+                ObservatoryId("cb71eebf-8afd-4fe3-9aea-d0966d71cece"),
             ),
             organizations = listOf(
-                OrganizationId("a700c55f-aae2-4696-b7d5-6e8b89f66a8f")
+                OrganizationId("a700c55f-aae2-4696-b7d5-6e8b89f66a8f"),
             ),
-            extractionMethod = ExtractionMethod.MANUAL
+            extractionMethod = ExtractionMethod.MANUAL,
         )
 
     private fun updateRosettaStoneStatementRequest() =
@@ -560,43 +560,43 @@ internal class RosettaStoneStatementControllerUnitTest : MockMvcBaseTest("rosett
             subjects = listOf("R258", "R369", "#temp1"),
             objects = listOf(
                 listOf("R987", "R654", "#temp2", "#temp3"),
-                listOf("R321", "R741", "#temp4", "#temp5")
+                listOf("R321", "R741", "#temp4", "#temp5"),
             ),
             certainty = Certainty.HIGH,
             negated = false,
             resources = mapOf(
                 "#temp1" to CreateResourceRequestPart(
                     label = "MOTO",
-                    classes = setOf(ThingId("Result"))
-                )
+                    classes = setOf(ThingId("Result")),
+                ),
             ),
             literals = mapOf(
-                "#temp2" to CreateLiteralRequestPart("0.1", Literals.XSD.DECIMAL.prefixedUri)
+                "#temp2" to CreateLiteralRequestPart("0.1", Literals.XSD.DECIMAL.prefixedUri),
             ),
             predicates = mapOf(
                 "#temp3" to CreatePredicateRequestPart(
                     label = "hasResult",
-                    description = "has result"
-                )
+                    description = "has result",
+                ),
             ),
             lists = mapOf(
                 "#temp4" to CreateListRequestPart(
                     label = "list",
-                    elements = listOf("#temp1", "C123")
-                )
+                    elements = listOf("#temp1", "C123"),
+                ),
             ),
             classes = mapOf(
                 "#temp5" to CreateClassRequestPart(
                     label = "class",
-                    uri = ParsedIRI.create("https://orkg.org/class/C1")
-                )
+                    uri = ParsedIRI.create("https://orkg.org/class/C1"),
+                ),
             ),
             observatories = listOf(
-                ObservatoryId("cb71eebf-8afd-4fe3-9aea-d0966d71cece")
+                ObservatoryId("cb71eebf-8afd-4fe3-9aea-d0966d71cece"),
             ),
             organizations = listOf(
-                OrganizationId("a700c55f-aae2-4696-b7d5-6e8b89f66a8f")
+                OrganizationId("a700c55f-aae2-4696-b7d5-6e8b89f66a8f"),
             ),
-            extractionMethod = ExtractionMethod.MANUAL
+            extractionMethod = ExtractionMethod.MANUAL,
         )
 }

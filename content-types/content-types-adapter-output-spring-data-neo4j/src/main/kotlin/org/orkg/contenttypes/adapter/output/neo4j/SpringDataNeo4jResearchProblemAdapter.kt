@@ -147,8 +147,8 @@ class SpringDataNeo4jResearchProblemAdapter(
                     exists(
                         node.relationshipFrom(node(Classes.contribution))
                             .relationshipFrom(
-                                node(Classes.thing).withProperties("observatory_id", literalOf<String>(it.value.toString()))
-                            )
+                                node(Classes.thing).withProperties("observatory_id", literalOf<String>(it.value.toString())),
+                            ),
                     )
                 },
                 // in some scenarios, it might be beneficial to move this check to the match pattern expression
@@ -156,8 +156,8 @@ class SpringDataNeo4jResearchProblemAdapter(
                     exists(
                         node.relationshipFrom(node(Classes.contribution))
                             .relationshipFrom(
-                                node(Classes.thing).withProperties("organization_id", literalOf<String>(it.value.toString()))
-                            )
+                                node(Classes.thing).withProperties("organization_id", literalOf<String>(it.value.toString())),
+                            ),
                     )
                 },
             )
@@ -175,15 +175,15 @@ class SpringDataNeo4jResearchProblemAdapter(
                     orderByOptimizations(
                         node = node,
                         sort = sort,
-                        properties = arrayOf("id", "label", "created_at", "created_by", "visibility")
-                    )
+                        properties = arrayOf("id", "label", "created_at", "created_by", "visibility"),
+                    ),
                 )
                 .with(variables)
                 .orderBy(
                     sort.toSortItems(
                         propertyMappings = listOf("id", "label", "created_at", "created_by", "visibility").associateWith { node.property(it) },
-                        knownProperties = arrayOf("id", "label", "created_at", "created_by", "visibility", "research_field_count")
-                    )
+                        knownProperties = arrayOf("id", "label", "created_at", "created_by", "visibility", "research_field_count"),
+                    ),
                 )
                 .returningDistinct(node)
         }

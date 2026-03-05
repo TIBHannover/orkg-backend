@@ -28,37 +28,37 @@ class AbstractTableRowCreator(
                 contributorId = contributorId,
                 label = "",
                 classes = setOf(Classes.row),
-            )
+            ),
         )
         val rowNumberLiteralId = unsafeLiteralUseCases.create(
             CreateLiteralUseCase.CreateCommand(
                 contributorId = contributorId,
                 label = "${index + 1}",
-                datatype = Literals.XSD.INT.prefixedUri
-            )
+                datatype = Literals.XSD.INT.prefixedUri,
+            ),
         )
         unsafeStatementUseCases.create(
             CreateStatementUseCase.CreateCommand(
                 contributorId = contributorId,
                 subjectId = rowId,
                 predicateId = Predicates.csvwNumber,
-                objectId = rowNumberLiteralId
-            )
+                objectId = rowNumberLiteralId,
+            ),
         )
         if (label != null) {
             val rowLabelLiteralId = unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = contributorId,
-                    label = label
-                )
+                    label = label,
+                ),
             )
             unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = contributorId,
                     subjectId = rowId,
                     predicateId = Predicates.csvwTitles,
-                    objectId = rowLabelLiteralId
-                )
+                    objectId = rowLabelLiteralId,
+                ),
             )
         }
         unsafeStatementUseCases.create(
@@ -66,8 +66,8 @@ class AbstractTableRowCreator(
                 contributorId = contributorId,
                 subjectId = tableId,
                 predicateId = Predicates.csvwRows,
-                objectId = rowId
-            )
+                objectId = rowId,
+            ),
         )
         return rowId
     }

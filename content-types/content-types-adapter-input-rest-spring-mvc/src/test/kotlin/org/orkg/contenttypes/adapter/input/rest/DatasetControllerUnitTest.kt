@@ -42,8 +42,8 @@ internal class DatasetControllerUnitTest : MockMvcBaseTest("datasets") {
                 label = "Dataset 1",
                 totalPapers = 567,
                 totalModels = 25,
-                totalCodes = 231
-            )
+                totalCodes = 231,
+            ),
         )
 
         documentedGetRequestTo("/api/datasets/research-problem/{id}", researchProblemId)
@@ -54,7 +54,7 @@ internal class DatasetControllerUnitTest : MockMvcBaseTest("datasets") {
                 description(
                     """
                     A `GET` request returns a <<sorting-and-pagination,paged>> list of datasets for a research problem.
-                    """
+                    """,
                 )
                 pathParameters(
                     parameterWithName("id").description("The identifier of the research problem."),
@@ -73,7 +73,7 @@ internal class DatasetControllerUnitTest : MockMvcBaseTest("datasets") {
 
         every { retrieveProblems.findAllByDatasetId(datasetId, any()) } returns pageOf(
             ResearchProblem(id = ThingId("R456"), label = "Problem 1"),
-            ResearchProblem(id = ThingId("R789"), label = "Problem 2")
+            ResearchProblem(id = ThingId("R789"), label = "Problem 2"),
         )
 
         documentedGetRequestTo("/api/datasets/{id}/problems", datasetId)
@@ -84,7 +84,7 @@ internal class DatasetControllerUnitTest : MockMvcBaseTest("datasets") {
                 description(
                     """
                     A `GET` request returns a <<sorting-and-pagination,paged>> list of research fields associated with a given dataset.
-                    """
+                    """,
                 )
                 pathParameters(
                     parameterWithName("id").description("The identifier of the dataset."),
@@ -119,7 +119,7 @@ internal class DatasetControllerUnitTest : MockMvcBaseTest("datasets") {
                     "https://some-code-1.cool",
                     "https://some-code-2.cool",
                 ),
-            )
+            ),
         )
 
         documentedGetRequestTo("/api/datasets/{id}/problem/{researchProblemId}/summary", datasetId, researchProblemId)
@@ -130,7 +130,7 @@ internal class DatasetControllerUnitTest : MockMvcBaseTest("datasets") {
                 description(
                     """
                     A `GET` request returns a <<sorting-and-pagination,paged>> list of dataset summaries.
-                    """
+                    """,
                 )
                 pathParameters(
                     parameterWithName("id").description("The identifier of the dataset."),

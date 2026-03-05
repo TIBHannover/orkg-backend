@@ -45,8 +45,8 @@ fun CreateClassUseCase.createClass(
         contributorId = contributorId,
         label = label,
         uri = uri,
-        modifiable = modifiable
-    )
+        modifiable = modifiable,
+    ),
 )
 
 // Predicates
@@ -64,8 +64,8 @@ fun CreatePredicateUseCase.createPredicate(
         id = id,
         contributorId = contributorId,
         label = label,
-        modifiable = modifiable
-    )
+        modifiable = modifiable,
+    ),
 )
 
 // Resources
@@ -88,8 +88,8 @@ fun CreateResourceUseCase.createResource(
         extractionMethod = extractionMethod,
         observatoryId = observatoryId,
         organizationId = organizationId,
-        modifiable = modifiable
-    )
+        modifiable = modifiable,
+    ),
 )
 
 // Literals
@@ -107,7 +107,7 @@ fun CreateLiteralUseCase.createLiteral(
         label = label,
         datatype = datatype,
         modifiable = modifiable,
-    )
+    ),
 )
 
 // Contributors
@@ -130,8 +130,8 @@ fun ContributorUseCases.createContributor(
         observatoryId = observatoryId,
         emailHash = emailHash,
         isCurator = isCurator,
-        isAdmin = isAdmin
-    )
+        isAdmin = isAdmin,
+    ),
 )
 
 // Organizations
@@ -151,7 +151,7 @@ fun OrganizationUseCases.createOrganization(
     url = url,
     displayId = displayId,
     type = type,
-    logoId = logoId
+    logoId = logoId,
 )
 
 // Observatories
@@ -172,8 +172,8 @@ fun ObservatoryUseCases.createObservatory(
         organizations = organizations,
         researchField = researchField,
         displayId = displayId,
-        sustainableDevelopmentGoals = sustainableDevelopmentGoals
-    )
+        sustainableDevelopmentGoals = sustainableDevelopmentGoals,
+    ),
 )
 
 // Lists
@@ -188,8 +188,8 @@ fun ListUseCases.createList(
         contributorId = contributorId,
         label = label,
         elements = elements,
-        id = id
-    )
+        id = id,
+    ),
 )
 
 // Statements
@@ -206,8 +206,8 @@ fun StatementUseCases.createStatement(
         subjectId = subject,
         predicateId = predicate,
         objectId = `object`,
-        modifiable = modifiable
-    )
+        modifiable = modifiable,
+    ),
 )
 
 private fun String.toDisplayId() = lowercase().replace(Regex("[^a-zA-Z0-9_]"), "_")

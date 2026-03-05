@@ -6,6 +6,6 @@ import org.orkg.graph.testing.fixtures.classRepositoryContract
 internal class InMemoryClassAdapterContractTest :
     DescribeSpec({
         include(
-            classRepositoryContract(InMemoryClassRepository(InMemoryGraph()))
+            classRepositoryContract(InMemoryClassRepository(InMemoryGraph())),
         )
     })

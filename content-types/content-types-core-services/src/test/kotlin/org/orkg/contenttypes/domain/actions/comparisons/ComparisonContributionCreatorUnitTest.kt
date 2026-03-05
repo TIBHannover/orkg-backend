@@ -24,7 +24,7 @@ internal class ComparisonContributionCreatorUnitTest : MockkBaseTest {
         val comparisonId = ThingId("R12")
         val command = createComparisonCommand()
         val state = CreateComparisonState(
-            comparisonId = comparisonId
+            comparisonId = comparisonId,
         )
 
         every { unsafeStatementUseCases.create(any()) } returns StatementId("S1")
@@ -43,8 +43,8 @@ internal class ComparisonContributionCreatorUnitTest : MockkBaseTest {
                         contributorId = command.contributorId,
                         subjectId = comparisonId,
                         predicateId = source.type.predicateId,
-                        objectId = source.id
-                    )
+                        objectId = source.id,
+                    ),
                 )
             }
         }

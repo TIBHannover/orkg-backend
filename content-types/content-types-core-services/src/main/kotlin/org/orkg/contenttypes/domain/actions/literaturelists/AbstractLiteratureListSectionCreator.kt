@@ -37,31 +37,31 @@ class AbstractLiteratureListSectionCreator(
             CreateResourceUseCase.CreateCommand(
                 contributorId = contributorId,
                 label = "Entry",
-                classes = setOf(Classes.listSection)
-            )
+                classes = setOf(Classes.listSection),
+            ),
         )
         unsafeStatementUseCases.create(
             CreateStatementUseCase.CreateCommand(
                 contributorId = contributorId,
                 subjectId = entryId,
                 predicateId = Predicates.hasLink,
-                objectId = entry.id
-            )
+                objectId = entry.id,
+            ),
         )
         entry.description?.also { description ->
             val descriptionLiteral = unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = contributorId,
-                    label = description
-                )
+                    label = description,
+                ),
             )
             unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = contributorId,
                     subjectId = entryId,
                     predicateId = Predicates.description,
-                    objectId = descriptionLiteral
-                )
+                    objectId = descriptionLiteral,
+                ),
             )
         }
         return entryId
@@ -75,8 +75,8 @@ class AbstractLiteratureListSectionCreator(
             CreateResourceUseCase.CreateCommand(
                 contributorId = contributorId,
                 label = "",
-                classes = setOf(Classes.listSection)
-            )
+                classes = setOf(Classes.listSection),
+            ),
         )
         section.entries.forEach {
             val entryId = createListSectionEntry(contributorId, it)
@@ -85,8 +85,8 @@ class AbstractLiteratureListSectionCreator(
                     contributorId = contributorId,
                     subjectId = sectionId,
                     predicateId = Predicates.hasEntry,
-                    objectId = entryId
-                )
+                    objectId = entryId,
+                ),
             )
         }
         return sectionId
@@ -100,37 +100,37 @@ class AbstractLiteratureListSectionCreator(
             CreateResourceUseCase.CreateCommand(
                 contributorId = contributorId,
                 label = section.heading,
-                classes = setOf(Classes.textSection)
-            )
+                classes = setOf(Classes.textSection),
+            ),
         )
         val headingSizeId = unsafeLiteralUseCases.create(
             CreateLiteralUseCase.CreateCommand(
                 contributorId = contributorId,
                 label = section.headingSize.toString(),
-                datatype = Literals.XSD.INT.prefixedUri
-            )
+                datatype = Literals.XSD.INT.prefixedUri,
+            ),
         )
         unsafeStatementUseCases.create(
             CreateStatementUseCase.CreateCommand(
                 contributorId = contributorId,
                 subjectId = sectionId,
                 predicateId = Predicates.hasHeadingLevel,
-                objectId = headingSizeId
-            )
+                objectId = headingSizeId,
+            ),
         )
         val textId = unsafeLiteralUseCases.create(
             CreateLiteralUseCase.CreateCommand(
                 contributorId = contributorId,
-                label = section.text
-            )
+                label = section.text,
+            ),
         )
         unsafeStatementUseCases.create(
             CreateStatementUseCase.CreateCommand(
                 contributorId = contributorId,
                 subjectId = sectionId,
                 predicateId = Predicates.hasContent,
-                objectId = textId
-            )
+                objectId = textId,
+            ),
         )
         return sectionId
     }

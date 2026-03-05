@@ -28,7 +28,7 @@ class PaperPublicationInfoUpdater(
         unsafeLiteralUseCases: UnsafeLiteralUseCases,
     ) : this(
         statementService,
-        PublicationInfoCreator(unsafeResourceUseCases, resourceRepository, unsafeStatementUseCases, unsafeLiteralUseCases)
+        PublicationInfoCreator(unsafeResourceUseCases, resourceRepository, unsafeStatementUseCases, unsafeLiteralUseCases),
     )
 
     override fun invoke(command: UpdatePaperCommand, state: State): State {
@@ -38,7 +38,7 @@ class PaperPublicationInfoUpdater(
                     statements = state.statements[command.paperId].orEmpty().wherePredicate(Predicates.monthPublished),
                     newMonth = command.publicationInfo!!.publishedMonth,
                     contributorId = command.contributorId,
-                    subjectId = command.paperId
+                    subjectId = command.paperId,
                 )
             }
             if (state.paper?.publicationInfo?.publishedYear != command.publicationInfo!!.publishedYear) {
@@ -46,7 +46,7 @@ class PaperPublicationInfoUpdater(
                     statements = state.statements[command.paperId].orEmpty().wherePredicate(Predicates.yearPublished),
                     newYear = command.publicationInfo!!.publishedYear,
                     contributorId = command.contributorId,
-                    subjectId = command.paperId
+                    subjectId = command.paperId,
                 )
             }
             if (state.paper?.publicationInfo?.publishedIn?.label != command.publicationInfo!!.publishedIn) {
@@ -54,7 +54,7 @@ class PaperPublicationInfoUpdater(
                     statements = state.statements[command.paperId].orEmpty().wherePredicate(Predicates.hasVenue),
                     newVenue = command.publicationInfo!!.publishedIn,
                     contributorId = command.contributorId,
-                    subjectId = command.paperId
+                    subjectId = command.paperId,
                 )
             }
             if (state.paper?.publicationInfo?.url != command.publicationInfo!!.url) {
@@ -62,7 +62,7 @@ class PaperPublicationInfoUpdater(
                     statements = state.statements[command.paperId].orEmpty().wherePredicate(Predicates.hasURL),
                     newUrl = command.publicationInfo!!.url,
                     contributorId = command.contributorId,
-                    subjectId = command.paperId
+                    subjectId = command.paperId,
                 )
             }
         }

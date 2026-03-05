@@ -40,7 +40,7 @@ class ThingFabricator : Fabricator<Thing> {
             createdBy = fabrikate.random(),
             // Do not create a random description for tests, as it needs to be saved via statements
             // description = random(),
-            modifiable = true
+            modifiable = true,
         )
     }
 }
@@ -54,7 +54,7 @@ class ClassFabricator : Fabricator<Class> {
         createdBy = fabrikate.random(),
         // Do not create a random description for tests, as it needs to be saved via statements
         // description = random(),
-        modifiable = true
+        modifiable = true,
     )
 }
 
@@ -66,7 +66,7 @@ class PredicateFabricator : Fabricator<Predicate> {
         createdBy = fabrikate.random(),
         // Do not create a random description for tests, as it needs to be saved via statements
         // description = random(),
-        modifiable = true
+        modifiable = true,
     )
 }
 
@@ -77,7 +77,7 @@ class LiteralFabricator : Fabricator<Literal> {
         datatype = fabrikate.random(),
         createdAt = fabrikate.random(),
         createdBy = fabrikate.random(),
-        modifiable = true
+        modifiable = true,
     )
 }
 
@@ -93,7 +93,7 @@ class ResourceFabricator : Fabricator<Resource> {
         organizationId = fabrikate.random(),
         visibility = fabrikate.random(),
         verified = fabrikate.random(),
-        modifiable = true
+        modifiable = true,
     )
 }
 

@@ -135,7 +135,7 @@ class KeycloakEventProcessor(
             observatoryId = ObservatoryId.UNKNOWN,
             emailHash = SHA256.fromEmail(user.email),
             isCurator = roles.any { it.name == "curator" },
-            isAdmin = roles.any { it.name == "admin" }
+            isAdmin = roles.any { it.name == "admin" },
         )
     }
 }

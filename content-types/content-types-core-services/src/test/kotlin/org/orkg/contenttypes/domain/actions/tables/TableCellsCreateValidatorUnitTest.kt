@@ -26,13 +26,13 @@ internal class TableCellsCreateValidatorUnitTest : MockkBaseTest {
         val command = createTableCommand()
         val state = CreateTableState(
             validationCache = mapOf(
-                "R123" to Either.right(createResource(ThingId("R123")))
-            )
+                "R123" to Either.right(createResource(ThingId("R123"))),
+            ),
         )
 
         val validationCache = mapOf<String, Either<CreateThingCommandPart, Thing>>(
             "R123" to Either.right(createResource(ThingId("R123"))),
-            "#temp1" from command
+            "#temp1" from command,
         )
 
         every { abstractTableCellsValidator.validate(command.rows, command.all(), state.validationCache) } returns validationCache

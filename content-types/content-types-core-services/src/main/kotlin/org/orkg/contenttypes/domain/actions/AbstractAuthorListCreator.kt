@@ -47,16 +47,16 @@ class AbstractAuthorListCreator(
             CreateListUseCase.CreateCommand(
                 label = "authors list",
                 elements = authorIds,
-                contributorId = contributorId
-            )
+                contributorId = contributorId,
+            ),
         )
         unsafeStatementUseCases.create(
             CreateStatementUseCase.CreateCommand(
                 contributorId = contributorId,
                 subjectId = subjectId,
                 predicateId = Predicates.hasAuthors,
-                objectId = authorList
-            )
+                objectId = authorList,
+            ),
         )
     }
 
@@ -64,8 +64,8 @@ class AbstractAuthorListCreator(
         unsafeLiteralUseCases.create(
             CreateLiteralUseCase.CreateCommand(
                 contributorId = contributorId,
-                label = author.name
-            )
+                label = author.name,
+            ),
         )
 
     private fun createResourceAuthor(author: Author, contributorId: ContributorId): ThingId {
@@ -73,8 +73,8 @@ class AbstractAuthorListCreator(
             CreateResourceUseCase.CreateCommand(
                 contributorId = contributorId,
                 label = author.name,
-                classes = setOf(Classes.author)
-            )
+                classes = setOf(Classes.author),
+            ),
         )
 
         if (!author.identifiers.isNullOrEmpty()) {
@@ -86,16 +86,16 @@ class AbstractAuthorListCreator(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = contributorId,
                     label = author.homepage.toString(),
-                    datatype = Literals.XSD.URI.prefixedUri
-                )
+                    datatype = Literals.XSD.URI.prefixedUri,
+                ),
             )
             unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = contributorId,
                     subjectId = authorId,
                     predicateId = Predicates.hasWebsite,
-                    objectId = homepage
-                )
+                    objectId = homepage,
+                ),
             )
         }
 
@@ -113,16 +113,16 @@ class AbstractAuthorListCreator(
                 val literalId = unsafeLiteralUseCases.create(
                     CreateLiteralUseCase.CreateCommand(
                         contributorId = contributorId,
-                        label = value
-                    )
+                        label = value,
+                    ),
                 )
                 unsafeStatementUseCases.create(
                     CreateStatementUseCase.CreateCommand(
                         contributorId = contributorId,
                         subjectId = authorId,
                         predicateId = identifier.predicateId,
-                        objectId = literalId
-                    )
+                        objectId = literalId,
+                    ),
                 )
             }
         }

@@ -19,7 +19,7 @@ class TemplateRelationsUpdater(
         unsafeStatementUseCases: UnsafeStatementUseCases,
     ) : this(
         StatementCollectionPropertyUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases),
-        SingleStatementPropertyUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases)
+        SingleStatementPropertyUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases),
     )
 
     override fun invoke(command: UpdateTemplateCommand, state: State): State {
@@ -30,21 +30,21 @@ class TemplateRelationsUpdater(
                 contributorId = command.contributorId,
                 subjectId = command.templateId,
                 predicateId = Predicates.templateOfResearchField,
-                objects = relations.researchFields
+                objects = relations.researchFields,
             )
             statementCollectionPropertyUpdater.update(
                 statements = statements,
                 contributorId = command.contributorId,
                 subjectId = command.templateId,
                 predicateId = Predicates.templateOfResearchProblem,
-                objects = relations.researchProblems
+                objects = relations.researchProblems,
             )
             singleStatementPropertyUpdater.updateOptionalProperty(
                 statements = statements,
                 contributorId = command.contributorId,
                 subjectId = command.templateId,
                 predicateId = Predicates.templateOfPredicate,
-                objectId = relations.predicate
+                objectId = relations.predicate,
             )
         }
         return state

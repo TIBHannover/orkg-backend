@@ -24,50 +24,50 @@ class RosettaStoneTemplateTargetClassCreator(
             CreateClassUseCase.CreateCommand(
                 contributorId = command.contributorId,
                 label = "${command.label} (class)",
-            )
+            ),
         )
         unsafeStatementUseCases.create(
             CreateCommand(
                 contributorId = command.contributorId,
                 subjectId = state.rosettaStoneTemplateId!!,
                 predicateId = Predicates.shTargetClass,
-                objectId = classId
-            )
+                objectId = classId,
+            ),
         )
         val exampleUsageId = unsafeLiteralUseCases.create(
             CreateLiteralUseCase.CreateCommand(
                 contributorId = command.contributorId,
-                label = command.exampleUsage
-            )
+                label = command.exampleUsage,
+            ),
         )
         unsafeStatementUseCases.create(
             CreateCommand(
                 contributorId = command.contributorId,
                 subjectId = classId,
                 predicateId = Predicates.exampleOfUsage,
-                objectId = exampleUsageId
-            )
+                objectId = exampleUsageId,
+            ),
         )
         val descriptionId = unsafeLiteralUseCases.create(
             CreateLiteralUseCase.CreateCommand(
                 contributorId = command.contributorId,
-                label = "${command.description}\n\nThis is a Rosetta Statement class. Every Rosetta Stone Statement class has a template associated that should be used when adding a statement of this type to the ORKG."
-            )
+                label = "${command.description}\n\nThis is a Rosetta Statement class. Every Rosetta Stone Statement class has a template associated that should be used when adding a statement of this type to the ORKG.",
+            ),
         )
         unsafeStatementUseCases.create(
             CreateCommand(
                 contributorId = command.contributorId,
                 subjectId = classId,
                 predicateId = Predicates.description,
-                objectId = descriptionId
-            )
+                objectId = descriptionId,
+            ),
         )
         classHierarchyUseCases.create(
             CreateClassHierarchyUseCase.CreateCommand(
                 parentId = Classes.rosettaStoneStatement,
                 childIds = setOf(classId),
                 contributorId = command.contributorId,
-            )
+            ),
         )
         return state
     }

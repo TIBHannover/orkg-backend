@@ -17,7 +17,7 @@ CALL (key) {
     RETURN key AS id, COLLECT(p.predicate_id) AS predicates, COLLECT(o.label) AS values, $RESOURCE_ID_TO_TEMPLATE_TARGET_CLASS[key] AS classId, format.label AS format, template.id AS templateId, template.label AS label
 }
 WITH id, templateId, label, classId, format, predicates, values
-RETURN id, templateId, label, classId, format, predicates, values"""
+RETURN id, templateId, label, classId, format, predicates, values""",
     )
     fun findTemplateSpecs(resourceIdToTemplateTargetClass: Map<String, String>): List<TemplatedResource>
 }

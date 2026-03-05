@@ -50,7 +50,7 @@ class AbstractRosettaStoneStatementPropertyValueValidator(
         ThingIdValidator(thingRepository),
         statementRepository,
         rosettaStoneStatementService,
-        AbstractTemplatePropertyValueValidator(classHierarchyRepository)
+        AbstractTemplatePropertyValueValidator(classHierarchyRepository),
     )
 
     fun validate(
@@ -117,7 +117,7 @@ class AbstractRosettaStoneStatementPropertyValueValidator(
                     objectPositionIndex = positionIndex,
                     label = `object`.label,
                     labelIndex = valueIndex,
-                    pattern = (property as StringLiteralTemplateProperty).pattern!!
+                    pattern = (property as StringLiteralTemplateProperty).pattern!!,
                 )
         } catch (e: NumberTooLow) {
             throw e.takeIf { property.path.id == Predicates.hasSubjectPosition }
@@ -126,7 +126,7 @@ class AbstractRosettaStoneStatementPropertyValueValidator(
                     objectPositionIndex = positionIndex,
                     label = `object`.label,
                     labelIndex = valueIndex,
-                    minInclusive = (property as NumberLiteralTemplateProperty).minInclusive!!
+                    minInclusive = (property as NumberLiteralTemplateProperty).minInclusive!!,
                 )
         } catch (e: NumberTooHigh) {
             throw e.takeIf { property.path.id == Predicates.hasSubjectPosition }
@@ -135,7 +135,7 @@ class AbstractRosettaStoneStatementPropertyValueValidator(
                     objectPositionIndex = positionIndex,
                     label = `object`.label,
                     labelIndex = valueIndex,
-                    maxInclusive = (property as NumberLiteralTemplateProperty).maxInclusive!!
+                    maxInclusive = (property as NumberLiteralTemplateProperty).maxInclusive!!,
                 )
         }
     }

@@ -94,7 +94,7 @@ internal class LiteralSerializationJsonTest {
             datatype = Literals.XSD.STRING.prefixedUri,
             createdAt = OffsetDateTime.parse("2019-12-19T15:07:02.204+01:00"),
             createdBy = ContributorId("29ed99d5-9135-41e2-8626-2bbd4e6797bf"),
-            modifiable = true
+            modifiable = true,
         )
 
         val expected = modelJson("orkg/literal")

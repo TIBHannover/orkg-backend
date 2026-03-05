@@ -19,16 +19,16 @@ class LiteratureListVersionHistoryUpdater(
                 contributorId = command.contributorId,
                 subjectId = state.literatureList!!.id,
                 predicateId = Predicates.hasPublishedVersion,
-                objectId = state.literatureListVersionId!!
-            )
+                objectId = state.literatureListVersionId!!,
+            ),
         )
         state.literatureList.versions.published.firstOrNull()?.let { latestVersion ->
             unsafeResourceUseCases.update(
                 UpdateResourceUseCase.UpdateCommand(
                     id = latestVersion.id,
                     contributorId = command.contributorId,
-                    classes = setOf(Classes.literatureListPublished)
-                )
+                    classes = setOf(Classes.literatureListPublished),
+                ),
             )
         }
         return state

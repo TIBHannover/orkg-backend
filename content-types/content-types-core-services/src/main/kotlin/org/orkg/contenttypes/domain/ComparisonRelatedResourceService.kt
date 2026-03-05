@@ -48,7 +48,7 @@ class ComparisonRelatedResourceService(
             subjectId = comparisonId,
             predicateId = Predicates.hasRelatedResource,
             objectId = id,
-            pageable = PageRequests.SINGLE
+            pageable = PageRequests.SINGLE,
         )
             .filter { it.`object` is Resource && Classes.comparisonRelatedResource in (it.`object` as Resource).classes }
             .singleOrNull()
@@ -71,16 +71,16 @@ class ComparisonRelatedResourceService(
             CreateResourceUseCase.CreateCommand(
                 contributorId = command.contributorId,
                 label = command.label,
-                classes = setOf(Classes.comparisonRelatedResource)
-            )
+                classes = setOf(Classes.comparisonRelatedResource),
+            ),
         )
         unsafeStatementUseCases.create(
             CreateStatementUseCase.CreateCommand(
                 contributorId = command.contributorId,
                 subjectId = command.comparisonId,
                 predicateId = Predicates.hasRelatedResource,
-                objectId = resourceId
-            )
+                objectId = resourceId,
+            ),
         )
         if (command.image != null) {
             unsafeStatementUseCases.create(
@@ -91,10 +91,10 @@ class ComparisonRelatedResourceService(
                     objectId = unsafeLiteralUseCases.create(
                         CreateLiteralUseCase.CreateCommand(
                             contributorId = command.contributorId,
-                            label = command.image!!
-                        )
-                    )
-                )
+                            label = command.image!!,
+                        ),
+                    ),
+                ),
             )
         }
         if (command.url != null) {
@@ -106,10 +106,10 @@ class ComparisonRelatedResourceService(
                     objectId = unsafeLiteralUseCases.create(
                         CreateLiteralUseCase.CreateCommand(
                             contributorId = command.contributorId,
-                            label = command.url!!
-                        )
-                    )
-                )
+                            label = command.url!!,
+                        ),
+                    ),
+                ),
             )
         }
         if (command.description != null) {
@@ -121,10 +121,10 @@ class ComparisonRelatedResourceService(
                     objectId = unsafeLiteralUseCases.create(
                         CreateLiteralUseCase.CreateCommand(
                             contributorId = command.contributorId,
-                            label = command.description!!
-                        )
-                    )
-                )
+                            label = command.description!!,
+                        ),
+                    ),
+                ),
             )
         }
         return resourceId
@@ -160,7 +160,7 @@ class ComparisonRelatedResourceService(
             url = statements.wherePredicate(Predicates.hasURL).firstObjectLabel(),
             description = statements.wherePredicate(Predicates.description).firstObjectLabel(),
             createdAt = createdAt,
-            createdBy = createdBy
+            createdBy = createdBy,
         )
     }
 }

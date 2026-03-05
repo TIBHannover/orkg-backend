@@ -21,7 +21,7 @@ class ObservatoryDeserializer : ValueDeserializer<Observatory>() {
             members = node["members"].map { ContributorId(UUID.fromString(it.asString())) }.toSet(),
             organizationIds = node["organization_ids"].map { OrganizationId(UUID.fromString(it.asString())) }.toSet(),
             displayId = node["display_id"].asString(),
-            sustainableDevelopmentGoals = node["sdgs"].map { ThingId(it.stringValue(null)) }.toSet()
+            sustainableDevelopmentGoals = node["sdgs"].map { ThingId(it.stringValue(null)) }.toSet(),
         )
     }
 }

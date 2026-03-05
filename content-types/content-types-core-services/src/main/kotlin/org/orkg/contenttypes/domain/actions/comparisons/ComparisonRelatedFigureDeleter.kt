@@ -24,7 +24,7 @@ class ComparisonRelatedFigureDeleter(
     ) : this(
         statementService,
         resourceService,
-        ContentTypePartDeleter(statementService)
+        ContentTypePartDeleter(statementService),
     )
 
     fun execute(comparisonId: ThingId, comparisonRelatedFigureId: ThingId, contributorId: ContributorId) {
@@ -33,7 +33,7 @@ class ComparisonRelatedFigureDeleter(
             predicateId = Predicates.hasRelatedFigure,
             objectId = comparisonRelatedFigureId,
             objectClasses = setOf(Classes.comparisonRelatedFigure),
-            pageable = PageRequests.SINGLE
+            pageable = PageRequests.SINGLE,
         )
         if (hasRelatedFigureStatements.isEmpty) {
             throw ComparisonRelatedFigureNotFound(comparisonRelatedFigureId)
@@ -43,7 +43,7 @@ class ComparisonRelatedFigureDeleter(
             subjectClasses = setOf(Classes.comparison),
             predicateId = Predicates.hasPreviousVersion,
             objectId = comparisonId,
-            pageable = PageRequests.SINGLE
+            pageable = PageRequests.SINGLE,
         )
         if (!isPreviousVersionComparison.isEmpty || !comparisonRelatedFigure.modifiable) {
             throw ComparisonRelatedFigureNotModifiable(comparisonId)
@@ -52,7 +52,7 @@ class ComparisonRelatedFigureDeleter(
         contentTypePartDeleter.delete(comparisonId, comparisonRelatedFigureId) { incomingStatements ->
             val statementToRemove = statementService.findAll(
                 subjectId = comparisonRelatedFigureId,
-                pageable = PageRequests.ALL
+                pageable = PageRequests.ALL,
             ).content + incomingStatements
 
             if (statementToRemove.isNotEmpty()) {

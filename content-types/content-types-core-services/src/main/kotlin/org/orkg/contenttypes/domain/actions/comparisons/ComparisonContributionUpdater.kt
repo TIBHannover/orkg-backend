@@ -16,7 +16,7 @@ class ComparisonContributionUpdater(
         statementuseCaes: StatementUseCases,
         unsafeStatementUseCases: UnsafeStatementUseCases,
     ) : this(
-        StatementCollectionPropertyUpdater(unsafeLiteralUseCases, statementuseCaes, unsafeStatementUseCases)
+        StatementCollectionPropertyUpdater(unsafeLiteralUseCases, statementuseCaes, unsafeStatementUseCases),
     )
 
     override fun invoke(command: UpdateComparisonCommand, state: State): State {
@@ -28,7 +28,7 @@ class ComparisonContributionUpdater(
                 predicates = setOf(Predicates.comparesContribution, Predicates.comparesRosettaStoneContribution),
                 objects = command.sources!!,
                 predicateSelector = { it.type.predicateId },
-                objectIdSelector = { it.id }
+                objectIdSelector = { it.id },
             )
         }
         return state

@@ -27,12 +27,12 @@ internal class PaperContributionCreatorUnitTest : MockkBaseTest {
         val state = CreatePaperState(
             validationCache = mapOf(
                 "#temp1" from command,
-                "R3003" to Either.right(createResource())
+                "R3003" to Either.right(createResource()),
             ),
             bakedStatements = setOf(
-                BakedStatement("^0", "#temp1", "R3003")
+                BakedStatement("^0", "#temp1", "R3003"),
             ),
-            paperId = ThingId("R15632")
+            paperId = ThingId("R15632"),
         )
 
         every {
@@ -43,7 +43,7 @@ internal class PaperContributionCreatorUnitTest : MockkBaseTest {
                 thingsCommand = command.contents!!,
                 contributionCommands = command.contents!!.contributions,
                 validationCache = state.validationCache,
-                bakedStatements = state.bakedStatements
+                bakedStatements = state.bakedStatements,
             )
         } returns listOf(ThingId("R456"))
 
@@ -64,7 +64,7 @@ internal class PaperContributionCreatorUnitTest : MockkBaseTest {
                 thingsCommand = command.contents!!,
                 contributionCommands = command.contents!!.contributions,
                 validationCache = state.validationCache,
-                bakedStatements = state.bakedStatements
+                bakedStatements = state.bakedStatements,
             )
         }
     }

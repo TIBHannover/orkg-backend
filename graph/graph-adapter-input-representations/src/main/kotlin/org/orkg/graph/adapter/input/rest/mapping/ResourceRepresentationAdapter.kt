@@ -61,6 +61,6 @@ interface ResourceRepresentationAdapter : FormattedLabelRepresentationAdapter {
             unlistedBy = unlistedBy,
             modifiable = modifiable,
             formattedLabel = formattedLabels[this@toResourceRepresentation.id],
-            extractionMethod = extractionMethod
+            extractionMethod = extractionMethod,
         )
 }

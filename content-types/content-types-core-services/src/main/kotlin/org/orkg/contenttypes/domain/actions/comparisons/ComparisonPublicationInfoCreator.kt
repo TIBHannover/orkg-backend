@@ -23,31 +23,31 @@ class ComparisonPublicationInfoCreator(
             CreateLiteralUseCase.CreateCommand(
                 contributorId = command.contributorId,
                 label = now.year.toString(),
-                datatype = Literals.XSD.INT.prefixedUri
-            )
+                datatype = Literals.XSD.INT.prefixedUri,
+            ),
         )
         unsafeStatementUseCases.create(
             CreateStatementUseCase.CreateCommand(
                 contributorId = command.contributorId,
                 subjectId = comparisonId,
                 predicateId = Predicates.yearPublished,
-                objectId = publicationYearLiteralId
-            )
+                objectId = publicationYearLiteralId,
+            ),
         )
         val publicationMonthLiteralId = unsafeLiteralUseCases.create(
             CreateLiteralUseCase.CreateCommand(
                 contributorId = command.contributorId,
                 label = now.monthValue.toString(),
-                datatype = Literals.XSD.INT.prefixedUri
-            )
+                datatype = Literals.XSD.INT.prefixedUri,
+            ),
         )
         unsafeStatementUseCases.create(
             CreateStatementUseCase.CreateCommand(
                 contributorId = command.contributorId,
                 subjectId = comparisonId,
                 predicateId = Predicates.yearPublished,
-                objectId = publicationMonthLiteralId
-            )
+                objectId = publicationMonthLiteralId,
+            ),
         )
         return state
     }

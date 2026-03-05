@@ -80,7 +80,7 @@ internal class ContributionControllerUnitTest : MockMvcBaseTest("contributions")
                 description(
                     """
                     A `GET` request provides information about a contribution.
-                    """
+                    """,
                 )
                 pathParameters(
                     parameterWithName("id").description("The identifier of the contribution to retrieve."),
@@ -125,7 +125,7 @@ internal class ContributionControllerUnitTest : MockMvcBaseTest("contributions")
                     """
                     A `GET` request returns a <<sorting-and-pagination,paged>> list of <<contributions-fetch,contributions>>.
                     If no paging request parameters are provided, the default values will be used.
-                    """
+                    """,
                 )
                 pagedQueryParameters()
                 pagedResponseFields<ContributionRepresentation>(contributionResponseFields())
@@ -157,7 +157,7 @@ internal class ContributionControllerUnitTest : MockMvcBaseTest("contributions")
                     A `POST` request creates a new contribution with all the given parameters.
                     The response will be `201 Created` when successful.
                     The contribution (object) can be retrieved by following the URI in the `Location` header field.
-                    """
+                    """,
                 )
                 responseHeaders(
                     headerWithName("Location").description("The uri path where the newly created contribution can be fetched from."),
@@ -361,26 +361,26 @@ internal class ContributionControllerUnitTest : MockMvcBaseTest("contributions")
             resources = mapOf(
                 "#temp1" to CreateResourceRequestPart(
                     label = "MOTO",
-                    classes = setOf(ThingId("Result"))
-                )
+                    classes = setOf(ThingId("Result")),
+                ),
             ),
             literals = mapOf(
                 "#temp2" to CreateLiteralRequestPart(
                     label = "0.1",
-                    dataType = "xsd:decimal"
-                )
+                    dataType = "xsd:decimal",
+                ),
             ),
             predicates = mapOf(
                 "#temp3" to CreatePredicateRequestPart(
                     label = "hasResult",
-                    description = "has result"
-                )
+                    description = "has result",
+                ),
             ),
             lists = mapOf(
                 "#temp4" to CreateListRequestPart(
                     label = "list",
-                    elements = listOf("#temp1", "C123")
-                )
+                    elements = listOf("#temp1", "C123"),
+                ),
             ),
             contribution = ContributionRequestPart(
                 label = "Contribution 1",
@@ -389,13 +389,13 @@ internal class ContributionControllerUnitTest : MockMvcBaseTest("contributions")
                     "P32" to listOf(
                         StatementObjectRequest(
                             id = "R3003",
-                            statements = null
-                        )
+                            statements = null,
+                        ),
                     ),
                     "HAS_EVALUATION" to listOf(
                         StatementObjectRequest(
                             id = "#temp1",
-                            statements = null
+                            statements = null,
                         ),
                         StatementObjectRequest(
                             id = "R3004",
@@ -403,27 +403,27 @@ internal class ContributionControllerUnitTest : MockMvcBaseTest("contributions")
                                 "#temp3" to listOf(
                                     StatementObjectRequest(
                                         id = "R3003",
-                                        statements = null
+                                        statements = null,
                                     ),
                                     StatementObjectRequest(
                                         id = "#temp2",
-                                        statements = null
+                                        statements = null,
                                     ),
                                     StatementObjectRequest(
                                         id = "#temp4",
-                                        statements = null
-                                    )
+                                        statements = null,
+                                    ),
                                 ),
                                 "P32" to listOf(
                                     StatementObjectRequest(
                                         id = "#temp2",
-                                        statements = null
-                                    )
-                                )
-                            )
-                        )
-                    )
-                )
-            )
+                                        statements = null,
+                                    ),
+                                ),
+                            ),
+                        ),
+                    ),
+                ),
+            ),
         )
 }

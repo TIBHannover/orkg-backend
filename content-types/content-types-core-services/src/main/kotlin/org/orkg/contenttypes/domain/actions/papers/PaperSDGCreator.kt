@@ -14,7 +14,7 @@ class PaperSDGCreator(
         unsafeLiteralUseCases: UnsafeLiteralUseCases,
         unsafeStatementUseCases: UnsafeStatementUseCases,
     ) : this(
-        StatementCollectionPropertyCreator(unsafeLiteralUseCases, unsafeStatementUseCases)
+        StatementCollectionPropertyCreator(unsafeLiteralUseCases, unsafeStatementUseCases),
     )
 
     override fun invoke(command: CreatePaperCommand, state: State): State {
@@ -22,7 +22,7 @@ class PaperSDGCreator(
             contributorId = command.contributorId,
             subjectId = state.paperId!!,
             predicateId = Predicates.sustainableDevelopmentGoal,
-            objects = command.sustainableDevelopmentGoals.toList()
+            objects = command.sustainableDevelopmentGoals.toList(),
         )
         return state
     }

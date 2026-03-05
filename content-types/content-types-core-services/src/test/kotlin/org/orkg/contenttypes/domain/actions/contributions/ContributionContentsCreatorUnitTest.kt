@@ -34,26 +34,26 @@ internal class ContributionContentsCreatorUnitTest : MockkBaseTest {
             extractionMethod = ExtractionMethod.MANUAL,
             predicates = mapOf(
                 "#temp1" to CreatePredicateCommandPart(
-                    label = "hasResult"
-                )
+                    label = "hasResult",
+                ),
             ),
             contribution = CreateContributionCommandPart(
                 label = "Contribution 1",
                 statements = mapOf(
                     "#temp1" to listOf(
-                        CreateContributionCommandPart.StatementObject("R3003")
-                    )
-                )
-            )
+                        CreateContributionCommandPart.StatementObject("R3003"),
+                    ),
+                ),
+            ),
         )
         val state = ContributionState(
             validationCache = mapOf(
                 "#temp1" from command,
-                "R3003" to Either.right(createResource())
+                "R3003" to Either.right(createResource()),
             ),
             bakedStatements = setOf(
-                BakedStatement("^0", "#temp1", "R3003")
-            )
+                BakedStatement("^0", "#temp1", "R3003"),
+            ),
         )
         val contributionId = ThingId("R456")
 
@@ -65,7 +65,7 @@ internal class ContributionContentsCreatorUnitTest : MockkBaseTest {
                 thingsCommand = command,
                 contributionCommands = listOf(command.contribution),
                 validationCache = state.validationCache,
-                bakedStatements = state.bakedStatements
+                bakedStatements = state.bakedStatements,
             )
         } returns listOf(contributionId)
 
@@ -85,7 +85,7 @@ internal class ContributionContentsCreatorUnitTest : MockkBaseTest {
                 thingsCommand = command,
                 contributionCommands = listOf(command.contribution),
                 validationCache = state.validationCache,
-                bakedStatements = state.bakedStatements
+                bakedStatements = state.bakedStatements,
             )
         }
     }

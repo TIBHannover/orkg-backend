@@ -36,7 +36,7 @@ class ComparisonRelatedFigureUpdater(
         comparisonRelatedFigureUseCases,
         resourceService,
         statementService,
-        SingleStatementPropertyUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases)
+        SingleStatementPropertyUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases),
     )
 
     fun execute(command: UpdateComparisonRelatedFigureCommand) {
@@ -58,14 +58,14 @@ class ComparisonRelatedFigureUpdater(
                 UpdateResourceUseCase.UpdateCommand(
                     id = comparisonRelatedFigure.id,
                     contributorId = command.contributorId,
-                    label = command.label
-                )
+                    label = command.label,
+                ),
             )
         }
         val statements by lazy {
             statementService.findAll(
                 subjectId = command.comparisonRelatedFigureId,
-                pageable = PageRequests.ALL
+                pageable = PageRequests.ALL,
             ).content
         }
         if (command.image != comparisonRelatedFigure.image) {
@@ -74,7 +74,7 @@ class ComparisonRelatedFigureUpdater(
                 contributorId = command.contributorId,
                 subjectId = command.comparisonRelatedFigureId,
                 predicateId = Predicates.hasImage,
-                label = command.image
+                label = command.image,
             )
         }
         if (command.description != comparisonRelatedFigure.description) {
@@ -83,7 +83,7 @@ class ComparisonRelatedFigureUpdater(
                 contributorId = command.contributorId,
                 subjectId = command.comparisonRelatedFigureId,
                 predicateId = Predicates.description,
-                label = command.description
+                label = command.description,
             )
         }
     }

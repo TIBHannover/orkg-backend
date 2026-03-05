@@ -62,7 +62,7 @@ CALL () {
     RETURN DISTINCT n.created_by AS id
 }
 WITH DISTINCT id
-RETURN COUNT(id)"""
+RETURN COUNT(id)""",
     )
     fun findAll(after: String, before: String, pageable: Pageable): Page<ContributorRecord>
 
@@ -96,7 +96,7 @@ UNWIND nodes AS n
 WITH DISTINCT n
 WHERE n IS NOT NULL AND n.created_by <> "00000000-0000-0000-0000-000000000000" AND n.created_at > $AFTER AND n.created_at < $BEFORE
 WITH DISTINCT n.created_by AS contributorId
-RETURN COUNT(contributorId)"""
+RETURN COUNT(contributorId)""",
     )
     fun findAllByResearchFieldId(id: ThingId, after: String, before: String, pageable: Pageable): Page<ContributorRecord>
 
@@ -157,7 +157,7 @@ UNWIND nodes AS n
 WITH DISTINCT n
 WHERE n IS NOT NULL AND n.created_by <> "00000000-0000-0000-0000-000000000000" AND n.created_at > $AFTER AND n.created_at < $BEFORE
 WITH DISTINCT n.created_by AS contributorId
-RETURN COUNT(contributorId)"""
+RETURN COUNT(contributorId)""",
     )
     fun findAllByResearchFieldIdIncludingSubfields(id: ThingId, after: String, before: String, pageable: Pageable): Page<ContributorRecord>
 
@@ -189,7 +189,7 @@ UNWIND nodes AS n
 WITH DISTINCT n
 WHERE n IS NOT NULL AND n.created_by <> "00000000-0000-0000-0000-000000000000" AND n.created_at > $AFTER AND n.created_at < $BEFORE
 WITH DISTINCT n.created_by AS contributorId
-RETURN COUNT(contributorId)"""
+RETURN COUNT(contributorId)""",
     )
     fun findAllByResearchProblemId(id: ThingId, after: String, before: String, pageable: Pageable): Page<ContributorRecord>
 
@@ -248,7 +248,7 @@ UNWIND nodes AS n
 WITH DISTINCT n
 WHERE n IS NOT NULL AND n.created_by <> "00000000-0000-0000-0000-000000000000" AND n.created_at > $AFTER AND n.created_at < $BEFORE
 WITH DISTINCT n.created_by AS contributorId
-RETURN COUNT(contributorId)"""
+RETURN COUNT(contributorId)""",
     )
     fun findAllByResearchProblemIdIncludingSubProblems(id: ThingId, after: String, before: String, pageable: Pageable): Page<ContributorRecord>
 }

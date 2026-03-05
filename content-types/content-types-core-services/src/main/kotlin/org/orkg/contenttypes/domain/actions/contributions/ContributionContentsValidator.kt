@@ -14,7 +14,7 @@ class ContributionContentsValidator(
         val result = contributionValidator.validate(
             validationCacheIn = state.validationCache,
             thingCommands = command.all(),
-            contributionCommands = listOf(command.contribution)
+            contributionCommands = listOf(command.contribution),
         )
         return state.copy(bakedStatements = result.bakedStatements, validationCache = result.validationCache)
     }

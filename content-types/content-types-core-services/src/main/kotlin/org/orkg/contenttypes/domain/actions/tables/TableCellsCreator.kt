@@ -12,7 +12,7 @@ class TableCellsCreator(
         unsafeResourceUseCases: UnsafeResourceUseCases,
         unsafeStatementUseCases: UnsafeStatementUseCases,
     ) : this(
-        AbstractTableCellCreator(unsafeResourceUseCases, unsafeStatementUseCases)
+        AbstractTableCellCreator(unsafeResourceUseCases, unsafeStatementUseCases),
     )
 
     override fun invoke(command: CreateTableCommand, state: State): State {

@@ -62,7 +62,7 @@ internal class UnsafeStatementServiceUnitTest : MockkBaseTest {
                     it.createdBy shouldBe command.contributorId
                     it.createdAt shouldBe OffsetDateTime.now(fixedClock)
                     it.modifiable shouldBe command.modifiable
-                }
+                },
             )
         }
     }
@@ -97,7 +97,7 @@ internal class UnsafeStatementServiceUnitTest : MockkBaseTest {
                     it.createdBy shouldBe command.contributorId
                     it.createdAt shouldBe OffsetDateTime.now(fixedClock)
                     it.modifiable shouldBe command.modifiable
-                }
+                },
             )
         }
     }
@@ -150,7 +150,7 @@ internal class UnsafeStatementServiceUnitTest : MockkBaseTest {
             subjectId = ThingId("R321"),
             predicateId = ThingId("P321"),
             objectId = ThingId("L321"),
-            modifiable = false
+            modifiable = false,
         )
         val statement = createStatement(command.statementId)
         val subject = createResource(command.subjectId!!)
@@ -181,7 +181,7 @@ internal class UnsafeStatementServiceUnitTest : MockkBaseTest {
                     it.createdBy shouldBe statement.createdBy
                     it.createdAt shouldBe statement.createdAt
                     it.modifiable shouldBe command.modifiable
-                }
+                },
             )
         }
     }
@@ -190,7 +190,7 @@ internal class UnsafeStatementServiceUnitTest : MockkBaseTest {
     fun `Given a statement update command, when object literal does not change, it prevents the automatic literal deletion`() {
         val command = updateStatementCommand().copy(
             subjectId = ThingId("R321"),
-            predicateId = ThingId("P321")
+            predicateId = ThingId("P321"),
         )
         val subject = createResource(command.subjectId!!)
         val predicate = createPredicate(command.predicateId!!)
@@ -221,7 +221,7 @@ internal class UnsafeStatementServiceUnitTest : MockkBaseTest {
                     it.createdBy shouldBe statement.createdBy
                     it.createdAt shouldBe statement.createdAt
                     it.modifiable shouldBe statement.modifiable
-                }
+                },
             )
         }
     }
@@ -269,7 +269,7 @@ internal class UnsafeStatementServiceUnitTest : MockkBaseTest {
     @Test
     fun `Given a statement update command, when subject cannot be found, it throws an exception`() {
         val command = updateStatementCommand().copy(
-            subjectId = ThingId("R321")
+            subjectId = ThingId("R321"),
         )
         val statement = createStatement(command.statementId)
 
@@ -286,7 +286,7 @@ internal class UnsafeStatementServiceUnitTest : MockkBaseTest {
     fun `Given a statement update command, when predicate cannot be found, it throws an exception`() {
         val command = updateStatementCommand().copy(
             subjectId = ThingId("R321"),
-            predicateId = ThingId("P321")
+            predicateId = ThingId("P321"),
         )
         val statement = createStatement(command.statementId)
         val subject = createResource(command.subjectId!!)
@@ -307,7 +307,7 @@ internal class UnsafeStatementServiceUnitTest : MockkBaseTest {
         val command = updateStatementCommand().copy(
             subjectId = ThingId("R321"),
             predicateId = ThingId("P321"),
-            objectId = ThingId("L321")
+            objectId = ThingId("L321"),
         )
         val statement = createStatement(command.statementId)
         val subject = createResource(command.subjectId!!)

@@ -12,7 +12,7 @@ class TemplatePropertyTemplateUpdateValidator : UpdateTemplatePropertyAction {
         }
         return state.copy(
             templateProperty = state.template.properties.find { it.id == command.templatePropertyId }
-                ?: throw UnrelatedTemplateProperty(command.templateId, command.templatePropertyId)
+                ?: throw UnrelatedTemplateProperty(command.templateId, command.templatePropertyId),
         )
     }
 }

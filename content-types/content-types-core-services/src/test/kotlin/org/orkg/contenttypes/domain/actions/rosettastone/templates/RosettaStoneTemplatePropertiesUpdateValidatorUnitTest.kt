@@ -52,7 +52,7 @@ internal class RosettaStoneTemplatePropertiesUpdateValidatorUnitTest : MockkBase
     fun whenNotUsedInStatementAndOldPropertyIsMissing_thenSuccess() {
         val rosettaStoneTemplate = createRosettaStoneTemplate()
         val command = updateRosettaStoneTemplateCommand().copy(
-            properties = listOf(rosettaStoneTemplate.properties.first().toTemplatePropertyCommand())
+            properties = listOf(rosettaStoneTemplate.properties.first().toTemplatePropertyCommand()),
         )
         val state = UpdateRosettaStoneTemplateState(rosettaStoneTemplate = rosettaStoneTemplate)
 
@@ -68,7 +68,7 @@ internal class RosettaStoneTemplatePropertiesUpdateValidatorUnitTest : MockkBase
     fun whenNotUsedInStatementAndOldPropertyIsOverriden_thenSuccess() {
         val rosettaStoneTemplate = createRosettaStoneTemplate()
         val command = updateRosettaStoneTemplateCommand().copy(
-            properties = rosettaStoneTemplate.properties.map { it.toTemplatePropertyCommand() }.reversed()
+            properties = rosettaStoneTemplate.properties.map { it.toTemplatePropertyCommand() }.reversed(),
         )
         val state = UpdateRosettaStoneTemplateState(rosettaStoneTemplate = rosettaStoneTemplate)
 
@@ -85,7 +85,7 @@ internal class RosettaStoneTemplatePropertiesUpdateValidatorUnitTest : MockkBase
         val rosettaStoneTemplate = createRosettaStoneTemplate()
         val command = updateRosettaStoneTemplateCommand().copy(
             properties = rosettaStoneTemplate.properties.map { it.toTemplatePropertyCommand() } +
-                createResourceObjectPositionTemplatePropertyCommand()
+                createResourceObjectPositionTemplatePropertyCommand(),
         )
         val state = UpdateRosettaStoneTemplateState(rosettaStoneTemplate = rosettaStoneTemplate)
 
@@ -102,11 +102,11 @@ internal class RosettaStoneTemplatePropertiesUpdateValidatorUnitTest : MockkBase
         val rosettaStoneTemplate = createRosettaStoneTemplate()
         val command = updateRosettaStoneTemplateCommand().copy(
             properties = rosettaStoneTemplate.properties.map { it.toTemplatePropertyCommand() } +
-                createResourceObjectPositionTemplatePropertyCommand().copy(minCount = 0)
+                createResourceObjectPositionTemplatePropertyCommand().copy(minCount = 0),
         )
         val state = UpdateRosettaStoneTemplateState(
             rosettaStoneTemplate = rosettaStoneTemplate,
-            isUsedInRosettaStoneStatement = true
+            isUsedInRosettaStoneStatement = true,
         )
 
         every { abstractRosettaStoneTemplatePropertiesValidator.validate(command.properties!!) } just runs
@@ -123,7 +123,7 @@ internal class RosettaStoneTemplatePropertiesUpdateValidatorUnitTest : MockkBase
         val command = updateRosettaStoneTemplateCommand().copy(properties = null)
         val state = UpdateRosettaStoneTemplateState(
             rosettaStoneTemplate = rosettaStoneTemplate,
-            isUsedInRosettaStoneStatement = true
+            isUsedInRosettaStoneStatement = true,
         )
 
         rosettaStoneTemplatePropertiesUpdateValidator(command, state)
@@ -134,11 +134,11 @@ internal class RosettaStoneTemplatePropertiesUpdateValidatorUnitTest : MockkBase
     fun whenUsedInStatementAndOldPropertyIsMissing_thenException() {
         val rosettaStoneTemplate = createRosettaStoneTemplate()
         val command = updateRosettaStoneTemplateCommand().copy(
-            properties = listOf(rosettaStoneTemplate.properties.first().toTemplatePropertyCommand())
+            properties = listOf(rosettaStoneTemplate.properties.first().toTemplatePropertyCommand()),
         )
         val state = UpdateRosettaStoneTemplateState(
             rosettaStoneTemplate = rosettaStoneTemplate,
-            isUsedInRosettaStoneStatement = true
+            isUsedInRosettaStoneStatement = true,
         )
 
         assertThrows<RosettaStoneTemplatePropertyNotModifiable> {
@@ -151,11 +151,11 @@ internal class RosettaStoneTemplatePropertiesUpdateValidatorUnitTest : MockkBase
     fun whenUsedInStatementAndOldPropertyIsOverriden_thenException() {
         val rosettaStoneTemplate = createRosettaStoneTemplate()
         val command = updateRosettaStoneTemplateCommand().copy(
-            properties = rosettaStoneTemplate.properties.map { it.toTemplatePropertyCommand() }.reversed()
+            properties = rosettaStoneTemplate.properties.map { it.toTemplatePropertyCommand() }.reversed(),
         )
         val state = UpdateRosettaStoneTemplateState(
             rosettaStoneTemplate = rosettaStoneTemplate,
-            isUsedInRosettaStoneStatement = true
+            isUsedInRosettaStoneStatement = true,
         )
 
         assertThrows<RosettaStoneTemplatePropertyNotModifiable> {
@@ -169,11 +169,11 @@ internal class RosettaStoneTemplatePropertiesUpdateValidatorUnitTest : MockkBase
         val rosettaStoneTemplate = createRosettaStoneTemplate()
         val command = updateRosettaStoneTemplateCommand().copy(
             properties = rosettaStoneTemplate.properties.map { it.toTemplatePropertyCommand() } +
-                createResourceObjectPositionTemplatePropertyCommand()
+                createResourceObjectPositionTemplatePropertyCommand(),
         )
         val state = UpdateRosettaStoneTemplateState(
             rosettaStoneTemplate = rosettaStoneTemplate,
-            isUsedInRosettaStoneStatement = true
+            isUsedInRosettaStoneStatement = true,
         )
 
         assertThrows<NewRosettaStoneTemplatePropertyMustBeOptional> {

@@ -37,7 +37,7 @@ internal class AbstractSmartReviewSectionCreatorUnitTest : MockkBaseTest {
         unsafeStatementUseCases,
         unsafeResourceUseCases,
         unsafeLiteralUseCases,
-        statementCollectionPropertyCreator
+        statementCollectionPropertyCreator,
     )
 
     @Test
@@ -48,7 +48,7 @@ internal class AbstractSmartReviewSectionCreatorUnitTest : MockkBaseTest {
         val resourceCreateCommand = CreateResourceUseCase.CreateCommand(
             contributorId = contributorId,
             label = section.heading,
-            classes = setOf(Classes.comparisonSection)
+            classes = setOf(Classes.comparisonSection),
         )
         val sectionId = ThingId("R156465")
 
@@ -59,8 +59,8 @@ internal class AbstractSmartReviewSectionCreatorUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     subjectId = sectionId,
                     predicateId = Predicates.hasLink,
-                    objectId = section.comparison!!
-                )
+                    objectId = section.comparison!!,
+                ),
             )
         } returns StatementId("S1")
 
@@ -73,8 +73,8 @@ internal class AbstractSmartReviewSectionCreatorUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     subjectId = sectionId,
                     predicateId = Predicates.hasLink,
-                    objectId = section.comparison!!
-                )
+                    objectId = section.comparison!!,
+                ),
             )
         }
     }
@@ -87,7 +87,7 @@ internal class AbstractSmartReviewSectionCreatorUnitTest : MockkBaseTest {
         val resourceCreateCommand = CreateResourceUseCase.CreateCommand(
             contributorId = contributorId,
             label = section.heading,
-            classes = setOf(Classes.comparisonSection)
+            classes = setOf(Classes.comparisonSection),
         )
         val sectionId = ThingId("R156465")
 
@@ -106,7 +106,7 @@ internal class AbstractSmartReviewSectionCreatorUnitTest : MockkBaseTest {
         val resourceCreateCommand = CreateResourceUseCase.CreateCommand(
             contributorId = contributorId,
             label = section.heading,
-            classes = setOf(Classes.visualizationSection)
+            classes = setOf(Classes.visualizationSection),
         )
         val sectionId = ThingId("R156465")
 
@@ -117,8 +117,8 @@ internal class AbstractSmartReviewSectionCreatorUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     subjectId = sectionId,
                     predicateId = Predicates.hasLink,
-                    objectId = section.visualization!!
-                )
+                    objectId = section.visualization!!,
+                ),
             )
         } returns StatementId("S1")
 
@@ -131,8 +131,8 @@ internal class AbstractSmartReviewSectionCreatorUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     subjectId = sectionId,
                     predicateId = Predicates.hasLink,
-                    objectId = section.visualization!!
-                )
+                    objectId = section.visualization!!,
+                ),
             )
         }
     }
@@ -145,7 +145,7 @@ internal class AbstractSmartReviewSectionCreatorUnitTest : MockkBaseTest {
         val resourceCreateCommand = CreateResourceUseCase.CreateCommand(
             contributorId = contributorId,
             label = section.heading,
-            classes = setOf(Classes.visualizationSection)
+            classes = setOf(Classes.visualizationSection),
         )
         val sectionId = ThingId("R156465")
 
@@ -164,7 +164,7 @@ internal class AbstractSmartReviewSectionCreatorUnitTest : MockkBaseTest {
         val resourceCreateCommand = CreateResourceUseCase.CreateCommand(
             contributorId = contributorId,
             label = section.heading,
-            classes = setOf(Classes.resourceSection)
+            classes = setOf(Classes.resourceSection),
         )
         val sectionId = ThingId("R156465")
 
@@ -175,8 +175,8 @@ internal class AbstractSmartReviewSectionCreatorUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     subjectId = sectionId,
                     predicateId = Predicates.hasLink,
-                    objectId = section.resource!!
-                )
+                    objectId = section.resource!!,
+                ),
             )
         } returns StatementId("S1")
 
@@ -189,8 +189,8 @@ internal class AbstractSmartReviewSectionCreatorUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     subjectId = sectionId,
                     predicateId = Predicates.hasLink,
-                    objectId = section.resource!!
-                )
+                    objectId = section.resource!!,
+                ),
             )
         }
     }
@@ -203,7 +203,7 @@ internal class AbstractSmartReviewSectionCreatorUnitTest : MockkBaseTest {
         val resourceCreateCommand = CreateResourceUseCase.CreateCommand(
             contributorId = contributorId,
             label = section.heading,
-            classes = setOf(Classes.resourceSection)
+            classes = setOf(Classes.resourceSection),
         )
         val sectionId = ThingId("R156465")
 
@@ -222,7 +222,7 @@ internal class AbstractSmartReviewSectionCreatorUnitTest : MockkBaseTest {
         val resourceCreateCommand = CreateResourceUseCase.CreateCommand(
             contributorId = contributorId,
             label = section.heading,
-            classes = setOf(Classes.propertySection)
+            classes = setOf(Classes.propertySection),
         )
         val sectionId = ThingId("R156465")
 
@@ -233,8 +233,8 @@ internal class AbstractSmartReviewSectionCreatorUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     subjectId = sectionId,
                     predicateId = Predicates.hasLink,
-                    objectId = section.predicate!!
-                )
+                    objectId = section.predicate!!,
+                ),
             )
         } returns StatementId("S1")
 
@@ -247,8 +247,8 @@ internal class AbstractSmartReviewSectionCreatorUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     subjectId = sectionId,
                     predicateId = Predicates.hasLink,
-                    objectId = section.predicate!!
-                )
+                    objectId = section.predicate!!,
+                ),
             )
         }
     }
@@ -261,7 +261,7 @@ internal class AbstractSmartReviewSectionCreatorUnitTest : MockkBaseTest {
         val resourceCreateCommand = CreateResourceUseCase.CreateCommand(
             contributorId = contributorId,
             label = section.heading,
-            classes = setOf(Classes.propertySection)
+            classes = setOf(Classes.propertySection),
         )
         val sectionId = ThingId("R156465")
 
@@ -280,7 +280,7 @@ internal class AbstractSmartReviewSectionCreatorUnitTest : MockkBaseTest {
         val resourceCreateCommand = CreateResourceUseCase.CreateCommand(
             contributorId = contributorId,
             label = section.heading,
-            classes = setOf(Classes.ontologySection)
+            classes = setOf(Classes.ontologySection),
         )
         val sectionId = ThingId("R156465")
 
@@ -290,7 +290,7 @@ internal class AbstractSmartReviewSectionCreatorUnitTest : MockkBaseTest {
                 contributorId = contributorId,
                 subjectId = sectionId,
                 predicateId = Predicates.hasEntity,
-                objects = section.entities
+                objects = section.entities,
             )
         } just runs
         every {
@@ -298,7 +298,7 @@ internal class AbstractSmartReviewSectionCreatorUnitTest : MockkBaseTest {
                 contributorId = contributorId,
                 subjectId = sectionId,
                 predicateId = Predicates.showProperty,
-                objects = section.predicates
+                objects = section.predicates,
             )
         } just runs
 
@@ -310,7 +310,7 @@ internal class AbstractSmartReviewSectionCreatorUnitTest : MockkBaseTest {
                 contributorId = contributorId,
                 subjectId = sectionId,
                 predicateId = Predicates.hasEntity,
-                objects = section.entities
+                objects = section.entities,
             )
         }
         verify(exactly = 1) {
@@ -318,7 +318,7 @@ internal class AbstractSmartReviewSectionCreatorUnitTest : MockkBaseTest {
                 contributorId = contributorId,
                 subjectId = sectionId,
                 predicateId = Predicates.showProperty,
-                objects = section.predicates
+                objects = section.predicates,
             )
         }
     }
@@ -331,12 +331,12 @@ internal class AbstractSmartReviewSectionCreatorUnitTest : MockkBaseTest {
         val resourceCreateCommand = CreateResourceUseCase.CreateCommand(
             contributorId = contributorId,
             label = section.heading,
-            classes = setOfNotNull(Classes.section, section.`class`)
+            classes = setOfNotNull(Classes.section, section.`class`),
         )
         val sectionId = ThingId("R156465")
         val literalCreateCommand = CreateLiteralUseCase.CreateCommand(
             contributorId = contributorId,
-            label = section.text
+            label = section.text,
         )
         val textId = ThingId("L123")
 
@@ -348,8 +348,8 @@ internal class AbstractSmartReviewSectionCreatorUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     subjectId = sectionId,
                     predicateId = Predicates.hasContent,
-                    objectId = textId
-                )
+                    objectId = textId,
+                ),
             )
         } returns StatementId("S1")
 
@@ -363,8 +363,8 @@ internal class AbstractSmartReviewSectionCreatorUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     subjectId = sectionId,
                     predicateId = Predicates.hasContent,
-                    objectId = textId
-                )
+                    objectId = textId,
+                ),
             )
         }
     }

@@ -216,9 +216,9 @@ class DocumentationBuilder(private val documentationContext: DocumentationContex
                     Sortable properties are dependent on the endpoint.
                     Direction can be "asc" or "desc". Parameter can be repeated multiple times.
                     The sorting is order-dependent.
-                    """.trimIndent()
+                    """.trimIndent(),
                 ).optional(),
-            )
+            ),
         )
     }
 

@@ -54,7 +54,7 @@ internal class CSVStateUpdaterUnitTest : MockkBaseTest {
                 withArg {
                     it.importJobId shouldBe jobId
                     it.state shouldBe startState
-                }
+                },
             )
         }
     }
@@ -79,7 +79,7 @@ internal class CSVStateUpdaterUnitTest : MockkBaseTest {
                 withArg {
                     it.importJobId shouldBe jobId
                     it.state shouldBe startState
-                }
+                },
             )
         }
     }
@@ -133,7 +133,7 @@ internal class CSVStateUpdaterUnitTest : MockkBaseTest {
             csvRepository.save(
                 withArg {
                     it.state shouldBe successState
-                }
+                },
             )
         }
     }
@@ -158,7 +158,7 @@ internal class CSVStateUpdaterUnitTest : MockkBaseTest {
             csvRepository.save(
                 withArg {
                     it.state shouldBe stoppedState
-                }
+                },
             )
         }
     }
@@ -183,7 +183,7 @@ internal class CSVStateUpdaterUnitTest : MockkBaseTest {
             csvRepository.save(
                 withArg {
                     it.state shouldBe failureState
-                }
+                },
             )
         }
     }

@@ -30,7 +30,7 @@ internal class ComparisonSDGUpdaterUnitTest : MockkBaseTest {
                 contributorId = command.contributorId,
                 subjectId = command.comparisonId,
                 predicateId = Predicates.sustainableDevelopmentGoal,
-                objects = command.sustainableDevelopmentGoals!!
+                objects = command.sustainableDevelopmentGoals!!,
             )
         } just runs
 
@@ -42,7 +42,7 @@ internal class ComparisonSDGUpdaterUnitTest : MockkBaseTest {
                 contributorId = command.contributorId,
                 subjectId = command.comparisonId,
                 predicateId = Predicates.sustainableDevelopmentGoal,
-                objects = command.sustainableDevelopmentGoals!!
+                objects = command.sustainableDevelopmentGoals!!,
             )
         }
     }
@@ -52,8 +52,8 @@ internal class ComparisonSDGUpdaterUnitTest : MockkBaseTest {
         val command = updateComparisonCommand()
         val state = UpdateComparisonState(
             comparison = createComparison().copy(
-                sustainableDevelopmentGoals = command.sustainableDevelopmentGoals!!.map { ObjectIdAndLabel(it, "irrelevant") }.toSet()
-            )
+                sustainableDevelopmentGoals = command.sustainableDevelopmentGoals!!.map { ObjectIdAndLabel(it, "irrelevant") }.toSet(),
+            ),
         )
         comparisonSDGUpdater(command, state)
     }

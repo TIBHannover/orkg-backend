@@ -108,7 +108,7 @@ class TemplateBasedResourceSnapshotController(
                 resourceId = resourceId,
                 templateId = templateId,
                 contributorId = contributorId,
-                registerHandle = registerHandle
+                registerHandle = registerHandle,
             )
     }
 }

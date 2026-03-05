@@ -40,7 +40,7 @@ class LiteratureListSnapshotMigrationRunner(
         forEachResource(setOf(Classes.literatureListPublished)) { resource ->
             literatureListPublishedRepository.findById(resource.id).ifPresentOrElse(
                 { migrateLiteratureListSnapshot(it, resource) },
-                { logger.warn("Could not find table for published literature list ${resource.id}") }
+                { logger.warn("Could not find table for published literature list ${resource.id}") },
             )
         }
 
@@ -57,7 +57,7 @@ class LiteratureListSnapshotMigrationRunner(
                     resourceId = literatureListPublished.id,
                     rootId = literatureListPublished.rootId,
                     subgraph = literatureListPublished.subgraph,
-                )
+                ),
             )
         } catch (e: Throwable) {
             logger.error("Failed to migrate snapshot for literature list ${literatureListPublished.id}", e)
@@ -70,7 +70,7 @@ class LiteratureListSnapshotMigrationRunner(
         do {
             page = resourceRepository.findAll(
                 pageable = PageRequest.of(pageNumber++, CHUNK_SIZE),
-                includeClasses = includeClasses
+                includeClasses = includeClasses,
             )
             page.forEach(action)
         }

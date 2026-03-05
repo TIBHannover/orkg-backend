@@ -49,7 +49,7 @@ internal class TemplatePropertyUpdaterUnitTest : MockkBaseTest {
         val command = property.toUpdateUntypedTemplatePropertyCommand(contributorId, template.id)
         val state = UpdateTemplatePropertyState(
             template = template,
-            templateProperty = property
+            templateProperty = property,
         )
 
         val result = templatePropertyUpdater(command, state)
@@ -66,12 +66,12 @@ internal class TemplatePropertyUpdaterUnitTest : MockkBaseTest {
         val template = createTemplate()
         val property = createUntypedTemplateProperty()
         val command = property.toUpdateUntypedTemplatePropertyCommand(ContributorId(UUID.randomUUID()), template.id).copy(
-            label = "updated label"
+            label = "updated label",
         )
         val state = UpdateTemplatePropertyState(
             template = template,
             templateProperty = property,
-            statements = mapOf(property.id to listOf(createStatement()))
+            statements = mapOf(property.id to listOf(createStatement())),
         )
 
         every { abstractTemplatePropertyUpdater.update(any(), any(), any(), any(), any()) } just runs
@@ -90,7 +90,7 @@ internal class TemplatePropertyUpdaterUnitTest : MockkBaseTest {
                 contributorId = command.contributorId,
                 order = property.order.toInt(),
                 newProperty = command,
-                oldProperty = property
+                oldProperty = property,
             )
         }
     }
@@ -108,7 +108,7 @@ internal class TemplatePropertyUpdaterUnitTest : MockkBaseTest {
         val state = UpdateTemplatePropertyState(
             template = template,
             templateProperty = property,
-            statements = mapOf(property.id to listOf(createStatement()))
+            statements = mapOf(property.id to listOf(createStatement())),
         )
 
         val result = templatePropertyUpdater(command, state)
@@ -125,12 +125,12 @@ internal class TemplatePropertyUpdaterUnitTest : MockkBaseTest {
         val template = createTemplate()
         val property = createStringLiteralTemplateProperty()
         val command = property.toUpdateStringLiteralTemplatePropertyCommand(ContributorId(UUID.randomUUID()), template.id).copy(
-            label = "updated label"
+            label = "updated label",
         )
         val state = UpdateTemplatePropertyState(
             template = template,
             templateProperty = property,
-            statements = mapOf(property.id to listOf(createStatement()))
+            statements = mapOf(property.id to listOf(createStatement())),
         )
 
         every { abstractTemplatePropertyUpdater.update(any(), any(), any(), any(), any()) } just runs
@@ -149,7 +149,7 @@ internal class TemplatePropertyUpdaterUnitTest : MockkBaseTest {
                 contributorId = command.contributorId,
                 order = property.order.toInt(),
                 newProperty = command,
-                oldProperty = property
+                oldProperty = property,
             )
         }
     }
@@ -167,7 +167,7 @@ internal class TemplatePropertyUpdaterUnitTest : MockkBaseTest {
         val state = UpdateTemplatePropertyState(
             template = template,
             templateProperty = property,
-            statements = mapOf(property.id to listOf(createStatement()))
+            statements = mapOf(property.id to listOf(createStatement())),
         )
 
         val result = templatePropertyUpdater(command, state)
@@ -184,12 +184,12 @@ internal class TemplatePropertyUpdaterUnitTest : MockkBaseTest {
         val template = createTemplate()
         val property = createNumberLiteralTemplateProperty()
         val command = property.toUpdateNumberLiteralTemplatePropertyCommand(ContributorId(UUID.randomUUID()), template.id).copy(
-            label = "updated label"
+            label = "updated label",
         )
         val state = UpdateTemplatePropertyState(
             template = template,
             templateProperty = property,
-            statements = mapOf(property.id to listOf(createStatement()))
+            statements = mapOf(property.id to listOf(createStatement())),
         )
 
         every { abstractTemplatePropertyUpdater.update(any(), any(), any(), any(), any()) } just runs
@@ -208,7 +208,7 @@ internal class TemplatePropertyUpdaterUnitTest : MockkBaseTest {
                 contributorId = command.contributorId,
                 order = property.order.toInt(),
                 newProperty = command,
-                oldProperty = property
+                oldProperty = property,
             )
         }
     }
@@ -226,7 +226,7 @@ internal class TemplatePropertyUpdaterUnitTest : MockkBaseTest {
         val state = UpdateTemplatePropertyState(
             template = template,
             templateProperty = property,
-            statements = mapOf(property.id to listOf(createStatement()))
+            statements = mapOf(property.id to listOf(createStatement())),
         )
 
         val result = templatePropertyUpdater(command, state)
@@ -243,12 +243,12 @@ internal class TemplatePropertyUpdaterUnitTest : MockkBaseTest {
         val template = createTemplate()
         val property = createOtherLiteralTemplateProperty()
         val command = property.toUpdateOtherLiteralTemplatePropertyCommand(ContributorId(UUID.randomUUID()), template.id).copy(
-            label = "updated label"
+            label = "updated label",
         )
         val state = UpdateTemplatePropertyState(
             template = template,
             templateProperty = property,
-            statements = mapOf(property.id to listOf(createStatement()))
+            statements = mapOf(property.id to listOf(createStatement())),
         )
 
         every { abstractTemplatePropertyUpdater.update(any(), any(), any(), any(), any()) } just runs
@@ -267,7 +267,7 @@ internal class TemplatePropertyUpdaterUnitTest : MockkBaseTest {
                 contributorId = command.contributorId,
                 order = property.order.toInt(),
                 newProperty = command,
-                oldProperty = property
+                oldProperty = property,
             )
         }
     }
@@ -285,7 +285,7 @@ internal class TemplatePropertyUpdaterUnitTest : MockkBaseTest {
         val state = UpdateTemplatePropertyState(
             template = template,
             templateProperty = property,
-            statements = mapOf(property.id to listOf(createStatement()))
+            statements = mapOf(property.id to listOf(createStatement())),
         )
 
         val result = templatePropertyUpdater(command, state)
@@ -302,12 +302,12 @@ internal class TemplatePropertyUpdaterUnitTest : MockkBaseTest {
         val template = createTemplate()
         val property = createResourceTemplateProperty()
         val command = property.toUpdateResourceTemplatePropertyCommand(ContributorId(UUID.randomUUID()), template.id).copy(
-            label = "updated label"
+            label = "updated label",
         )
         val state = UpdateTemplatePropertyState(
             template = template,
             templateProperty = property,
-            statements = mapOf(property.id to listOf(createStatement()))
+            statements = mapOf(property.id to listOf(createStatement())),
         )
 
         every { abstractTemplatePropertyUpdater.update(any(), any(), any(), any(), any()) } just runs
@@ -326,7 +326,7 @@ internal class TemplatePropertyUpdaterUnitTest : MockkBaseTest {
                 contributorId = command.contributorId,
                 order = property.order.toInt(),
                 newProperty = command,
-                oldProperty = property
+                oldProperty = property,
             )
         }
     }
@@ -343,7 +343,7 @@ internal class TemplatePropertyUpdaterUnitTest : MockkBaseTest {
         description = description,
         minCount = minCount,
         maxCount = maxCount,
-        path = path.id
+        path = path.id,
     )
 
     private fun StringLiteralTemplateProperty.toUpdateStringLiteralTemplatePropertyCommand(
@@ -360,7 +360,7 @@ internal class TemplatePropertyUpdaterUnitTest : MockkBaseTest {
         maxCount = maxCount,
         pattern = pattern,
         path = path.id,
-        datatype = datatype.id
+        datatype = datatype.id,
     )
 
     private fun NumberLiteralTemplateProperty.toUpdateNumberLiteralTemplatePropertyCommand(
@@ -378,7 +378,7 @@ internal class TemplatePropertyUpdaterUnitTest : MockkBaseTest {
         minInclusive = minInclusive,
         maxInclusive = maxInclusive,
         path = path.id,
-        datatype = datatype.id
+        datatype = datatype.id,
     )
 
     private fun OtherLiteralTemplateProperty.toUpdateOtherLiteralTemplatePropertyCommand(
@@ -394,7 +394,7 @@ internal class TemplatePropertyUpdaterUnitTest : MockkBaseTest {
         minCount = minCount,
         maxCount = maxCount,
         path = path.id,
-        datatype = datatype.id
+        datatype = datatype.id,
     )
 
     private fun ResourceTemplateProperty.toUpdateResourceTemplatePropertyCommand(
@@ -410,6 +410,6 @@ internal class TemplatePropertyUpdaterUnitTest : MockkBaseTest {
         minCount = minCount,
         maxCount = maxCount,
         path = path.id,
-        `class` = `class`.id
+        `class` = `class`.id,
     )
 }

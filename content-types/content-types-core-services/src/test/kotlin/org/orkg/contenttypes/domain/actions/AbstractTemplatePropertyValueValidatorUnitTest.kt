@@ -97,7 +97,7 @@ internal class AbstractTemplatePropertyValueValidatorUnitTest : MockkBaseTest {
     fun `Given a resource template property with classes as class constraint, when validating a class object, it returns success`() {
         val property = createResourceTemplateProperty().copy(
             minCount = 0,
-            `class` = ObjectIdAndLabel(Classes.classes, "Classes")
+            `class` = ObjectIdAndLabel(Classes.classes, "Classes"),
         )
         val id = "D123"
         val `object` = createClass(ThingId("D123")).toThingCommandPart()
@@ -109,7 +109,7 @@ internal class AbstractTemplatePropertyValueValidatorUnitTest : MockkBaseTest {
     fun `Given a resource template property with classes as class constraint, when object value is not a class, it throws an exception`() {
         val property = createResourceTemplateProperty().copy(
             minCount = 0,
-            `class` = ObjectIdAndLabel(Classes.classes, "Classes")
+            `class` = ObjectIdAndLabel(Classes.classes, "Classes"),
         )
         val id = "R123"
         val `object` = createResource(ThingId("R123")).toThingCommandPart()
@@ -125,7 +125,7 @@ internal class AbstractTemplatePropertyValueValidatorUnitTest : MockkBaseTest {
     fun `Given a resource template property with predicates as class constraint, when validating a predicate object, it returns success`() {
         val property = createResourceTemplateProperty().copy(
             minCount = 0,
-            `class` = ObjectIdAndLabel(Classes.predicates, "Predicates")
+            `class` = ObjectIdAndLabel(Classes.predicates, "Predicates"),
         )
         val id = "P123"
         val `object` = createPredicate(ThingId("P123")).toThingCommandPart()
@@ -137,7 +137,7 @@ internal class AbstractTemplatePropertyValueValidatorUnitTest : MockkBaseTest {
     fun `Given a resource template property with predicates as class constraint, when object value is not a predicate, it throws an exception`() {
         val property = createResourceTemplateProperty().copy(
             minCount = 0,
-            `class` = ObjectIdAndLabel(Classes.predicates, "Predicates")
+            `class` = ObjectIdAndLabel(Classes.predicates, "Predicates"),
         )
         val id = "R123"
         val `object` = createResource(ThingId("R123")).toThingCommandPart()
@@ -153,7 +153,7 @@ internal class AbstractTemplatePropertyValueValidatorUnitTest : MockkBaseTest {
     fun `Given a resource template property with list as class constraint, when validating a list object, it returns success`() {
         val property = createResourceTemplateProperty().copy(
             minCount = 0,
-            `class` = ObjectIdAndLabel(Classes.list, "List")
+            `class` = ObjectIdAndLabel(Classes.list, "List"),
         )
         val id = "R123"
         val `object` = createResource(ThingId("R123"), classes = setOf(Classes.list)).toThingCommandPart()
@@ -165,7 +165,7 @@ internal class AbstractTemplatePropertyValueValidatorUnitTest : MockkBaseTest {
     fun `Given a resource template property with list as class constraint, when object value is not a list, it throws an exception`() {
         val property = createResourceTemplateProperty().copy(
             minCount = 0,
-            `class` = ObjectIdAndLabel(Classes.list, "List")
+            `class` = ObjectIdAndLabel(Classes.list, "List"),
         )
         val id = "R123"
         val `object` = createResource(ThingId("R123")).toThingCommandPart()
@@ -181,7 +181,7 @@ internal class AbstractTemplatePropertyValueValidatorUnitTest : MockkBaseTest {
     fun `Given a resource template property, when object value is an instance of target class, it returns success`() {
         val property = createResourceTemplateProperty().copy(
             minCount = 0,
-            `class` = ObjectIdAndLabel(ThingId("C123"), "Dummy")
+            `class` = ObjectIdAndLabel(ThingId("C123"), "Dummy"),
         )
         val id = "R123"
         val `object` = createResource(ThingId("R123"), classes = setOf(ThingId("C123"))).toThingCommandPart()
@@ -193,7 +193,7 @@ internal class AbstractTemplatePropertyValueValidatorUnitTest : MockkBaseTest {
     fun `Given a resource template property, when object value is not an instance of target class, it throws an exception`() {
         val property = createResourceTemplateProperty().copy(
             minCount = 0,
-            `class` = ObjectIdAndLabel(ThingId("C123"), "Dummy")
+            `class` = ObjectIdAndLabel(ThingId("C123"), "Dummy"),
         )
         val id = "R123"
         val `object` = createResource(ThingId("R123")).toThingCommandPart()
@@ -209,7 +209,7 @@ internal class AbstractTemplatePropertyValueValidatorUnitTest : MockkBaseTest {
     fun `Given a resource template property, when object value is not an instance of the target class but an instance of a subclass of target class, it returns success`() {
         val property = createResourceTemplateProperty().copy(
             minCount = 0,
-            `class` = ObjectIdAndLabel(ThingId("C123"), "Dummy")
+            `class` = ObjectIdAndLabel(ThingId("C123"), "Dummy"),
         )
         val id = "R123"
         val `object` = createResource(ThingId("R123"), classes = setOf(ThingId("Subclass"))).toThingCommandPart()
@@ -225,7 +225,7 @@ internal class AbstractTemplatePropertyValueValidatorUnitTest : MockkBaseTest {
     fun `Given a resource template property, when object value is not an instance of the target class and not an instance of a subclass of target class, it throws an exception`() {
         val property = createResourceTemplateProperty().copy(
             minCount = 0,
-            `class` = ObjectIdAndLabel(ThingId("C123"), "Dummy")
+            `class` = ObjectIdAndLabel(ThingId("C123"), "Dummy"),
         )
         val id = "R123"
         val `object` = createResource(ThingId("R123"), classes = setOf(ThingId("Subclass"))).toThingCommandPart()
@@ -245,7 +245,7 @@ internal class AbstractTemplatePropertyValueValidatorUnitTest : MockkBaseTest {
     fun `Given a resource template property, when object value is a literal, it throws an exception`() {
         val property = createResourceTemplateProperty().copy(
             minCount = 0,
-            `class` = ObjectIdAndLabel(Classes.author, "Author")
+            `class` = ObjectIdAndLabel(Classes.author, "Author"),
         )
         val id = "L123"
         val `object` = createLiteral(ThingId("L123")).toThingCommandPart()
@@ -274,7 +274,7 @@ internal class AbstractTemplatePropertyValueValidatorUnitTest : MockkBaseTest {
     fun `Given a string literal template property, when literal label does not match the required pattern, it throws an exception`() {
         val property = createStringLiteralTemplateProperty().copy(
             minCount = 0,
-            datatype = ClassReference(Classes.string, "String", ParsedIRI.create(Literals.XSD.STRING.uri))
+            datatype = ClassReference(Classes.string, "String", ParsedIRI.create(Literals.XSD.STRING.uri)),
         )
         val id = "L123"
         val `object` = createLiteral(ThingId("L123")).toThingCommandPart()
@@ -291,7 +291,7 @@ internal class AbstractTemplatePropertyValueValidatorUnitTest : MockkBaseTest {
         val property = createStringLiteralTemplateProperty().copy(
             minCount = 0,
             pattern = """\w+""",
-            datatype = ClassReference(Classes.string, "String", ParsedIRI.create(Literals.XSD.STRING.uri))
+            datatype = ClassReference(Classes.string, "String", ParsedIRI.create(Literals.XSD.STRING.uri)),
         )
         val id = "L123"
         val `object` = createLiteral(ThingId("L123"), label = "word").toThingCommandPart()
@@ -305,12 +305,12 @@ internal class AbstractTemplatePropertyValueValidatorUnitTest : MockkBaseTest {
             minCount = 0,
             minInclusive = RealNumber(0),
             maxInclusive = RealNumber(10),
-            datatype = ClassReference(Classes.integer, "Integer", ParsedIRI.create(Literals.XSD.INT.uri))
+            datatype = ClassReference(Classes.integer, "Integer", ParsedIRI.create(Literals.XSD.INT.uri)),
         )
         val id = "#temp1"
         val `object` = CreateLiteralCommandPart(
             label = "5",
-            dataType = Literals.XSD.INT.prefixedUri
+            dataType = Literals.XSD.INT.prefixedUri,
         )
 
         assertDoesNotThrow { abstractTemplatePropertyValueValidator.validateObject(property, id, `object`) }
@@ -321,12 +321,12 @@ internal class AbstractTemplatePropertyValueValidatorUnitTest : MockkBaseTest {
         val property = createNumberLiteralTemplateProperty().copy(
             minCount = 0,
             minInclusive = RealNumber(10),
-            datatype = ClassReference(Classes.integer, "Integer", ParsedIRI.create(Literals.XSD.INT.uri))
+            datatype = ClassReference(Classes.integer, "Integer", ParsedIRI.create(Literals.XSD.INT.uri)),
         )
         val id = "#temp1"
         val `object` = CreateLiteralCommandPart(
             label = "5",
-            dataType = Literals.XSD.INT.prefixedUri
+            dataType = Literals.XSD.INT.prefixedUri,
         )
 
         shouldThrow<NumberTooLow> {
@@ -340,12 +340,12 @@ internal class AbstractTemplatePropertyValueValidatorUnitTest : MockkBaseTest {
     fun `Given a number literal template property, when object label is higher than maxInclusive, it throws an exception`() {
         val property = createNumberLiteralTemplateProperty().copy(
             minCount = 0,
-            maxInclusive = RealNumber(5)
+            maxInclusive = RealNumber(5),
         )
         val id = "#temp1"
         val `object` = CreateLiteralCommandPart(
             label = "10",
-            dataType = Literals.XSD.INT.prefixedUri
+            dataType = Literals.XSD.INT.prefixedUri,
         )
 
         shouldThrow<NumberTooHigh> {
@@ -361,12 +361,12 @@ internal class AbstractTemplatePropertyValueValidatorUnitTest : MockkBaseTest {
             minCount = 0,
             minInclusive = RealNumber(0.0),
             maxInclusive = RealNumber(10.0),
-            datatype = ClassReference(Classes.decimal, "Decimal", ParsedIRI.create(Literals.XSD.DECIMAL.uri))
+            datatype = ClassReference(Classes.decimal, "Decimal", ParsedIRI.create(Literals.XSD.DECIMAL.uri)),
         )
         val id = "#temp1"
         val `object` = CreateLiteralCommandPart(
             label = "5.0",
-            dataType = Literals.XSD.DECIMAL.prefixedUri
+            dataType = Literals.XSD.DECIMAL.prefixedUri,
         )
 
         assertDoesNotThrow { abstractTemplatePropertyValueValidator.validateObject(property, id, `object`) }
@@ -377,12 +377,12 @@ internal class AbstractTemplatePropertyValueValidatorUnitTest : MockkBaseTest {
         val property = createDecimalLiteralTemplateProperty().copy(
             minCount = 0,
             minInclusive = RealNumber(10.0),
-            datatype = ClassReference(Classes.decimal, "Decimal", ParsedIRI.create(Literals.XSD.DECIMAL.uri))
+            datatype = ClassReference(Classes.decimal, "Decimal", ParsedIRI.create(Literals.XSD.DECIMAL.uri)),
         )
         val id = "#temp1"
         val `object` = CreateLiteralCommandPart(
             label = "5.0",
-            dataType = Literals.XSD.DECIMAL.prefixedUri
+            dataType = Literals.XSD.DECIMAL.prefixedUri,
         )
 
         shouldThrow<NumberTooLow> {
@@ -397,12 +397,12 @@ internal class AbstractTemplatePropertyValueValidatorUnitTest : MockkBaseTest {
         val property = createDecimalLiteralTemplateProperty().copy(
             minCount = 0,
             maxInclusive = RealNumber(5.0),
-            datatype = ClassReference(Classes.decimal, "Decimal", ParsedIRI.create(Literals.XSD.DECIMAL.uri))
+            datatype = ClassReference(Classes.decimal, "Decimal", ParsedIRI.create(Literals.XSD.DECIMAL.uri)),
         )
         val id = "#temp1"
         val `object` = CreateLiteralCommandPart(
             label = "10.0",
-            dataType = Literals.XSD.DECIMAL.prefixedUri
+            dataType = Literals.XSD.DECIMAL.prefixedUri,
         )
 
         shouldThrow<NumberTooHigh> {
@@ -418,12 +418,12 @@ internal class AbstractTemplatePropertyValueValidatorUnitTest : MockkBaseTest {
             minCount = 0,
             minInclusive = RealNumber(0.0F),
             maxInclusive = RealNumber(10.0F),
-            datatype = ClassReference(Classes.float, "Float", ParsedIRI.create(Literals.XSD.FLOAT.uri))
+            datatype = ClassReference(Classes.float, "Float", ParsedIRI.create(Literals.XSD.FLOAT.uri)),
         )
         val id = "#temp1"
         val `object` = CreateLiteralCommandPart(
             label = "5.0",
-            dataType = Literals.XSD.FLOAT.prefixedUri
+            dataType = Literals.XSD.FLOAT.prefixedUri,
         )
 
         assertDoesNotThrow { abstractTemplatePropertyValueValidator.validateObject(property, id, `object`) }
@@ -434,12 +434,12 @@ internal class AbstractTemplatePropertyValueValidatorUnitTest : MockkBaseTest {
         val property = createFloatLiteralTemplateProperty().copy(
             minCount = 0,
             minInclusive = RealNumber(10.0F),
-            datatype = ClassReference(Classes.float, "Float", ParsedIRI.create(Literals.XSD.FLOAT.uri))
+            datatype = ClassReference(Classes.float, "Float", ParsedIRI.create(Literals.XSD.FLOAT.uri)),
         )
         val id = "#temp1"
         val `object` = CreateLiteralCommandPart(
             label = "5.0",
-            dataType = Literals.XSD.FLOAT.prefixedUri
+            dataType = Literals.XSD.FLOAT.prefixedUri,
         )
 
         shouldThrow<NumberTooLow> {
@@ -454,12 +454,12 @@ internal class AbstractTemplatePropertyValueValidatorUnitTest : MockkBaseTest {
         val property = createFloatLiteralTemplateProperty().copy(
             minCount = 0,
             maxInclusive = RealNumber(5.0F),
-            datatype = ClassReference(Classes.float, "Float", ParsedIRI.create(Literals.XSD.FLOAT.uri))
+            datatype = ClassReference(Classes.float, "Float", ParsedIRI.create(Literals.XSD.FLOAT.uri)),
         )
         val id = "#temp1"
         val `object` = CreateLiteralCommandPart(
             label = "10.0",
-            dataType = Literals.XSD.FLOAT.prefixedUri
+            dataType = Literals.XSD.FLOAT.prefixedUri,
         )
 
         shouldThrow<NumberTooHigh> {
@@ -473,12 +473,12 @@ internal class AbstractTemplatePropertyValueValidatorUnitTest : MockkBaseTest {
     fun `Given a literal template property, when object label cannot be parsed by data type, it throws an exception`() {
         val property = createOtherLiteralTemplateProperty().copy(
             minCount = 0,
-            datatype = ClassReference(Classes.integer, "Integer", ParsedIRI.create(Literals.XSD.INT.uri))
+            datatype = ClassReference(Classes.integer, "Integer", ParsedIRI.create(Literals.XSD.INT.uri)),
         )
         val id = "#temp1"
         val `object` = CreateLiteralCommandPart(
             label = "not a number",
-            dataType = Literals.XSD.INT.prefixedUri
+            dataType = Literals.XSD.INT.prefixedUri,
         )
 
         shouldThrow<InvalidLiteral> {
@@ -493,12 +493,12 @@ internal class AbstractTemplatePropertyValueValidatorUnitTest : MockkBaseTest {
         val uri = "https://example.org/classes/software"
         val property = createOtherLiteralTemplateProperty().copy(
             minCount = 0,
-            datatype = ClassReference(Classes.software, "Software", ParsedIRI.create(uri))
+            datatype = ClassReference(Classes.software, "Software", ParsedIRI.create(uri)),
         )
         val id = "#temp1"
         val `object` = CreateLiteralCommandPart(
             label = "some value",
-            dataType = uri
+            dataType = uri,
         )
 
         assertDoesNotThrow { abstractTemplatePropertyValueValidator.validateObject(property, id, `object`) }
@@ -508,12 +508,12 @@ internal class AbstractTemplatePropertyValueValidatorUnitTest : MockkBaseTest {
     fun `Given a literal template property with a custom datatype, when object data type does not match the uri of the custom data type, it throws an exception`() {
         val property = createOtherLiteralTemplateProperty().copy(
             minCount = 0,
-            datatype = ClassReference(Classes.software, "Software", null)
+            datatype = ClassReference(Classes.software, "Software", null),
         )
         val id = "#temp1"
         val `object` = CreateLiteralCommandPart(
             label = "some value",
-            dataType = "unknown"
+            dataType = "unknown",
         )
 
         shouldThrow<MismatchedDataType> {
@@ -527,12 +527,12 @@ internal class AbstractTemplatePropertyValueValidatorUnitTest : MockkBaseTest {
     fun `Given a literal template property with a custom datatype, when object data type matches the id of the custom data type, it returns success`() {
         val property = createOtherLiteralTemplateProperty().copy(
             minCount = 0,
-            datatype = ClassReference(Classes.software, "Software", null)
+            datatype = ClassReference(Classes.software, "Software", null),
         )
         val id = "#temp1"
         val `object` = CreateLiteralCommandPart(
             label = "some value",
-            dataType = "$ORKG_CLASS_NS${Classes.software}"
+            dataType = "$ORKG_CLASS_NS${Classes.software}",
         )
 
         assertDoesNotThrow { abstractTemplatePropertyValueValidator.validateObject(property, id, `object`) }
@@ -542,12 +542,12 @@ internal class AbstractTemplatePropertyValueValidatorUnitTest : MockkBaseTest {
     fun `Given a literal template property with a custom datatype, when object data type does not match the id of the custom data type, it throws an exception`() {
         val property = createOtherLiteralTemplateProperty().copy(
             minCount = 0,
-            datatype = ClassReference(Classes.software, "Software", null)
+            datatype = ClassReference(Classes.software, "Software", null),
         )
         val id = "#temp1"
         val `object` = CreateLiteralCommandPart(
             label = "some value",
-            dataType = "unknown"
+            dataType = "unknown",
         )
 
         shouldThrow<MismatchedDataType> {

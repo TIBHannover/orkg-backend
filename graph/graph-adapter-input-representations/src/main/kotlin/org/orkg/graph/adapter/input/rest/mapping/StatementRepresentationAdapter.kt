@@ -62,7 +62,7 @@ interface StatementRepresentationAdapter : ThingRepresentationAdapter {
             createdAt = createdAt!!,
             createdBy = createdBy,
             modifiable = modifiable,
-            index = index
+            index = index,
         )
 
     private fun Iterable<GeneralStatement>.resources() =

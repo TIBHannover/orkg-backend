@@ -40,7 +40,7 @@ class CSVStepConfiguration {
     ): CSVRecordReader =
         CSVRecordReader(
             csvId = extractCSVID(jobParameters),
-            csvRepository = csvRepository
+            csvRepository = csvRepository,
         )
 
     @Bean

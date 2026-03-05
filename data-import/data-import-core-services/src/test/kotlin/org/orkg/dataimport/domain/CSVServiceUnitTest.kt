@@ -119,7 +119,7 @@ internal class CSVServiceUnitTest : MockkBaseTest {
                         it.data shouldBe command.data
                         it.createdBy shouldBe command.contributorId
                         it.createdAt shouldBe OffsetDateTime.now(fixedClock)
-                    }
+                    },
                 )
             }
         }
@@ -178,7 +178,7 @@ internal class CSVServiceUnitTest : MockkBaseTest {
                     it.data shouldBe command.data
                     it.createdBy shouldBe csv.createdBy
                     it.createdAt shouldBe csv.createdAt
-                }
+                },
             )
         }
     }
@@ -221,7 +221,7 @@ internal class CSVServiceUnitTest : MockkBaseTest {
                     it.data shouldBe command.data
                     it.createdBy shouldBe csv.createdBy
                     it.createdAt shouldBe csv.createdAt
-                }
+                },
             )
         }
     }
@@ -230,7 +230,7 @@ internal class CSVServiceUnitTest : MockkBaseTest {
     fun `Given a csv update command, when updating all properties, and the user is not the owner and not an admin, it throws an exception`() {
         val csv = createCSV().copy(
             state = State.VALIDATION_DONE,
-            validationJobId = JobId(123)
+            validationJobId = JobId(123),
         )
         val otherUser = createContributor(isAdmin = false)
         val command = UpdateCSVUseCase.UpdateCommand(
@@ -255,7 +255,7 @@ internal class CSVServiceUnitTest : MockkBaseTest {
         val csv = createCSV()
         val command = UpdateCSVUseCase.UpdateCommand(
             id = csv.id,
-            contributorId = csv.createdBy
+            contributorId = csv.createdBy,
         )
 
         service.update(command)
@@ -265,7 +265,7 @@ internal class CSVServiceUnitTest : MockkBaseTest {
     fun `Given a csv update command, when validation is currently running, it stops the job`() {
         val csv = createCSV().copy(
             state = State.VALIDATION_RUNNING,
-            validationJobId = JobId(123)
+            validationJobId = JobId(123),
         )
         val command = UpdateCSVUseCase.UpdateCommand(
             id = csv.id,
@@ -296,7 +296,7 @@ internal class CSVServiceUnitTest : MockkBaseTest {
                     it.data shouldBe csv.data
                     it.createdBy shouldBe csv.createdBy
                     it.createdAt shouldBe csv.createdAt
-                }
+                },
             )
         }
     }
@@ -324,7 +324,7 @@ internal class CSVServiceUnitTest : MockkBaseTest {
         val command = UpdateCSVUseCase.UpdateCommand(
             id = csv.id,
             contributorId = csv.createdBy,
-            data = "changed"
+            data = "changed",
         )
 
         every { repository.findById(csv.id) } returns Optional.of(csv)
@@ -340,7 +340,7 @@ internal class CSVServiceUnitTest : MockkBaseTest {
         val command = UpdateCSVUseCase.UpdateCommand(
             id = csv.id,
             contributorId = csv.createdBy,
-            data = "changed"
+            data = "changed",
         )
 
         every { repository.findById(csv.id) } returns Optional.of(csv)
@@ -383,7 +383,7 @@ internal class CSVServiceUnitTest : MockkBaseTest {
                     it.data shouldBe csv.data
                     it.createdBy shouldBe csv.createdBy
                     it.createdAt shouldBe csv.createdAt
-                }
+                },
             )
         }
     }
@@ -467,7 +467,7 @@ internal class CSVServiceUnitTest : MockkBaseTest {
     @ParameterizedTest
     @EnumSource(
         State::class,
-        names = arrayOf("VALIDATION_DONE", "VALIDATION_FAILED", "IMPORT_RUNNING", "IMPORT_STOPPED", "IMPORT_FAILED", "IMPORT_DONE")
+        names = arrayOf("VALIDATION_DONE", "VALIDATION_FAILED", "IMPORT_RUNNING", "IMPORT_STOPPED", "IMPORT_FAILED", "IMPORT_DONE"),
     )
     fun `Given a csv validation command, when csv is already validated, it throws an exception`(state: State) {
         val csv = createCSV().copy(state = state)
@@ -486,7 +486,7 @@ internal class CSVServiceUnitTest : MockkBaseTest {
     @ParameterizedTest
     @EnumSource(
         State::class,
-        names = arrayOf("VALIDATION_QUEUED", "VALIDATION_RUNNING")
+        names = arrayOf("VALIDATION_QUEUED", "VALIDATION_RUNNING"),
     )
     fun `Given a csv validation command, when csv validation is already running, it throws an exception`(state: State) {
         val csv = createCSV().copy(state = state)
@@ -641,7 +641,7 @@ internal class CSVServiceUnitTest : MockkBaseTest {
     @ParameterizedTest
     @EnumSource(
         State::class,
-        names = arrayOf("IMPORT_FAILED", "IMPORT_DONE")
+        names = arrayOf("IMPORT_FAILED", "IMPORT_DONE"),
     )
     fun `Given a csv import command, when csv is already imported, it throws an exception`(state: State) {
         val csv = createCSV().copy(state = state)
@@ -660,7 +660,7 @@ internal class CSVServiceUnitTest : MockkBaseTest {
     @ParameterizedTest
     @EnumSource(
         State::class,
-        names = arrayOf("IMPORT_QUEUED", "IMPORT_RUNNING")
+        names = arrayOf("IMPORT_QUEUED", "IMPORT_RUNNING"),
     )
     fun `Given a csv import command, when csv import is already running, it throws an exception`(state: State) {
         val csv = createCSV().copy(state = state)
@@ -679,7 +679,7 @@ internal class CSVServiceUnitTest : MockkBaseTest {
     @ParameterizedTest
     @EnumSource(
         State::class,
-        names = arrayOf("UPLOADED", "VALIDATION_RUNNING", "VALIDATION_STOPPED", "VALIDATION_FAILED")
+        names = arrayOf("UPLOADED", "VALIDATION_RUNNING", "VALIDATION_STOPPED", "VALIDATION_FAILED"),
     )
     fun `Given a csv import command, when csv is not validated, it throws an exception`(state: State) {
         val csv = createCSV().copy(state = state)

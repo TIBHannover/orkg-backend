@@ -43,14 +43,14 @@ class ComparisonTableMigrationRunner(
         forEachResource(setOf(Classes.comparison)) {
             legacyComparisonTableRepository.findById(it.id).ifPresentOrElse(
                 { migrateComparisonTable(it.id, it.config, it.data, false) },
-                { logger.warn("Could not find table for comparison ${it.id}") }
+                { logger.warn("Could not find table for comparison ${it.id}") },
             )
         }
 
         forEachResource(setOf(Classes.comparisonPublished)) {
             legacyComparisonPublishedRepository.findById(it.id).ifPresentOrElse(
                 { migrateComparisonTable(it.id, it.config, it.data, true) },
-                { logger.warn("Could not find table for published comparison ${it.id}") }
+                { logger.warn("Could not find table for published comparison ${it.id}") },
             )
         }
 
@@ -80,7 +80,7 @@ class ComparisonTableMigrationRunner(
         do {
             page = resourceRepository.findAll(
                 pageable = PageRequest.of(pageNumber++, CHUNK_SIZE),
-                includeClasses = includeClasses
+                includeClasses = includeClasses,
             )
             page.forEach(action)
         }

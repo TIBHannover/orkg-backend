@@ -31,10 +31,10 @@ fun <R : LiteralRepository> literalRepositoryContract(
     val fabricator = Fabrikate(
         FabricatorConfig(
             collectionSizes = 12..12,
-            nullableStrategy = FabricatorConfig.NullableStrategy.NeverSetToNull // FIXME: because "id" is nullable
+            nullableStrategy = FabricatorConfig.NullableStrategy.NeverSetToNull, // FIXME: because "id" is nullable
         )
             .withStandardMappings()
-            .withGraphMappings()
+            .withGraphMappings(),
     )
 
     describe("saving a literal") {
@@ -133,7 +133,7 @@ fun <R : LiteralRepository> literalRepositoryContract(
                     literals.forEach(repository::save)
                     val result = repository.findAll(
                         pageable = PageRequest.of(0, 5),
-                        label = SearchString.of("label find", exactMatch = false)
+                        label = SearchString.of("label find", exactMatch = false),
                     )
 
                     it("returns the correct result") {
@@ -167,7 +167,7 @@ fun <R : LiteralRepository> literalRepositoryContract(
                 val expected = literals.take(expectedCount)
                 val result = repository.findAll(
                     pageable = PageRequest.of(0, 5),
-                    createdBy = createdBy
+                    createdBy = createdBy,
                 )
 
                 it("returns the correct result") {
@@ -192,7 +192,7 @@ fun <R : LiteralRepository> literalRepositoryContract(
                 val expectedCount = 3
                 val literals = fabricator.random<List<Literal>>().mapIndexed { index, literal ->
                     literal.copy(
-                        createdAt = OffsetDateTime.now(fixedClock).minusHours(index.toLong())
+                        createdAt = OffsetDateTime.now(fixedClock).minusHours(index.toLong()),
                     )
                 }
                 literals.forEach(repository::save)
@@ -200,7 +200,7 @@ fun <R : LiteralRepository> literalRepositoryContract(
                 val expected = literals.take(expectedCount)
                 val result = repository.findAll(
                     pageable = PageRequest.of(0, 5),
-                    createdAtStart = expected.last().createdAt
+                    createdAtStart = expected.last().createdAt,
                 )
 
                 it("returns the correct result") {
@@ -225,7 +225,7 @@ fun <R : LiteralRepository> literalRepositoryContract(
                 val expectedCount = 3
                 val literals = fabricator.random<List<Literal>>().mapIndexed { index, literal ->
                     literal.copy(
-                        createdAt = OffsetDateTime.now(fixedClock).plusHours(index.toLong())
+                        createdAt = OffsetDateTime.now(fixedClock).plusHours(index.toLong()),
                     )
                 }
                 literals.forEach(repository::save)
@@ -233,7 +233,7 @@ fun <R : LiteralRepository> literalRepositoryContract(
                 val expected = literals.take(expectedCount)
                 val result = repository.findAll(
                     pageable = PageRequest.of(0, 5),
-                    createdAtEnd = expected.last().createdAt
+                    createdAtEnd = expected.last().createdAt,
                 )
 
                 it("returns the correct result") {

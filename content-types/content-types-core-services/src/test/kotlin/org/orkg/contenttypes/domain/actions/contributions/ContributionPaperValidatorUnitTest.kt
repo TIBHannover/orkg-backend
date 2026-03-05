@@ -25,7 +25,7 @@ internal class ContributionPaperValidatorUnitTest : MockkBaseTest {
     private val resourceService: ResourceUseCases = mockk()
 
     private val contributionPaperValidator = ContributionPaperValidator(
-        resourceRepository = resourceRepository
+        resourceRepository = resourceRepository,
     )
 
     @Test

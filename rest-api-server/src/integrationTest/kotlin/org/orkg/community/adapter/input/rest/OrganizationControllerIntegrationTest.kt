@@ -90,7 +90,7 @@ internal class OrganizationControllerIntegrationTest : MockMvcBaseTest("organiza
                 description(
                     """
                     A `GET` request provides information about an organization.
-                    """
+                    """,
                 )
                 pathParameters(
                     parameterWithName("id").description("The identifier of the organization."),
@@ -114,7 +114,7 @@ internal class OrganizationControllerIntegrationTest : MockMvcBaseTest("organiza
                 description(
                     """
                     A `GET` request lists all organizations.
-                    """
+                    """,
                 )
                 listResponseFields<Organization>(organizationResponseFields())
             }
@@ -128,7 +128,7 @@ internal class OrganizationControllerIntegrationTest : MockMvcBaseTest("organiza
                 data = ImageData(png("white_pixel")),
                 mimeType = MimeType.valueOf("image/png"),
                 createdBy = contributorId,
-            )
+            ),
         )
         val organizationId = service.createOrganization(createdBy = contributorId, logoId = imageId)
 
@@ -142,11 +142,11 @@ internal class OrganizationControllerIntegrationTest : MockMvcBaseTest("organiza
         val contributorId = contributorService.createContributor()
         val organizationId = service.createOrganization(createdBy = contributorId)
         val researchField = resourceService.createResource(
-            classes = setOf(Classes.researchField)
+            classes = setOf(Classes.researchField),
         )
         observatoryService.createObservatory(
             organizations = setOf(organizationId),
-            researchField = researchField
+            researchField = researchField,
         )
 
         get("/api/organizations/{id}/observatories", organizationId)

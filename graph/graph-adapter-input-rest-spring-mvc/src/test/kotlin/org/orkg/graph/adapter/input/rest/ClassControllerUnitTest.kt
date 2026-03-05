@@ -80,7 +80,7 @@ internal class ClassControllerUnitTest : MockMvcBaseTest("classes") {
                 pageable = PageRequests.SINGLE,
                 subjectId = `class`.id,
                 predicateId = Predicates.description,
-                objectClasses = setOf(Classes.literal)
+                objectClasses = setOf(Classes.literal),
             )
         } returns pageOf()
 
@@ -93,7 +93,7 @@ internal class ClassControllerUnitTest : MockMvcBaseTest("classes") {
                 description(
                     """
                     A `GET` request provides information about a class.
-                    """
+                    """,
                 )
                 pathParameters(
                     parameterWithName("id").description("The identifier of the class to retrieve."),
@@ -108,7 +108,7 @@ internal class ClassControllerUnitTest : MockMvcBaseTest("classes") {
                 pageable = PageRequests.SINGLE,
                 subjectId = `class`.id,
                 predicateId = Predicates.description,
-                objectClasses = setOf(Classes.literal)
+                objectClasses = setOf(Classes.literal),
             )
         }
     }
@@ -160,7 +160,7 @@ internal class ClassControllerUnitTest : MockMvcBaseTest("classes") {
                     """
                     A `GET` request returns a <<sorting-and-pagination,paged>> list of <<classes-fetch,classes>>.
                     If no paging request parameters are provided, the default values will be used.
-                    """
+                    """,
                 )
                 pagedQueryParameters(
                     parameterWithName("q").description("A search term that must be contained in the label. (optional)").optional(),
@@ -227,10 +227,10 @@ internal class ClassControllerUnitTest : MockMvcBaseTest("classes") {
                     An optional URI can be given to link to the class in an external ontology (RDF).
                     The response will be `201 Created` when successful.
                     The class can be retrieved by following the URI in the `Location` header field.
-                    """
+                    """,
                 )
                 responseHeaders(
-                    headerWithName("Location").description("The uri path where the newly created class can be fetched from.")
+                    headerWithName("Location").description("The uri path where the newly created class can be fetched from."),
                 )
                 requestFields<CreateClassRequest>(
                     fieldWithPath("id").description("The class id (optional)").optional(),
@@ -247,7 +247,7 @@ internal class ClassControllerUnitTest : MockMvcBaseTest("classes") {
                     it.label shouldBe label
                     it.uri shouldBe uri
                     it.contributorId.toString() shouldBe MockUserId.USER
-                }
+                },
             )
         }
     }
@@ -259,7 +259,7 @@ internal class ClassControllerUnitTest : MockMvcBaseTest("classes") {
         val id = ThingId("EXISTS")
         val body = mapOf(
             "label" to "new label",
-            "uri" to "https://example.org/some/new#URI"
+            "uri" to "https://example.org/some/new#URI",
         )
         every { classService.replace(any()) } just runs
 
@@ -275,17 +275,17 @@ internal class ClassControllerUnitTest : MockMvcBaseTest("classes") {
                     A `PUT` request updates a class with a new given label and URI.
                     All fields will be updated in the process.
                     The response will be `204 NO CONTENT` when successful.
-                    """
+                    """,
                 )
                 pathParameters(
-                    parameterWithName("id").description("The identifier of the class.")
+                    parameterWithName("id").description("The identifier of the class."),
                 )
                 responseHeaders(
-                    headerWithName("Location").description("The uri path where the updated class can be fetched from.")
+                    headerWithName("Location").description("The uri path where the updated class can be fetched from."),
                 )
                 requestFields<ReplaceClassRequest>(
                     fieldWithPath("label").description("The updated class label"),
-                    fieldWithPath("uri").description("The updated class label")
+                    fieldWithPath("uri").description("The updated class label"),
                 )
                 throws(InvalidLabel::class, ClassNotFound::class, ClassNotModifiable::class, CannotResetURI::class, URIAlreadyInUse::class)
             }
@@ -296,7 +296,7 @@ internal class ClassControllerUnitTest : MockMvcBaseTest("classes") {
                     it.id shouldBe id
                     it.label shouldBe "new label"
                     it.uri shouldBe ParsedIRI.create("https://example.org/some/new#URI")
-                }
+                },
             )
         }
     }
@@ -321,13 +321,13 @@ internal class ClassControllerUnitTest : MockMvcBaseTest("classes") {
                     A `PATCH` request updates a class with a new given label and URI.
                     Only fields provided in the request, and therefore non-null, will be updated.
                     The response will be `204 NO CONTENT` when successful.
-                    """
+                    """,
                 )
                 pathParameters(
-                    parameterWithName("id").description("The identifier of the class.")
+                    parameterWithName("id").description("The identifier of the class."),
                 )
                 responseHeaders(
-                    headerWithName("Location").description("The uri path where the updated class can be fetched from.")
+                    headerWithName("Location").description("The uri path where the updated class can be fetched from."),
                 )
                 requestFields<UpdateClassRequest>(
                     fieldWithPath("label").description("The updated class label (optional)").optional(),
@@ -342,7 +342,7 @@ internal class ClassControllerUnitTest : MockMvcBaseTest("classes") {
                     it.id shouldBe id
                     it.label shouldBe "some label"
                     it.uri shouldBe ParsedIRI.create("https://example.org/some/new#URI")
-                }
+                },
             )
         }
     }
@@ -365,7 +365,7 @@ internal class ClassControllerUnitTest : MockMvcBaseTest("classes") {
                     it.id shouldBe id
                     it.label shouldBe "some label"
                     it.uri shouldBe null
-                }
+                },
             )
         }
     }
@@ -387,7 +387,7 @@ internal class ClassControllerUnitTest : MockMvcBaseTest("classes") {
                     it.id shouldBe id
                     it.label shouldBe null
                     it.uri shouldBe ParsedIRI.create("https://example.org/some/new#URI")
-                }
+                },
             )
         }
     }

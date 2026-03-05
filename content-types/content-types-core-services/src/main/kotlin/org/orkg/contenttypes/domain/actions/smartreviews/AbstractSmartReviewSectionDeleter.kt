@@ -20,7 +20,7 @@ class AbstractSmartReviewSectionDeleter(
     ) : this(
         statementService,
         resourceService,
-        ContentTypePartDeleter(statementService)
+        ContentTypePartDeleter(statementService),
     )
 
     internal fun delete(

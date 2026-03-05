@@ -16,7 +16,7 @@ class TableCellsUpdateValidator(
         val validationCache = abstractTableCellsValidator.validate(
             rows = command.rows!!,
             thingCommands = command.all(),
-            validationCacheIn = state.validationCache
+            validationCacheIn = state.validationCache,
         )
         val existingRows = parseRowGraphs(command.tableId, state.statements, state.headerIndices)
         return state.copy(validationCache = validationCache, existingRows = existingRows)

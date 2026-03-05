@@ -23,44 +23,44 @@ fun createRosettaStoneStatementCommand() = CreateRosettaStoneStatementUseCase.Cr
     subjects = listOf("R258", "R369", "#temp1"),
     objects = listOf(
         listOf("R987", "R654", "#temp2", "#temp3"),
-        listOf("R321", "R741", "#temp4", "#temp5")
+        listOf("R321", "R741", "#temp4", "#temp5"),
     ),
     certainty = Certainty.HIGH,
     negated = false,
     resources = mapOf(
         "#temp1" to CreateResourceCommandPart(
             label = "MOTO",
-            classes = setOf(ThingId("Result"))
-        )
+            classes = setOf(ThingId("Result")),
+        ),
     ),
     literals = mapOf(
-        "#temp2" to CreateLiteralCommandPart("0.1", Literals.XSD.DECIMAL.prefixedUri)
+        "#temp2" to CreateLiteralCommandPart("0.1", Literals.XSD.DECIMAL.prefixedUri),
     ),
     predicates = mapOf(
         "#temp3" to CreatePredicateCommandPart(
             label = "hasResult",
-            description = "has result"
-        )
+            description = "has result",
+        ),
     ),
     lists = mapOf(
         "#temp4" to CreateListCommandPart(
             label = "list",
-            elements = listOf("#temp1", "C123")
-        )
+            elements = listOf("#temp1", "C123"),
+        ),
     ),
     classes = mapOf(
         "#temp5" to CreateClassCommandPart(
             label = "class",
-            uri = ParsedIRI.create("https://orkg.org/class/C1")
-        )
+            uri = ParsedIRI.create("https://orkg.org/class/C1"),
+        ),
     ),
     observatories = listOf(
-        ObservatoryId("cb71eebf-8afd-4fe3-9aea-d0966d71cece")
+        ObservatoryId("cb71eebf-8afd-4fe3-9aea-d0966d71cece"),
     ),
     organizations = listOf(
-        OrganizationId("a700c55f-aae2-4696-b7d5-6e8b89f66a8f")
+        OrganizationId("a700c55f-aae2-4696-b7d5-6e8b89f66a8f"),
     ),
-    extractionMethod = ExtractionMethod.MANUAL
+    extractionMethod = ExtractionMethod.MANUAL,
 )
 
 fun updateRosettaStoneStatementCommand() = UpdateRosettaStoneStatementUseCase.UpdateCommand(
@@ -69,42 +69,42 @@ fun updateRosettaStoneStatementCommand() = UpdateRosettaStoneStatementUseCase.Up
     subjects = listOf("R258", "R369", "#temp1"),
     objects = listOf(
         listOf("R987", "R654", "#temp2", "#temp3"),
-        listOf("R321", "R741", "#temp4", "#temp5")
+        listOf("R321", "R741", "#temp4", "#temp5"),
     ),
     certainty = Certainty.HIGH,
     negated = false,
     resources = mapOf(
         "#temp1" to CreateResourceCommandPart(
             label = "MOTO",
-            classes = setOf(ThingId("Result"))
-        )
+            classes = setOf(ThingId("Result")),
+        ),
     ),
     literals = mapOf(
-        "#temp2" to CreateLiteralCommandPart("0.1", Literals.XSD.DECIMAL.prefixedUri)
+        "#temp2" to CreateLiteralCommandPart("0.1", Literals.XSD.DECIMAL.prefixedUri),
     ),
     predicates = mapOf(
         "#temp3" to CreatePredicateCommandPart(
             label = "hasResult",
-            description = "has result"
-        )
+            description = "has result",
+        ),
     ),
     lists = mapOf(
         "#temp4" to CreateListCommandPart(
             label = "list",
-            elements = listOf("#temp1", "C123")
-        )
+            elements = listOf("#temp1", "C123"),
+        ),
     ),
     classes = mapOf(
         "#temp5" to CreateClassCommandPart(
             label = "class",
-            uri = ParsedIRI.create("https://orkg.org/class/C1")
-        )
+            uri = ParsedIRI.create("https://orkg.org/class/C1"),
+        ),
     ),
     observatories = listOf(
-        ObservatoryId("cb71eebf-8afd-4fe3-9aea-d0966d71cece")
+        ObservatoryId("cb71eebf-8afd-4fe3-9aea-d0966d71cece"),
     ),
     organizations = listOf(
-        OrganizationId("a700c55f-aae2-4696-b7d5-6e8b89f66a8f")
+        OrganizationId("a700c55f-aae2-4696-b7d5-6e8b89f66a8f"),
     ),
-    extractionMethod = ExtractionMethod.MANUAL
+    extractionMethod = ExtractionMethod.MANUAL,
 )

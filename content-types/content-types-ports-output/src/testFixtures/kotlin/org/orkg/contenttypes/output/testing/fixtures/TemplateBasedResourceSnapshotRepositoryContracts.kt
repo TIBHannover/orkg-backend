@@ -19,11 +19,11 @@ import org.springframework.data.domain.PageRequest
 private val fabricator = Fabrikate(
     FabricatorConfig(
         collectionSizes = 12..12,
-        nullableStrategy = FabricatorConfig.NullableStrategy.NeverSetToNull // FIXME: because "id" is nullable
+        nullableStrategy = FabricatorConfig.NullableStrategy.NeverSetToNull, // FIXME: because "id" is nullable
     )
         .withStandardMappings()
         .withGraphMappings()
-        .withContentTypeMappings()
+        .withContentTypeMappings(),
 )
 
 interface TemplateBasedResourceSnapshotRepositoryContracts {
@@ -61,7 +61,7 @@ interface TemplateBasedResourceSnapshotRepositoryContracts {
 
         val result = repository.findAllByResourceId(
             resourceId = resourceId,
-            pageable = PageRequest.of(0, 15)
+            pageable = PageRequest.of(0, 15),
         )
 
         result shouldNotBe null
@@ -100,7 +100,7 @@ interface TemplateBasedResourceSnapshotRepositoryContracts {
         val result = repository.findAllByResourceIdAndTemplateId(
             resourceId = resourceId,
             templateId = templateId,
-            pageable = PageRequest.of(0, 15)
+            pageable = PageRequest.of(0, 15),
         )
 
         result shouldNotBe null

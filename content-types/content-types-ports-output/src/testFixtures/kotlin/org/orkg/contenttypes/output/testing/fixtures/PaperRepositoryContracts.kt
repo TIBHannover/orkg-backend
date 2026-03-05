@@ -64,10 +64,10 @@ fun <
     val fabricator = Fabrikate(
         FabricatorConfig(
             collectionSizes = 12..12,
-            nullableStrategy = FabricatorConfig.NullableStrategy.NeverSetToNull // FIXME: because "id" is nullable
+            nullableStrategy = FabricatorConfig.NullableStrategy.NeverSetToNull, // FIXME: because "id" is nullable
         )
             .withStandardMappings()
-            .withGraphMappings()
+            .withGraphMappings(),
     )
 
     val saveThing: (Thing) -> Unit = {
@@ -90,21 +90,21 @@ fun <
 
     fun Resource.associateResearchProblem(researchProblem: Resource) {
         val contribution = fabricator.random<Resource>().copy(
-            classes = setOf(Classes.contribution)
+            classes = setOf(Classes.contribution),
         )
         saveStatement(
             fabricator.random<GeneralStatement>().copy(
                 subject = this,
                 predicate = createPredicate(Predicates.hasContribution),
-                `object` = contribution
-            )
+                `object` = contribution,
+            ),
         )
         saveStatement(
             fabricator.random<GeneralStatement>().copy(
                 subject = contribution,
                 predicate = createPredicate(Predicates.hasResearchProblem),
-                `object` = researchProblem
-            )
+                `object` = researchProblem,
+            ),
         )
     }
 
@@ -174,7 +174,7 @@ fun <
                 resources.forEach(resourceRepository::save)
                 val result = repository.findAll(
                     pageable = PageRequest.of(0, 5),
-                    label = SearchString.of("label find", exactMatch = false)
+                    label = SearchString.of("label find", exactMatch = false),
                 )
 
                 it("returns the correct result") {
@@ -202,7 +202,7 @@ fun <
             val doi = "10.564/531453abc"
             val doiLiteral = fabricator.random<Literal>().copy(
                 label = doi.uppercase(),
-                datatype = Literals.XSD.STRING.prefixedUri
+                datatype = Literals.XSD.STRING.prefixedUri,
             )
             val hasDoi = createPredicate(Predicates.hasDOI)
             val expected = resources.take(expectedCount)
@@ -212,8 +212,8 @@ fun <
                     fabricator.random<GeneralStatement>().copy(
                         subject = it,
                         predicate = hasDoi,
-                        `object` = doiLiteral
-                    )
+                        `object` = doiLiteral,
+                    ),
                 )
             }
 
@@ -222,7 +222,7 @@ fun <
                     fabricator.random<GeneralStatement>().copy(
                         subject = paper,
                         predicate = hasDoi,
-                        `object` = fabricator.random<Literal>().copy(label = "10.564/$index")
+                        `object` = fabricator.random<Literal>().copy(label = "10.564/$index"),
                     )
                 }
                 .forEach(saveStatement)
@@ -257,7 +257,7 @@ fun <
             val doiPrefix = doi.split('/').first()
             val doiLiteral = fabricator.random<Literal>().copy(
                 label = doi,
-                datatype = Literals.XSD.STRING.prefixedUri
+                datatype = Literals.XSD.STRING.prefixedUri,
             )
             val hasDoi = createPredicate(Predicates.hasDOI)
             val expected = resources.take(expectedCount)
@@ -267,8 +267,8 @@ fun <
                     fabricator.random<GeneralStatement>().copy(
                         subject = it,
                         predicate = hasDoi,
-                        `object` = doiLiteral
-                    )
+                        `object` = doiLiteral,
+                    ),
                 )
             }
 
@@ -277,7 +277,7 @@ fun <
                     fabricator.random<GeneralStatement>().copy(
                         subject = paper,
                         predicate = hasDoi,
-                        `object` = fabricator.random<Literal>().copy(label = "10.565/$index")
+                        `object` = fabricator.random<Literal>().copy(label = "10.565/$index"),
                     )
                 }
                 .forEach(saveStatement)
@@ -308,7 +308,7 @@ fun <
         context("by visibility") {
             val resources = fabricator.random<List<Resource>>().toPapers().mapIndexed { index, resource ->
                 resource.copy(
-                    visibility = Visibility.entries[index % Visibility.entries.size]
+                    visibility = Visibility.entries[index % Visibility.entries.size],
                 )
             }
             VisibilityFilter.entries.forEach { visibilityFilter ->
@@ -317,7 +317,7 @@ fun <
                     val expected = resources.filter { it.visibility in visibilityFilter.targets }
                     val result = repository.findAll(
                         visibility = visibilityFilter,
-                        pageable = PageRequest.of(0, 10)
+                        pageable = PageRequest.of(0, 10),
                     )
 
                     it("returns the correct result") {
@@ -348,7 +348,7 @@ fun <
                         index < expectedCount -> true
                         index % 2 == 0 -> false
                         else -> null
-                    }
+                    },
                 )
             }
             context("when true") {
@@ -357,7 +357,7 @@ fun <
                 val expected = resources.take(expectedCount)
                 val result = repository.findAll(
                     pageable = PageRequest.of(0, 5),
-                    verified = true
+                    verified = true,
                 )
 
                 it("returns the correct result") {
@@ -384,7 +384,7 @@ fun <
                 val expected = resources.drop(expectedCount).sortedBy { it.createdAt }.take(5)
                 val result = repository.findAll(
                     pageable = PageRequest.of(0, 5),
-                    verified = false
+                    verified = false,
                 )
 
                 it("returns the correct result") {
@@ -418,7 +418,7 @@ fun <
             val expected = resources.take(expectedCount)
             val result = repository.findAll(
                 pageable = PageRequest.of(0, 5),
-                createdBy = createdBy
+                createdBy = createdBy,
             )
 
             it("returns the correct result") {
@@ -443,7 +443,7 @@ fun <
             val expectedCount = 3
             val resources = fabricator.random<List<Resource>>().toPapers().mapIndexed { index, resource ->
                 resource.copy(
-                    createdAt = OffsetDateTime.now().minusHours(index.toLong())
+                    createdAt = OffsetDateTime.now().minusHours(index.toLong()),
                 )
             }
             resources.forEach(resourceRepository::save)
@@ -451,7 +451,7 @@ fun <
             val expected = resources.take(expectedCount)
             val result = repository.findAll(
                 pageable = PageRequest.of(0, 5),
-                createdAtStart = expected.last().createdAt
+                createdAtStart = expected.last().createdAt,
             )
 
             it("returns the correct result") {
@@ -476,7 +476,7 @@ fun <
             val expectedCount = 3
             val resources = fabricator.random<List<Resource>>().toPapers().mapIndexed { index, resource ->
                 resource.copy(
-                    createdAt = OffsetDateTime.now().plusHours(index.toLong())
+                    createdAt = OffsetDateTime.now().plusHours(index.toLong()),
                 )
             }
             resources.forEach(resourceRepository::save)
@@ -484,7 +484,7 @@ fun <
             val expected = resources.take(expectedCount)
             val result = repository.findAll(
                 pageable = PageRequest.of(0, 5),
-                createdAtEnd = expected.last().createdAt
+                createdAtEnd = expected.last().createdAt,
             )
 
             it("returns the correct result") {
@@ -517,7 +517,7 @@ fun <
             val expected = resources.take(expectedCount)
             val result = repository.findAll(
                 pageable = PageRequest.of(0, 5),
-                observatoryId = observatoryId
+                observatoryId = observatoryId,
             )
 
             it("returns the correct result") {
@@ -550,7 +550,7 @@ fun <
             val expected = resources.take(expectedCount)
             val result = repository.findAll(
                 pageable = PageRequest.of(0, 5),
-                organizationId = organizationId
+                organizationId = organizationId,
             )
 
             it("returns the correct result") {
@@ -576,7 +576,7 @@ fun <
                 val expectedCount = 3
                 val resources = fabricator.random<List<Resource>>().toPapers().toMutableList()
                 val researchField = fabricator.random<Resource>().copy(
-                    classes = setOf(Classes.researchField)
+                    classes = setOf(Classes.researchField),
                 )
                 val hasResearchField = createPredicate(Predicates.hasResearchField)
 
@@ -585,22 +585,22 @@ fun <
                         researchField
                     } else {
                         fabricator.random<Resource>().copy(
-                            classes = setOf(Classes.researchField)
+                            classes = setOf(Classes.researchField),
                         )
                     }
                     saveStatement(
                         fabricator.random<GeneralStatement>().copy(
                             subject = paper,
                             predicate = hasResearchField,
-                            `object` = field
-                        )
+                            `object` = field,
+                        ),
                     )
                 }
 
                 val expected = resources.take(expectedCount)
                 val result = repository.findAll(
                     pageable = PageRequest.of(0, 5),
-                    researchField = researchField.id
+                    researchField = researchField.id,
                 )
 
                 it("returns the correct result") {
@@ -625,7 +625,7 @@ fun <
                 val expectedCount = 2
                 val resources = fabricator.random<List<Resource>>().toPapers().toMutableList()
                 val researchField = fabricator.random<Resource>().copy(
-                    classes = setOf(Classes.researchField)
+                    classes = setOf(Classes.researchField),
                 )
                 val hasResearchField = createPredicate(Predicates.hasResearchField)
 
@@ -634,28 +634,28 @@ fun <
                     fabricator.random<GeneralStatement>().copy(
                         subject = resources[0],
                         predicate = hasResearchField,
-                        `object` = researchField
-                    )
+                        `object` = researchField,
+                    ),
                 )
 
                 // indirectly attached
                 val subfield = fabricator.random<Resource>().copy(
-                    classes = setOf(Classes.researchField)
+                    classes = setOf(Classes.researchField),
                 )
                 val hasSubfield = createPredicate(Predicates.hasSubfield)
                 saveStatement(
                     fabricator.random<GeneralStatement>().copy(
                         subject = resources[1],
                         predicate = hasResearchField,
-                        `object` = subfield
-                    )
+                        `object` = subfield,
+                    ),
                 )
                 saveStatement(
                     fabricator.random<GeneralStatement>().copy(
                         subject = researchField,
                         predicate = hasSubfield,
-                        `object` = subfield
-                    )
+                        `object` = subfield,
+                    ),
                 )
 
                 // attach random research field to other papers
@@ -665,9 +665,9 @@ fun <
                             subject = it,
                             predicate = hasResearchField,
                             `object` = fabricator.random<Resource>().copy(
-                                classes = setOf(Classes.researchField)
-                            )
-                        )
+                                classes = setOf(Classes.researchField),
+                            ),
+                        ),
                     )
                 }
 
@@ -675,7 +675,7 @@ fun <
                 val result = repository.findAll(
                     pageable = PageRequest.of(0, 5),
                     researchField = researchField.id,
-                    includeSubfields = true
+                    includeSubfields = true,
                 )
 
                 it("returns the correct result") {
@@ -703,7 +703,7 @@ fun <
             val sdgId = Resources.sustainableDevelopmentGoals[0]
             val sdg = fabricator.random<Resource>().copy(
                 id = sdgId,
-                classes = setOf(Classes.sustainableDevelopmentGoal)
+                classes = setOf(Classes.sustainableDevelopmentGoal),
             )
             val hasSDG = createPredicate(Predicates.sustainableDevelopmentGoal)
             val expected = resources.take(expectedCount)
@@ -713,8 +713,8 @@ fun <
                     fabricator.random<GeneralStatement>().copy(
                         subject = it,
                         predicate = hasSDG,
-                        `object` = sdg
-                    )
+                        `object` = sdg,
+                    ),
                 )
             }
 
@@ -725,8 +725,8 @@ fun <
                         predicate = hasSDG,
                         `object` = fabricator.random<Resource>().copy(
                             id = Resources.sustainableDevelopmentGoals[index + 1],
-                            classes = setOf(Classes.sustainableDevelopmentGoal)
-                        )
+                            classes = setOf(Classes.sustainableDevelopmentGoal),
+                        ),
                     )
                 }
                 .forEach(saveStatement)
@@ -769,8 +769,8 @@ fun <
                         fabricator.random<GeneralStatement>().copy(
                             subject = it,
                             predicate = mentions,
-                            `object` = resourceA
-                        )
+                            `object` = resourceA,
+                        ),
                     )
                 }
 
@@ -779,8 +779,8 @@ fun <
                         fabricator.random<GeneralStatement>().copy(
                             subject = it,
                             predicate = mentions,
-                            `object` = resourceB
-                        )
+                            `object` = resourceB,
+                        ),
                     )
                 }
 
@@ -822,15 +822,15 @@ fun <
                         fabricator.random<GeneralStatement>().copy(
                             subject = it,
                             predicate = mentions,
-                            `object` = resourceA
-                        )
+                            `object` = resourceA,
+                        ),
                     )
                     saveStatement(
                         fabricator.random<GeneralStatement>().copy(
                             subject = it,
                             predicate = mentions,
-                            `object` = resourceC
-                        )
+                            `object` = resourceC,
+                        ),
                     )
                 }
 
@@ -839,8 +839,8 @@ fun <
                         fabricator.random<GeneralStatement>().copy(
                             subject = it,
                             predicate = mentions,
-                            `object` = resourceB
-                        )
+                            `object` = resourceB,
+                        ),
                     )
                 }
 
@@ -872,7 +872,7 @@ fun <
             val expectedCount = 3
             val resources = fabricator.random<List<Resource>>().toPapers().toMutableList()
             val researchProblem = fabricator.random<Resource>().copy(
-                classes = setOf(Classes.problem)
+                classes = setOf(Classes.problem),
             )
             val expected = resources.take(expectedCount)
 
@@ -881,8 +881,8 @@ fun <
             resources.drop(expectedCount).forEach {
                 it.associateResearchProblem(
                     fabricator.random<Resource>().copy(
-                        classes = setOf(Classes.problem)
-                    )
+                        classes = setOf(Classes.problem),
+                    ),
                 )
             }
 
@@ -921,8 +921,8 @@ fun <
                     fabricator.random<GeneralStatement>().copy(
                         subject = it,
                         predicate = hasVenue,
-                        `object` = venue
-                    )
+                        `object` = venue,
+                    ),
                 )
             }
 
@@ -932,9 +932,9 @@ fun <
                         subject = it,
                         predicate = hasVenue,
                         `object` = fabricator.random<Resource>().copy(
-                            classes = setOf(Classes.venue)
-                        )
-                    )
+                            classes = setOf(Classes.venue),
+                        ),
+                    ),
                 )
             }
 
@@ -963,7 +963,7 @@ fun <
         }
         context("using all parameters") {
             val researchField = fabricator.random<Resource>().copy(
-                classes = setOf(Classes.researchField)
+                classes = setOf(Classes.researchField),
             )
             val hasResearchField = createPredicate(Predicates.hasResearchField)
             val hasDoi = createPredicate(Predicates.hasDOI)
@@ -976,9 +976,9 @@ fun <
                         predicate = hasDoi,
                         `object` = fabricator.random<Literal>().copy(
                             label = "10.4564/$index",
-                            datatype = Literals.XSD.STRING.prefixedUri
-                        )
-                    )
+                            datatype = Literals.XSD.STRING.prefixedUri,
+                        ),
+                    ),
                 )
                 saveStatement(
                     fabricator.random<GeneralStatement>().copy(
@@ -986,21 +986,21 @@ fun <
                         predicate = hasSDG,
                         `object` = fabricator.random<Resource>().copy(
                             id = Resources.sustainableDevelopmentGoals[index],
-                            classes = setOf(Classes.sustainableDevelopmentGoal)
-                        )
-                    )
+                            classes = setOf(Classes.sustainableDevelopmentGoal),
+                        ),
+                    ),
                 )
                 saveStatement(
                     fabricator.random<GeneralStatement>().copy(
                         subject = paper,
                         predicate = hasResearchField,
-                        `object` = researchField
-                    )
+                        `object` = researchField,
+                    ),
                 )
                 paper.associateResearchProblem(
                     fabricator.random<Resource>().copy(
-                        classes = setOf(Classes.problem)
-                    )
+                        classes = setOf(Classes.problem),
+                    ),
                 )
             }
 
@@ -1011,15 +1011,15 @@ fun <
                 fabricator.random<GeneralStatement>().copy(
                     subject = expected,
                     predicate = hasDoi,
-                    `object` = fabricator.random<Literal>().copy(label = doi)
-                )
+                    `object` = fabricator.random<Literal>().copy(label = doi),
+                ),
             )
             saveStatement(
                 fabricator.random<GeneralStatement>().copy(
                     subject = expected,
                     predicate = hasResearchField,
-                    `object` = researchField
-                )
+                    `object` = researchField,
+                ),
             )
             val sdg = Resources.sustainableDevelopmentGoals[5]
             saveStatement(
@@ -1028,12 +1028,12 @@ fun <
                     predicate = hasSDG,
                     `object` = fabricator.random<Resource>().copy(
                         id = sdg,
-                        classes = setOf(Classes.sustainableDevelopmentGoal)
-                    )
-                )
+                        classes = setOf(Classes.sustainableDevelopmentGoal),
+                    ),
+                ),
             )
             val researchProblem = fabricator.random<Resource>().copy(
-                classes = setOf(Classes.problem)
+                classes = setOf(Classes.problem),
             )
             expected.associateResearchProblem(researchProblem)
             val venue = fabricator.random<Resource>().copy(classes = setOf(Classes.venue))
@@ -1041,8 +1041,8 @@ fun <
                 fabricator.random<GeneralStatement>().copy(
                     subject = expected,
                     predicate = hasVenue,
-                    `object` = venue
-                )
+                    `object` = venue,
+                ),
             )
 
             val result = repository.findAll(

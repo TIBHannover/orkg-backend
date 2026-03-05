@@ -42,7 +42,7 @@ internal class ObservatoryFilterServiceUnitTest : MockkBaseTest {
         observatoryRepository,
         predicateRepository,
         classRepository,
-        fixedClock
+        fixedClock,
     )
 
     @Test
@@ -55,7 +55,7 @@ internal class ObservatoryFilterServiceUnitTest : MockkBaseTest {
             path = listOf(Predicates.hasResearchProblem),
             range = Classes.resources,
             exact = false,
-            featured = false
+            featured = false,
         )
         val id = ObservatoryFilterId(UUID.randomUUID())
         val observatory = createObservatory(id = command.observatoryId)
@@ -86,7 +86,7 @@ internal class ObservatoryFilterServiceUnitTest : MockkBaseTest {
                     it.range shouldBe command.range
                     it.exact shouldBe command.exact
                     it.featured shouldBe command.featured
-                }
+                },
             )
         }
     }
@@ -101,7 +101,7 @@ internal class ObservatoryFilterServiceUnitTest : MockkBaseTest {
             path = listOf(Predicates.hasResearchProblem),
             range = Classes.resources,
             exact = false,
-            featured = false
+            featured = false,
         )
         val observatory = createObservatory(id = command.observatoryId)
         val range = createClass(command.range)
@@ -131,7 +131,7 @@ internal class ObservatoryFilterServiceUnitTest : MockkBaseTest {
                     it.range shouldBe command.range
                     it.exact shouldBe command.exact
                     it.featured shouldBe command.featured
-                }
+                },
             )
         }
     }
@@ -146,7 +146,7 @@ internal class ObservatoryFilterServiceUnitTest : MockkBaseTest {
             path = listOf(Predicates.hasResearchProblem),
             range = Classes.resources,
             exact = false,
-            featured = false
+            featured = false,
         )
 
         every { observatoryRepository.findById(command.observatoryId) } returns Optional.empty()
@@ -165,7 +165,7 @@ internal class ObservatoryFilterServiceUnitTest : MockkBaseTest {
             path = listOf(Predicates.hasResearchProblem),
             range = ThingId("Missing"),
             exact = false,
-            featured = false
+            featured = false,
         )
         val observatory = createObservatory(id = command.observatoryId)
 
@@ -187,7 +187,7 @@ internal class ObservatoryFilterServiceUnitTest : MockkBaseTest {
             path = listOf(Predicates.hasResearchProblem),
             range = Classes.resources,
             exact = false,
-            featured = false
+            featured = false,
         )
         val observatory = createObservatory(id = command.observatoryId)
         val range = createClass(command.range)
@@ -213,7 +213,7 @@ internal class ObservatoryFilterServiceUnitTest : MockkBaseTest {
             path = listOf(Predicates.hasResearchProblem),
             range = Classes.resources,
             exact = false,
-            featured = false
+            featured = false,
         )
         val observatory = createObservatory(id = command.observatoryId)
         val range = createClass(command.range)
@@ -242,7 +242,7 @@ internal class ObservatoryFilterServiceUnitTest : MockkBaseTest {
             path = listOf(Predicates.hasResearchProblem),
             range = Classes.resources,
             exact = true,
-            featured = true
+            featured = true,
         )
         val range = createClass(command.range!!)
         val path = createPredicate(command.path!![0])
@@ -269,7 +269,7 @@ internal class ObservatoryFilterServiceUnitTest : MockkBaseTest {
                     it.range shouldBe command.range
                     it.exact shouldBe command.exact
                     it.featured shouldBe command.featured
-                }
+                },
             )
         }
     }
@@ -283,7 +283,7 @@ internal class ObservatoryFilterServiceUnitTest : MockkBaseTest {
             path = listOf(Predicates.hasResearchProblem),
             range = Classes.resources,
             exact = false,
-            featured = false
+            featured = false,
         )
 
         every { repository.findById(command.id) } returns Optional.empty()
@@ -302,7 +302,7 @@ internal class ObservatoryFilterServiceUnitTest : MockkBaseTest {
             path = listOf(Predicates.hasResearchProblem),
             range = Classes.resources,
             exact = false,
-            featured = false
+            featured = false,
         )
 
         every { repository.findById(command.id) } returns Optional.of(filter)
@@ -323,7 +323,7 @@ internal class ObservatoryFilterServiceUnitTest : MockkBaseTest {
             path = listOf(Predicates.hasResearchProblem),
             range = Classes.resources,
             exact = false,
-            featured = false
+            featured = false,
         )
         val range = createClass(command.range!!)
 

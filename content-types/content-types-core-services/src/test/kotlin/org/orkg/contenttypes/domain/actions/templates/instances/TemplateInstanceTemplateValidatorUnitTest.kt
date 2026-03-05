@@ -46,7 +46,7 @@ internal class TemplateInstanceTemplateValidatorUnitTest : MockkBaseTest {
     fun `Given a template instance update command, when template is not found, it throws an exception`() {
         val command = updateTemplateInstanceCommand()
         val state = UpdateTemplateInstanceState(
-            template = createTemplate()
+            template = createTemplate(),
         )
 
         every { templateService.findById(command.templateId) } returns Optional.empty()

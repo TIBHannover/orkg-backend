@@ -32,17 +32,17 @@ internal class LiteratureListSectionDeleterUnitTest : MockkBaseTest {
             createStatement(
                 subject = createResource(command.literatureListId),
                 predicate = createPredicate(Predicates.hasSection),
-                `object` = createResource(literatureList.sections.first().id)
+                `object` = createResource(literatureList.sections.first().id),
             ),
             createStatement(
                 subject = createResource(command.literatureListId),
                 predicate = createPredicate(Predicates.hasSection),
-                `object` = createResource(literatureList.sections.last().id)
-            )
+                `object` = createResource(literatureList.sections.last().id),
+            ),
         )
         val state = DeleteLiteratureListSectionState().copy(
             literatureList = literatureList,
-            statements = statements.groupBy { it.subject.id }
+            statements = statements.groupBy { it.subject.id },
         )
 
         every {
@@ -50,7 +50,7 @@ internal class LiteratureListSectionDeleterUnitTest : MockkBaseTest {
                 contributorId = command.contributorId,
                 literatureListId = command.literatureListId,
                 section = literatureList.sections.last(),
-                statements = state.statements
+                statements = state.statements,
             )
         } just runs
 
@@ -66,7 +66,7 @@ internal class LiteratureListSectionDeleterUnitTest : MockkBaseTest {
                 contributorId = command.contributorId,
                 literatureListId = command.literatureListId,
                 section = literatureList.sections.last(),
-                statements = state.statements
+                statements = state.statements,
             )
         }
     }
@@ -79,17 +79,17 @@ internal class LiteratureListSectionDeleterUnitTest : MockkBaseTest {
             createStatement(
                 subject = createResource(command.literatureListId),
                 predicate = createPredicate(Predicates.hasSection),
-                `object` = createResource(literatureList.sections.first().id)
+                `object` = createResource(literatureList.sections.first().id),
             ),
             createStatement(
                 subject = createResource(command.literatureListId),
                 predicate = createPredicate(Predicates.hasSection),
-                `object` = createResource(literatureList.sections.last().id)
-            )
+                `object` = createResource(literatureList.sections.last().id),
+            ),
         )
         val state = DeleteLiteratureListSectionState().copy(
             literatureList = literatureList,
-            statements = statements.groupBy { it.subject.id }
+            statements = statements.groupBy { it.subject.id },
         )
 
         val result = literatureListSectionDeleter(command, state)

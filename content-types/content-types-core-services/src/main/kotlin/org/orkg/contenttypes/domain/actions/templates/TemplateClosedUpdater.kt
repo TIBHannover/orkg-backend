@@ -17,7 +17,7 @@ class TemplateClosedUpdater(
         statementService: StatementUseCases,
         unsafeStatementUseCases: UnsafeStatementUseCases,
     ) : this(
-        SingleStatementPropertyUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases)
+        SingleStatementPropertyUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases),
     )
 
     override fun invoke(command: UpdateTemplateCommand, state: State): State {
@@ -28,7 +28,7 @@ class TemplateClosedUpdater(
                 subjectId = command.templateId,
                 predicateId = Predicates.shClosed,
                 label = command.isClosed?.toString(),
-                datatype = Literals.XSD.BOOLEAN.prefixedUri
+                datatype = Literals.XSD.BOOLEAN.prefixedUri,
             )
         }
         return state

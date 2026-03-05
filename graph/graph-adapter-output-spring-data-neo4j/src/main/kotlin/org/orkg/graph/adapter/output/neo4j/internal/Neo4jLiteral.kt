@@ -19,7 +19,7 @@ class Neo4jLiteral : Neo4jThing() {
             datatype = datatype!!,
             createdAt = created_at!!,
             createdBy = created_by,
-            modifiable = modifiable!!
+            modifiable = modifiable!!,
         )
 
     override fun toThing() = toLiteral()

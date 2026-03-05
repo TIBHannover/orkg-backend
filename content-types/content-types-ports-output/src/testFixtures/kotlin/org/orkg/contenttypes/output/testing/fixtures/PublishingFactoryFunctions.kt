@@ -20,20 +20,20 @@ fun createRegisterDoiCommand(): DoiService.RegisterCommand =
                 id = ThingId("147"),
                 name = "Josiah Stinkney Carberry",
                 identifiers = mapOf(
-                    "orcid" to listOf("0000-0002-1825-0097")
+                    "orcid" to listOf("0000-0002-1825-0097"),
                 ),
-                homepage = ParsedIRI.create("https://example.org")
+                homepage = ParsedIRI.create("https://example.org"),
             ),
             Author(
                 id = null,
                 name = "Author 2",
                 identifiers = emptyMap(),
-                homepage = null
-            )
+                homepage = null,
+            ),
         ),
         resourceType = Classes.paper.value,
         resourceTypeGeneral = "Dataset",
-        relatedIdentifiers = listOf("10.48366/r609337")
+        relatedIdentifiers = listOf("10.48366/r609337"),
     )
 
 fun registerHandleCommand(): HandleService.RegisterCommand =

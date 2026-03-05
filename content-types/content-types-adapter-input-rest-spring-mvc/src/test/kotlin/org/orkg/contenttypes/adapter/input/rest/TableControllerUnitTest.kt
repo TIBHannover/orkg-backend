@@ -117,7 +117,7 @@ internal class TableControllerUnitTest : MockMvcBaseTest("tables") {
                 description(
                     """
                     A `GET` request provides information about a table.
-                    """
+                    """,
                 )
                 pathParameters(
                     parameterWithName("id").description("The identifier of the table to retrieve."),
@@ -201,7 +201,7 @@ internal class TableControllerUnitTest : MockMvcBaseTest("tables") {
                     """
                     A `GET` request returns a <<sorting-and-pagination,paged>> list of <<tables-fetch,tables>>.
                     If no paging request parameters are provided, the default values will be used.
-                    """
+                    """,
                 )
                 pagedQueryParameters(
                     parameterWithName("q").description("A search term that must be contained in the label of the table. (optional)").optional(),
@@ -228,7 +228,7 @@ internal class TableControllerUnitTest : MockMvcBaseTest("tables") {
                 createdAtStart = createdAtStart,
                 createdAtEnd = createdAtEnd,
                 observatoryId = observatoryId,
-                organizationId = organizationId
+                organizationId = organizationId,
             )
         }
     }
@@ -273,7 +273,7 @@ internal class TableControllerUnitTest : MockMvcBaseTest("tables") {
                     A `POST` request creates a new table with all the given parameters.
                     The response will be `201 Created` when successful.
                     The table (object) can be retrieved by following the URI in the `Location` header field.
-                    """
+                    """,
                 )
                 responseHeaders(
                     headerWithName("Location").description("The uri path where the newly created table can be fetched from."),
@@ -346,7 +346,7 @@ internal class TableControllerUnitTest : MockMvcBaseTest("tables") {
                     1. All fields at the top level in the request can be omitted or `null`, meaning that the corresponding fields should not be updated.
                     2. The same rules as for <<resources-edit,updating resources>> apply when updating the visibility of a table.
                     ====
-                    """
+                    """,
                 )
                 pathParameters(
                     parameterWithName("id").description("The identifier of the table."),
@@ -438,7 +438,7 @@ internal class TableControllerUnitTest : MockMvcBaseTest("tables") {
                     A `POST` request creates a new table row with the given parameters.
                     The response will be `201 Created` when successful.
                     The updated table (object) can be retrieved by following the URI in the `Location` header field.
-                    """
+                    """,
                 )
                 pathParameters(
                     parameterWithName("id").description("The identifier of the table."),
@@ -505,7 +505,7 @@ internal class TableControllerUnitTest : MockMvcBaseTest("tables") {
                     A `PUT` request updates an existing row of a table with the given parameters.
                     The response will be `204 No Content` when successful.
                     The updated table (object) can be retrieved by following the URI in the `Location` header field.
-                    """
+                    """,
                 )
                 pathParameters(
                     parameterWithName("id").description("The identifier of the table."),
@@ -577,7 +577,7 @@ internal class TableControllerUnitTest : MockMvcBaseTest("tables") {
                     1. The table header (first row) cannot be deleted.
                     2. There must at least be two rows left (including header) after deletion.
                     ====
-                    """
+                    """,
                 )
                 pathParameters(
                     parameterWithName("id").description("The identifier of the table."),
@@ -638,7 +638,7 @@ internal class TableControllerUnitTest : MockMvcBaseTest("tables") {
                     A `POST` request creates a new table column with the given parameters.
                     The response will be `201 Created` when successful.
                     The updated table (object) can be retrieved by following the URI in the `Location` header field.
-                    """
+                    """,
                 )
                 pathParameters(
                     parameterWithName("id").description("The identifier of the table."),
@@ -705,7 +705,7 @@ internal class TableControllerUnitTest : MockMvcBaseTest("tables") {
                     A `PUT` request updates an existing column of a table with the given parameters.
                     The response will be `204 No Content` when successful.
                     The updated table (object) can be retrieved by following the URI in the `Location` header field.
-                    """
+                    """,
                 )
                 pathParameters(
                     parameterWithName("id").description("The identifier of the table."),
@@ -769,7 +769,7 @@ internal class TableControllerUnitTest : MockMvcBaseTest("tables") {
                     A `DELETE` request deletes an existing column of a table.
                     The response will be `204 No Content` when successful.
                     The updated table (object) can be retrieved by following the URI in the `Location` header field.
-                    """
+                    """,
                 )
                 pathParameters(
                     parameterWithName("id").description("The identifier of the table."),
@@ -812,7 +812,7 @@ internal class TableControllerUnitTest : MockMvcBaseTest("tables") {
                     A `PUT` request updates an existing cell of a table with the given parameters.
                     The response will be `204 No Content` when successful.
                     The updated table (object) can be retrieved by following the URI in the `Location` header field.
-                    """
+                    """,
                 )
                 pathParameters(
                     parameterWithName("id").description("The identifier of the table."),
@@ -842,7 +842,7 @@ internal class TableControllerUnitTest : MockMvcBaseTest("tables") {
                     it.tableId shouldBe id
                     it.rowIndex shouldBe rowIndex
                     it.columnIndex shouldBe columnIndex
-                }
+                },
             )
         }
     }
@@ -853,53 +853,53 @@ internal class TableControllerUnitTest : MockMvcBaseTest("tables") {
             resources = mapOf(
                 "#temp1" to CreateResourceRequestPart(
                     label = "MOTO",
-                    classes = setOf(ThingId("Result"))
-                )
+                    classes = setOf(ThingId("Result")),
+                ),
             ),
             literals = mapOf(
                 "#temp2" to CreateLiteralRequestPart("column 1", Literals.XSD.STRING.prefixedUri),
                 "#temp3" to CreateLiteralRequestPart("column 2", Literals.XSD.STRING.prefixedUri),
-                "#temp4" to CreateLiteralRequestPart("column 3", Literals.XSD.STRING.prefixedUri)
+                "#temp4" to CreateLiteralRequestPart("column 3", Literals.XSD.STRING.prefixedUri),
             ),
             predicates = mapOf(
                 "#temp5" to CreatePredicateRequestPart(
                     label = "hasResult",
-                    description = "has result"
-                )
+                    description = "has result",
+                ),
             ),
             lists = mapOf(
                 "#temp6" to CreateListRequestPart(
                     label = "list",
-                    elements = listOf("#temp1", "C123")
-                )
+                    elements = listOf("#temp1", "C123"),
+                ),
             ),
             classes = mapOf(
                 "#temp7" to CreateClassRequestPart(
                     label = "class",
-                    uri = ParsedIRI.create("https://orkg.org/class/C1")
-                )
+                    uri = ParsedIRI.create("https://orkg.org/class/C1"),
+                ),
             ),
             rows = listOf(
                 CreateRowRequest(
                     label = "header",
-                    data = listOf("#temp1", "#temp2", "#temp3")
+                    data = listOf("#temp1", "#temp2", "#temp3"),
                 ),
                 CreateRowRequest(
                     label = null,
-                    data = listOf("R456", "#temp4", "#temp5")
+                    data = listOf("R456", "#temp4", "#temp5"),
                 ),
                 CreateRowRequest(
                     label = "row 2",
-                    data = listOf("#temp6", null, "#temp7")
-                )
+                    data = listOf("#temp6", null, "#temp7"),
+                ),
             ),
             observatories = listOf(
-                ObservatoryId("cb71eebf-8afd-4fe3-9aea-d0966d71cece")
+                ObservatoryId("cb71eebf-8afd-4fe3-9aea-d0966d71cece"),
             ),
             organizations = listOf(
-                OrganizationId("a700c55f-aae2-4696-b7d5-6e8b89f66a8f")
+                OrganizationId("a700c55f-aae2-4696-b7d5-6e8b89f66a8f"),
             ),
-            extractionMethod = ExtractionMethod.UNKNOWN
+            extractionMethod = ExtractionMethod.UNKNOWN,
         )
 
     private fun updateTableRequest() =
@@ -908,54 +908,54 @@ internal class TableControllerUnitTest : MockMvcBaseTest("tables") {
             resources = mapOf(
                 "#temp1" to CreateResourceRequestPart(
                     label = "MOTO",
-                    classes = setOf(ThingId("Result"))
-                )
+                    classes = setOf(ThingId("Result")),
+                ),
             ),
             literals = mapOf(
                 "#temp2" to CreateLiteralRequestPart("column 1", Literals.XSD.STRING.prefixedUri),
                 "#temp3" to CreateLiteralRequestPart("column 2", Literals.XSD.STRING.prefixedUri),
-                "#temp4" to CreateLiteralRequestPart("column 3", Literals.XSD.STRING.prefixedUri)
+                "#temp4" to CreateLiteralRequestPart("column 3", Literals.XSD.STRING.prefixedUri),
             ),
             predicates = mapOf(
                 "#temp5" to CreatePredicateRequestPart(
                     label = "hasResult",
-                    description = "has result"
-                )
+                    description = "has result",
+                ),
             ),
             lists = mapOf(
                 "#temp6" to CreateListRequestPart(
                     label = "list",
-                    elements = listOf("#temp1", "C123")
-                )
+                    elements = listOf("#temp1", "C123"),
+                ),
             ),
             classes = mapOf(
                 "#temp7" to CreateClassRequestPart(
                     label = "class",
-                    uri = ParsedIRI.create("https://orkg.org/class/C1")
-                )
+                    uri = ParsedIRI.create("https://orkg.org/class/C1"),
+                ),
             ),
             rows = listOf(
                 CreateRowRequest(
                     label = "header",
-                    data = listOf("#temp1", "#temp2", "#temp3")
+                    data = listOf("#temp1", "#temp2", "#temp3"),
                 ),
                 CreateRowRequest(
                     label = null,
-                    data = listOf("R456", "#temp4", "#temp5")
+                    data = listOf("R456", "#temp4", "#temp5"),
                 ),
                 CreateRowRequest(
                     label = "row 2",
-                    data = listOf("#temp6", null, "#temp7")
-                )
+                    data = listOf("#temp6", null, "#temp7"),
+                ),
             ),
             observatories = listOf(
-                ObservatoryId("cb71eebf-8afd-4fe3-9aea-d0966d71cece")
+                ObservatoryId("cb71eebf-8afd-4fe3-9aea-d0966d71cece"),
             ),
             organizations = listOf(
-                OrganizationId("a700c55f-aae2-4696-b7d5-6e8b89f66a8f")
+                OrganizationId("a700c55f-aae2-4696-b7d5-6e8b89f66a8f"),
             ),
             extractionMethod = ExtractionMethod.UNKNOWN,
-            visibility = Visibility.DEFAULT
+            visibility = Visibility.DEFAULT,
         )
 
     private fun createTableRowRequest() =
@@ -963,8 +963,8 @@ internal class TableControllerUnitTest : MockMvcBaseTest("tables") {
             resources = mapOf(
                 "#temp1" to CreateResourceRequestPart(
                     label = "MOTO",
-                    classes = setOf(ThingId("Result"))
-                )
+                    classes = setOf(ThingId("Result")),
+                ),
             ),
             literals = null,
             predicates = null,
@@ -972,7 +972,7 @@ internal class TableControllerUnitTest : MockMvcBaseTest("tables") {
             classes = null,
             row = CreateRowRequest(
                 label = "row 3",
-                data = listOf("R456", "#temp1", null)
+                data = listOf("R456", "#temp1", null),
             ),
         )
 
@@ -981,8 +981,8 @@ internal class TableControllerUnitTest : MockMvcBaseTest("tables") {
             resources = mapOf(
                 "#temp1" to CreateResourceRequestPart(
                     label = "MOTO",
-                    classes = setOf(ThingId("Result"))
-                )
+                    classes = setOf(ThingId("Result")),
+                ),
             ),
             literals = null,
             predicates = null,
@@ -990,7 +990,7 @@ internal class TableControllerUnitTest : MockMvcBaseTest("tables") {
             classes = null,
             row = UpdateRowRequest(
                 label = "row 3",
-                data = listOf("R456", "#temp1", null)
+                data = listOf("R456", "#temp1", null),
             ),
         )
 

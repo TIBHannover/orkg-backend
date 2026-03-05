@@ -49,7 +49,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
             descriptionLiteralId,
             minLiteralId,
             maxLiteralId,
-            orderLiteralId
+            orderLiteralId,
         )
 
         abstractTemplatePropertyCreator.create(property.contributorId, property.templateId, order, property)
@@ -62,7 +62,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
             descriptionLiteralId,
             minLiteralId,
             maxLiteralId,
-            orderLiteralId
+            orderLiteralId,
         )
     }
 
@@ -86,7 +86,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
             descriptionLiteralId,
             minLiteralId,
             maxLiteralId,
-            orderLiteralId
+            orderLiteralId,
         )
         every {
             unsafeStatementUseCases.create(
@@ -94,16 +94,16 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
                     contributorId = property.contributorId,
                     subjectId = propertyId,
                     predicateId = Predicates.shDatatype,
-                    objectId = property.datatype
-                )
+                    objectId = property.datatype,
+                ),
             )
         } returns StatementId("S1")
         every {
             unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = property.contributorId,
-                    label = property.pattern.toString()
-                )
+                    label = property.pattern.toString(),
+                ),
             )
         } returns patternLiteralId
         every {
@@ -112,8 +112,8 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
                     contributorId = property.contributorId,
                     subjectId = propertyId,
                     predicateId = Predicates.shPattern,
-                    objectId = patternLiteralId
-                )
+                    objectId = patternLiteralId,
+                ),
             )
         } returns StatementId("S2")
 
@@ -127,7 +127,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
             descriptionLiteralId,
             minLiteralId,
             maxLiteralId,
-            orderLiteralId
+            orderLiteralId,
         )
         verify(exactly = 1) {
             unsafeStatementUseCases.create(
@@ -135,16 +135,16 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
                     contributorId = property.contributorId,
                     subjectId = propertyId,
                     predicateId = Predicates.shDatatype,
-                    objectId = property.datatype
-                )
+                    objectId = property.datatype,
+                ),
             )
         }
         verify(exactly = 1) {
             unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = property.contributorId,
-                    label = property.pattern.toString()
-                )
+                    label = property.pattern.toString(),
+                ),
             )
         }
         verify(exactly = 1) {
@@ -153,8 +153,8 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
                     contributorId = property.contributorId,
                     subjectId = propertyId,
                     predicateId = Predicates.shPattern,
-                    objectId = patternLiteralId
-                )
+                    objectId = patternLiteralId,
+                ),
             )
         }
     }
@@ -178,7 +178,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
             descriptionLiteralId,
             minLiteralId,
             maxLiteralId,
-            orderLiteralId
+            orderLiteralId,
         )
         every {
             unsafeStatementUseCases.create(
@@ -186,8 +186,8 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
                     contributorId = property.contributorId,
                     subjectId = propertyId,
                     predicateId = Predicates.shDatatype,
-                    objectId = property.datatype
-                )
+                    objectId = property.datatype,
+                ),
             )
         } returns StatementId("S1")
 
@@ -201,7 +201,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
             descriptionLiteralId,
             minLiteralId,
             maxLiteralId,
-            orderLiteralId
+            orderLiteralId,
         )
         verify(exactly = 1) {
             unsafeStatementUseCases.create(
@@ -209,8 +209,8 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
                     contributorId = property.contributorId,
                     subjectId = propertyId,
                     predicateId = Predicates.shDatatype,
-                    objectId = property.datatype
-                )
+                    objectId = property.datatype,
+                ),
             )
         }
     }
@@ -234,7 +234,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
             descriptionLiteralId,
             minLiteralId,
             maxLiteralId,
-            orderLiteralId
+            orderLiteralId,
         )
         every {
             unsafeStatementUseCases.create(
@@ -242,8 +242,8 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
                     contributorId = property.contributorId,
                     subjectId = propertyId,
                     predicateId = Predicates.shDatatype,
-                    objectId = property.datatype
-                )
+                    objectId = property.datatype,
+                ),
             )
         } returns StatementId("S1")
 
@@ -257,7 +257,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
             descriptionLiteralId,
             minLiteralId,
             maxLiteralId,
-            orderLiteralId
+            orderLiteralId,
         )
         verify(exactly = 1) {
             unsafeStatementUseCases.create(
@@ -265,8 +265,8 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
                     contributorId = property.contributorId,
                     subjectId = propertyId,
                     predicateId = Predicates.shDatatype,
-                    objectId = property.datatype
-                )
+                    objectId = property.datatype,
+                ),
             )
         }
     }
@@ -292,7 +292,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
             descriptionLiteralId,
             minLiteralId,
             maxLiteralId,
-            orderLiteralId
+            orderLiteralId,
         )
         every {
             unsafeStatementUseCases.create(
@@ -300,8 +300,8 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
                     contributorId = property.contributorId,
                     subjectId = propertyId,
                     predicateId = Predicates.shDatatype,
-                    objectId = property.datatype
-                )
+                    objectId = property.datatype,
+                ),
             )
         } returns StatementId("S1")
         every {
@@ -309,8 +309,8 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = property.contributorId,
                     label = property.minInclusive.toString(),
-                    datatype = Literals.XSD.INT.prefixedUri
-                )
+                    datatype = Literals.XSD.INT.prefixedUri,
+                ),
             )
         } returns minInclusiveLiteralId
         every {
@@ -319,8 +319,8 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
                     contributorId = property.contributorId,
                     subjectId = propertyId,
                     predicateId = Predicates.shMinInclusive,
-                    objectId = minInclusiveLiteralId
-                )
+                    objectId = minInclusiveLiteralId,
+                ),
             )
         } returns StatementId("S2")
         every {
@@ -328,8 +328,8 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = property.contributorId,
                     label = property.maxInclusive.toString(),
-                    datatype = Literals.XSD.INT.prefixedUri
-                )
+                    datatype = Literals.XSD.INT.prefixedUri,
+                ),
             )
         } returns maxInclusiveLiteralId
         every {
@@ -338,8 +338,8 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
                     contributorId = property.contributorId,
                     subjectId = propertyId,
                     predicateId = Predicates.shMaxInclusive,
-                    objectId = maxInclusiveLiteralId
-                )
+                    objectId = maxInclusiveLiteralId,
+                ),
             )
         } returns StatementId("S3")
 
@@ -353,7 +353,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
             descriptionLiteralId,
             minLiteralId,
             maxLiteralId,
-            orderLiteralId
+            orderLiteralId,
         )
         verify(exactly = 1) {
             unsafeStatementUseCases.create(
@@ -361,8 +361,8 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
                     contributorId = property.contributorId,
                     subjectId = propertyId,
                     predicateId = Predicates.shDatatype,
-                    objectId = property.datatype
-                )
+                    objectId = property.datatype,
+                ),
             )
         }
         verify(exactly = 1) {
@@ -370,8 +370,8 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = property.contributorId,
                     label = property.minInclusive.toString(),
-                    datatype = Literals.XSD.INT.prefixedUri
-                )
+                    datatype = Literals.XSD.INT.prefixedUri,
+                ),
             )
         }
         verify(exactly = 1) {
@@ -380,8 +380,8 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
                     contributorId = property.contributorId,
                     subjectId = propertyId,
                     predicateId = Predicates.shMinInclusive,
-                    objectId = minInclusiveLiteralId
-                )
+                    objectId = minInclusiveLiteralId,
+                ),
             )
         }
         verify(exactly = 1) {
@@ -389,8 +389,8 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = property.contributorId,
                     label = property.maxInclusive.toString(),
-                    datatype = Literals.XSD.INT.prefixedUri
-                )
+                    datatype = Literals.XSD.INT.prefixedUri,
+                ),
             )
         }
         verify(exactly = 1) {
@@ -399,8 +399,8 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
                     contributorId = property.contributorId,
                     subjectId = propertyId,
                     predicateId = Predicates.shMaxInclusive,
-                    objectId = maxInclusiveLiteralId
-                )
+                    objectId = maxInclusiveLiteralId,
+                ),
             )
         }
     }
@@ -409,7 +409,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
     fun `Given a number literal template property command, when minInclusive and maxInclusive are not set, it does not create statements for them`() {
         val property = createNumberLiteralTemplatePropertyCommand().copy(
             minInclusive = null,
-            maxInclusive = null
+            maxInclusive = null,
         )
         val order = 4
         val propertyId = ThingId("R1325")
@@ -427,7 +427,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
             descriptionLiteralId,
             minLiteralId,
             maxLiteralId,
-            orderLiteralId
+            orderLiteralId,
         )
         every {
             unsafeStatementUseCases.create(
@@ -435,8 +435,8 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
                     contributorId = property.contributorId,
                     subjectId = propertyId,
                     predicateId = Predicates.shDatatype,
-                    objectId = property.datatype
-                )
+                    objectId = property.datatype,
+                ),
             )
         } returns StatementId("S1")
 
@@ -450,7 +450,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
             descriptionLiteralId,
             minLiteralId,
             maxLiteralId,
-            orderLiteralId
+            orderLiteralId,
         )
         verify(exactly = 1) {
             unsafeStatementUseCases.create(
@@ -458,8 +458,8 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
                     contributorId = property.contributorId,
                     subjectId = propertyId,
                     predicateId = Predicates.shDatatype,
-                    objectId = property.datatype
-                )
+                    objectId = property.datatype,
+                ),
             )
         }
     }
@@ -483,7 +483,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
             descriptionLiteralId,
             minLiteralId,
             maxLiteralId,
-            orderLiteralId
+            orderLiteralId,
         )
         every {
             unsafeStatementUseCases.create(
@@ -491,8 +491,8 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
                     contributorId = property.contributorId,
                     subjectId = propertyId,
                     predicateId = Predicates.shClass,
-                    objectId = property.`class`
-                )
+                    objectId = property.`class`,
+                ),
             )
         } returns StatementId("S1")
 
@@ -506,7 +506,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
             descriptionLiteralId,
             minLiteralId,
             maxLiteralId,
-            orderLiteralId
+            orderLiteralId,
         )
         verify(exactly = 1) {
             unsafeStatementUseCases.create(
@@ -514,8 +514,8 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
                     contributorId = property.contributorId,
                     subjectId = propertyId,
                     predicateId = Predicates.shClass,
-                    objectId = property.`class`
-                )
+                    objectId = property.`class`,
+                ),
             )
         }
     }
@@ -535,8 +535,8 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
                 CreateResourceUseCase.CreateCommand(
                     contributorId = property.contributorId,
                     label = property.label,
-                    classes = setOf(Classes.propertyShape)
-                )
+                    classes = setOf(Classes.propertyShape),
+                ),
             )
         } returns propertyId
         property.placeholder?.also { placeholder ->
@@ -544,8 +544,8 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
                 unsafeLiteralUseCases.create(
                     CreateLiteralUseCase.CreateCommand(
                         contributorId = property.contributorId,
-                        label = placeholder
-                    )
+                        label = placeholder,
+                    ),
                 )
             } returns placeholderLiteralId
             every {
@@ -554,8 +554,8 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
                         contributorId = property.contributorId,
                         subjectId = propertyId,
                         predicateId = Predicates.placeholder,
-                        objectId = placeholderLiteralId
-                    )
+                        objectId = placeholderLiteralId,
+                    ),
                 )
             } returns StatementId("Splaceholder")
         }
@@ -564,8 +564,8 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
                 unsafeLiteralUseCases.create(
                     CreateLiteralUseCase.CreateCommand(
                         contributorId = property.contributorId,
-                        label = description
-                    )
+                        label = description,
+                    ),
                 )
             } returns descriptionLiteralId
             every {
@@ -574,8 +574,8 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
                         contributorId = property.contributorId,
                         subjectId = propertyId,
                         predicateId = Predicates.description,
-                        objectId = descriptionLiteralId
-                    )
+                        objectId = descriptionLiteralId,
+                    ),
                 )
             } returns StatementId("Sdescription")
         }
@@ -584,8 +584,8 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = property.contributorId,
                     label = property.minCount.toString(),
-                    datatype = Literals.XSD.INT.prefixedUri
-                )
+                    datatype = Literals.XSD.INT.prefixedUri,
+                ),
             )
         } returns minLiteralId
         every {
@@ -594,8 +594,8 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
                     contributorId = property.contributorId,
                     subjectId = propertyId,
                     predicateId = Predicates.shMinCount,
-                    objectId = minLiteralId
-                )
+                    objectId = minLiteralId,
+                ),
             )
         } returns StatementId("SminCount")
         every {
@@ -603,8 +603,8 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = property.contributorId,
                     label = property.maxCount.toString(),
-                    datatype = Literals.XSD.INT.prefixedUri
-                )
+                    datatype = Literals.XSD.INT.prefixedUri,
+                ),
             )
         } returns maxLiteralId
         every {
@@ -613,8 +613,8 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
                     contributorId = property.contributorId,
                     subjectId = propertyId,
                     predicateId = Predicates.shMaxCount,
-                    objectId = maxLiteralId
-                )
+                    objectId = maxLiteralId,
+                ),
             )
         } returns StatementId("SmaxCount")
         every {
@@ -623,8 +623,8 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
                     contributorId = property.contributorId,
                     subjectId = propertyId,
                     predicateId = Predicates.shPath,
-                    objectId = property.path
-                )
+                    objectId = property.path,
+                ),
             )
         } returns StatementId("Spath")
         every {
@@ -632,8 +632,8 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = property.contributorId,
                     label = order.toString(),
-                    datatype = Literals.XSD.INT.prefixedUri
-                )
+                    datatype = Literals.XSD.INT.prefixedUri,
+                ),
             )
         } returns orderLiteralId
         every {
@@ -642,8 +642,8 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
                     contributorId = property.contributorId,
                     subjectId = propertyId,
                     predicateId = Predicates.shOrder,
-                    objectId = orderLiteralId
-                )
+                    objectId = orderLiteralId,
+                ),
             )
         } returns StatementId("Sorder")
         every {
@@ -652,8 +652,8 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
                     contributorId = property.contributorId,
                     subjectId = property.templateId,
                     predicateId = Predicates.shProperty,
-                    objectId = propertyId
-                )
+                    objectId = propertyId,
+                ),
             )
         } returns StatementId("Sproperty")
     }
@@ -673,8 +673,8 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
                 CreateResourceUseCase.CreateCommand(
                     contributorId = property.contributorId,
                     label = property.label,
-                    classes = setOf(Classes.propertyShape)
-                )
+                    classes = setOf(Classes.propertyShape),
+                ),
             )
         }
         property.placeholder?.also { placeholder ->
@@ -682,8 +682,8 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
                 unsafeLiteralUseCases.create(
                     CreateLiteralUseCase.CreateCommand(
                         contributorId = property.contributorId,
-                        label = placeholder
-                    )
+                        label = placeholder,
+                    ),
                 )
             }
             verify(exactly = 1) {
@@ -692,8 +692,8 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
                         contributorId = property.contributorId,
                         subjectId = propertyId,
                         predicateId = Predicates.placeholder,
-                        objectId = placeholderLiteralId
-                    )
+                        objectId = placeholderLiteralId,
+                    ),
                 )
             }
         }
@@ -702,8 +702,8 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
                 unsafeLiteralUseCases.create(
                     CreateLiteralUseCase.CreateCommand(
                         contributorId = property.contributorId,
-                        label = description
-                    )
+                        label = description,
+                    ),
                 )
             }
             verify(exactly = 1) {
@@ -712,8 +712,8 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
                         contributorId = property.contributorId,
                         subjectId = propertyId,
                         predicateId = Predicates.description,
-                        objectId = descriptionLiteralId
-                    )
+                        objectId = descriptionLiteralId,
+                    ),
                 )
             }
         }
@@ -723,8 +723,8 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = property.contributorId,
                     label = property.minCount.toString(),
-                    datatype = Literals.XSD.INT.prefixedUri
-                )
+                    datatype = Literals.XSD.INT.prefixedUri,
+                ),
             )
         }
         verify(exactly = 1) {
@@ -733,8 +733,8 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
                     contributorId = property.contributorId,
                     subjectId = propertyId,
                     predicateId = Predicates.shMinCount,
-                    objectId = minLiteralId
-                )
+                    objectId = minLiteralId,
+                ),
             )
         }
 
@@ -743,8 +743,8 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = property.contributorId,
                     label = property.maxCount.toString(),
-                    datatype = Literals.XSD.INT.prefixedUri
-                )
+                    datatype = Literals.XSD.INT.prefixedUri,
+                ),
             )
         }
         verify(exactly = 1) {
@@ -753,8 +753,8 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
                     contributorId = property.contributorId,
                     subjectId = propertyId,
                     predicateId = Predicates.shMaxCount,
-                    objectId = maxLiteralId
-                )
+                    objectId = maxLiteralId,
+                ),
             )
         }
 
@@ -764,8 +764,8 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
                     contributorId = property.contributorId,
                     subjectId = propertyId,
                     predicateId = Predicates.shPath,
-                    objectId = property.path
-                )
+                    objectId = property.path,
+                ),
             )
         }
         verify(exactly = 1) {
@@ -773,8 +773,8 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = property.contributorId,
                     label = order.toString(),
-                    datatype = Literals.XSD.INT.prefixedUri
-                )
+                    datatype = Literals.XSD.INT.prefixedUri,
+                ),
             )
         }
         verify(exactly = 1) {
@@ -783,8 +783,8 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
                     contributorId = property.contributorId,
                     subjectId = propertyId,
                     predicateId = Predicates.shOrder,
-                    objectId = orderLiteralId
-                )
+                    objectId = orderLiteralId,
+                ),
             )
         }
         verify(exactly = 1) {
@@ -793,8 +793,8 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
                     contributorId = property.contributorId,
                     subjectId = property.templateId,
                     predicateId = Predicates.shProperty,
-                    objectId = propertyId
-                )
+                    objectId = propertyId,
+                ),
             )
         }
     }

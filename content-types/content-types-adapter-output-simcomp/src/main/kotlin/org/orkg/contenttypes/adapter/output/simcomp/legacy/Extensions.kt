@@ -11,12 +11,12 @@ fun BaseThing.toLegacyPublishedComparison(objectMapper: ObjectMapper): LegacyPub
     LegacyPublishedComparison(
         id = thingKey,
         config = objectMapper.treeToValue(config, LegacyComparisonConfig::class.java),
-        data = objectMapper.treeToValue(data, LegacyComparisonData::class.java)
+        data = objectMapper.treeToValue(data, LegacyComparisonData::class.java),
     )
 
 fun BaseThing.toLegacyComparisonTable(objectMapper: ObjectMapper): LegacyComparisonTable =
     LegacyComparisonTable(
         id = thingKey,
         config = objectMapper.treeToValue(config, LegacyComparisonConfig::class.java),
-        data = objectMapper.treeToValue(data, LegacyComparisonData::class.java)
+        data = objectMapper.treeToValue(data, LegacyComparisonData::class.java),
     )

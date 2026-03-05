@@ -65,7 +65,7 @@ internal class ComparisonRelatedResourceControllerUnitTest : MockMvcBaseTest("co
                 description(
                     """
                     A `GET` request provides information about a comparison related resource.
-                    """
+                    """,
                 )
                 pathParameters(
                     parameterWithName("id").description("The identifier of the comparison."),
@@ -114,7 +114,7 @@ internal class ComparisonRelatedResourceControllerUnitTest : MockMvcBaseTest("co
                 description(
                     """
                     A `GET` request returns a <<sorting-and-pagination,paged>> list of <<comparisons-related-resource-fetch,comparison related resources>>.
-                    """
+                    """,
                 )
                 pathParameters(
                     parameterWithName("id").description("The identifier of the comparison."),
@@ -148,7 +148,7 @@ internal class ComparisonRelatedResourceControllerUnitTest : MockMvcBaseTest("co
                     A `POST` request creates a new comparison related resource with all the given parameters.
                     The response will be `201 Created` when successful.
                     The comparison related resource (object) can be retrieved by following the URI in the `Location` header field.
-                    """
+                    """,
                 )
                 pathParameters(
                     parameterWithName("id").description("The comparison to attach the comparison related resource to."),
@@ -210,7 +210,7 @@ internal class ComparisonRelatedResourceControllerUnitTest : MockMvcBaseTest("co
                     The updated comparison related resource (object) can be retrieved by following the URI in the `Location` header field.
                     
                     NOTE: Top level fields that were mandatory when creating the comparison related resource can be omitted or `null`, meaning that the corresponding fields should not be updated.
-                    """
+                    """,
                 )
                 responseHeaders(
                     headerWithName("Location").description("The uri path where the updated comparison related resource can be fetched from."),
@@ -229,7 +229,7 @@ internal class ComparisonRelatedResourceControllerUnitTest : MockMvcBaseTest("co
                     ComparisonRelatedResourceNotModifiable::class,
                     ComparisonNotFound::class,
                     InvalidLabel::class,
-                    ComparisonRelatedResourceNotFound::class
+                    ComparisonRelatedResourceNotFound::class,
                 )
             }
 
@@ -247,7 +247,7 @@ internal class ComparisonRelatedResourceControllerUnitTest : MockMvcBaseTest("co
             comparisonRelatedResourceService.deleteByIdAndComparisonId(
                 comparisonId = comparisonId,
                 comparisonRelatedResourceId = comparisonRelatedResourceId,
-                contributorId = any()
+                contributorId = any(),
             )
         } just runs
 
@@ -263,7 +263,7 @@ internal class ComparisonRelatedResourceControllerUnitTest : MockMvcBaseTest("co
                     A `DELETE` request deletes a comparison related resource by ID.
                     The response will be `204 No Content` when successful.
                     The updated comparison (object) can be retrieved by following the URI in the `Location` header field.
-                    """
+                    """,
                 )
                 pathParameters(
                     parameterWithName("id").description("The identifier of the comparison."),
@@ -279,7 +279,7 @@ internal class ComparisonRelatedResourceControllerUnitTest : MockMvcBaseTest("co
             comparisonRelatedResourceService.deleteByIdAndComparisonId(
                 comparisonId = comparisonId,
                 comparisonRelatedResourceId = comparisonRelatedResourceId,
-                contributorId = ContributorId(MockUserId.USER)
+                contributorId = ContributorId(MockUserId.USER),
             )
         }
     }
@@ -289,7 +289,7 @@ internal class ComparisonRelatedResourceControllerUnitTest : MockMvcBaseTest("co
             label = "related resource",
             image = "https://example.org/test.png",
             url = "https://orkg.org/resources/R1000",
-            description = "comparison related resource description"
+            description = "comparison related resource description",
         )
 
     private fun updateComparisonRelatedResourceRequest() =
@@ -297,6 +297,6 @@ internal class ComparisonRelatedResourceControllerUnitTest : MockMvcBaseTest("co
             label = "related resource",
             image = "https://example.org/test.png",
             url = "https://orkg.org/resources/R1000",
-            description = "comparison related resource description"
+            description = "comparison related resource description",
         )
 }

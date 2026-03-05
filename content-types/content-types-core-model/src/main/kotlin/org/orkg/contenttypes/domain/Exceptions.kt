@@ -82,42 +82,42 @@ class RosettaStoneStatementNotFound(id: ThingId) :
     SimpleMessageException(
         HttpStatus.NOT_FOUND,
         """Rosetta stone statement "$id" not found.""",
-        properties = mapOf("rosetta_stone_statement_id" to id)
+        properties = mapOf("rosetta_stone_statement_id" to id),
     )
 
 class RosettaStoneStatementVersionNotFound(id: ThingId) :
     SimpleMessageException(
         HttpStatus.NOT_FOUND,
         """Rosetta stone statement version "$id" not found.""",
-        properties = mapOf("rosetta_stone_statement_version_id" to id)
+        properties = mapOf("rosetta_stone_statement_version_id" to id),
     )
 
 class LiteratureListNotFound(id: ThingId) :
     SimpleMessageException(
         HttpStatus.NOT_FOUND,
         """Literature list "$id" not found.""",
-        properties = mapOf("literature_list_id" to id)
+        properties = mapOf("literature_list_id" to id),
     )
 
 class SmartReviewNotFound(id: ThingId) :
     SimpleMessageException(
         HttpStatus.NOT_FOUND,
         """Smart review "$id" not found.""",
-        properties = mapOf("smart_review_id" to id)
+        properties = mapOf("smart_review_id" to id),
     )
 
 class SustainableDevelopmentGoalNotFound(id: ThingId) :
     SimpleMessageException(
         HttpStatus.NOT_FOUND,
         """Sustainable Development Goal "$id" not found.""",
-        properties = mapOf("sustainable_development_goal_id" to id)
+        properties = mapOf("sustainable_development_goal_id" to id),
     )
 
 class TableNotFound(id: ThingId) :
     SimpleMessageException(
         HttpStatus.NOT_FOUND,
         """Table "$id" not found.""",
-        properties = mapOf("table_id" to id)
+        properties = mapOf("table_id" to id),
     )
 
 class TableRowNotFound(
@@ -129,7 +129,7 @@ class TableRowNotFound(
         properties = mapOf(
             "table_id" to id,
             "table_row_index" to index,
-        )
+        ),
     )
 
 class TableColumnNotFound(
@@ -141,7 +141,7 @@ class TableColumnNotFound(
         properties = mapOf(
             "table_id" to id,
             "table_column_index" to index,
-        )
+        ),
     )
 
 class TemplateInstanceNotFound(
@@ -182,7 +182,7 @@ class DuplicateComparisonDataSources(val duplicates: Map<ComparisonDataSource, I
         HttpStatus.BAD_REQUEST,
         """Duplicate data sources: ${duplicates.entries.joinToString { "(id=${it.key.id},type=${it.key.type})=${it.value}" }}.""",
         type = createProblemURI("duplicate_data_sources"),
-        properties = mapOf("duplicate_data_sources" to duplicates.mapKeys { "(id=${it.key.id},type=${it.key.type})" })
+        properties = mapOf("duplicate_data_sources" to duplicates.mapKeys { "(id=${it.key.id},type=${it.key.type})" }),
     )
 
 class ComparisonRelatedResourceNotModifiable(id: ThingId) :
@@ -203,21 +203,21 @@ class LiteratureListNotModifiable(id: ThingId) :
     SimpleMessageException(
         HttpStatus.FORBIDDEN,
         """Literature list "$id" is not modifiable.""",
-        properties = mapOf("literature_list_id" to id)
+        properties = mapOf("literature_list_id" to id),
     )
 
 class SmartReviewNotModifiable(id: ThingId) :
     SimpleMessageException(
         HttpStatus.FORBIDDEN,
         """Smart review "$id" is not modifiable.""",
-        properties = mapOf("smart_review_id" to id)
+        properties = mapOf("smart_review_id" to id),
     )
 
 class RosettaStoneStatementNotModifiable(id: ThingId) :
     SimpleMessageException(
         HttpStatus.FORBIDDEN,
         """Rosetta stone statement "$id" is not modifiable.""",
-        properties = mapOf("rosetta_stone_statement_id" to id)
+        properties = mapOf("rosetta_stone_statement_id" to id),
     )
 
 class RosettaStoneTemplateNotModifiable(id: ThingId) :
@@ -238,7 +238,7 @@ class TableNotModifiable(id: ThingId) :
     SimpleMessageException(
         HttpStatus.FORBIDDEN,
         """Table "$id" is not modifiable.""",
-        properties = mapOf("table_id" to id)
+        properties = mapOf("table_id" to id),
     )
 
 class ComparisonAlreadyPublished(id: ThingId) :
@@ -252,28 +252,28 @@ class LiteratureListAlreadyPublished(id: ThingId) :
     SimpleMessageException(
         HttpStatus.FORBIDDEN,
         """Literature list "$id" is already published.""",
-        properties = mapOf("literature_list_id" to id)
+        properties = mapOf("literature_list_id" to id),
     )
 
 class SmartReviewAlreadyPublished(id: ThingId) :
     SimpleMessageException(
         HttpStatus.FORBIDDEN,
         """Smart review "$id" is already published.""",
-        properties = mapOf("smart_review_id" to id)
+        properties = mapOf("smart_review_id" to id),
     )
 
 class CannotDeleteIndividualRosettaStoneStatementVersion(id: ThingId) :
     SimpleMessageException(
         HttpStatus.BAD_REQUEST,
         """Cannot delete individual versions of rosetta stone statements.""",
-        properties = mapOf("rosetta_stone_statement_version_id" to id)
+        properties = mapOf("rosetta_stone_statement_version_id" to id),
     )
 
 class RosettaStoneStatementInUse(id: ThingId) :
     SimpleMessageException(
         HttpStatus.FORBIDDEN,
         """Unable to delete rosetta stone statement "$id" because it is used in at least one (rosetta stone) statement.""",
-        properties = mapOf("rosetta_stone_statement_id" to id)
+        properties = mapOf("rosetta_stone_statement_id" to id),
     )
 
 class RosettaStoneTemplateInUse private constructor(
@@ -299,25 +299,25 @@ class RosettaStoneTemplateInUse private constructor(
 class OnlyOneResearchFieldAllowed :
     SimpleMessageException(
         HttpStatus.BAD_REQUEST,
-        """Ony one research field is allowed."""
+        """Ony one research field is allowed.""",
     )
 
 class OnlyOneOrganizationAllowed :
     SimpleMessageException(
         HttpStatus.BAD_REQUEST,
-        """Ony one organization is allowed."""
+        """Ony one organization is allowed.""",
     )
 
 class OnlyOneObservatoryAllowed :
     SimpleMessageException(
         HttpStatus.BAD_REQUEST,
-        """Ony one observatory is allowed."""
+        """Ony one observatory is allowed.""",
     )
 
 class RequiresAtLeastTwoSources :
     SimpleMessageException(
         HttpStatus.BAD_REQUEST,
-        """At least two sources are required."""
+        """At least two sources are required.""",
     )
 
 class ThingNotDefined(id: String) :
@@ -338,14 +338,14 @@ class DuplicateTempIds(val duplicates: Map<String, Int>) :
     SimpleMessageException(
         HttpStatus.BAD_REQUEST,
         """Duplicate temp ids: ${duplicates.entries.joinToString { "${it.key}=${it.value}" }}.""",
-        properties = mapOf("duplicate_temp_ids" to duplicates)
+        properties = mapOf("duplicate_temp_ids" to duplicates),
     )
 
 class InvalidTempId(id: String) :
     SimpleMessageException(
         HttpStatus.BAD_REQUEST,
         """Invalid temp id "$id". Requires "#" as prefix.""",
-        properties = mapOf("temp_id" to id)
+        properties = mapOf("temp_id" to id),
     )
 
 class PaperAlreadyExists private constructor(
@@ -369,7 +369,7 @@ class PaperInUse(id: ThingId) :
     SimpleMessageException(
         HttpStatus.FORBIDDEN,
         """Unable to delete paper "$id" because it is used in at least one statement.""",
-        properties = mapOf("paper_id" to id)
+        properties = mapOf("paper_id" to id),
     )
 
 class AmbiguousAuthor(author: Author) :
@@ -383,7 +383,7 @@ class AmbiguousAuthor(author: Author) :
         properties = mapOf(
             "author_id" to author.id,
             "author_identifiers" to author.identifiers,
-        )
+        ),
     )
 
 class ThingIsNotAClass(id: ThingId) :
@@ -416,7 +416,7 @@ class EmptyContribution : SimpleMessageException {
         super(
             HttpStatus.BAD_REQUEST,
             """Contribution at index "$index" does not contain any statements.""",
-            properties = mapOf("index" to index)
+            properties = mapOf("index" to index),
         )
 }
 
@@ -428,7 +428,7 @@ class TemplateAlreadyExistsForClass(
         """Class "$classId" already has template "$templateId".""",
         properties = mapOf(
             "template_id" to templateId,
-            "template_target_class_id" to classId
+            "template_target_class_id" to classId,
         ),
     )
 
@@ -477,7 +477,7 @@ class InvalidDataType : SimpleMessageException {
             message = """Invalid datatype. Found "$actual", expected "$expected".""",
             properties = mapOf(
                 "actual_data_type" to actual,
-                "expected_data_types" to listOf(expected)
+                "expected_data_types" to listOf(expected),
             ),
         )
     constructor(actual: ThingId, vararg expected: ThingId) :
@@ -486,7 +486,7 @@ class InvalidDataType : SimpleMessageException {
             message = """Invalid datatype. Found "$actual", expected either of ${expected.joinToString { "\"$it\"" }}.""",
             properties = mapOf(
                 "actual_data_type" to actual,
-                "expected_data_types" to expected
+                "expected_data_types" to expected,
             ),
         )
 }
@@ -498,14 +498,14 @@ class InvalidRegexPattern(
         status = HttpStatus.BAD_REQUEST,
         message = """Invalid regex pattern "$pattern".""",
         cause = cause,
-        properties = mapOf("regex_pattern" to pattern)
+        properties = mapOf("regex_pattern" to pattern),
     )
 
 class DuplicateTemplatePropertyPaths(val duplicates: Map<ThingId, Int>) :
     SimpleMessageException(
         HttpStatus.BAD_REQUEST,
         """Duplicate template property paths: ${duplicates.entries.joinToString { "${it.key}=${it.value}" }}.""",
-        properties = mapOf("duplicate_template_property_paths" to duplicates)
+        properties = mapOf("duplicate_template_property_paths" to duplicates),
     )
 
 class TemplateClosed(id: ThingId) :
@@ -519,7 +519,7 @@ class InvalidMonth(month: Int) :
     SimpleMessageException(
         HttpStatus.BAD_REQUEST,
         """Invalid month "$month". Must be in range [1..12].""",
-        properties = mapOf("month" to month)
+        properties = mapOf("month" to month),
     )
 
 class TemplateNotApplicable(
@@ -779,8 +779,8 @@ class InvalidListSectionEntry(
         """Invalid list section entry "$id". Must be an instance of either ${expectedAnyInstanceOf.joinToString { "\"$it\"" }}.""",
         properties = mapOf(
             "literature_list_section_id" to id,
-            "expected_classes" to expectedAnyInstanceOf
-        )
+            "expected_classes" to expectedAnyInstanceOf,
+        ),
     )
 
 class InvalidHeadingSize(headingSize: Int) :
@@ -798,8 +798,8 @@ class UnrelatedLiteratureListSection(
         """Literature list section "$literatureListSectionId" does not belong to literature list "$literatureListId".""",
         properties = mapOf(
             "literature_list_id" to literatureListId,
-            "literature_list_section_id" to literatureListSectionId
-        )
+            "literature_list_section_id" to literatureListSectionId,
+        ),
     )
 
 class LiteratureListSectionTypeMismatch private constructor(
@@ -809,12 +809,12 @@ class LiteratureListSectionTypeMismatch private constructor(
     companion object {
         fun mustBeTextSection() = LiteratureListSectionTypeMismatch(
             """Invalid literature list section type. Must be a text section.""",
-            mapOf("expected_literature_list_section_type" to Classes.textSection)
+            mapOf("expected_literature_list_section_type" to Classes.textSection),
         )
 
         fun mustBeListSection() = LiteratureListSectionTypeMismatch(
             """Invalid literature list section type. Must be a list section.""",
-            mapOf("expected_literature_list_section_type" to Classes.listSection)
+            mapOf("expected_literature_list_section_type" to Classes.listSection),
         )
     }
 }
@@ -828,7 +828,7 @@ class PublishedLiteratureListContentNotFound(
         properties = mapOf(
             "literature_list_id" to literatureListId,
             "literature_list_content_id" to contentId,
-        )
+        ),
     )
 
 class PublishedSmartReviewContentNotFound(
@@ -840,7 +840,7 @@ class PublishedSmartReviewContentNotFound(
         properties = mapOf(
             "smart_review_id" to smartReviewId,
             "smart_review_content_id" to contentId,
-        )
+        ),
     )
 
 class UnrelatedSmartReviewSection(
@@ -852,7 +852,7 @@ class UnrelatedSmartReviewSection(
         properties = mapOf(
             "smart_review_id" to smartReviewId,
             "smart_review_section_id" to smartReviewSectionId,
-        )
+        ),
     )
 
 class SmartReviewSectionTypeMismatch private constructor(
@@ -862,32 +862,32 @@ class SmartReviewSectionTypeMismatch private constructor(
     companion object {
         fun mustBeComparisonSection() = SmartReviewSectionTypeMismatch(
             """Invalid smart review section type. Must be a comparison section.""",
-            mapOf("expected_smart_review_section_type" to Classes.comparisonSection)
+            mapOf("expected_smart_review_section_type" to Classes.comparisonSection),
         )
 
         fun mustBeVisualizationSection() = SmartReviewSectionTypeMismatch(
             """Invalid smart review section type. Must be a visualization section.""",
-            mapOf("expected_smart_review_section_type" to Classes.visualizationSection)
+            mapOf("expected_smart_review_section_type" to Classes.visualizationSection),
         )
 
         fun mustBeResourceSection() = SmartReviewSectionTypeMismatch(
             """Invalid smart review section type. Must be a resource section.""",
-            mapOf("expected_smart_review_section_type" to Classes.resourceSection)
+            mapOf("expected_smart_review_section_type" to Classes.resourceSection),
         )
 
         fun mustBePredicateSection() = SmartReviewSectionTypeMismatch(
             """Invalid smart review section type. Must be a predicate section.""",
-            mapOf("expected_smart_review_section_type" to Classes.propertySection)
+            mapOf("expected_smart_review_section_type" to Classes.propertySection),
         )
 
         fun mustBeOntologySection() = SmartReviewSectionTypeMismatch(
             """Invalid smart review section type. Must be an ontology section.""",
-            mapOf("expected_smart_review_section_type" to Classes.ontologySection)
+            mapOf("expected_smart_review_section_type" to Classes.ontologySection),
         )
 
         fun mustBeTextSection() = SmartReviewSectionTypeMismatch(
             """Invalid smart review section type. Must be a text section.""",
-            mapOf("expected_smart_review_section_type" to Classes.section)
+            mapOf("expected_smart_review_section_type" to Classes.section),
         )
     }
 }
@@ -895,40 +895,40 @@ class SmartReviewSectionTypeMismatch private constructor(
 class InvalidSubjectPositionCardinality :
     SimpleMessageException(
         HttpStatus.BAD_REQUEST,
-        """Invalid subject position cardinality. Minimum cardinality must be at least one."""
+        """Invalid subject position cardinality. Minimum cardinality must be at least one.""",
     )
 
 class InvalidSubjectPositionType :
     SimpleMessageException(
         HttpStatus.BAD_REQUEST,
-        """Invalid subject position type. Subject position must not be a literal property."""
+        """Invalid subject position type. Subject position must not be a literal property.""",
     )
 
 class InvalidSubjectPositionPath :
     SimpleMessageException(
         HttpStatus.BAD_REQUEST,
         """Invalid subject position path. Must be "${Predicates.hasSubjectPosition}".""",
-        properties = mapOf("input_position_index" to 0)
+        properties = mapOf("input_position_index" to 0),
     )
 
 class InvalidObjectPositionPath(index: Int) :
     SimpleMessageException(
         HttpStatus.BAD_REQUEST,
         """Invalid object position path for property at index "$index". Must be "${Predicates.hasObjectPosition}".""",
-        properties = mapOf("input_position_index" to index)
+        properties = mapOf("input_position_index" to index),
     )
 
 class MissingSubjectPosition :
     SimpleMessageException(
         HttpStatus.BAD_REQUEST,
-        """Missing subject position. There must be at least one property with path "${Predicates.hasSubjectPosition}" that has a minimum cardinality of at least one."""
+        """Missing subject position. There must be at least one property with path "${Predicates.hasSubjectPosition}" that has a minimum cardinality of at least one.""",
     )
 
 class MissingPropertyPlaceholder(index: Int) :
     SimpleMessageException(
         HttpStatus.BAD_REQUEST,
         """Missing placeholder for property at index "$index".""",
-        properties = mapOf("input_position_index" to index)
+        properties = mapOf("input_position_index" to index),
     )
 
 class MissingDynamicLabelPlaceholder : SimpleMessageException {
@@ -942,44 +942,44 @@ class MissingDynamicLabelPlaceholder : SimpleMessageException {
         properties = mapOf(
             "input_position_index" to index,
             "input_position_placeholder" to placeholder,
-        )
+        ),
     )
 }
 
 class RosettaStoneTemplateLabelMustStartWithPreviousVersion :
     SimpleMessageException(
         HttpStatus.BAD_REQUEST,
-        """The updated dynamic label must start with the previous label."""
+        """The updated dynamic label must start with the previous label.""",
     )
 
 class TooManyNewRosettaStoneTemplateLabelSections :
     SimpleMessageException(
         HttpStatus.BAD_REQUEST,
-        """Too many new dynamic label sections. Must be exactly one optional section per new template property."""
+        """Too many new dynamic label sections. Must be exactly one optional section per new template property.""",
     )
 
 class RosettaStoneTemplateLabelUpdateRequiresNewTemplateProperties :
     SimpleMessageException(
         HttpStatus.BAD_REQUEST,
-        """The dynamic label can only be updated in combination with the addition of new template properties."""
+        """The dynamic label can only be updated in combination with the addition of new template properties.""",
     )
 
 class NewRosettaStoneTemplateLabelSectionsMustBeOptional :
     SimpleMessageException(
         HttpStatus.BAD_REQUEST,
-        """New sections of the dynamic label must be optional."""
+        """New sections of the dynamic label must be optional.""",
     )
 
 class RosettaStoneTemplateLabelMustBeUpdated :
     SimpleMessageException(
         HttpStatus.BAD_REQUEST,
-        """The dynamic label must be updated when updating template properties."""
+        """The dynamic label must be updated when updating template properties.""",
     )
 
 class NewRosettaStoneTemplateExampleUsageMustStartWithPreviousExampleUsage :
     SimpleMessageException(
         HttpStatus.BAD_REQUEST,
-        """New example usage must start with the previous example usage."""
+        """New example usage must start with the previous example usage.""",
     )
 
 class NewRosettaStoneTemplatePropertyMustBeOptional(
@@ -1147,28 +1147,28 @@ class InvalidBibTeXReference(reference: String) :
         HttpStatus.BAD_REQUEST,
         """Invalid BibTeX reference "$reference".""",
         type = createProblemURI("invalid_bibtex_reference"),
-        properties = mapOf("bibtex_reference" to reference)
+        properties = mapOf("bibtex_reference" to reference),
     )
 
 class OntologyEntityNotFound(entities: Set<ThingId>) :
     SimpleMessageException(
         HttpStatus.NOT_FOUND,
         """Ontology entity not found among entities ${entities.joinToString { """"$it"""" }}.""",
-        properties = mapOf("ontology_entities" to entities)
+        properties = mapOf("ontology_entities" to entities),
     )
 
 class InvalidSmartReviewTextSectionType(type: ThingId) :
     SimpleMessageException(
         HttpStatus.BAD_REQUEST,
         """Invalid smart review text section type "$type".""",
-        properties = mapOf("smart_review_section_type" to type)
+        properties = mapOf("smart_review_section_type" to type),
     )
 
 class InvalidDOI(doi: String) :
     PropertyValidationException(
         jsonFieldPathToJsonPointerReference("doi"),
         "The value passed as query parameter \"doi\" is not a valid DOI. The value sent was: $doi",
-        type = createProblemURI("invalid_doi")
+        type = createProblemURI("invalid_doi"),
     )
 
 class InvalidIdentifier(
@@ -1176,14 +1176,14 @@ class InvalidIdentifier(
     cause: IllegalArgumentException,
 ) : PropertyValidationException(
         jsonFieldPathToJsonPointerReference(name),
-        cause.message!!
+        cause.message!!,
     )
 
 class ResearchProblemNotFound(id: ThingId) :
     SimpleMessageException(
         HttpStatus.NOT_FOUND,
         """Research problem "$id" not found.""",
-        properties = mapOf("research_problem_id" to id)
+        properties = mapOf("research_problem_id" to id),
     )
 
 class TooFewContributions(ids: List<ThingId>) :
@@ -1196,7 +1196,7 @@ class TooFewContributions(ids: List<ThingId>) :
 class MissingTableRows :
     SimpleMessageException(
         HttpStatus.BAD_REQUEST,
-        """Missing table rows. At least one row is required."""
+        """Missing table rows. At least one row is required.""",
     )
 
 class TooFewTableRows(id: ThingId) :
@@ -1306,7 +1306,7 @@ class ResearchFieldNotFound(id: ThingId) :
     SimpleMessageException(
         HttpStatus.NOT_FOUND,
         """Research field "$id" not found.""",
-        properties = mapOf("research_field_id" to id)
+        properties = mapOf("research_field_id" to id),
     )
 
 class InvalidComparisonPath private constructor(
@@ -1317,25 +1317,25 @@ class InvalidComparisonPath private constructor(
         fun statementMustBeAtFirstLevel(path: List<ThingId>) =
             InvalidComparisonPath(
                 """A rosetta stone statement path must be at the root.""",
-                properties = mapOf("comparison_path" to path)
+                properties = mapOf("comparison_path" to path),
             )
 
         fun statementValueMustBeAtSecondLevel(path: List<ThingId>) =
             InvalidComparisonPath(
                 """A rosetta stone statement value path must be a children of a rosetta stone statement path.""",
-                properties = mapOf("comparison_path" to path)
+                properties = mapOf("comparison_path" to path),
             )
 
         fun statementChildMustBeStatementValue(path: List<ThingId>) =
             InvalidComparisonPath(
                 """A child path of a rosetta stone statement must be a rosetta stone statement value path.""",
-                properties = mapOf("comparison_path" to path)
+                properties = mapOf("comparison_path" to path),
             )
 
         fun statementValueCannotHaveChildren(path: List<ThingId>) =
             InvalidComparisonPath(
                 """A rosetta stone statement value path cannot have any children.""",
-                properties = mapOf("comparison_path" to path)
+                properties = mapOf("comparison_path" to path),
             )
 
         fun invalidStatementValuePredicateId(path: List<ThingId>, predicateId: ThingId) =
@@ -1344,7 +1344,7 @@ class InvalidComparisonPath private constructor(
                 properties = mapOf(
                     "comparison_path" to path,
                     "predicate_id" to predicateId,
-                )
+                ),
             )
 
         fun exceedsMaxDepth(path: List<ThingId>, depth: Int) =
@@ -1353,7 +1353,7 @@ class InvalidComparisonPath private constructor(
                 properties = mapOf(
                     "comparison_path" to path,
                     "max_comparison_path_depth" to depth,
-                )
+                ),
             )
     }
 }
@@ -1363,5 +1363,5 @@ class ComparisonPathNotFound(
 ) : SimpleMessageException(
         HttpStatus.NOT_FOUND,
         """Comparison path "${path.joinToString(" > ")}" not found.""",
-        properties = mapOf("comparison_path" to path)
+        properties = mapOf("comparison_path" to path),
     )

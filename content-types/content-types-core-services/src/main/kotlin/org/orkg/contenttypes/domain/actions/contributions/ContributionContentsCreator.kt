@@ -30,8 +30,8 @@ class ContributionContentsCreator(
             unsafeLiteralUseCases,
             unsafePredicateUseCases,
             statementRepository,
-            listService
-        )
+            listService,
+        ),
     )
 
     override fun invoke(command: CreateContributionCommand, state: State): State =
@@ -43,7 +43,7 @@ class ContributionContentsCreator(
                 thingsCommand = command,
                 contributionCommands = listOf(command.contribution),
                 validationCache = state.validationCache,
-                bakedStatements = state.bakedStatements
-            ).single()
+                bakedStatements = state.bakedStatements,
+            ).single(),
         )
 }

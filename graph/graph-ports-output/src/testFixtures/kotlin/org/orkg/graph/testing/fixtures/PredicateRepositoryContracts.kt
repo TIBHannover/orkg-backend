@@ -54,10 +54,10 @@ fun <
     val fabricator = Fabrikate(
         FabricatorConfig(
             collectionSizes = 12..12,
-            nullableStrategy = FabricatorConfig.NullableStrategy.NeverSetToNull // FIXME: because "id" is nullable
+            nullableStrategy = FabricatorConfig.NullableStrategy.NeverSetToNull, // FIXME: because "id" is nullable
         )
             .withStandardMappings()
-            .withGraphMappings()
+            .withGraphMappings(),
     )
 
     val saveThing: (Thing) -> Unit = {
@@ -172,7 +172,7 @@ fun <
                     predicates.forEach(repository::save)
                     val result = repository.findAll(
                         pageable = PageRequest.of(0, 5),
-                        label = SearchString.of("label find", exactMatch = false)
+                        label = SearchString.of("label find", exactMatch = false),
                     )
 
                     it("returns the correct result") {
@@ -206,7 +206,7 @@ fun <
                 val expected = predicates.take(expectedCount)
                 val result = repository.findAll(
                     pageable = PageRequest.of(0, 5),
-                    createdBy = createdBy
+                    createdBy = createdBy,
                 )
 
                 it("returns the correct result") {
@@ -231,7 +231,7 @@ fun <
                 val expectedCount = 3
                 val predicates = fabricator.random<List<Predicate>>().mapIndexed { index, predicate ->
                     predicate.copy(
-                        createdAt = OffsetDateTime.now(fixedClock).minusHours(index.toLong())
+                        createdAt = OffsetDateTime.now(fixedClock).minusHours(index.toLong()),
                     )
                 }
                 predicates.forEach(repository::save)
@@ -239,7 +239,7 @@ fun <
                 val expected = predicates.take(expectedCount)
                 val result = repository.findAll(
                     pageable = PageRequest.of(0, 5),
-                    createdAtStart = expected.last().createdAt
+                    createdAtStart = expected.last().createdAt,
                 )
 
                 it("returns the correct result") {
@@ -264,7 +264,7 @@ fun <
                 val expectedCount = 3
                 val predicates = fabricator.random<List<Predicate>>().mapIndexed { index, predicate ->
                     predicate.copy(
-                        createdAt = OffsetDateTime.now(fixedClock).plusHours(index.toLong())
+                        createdAt = OffsetDateTime.now(fixedClock).plusHours(index.toLong()),
                     )
                 }
                 predicates.forEach(repository::save)
@@ -272,7 +272,7 @@ fun <
                 val expected = predicates.take(expectedCount)
                 val result = repository.findAll(
                     pageable = PageRequest.of(0, 5),
-                    createdAtEnd = expected.last().createdAt
+                    createdAtEnd = expected.last().createdAt,
                 )
 
                 it("returns the correct result") {
@@ -402,7 +402,7 @@ fun <
                 it("returns the correct result") {
                     val subject = fabricator.random<Predicate>()
                     val statement = fabricator.random<GeneralStatement>().copy(
-                        subject = subject
+                        subject = subject,
                     )
                     saveStatement(statement)
 
@@ -414,7 +414,7 @@ fun <
                 it("returns the correct result") {
                     val `object` = fabricator.random<Predicate>()
                     val statement = fabricator.random<GeneralStatement>().copy(
-                        `object` = `object`
+                        `object` = `object`,
                     )
                     saveStatement(statement)
 

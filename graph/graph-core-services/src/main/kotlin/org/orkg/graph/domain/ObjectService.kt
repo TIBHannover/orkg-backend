@@ -73,8 +73,8 @@ class ObjectService(
                 val predicateId = predicateService.create(
                     CreatePredicateUseCase.CreateCommand(
                         contributorId = userId,
-                        label = it.keys.first()
-                    )
+                        label = it.keys.first(),
+                    ),
                 )
                 predicates[surrogateId] = predicateId
             }
@@ -96,7 +96,7 @@ class ObjectService(
                     extractionMethod = request.resource.extractionMethod,
                     observatoryId = observatoryId,
                     organizationId = organizationId,
-                )
+                ),
             )
 
         // Check if the contribution has more statements to add
@@ -111,7 +111,7 @@ class ObjectService(
                 userId,
                 observatoryId = observatoryId,
                 extractionMethod = request.resource.extractionMethod,
-                organizationId = organizationId
+                organizationId = organizationId,
             )
         }
         return resourceId
@@ -170,8 +170,8 @@ class ObjectService(
                                     contributorId = userId,
                                     subjectId = subject,
                                     predicateId = predicateId!!,
-                                    objectId = ThingId(jsonObject.`@id`!!)
-                                )
+                                    objectId = ThingId(jsonObject.`@id`!!),
+                                ),
                             )
                         } else {
                             if (!tempResources.containsKey(jsonObject.`@id`)) {
@@ -179,8 +179,8 @@ class ObjectService(
                                     TempResource(
                                         subject,
                                         predicateId!!,
-                                        jsonObject.`@id`!!
-                                    )
+                                        jsonObject.`@id`!!,
+                                    ),
                                 )
                             } else {
                                 val tempId = tempResources[jsonObject.`@id`]
@@ -189,8 +189,8 @@ class ObjectService(
                                         contributorId = userId,
                                         subjectId = subject,
                                         predicateId = predicateId!!,
-                                        objectId = tempId!!
-                                    )
+                                        objectId = tempId!!,
+                                    ),
                                 )
                             }
                         }
@@ -201,8 +201,8 @@ class ObjectService(
                             CreateLiteralUseCase.CreateCommand(
                                 contributorId = userId,
                                 label = jsonObject.text!!,
-                                datatype = jsonObject.datatype ?: "xsd:string"
-                            )
+                                datatype = jsonObject.datatype ?: "xsd:string",
+                            ),
                         )
                         if (jsonObject.`@temp` != null) {
                             tempResources[jsonObject.`@temp`!!] = newLiteral
@@ -212,8 +212,8 @@ class ObjectService(
                                 contributorId = userId,
                                 subjectId = subject,
                                 predicateId = predicateId!!,
-                                objectId = newLiteral
-                            )
+                                objectId = newLiteral,
+                            ),
                         )
                     }
 
@@ -237,7 +237,7 @@ class ObjectService(
                                 extractionMethod = extractionMethod,
                                 observatoryId = observatoryId,
                                 organizationId = organizationId,
-                            )
+                            ),
                         )
                         if (jsonObject.`@temp` != null) {
                             tempResources[jsonObject.`@temp`!!] = newResource
@@ -247,8 +247,8 @@ class ObjectService(
                                 contributorId = userId,
                                 subjectId = subject,
                                 predicateId = predicateId,
-                                objectId = newResource
-                            )
+                                objectId = newResource,
+                            ),
                         )
                         if (jsonObject.hasSubsequentStatements()) {
                             goThroughStatementsRecursively(
@@ -261,7 +261,7 @@ class ObjectService(
                                 true,
                                 observatoryId,
                                 extractionMethod,
-                                organizationId
+                                organizationId,
                             )
                         }
                     }
@@ -294,8 +294,8 @@ class ObjectService(
                         contributorId = userId,
                         subjectId = temp.subject,
                         predicateId = temp.predicate,
-                        objectId = tempId!!
-                    )
+                        objectId = tempId!!,
+                    ),
                 )
             } else {
                 queue.add(temp)

@@ -19,16 +19,16 @@ class ComparisonVersionHistoryUpdater(
                 contributorId = command.contributorId,
                 subjectId = state.comparison!!.id,
                 predicateId = Predicates.hasPublishedVersion,
-                objectId = state.comparisonVersionId!!
-            )
+                objectId = state.comparisonVersionId!!,
+            ),
         )
         state.comparison.versions.published.firstOrNull()?.let { latestVersion ->
             unsafeResourceUseCases.update(
                 UpdateResourceUseCase.UpdateCommand(
                     id = latestVersion.id,
                     contributorId = command.contributorId,
-                    classes = setOf(Classes.comparisonPublished)
-                )
+                    classes = setOf(Classes.comparisonPublished),
+                ),
             )
         }
         return state

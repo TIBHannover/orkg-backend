@@ -49,28 +49,28 @@ internal class ThingsCommandValidatorUnitTest : MockkBaseTest {
             resources = mapOf(
                 "#temp1" to CreateResourceCommandPart(
                     label = "MOTO",
-                    classes = setOf(ThingId("C2000"))
-                )
+                    classes = setOf(ThingId("C2000")),
+                ),
             ),
             literals = mapOf(
                 "#temp2" to CreateLiteralCommandPart(
                     label = "0.1",
-                    dataType = Literals.XSD.DECIMAL.prefixedUri
-                )
+                    dataType = Literals.XSD.DECIMAL.prefixedUri,
+                ),
             ),
             predicates = mapOf(
                 "#temp3" to CreatePredicateCommandPart(
                     label = "hasResult",
-                    description = "has result"
-                )
+                    description = "has result",
+                ),
             ),
             lists = mapOf(
                 "#temp4" to CreateListCommandPart(
                     label = "list",
-                    elements = listOf("R123", "#temp1")
-                )
+                    elements = listOf("R123", "#temp1"),
+                ),
             ),
-            contributions = emptyList()
+            contributions = emptyList(),
         )
 
         val r123 = createResource(id = ThingId("R123"))
@@ -86,7 +86,7 @@ internal class ThingsCommandValidatorUnitTest : MockkBaseTest {
         result shouldBe mapOf(
             "#temp1" from contents,
             "R123" to Either.right(r123),
-            "C2000" to Either.right(c2000)
+            "C2000" to Either.right(c2000),
         )
 
         verify(exactly = 1) { thingRepository.findById(r123.id) }
@@ -99,12 +99,12 @@ internal class ThingsCommandValidatorUnitTest : MockkBaseTest {
             resources = mapOf(
                 "#temp1" to CreateResourceCommandPart(
                     label = "MOTO",
-                    classes = setOf(ThingId("R2000"))
-                )
+                    classes = setOf(ThingId("R2000")),
+                ),
             ),
             literals = emptyMap(),
             predicates = emptyMap(),
-            contributions = emptyList()
+            contributions = emptyList(),
         )
 
         every { thingRepository.findById(any()) } returns Optional.empty()
@@ -112,7 +112,7 @@ internal class ThingsCommandValidatorUnitTest : MockkBaseTest {
         assertThrows<ThingNotFound> {
             thingsCommandValidator.validate(
                 thingsCommand = contents,
-                validationCache = mutableMapOf()
+                validationCache = mutableMapOf(),
             )
         }
 
@@ -125,12 +125,12 @@ internal class ThingsCommandValidatorUnitTest : MockkBaseTest {
             resources = mapOf(
                 "#temp1" to CreateResourceCommandPart(
                     label = "MOTO",
-                    classes = setOf(ThingId("R2000"))
-                )
+                    classes = setOf(ThingId("R2000")),
+                ),
             ),
             literals = emptyMap(),
             predicates = emptyMap(),
-            contributions = emptyList()
+            contributions = emptyList(),
         )
         val resource = createResource()
 
@@ -147,12 +147,12 @@ internal class ThingsCommandValidatorUnitTest : MockkBaseTest {
             resources = mapOf(
                 "#temp1" to CreateResourceCommandPart(
                     label = "MOTO",
-                    classes = setOf(reservedClassIds.first())
-                )
+                    classes = setOf(reservedClassIds.first()),
+                ),
             ),
             literals = emptyMap(),
             predicates = emptyMap(),
-            contributions = emptyList()
+            contributions = emptyList(),
         )
 
         assertThrows<ReservedClass> { thingsCommandValidator.validate(contents, mutableMapOf()) }
@@ -163,12 +163,12 @@ internal class ThingsCommandValidatorUnitTest : MockkBaseTest {
         val contents = CreatePaperUseCase.CreateCommand.PaperContents(
             resources = mapOf(
                 "#temp1" to CreateResourceCommandPart(
-                    label = "\n"
-                )
+                    label = "\n",
+                ),
             ),
             literals = emptyMap(),
             predicates = emptyMap(),
-            contributions = emptyList()
+            contributions = emptyList(),
         )
 
         assertThrows<InvalidLabel> { thingsCommandValidator.validate(contents, mutableMapOf()) }
@@ -180,11 +180,11 @@ internal class ThingsCommandValidatorUnitTest : MockkBaseTest {
             resources = emptyMap(),
             literals = mapOf(
                 "#temp1" to CreateLiteralCommandPart(
-                    label = "a".repeat(MAX_LABEL_LENGTH + 1)
-                )
+                    label = "a".repeat(MAX_LABEL_LENGTH + 1),
+                ),
             ),
             predicates = emptyMap(),
-            contributions = emptyList()
+            contributions = emptyList(),
         )
 
         assertThrows<InvalidLiteralLabel> { thingsCommandValidator.validate(contents, mutableMapOf()) }
@@ -197,11 +197,11 @@ internal class ThingsCommandValidatorUnitTest : MockkBaseTest {
             literals = mapOf(
                 "#temp1" to CreateLiteralCommandPart(
                     label = "not a number",
-                    dataType = Literals.XSD.DECIMAL.prefixedUri
-                )
+                    dataType = Literals.XSD.DECIMAL.prefixedUri,
+                ),
             ),
             predicates = emptyMap(),
-            contributions = emptyList()
+            contributions = emptyList(),
         )
 
         assertThrows<InvalidLiteralLabel> { thingsCommandValidator.validate(contents, mutableMapOf()) }
@@ -214,11 +214,11 @@ internal class ThingsCommandValidatorUnitTest : MockkBaseTest {
             literals = mapOf(
                 "#temp1" to CreateLiteralCommandPart(
                     label = "imvalid",
-                    dataType = "foo_bar:string"
-                )
+                    dataType = "foo_bar:string",
+                ),
             ),
             predicates = emptyMap(),
-            contributions = emptyList()
+            contributions = emptyList(),
         )
 
         assertThrows<InvalidLiteralDatatype> { thingsCommandValidator.validate(contents, mutableMapOf()) }
@@ -231,10 +231,10 @@ internal class ThingsCommandValidatorUnitTest : MockkBaseTest {
             literals = emptyMap(),
             predicates = mapOf(
                 "#temp1" to CreatePredicateCommandPart(
-                    label = "\n"
-                )
+                    label = "\n",
+                ),
             ),
-            contributions = emptyList()
+            contributions = emptyList(),
         )
 
         assertThrows<InvalidLabel> { thingsCommandValidator.validate(contents, mutableMapOf()) }
@@ -248,10 +248,10 @@ internal class ThingsCommandValidatorUnitTest : MockkBaseTest {
             predicates = emptyMap(),
             lists = mapOf(
                 "#temp1" to CreateListCommandPart(
-                    label = "\n"
-                )
+                    label = "\n",
+                ),
             ),
-            contributions = emptyList()
+            contributions = emptyList(),
         )
 
         assertThrows<InvalidLabel> { thingsCommandValidator.validate(contents, mutableMapOf()) }
@@ -266,9 +266,9 @@ internal class ThingsCommandValidatorUnitTest : MockkBaseTest {
             lists = emptyMap(),
             classes = mapOf(
                 "#temp1" to CreateClassCommandPart(
-                    label = "\n"
-                )
-            )
+                    label = "\n",
+                ),
+            ),
         )
 
         assertThrows<InvalidLabel> { thingsCommandValidator.validate(contents, mutableMapOf()) }
@@ -285,9 +285,9 @@ internal class ThingsCommandValidatorUnitTest : MockkBaseTest {
             classes = mapOf(
                 "#temp1" to CreateClassCommandPart(
                     label = "irrelevant",
-                    uri = uri
-                )
-            )
+                    uri = uri,
+                ),
+            ),
         )
 
         assertThrows<URINotAbsolute> { thingsCommandValidator.validate(contents, mutableMapOf()) }
@@ -304,9 +304,9 @@ internal class ThingsCommandValidatorUnitTest : MockkBaseTest {
             classes = mapOf(
                 "#temp1" to CreateClassCommandPart(
                     label = "irrelevant",
-                    uri = uri
-                )
-            )
+                    uri = uri,
+                ),
+            ),
         )
         val `class` = createClass(uri = uri)
 

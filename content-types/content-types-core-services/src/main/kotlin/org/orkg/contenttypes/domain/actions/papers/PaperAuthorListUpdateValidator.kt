@@ -13,7 +13,7 @@ class PaperAuthorListUpdateValidator(
         resourceRepository: ResourceRepository,
         statementRepository: StatementRepository,
     ) : this(
-        AbstractAuthorListValidator(resourceRepository, statementRepository)
+        AbstractAuthorListValidator(resourceRepository, statementRepository),
     )
 
     override fun invoke(command: UpdatePaperCommand, state: State): State {

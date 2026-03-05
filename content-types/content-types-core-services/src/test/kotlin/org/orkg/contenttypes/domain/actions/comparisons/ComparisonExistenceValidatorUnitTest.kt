@@ -41,12 +41,12 @@ internal class ComparisonExistenceValidatorUnitTest : MockkBaseTest {
         val root = createResource(
             id = comparison.id,
             label = comparison.title,
-            classes = setOf(Classes.comparison)
+            classes = setOf(Classes.comparison),
         )
         val statements = listOf(createStatement(subject = root)).groupBy { it.subject.id }
         val versionInfo = VersionInfo(
             head = HeadVersion(root),
-            published = emptyList()
+            published = emptyList(),
         )
 
         mockkObject(Comparison.Companion) {

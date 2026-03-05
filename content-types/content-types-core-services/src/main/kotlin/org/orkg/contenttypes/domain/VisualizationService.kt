@@ -80,7 +80,7 @@ class VisualizationService(
             researchField = researchField,
             includeSubfields = includeSubfields,
             researchProblem = researchProblem,
-            pageable = pageable
+            pageable = pageable,
         ).map { it.toVisualization() }
 
     override fun create(command: CreateVisualizationCommand): ThingId {
@@ -92,7 +92,7 @@ class VisualizationService(
             VisualizationAuthorListValidator(resourceRepository, statementRepository),
             VisualizationResourceCreator(unsafeResourceUseCases),
             VisualizationDescriptionCreator(unsafeLiteralUseCases, unsafeStatementUseCases),
-            VisualizationAuthorListCreator(unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases, listService)
+            VisualizationAuthorListCreator(unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases, listService),
         )
         return steps.execute(command, VisualizationState()).visualizationId!!
     }
@@ -104,9 +104,9 @@ class VisualizationService(
                 minLevel = null,
                 maxLevel = 3,
                 blacklist = listOf(Classes.researchField),
-                whitelist = emptyList()
+                whitelist = emptyList(),
             ),
-            sort = Sort.unsorted()
+            sort = Sort.unsorted(),
         ).groupBy { it.subject.id }
         return ContentTypeSubgraph(resource.id, statements)
     }

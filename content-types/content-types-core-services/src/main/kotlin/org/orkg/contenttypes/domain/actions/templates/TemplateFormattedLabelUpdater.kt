@@ -16,7 +16,7 @@ class TemplateFormattedLabelUpdater(
         statementService: StatementUseCases,
         unsafeStatementUseCases: UnsafeStatementUseCases,
     ) : this(
-        SingleStatementPropertyUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases)
+        SingleStatementPropertyUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases),
     )
 
     override fun invoke(command: UpdateTemplateCommand, state: State): State {
@@ -26,7 +26,7 @@ class TemplateFormattedLabelUpdater(
                 contributorId = command.contributorId,
                 subjectId = command.templateId,
                 predicateId = Predicates.templateLabelFormat,
-                label = command.formattedLabel?.value
+                label = command.formattedLabel?.value,
             )
         }
         return state

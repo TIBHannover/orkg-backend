@@ -88,7 +88,7 @@ class ThingIdValueGenerator(
                 random.nextResourceId(),
                 random.nextClassId(),
                 random.nextPredicateId(),
-                random.nextLiteralId()
+                random.nextLiteralId(),
             )
         }
 
@@ -104,11 +104,11 @@ class ThingIdValueGenerator(
         } else {
             val count = resourceRepository.findAll(
                 includeClasses = setOf(classId),
-                pageable = PageRequest.of(0, 1)
+                pageable = PageRequest.of(0, 1),
             ).totalElements.toInt()
             resourceRepository.findAll(
                 includeClasses = setOf(classId),
-                pageable = PageRequest.of(nextInt(count), 1)
+                pageable = PageRequest.of(nextInt(count), 1),
             ).first().id
         }
 }
@@ -122,7 +122,7 @@ class ThingIdMapGenerator : ValueGenerator<Map<ThingId, ThingId>> {
         type: KType,
         randomInstances: (Random, String, KType) -> List<Any>,
     ): List<Map<ThingId, ThingId>> = listOf(
-        mapOf(ThingId("R44543") to ThingId("C5000"))
+        mapOf(ThingId("R44543") to ThingId("C5000")),
     )
 }
 
@@ -250,10 +250,10 @@ class SearchFilterValueGenerator : ValueGenerator<SearchFilter> {
             values = setOf(
                 SearchFilter.Value(
                     op = SearchFilter.Operator.NE,
-                    value = "R182085"
-                )
+                    value = "R182085",
+                ),
             ),
-            exact = true
+            exact = true,
         ),
         SearchFilter(
             path = listOf(Predicates.hasResearchProblem),
@@ -261,11 +261,11 @@ class SearchFilterValueGenerator : ValueGenerator<SearchFilter> {
             values = setOf(
                 SearchFilter.Value(
                     op = SearchFilter.Operator.NE,
-                    value = "R182085"
-                )
+                    value = "R182085",
+                ),
             ),
-            exact = false
-        )
+            exact = false,
+        ),
     )
 }
 
@@ -305,7 +305,7 @@ class StringValueGenerator : ValueGenerator<String> {
         "Venue",
         "Visualization",
         "SmartReview",
-        "Benchmark"
+        "Benchmark",
     )
 
     @Suppress("HttpUrlsUsage")
@@ -326,7 +326,7 @@ class StringValueGenerator : ValueGenerator<String> {
                 "10.48366/r609337", // comparison
                 "10.1101/2020.03.03.20029983", // paper
                 "https://doi.org/10.48366/r609337", // comparison
-                "https://doi.org/10.1101/2020.03.03.20029983" // paper
+                "https://doi.org/10.1101/2020.03.03.20029983", // paper
             )
 
             else -> labels + listOf("covid", "2023-01-01")
@@ -385,7 +385,7 @@ class SearchStringValueGenerator(
 @Profile("profileRepositories")
 class FuzzyStringValueGenerator : ValueGenerator<FuzzySearchString> {
     private val instances = listOf(
-        SearchString.of(string = "covid", exactMatch = false) as FuzzySearchString
+        SearchString.of(string = "covid", exactMatch = false) as FuzzySearchString,
     )
 
     override operator fun invoke(
@@ -400,7 +400,7 @@ class FuzzyStringValueGenerator : ValueGenerator<FuzzySearchString> {
 @Profile("profileRepositories")
 class ExactStringValueGenerator : ValueGenerator<ExactSearchString> {
     private val instances = listOf(
-        SearchString.of(string = "covid", exactMatch = true) as ExactSearchString
+        SearchString.of(string = "covid", exactMatch = true) as ExactSearchString,
     )
 
     override operator fun invoke(

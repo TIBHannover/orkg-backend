@@ -21,7 +21,7 @@ class TemplatePropertiesValidator<T, S>(
     ) : this(
         AbstractTemplatePropertyValidator(predicateRepository, classRepository),
         newValueSelector,
-        oldValueSelector
+        oldValueSelector,
     )
 
     override fun invoke(command: T, state: S): S {

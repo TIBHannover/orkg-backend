@@ -35,7 +35,7 @@ class RosettaStoneStatementUpdater(
             organizations = command.organizations,
             extractionMethod = command.extractionMethod,
             visibility = command.visibility,
-            modifiable = command.modifiable
+            modifiable = command.modifiable,
         )
         val statement = state.rosettaStoneStatement!!
             .withVersion(version)
@@ -45,7 +45,7 @@ class RosettaStoneStatementUpdater(
                 organizations = command.organizations,
                 extractionMethod = command.extractionMethod,
                 visibility = command.visibility,
-                modifiable = command.modifiable
+                modifiable = command.modifiable,
             )
         rosettaStoneStatementRepository.save(statement)
         return state.copy(rosettaStoneStatementId = statement.id)

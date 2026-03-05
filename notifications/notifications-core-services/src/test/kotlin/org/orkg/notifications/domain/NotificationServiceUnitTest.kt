@@ -26,7 +26,7 @@ internal class NotificationServiceUnitTest : MockkBaseTest {
         val expected = Email(
             subject = "Test email",
             htmlBody = emailHtml("testEmail"),
-            textBody = emailText("testEmail")
+            textBody = emailText("testEmail"),
         )
 
         every { emailService.send(recipient, any()) } just runs

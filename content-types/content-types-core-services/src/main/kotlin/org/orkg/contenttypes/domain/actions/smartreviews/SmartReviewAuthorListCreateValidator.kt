@@ -13,7 +13,7 @@ class SmartReviewAuthorListCreateValidator(
         resourceRepository: ResourceRepository,
         statementRepository: StatementRepository,
     ) : this(
-        AbstractAuthorListValidator(resourceRepository, statementRepository)
+        AbstractAuthorListValidator(resourceRepository, statementRepository),
     )
 
     override fun invoke(command: CreateSmartReviewCommand, state: State): State =

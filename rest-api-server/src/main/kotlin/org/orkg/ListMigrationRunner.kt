@@ -51,7 +51,7 @@ class ListMigrationRunner(
             .run()
         val hasAuthorsPredicate = findOrCreatePredicate(
             label = "authors",
-            id = Predicates.hasAuthors
+            id = Predicates.hasAuthors,
         )
 //        val hasSectionsPredicate = findOrCreatePredicate(
 //            label = "sections",
@@ -102,7 +102,7 @@ class ListMigrationRunner(
         val statements = statementRepository.findAll(
             subjectId = resource.id,
             predicateId = oldPredicateId,
-            pageable = PageRequests.ALL
+            pageable = PageRequests.ALL,
         )
         if (statements.isEmpty) {
             return
@@ -117,9 +117,9 @@ class ListMigrationRunner(
                 label = label,
                 elements = objects,
                 createdAt = OffsetDateTime.now(clock),
-                createdBy = ContributorId.UNKNOWN
+                createdBy = ContributorId.UNKNOWN,
             ),
-            ContributorId.UNKNOWN
+            ContributorId.UNKNOWN,
         )
         statementRepository.deleteByStatementIds(statements.mapTo(mutableSetOf()) { it.id })
         statementRepository.save(
@@ -129,8 +129,8 @@ class ListMigrationRunner(
                 predicate = newPredicate,
                 `object` = resourceRepository.findById(listId).get(),
                 createdBy = ContributorId.UNKNOWN,
-                createdAt = OffsetDateTime.now(clock)
-            )
+                createdAt = OffsetDateTime.now(clock),
+            ),
         )
     }
 
@@ -138,7 +138,7 @@ class ListMigrationRunner(
         val sectionStatements = statementRepository.findAll(
             subjectId = resource.id,
             predicateId = Predicates.hasSection,
-            pageable = PageRequests.ALL
+            pageable = PageRequests.ALL,
         )
         val sections = sectionStatements
             .sortedBy { it.createdAt }
@@ -146,7 +146,7 @@ class ListMigrationRunner(
                 val entryStatements = statementRepository.findAll(
                     subjectId = sectionStatement.`object`.id,
                     predicateId = Predicates.hasEntry,
-                    pageable = PageRequests.ALL
+                    pageable = PageRequests.ALL,
                 )
                 resourceRepository.deleteById(sectionStatement.`object`.id)
                 if (entryStatements.content.isEmpty()) {
@@ -166,9 +166,9 @@ class ListMigrationRunner(
                         label = "Entries",
                         elements = entries,
                         createdBy = (sectionStatement.`object` as Resource).createdBy,
-                        createdAt = OffsetDateTime.now(clock)
+                        createdAt = OffsetDateTime.now(clock),
                     ),
-                    (sectionStatement.`object` as Resource).createdBy
+                    (sectionStatement.`object` as Resource).createdBy,
                 )
                 return@map listId
             }.filterNotNull()
@@ -182,9 +182,9 @@ class ListMigrationRunner(
                 label = "Sections",
                 elements = sections,
                 createdBy = ContributorId.UNKNOWN,
-                createdAt = OffsetDateTime.now(clock)
+                createdAt = OffsetDateTime.now(clock),
             ),
-            ContributorId.UNKNOWN
+            ContributorId.UNKNOWN,
         )
         statementRepository.deleteByStatementIds(sectionStatements.mapTo(mutableSetOf()) { it.id })
         statementRepository.save(
@@ -194,8 +194,8 @@ class ListMigrationRunner(
                 predicate = newPredicate,
                 `object` = resourceRepository.findById(listId).get(),
                 createdBy = ContributorId.UNKNOWN,
-                createdAt = OffsetDateTime.now(clock)
-            )
+                createdAt = OffsetDateTime.now(clock),
+            ),
         )
     }
 
@@ -205,8 +205,8 @@ class ListMigrationRunner(
                 CreatePredicateUseCase.CreateCommand(
                     id = id,
                     contributorId = ContributorId.UNKNOWN,
-                    label = label
-                )
+                    label = label,
+                ),
             )
             predicateRepository.findById(predicateId).get()
         }
@@ -215,13 +215,13 @@ class ListMigrationRunner(
         logger.info("Migrating resources of class $classId...")
         var page = resourceRepository.findAll(
             includeClasses = setOf(classId),
-            pageable = PageRequest.of(0, CHUNK_SIZE)
+            pageable = PageRequest.of(0, CHUNK_SIZE),
         )
         page.content.forEach(consumer)
         while (page.hasNext()) {
             page = resourceRepository.findAll(
                 includeClasses = setOf(classId),
-                pageable = PageRequest.of(page.number + 1, CHUNK_SIZE)
+                pageable = PageRequest.of(page.number + 1, CHUNK_SIZE),
             )
             page.content.forEach(consumer)
         }

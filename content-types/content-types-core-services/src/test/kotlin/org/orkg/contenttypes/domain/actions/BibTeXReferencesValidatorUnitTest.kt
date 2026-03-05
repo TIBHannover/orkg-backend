@@ -32,7 +32,7 @@ internal class BibTeXReferencesValidatorUnitTest : MockkBaseTest {
             parser.parse(
                 withArg {
                     it.contentAsString shouldBe REFERENCE1
-                }
+                },
             )
         }
     }
@@ -47,7 +47,7 @@ internal class BibTeXReferencesValidatorUnitTest : MockkBaseTest {
             parser.parse(
                 withArg {
                     it.contentAsString shouldBe REFERENCE1
-                }
+                },
             )
         }
     }

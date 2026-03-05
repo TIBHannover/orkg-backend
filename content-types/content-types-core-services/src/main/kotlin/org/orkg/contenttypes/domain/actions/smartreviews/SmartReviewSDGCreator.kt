@@ -14,7 +14,7 @@ class SmartReviewSDGCreator(
         unsafeLiteralUseCases: UnsafeLiteralUseCases,
         unsafeStatementUseCases: UnsafeStatementUseCases,
     ) : this(
-        StatementCollectionPropertyCreator(unsafeLiteralUseCases, unsafeStatementUseCases)
+        StatementCollectionPropertyCreator(unsafeLiteralUseCases, unsafeStatementUseCases),
     )
 
     override fun invoke(command: CreateSmartReviewCommand, state: State): State {
@@ -22,7 +22,7 @@ class SmartReviewSDGCreator(
             contributorId = command.contributorId,
             subjectId = state.smartReviewId!!,
             predicateId = Predicates.sustainableDevelopmentGoal,
-            objects = command.sustainableDevelopmentGoals.toList()
+            objects = command.sustainableDevelopmentGoals.toList(),
         )
         return state
     }

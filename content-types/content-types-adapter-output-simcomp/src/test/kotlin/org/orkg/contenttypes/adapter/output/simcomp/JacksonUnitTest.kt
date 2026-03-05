@@ -24,10 +24,10 @@ internal class JacksonUnitTest : MockkBaseTest {
                     context!!.addDeserializers(
                         SimpleDeserializers().apply {
                             addDeserializer(Example::class.java, ExampleDeserializer())
-                        }
+                        },
                     )
                 }
-            }
+            },
         )
         .disable(DateTimeFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE)
         .build()
@@ -62,7 +62,7 @@ internal class JacksonUnitTest : MockkBaseTest {
                 "bar": "b"
             }
             """,
-            Example::class.java
+            Example::class.java,
         )
         println(read)
     }

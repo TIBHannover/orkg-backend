@@ -16,7 +16,7 @@ private val bundleConfiguration = BundleConfiguration(
     minLevel = null,
     maxLevel = 10,
     blacklist = listOf(Classes.researchField),
-    whitelist = emptyList()
+    whitelist = emptyList(),
 )
 
 class SmartReviewVersionArchiver(
@@ -30,7 +30,7 @@ class SmartReviewVersionArchiver(
             thingId = command.smartReviewId,
             configuration = bundleConfiguration,
             includeFirst = true,
-            sort = Sort.unsorted()
+            sort = Sort.unsorted(),
         ).bundle
         smartReviewPublishedRepository.save(
             SmartReviewSnapshotV1(
@@ -40,7 +40,7 @@ class SmartReviewVersionArchiver(
                 resourceId = state.smartReviewVersionId!!,
                 rootId = command.smartReviewId,
                 subgraph = statementsToPersist,
-            )
+            ),
         )
         return state
     }

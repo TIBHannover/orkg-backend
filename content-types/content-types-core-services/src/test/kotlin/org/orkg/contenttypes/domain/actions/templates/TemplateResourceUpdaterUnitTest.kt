@@ -33,7 +33,7 @@ internal class TemplateResourceUpdaterUnitTest : MockkBaseTest {
             observatoryId = command.observatories!!.single(),
             organizationId = command.organizations!!.single(),
             extractionMethod = command.extractionMethod,
-            visibility = command.visibility
+            visibility = command.visibility,
         )
 
         every { unsafeResourceUseCases.update(resourceUpdateCommand) } just runs

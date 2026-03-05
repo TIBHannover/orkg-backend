@@ -59,7 +59,7 @@ internal class SpringDataNeo4jRankingServiceAdapterContractTest(
                 springDataNeo4jPredicateAdapter,
                 listAdapter,
                 springDataNeo4jRosettaStoneStatementAdapter,
-                springDataNeo4jRankingServiceAdapter
-            )
+                springDataNeo4jRankingServiceAdapter,
+            ),
         )
     })

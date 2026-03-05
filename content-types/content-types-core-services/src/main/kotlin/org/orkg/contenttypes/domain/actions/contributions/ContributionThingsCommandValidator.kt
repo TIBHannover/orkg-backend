@@ -13,14 +13,14 @@ class ContributionThingsCommandValidator(
         thingRepository: ThingRepository,
         classRepository: ClassRepository,
     ) : this(
-        ThingsCommandValidator(thingRepository, classRepository)
+        ThingsCommandValidator(thingRepository, classRepository),
     )
 
     override fun invoke(command: CreateContributionCommand, state: State): State =
         state.copy(
             validationCache = thingsCommandValidator.validate(
                 thingsCommand = command,
-                validationCache = state.validationCache
-            )
+                validationCache = state.validationCache,
+            ),
         )
 }

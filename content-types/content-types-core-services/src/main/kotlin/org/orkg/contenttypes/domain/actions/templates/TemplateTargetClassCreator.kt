@@ -15,8 +15,8 @@ class TemplateTargetClassCreator(
                 contributorId = command.contributorId,
                 subjectId = state.templateId!!,
                 predicateId = Predicates.shTargetClass,
-                objectId = command.targetClass
-            )
+                objectId = command.targetClass,
+            ),
         )
         return state
     }

@@ -94,23 +94,23 @@ internal class SimCompThingRepositoryAdapterUnitTest : MockkBaseTest {
                         observatoryId = ObservatoryId.UNKNOWN,
                         extractionMethod = ExtractionMethod.UNKNOWN,
                         organizationId = OrganizationId.UNKNOWN,
-                        visibility = Visibility.DEFAULT
+                        visibility = Visibility.DEFAULT,
                     ),
                     predicate = Predicate(
                         id = Predicates.hasPaper,
                         label = "has paper",
                         createdAt = OffsetDateTime.parse("2021-04-26T16:57:34.745465+02:00"),
-                        createdBy = ContributorId.UNKNOWN
+                        createdBy = ContributorId.UNKNOWN,
                     ),
                     `object` = Class(
                         id = ThingId("C12457"),
                         label = "Some class",
                         uri = ParsedIRI.create("https://orkg.org/class/C12457"),
                         createdAt = OffsetDateTime.parse("2022-02-22T08:01:13.261082+01:00"),
-                        createdBy = ContributorId("d5416c16-1a45-4aee-8069-be1b6097478b")
+                        createdBy = ContributorId("d5416c16-1a45-4aee-8069-be1b6097478b"),
                     ),
                     createdAt = OffsetDateTime.parse("2022-02-22T08:01:15.253502+01:00"),
-                    createdBy = ContributorId("d5416c16-1a45-4aee-8069-be1b6097478b")
+                    createdBy = ContributorId("d5416c16-1a45-4aee-8069-be1b6097478b"),
                 ),
                 GeneralStatement(
                     id = StatementId("S5436"),
@@ -123,24 +123,24 @@ internal class SimCompThingRepositoryAdapterUnitTest : MockkBaseTest {
                         observatoryId = ObservatoryId.UNKNOWN,
                         extractionMethod = ExtractionMethod.MANUAL,
                         organizationId = OrganizationId.UNKNOWN,
-                        visibility = Visibility.FEATURED
+                        visibility = Visibility.FEATURED,
                     ),
                     predicate = Predicate(
                         id = Predicates.hasPaper,
                         label = "has paper",
                         createdAt = OffsetDateTime.parse("2021-04-26T16:57:34.745465+02:00"),
-                        createdBy = ContributorId.UNKNOWN
+                        createdBy = ContributorId.UNKNOWN,
                     ),
                     `object` = Literal(
                         id = ThingId("L354354"),
                         label = "Some literal",
                         datatype = "xsd:string",
                         createdAt = OffsetDateTime.parse("2022-02-22T08:01:12.709843+01:00"),
-                        createdBy = ContributorId("d5416c16-1a45-4aee-8069-be1b6097478b")
+                        createdBy = ContributorId("d5416c16-1a45-4aee-8069-be1b6097478b"),
                     ),
                     createdAt = OffsetDateTime.parse("2023-02-22T08:01:15.253502+01:00"),
-                    createdBy = ContributorId("d5416c16-1a45-4aee-8069-be1b6097478b")
-                )
+                    createdBy = ContributorId("d5416c16-1a45-4aee-8069-be1b6097478b"),
+                ),
             )
         }
 
@@ -149,7 +149,7 @@ internal class SimCompThingRepositoryAdapterUnitTest : MockkBaseTest {
                 withArg {
                     it.uri() shouldBe URI.create("$simCompHostUrl/thing/?thing_type=LIST&thing_key=$id")
                 },
-                any<HttpResponse.BodyHandler<String>>()
+                any<HttpResponse.BodyHandler<String>>(),
             )
         }
         verify(exactly = 1) { response.statusCode() }
@@ -173,7 +173,7 @@ internal class SimCompThingRepositoryAdapterUnitTest : MockkBaseTest {
                 withArg {
                     it.uri() shouldBe URI.create("$simCompHostUrl/thing/?thing_type=LIST&thing_key=$id")
                 },
-                any<HttpResponse.BodyHandler<String>>()
+                any<HttpResponse.BodyHandler<String>>(),
             )
         }
         verify { response.statusCode() }
@@ -199,7 +199,7 @@ internal class SimCompThingRepositoryAdapterUnitTest : MockkBaseTest {
                 withArg {
                     it.uri() shouldBe URI.create("$simCompHostUrl/thing/?thing_type=LIST&thing_key=$id")
                 },
-                any<HttpResponse.BodyHandler<String>>()
+                any<HttpResponse.BodyHandler<String>>(),
             )
         }
         verify { response.statusCode() }
@@ -228,14 +228,14 @@ internal class SimCompThingRepositoryAdapterUnitTest : MockkBaseTest {
         val type = ThingType.PAPER_VERSION
         val data = mapOf(
             "rootResource" to ThingId("C1"),
-            "statements" to listOf(createStatement())
+            "statements" to listOf(createStatement()),
         )
         val config = emptyMap<String, Any>()
         val request = ThingAddRequest(
             thingType = type,
             thingKey = id,
             config = config,
-            data = data
+            data = data,
         )
         // Mock HttpClient dsl
         val response = mockk<HttpResponse<String>>()
@@ -256,7 +256,7 @@ internal class SimCompThingRepositoryAdapterUnitTest : MockkBaseTest {
                         bodyPublisher.content shouldBe objectMapper.writeValueAsString(request)
                     }
                 },
-                any<HttpResponse.BodyHandler<String>>()
+                any<HttpResponse.BodyHandler<String>>(),
             )
         }
         verify { response.statusCode() }
@@ -268,7 +268,7 @@ internal class SimCompThingRepositoryAdapterUnitTest : MockkBaseTest {
         val type = ThingType.PAPER_VERSION
         val data = mapOf(
             "rootResource" to ThingId("C1"),
-            "statements" to listOf(createStatement())
+            "statements" to listOf(createStatement()),
         )
         val config = emptyMap<String, Any>()
         // Mock HttpClient dsl
@@ -288,7 +288,7 @@ internal class SimCompThingRepositoryAdapterUnitTest : MockkBaseTest {
         verify(exactly = 1) {
             httpClient.send(
                 withArg { it.uri() shouldBe URI.create("$simCompHostUrl/thing/") },
-                any<HttpResponse.BodyHandler<String>>()
+                any<HttpResponse.BodyHandler<String>>(),
             )
         }
         verify { response.statusCode() }
@@ -301,7 +301,7 @@ internal class SimCompThingRepositoryAdapterUnitTest : MockkBaseTest {
         val type = ThingType.PAPER_VERSION
         val data = mapOf(
             "rootResource" to ThingId("C1"),
-            "statements" to listOf(createStatement())
+            "statements" to listOf(createStatement()),
         )
         val config = emptyMap<String, Any>()
         val exception = IOException()
@@ -329,7 +329,7 @@ internal class SimCompThingRepositoryAdapterUnitTest : MockkBaseTest {
             thingType = type,
             thingKey = id,
             config = config,
-            data = data
+            data = data,
         )
         // Mock HttpClient dsl
         val response = mockk<HttpResponse<String>>()
@@ -351,7 +351,7 @@ internal class SimCompThingRepositoryAdapterUnitTest : MockkBaseTest {
                         bodyPublisher.content shouldBe objectMapper.writeValueAsString(request)
                     }
                 },
-                any<HttpResponse.BodyHandler<String>>()
+                any<HttpResponse.BodyHandler<String>>(),
             )
         }
         verify { response.statusCode() }
@@ -380,7 +380,7 @@ internal class SimCompThingRepositoryAdapterUnitTest : MockkBaseTest {
         verify(exactly = 1) {
             httpClient.send(
                 withArg { it.uri() shouldBe URI.create("$simCompHostUrl/thing/") },
-                any<HttpResponse.BodyHandler<String>>()
+                any<HttpResponse.BodyHandler<String>>(),
             )
         }
         verify { response.statusCode() }

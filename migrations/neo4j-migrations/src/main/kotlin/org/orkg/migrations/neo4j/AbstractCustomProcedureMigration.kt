@@ -40,7 +40,7 @@ abstract class AbstractCustomProcedureMigration(
         this::class.simpleName
             ?.replace(Regex("""^[RV]\d+__"""), "")
             ?.replace(Regex("""([A-Z])""")) { " " + it.value.lowercase() }
-            ?.trim()
+            ?.trim(),
     )
 
     override fun getChecksum(): Optional<String> = Optional.of(migrationQuery.hashCode().toString())

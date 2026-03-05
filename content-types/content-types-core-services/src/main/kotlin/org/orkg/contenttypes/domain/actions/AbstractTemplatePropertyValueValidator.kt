@@ -82,7 +82,7 @@ class AbstractTemplatePropertyValueValidator(
                         predicateId = property.path.id,
                         expectedDataType = property.datatype.uri?.toString() ?: "$ORKG_CLASS_NS${property.datatype.id}",
                         id = id,
-                        foundDataType = `object`.dataType
+                        foundDataType = `object`.dataType,
                     )
                 }
             }

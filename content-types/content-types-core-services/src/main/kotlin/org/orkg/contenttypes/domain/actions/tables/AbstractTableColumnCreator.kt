@@ -28,38 +28,38 @@ class AbstractTableColumnCreator(
                 contributorId = contributorId,
                 label = "",
                 classes = setOf(Classes.column),
-            )
+            ),
         )
         val columnNumberLiteralId = unsafeLiteralUseCases.create(
             CreateLiteralUseCase.CreateCommand(
                 contributorId = contributorId,
                 label = "${index + 1}",
-                datatype = Literals.XSD.INT.prefixedUri
-            )
+                datatype = Literals.XSD.INT.prefixedUri,
+            ),
         )
         unsafeStatementUseCases.create(
             CreateStatementUseCase.CreateCommand(
                 contributorId = contributorId,
                 subjectId = columnId,
                 predicateId = Predicates.csvwNumber,
-                objectId = columnNumberLiteralId
-            )
+                objectId = columnNumberLiteralId,
+            ),
         )
         unsafeStatementUseCases.create(
             CreateStatementUseCase.CreateCommand(
                 contributorId = contributorId,
                 subjectId = columnId,
                 predicateId = Predicates.csvwTitles,
-                objectId = titleLiteralId
-            )
+                objectId = titleLiteralId,
+            ),
         )
         unsafeStatementUseCases.create(
             CreateStatementUseCase.CreateCommand(
                 contributorId = contributorId,
                 subjectId = tableId,
                 predicateId = Predicates.csvwColumns,
-                objectId = columnId
-            )
+                objectId = columnId,
+            ),
         )
         return columnId
     }

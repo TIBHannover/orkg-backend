@@ -28,7 +28,7 @@ MATCH (r:Resource {id: $ID})
 CALL apoc.path.expandConfig(r, {relationshipFilter: "<RELATED", labelFilter: "/Paper", uniqueness: "RELATIONSHIP_GLOBAL"})
 YIELD path
 WITH last(nodes(path)) AS paper
-RETURN COUNT(DISTINCT paper) AS cnt"""
+RETURN COUNT(DISTINCT paper) AS cnt""",
     )
     fun findAllPapersRelatedToResource(id: ThingId, pageable: Pageable): Page<Neo4jPaperWithPath>
 }

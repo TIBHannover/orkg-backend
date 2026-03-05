@@ -36,7 +36,7 @@ import java.util.Optional
         ExceptionTestConfiguration::class,
         CommonJacksonModule::class,
         CommonDocumentationContextProvider::class,
-    ]
+    ],
 )
 @WebMvcTest(controllers = [LegacyUserController::class])
 internal class LegacyUserControllerUnitTest : MockMvcBaseTest("users") {
@@ -68,7 +68,7 @@ internal class LegacyUserControllerUnitTest : MockMvcBaseTest("users") {
                     """
                     A `GET` request returns information about the currently logged-in user.
                     An authentication token needs to be provided.
-                    """
+                    """,
                 )
                 responseFields<UserDetails>(
                     fieldWithPath("id").description("The id of the user."),

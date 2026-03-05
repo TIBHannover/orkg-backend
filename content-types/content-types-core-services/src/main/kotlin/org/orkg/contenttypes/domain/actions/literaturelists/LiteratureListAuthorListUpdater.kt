@@ -24,8 +24,8 @@ class LiteratureListAuthorListUpdater(
             unsafeStatementUseCases,
             unsafeLiteralUseCases,
             listService,
-            listRepository
-        )
+            listRepository,
+        ),
     )
 
     override fun invoke(command: UpdateLiteratureListCommand, state: State): State {

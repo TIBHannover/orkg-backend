@@ -53,7 +53,7 @@ internal class VisualizationServiceUnitTest : MockkBaseTest {
         unsafeStatementUseCases = unsafeStatementUseCases,
         unsafeLiteralUseCases = unsafeLiteralUseCases,
         listService = listService,
-        visualizationRepository = visualizationRepository
+        visualizationRepository = visualizationRepository,
     )
 
     @Test
@@ -61,7 +61,7 @@ internal class VisualizationServiceUnitTest : MockkBaseTest {
         val expected = createResource(
             classes = setOf(Classes.visualization),
             organizationId = OrganizationId(UUID.randomUUID()),
-            observatoryId = ObservatoryId(UUID.randomUUID())
+            observatoryId = ObservatoryId(UUID.randomUUID()),
         )
         val description = "Description of a visualization"
         val authorList = createResource(classes = setOf(Classes.list), id = ThingId("R536456"))
@@ -69,7 +69,7 @@ internal class VisualizationServiceUnitTest : MockkBaseTest {
             minLevel = null,
             maxLevel = 3,
             blacklist = listOf(Classes.researchField),
-            whitelist = emptyList()
+            whitelist = emptyList(),
         )
 
         every { resourceRepository.findById(expected.id) } returns Optional.of(expected)
@@ -77,24 +77,24 @@ internal class VisualizationServiceUnitTest : MockkBaseTest {
             statementRepository.fetchAsBundle(
                 id = expected.id,
                 configuration = bundleConfiguration,
-                sort = Sort.unsorted()
+                sort = Sort.unsorted(),
             )
         } returns pageOf(
             createStatement(
                 subject = expected,
                 predicate = createPredicate(Predicates.hasAuthors),
-                `object` = authorList
+                `object` = authorList,
             ),
             createStatement(
                 subject = expected,
                 predicate = createPredicate(Predicates.description),
-                `object` = createLiteral(label = description)
+                `object` = createLiteral(label = description),
             ),
             createStatement(
                 subject = authorList,
                 predicate = createPredicate(Predicates.hasListElement),
-                `object` = createLiteral(label = "Author 1")
-            )
+                `object` = createLiteral(label = "Author 1"),
+            ),
         )
 
         val actual = service.findById(expected.id)
@@ -110,8 +110,8 @@ internal class VisualizationServiceUnitTest : MockkBaseTest {
                     id = null,
                     name = "Author 1",
                     identifiers = emptyMap(),
-                    homepage = null
-                )
+                    homepage = null,
+                ),
             )
             visualization.observatories shouldBe setOf(expected.observatoryId)
             visualization.organizations shouldBe setOf(expected.organizationId)
@@ -127,7 +127,7 @@ internal class VisualizationServiceUnitTest : MockkBaseTest {
             statementRepository.fetchAsBundle(
                 id = expected.id,
                 configuration = bundleConfiguration,
-                sort = Sort.unsorted()
+                sort = Sort.unsorted(),
             )
         }
     }

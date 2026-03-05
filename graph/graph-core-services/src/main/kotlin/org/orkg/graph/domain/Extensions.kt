@@ -33,7 +33,7 @@ fun Resource.apply(command: UpdateResourceUseCase.UpdateCommand): Resource =
             command.visibility == Visibility.UNLISTED && visibility != Visibility.UNLISTED -> command.contributorId
             command.visibility != Visibility.UNLISTED && visibility == Visibility.UNLISTED -> null
             else -> unlistedBy
-        }
+        },
     )
 
 fun UpdateStatementUseCase.UpdateCommand.hasNoContents(): Boolean =
@@ -104,5 +104,5 @@ fun UpdateListUseCase.UpdateCommand.hasNoContents(): Boolean =
 fun List.apply(command: UpdateListUseCase.UpdateCommand): List =
     copy(
         label = command.label ?: label,
-        elements = command.elements ?: elements
+        elements = command.elements ?: elements,
     )

@@ -12,7 +12,7 @@ class LiteratureListExistenceValidator(
         literatureListService: LiteratureListService,
         resourceRepository: ResourceRepository,
     ) : this(
-        AbstractLiteratureListExistenceValidator(literatureListService, resourceRepository)
+        AbstractLiteratureListExistenceValidator(literatureListService, resourceRepository),
     )
 
     override fun invoke(command: UpdateLiteratureListCommand, state: State): State =

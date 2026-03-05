@@ -80,7 +80,7 @@ internal class TableServiceUnitTest : MockkBaseTest {
         val expected = createResource(
             classes = setOf(Classes.table),
             organizationId = OrganizationId(UUID.randomUUID()),
-            observatoryId = ObservatoryId(UUID.randomUUID())
+            observatoryId = ObservatoryId(UUID.randomUUID()),
         )
         val row0 = createResource(
             id = ThingId("row0"),
@@ -88,7 +88,7 @@ internal class TableServiceUnitTest : MockkBaseTest {
         )
         val row0Data = listOf(
             null,
-            createLiteral()
+            createLiteral(),
         )
         val row1 = createResource(
             id = ThingId("row1"),
@@ -96,13 +96,13 @@ internal class TableServiceUnitTest : MockkBaseTest {
         )
         val row1Data = listOf(
             createResource(),
-            createClass()
+            createClass(),
         )
         val bundleConfiguration = BundleConfiguration(
             minLevel = null,
             maxLevel = 3,
             blacklist = emptyList(),
-            whitelist = emptyList()
+            whitelist = emptyList(),
         )
         val column0 = createResource(
             id = ThingId("column0"),
@@ -122,7 +122,7 @@ internal class TableServiceUnitTest : MockkBaseTest {
             statementRepository.fetchAsBundle(
                 id = expected.id,
                 configuration = bundleConfiguration,
-                sort = Sort.unsorted()
+                sort = Sort.unsorted(),
             )
         } returns pageOf(
             // declare columns
@@ -130,127 +130,127 @@ internal class TableServiceUnitTest : MockkBaseTest {
             createStatement(
                 subject = expected,
                 predicate = createPredicate(Predicates.csvwColumns),
-                `object` = column0
+                `object` = column0,
             ),
             createStatement(
                 subject = column0,
                 predicate = createPredicate(Predicates.csvwNumber),
-                `object` = createLiteral(label = "1", datatype = Literals.XSD.INT.prefixedUri)
+                `object` = createLiteral(label = "1", datatype = Literals.XSD.INT.prefixedUri),
             ),
             createStatement(
                 subject = column0,
                 predicate = createPredicate(Predicates.csvwTitles),
-                `object` = createLiteral(label = "Column 0")
+                `object` = createLiteral(label = "Column 0"),
             ),
             // declare column 1
             createStatement(
                 subject = expected,
                 predicate = createPredicate(Predicates.csvwColumns),
-                `object` = column1
+                `object` = column1,
             ),
             createStatement(
                 subject = column1,
                 predicate = createPredicate(Predicates.csvwNumber),
-                `object` = createLiteral(label = "2", datatype = Literals.XSD.INT.prefixedUri)
+                `object` = createLiteral(label = "2", datatype = Literals.XSD.INT.prefixedUri),
             ),
             createStatement(
                 subject = column1,
                 predicate = createPredicate(Predicates.csvwTitles),
-                `object` = createLiteral(label = "Column 1")
+                `object` = createLiteral(label = "Column 1"),
             ),
             // declare rows
             // declare row 0
             createStatement(
                 subject = expected,
                 predicate = createPredicate(Predicates.csvwRows),
-                `object` = row0
+                `object` = row0,
             ),
             createStatement(
                 subject = row0,
                 predicate = createPredicate(Predicates.csvwNumber),
-                `object` = createLiteral(label = "1", datatype = Literals.XSD.INT.prefixedUri)
+                `object` = createLiteral(label = "1", datatype = Literals.XSD.INT.prefixedUri),
             ),
             createStatement(
                 subject = row0,
                 predicate = createPredicate(Predicates.csvwTitles),
-                `object` = createLiteral(label = "Row 0")
+                `object` = createLiteral(label = "Row 0"),
             ),
             // declare row 1
             createStatement(
                 subject = expected,
                 predicate = createPredicate(Predicates.csvwRows),
-                `object` = row1
+                `object` = row1,
             ),
             createStatement(
                 subject = row1,
                 predicate = createPredicate(Predicates.csvwNumber),
-                `object` = createLiteral(label = "2", datatype = Literals.XSD.INT.prefixedUri)
+                `object` = createLiteral(label = "2", datatype = Literals.XSD.INT.prefixedUri),
             ),
             createStatement(
                 subject = row1,
                 predicate = createPredicate(Predicates.csvwTitles),
-                `object` = createLiteral(label = "Row 1")
+                `object` = createLiteral(label = "Row 1"),
             ),
             // declare cell contents
             // declare cell 00
             createStatement(
                 subject = row0,
                 predicate = createPredicate(Predicates.csvwCells),
-                `object` = cell00
+                `object` = cell00,
             ),
             createStatement(
                 subject = cell00,
                 predicate = createPredicate(Predicates.csvwColumn),
-                `object` = column0
+                `object` = column0,
             ),
             // no data
             // declare cell 01
             createStatement(
                 subject = row0,
                 predicate = createPredicate(Predicates.csvwCells),
-                `object` = cell01
+                `object` = cell01,
             ),
             createStatement(
                 subject = cell01,
                 predicate = createPredicate(Predicates.csvwColumn),
-                `object` = column1
+                `object` = column1,
             ),
             createStatement(
                 subject = cell01,
                 predicate = createPredicate(Predicates.csvwValue),
-                `object` = row0Data[1]!!
+                `object` = row0Data[1]!!,
             ),
             // declare cell 10
             createStatement(
                 subject = row1,
                 predicate = createPredicate(Predicates.csvwCells),
-                `object` = cell10
+                `object` = cell10,
             ),
             createStatement(
                 subject = cell10,
                 predicate = createPredicate(Predicates.csvwColumn),
-                `object` = column0
+                `object` = column0,
             ),
             createStatement(
                 subject = cell10,
                 predicate = createPredicate(Predicates.csvwValue),
-                `object` = row1Data[0]
+                `object` = row1Data[0],
             ),
             // declare cell 11
             createStatement(
                 subject = row1,
                 predicate = createPredicate(Predicates.csvwCells),
-                `object` = cell11
+                `object` = cell11,
             ),
             createStatement(
                 subject = cell11,
                 predicate = createPredicate(Predicates.csvwColumn),
-                `object` = column1
+                `object` = column1,
             ),
             createStatement(
                 subject = cell11,
                 predicate = createPredicate(Predicates.csvwValue),
-                `object` = row1Data[1]
+                `object` = row1Data[1],
             ),
         )
 
@@ -296,7 +296,7 @@ internal class TableServiceUnitTest : MockkBaseTest {
             statementRepository.fetchAsBundle(
                 id = expected.id,
                 configuration = bundleConfiguration,
-                sort = Sort.unsorted()
+                sort = Sort.unsorted(),
             )
         }
     }

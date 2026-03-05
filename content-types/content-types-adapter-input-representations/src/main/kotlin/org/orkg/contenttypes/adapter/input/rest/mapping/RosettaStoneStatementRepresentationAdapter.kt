@@ -49,6 +49,6 @@ interface RosettaStoneStatementRepresentationAdapter : ThingReferenceRepresentat
             unlistedBy = version.unlistedBy,
             modifiable = modifiable,
             deletedBy = version.deletedBy,
-            deletedAt = version.deletedAt
+            deletedAt = version.deletedAt,
         )
 }

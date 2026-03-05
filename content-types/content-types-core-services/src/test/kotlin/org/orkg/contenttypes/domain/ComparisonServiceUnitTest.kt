@@ -84,7 +84,7 @@ internal class ComparisonServiceUnitTest : MockkBaseTest {
         comparisonTableUseCases = comparisonTableUseCases,
         comparisonTableRepository = comparisonTableRepository,
         clock = fixedClock,
-        comparisonPublishBaseUri = "https://orkg.org/comparison/"
+        comparisonPublishBaseUri = "https://orkg.org/comparison/",
     )
 
     @Test
@@ -92,18 +92,18 @@ internal class ComparisonServiceUnitTest : MockkBaseTest {
         val expected = createResource(
             classes = setOf(Classes.comparison),
             organizationId = OrganizationId(UUID.randomUUID()),
-            observatoryId = ObservatoryId(UUID.randomUUID())
+            observatoryId = ObservatoryId(UUID.randomUUID()),
         )
         val publishedVersion = createResource(
             id = ThingId("R156"),
             label = "published comparison",
             classes = setOf(Classes.comparisonPublished),
             createdAt = OffsetDateTime.now(fixedClock).minusDays(1),
-            createdBy = ContributorId(MockUserId.USER)
+            createdBy = ContributorId(MockUserId.USER),
         )
         val versions = VersionInfo(
             head = HeadVersion(expected),
-            published = listOf(PublishedVersion(publishedVersion, null))
+            published = listOf(PublishedVersion(publishedVersion, null)),
         )
         val researchFieldId = ThingId("R20")
         val doi = "10.1000/182"
@@ -120,9 +120,9 @@ internal class ComparisonServiceUnitTest : MockkBaseTest {
                 Classes.visualization,
                 Classes.comparisonRelatedFigure,
                 Classes.comparisonRelatedResource,
-                Classes.sustainableDevelopmentGoal
+                Classes.sustainableDevelopmentGoal,
             ),
-            whitelist = emptyList()
+            whitelist = emptyList(),
         )
         val secondBundleConfiguration = BundleConfiguration(
             minLevel = null,
@@ -134,8 +134,8 @@ internal class ComparisonServiceUnitTest : MockkBaseTest {
                 Classes.visualization,
                 Classes.comparisonRelatedFigure,
                 Classes.comparisonRelatedResource,
-                Classes.sustainableDevelopmentGoal
-            )
+                Classes.sustainableDevelopmentGoal,
+            ),
         )
 
         every { resourceRepository.findById(expected.id) } returns Optional.of(expected)
@@ -143,58 +143,58 @@ internal class ComparisonServiceUnitTest : MockkBaseTest {
             statementRepository.fetchAsBundle(
                 id = expected.id,
                 configuration = firstBundleConfiguration,
-                sort = Sort.unsorted()
+                sort = Sort.unsorted(),
             )
         } returns pageOf(
             createStatement(
                 subject = expected,
                 predicate = createPredicate(Predicates.hasDOI),
-                `object` = createLiteral(label = doi)
+                `object` = createLiteral(label = doi),
             ),
             createStatement(
                 subject = expected,
                 predicate = createPredicate(Predicates.yearPublished),
                 `object` = createLiteral(
                     label = publicationYear.toString(),
-                    datatype = Literals.XSD.DECIMAL.prefixedUri
-                )
+                    datatype = Literals.XSD.DECIMAL.prefixedUri,
+                ),
             ),
             createStatement(
                 subject = expected,
                 predicate = createPredicate(Predicates.monthPublished),
-                `object` = createLiteral(label = publicationMonth.toString(), datatype = Literals.XSD.INT.prefixedUri)
+                `object` = createLiteral(label = publicationMonth.toString(), datatype = Literals.XSD.INT.prefixedUri),
             ),
             createStatement(
                 subject = expected,
                 predicate = createPredicate(Predicates.hasAuthors),
-                `object` = authorList
+                `object` = authorList,
             ),
             createStatement(
                 subject = expected,
                 predicate = createPredicate(Predicates.reference),
-                `object` = createLiteral(label = reference)
+                `object` = createLiteral(label = reference),
             ),
             createStatement(
                 subject = expected,
                 predicate = createPredicate(Predicates.isAnonymized),
-                `object` = createLiteral(label = "true", datatype = Literals.XSD.BOOLEAN.prefixedUri)
+                `object` = createLiteral(label = "true", datatype = Literals.XSD.BOOLEAN.prefixedUri),
             ),
             createStatement(
                 subject = authorList,
                 predicate = createPredicate(Predicates.hasListElement),
-                `object` = createLiteral(label = "Author 1")
+                `object` = createLiteral(label = "Author 1"),
             ),
             createStatement(
                 subject = expected,
                 predicate = createPredicate(Predicates.hasPublishedVersion),
-                `object` = publishedVersion
-            )
+                `object` = publishedVersion,
+            ),
         )
         every {
             statementRepository.fetchAsBundle(
                 id = expected.id,
                 configuration = secondBundleConfiguration,
-                sort = Sort.unsorted()
+                sort = Sort.unsorted(),
             )
         } returns pageOf(
             createStatement(
@@ -203,8 +203,8 @@ internal class ComparisonServiceUnitTest : MockkBaseTest {
                 `object` = createResource(
                     classes = setOf(Classes.sustainableDevelopmentGoal),
                     label = "No poverty",
-                    id = ThingId("SDG_1")
-                )
+                    id = ThingId("SDG_1"),
+                ),
             ),
             createStatement(
                 subject = expected,
@@ -212,8 +212,8 @@ internal class ComparisonServiceUnitTest : MockkBaseTest {
                 `object` = createResource(
                     id = researchFieldId,
                     classes = setOf(Classes.researchField),
-                    label = "Research Field 1"
-                )
+                    label = "Research Field 1",
+                ),
             ),
             createStatement(
                 subject = expected,
@@ -221,8 +221,8 @@ internal class ComparisonServiceUnitTest : MockkBaseTest {
                 `object` = createResource(
                     classes = setOf(Classes.contribution),
                     label = "Contribution",
-                    id = ThingId("Contribution123")
-                )
+                    id = ThingId("Contribution123"),
+                ),
             ),
             createStatement(
                 subject = expected,
@@ -230,8 +230,8 @@ internal class ComparisonServiceUnitTest : MockkBaseTest {
                 `object` = createResource(
                     classes = setOf(Classes.rosettaStoneStatement),
                     label = "Rosetta Stone Statement",
-                    id = ThingId("RosettaStoneStatement123")
-                )
+                    id = ThingId("RosettaStoneStatement123"),
+                ),
             ),
             createStatement(
                 subject = expected,
@@ -239,8 +239,8 @@ internal class ComparisonServiceUnitTest : MockkBaseTest {
                 `object` = createResource(
                     classes = setOf(Classes.visualization),
                     label = "Visualization",
-                    id = ThingId("Visualization123")
-                )
+                    id = ThingId("Visualization123"),
+                ),
             ),
             createStatement(
                 subject = expected,
@@ -248,8 +248,8 @@ internal class ComparisonServiceUnitTest : MockkBaseTest {
                 `object` = createResource(
                     classes = setOf(Classes.comparisonRelatedResource),
                     label = "ComparisonRelatedResource",
-                    id = ThingId("ComparisonRelatedResource123")
-                )
+                    id = ThingId("ComparisonRelatedResource123"),
+                ),
             ),
             createStatement(
                 subject = expected,
@@ -257,9 +257,9 @@ internal class ComparisonServiceUnitTest : MockkBaseTest {
                 `object` = createResource(
                     classes = setOf(Classes.comparisonRelatedFigure),
                     label = "ComparisonRelatedFigure",
-                    id = ThingId("ComparisonRelatedFigure123")
-                )
-            )
+                    id = ThingId("ComparisonRelatedFigure123"),
+                ),
+            ),
         )
 
         val actual = service.findById(expected.id)
@@ -270,11 +270,11 @@ internal class ComparisonServiceUnitTest : MockkBaseTest {
             comparison.title shouldBe expected.label
             comparison.researchFields shouldNotBe null
             comparison.researchFields shouldBe listOf(
-                ObjectIdAndLabel(researchFieldId, "Research Field 1")
+                ObjectIdAndLabel(researchFieldId, "Research Field 1"),
             )
             comparison.identifiers shouldNotBe null
             comparison.identifiers shouldBe mapOf(
-                "doi" to listOf(doi)
+                "doi" to listOf(doi),
             )
             comparison.publicationInfo shouldNotBe null
             comparison.publicationInfo.asClue { publicationInfo ->
@@ -289,11 +289,11 @@ internal class ComparisonServiceUnitTest : MockkBaseTest {
                     id = null,
                     name = "Author 1",
                     identifiers = emptyMap(),
-                    homepage = null
-                )
+                    homepage = null,
+                ),
             )
             comparison.sustainableDevelopmentGoals shouldBe setOf(
-                ObjectIdAndLabel(ThingId("SDG_1"), "No poverty")
+                ObjectIdAndLabel(ThingId("SDG_1"), "No poverty"),
             )
             comparison.sources shouldNotBe null
             comparison.sources shouldBe listOf(
@@ -302,15 +302,15 @@ internal class ComparisonServiceUnitTest : MockkBaseTest {
             )
             comparison.visualizations shouldNotBe null
             comparison.visualizations shouldBe listOf(
-                ObjectIdAndLabel(ThingId("Visualization123"), "Visualization")
+                ObjectIdAndLabel(ThingId("Visualization123"), "Visualization"),
             )
             comparison.relatedFigures shouldNotBe null
             comparison.relatedFigures shouldBe listOf(
-                ObjectIdAndLabel(ThingId("ComparisonRelatedFigure123"), "ComparisonRelatedFigure")
+                ObjectIdAndLabel(ThingId("ComparisonRelatedFigure123"), "ComparisonRelatedFigure"),
             )
             comparison.relatedResources shouldNotBe null
             comparison.relatedResources shouldBe listOf(
-                ObjectIdAndLabel(ThingId("ComparisonRelatedResource123"), "ComparisonRelatedResource")
+                ObjectIdAndLabel(ThingId("ComparisonRelatedResource123"), "ComparisonRelatedResource"),
             )
             comparison.references shouldNotBe null
             comparison.references shouldBe listOf(reference)
@@ -331,14 +331,14 @@ internal class ComparisonServiceUnitTest : MockkBaseTest {
             statementRepository.fetchAsBundle(
                 id = expected.id,
                 configuration = firstBundleConfiguration,
-                sort = Sort.unsorted()
+                sort = Sort.unsorted(),
             )
         }
         verify(exactly = 1) {
             statementRepository.fetchAsBundle(
                 id = expected.id,
                 configuration = secondBundleConfiguration,
-                sort = Sort.unsorted()
+                sort = Sort.unsorted(),
             )
         }
     }
@@ -348,28 +348,28 @@ internal class ComparisonServiceUnitTest : MockkBaseTest {
         val expected = createResource(
             classes = setOf(Classes.comparisonPublished),
             organizationId = OrganizationId(UUID.randomUUID()),
-            observatoryId = ObservatoryId(UUID.randomUUID())
+            observatoryId = ObservatoryId(UUID.randomUUID()),
         )
         val otherPublishedVersion = createResource(
             id = ThingId("R6481"),
             label = "published comparison",
             classes = setOf(Classes.comparisonPublished),
             createdAt = OffsetDateTime.now(fixedClock).minusDays(2),
-            createdBy = ContributorId(MockUserId.USER)
+            createdBy = ContributorId(MockUserId.USER),
         )
         val headVersion = createResource(
             id = ThingId("R5346"),
             label = "head version comparison",
             classes = setOf(Classes.comparison),
             createdAt = OffsetDateTime.now(fixedClock).minusDays(3),
-            createdBy = ContributorId(MockUserId.USER)
+            createdBy = ContributorId(MockUserId.USER),
         )
         val versions = VersionInfo(
             head = HeadVersion(headVersion),
             published = listOf(
                 PublishedVersion(expected, null),
-                PublishedVersion(otherPublishedVersion, null)
-            )
+                PublishedVersion(otherPublishedVersion, null),
+            ),
         )
         val researchFieldId = ThingId("R20")
         val doi = "10.1000/182"
@@ -386,9 +386,9 @@ internal class ComparisonServiceUnitTest : MockkBaseTest {
                 Classes.visualization,
                 Classes.comparisonRelatedFigure,
                 Classes.comparisonRelatedResource,
-                Classes.sustainableDevelopmentGoal
+                Classes.sustainableDevelopmentGoal,
             ),
-            whitelist = emptyList()
+            whitelist = emptyList(),
         )
         val secondBundleConfiguration = BundleConfiguration(
             minLevel = null,
@@ -400,8 +400,8 @@ internal class ComparisonServiceUnitTest : MockkBaseTest {
                 Classes.visualization,
                 Classes.comparisonRelatedFigure,
                 Classes.comparisonRelatedResource,
-                Classes.sustainableDevelopmentGoal
-            )
+                Classes.sustainableDevelopmentGoal,
+            ),
         )
 
         every { resourceRepository.findById(expected.id) } returns Optional.of(expected)
@@ -409,53 +409,53 @@ internal class ComparisonServiceUnitTest : MockkBaseTest {
             statementRepository.fetchAsBundle(
                 id = expected.id,
                 configuration = firstBundleConfiguration,
-                sort = Sort.unsorted()
+                sort = Sort.unsorted(),
             )
         } returns pageOf(
             createStatement(
                 subject = expected,
                 predicate = createPredicate(Predicates.hasDOI),
-                `object` = createLiteral(label = doi)
+                `object` = createLiteral(label = doi),
             ),
             createStatement(
                 subject = expected,
                 predicate = createPredicate(Predicates.yearPublished),
                 `object` = createLiteral(
                     label = publicationYear.toString(),
-                    datatype = Literals.XSD.DECIMAL.prefixedUri
-                )
+                    datatype = Literals.XSD.DECIMAL.prefixedUri,
+                ),
             ),
             createStatement(
                 subject = expected,
                 predicate = createPredicate(Predicates.monthPublished),
-                `object` = createLiteral(label = publicationMonth.toString(), datatype = Literals.XSD.INT.prefixedUri)
+                `object` = createLiteral(label = publicationMonth.toString(), datatype = Literals.XSD.INT.prefixedUri),
             ),
             createStatement(
                 subject = expected,
                 predicate = createPredicate(Predicates.hasAuthors),
-                `object` = authorList
+                `object` = authorList,
             ),
             createStatement(
                 subject = expected,
                 predicate = createPredicate(Predicates.reference),
-                `object` = createLiteral(label = reference)
+                `object` = createLiteral(label = reference),
             ),
             createStatement(
                 subject = expected,
                 predicate = createPredicate(Predicates.isAnonymized),
-                `object` = createLiteral(label = "true", datatype = Literals.XSD.BOOLEAN.prefixedUri)
+                `object` = createLiteral(label = "true", datatype = Literals.XSD.BOOLEAN.prefixedUri),
             ),
             createStatement(
                 subject = authorList,
                 predicate = createPredicate(Predicates.hasListElement),
-                `object` = createLiteral(label = "Author 1")
-            )
+                `object` = createLiteral(label = "Author 1"),
+            ),
         )
         every {
             statementRepository.fetchAsBundle(
                 id = expected.id,
                 configuration = secondBundleConfiguration,
-                sort = Sort.unsorted()
+                sort = Sort.unsorted(),
             )
         } returns pageOf(
             createStatement(
@@ -464,8 +464,8 @@ internal class ComparisonServiceUnitTest : MockkBaseTest {
                 `object` = createResource(
                     classes = setOf(Classes.sustainableDevelopmentGoal),
                     label = "No poverty",
-                    id = ThingId("SDG_1")
-                )
+                    id = ThingId("SDG_1"),
+                ),
             ),
             createStatement(
                 subject = expected,
@@ -473,8 +473,8 @@ internal class ComparisonServiceUnitTest : MockkBaseTest {
                 `object` = createResource(
                     id = researchFieldId,
                     classes = setOf(Classes.researchField),
-                    label = "Research Field 1"
-                )
+                    label = "Research Field 1",
+                ),
             ),
             createStatement(
                 subject = expected,
@@ -482,8 +482,8 @@ internal class ComparisonServiceUnitTest : MockkBaseTest {
                 `object` = createResource(
                     classes = setOf(Classes.contribution),
                     label = "Contribution",
-                    id = ThingId("Contribution123")
-                )
+                    id = ThingId("Contribution123"),
+                ),
             ),
             createStatement(
                 subject = expected,
@@ -491,8 +491,8 @@ internal class ComparisonServiceUnitTest : MockkBaseTest {
                 `object` = createResource(
                     classes = setOf(Classes.rosettaStoneStatement),
                     label = "Rosetta Stone Statement",
-                    id = ThingId("RosettaStoneStatement123")
-                )
+                    id = ThingId("RosettaStoneStatement123"),
+                ),
             ),
             createStatement(
                 subject = expected,
@@ -500,8 +500,8 @@ internal class ComparisonServiceUnitTest : MockkBaseTest {
                 `object` = createResource(
                     classes = setOf(Classes.visualization),
                     label = "Visualization",
-                    id = ThingId("Visualization123")
-                )
+                    id = ThingId("Visualization123"),
+                ),
             ),
             createStatement(
                 subject = expected,
@@ -509,8 +509,8 @@ internal class ComparisonServiceUnitTest : MockkBaseTest {
                 `object` = createResource(
                     classes = setOf(Classes.comparisonRelatedResource),
                     label = "ComparisonRelatedResource",
-                    id = ThingId("ComparisonRelatedResource123")
-                )
+                    id = ThingId("ComparisonRelatedResource123"),
+                ),
             ),
             createStatement(
                 subject = expected,
@@ -518,9 +518,9 @@ internal class ComparisonServiceUnitTest : MockkBaseTest {
                 `object` = createResource(
                     classes = setOf(Classes.comparisonRelatedFigure),
                     label = "ComparisonRelatedFigure",
-                    id = ThingId("ComparisonRelatedFigure123")
-                )
-            )
+                    id = ThingId("ComparisonRelatedFigure123"),
+                ),
+            ),
         )
         every {
             comparisonRepository.findVersionHistoryForPublishedComparison(expected.id)
@@ -534,11 +534,11 @@ internal class ComparisonServiceUnitTest : MockkBaseTest {
             comparison.title shouldBe expected.label
             comparison.researchFields shouldNotBe null
             comparison.researchFields shouldBe listOf(
-                ObjectIdAndLabel(researchFieldId, "Research Field 1")
+                ObjectIdAndLabel(researchFieldId, "Research Field 1"),
             )
             comparison.identifiers shouldNotBe null
             comparison.identifiers shouldBe mapOf(
-                "doi" to listOf(doi)
+                "doi" to listOf(doi),
             )
             comparison.publicationInfo shouldNotBe null
             comparison.publicationInfo.asClue { publicationInfo ->
@@ -553,11 +553,11 @@ internal class ComparisonServiceUnitTest : MockkBaseTest {
                     id = null,
                     name = "Author 1",
                     identifiers = emptyMap(),
-                    homepage = null
-                )
+                    homepage = null,
+                ),
             )
             comparison.sustainableDevelopmentGoals shouldBe setOf(
-                ObjectIdAndLabel(ThingId("SDG_1"), "No poverty")
+                ObjectIdAndLabel(ThingId("SDG_1"), "No poverty"),
             )
             comparison.sources shouldNotBe null
             comparison.sources shouldBe listOf(
@@ -566,15 +566,15 @@ internal class ComparisonServiceUnitTest : MockkBaseTest {
             )
             comparison.visualizations shouldNotBe null
             comparison.visualizations shouldBe listOf(
-                ObjectIdAndLabel(ThingId("Visualization123"), "Visualization")
+                ObjectIdAndLabel(ThingId("Visualization123"), "Visualization"),
             )
             comparison.relatedFigures shouldNotBe null
             comparison.relatedFigures shouldBe listOf(
-                ObjectIdAndLabel(ThingId("ComparisonRelatedFigure123"), "ComparisonRelatedFigure")
+                ObjectIdAndLabel(ThingId("ComparisonRelatedFigure123"), "ComparisonRelatedFigure"),
             )
             comparison.relatedResources shouldNotBe null
             comparison.relatedResources shouldBe listOf(
-                ObjectIdAndLabel(ThingId("ComparisonRelatedResource123"), "ComparisonRelatedResource")
+                ObjectIdAndLabel(ThingId("ComparisonRelatedResource123"), "ComparisonRelatedResource"),
             )
             comparison.references shouldNotBe null
             comparison.references shouldBe listOf(reference)
@@ -595,14 +595,14 @@ internal class ComparisonServiceUnitTest : MockkBaseTest {
             statementRepository.fetchAsBundle(
                 id = expected.id,
                 configuration = firstBundleConfiguration,
-                sort = Sort.unsorted()
+                sort = Sort.unsorted(),
             )
         }
         verify(exactly = 1) {
             statementRepository.fetchAsBundle(
                 id = expected.id,
                 configuration = secondBundleConfiguration,
-                sort = Sort.unsorted()
+                sort = Sort.unsorted(),
             )
         }
         verify(exactly = 1) {

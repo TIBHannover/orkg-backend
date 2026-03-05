@@ -22,9 +22,9 @@ import org.springframework.test.context.TestConstructor
         GraphSpringConfig::class,
         ContentTypesJpaConfiguration::class,
         ContentTypesJpaTestConfiguration::class,
-        JacksonAutoConfiguration::class
+        JacksonAutoConfiguration::class,
     ],
-    initializers = [PostgresContainerInitializer::class]
+    initializers = [PostgresContainerInitializer::class],
 )
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)

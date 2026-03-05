@@ -20,7 +20,7 @@ class ComparisonResearchFieldCreator(
             contributorId = command.contributorId,
             subjectId = state.comparisonId!!,
             predicateId = Predicates.hasSubject,
-            objects = command.researchFields
+            objects = command.researchFields,
         )
         return state
     }

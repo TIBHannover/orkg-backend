@@ -76,7 +76,7 @@ class VisualizationController(
             researchField = researchField,
             includeSubfields = includeSubfields,
             researchProblem = researchProblem,
-            pageable = pageable
+            pageable = pageable,
         ).mapToVisualizationRepresentation()
 
     @RequireLogin
@@ -117,7 +117,7 @@ class VisualizationController(
                 authors = authors.map { it.toAuthor() },
                 observatories = observatories,
                 organizations = organizations,
-                extractionMethod = extractionMethod
+                extractionMethod = extractionMethod,
             )
     }
 }

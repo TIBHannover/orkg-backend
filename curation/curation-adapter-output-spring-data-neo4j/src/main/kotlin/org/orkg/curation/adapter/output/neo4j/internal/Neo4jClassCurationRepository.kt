@@ -26,7 +26,7 @@ interface Neo4jClassCurationRepository : Neo4jRepository<Neo4jClass, ThingId> {
                 match (node:Class)
                 WHERE NOT EXISTS((node)-[:RELATED {predicate_id: "description"}]->(:Literal))
                 return COUNT(node)
-            """
+            """,
     )
     fun findAllClassesWithoutDescriptions(pageable: Pageable): Page<Neo4jClass>
 }

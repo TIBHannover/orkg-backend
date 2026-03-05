@@ -95,10 +95,10 @@ internal class StatementControllerUnitTest : MockMvcBaseTest("statements") {
                 description(
                     """
                     A `GET` request provides information about a statement.
-                    """
+                    """,
                 )
                 pathParameters(
-                    parameterWithName("id").description("The identifier of the statement to retrieve.")
+                    parameterWithName("id").description("The identifier of the statement to retrieve."),
                 )
                 responseFields<StatementRepresentation>(statementResponseFields())
                 throws(StatementNotFound::class)
@@ -132,7 +132,7 @@ internal class StatementControllerUnitTest : MockMvcBaseTest("statements") {
     fun findAll() {
         val statement = createStatement().copy(
             subject = createResource(classes = setOf(Classes.contribution, ThingId("C123"))),
-            `object` = createLiteral()
+            `object` = createLiteral(),
         )
         every { statementService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any()) } returns pageOf(statement)
         every { statementService.countAllIncomingStatementsById(any<Set<ThingId>>()) } returns emptyMap()
@@ -170,7 +170,7 @@ internal class StatementControllerUnitTest : MockMvcBaseTest("statements") {
                     """
                     A `GET` request returns a <<sorting-and-pagination,paged>> list of <<statements-fetch,statements>>.
                     If no paging request parameters are provided, the default values will be used.
-                    """
+                    """,
                 )
                 pagedQueryParameters(
                     parameterWithName("subject_classes").description("A comma-separated set of classes that the subject of the statement must have. The ids `Resource`, `Class` and `Predicate` can be used to filter for a general type of subject. (optional)").repeatable().optional(),
@@ -200,7 +200,7 @@ internal class StatementControllerUnitTest : MockMvcBaseTest("statements") {
                 createdAtEnd = createdAtEnd,
                 objectClasses = objectClasses,
                 objectId = objectId,
-                objectLabel = objectLabel
+                objectLabel = objectLabel,
             )
             statementService.countAllIncomingStatementsById(any<Set<ThingId>>())
             statementService.findAllDescriptionsById(any())
@@ -231,13 +231,13 @@ internal class StatementControllerUnitTest : MockMvcBaseTest("statements") {
             id = id,
             subjectId = statement.subject.id,
             predicateId = statement.predicate.id,
-            objectId = statement.`object`.id
+            objectId = statement.`object`.id,
         )
         val command = CreateCommand(
             contributorId = ContributorId(MockUserId.USER),
             subjectId = request.subjectId,
             predicateId = request.predicateId,
-            objectId = request.objectId
+            objectId = request.objectId,
         )
 
         every { statementService.create(command) } returns id
@@ -264,16 +264,16 @@ internal class StatementControllerUnitTest : MockMvcBaseTest("statements") {
                     5. If a statement id is provided and a statement with that id already exists, the return status will be `400 BAD REQUEST`.
                     6. If a statement with the specified subject, predicate and object already exists, the id of the existing statement will be returned and the status will be `201 CREATED`.
                     ====
-                    """
+                    """,
                 )
                 responseHeaders(
-                    headerWithName("Location").description("The uri path where the newly created statement can be fetched from.")
+                    headerWithName("Location").description("The uri path where the newly created statement can be fetched from."),
                 )
                 requestFields<CreateStatementRequest>(
                     fieldWithPath("id").description("The statement id. (optional)").optional(),
                     fieldWithPath("subject_id").description("The id of the subject of the statement."),
                     fieldWithPath("predicate_id").description("The id of the predicate of the statement."),
-                    fieldWithPath("object_id").description("The id of the object of the statement.")
+                    fieldWithPath("object_id").description("The id of the object of the statement."),
                 )
                 throws(
                     StatementSubjectNotFound::class,
@@ -296,13 +296,13 @@ internal class StatementControllerUnitTest : MockMvcBaseTest("statements") {
         val body = mapOf(
             "subject_id" to subject,
             "predicate_id" to predicate,
-            "object_id" to `object`
+            "object_id" to `object`,
         )
         val command = CreateCommand(
             contributorId = ContributorId(MockUserId.USER),
             subjectId = ThingId(subject),
             predicateId = ThingId(predicate),
-            objectId = ThingId(`object`)
+            objectId = ThingId(`object`),
         )
 
         every { statementService.create(command) } throws StatementSubjectNotFound(ThingId(subject))
@@ -325,13 +325,13 @@ internal class StatementControllerUnitTest : MockMvcBaseTest("statements") {
         val body = mapOf(
             "subject_id" to subject,
             "predicate_id" to predicate,
-            "object_id" to `object`
+            "object_id" to `object`,
         )
         val command = CreateCommand(
             contributorId = ContributorId(MockUserId.USER),
             subjectId = ThingId(subject),
             predicateId = ThingId(predicate),
-            objectId = ThingId(`object`)
+            objectId = ThingId(`object`),
         )
 
         every { statementService.create(command) } throws StatementPredicateNotFound(ThingId(predicate))
@@ -354,13 +354,13 @@ internal class StatementControllerUnitTest : MockMvcBaseTest("statements") {
         val body = mapOf(
             "subject_id" to subject,
             "predicate_id" to predicate,
-            "object_id" to `object`
+            "object_id" to `object`,
         )
         val command = CreateCommand(
             contributorId = ContributorId(MockUserId.USER),
             subjectId = ThingId(subject),
             predicateId = ThingId(predicate),
-            objectId = ThingId(`object`)
+            objectId = ThingId(`object`),
         )
 
         every { statementService.create(command) } throws StatementObjectNotFound(ThingId(`object`))
@@ -401,13 +401,13 @@ internal class StatementControllerUnitTest : MockMvcBaseTest("statements") {
                     A `PUT` request updates an existing statement with the given parameters.
                     The response will be `204 NO CONTENT` when successful.
                     The updated statement can be retrieved by following the URI in the `Location` header field.
-                    """
+                    """,
                 )
                 pathParameters(
-                    parameterWithName("id").description("The identifier of statement.")
+                    parameterWithName("id").description("The identifier of statement."),
                 )
                 responseHeaders(
-                    headerWithName("Location").description("The uri path where the updated statement can be fetched from.")
+                    headerWithName("Location").description("The uri path where the updated statement can be fetched from."),
                 )
                 requestFields<UpdateStatementRequest>(
                     fieldWithPath("subject_id").description("The updated id of the subject entity of the statement. (optional)").optional(),
@@ -431,7 +431,7 @@ internal class StatementControllerUnitTest : MockMvcBaseTest("statements") {
                     it.subjectId shouldBe subjectId
                     it.predicateId shouldBe predicateId
                     it.objectId shouldBe objectId
-                }
+                },
             )
         }
     }
@@ -444,7 +444,7 @@ internal class StatementControllerUnitTest : MockMvcBaseTest("statements") {
             minLevel = 1,
             maxLevel = 5,
             blacklist = listOf(Classes.researchField),
-            whitelist = listOf()
+            whitelist = listOf(),
         )
         val includeFirst = true
 
@@ -453,7 +453,7 @@ internal class StatementControllerUnitTest : MockMvcBaseTest("statements") {
                 thingId = id,
                 configuration = bundleConfiguration,
                 includeFirst = any(),
-                sort = any()
+                sort = any(),
             )
         } returns Bundle(id, mutableListOf(createStatement()))
         every { statementService.findAllDescriptionsById(any()) } returns emptyMap()
@@ -473,10 +473,10 @@ internal class StatementControllerUnitTest : MockMvcBaseTest("statements") {
                     """
                     A `Bundle` is a collection of statements that represent the subgraph starting from a specified entity in the graph.
                     A `GET` request fetches a subgraph of a certain entity and returns all the statements as a bundle.
-                    """
+                    """,
                 )
                 pathParameters(
-                    parameterWithName("id").description("The identifier of the root of the bundle.")
+                    parameterWithName("id").description("The identifier of the root of the bundle."),
                 )
                 queryParameters(
                     parameterWithName("min_level").description("The minimum hops a statement must be away from the root entity, in order to be included in the bundle. (optional)").optional(),
@@ -487,7 +487,7 @@ internal class StatementControllerUnitTest : MockMvcBaseTest("statements") {
                 )
                 responseFields<BundleRepresentation>(
                     fieldWithPath("root").description("The root ID of the object."),
-                    subsectionWithPath("statements[]").description("The list of statements.")
+                    subsectionWithPath("statements[]").description("The list of statements."),
                 )
                 throws(ThingNotFound::class)
             }
@@ -523,10 +523,10 @@ internal class StatementControllerUnitTest : MockMvcBaseTest("statements") {
                         1. If the statement is not modifiable, the return status will be `403 FORBIDDEN`.
                         2. If the statement is a <<lists,list>> element statement, the return status will be `403 FORBIDDEN`.
                         ====
-                        """
+                        """,
                     )
                     pathParameters(
-                        parameterWithName("id").description("The identifier of the statement to delete.")
+                        parameterWithName("id").description("The identifier of the statement to delete."),
                     )
                     throws(StatementNotModifiable::class, StatementInUse::class)
                 }

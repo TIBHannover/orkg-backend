@@ -22,7 +22,7 @@ CALL () {
     RETURN r
 }
 WITH r
-RETURN COUNT(r) > 0 AS count"""
+RETURN COUNT(r) > 0 AS count""",
     )
     fun isInUse(id: ThingId): Boolean
 }

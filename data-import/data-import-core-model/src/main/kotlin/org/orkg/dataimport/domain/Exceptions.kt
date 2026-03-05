@@ -37,7 +37,7 @@ class CSVNotFound(csvId: CSVID) :
         status = HttpStatus.NOT_FOUND,
         message = """CSV "$csvId" not found.""",
         type = createProblemURI("csv_not_found"),
-        properties = mapOf("csv_id" to csvId)
+        properties = mapOf("csv_id" to csvId),
     )
 
 class CSVValidationJobNotFound(
@@ -49,8 +49,8 @@ class CSVValidationJobNotFound(
         type = createProblemURI("csv_validation_job_not_found"),
         properties = mapOf(
             "csv_id" to csvId,
-            "job_id" to jobId
-        )
+            "job_id" to jobId,
+        ),
     )
 
 class CSVImportJobNotFound(
@@ -62,8 +62,8 @@ class CSVImportJobNotFound(
         type = createProblemURI("csv_import_job_not_found"),
         properties = mapOf(
             "csv_id" to csvId,
-            "job_id" to jobId
-        )
+            "job_id" to jobId,
+        ),
     )
 
 class CSVAlreadyValidated(csvId: CSVID) :
@@ -71,7 +71,7 @@ class CSVAlreadyValidated(csvId: CSVID) :
         status = HttpStatus.BAD_REQUEST,
         message = """CSV "$csvId" was already validated.""",
         type = createProblemURI("csv_already_validated"),
-        properties = mapOf("csv_id" to csvId)
+        properties = mapOf("csv_id" to csvId),
     )
 
 class CSVValidationAlreadyRunning(csvId: CSVID) :
@@ -79,7 +79,7 @@ class CSVValidationAlreadyRunning(csvId: CSVID) :
         status = HttpStatus.BAD_REQUEST,
         message = """Validation for CSV "$csvId" is already running.""",
         type = createProblemURI("csv_validation_already_running"),
-        properties = mapOf("csv_id" to csvId)
+        properties = mapOf("csv_id" to csvId),
     )
 
 class CSVValidationRestartFailed(
@@ -90,7 +90,7 @@ class CSVValidationRestartFailed(
         message = """Could not restart validation for CSV "$csvId".""",
         type = createProblemURI("csv_validation_restart_failed"),
         cause = cause,
-        properties = mapOf("csv_id" to csvId)
+        properties = mapOf("csv_id" to csvId),
     )
 
 class CSVNotValidated(csvId: CSVID) :
@@ -98,7 +98,7 @@ class CSVNotValidated(csvId: CSVID) :
         status = HttpStatus.BAD_REQUEST,
         message = """CSV "$csvId" must be validated before import.""",
         type = createProblemURI("csv_not_validated"),
-        properties = mapOf("csv_id" to csvId)
+        properties = mapOf("csv_id" to csvId),
     )
 
 class CSVAlreadyImported(csvId: CSVID) :
@@ -106,7 +106,7 @@ class CSVAlreadyImported(csvId: CSVID) :
         status = HttpStatus.BAD_REQUEST,
         message = """CSV "$csvId" was already imported.""",
         type = createProblemURI("csv_already_imported"),
-        properties = mapOf("csv_id" to csvId)
+        properties = mapOf("csv_id" to csvId),
     )
 
 class CSVImportAlreadyRunning(csvId: CSVID) :
@@ -114,7 +114,7 @@ class CSVImportAlreadyRunning(csvId: CSVID) :
         status = HttpStatus.BAD_REQUEST,
         message = """Import for CSV "$csvId" is already running.""",
         type = createProblemURI("csv_import_already_running"),
-        properties = mapOf("csv_id" to csvId)
+        properties = mapOf("csv_id" to csvId),
     )
 
 class CSVImportRestartFailed(
@@ -125,49 +125,49 @@ class CSVImportRestartFailed(
         message = """Could not restart import for CSV "$csvId".""",
         type = createProblemURI("csv_import_restart_failed"),
         cause = cause,
-        properties = mapOf("csv_id" to csvId)
+        properties = mapOf("csv_id" to csvId),
     )
 
 class JobNotFound(jobId: JobId) :
     SimpleMessageException(
         status = HttpStatus.NOT_FOUND,
         message = """Job "$jobId" not found.""",
-        properties = mapOf("job_id" to jobId)
+        properties = mapOf("job_id" to jobId),
     )
 
 class JobResultNotFound(jobId: JobId) :
     SimpleMessageException(
         status = HttpStatus.NOT_FOUND,
         message = """Result for job "$jobId" not found.""",
-        properties = mapOf("job_id" to jobId)
+        properties = mapOf("job_id" to jobId),
     )
 
 class JobNotComplete(jobId: JobId) :
     SimpleMessageException(
         status = HttpStatus.BAD_REQUEST,
         message = """Job "$jobId" is not complete.""",
-        properties = mapOf("job_id" to jobId)
+        properties = mapOf("job_id" to jobId),
     )
 
 class JobNotRunning(jobId: JobId) :
     SimpleMessageException(
         status = HttpStatus.BAD_REQUEST,
         message = """Job "$jobId" is not running.""",
-        properties = mapOf("job_id" to jobId)
+        properties = mapOf("job_id" to jobId),
     )
 
 class JobAlreadyRunning(jobId: JobId) :
     SimpleMessageException(
         status = HttpStatus.BAD_REQUEST,
         message = """Job "$jobId" is already running.""",
-        properties = mapOf("job_id" to jobId)
+        properties = mapOf("job_id" to jobId),
     )
 
 class JobAlreadyComplete(jobId: JobId) :
     SimpleMessageException(
         status = HttpStatus.BAD_REQUEST,
         message = """Job "$jobId" is already complete.""",
-        properties = mapOf("job_id" to jobId)
+        properties = mapOf("job_id" to jobId),
     )
 
 class JobRestartFailed(
@@ -177,7 +177,7 @@ class JobRestartFailed(
         status = HttpStatus.BAD_REQUEST,
         message = """Could not restart job "$jobId".""",
         cause = cause,
-        properties = mapOf("job_id" to jobId)
+        properties = mapOf("job_id" to jobId),
     )
 
 class DuplicateCSVHeaders(
@@ -187,8 +187,8 @@ class DuplicateCSVHeaders(
         type = createProblemURI("duplicate_csv_headers"),
         message = """Duplicate CSV headers ${duplicateHeaders.entries.joinToString { """"${it.key}" in columns ${it.value}""" }}.""",
         properties = mapOf(
-            "csv_headers" to duplicateHeaders.mapValues { ArrayList(it.value) }
-        )
+            "csv_headers" to duplicateHeaders.mapValues { ArrayList(it.value) },
+        ),
     )
 
 class BlankCSVHeaderValue(column: Long) :
@@ -196,14 +196,14 @@ class BlankCSVHeaderValue(column: Long) :
         status = HttpStatus.BAD_REQUEST,
         type = createProblemURI("blank_csv_header_value"),
         message = """The CSV header value in column $column must not be blank.""",
-        properties = mapOf("csv_column" to column)
+        properties = mapOf("csv_column" to column),
     )
 
 class EmptyCSVHeader :
     SimpleMessageException(
         status = HttpStatus.BAD_REQUEST,
         type = createProblemURI("empty_csv_header"),
-        message = """The CSV header must not be empty."""
+        message = """The CSV header must not be empty.""",
     )
 
 class UnknownCSVNamespace(
@@ -220,7 +220,7 @@ class UnknownCSVNamespace(
             "csv_value" to value,
             "csv_row" to 1,
             "csv_column" to column,
-        )
+        ),
     )
 
 class UnknownCSVNamespaceValue(
@@ -237,7 +237,7 @@ class UnknownCSVNamespaceValue(
             "csv_value" to value,
             "csv_row" to row,
             "csv_column" to column,
-        )
+        ),
     )
 
 class UnexpectedCSVValueType(
@@ -254,7 +254,7 @@ class UnexpectedCSVValueType(
             "expected_csv_cell_value_type" to expectedType,
             "csv_row" to row,
             "csv_column" to column,
-        )
+        ),
     )
 
 class UnknownCSVValueType(
@@ -269,7 +269,7 @@ class UnknownCSVValueType(
             "csv_cell_value_type" to type,
             "csv_row" to row,
             "csv_column" to column,
-        )
+        ),
     )
 
 class InconsistentCSVColumnCount(
@@ -284,7 +284,7 @@ class InconsistentCSVColumnCount(
             "actual_csv_column_count" to actualColumnCount,
             "expected_csv_column_count" to expectedColumnCount,
             "csv_row" to row,
-        )
+        ),
     )
 
 class InvalidCSVValue : SimpleMessageException {
@@ -298,7 +298,7 @@ class InvalidCSVValue : SimpleMessageException {
             "csv_column" to column,
             "reason" to cause.message,
         ),
-        cause = cause
+        cause = cause,
     )
 
     constructor(value: String, row: Long, column: Long, requiredType: ThingId) :
@@ -315,7 +315,7 @@ class PaperCSVMissingTitle(
         properties = mapOf(
             "item_number" to itemNumber,
             "line_number" to lineNumber,
-        )
+        ),
     )
 
 class PaperCSVMissingResearchField(
@@ -328,7 +328,7 @@ class PaperCSVMissingResearchField(
         properties = mapOf(
             "item_number" to itemNumber,
             "line_number" to lineNumber,
-        )
+        ),
     )
 
 class PaperCSVResourceNotFound(
@@ -345,7 +345,7 @@ class PaperCSVResourceNotFound(
             "item_number" to itemNumber,
             "line_number" to lineNumber,
             "csv_column" to column,
-        )
+        ),
     )
 
 class PaperCSVThingNotFound(
@@ -362,5 +362,5 @@ class PaperCSVThingNotFound(
             "item_number" to itemNumber,
             "line_number" to lineNumber,
             "csv_column" to column,
-        )
+        ),
     )

@@ -12,7 +12,7 @@ val thingIdConstraint = Constraint(
         "message" to "{jakarta.validation.constraints.Pattern.message}",
         "groups" to emptyArray<Class<*>>(),
         "payload" to emptyArray<Class<out Payload>>(),
-    )
+    ),
 )
 
 internal val nullableNotBlankPatternConstraint = Constraint(
@@ -23,5 +23,5 @@ internal val nullableNotBlankPatternConstraint = Constraint(
         "message" to "{jakarta.validation.constraints.Pattern.message}",
         "groups" to emptyArray<Class<*>>(),
         "payload" to emptyArray<Class<out Payload>>(),
-    )
+    ),
 )

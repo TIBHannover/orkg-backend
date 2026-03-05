@@ -94,7 +94,7 @@ class SpringDataNeo4jComparisonAdapter(
             includeSubfields = includeSubfields,
             published = published,
             sustainableDevelopmentGoal = sustainableDevelopmentGoal,
-            researchProblem = researchProblem
+            researchProblem = researchProblem,
         ).fetch(pageable, false)
 
     override fun count(
@@ -126,7 +126,7 @@ class SpringDataNeo4jComparisonAdapter(
             includeSubfields = includeSubfields,
             published = published,
             sustainableDevelopmentGoal = sustainableDevelopmentGoal,
-            researchProblem = researchProblem
+            researchProblem = researchProblem,
         ).count()
 
     private fun buildFindAllQuery(
@@ -168,7 +168,7 @@ class SpringDataNeo4jComparisonAdapter(
                         // we are not checking for predicate ids here, because the computational overhead is too high and results are expected to be almost identical
                         node.relationshipTo(node(Classes.contribution), RELATED)
                             .relationshipTo(node(Classes.problem).withProperties("id", anonParameter(it.value)), RELATED)
-                    }
+                    },
                 )
             }
             val node = name("node")
@@ -206,7 +206,7 @@ class SpringDataNeo4jComparisonAdapter(
                 createdAtStart.toCondition { node.property("created_at").gte(anonParameter(it.format(ISO_OFFSET_DATE_TIME))) },
                 createdAtEnd.toCondition { node.property("created_at").lte(anonParameter(it.format(ISO_OFFSET_DATE_TIME))) },
                 observatoryId.toCondition { node.property("observatory_id").eq(anonParameter(it.value.toString())) },
-                organizationId.toCondition { node.property("organization_id").eq(anonParameter(it.value.toString())) }
+                organizationId.toCondition { node.property("organization_id").eq(anonParameter(it.value.toString())) },
             )
         }
         .withQuery { commonQuery ->
@@ -219,8 +219,8 @@ class SpringDataNeo4jComparisonAdapter(
                     orderByOptimizations(
                         node = node,
                         sort = sort,
-                        properties = arrayOf("id", "label", "created_at", "created_by", "visibility")
-                    )
+                        properties = arrayOf("id", "label", "created_at", "created_by", "visibility"),
+                    ),
                 )
                 .with(variables)
                 .orderBy(
@@ -228,14 +228,14 @@ class SpringDataNeo4jComparisonAdapter(
                         listOf(
                             size(node.property("label")).ascending(),
                             score.descending(),
-                            node.property("created_at").ascending()
+                            node.property("created_at").ascending(),
                         )
                     } else {
                         sort.toSortItems(
                             node = node,
-                            knownProperties = arrayOf("id", "label", "created_at", "created_by", "visibility")
+                            knownProperties = arrayOf("id", "label", "created_at", "created_by", "visibility"),
                         )
-                    }
+                    },
                 )
                 .returningDistinct(node)
         }
@@ -247,7 +247,7 @@ class SpringDataNeo4jComparisonAdapter(
             VersionInfo(
                 head = HeadVersion(neo4jVersion.head.toResource()),
                 published = neo4jVersion.published.map { PublishedVersion(it.toResource(), null) }
-                    .sortedByDescending { it.createdAt }
+                    .sortedByDescending { it.createdAt },
             )
         }
 
@@ -262,8 +262,8 @@ class SpringDataNeo4jComparisonAdapter(
                         .build(),
                     match(node("ComparisonPublished").named(node).withProperties("id", parameter("id")))
                         .returning(node)
-                        .build()
-                )
+                        .build(),
+                ),
             )
                 .with(node)
                 .match(
@@ -272,7 +272,7 @@ class SpringDataNeo4jComparisonAdapter(
                         .relationshipFrom(paperNode(), RELATED)
                         .properties("predicate_id", literalOf<String>(Predicates.hasContribution.value))
                         .relationshipTo(node("Literal").named(doi), RELATED)
-                        .properties("predicate_id", literalOf<String>(Predicates.hasDOI.value))
+                        .properties("predicate_id", literalOf<String>(Predicates.hasDOI.value)),
                 )
                 .returningDistinct(trim(doi.property("label")))
         }

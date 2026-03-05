@@ -147,14 +147,14 @@ internal class RosettaStoneStatementControllerIntegrationTest : MockMvcBaseTest(
             classService.createClass(
                 label = xsd.`class`.value,
                 id = xsd.`class`,
-                uri = ParsedIRI.create(xsd.uri)
+                uri = ParsedIRI.create(xsd.uri),
             )
         }
 
         resourceService.createResource(
             id = ThingId("R12"),
             label = "Computer Science",
-            classes = setOf(Classes.researchField)
+            classes = setOf(Classes.researchField),
         )
 
         // Example specific entities
@@ -178,13 +178,13 @@ internal class RosettaStoneStatementControllerIntegrationTest : MockMvcBaseTest(
 
         organizationService.createOrganization(
             createdBy = contributorId,
-            id = OrganizationId("edc18168-c4ee-4cb8-a98a-136f748e912e")
+            id = OrganizationId("edc18168-c4ee-4cb8-a98a-136f748e912e"),
         )
 
         observatoryService.createObservatory(
             organizations = setOf(OrganizationId("edc18168-c4ee-4cb8-a98a-136f748e912e")),
             researchField = ThingId("R12"),
-            id = ObservatoryId("1afefdd0-5c09-4c9c-b718-2b35316b56f3")
+            id = ObservatoryId("1afefdd0-5c09-4c9c-b718-2b35316b56f3"),
         )
     }
 
@@ -552,7 +552,7 @@ internal class RosettaStoneStatementControllerIntegrationTest : MockMvcBaseTest(
                     minCount = 1,
                     maxCount = 4,
                     path = Predicates.hasSubjectPosition,
-                    `class` = ThingId("C28")
+                    `class` = ThingId("C28"),
                 ),
                 UntypedPropertyCommand(
                     label = "property label",
@@ -560,7 +560,7 @@ internal class RosettaStoneStatementControllerIntegrationTest : MockMvcBaseTest(
                     description = "property description",
                     minCount = 1,
                     maxCount = 3,
-                    path = Predicates.hasObjectPosition
+                    path = Predicates.hasObjectPosition,
                 ),
                 StringLiteralPropertyCommand(
                     label = "string literal property label",
@@ -570,7 +570,7 @@ internal class RosettaStoneStatementControllerIntegrationTest : MockMvcBaseTest(
                     maxCount = 2,
                     pattern = "\\d+",
                     path = Predicates.hasObjectPosition,
-                    datatype = Classes.string
+                    datatype = Classes.string,
                 ),
                 NumberLiteralPropertyCommand(
                     label = "number literal property label",
@@ -581,7 +581,7 @@ internal class RosettaStoneStatementControllerIntegrationTest : MockMvcBaseTest(
                     minInclusive = RealNumber(-1),
                     maxInclusive = RealNumber(10),
                     path = Predicates.hasObjectPosition,
-                    datatype = Classes.integer
+                    datatype = Classes.integer,
                 ),
                 OtherLiteralPropertyCommand(
                     label = "literal property label",
@@ -590,7 +590,7 @@ internal class RosettaStoneStatementControllerIntegrationTest : MockMvcBaseTest(
                     minCount = 1,
                     maxCount = 2,
                     path = Predicates.hasObjectPosition,
-                    datatype = ThingId("C25")
+                    datatype = ThingId("C25"),
                 ),
                 ResourcePropertyCommand(
                     label = "resource property label",
@@ -599,12 +599,12 @@ internal class RosettaStoneStatementControllerIntegrationTest : MockMvcBaseTest(
                     minCount = 3,
                     maxCount = 4,
                     path = Predicates.hasObjectPosition,
-                    `class` = ThingId("C28")
+                    `class` = ThingId("C28"),
                 ),
             ),
             organizations = listOf(OrganizationId("edc18168-c4ee-4cb8-a98a-136f748e912e")),
-            observatories = listOf(ObservatoryId("1afefdd0-5c09-4c9c-b718-2b35316b56f3"))
-        )
+            observatories = listOf(ObservatoryId("1afefdd0-5c09-4c9c-b718-2b35316b56f3")),
+        ),
     )
 
     private fun createRosettaStoneStatement(templateId: ThingId): ThingId =

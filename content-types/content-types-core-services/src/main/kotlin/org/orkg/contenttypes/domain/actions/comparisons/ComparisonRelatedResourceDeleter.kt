@@ -24,7 +24,7 @@ class ComparisonRelatedResourceDeleter(
     ) : this(
         statementService,
         resourceService,
-        ContentTypePartDeleter(statementService)
+        ContentTypePartDeleter(statementService),
     )
 
     fun execute(comparisonId: ThingId, comparisonRelatedResourceId: ThingId, contributorId: ContributorId) {
@@ -33,7 +33,7 @@ class ComparisonRelatedResourceDeleter(
             predicateId = Predicates.hasRelatedResource,
             objectId = comparisonRelatedResourceId,
             objectClasses = setOf(Classes.comparisonRelatedResource),
-            pageable = PageRequests.SINGLE
+            pageable = PageRequests.SINGLE,
         )
         if (hasRelatedResourceStatements.isEmpty) {
             throw ComparisonRelatedResourceNotFound(comparisonRelatedResourceId)
@@ -43,7 +43,7 @@ class ComparisonRelatedResourceDeleter(
             subjectClasses = setOf(Classes.comparison),
             predicateId = Predicates.hasPreviousVersion,
             objectId = comparisonId,
-            pageable = PageRequests.SINGLE
+            pageable = PageRequests.SINGLE,
         )
         if (!isPreviousVersionComparison.isEmpty || !comparisonRelatedResource.modifiable) {
             throw ComparisonRelatedResourceNotModifiable(comparisonId)
@@ -52,7 +52,7 @@ class ComparisonRelatedResourceDeleter(
         contentTypePartDeleter.delete(comparisonId, comparisonRelatedResourceId) { incomingStatements ->
             val statementToRemove = statementService.findAll(
                 subjectId = comparisonRelatedResourceId,
-                pageable = PageRequests.ALL
+                pageable = PageRequests.ALL,
             ).content + incomingStatements
 
             if (statementToRemove.isNotEmpty()) {

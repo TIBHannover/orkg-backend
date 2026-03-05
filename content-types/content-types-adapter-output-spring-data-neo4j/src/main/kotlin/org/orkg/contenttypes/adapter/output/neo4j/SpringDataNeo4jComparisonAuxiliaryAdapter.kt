@@ -108,7 +108,7 @@ class SpringDataNeo4jComparisonAuxiliaryAdapter(
             label = label,
             type = type,
             description = description,
-            children = (children + other.children).merge()
+            children = (children + other.children).merge(),
         )
     }
 
@@ -148,7 +148,7 @@ class SpringDataNeo4jComparisonAuxiliaryAdapter(
                 label = labelEntry.predicateLabel,
                 description = labelEntry.description,
                 type = it.type,
-                children = it.children.withLabels(it.id, predicateIdToEntry, templateIdToEntryMap)
+                children = it.children.withLabels(it.id, predicateIdToEntry, templateIdToEntryMap),
             )
         }
 
@@ -177,7 +177,7 @@ class SpringDataNeo4jComparisonAuxiliaryAdapter(
                     .returning(
                         root.`as`("root"),
                         paper.asExpression(),
-                        collect(Cypher.mapOf("object", nextObjectName, "predicate_id", nextPredicateName, "children", nextChildrenName)).`as`(children)
+                        collect(Cypher.mapOf("object", nextObjectName, "predicate_id", nextPredicateName, "children", nextChildrenName)).`as`(children),
                     )
             } else {
                 match.returning(root.`as`("root"), paper.asExpression(), listOf().`as`(children))
@@ -214,7 +214,7 @@ class SpringDataNeo4jComparisonAuxiliaryAdapter(
             val match = optionalMatch(
                 subjectNode.relationshipTo(objectNode, RELATED)
                     .withProperties("predicate_id", literalOf<String>(comparisonPath.id.value))
-                    .named(relName)
+                    .named(relName),
             )
             val filteredChildren = comparisonPath.children.filter { it.type == ComparisonPath.Type.PREDICATE }
             if (filteredChildren.isEmpty()) {
@@ -225,7 +225,7 @@ class SpringDataNeo4jComparisonAuxiliaryAdapter(
                     .returning(
                         objectNodeName.`as`(objectName),
                         relName.property("predicate_id").`as`(predicateId),
-                        collect(Cypher.mapOf("object", nextObjectName, "predicate_id", nextPredicateIdName, "children", nextChildrenName)).`as`(childrenName)
+                        collect(Cypher.mapOf("object", nextObjectName, "predicate_id", nextPredicateIdName, "children", nextChildrenName)).`as`(childrenName),
                     )
                     .build()
             }
@@ -238,7 +238,7 @@ class SpringDataNeo4jComparisonAuxiliaryAdapter(
         return Neo4jComparisonTableData(
             thing = this["object"].asNode().toThing(),
             predicateId = this["predicate_id"].toThingId()!!,
-            children = this["children"].asList { it.toNeo4jComparisonTableData() }.filterNotNull()
+            children = this["children"].asList { it.toNeo4jComparisonTableData() }.filterNotNull(),
         )
     }
 

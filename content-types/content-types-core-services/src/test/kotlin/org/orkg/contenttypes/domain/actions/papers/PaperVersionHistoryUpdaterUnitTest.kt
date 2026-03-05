@@ -38,7 +38,7 @@ internal class PaperVersionHistoryUpdaterUnitTest : MockkBaseTest {
         val state = PublishPaperState(
             paper = paper,
             statements = statements,
-            paperVersionId = paperVersionId
+            paperVersionId = paperVersionId,
         )
 
         every {
@@ -47,8 +47,8 @@ internal class PaperVersionHistoryUpdaterUnitTest : MockkBaseTest {
                     contributorId = command.contributorId,
                     subjectId = command.id,
                     predicateId = Predicates.hasPreviousVersion,
-                    objectId = state.paperVersionId!!
-                )
+                    objectId = state.paperVersionId!!,
+                ),
             )
         } returns StatementId("S1")
 
@@ -64,8 +64,8 @@ internal class PaperVersionHistoryUpdaterUnitTest : MockkBaseTest {
                     contributorId = command.contributorId,
                     subjectId = command.id,
                     predicateId = Predicates.hasPreviousVersion,
-                    objectId = state.paperVersionId!!
-                )
+                    objectId = state.paperVersionId!!,
+                ),
             )
         }
     }
@@ -84,7 +84,7 @@ internal class PaperVersionHistoryUpdaterUnitTest : MockkBaseTest {
         val resource = createResource(
             id = paper.id,
             label = paper.title,
-            classes = setOf(Classes.paper)
+            classes = setOf(Classes.paper),
         )
         val statementId = StatementId("S1")
         val previousVersionId = ThingId("R456")
@@ -93,14 +93,14 @@ internal class PaperVersionHistoryUpdaterUnitTest : MockkBaseTest {
                 id = statementId,
                 subject = resource,
                 predicate = createPredicate(Predicates.hasPreviousVersion),
-                `object` = createResource(previousVersionId)
-            )
+                `object` = createResource(previousVersionId),
+            ),
         ).groupBy { it.subject.id }
         val paperVersionId = ThingId("R321")
         val state = PublishPaperState(
             paper = paper,
             statements = statements,
-            paperVersionId = paperVersionId
+            paperVersionId = paperVersionId,
         )
 
         every { statementService.deleteAllById(setOf(statementId)) } just runs
@@ -110,8 +110,8 @@ internal class PaperVersionHistoryUpdaterUnitTest : MockkBaseTest {
                     contributorId = command.contributorId,
                     subjectId = state.paperVersionId!!,
                     predicateId = Predicates.hasPreviousVersion,
-                    objectId = previousVersionId
-                )
+                    objectId = previousVersionId,
+                ),
             )
         } returns StatementId("S1")
         every {
@@ -120,8 +120,8 @@ internal class PaperVersionHistoryUpdaterUnitTest : MockkBaseTest {
                     contributorId = command.contributorId,
                     subjectId = command.id,
                     predicateId = Predicates.hasPreviousVersion,
-                    objectId = state.paperVersionId!!
-                )
+                    objectId = state.paperVersionId!!,
+                ),
             )
         } returns StatementId("S2")
 
@@ -138,8 +138,8 @@ internal class PaperVersionHistoryUpdaterUnitTest : MockkBaseTest {
                     contributorId = command.contributorId,
                     subjectId = state.paperVersionId!!,
                     predicateId = Predicates.hasPreviousVersion,
-                    objectId = previousVersionId
-                )
+                    objectId = previousVersionId,
+                ),
             )
         }
         verify(exactly = 1) {
@@ -148,8 +148,8 @@ internal class PaperVersionHistoryUpdaterUnitTest : MockkBaseTest {
                     contributorId = command.contributorId,
                     subjectId = command.id,
                     predicateId = Predicates.hasPreviousVersion,
-                    objectId = state.paperVersionId!!
-                )
+                    objectId = state.paperVersionId!!,
+                ),
             )
         }
     }

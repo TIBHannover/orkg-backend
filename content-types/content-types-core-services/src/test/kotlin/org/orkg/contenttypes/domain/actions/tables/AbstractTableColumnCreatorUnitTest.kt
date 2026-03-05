@@ -28,7 +28,7 @@ internal class AbstractTableColumnCreatorUnitTest : MockkBaseTest {
     private val abstractTableColumnCreator = AbstractTableColumnCreator(
         unsafeResourceUseCases,
         unsafeStatementUseCases,
-        unsafeLiteralUseCases
+        unsafeLiteralUseCases,
     )
 
     @Test
@@ -48,25 +48,25 @@ internal class AbstractTableColumnCreatorUnitTest : MockkBaseTest {
         val createColumnNumberLiteralCommand = CreateLiteralUseCase.CreateCommand(
             contributorId = contributorId,
             label = "${index + 1}",
-            datatype = Literals.XSD.INT.prefixedUri
+            datatype = Literals.XSD.INT.prefixedUri,
         )
         val createColumnNumberStatementCommand = CreateStatementUseCase.CreateCommand(
             contributorId = contributorId,
             subjectId = columnId,
             predicateId = Predicates.csvwNumber,
-            objectId = columnNumberLiteralId
+            objectId = columnNumberLiteralId,
         )
         val createColumnTitleStatementCommand = CreateStatementUseCase.CreateCommand(
             contributorId = contributorId,
             subjectId = columnId,
             predicateId = Predicates.csvwTitles,
-            objectId = columnTitleLiteralId
+            objectId = columnTitleLiteralId,
         )
         val createColumnStatementCommand = CreateStatementUseCase.CreateCommand(
             contributorId = contributorId,
             subjectId = tableId,
             predicateId = Predicates.csvwColumns,
-            objectId = columnId
+            objectId = columnId,
         )
 
         every { unsafeResourceUseCases.create(createColumnResourceCommand) } returns columnId
@@ -79,7 +79,7 @@ internal class AbstractTableColumnCreatorUnitTest : MockkBaseTest {
             contributorId = contributorId,
             tableId = tableId,
             index = index,
-            titleLiteralId = columnTitleLiteralId
+            titleLiteralId = columnTitleLiteralId,
         )
 
         result shouldBe columnId

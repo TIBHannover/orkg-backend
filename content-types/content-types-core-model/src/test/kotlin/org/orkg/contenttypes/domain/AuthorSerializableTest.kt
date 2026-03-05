@@ -12,9 +12,9 @@ internal class AuthorSerializableTest {
             id = ThingId("147"),
             name = "Josiah Stinkney Carberry",
             identifiers = mapOf(
-                "orcid" to listOf("0000-0002-1825-0097")
+                "orcid" to listOf("0000-0002-1825-0097"),
             ),
-            homepage = ParsedIRI.create("https://example.org")
+            homepage = ParsedIRI.create("https://example.org"),
         )
         testSerialization(author)
     }

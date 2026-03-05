@@ -15,7 +15,7 @@ class ContentTypePartDeleter(
     ) {
         val incomingStatements = statementService.findAll(
             objectId = partId,
-            pageable = PageRequests.ALL
+            pageable = PageRequests.ALL,
         ).content
         if (incomingStatements.isOnlyReferencedByContentType(contentTypeId)) {
             delete(incomingStatements)

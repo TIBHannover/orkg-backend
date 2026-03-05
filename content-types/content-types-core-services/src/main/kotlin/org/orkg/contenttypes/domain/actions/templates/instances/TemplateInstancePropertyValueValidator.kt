@@ -32,7 +32,7 @@ class TemplateInstancePropertyValueValidator(
         ThingIdValidator(thingRepository),
         classRepository,
         statementRepository,
-        AbstractTemplatePropertyValueValidator(classHierarchyRepository)
+        AbstractTemplatePropertyValueValidator(classHierarchyRepository),
     )
 
     override fun invoke(command: UpdateTemplateInstanceCommand, state: State): State {
@@ -60,7 +60,7 @@ class TemplateInstancePropertyValueValidator(
                         literalCommands[objectId] = command.copy(
                             dataType = Literals.XSD.fromClass(property.datatype.id)?.prefixedUri
                                 ?: classRepository.findById(property.datatype.id).orElse(null)?.uri?.toString()
-                                ?: Literals.XSD.STRING.prefixedUri
+                                ?: Literals.XSD.STRING.prefixedUri,
                         )
                     }
                     toAdd += BakedStatement(templateInstance.root.id.value, property.path.id.value, objectId)
@@ -82,7 +82,7 @@ class TemplateInstancePropertyValueValidator(
             validationCache = validationCache,
             statementsToAdd = toAdd,
             statementsToRemove = toRemove,
-            literals = literalCommands
+            literals = literalCommands,
         )
     }
 

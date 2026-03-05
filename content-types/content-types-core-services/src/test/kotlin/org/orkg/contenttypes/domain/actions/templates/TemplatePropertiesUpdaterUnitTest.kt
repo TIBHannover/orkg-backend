@@ -23,7 +23,7 @@ internal class TemplatePropertiesUpdaterUnitTest : MockkBaseTest {
     fun `Given a template update command, when properties are not set, it does nothing`() {
         val template = createTemplate()
         val command = updateTemplateCommand().copy(
-            properties = null
+            properties = null,
         )
         val state = UpdateTemplateState(template)
 
@@ -36,7 +36,7 @@ internal class TemplatePropertiesUpdaterUnitTest : MockkBaseTest {
         val command = updateTemplateCommand()
         val state = UpdateTemplateState(
             template = template,
-            statements = listOf(createStatement(subject = createResource(template.id))).groupBy { it.subject.id }
+            statements = listOf(createStatement(subject = createResource(template.id))).groupBy { it.subject.id },
         )
 
         every {
@@ -45,7 +45,7 @@ internal class TemplatePropertiesUpdaterUnitTest : MockkBaseTest {
                 subjectId = command.templateId,
                 newProperties = command.properties!!,
                 oldProperties = state.template!!.properties,
-                statements = state.statements
+                statements = state.statements,
             )
         } just runs
 
@@ -57,7 +57,7 @@ internal class TemplatePropertiesUpdaterUnitTest : MockkBaseTest {
                 subjectId = command.templateId,
                 newProperties = command.properties!!,
                 oldProperties = state.template!!.properties,
-                statements = state.statements
+                statements = state.statements,
             )
         }
     }

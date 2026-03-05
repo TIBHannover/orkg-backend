@@ -174,7 +174,7 @@ class SpringDataNeo4jVisualizationAdapter(
                 createdAtStart.toCondition { node.property("created_at").gte(anonParameter(it.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))) },
                 createdAtEnd.toCondition { node.property("created_at").lte(anonParameter(it.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))) },
                 observatoryId.toCondition { node.property("observatory_id").eq(anonParameter(it.value.toString())) },
-                organizationId.toCondition { node.property("organization_id").eq(anonParameter(it.value.toString())) }
+                organizationId.toCondition { node.property("organization_id").eq(anonParameter(it.value.toString())) },
             )
         }
         .withQuery { commonQuery ->
@@ -187,8 +187,8 @@ class SpringDataNeo4jVisualizationAdapter(
                     orderByOptimizations(
                         node = node,
                         sort = sort,
-                        properties = arrayOf("id", "label", "created_at", "created_by", "visibility")
-                    )
+                        properties = arrayOf("id", "label", "created_at", "created_by", "visibility"),
+                    ),
                 )
                 .with(variables)
                 .orderBy(
@@ -196,14 +196,14 @@ class SpringDataNeo4jVisualizationAdapter(
                         listOf(
                             size(node.property("label")).ascending(),
                             score.descending(),
-                            node.property("created_at").ascending()
+                            node.property("created_at").ascending(),
                         )
                     } else {
                         sort.toSortItems(
                             node = node,
-                            knownProperties = arrayOf("id", "label", "created_at", "created_by", "visibility")
+                            knownProperties = arrayOf("id", "label", "created_at", "created_by", "visibility"),
                         )
-                    }
+                    },
                 )
                 .returning(node)
         }

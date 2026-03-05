@@ -41,7 +41,7 @@ class AbstractLiteratureListSectionUpdater(
         resourceService,
         unsafeResourceUseCases,
         AbstractLiteratureListSectionCreator(unsafeStatementUseCases, unsafeResourceUseCases, unsafeLiteralUseCases),
-        SingleStatementPropertyUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases)
+        SingleStatementPropertyUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases),
     )
 
     /**
@@ -70,7 +70,7 @@ class AbstractLiteratureListSectionUpdater(
                     EntryConnection(
                         hasEntry,
                         entryStatements.single { it.predicate.id == Predicates.hasLink },
-                        entryStatements.wherePredicate(Predicates.description).singleOrNull()
+                        entryStatements.wherePredicate(Predicates.description).singleOrNull(),
                     )
                 }
                 .listIterator()
@@ -99,8 +99,8 @@ class AbstractLiteratureListSectionUpdater(
                                         contributorId = contributorId,
                                         subjectId = connection.hasEntryStatement.`object`.id,
                                         predicateId = Predicates.hasLink,
-                                        objectId = newEntry.id
-                                    )
+                                        objectId = newEntry.id,
+                                    ),
                                 )
                             }
                             singleStatementPropertyUpdater.updateOptionalProperty(
@@ -108,7 +108,7 @@ class AbstractLiteratureListSectionUpdater(
                                 contributorId = contributorId,
                                 subjectId = connection.hasEntryStatement.`object`.id,
                                 predicateId = Predicates.description,
-                                label = newEntry.description
+                                label = newEntry.description,
                             )
                             break
                         }
@@ -131,8 +131,8 @@ class AbstractLiteratureListSectionUpdater(
                         contributorId = contributorId,
                         subjectId = oldSection.id,
                         predicateId = Predicates.hasEntry,
-                        objectId = entryId
-                    )
+                        objectId = entryId,
+                    ),
                 )
             }
         }
@@ -149,8 +149,8 @@ class AbstractLiteratureListSectionUpdater(
                 UpdateResourceUseCase.UpdateCommand(
                     id = oldSection.id,
                     contributorId = contributorId,
-                    label = newSection.heading
-                )
+                    label = newSection.heading,
+                ),
             )
         }
         if (newSection.headingSize != oldSection.headingSize) {
@@ -160,7 +160,7 @@ class AbstractLiteratureListSectionUpdater(
                 subjectId = oldSection.id,
                 predicateId = Predicates.hasHeadingLevel,
                 label = newSection.headingSize.toString(),
-                datatype = Literals.XSD.INT.prefixedUri
+                datatype = Literals.XSD.INT.prefixedUri,
             )
         }
         if (newSection.text != oldSection.text) {
@@ -169,7 +169,7 @@ class AbstractLiteratureListSectionUpdater(
                 contributorId = contributorId,
                 subjectId = oldSection.id,
                 predicateId = Predicates.hasContent,
-                label = newSection.text
+                label = newSection.text,
             )
         }
     }
@@ -182,7 +182,7 @@ class AbstractLiteratureListSectionUpdater(
         fun toEntry(): AbstractLiteratureListListSectionCommand.Entry =
             AbstractLiteratureListListSectionCommand.Entry(
                 hasLinkStatement.`object`.id,
-                hasDescriptionStatement?.`object`?.label
+                hasDescriptionStatement?.`object`?.label,
             )
 
         fun statementIds(): Set<StatementId> =

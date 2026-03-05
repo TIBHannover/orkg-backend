@@ -17,7 +17,7 @@ fun untypedTemplatePropertyRequest() =
         description = "property description",
         minCount = 1,
         maxCount = 2,
-        path = Predicates.field
+        path = Predicates.field,
     )
 
 fun stringLiteralTemplatePropertyRequest() =

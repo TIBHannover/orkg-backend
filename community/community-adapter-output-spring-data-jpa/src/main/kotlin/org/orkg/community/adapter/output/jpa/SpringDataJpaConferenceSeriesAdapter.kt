@@ -23,8 +23,8 @@ class SpringDataJpaConferenceSeriesAdapter(
         postgresConferenceSeriesRepository.save(
             postgresConferenceSeriesRepository.toConferenceSeriesEntity(
                 conferenceSeries,
-                postgresOrganizationRepository
-            )
+                postgresOrganizationRepository,
+            ),
         )
     }
 

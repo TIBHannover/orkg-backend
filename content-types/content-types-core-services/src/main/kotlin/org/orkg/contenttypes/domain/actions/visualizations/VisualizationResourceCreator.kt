@@ -17,8 +17,8 @@ class VisualizationResourceCreator(
                 classes = setOf(Classes.visualization),
                 extractionMethod = command.extractionMethod,
                 observatoryId = command.observatories.firstOrNull(),
-                organizationId = command.organizations.firstOrNull()
-            )
+                organizationId = command.organizations.firstOrNull(),
+            ),
         )
         return state.copy(visualizationId = visualizationId)
     }

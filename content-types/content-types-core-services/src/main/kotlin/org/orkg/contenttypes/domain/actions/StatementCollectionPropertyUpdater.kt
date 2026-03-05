@@ -42,8 +42,8 @@ data class StatementCollectionPropertyUpdater(
                     contributorId = contributorId,
                     subjectId = subjectId,
                     predicateId = predicateId,
-                    objectId = objectId
-                )
+                    objectId = objectId,
+                ),
             )
         }
     }
@@ -61,7 +61,7 @@ data class StatementCollectionPropertyUpdater(
         predicates = setOf(predicateId),
         objects = objects,
         predicateSelector = { predicateId },
-        objectIdSelector = { it }
+        objectIdSelector = { it },
     )
 
     internal fun <T> update(
@@ -98,8 +98,8 @@ data class StatementCollectionPropertyUpdater(
                         contributorId = contributorId,
                         subjectId = subjectId,
                         predicateId = predicateId,
-                        objectId = objectId
-                    )
+                        objectId = objectId,
+                    ),
                 )
             }
         }
@@ -138,16 +138,16 @@ data class StatementCollectionPropertyUpdater(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = contributorId,
                     label = literal,
-                    datatype = datatype
-                )
+                    datatype = datatype,
+                ),
             )
             unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = contributorId,
                     subjectId = subjectId,
                     predicateId = predicateId,
-                    objectId = literalId
-                )
+                    objectId = literalId,
+                ),
             )
         }
     }
@@ -182,16 +182,16 @@ data class StatementCollectionPropertyUpdater(
                     CreateLiteralUseCase.CreateCommand(
                         contributorId = contributorId,
                         label = literal,
-                        datatype = datatype
-                    )
+                        datatype = datatype,
+                    ),
                 )
                 unsafeStatementUseCases.create(
                     CreateStatementUseCase.CreateCommand(
                         contributorId = contributorId,
                         subjectId = subjectId,
                         predicateId = predicateId,
-                        objectId = literalId
-                    )
+                        objectId = literalId,
+                    ),
                 )
             }
         }

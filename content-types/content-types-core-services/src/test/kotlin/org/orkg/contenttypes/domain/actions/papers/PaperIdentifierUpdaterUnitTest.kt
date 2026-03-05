@@ -28,8 +28,8 @@ internal class PaperIdentifierUpdaterUnitTest : MockkBaseTest {
         val state = UpdatePaperState(
             paper = paper,
             statements = mapOf(
-                paper.id to listOf(createStatement())
-            )
+                paper.id to listOf(createStatement()),
+            ),
         )
 
         every {
@@ -38,7 +38,7 @@ internal class PaperIdentifierUpdaterUnitTest : MockkBaseTest {
                 contributorId = command.contributorId,
                 newIdentifiers = command.identifiers!!,
                 identifierDefinitions = Identifiers.paper,
-                subjectId = state.paper!!.id
+                subjectId = state.paper!!.id,
             )
         } just runs
 
@@ -56,7 +56,7 @@ internal class PaperIdentifierUpdaterUnitTest : MockkBaseTest {
                 contributorId = command.contributorId,
                 newIdentifiers = command.identifiers!!,
                 identifierDefinitions = Identifiers.paper,
-                subjectId = state.paper!!.id
+                subjectId = state.paper!!.id,
             )
         }
     }

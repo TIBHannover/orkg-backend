@@ -75,7 +75,7 @@ internal class LiteralControllerUnitTest : MockMvcBaseTest("literals") {
         val id = ThingId("L1234")
         val literal = createLiteral(
             id = id,
-            createdAt = OffsetDateTime.of(2023, 6, 1, 15, 19, 4, 778631092, ZoneOffset.ofHours(2))
+            createdAt = OffsetDateTime.of(2023, 6, 1, 15, 19, 4, 778631092, ZoneOffset.ofHours(2)),
         )
         every { literalService.findById(any()) } returns Optional.of(literal)
 
@@ -96,10 +96,10 @@ internal class LiteralControllerUnitTest : MockMvcBaseTest("literals") {
                 description(
                     """
                     A `GET` request provides information about a literal.
-                    """
+                    """,
                 )
                 pathParameters(
-                    parameterWithName("id").description("The identifier of the literal.")
+                    parameterWithName("id").description("The identifier of the literal."),
                 )
                 responseFields<LiteralRepresentation>(
                     // The order here determines the order in the generated table. More relevant items should be up.
@@ -110,7 +110,7 @@ internal class LiteralControllerUnitTest : MockMvcBaseTest("literals") {
                     // TODO: Add links to documentation of special user UUIDs.
                     fieldWithPath("created_by").description("The UUID of the user or service who created this literal."),
                     fieldWithPath("modifiable").description("Whether this literal can be modified."),
-                    fieldWithPath("_class").description("An indicator which type of entity was returned. Always has the value \"`literal`\".")
+                    fieldWithPath("_class").description("An indicator which type of entity was returned. Always has the value \"`literal`\"."),
                 )
                 throws(LiteralNotFound::class)
             }
@@ -162,7 +162,7 @@ internal class LiteralControllerUnitTest : MockMvcBaseTest("literals") {
                     """
                     A `GET` request returns a <<sorting-and-pagination,paged>> list of <<literals-fetch,literals>>.
                     If no paging request parameters are provided, the default values will be used.
-                    """
+                    """,
                 )
                 pagedQueryParameters(
                     parameterWithName("q").description("A search term that must be contained in the label. (optional)").optional(),
@@ -210,7 +210,7 @@ internal class LiteralControllerUnitTest : MockMvcBaseTest("literals") {
         val literal = createLiteral(id)
         val request = CreateLiteralRequest(
             label = literal.label,
-            datatype = literal.datatype
+            datatype = literal.datatype,
         )
         val command = CreateCommand(
             contributorId = ContributorId(MockUserId.USER),
@@ -231,14 +231,14 @@ internal class LiteralControllerUnitTest : MockMvcBaseTest("literals") {
                     A `POST` request creates a new literal with a given label (its value).
                     The response will be `201 Created` when successful.
                     The literal can be retrieved by following the URI in the `Location` header field.
-                    """
+                    """,
                 )
                 responseHeaders(
-                    headerWithName("Location").description("The uri path where the newly created literal can be fetched from.")
+                    headerWithName("Location").description("The uri path where the newly created literal can be fetched from."),
                 )
                 requestFields<CreateLiteralRequest>(
                     fieldWithPath("label").description("The value of the literal."),
-                    fieldWithPath("datatype").description("The datatype of the literal value. (default: xsd:string)")
+                    fieldWithPath("datatype").description("The datatype of the literal value. (default: xsd:string)"),
                 )
                 throws(InvalidLiteralLabel::class, InvalidLiteralLabel::class, InvalidLiteralDatatype::class, LiteralAlreadyExists::class)
             }
@@ -255,12 +255,12 @@ internal class LiteralControllerUnitTest : MockMvcBaseTest("literals") {
             label = literal.label,
             datatype = literal.datatype,
             createdAt = OffsetDateTime.now(clock),
-            createdBy = ContributorId(MockUserId.USER)
+            createdBy = ContributorId(MockUserId.USER),
         )
         val command = CreateCommand(
             contributorId = ContributorId(MockUserId.USER),
             label = "",
-            datatype = "xsd:string"
+            datatype = "xsd:string",
         )
         every { literalService.create(command) } returns mockResult.id
 
@@ -277,7 +277,7 @@ internal class LiteralControllerUnitTest : MockMvcBaseTest("literals") {
     fun whenPOST_AndDatatypeIsBlank_ThenFailValidation() {
         val literal = CreateLiteralRequest(
             label = "irrelevant",
-            datatype = " ".repeat(5)
+            datatype = " ".repeat(5),
         )
 
         post("/api/literals")
@@ -291,7 +291,7 @@ internal class LiteralControllerUnitTest : MockMvcBaseTest("literals") {
     @TestWithMockUser
     fun whenPOST_AndLabelIsTooLong_ThenFailValidation() {
         val literal = CreateLiteralRequest(
-            label = "a".repeat(MAX_LABEL_LENGTH + 1)
+            label = "a".repeat(MAX_LABEL_LENGTH + 1),
         )
         every { literalService.create(any()) } throws InvalidLiteralLabel()
 
@@ -313,7 +313,7 @@ internal class LiteralControllerUnitTest : MockMvcBaseTest("literals") {
             id = literal.id,
             contributorId = ContributorId(MockUserId.USER),
             label = literal.label,
-            datatype = Literals.XSD.STRING.prefixedUri
+            datatype = Literals.XSD.STRING.prefixedUri,
         )
         val request = mapOf(
             "label" to literal.label,
@@ -333,13 +333,13 @@ internal class LiteralControllerUnitTest : MockMvcBaseTest("literals") {
                     """
                     A `PUT` request updates a literal with the given parameters.
                     The response will be `204 NO CONTENT` when successful.
-                    """
+                    """,
                 )
                 pathParameters(
-                    parameterWithName("id").description("The identifier of the literal.")
+                    parameterWithName("id").description("The identifier of the literal."),
                 )
                 responseHeaders(
-                    headerWithName("Location").description("The uri path where the updated literal can be fetched from.")
+                    headerWithName("Location").description("The uri path where the updated literal can be fetched from."),
                 )
                 requestFields<UpdateLiteralRequest>(
                     fieldWithPath("label").description("The updated value of the literal. (optional)").optional(),
@@ -357,6 +357,6 @@ internal class LiteralControllerUnitTest : MockMvcBaseTest("literals") {
         id = ThingId("L1"),
         label = "irrelevant",
         datatype = "irrelevant",
-        createdAt = OffsetDateTime.now(clock)
+        createdAt = OffsetDateTime.now(clock),
     )
 }

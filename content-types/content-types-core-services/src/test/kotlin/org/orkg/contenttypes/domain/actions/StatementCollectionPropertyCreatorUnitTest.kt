@@ -27,7 +27,7 @@ internal class StatementCollectionPropertyCreatorUnitTest : MockkBaseTest {
             contributorId = ContributorId(UUID.randomUUID()),
             subjectId = ThingId("R123"),
             predicateId = Predicates.description,
-            labels = emptyList()
+            labels = emptyList(),
         )
     }
 
@@ -42,8 +42,8 @@ internal class StatementCollectionPropertyCreatorUnitTest : MockkBaseTest {
             unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = contributorId,
-                    label = description
-                )
+                    label = description,
+                ),
             )
         } returns literal
         every {
@@ -52,8 +52,8 @@ internal class StatementCollectionPropertyCreatorUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     subjectId = subjectId,
                     predicateId = Predicates.description,
-                    objectId = literal
-                )
+                    objectId = literal,
+                ),
             )
         } returns StatementId("S1")
 
@@ -63,8 +63,8 @@ internal class StatementCollectionPropertyCreatorUnitTest : MockkBaseTest {
             unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = contributorId,
-                    label = description
-                )
+                    label = description,
+                ),
             )
         }
         verify(exactly = 1) {
@@ -73,8 +73,8 @@ internal class StatementCollectionPropertyCreatorUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     subjectId = subjectId,
                     predicateId = Predicates.description,
-                    objectId = literal
-                )
+                    objectId = literal,
+                ),
             )
         }
     }
@@ -95,8 +95,8 @@ internal class StatementCollectionPropertyCreatorUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     subjectId = subjectId,
                     predicateId = Predicates.hasLink,
-                    objectId = ids.first()
-                )
+                    objectId = ids.first(),
+                ),
             )
         }
         verify(exactly = 1) {
@@ -105,8 +105,8 @@ internal class StatementCollectionPropertyCreatorUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     subjectId = subjectId,
                     predicateId = Predicates.hasLink,
-                    objectId = ids.last()
-                )
+                    objectId = ids.last(),
+                ),
             )
         }
     }

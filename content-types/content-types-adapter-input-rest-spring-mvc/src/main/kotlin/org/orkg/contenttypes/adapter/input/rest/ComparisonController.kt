@@ -89,7 +89,7 @@ class ComparisonController(
             includeSubfields = includeSubfields,
             published = published,
             sustainableDevelopmentGoal = sustainableDevelopmentGoal,
-            researchProblem = researchProblem
+            researchProblem = researchProblem,
         ).mapToComparisonRepresentation()
 
     @RequireLogin
@@ -179,7 +179,7 @@ class ComparisonController(
                 observatories = observatories,
                 organizations = organizations,
                 isAnonymized = isAnonymized,
-                extractionMethod = extractionMethod
+                extractionMethod = extractionMethod,
             )
     }
 
@@ -224,7 +224,7 @@ class ComparisonController(
                 organizations = organizations,
                 isAnonymized = isAnonymized,
                 extractionMethod = extractionMethod,
-                visibility = visibility
+                visibility = visibility,
             )
     }
 
@@ -246,7 +246,7 @@ class ComparisonController(
                 subject = subject,
                 description = description,
                 authors = authors.map { it.toAuthor() },
-                assignDOI = assignDOI
+                assignDOI = assignDOI,
             )
     }
 }

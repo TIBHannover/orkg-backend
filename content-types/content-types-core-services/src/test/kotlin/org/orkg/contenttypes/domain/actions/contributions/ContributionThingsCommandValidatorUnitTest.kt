@@ -26,7 +26,7 @@ internal class ContributionThingsCommandValidatorUnitTest : MockkBaseTest {
         val command = createContributionCommand()
         val state = ContributionState()
         val validationCache = mapOf<String, Either<CreateThingCommandPart, Thing>>(
-            "R2000" to Either.right(createClass(ThingId("R2000")))
+            "R2000" to Either.right(createClass(ThingId("R2000"))),
         )
 
         every { thingsCommandValidator.validate(command, state.validationCache) } returns validationCache

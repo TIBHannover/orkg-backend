@@ -34,7 +34,7 @@ internal class UnsafeClassServiceUnitTest : MockkBaseTest {
         val command = CreateClassUseCase.CreateCommand(
             id = null,
             contributorId = ContributorId(MockUserId.USER),
-            label = "irrelevant"
+            label = "irrelevant",
         )
 
         every { repository.nextIdentity() } returns mockClassId
@@ -52,7 +52,7 @@ internal class UnsafeClassServiceUnitTest : MockkBaseTest {
         val command = CreateClassUseCase.CreateCommand(
             id = mockClassId,
             contributorId = ContributorId(MockUserId.USER),
-            label = "irrelevant"
+            label = "irrelevant",
         )
 
         every { repository.save(any()) } just runs
@@ -68,7 +68,7 @@ internal class UnsafeClassServiceUnitTest : MockkBaseTest {
         val command = CreateClassUseCase.CreateCommand(
             id = mockClassId,
             contributorId = ContributorId(MockUserId.USER),
-            label = "irrelevant"
+            label = "irrelevant",
         )
 
         every { repository.save(any()) } just runs
@@ -84,7 +84,7 @@ internal class UnsafeClassServiceUnitTest : MockkBaseTest {
         val command = CreateClassUseCase.CreateCommand(
             id = reservedClassIds.first(),
             contributorId = contributorId,
-            label = "irrelevant"
+            label = "irrelevant",
         )
 
         every { repository.save(any()) } just runs
@@ -98,7 +98,7 @@ internal class UnsafeClassServiceUnitTest : MockkBaseTest {
     fun `Given a class is created, when the label is invalid, then it creates the class`() {
         val command = CreateClassUseCase.CreateCommand(
             contributorId = ContributorId(MockUserId.USER),
-            label = " \t "
+            label = " \t ",
         )
         val id = ThingId("C123")
 
@@ -113,7 +113,7 @@ internal class UnsafeClassServiceUnitTest : MockkBaseTest {
                 withArg {
                     it.id shouldBe id
                     it.label shouldBe command.label
-                }
+                },
             )
         }
     }
@@ -123,7 +123,7 @@ internal class UnsafeClassServiceUnitTest : MockkBaseTest {
         val command = CreateClassUseCase.CreateCommand(
             contributorId = ContributorId(MockUserId.USER),
             label = "irrelevant",
-            uri = ParsedIRI.create("invalid")
+            uri = ParsedIRI.create("invalid"),
         )
         val id = ThingId("C123")
 
@@ -138,7 +138,7 @@ internal class UnsafeClassServiceUnitTest : MockkBaseTest {
                 withArg {
                     it.id shouldBe id
                     it.uri shouldBe command.uri
-                }
+                },
             )
         }
     }
@@ -149,7 +149,7 @@ internal class UnsafeClassServiceUnitTest : MockkBaseTest {
         val command = CreateClassUseCase.CreateCommand(
             contributorId = ContributorId(MockUserId.USER),
             label = "irrelevant",
-            uri = mockClass.uri
+            uri = mockClass.uri,
         )
         val id = ThingId("C123")
 
@@ -164,7 +164,7 @@ internal class UnsafeClassServiceUnitTest : MockkBaseTest {
                 withArg {
                     it.id shouldBe id
                     it.uri shouldBe command.uri
-                }
+                },
             )
         }
     }
@@ -186,7 +186,7 @@ internal class UnsafeClassServiceUnitTest : MockkBaseTest {
                     uri = null,
                     createdAt = OffsetDateTime.now(fixedClock),
                     createdBy = randomContributorId,
-                )
+                ),
             )
         }
         verify(exactly = 1) { repository.nextIdentity() }
@@ -199,7 +199,7 @@ internal class UnsafeClassServiceUnitTest : MockkBaseTest {
         val command = UpdateClassUseCase.UpdateCommand(
             id = id,
             contributorId = contributorId,
-            label = "new label"
+            label = "new label",
         )
 
         every { repository.findById(any()) } returns Optional.empty()
@@ -227,7 +227,7 @@ internal class UnsafeClassServiceUnitTest : MockkBaseTest {
                 label = label,
                 uri = uri,
                 modifiable = modifiable,
-            )
+            ),
         )
 
         verify(exactly = 1) { repository.findById(`class`.id) }
@@ -240,7 +240,7 @@ internal class UnsafeClassServiceUnitTest : MockkBaseTest {
                     it.createdAt shouldBe `class`.createdAt
                     it.createdBy shouldBe `class`.createdBy
                     it.modifiable shouldBe modifiable
-                }
+                },
             )
         }
     }
@@ -253,7 +253,7 @@ internal class UnsafeClassServiceUnitTest : MockkBaseTest {
         val command = UpdateClassUseCase.UpdateCommand(
             id = originalClass.id,
             contributorId = contributorId,
-            label = "new label"
+            label = "new label",
         )
 
         every { repository.findById(originalClass.id) } returns Optional.of(originalClass)
@@ -271,7 +271,7 @@ internal class UnsafeClassServiceUnitTest : MockkBaseTest {
         val command = UpdateClassUseCase.UpdateCommand(
             id = originalClass.id,
             contributorId = ContributorId(MockUserId.USER),
-            label = "some\ninvalid\nlabel"
+            label = "some\ninvalid\nlabel",
         )
 
         every { repository.findById(originalClass.id) } returns originalClass.toOptional()
@@ -291,7 +291,7 @@ internal class UnsafeClassServiceUnitTest : MockkBaseTest {
         val command = UpdateClassUseCase.UpdateCommand(
             id = id,
             contributorId = contributorId,
-            label = "some label"
+            label = "some label",
         )
 
         every { repository.findById(id) } returns Optional.of(originalClass)
@@ -308,7 +308,7 @@ internal class UnsafeClassServiceUnitTest : MockkBaseTest {
         val command = UpdateClassUseCase.UpdateCommand(
             id = originalClass.id,
             contributorId = contributorId,
-            label = "changed label"
+            label = "changed label",
         )
 
         every { repository.findById(originalClass.id) } returns originalClass.toOptional()
@@ -326,7 +326,7 @@ internal class UnsafeClassServiceUnitTest : MockkBaseTest {
                     it.createdAt shouldBe originalClass.createdAt
                     it.createdBy shouldBe originalClass.createdBy
                     it.modifiable shouldBe false
-                }
+                },
             )
         }
     }
@@ -338,7 +338,7 @@ internal class UnsafeClassServiceUnitTest : MockkBaseTest {
         val command = UpdateClassUseCase.UpdateCommand(
             id = id,
             contributorId = contributorId,
-            uri = ParsedIRI.create("https://example.org/foo")
+            uri = ParsedIRI.create("https://example.org/foo"),
         )
 
         every { repository.findById(id) } returns Optional.empty()
@@ -356,7 +356,7 @@ internal class UnsafeClassServiceUnitTest : MockkBaseTest {
         val command = UpdateClassUseCase.UpdateCommand(
             id = originalClass.id,
             contributorId = contributorId,
-            uri = ParsedIRI.create("https://example.org/NEW")
+            uri = ParsedIRI.create("https://example.org/NEW"),
         )
 
         every { repository.findById(originalClass.id) } returns Optional.of(originalClass)
@@ -375,7 +375,7 @@ internal class UnsafeClassServiceUnitTest : MockkBaseTest {
         val command = UpdateClassUseCase.UpdateCommand(
             id = originalClass.id,
             contributorId = contributorId,
-            uri = ParsedIRI.create("https://example.org/NEW")
+            uri = ParsedIRI.create("https://example.org/NEW"),
         )
 
         every { repository.findById(originalClass.id) } returns originalClass.toOptional()
@@ -389,7 +389,7 @@ internal class UnsafeClassServiceUnitTest : MockkBaseTest {
                 withArg {
                     it.id shouldBe command.id
                     it.uri shouldBe command.uri
-                }
+                },
             )
         }
     }
@@ -401,7 +401,7 @@ internal class UnsafeClassServiceUnitTest : MockkBaseTest {
         val command = UpdateClassUseCase.UpdateCommand(
             id = originalClass.id,
             contributorId = contributorId,
-            uri = ParsedIRI.create("https://example.org/DIFFERENT")
+            uri = ParsedIRI.create("https://example.org/DIFFERENT"),
         )
 
         every { repository.findById(originalClass.id) } returns originalClass.toOptional()
@@ -427,7 +427,7 @@ internal class UnsafeClassServiceUnitTest : MockkBaseTest {
         val command = UpdateClassUseCase.UpdateCommand(
             id = originalClass.id,
             contributorId = contributorId,
-            uri = ParsedIRI.create("https://example.com/DIFFERENT")
+            uri = ParsedIRI.create("https://example.com/DIFFERENT"),
         )
 
         every { repository.findById(originalClass.id) } returns originalClass.toOptional()
@@ -445,7 +445,7 @@ internal class UnsafeClassServiceUnitTest : MockkBaseTest {
                     it.createdAt shouldBe originalClass.createdAt
                     it.createdBy shouldBe originalClass.createdBy
                     it.modifiable shouldBe false
-                }
+                },
             )
         }
     }
@@ -468,7 +468,7 @@ internal class UnsafeClassServiceUnitTest : MockkBaseTest {
                 label = label,
                 uri = uri,
                 modifiable = modifiable,
-            )
+            ),
         )
 
         verify(exactly = 1) { repository.findById(`class`.id) }
@@ -481,7 +481,7 @@ internal class UnsafeClassServiceUnitTest : MockkBaseTest {
                     it.createdAt shouldBe `class`.createdAt
                     it.createdBy shouldBe `class`.createdBy
                     it.modifiable shouldBe modifiable
-                }
+                },
             )
         }
     }
@@ -638,7 +638,7 @@ internal class UnsafeClassServiceUnitTest : MockkBaseTest {
                     it.createdAt shouldBe existingClass.createdAt
                     it.createdBy shouldBe existingClass.createdBy
                     it.modifiable shouldBe false
-                }
+                },
             )
         }
     }

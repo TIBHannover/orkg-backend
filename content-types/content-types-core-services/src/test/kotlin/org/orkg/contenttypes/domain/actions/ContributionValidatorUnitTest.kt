@@ -46,7 +46,7 @@ internal class ContributionValidatorUnitTest : MockkBaseTest {
             "#temp1" from command,
             "#temp2" from command,
             "#temp3" from command,
-            "#temp4" from command
+            "#temp4" from command,
         )
 
         val template = createClass(ThingId("C123"))
@@ -74,14 +74,14 @@ internal class ContributionValidatorUnitTest : MockkBaseTest {
                 BakedStatement("^1", Predicates.hasEvaluation.value, "R3004"),
                 BakedStatement("R3004", "#temp3", "R3003"),
                 BakedStatement("R3004", "#temp3", "#temp2"),
-                BakedStatement("R3004", "#temp4", "#temp1")
+                BakedStatement("R3004", "#temp4", "#temp1"),
             )
             it.validationCache shouldBe validationCache + mapOf(
                 "C123" to Either.right(template),
                 "R3003" to Either.right(resource),
                 "R3004" to Either.right(`class`),
                 Predicates.hasEvaluation.value to Either.right(hasEvaluation),
-                Predicates.hasResearchProblem.value to Either.right(hasResearchProblem)
+                Predicates.hasResearchProblem.value to Either.right(hasResearchProblem),
             )
         }
 
@@ -100,7 +100,7 @@ internal class ContributionValidatorUnitTest : MockkBaseTest {
             "#temp1" from command,
             "#temp2" from command,
             "#temp3" from command,
-            "#temp4" from command
+            "#temp4" from command,
         )
         val template = createClass(ThingId("C123"))
 
@@ -126,7 +126,7 @@ internal class ContributionValidatorUnitTest : MockkBaseTest {
             "#temp1" from command,
             "#temp2" from command,
             "#temp3" from command,
-            "#temp4" from command
+            "#temp4" from command,
         )
         val template = createResource(id = ThingId("C123"))
 
@@ -150,10 +150,10 @@ internal class ContributionValidatorUnitTest : MockkBaseTest {
                 contributions = listOf(
                     CreateContributionCommandPart(
                         label = "Contribution",
-                        statements = emptyMap()
-                    )
-                )
-            )
+                        statements = emptyMap(),
+                    ),
+                ),
+            ),
         )
         val exception = EmptyContribution()
 
@@ -171,15 +171,15 @@ internal class ContributionValidatorUnitTest : MockkBaseTest {
     @Test
     fun `Given paper contents, when predicate could not be found, it throws an exception`() {
         val statements = mapOf(
-            "P32" to listOf(CreateContributionCommandPart.StatementObject("R3003"))
+            "P32" to listOf(CreateContributionCommandPart.StatementObject("R3003")),
         )
         val contents = CreatePaperUseCase.CreateCommand.PaperContents(
             contributions = listOf(
                 CreateContributionCommandPart(
                     label = "Contribution 1",
-                    statements = statements
-                )
-            )
+                    statements = statements,
+                ),
+            ),
         )
 
         every { thingRepository.findById(Predicates.hasResearchProblem) } returns Optional.empty()
@@ -190,7 +190,7 @@ internal class ContributionValidatorUnitTest : MockkBaseTest {
                 statementCommands = statements,
                 thingCommands = contents.all(),
                 validationCache = mutableMapOf(),
-                destination = mutableSetOf()
+                destination = mutableSetOf(),
             )
         }
 
@@ -201,15 +201,15 @@ internal class ContributionValidatorUnitTest : MockkBaseTest {
     fun `Given paper contents, when specified predicate id does not resolve to a predicate, it throws an exception`() {
         val id = ThingId("R123")
         val statements = mapOf(
-            id.value to listOf(CreateContributionCommandPart.StatementObject("R3003"))
+            id.value to listOf(CreateContributionCommandPart.StatementObject("R3003")),
         )
         val contents = CreatePaperUseCase.CreateCommand.PaperContents(
             contributions = listOf(
                 CreateContributionCommandPart(
                     label = "Contribution 1",
-                    statements = statements
-                )
-            )
+                    statements = statements,
+                ),
+            ),
         )
         val resource = createResource(id = id)
 
@@ -221,7 +221,7 @@ internal class ContributionValidatorUnitTest : MockkBaseTest {
                 statementCommands = statements,
                 thingCommands = contents.all(),
                 validationCache = mutableMapOf(),
-                destination = mutableSetOf()
+                destination = mutableSetOf(),
             )
         }
 
@@ -231,15 +231,15 @@ internal class ContributionValidatorUnitTest : MockkBaseTest {
     @Test
     fun `Given paper contents, when specified temp id does not resolve to a predicate, it throws an exception`() {
         val statements = mapOf(
-            "#temp1" to listOf(CreateContributionCommandPart.StatementObject("R3003"))
+            "#temp1" to listOf(CreateContributionCommandPart.StatementObject("R3003")),
         )
         val contents = CreatePaperUseCase.CreateCommand.PaperContents(
             contributions = listOf(
                 CreateContributionCommandPart(
                     label = "Contribution 1",
-                    statements = statements
-                )
-            )
+                    statements = statements,
+                ),
+            ),
         )
 
         assertThrows<ThingIsNotAPredicate> {
@@ -248,7 +248,7 @@ internal class ContributionValidatorUnitTest : MockkBaseTest {
                 statementCommands = statements,
                 thingCommands = contents.all(),
                 validationCache = mutableMapOf("#temp1" to Either.left(CreateLiteralCommandPart("not a predicate"))),
-                destination = mutableSetOf()
+                destination = mutableSetOf(),
             )
         }
     }
@@ -256,20 +256,20 @@ internal class ContributionValidatorUnitTest : MockkBaseTest {
     @Test
     fun `Given paper contents, when object could not be found, it throws an exception`() {
         val statements = mapOf(
-            "#temp1" to listOf(CreateContributionCommandPart.StatementObject("R3003"))
+            "#temp1" to listOf(CreateContributionCommandPart.StatementObject("R3003")),
         )
         val contents = CreatePaperUseCase.CreateCommand.PaperContents(
             predicates = mapOf(
                 "#temp1" to CreatePredicateCommandPart(
-                    label = "predicate"
-                )
+                    label = "predicate",
+                ),
             ),
             contributions = listOf(
                 CreateContributionCommandPart(
                     label = "Contribution 1",
-                    statements = statements
-                )
-            )
+                    statements = statements,
+                ),
+            ),
         )
         val id = ThingId("R3003")
 
@@ -281,7 +281,7 @@ internal class ContributionValidatorUnitTest : MockkBaseTest {
                 statementCommands = statements,
                 thingCommands = contents.all(),
                 validationCache = mutableMapOf("#temp1" from contents),
-                destination = mutableSetOf()
+                destination = mutableSetOf(),
             )
         }
 
@@ -297,19 +297,19 @@ internal class ContributionValidatorUnitTest : MockkBaseTest {
                     id = literalId,
                     statements = mapOf(
                         Predicates.hasEvaluation.value to listOf(
-                            CreateContributionCommandPart.StatementObject("R3003")
-                        )
-                    )
-                )
-            )
+                            CreateContributionCommandPart.StatementObject("R3003"),
+                        ),
+                    ),
+                ),
+            ),
         )
         val contents = CreatePaperUseCase.CreateCommand.PaperContents(
             contributions = listOf(
                 CreateContributionCommandPart(
                     label = "Contribution 1",
-                    statements = statements
-                )
-            )
+                    statements = statements,
+                ),
+            ),
         )
 
         assertThrows<InvalidStatementSubject> {
@@ -319,9 +319,9 @@ internal class ContributionValidatorUnitTest : MockkBaseTest {
                 thingCommands = contents.all(),
                 validationCache = mutableMapOf(
                     literalId to Either.right(createLiteral(ThingId(literalId))),
-                    Predicates.hasEvaluation.value to Either.right(createPredicate(Predicates.hasEvaluation))
+                    Predicates.hasEvaluation.value to Either.right(createPredicate(Predicates.hasEvaluation)),
                 ),
-                destination = mutableSetOf()
+                destination = mutableSetOf(),
             )
         }
     }
@@ -334,22 +334,22 @@ internal class ContributionValidatorUnitTest : MockkBaseTest {
                     id = "#temp1",
                     statements = mapOf(
                         Predicates.hasEvaluation.value to listOf(
-                            CreateContributionCommandPart.StatementObject("R3003")
-                        )
-                    )
-                )
-            )
+                            CreateContributionCommandPart.StatementObject("R3003"),
+                        ),
+                    ),
+                ),
+            ),
         )
         val contents = CreatePaperUseCase.CreateCommand.PaperContents(
             literals = mapOf(
-                "#temp1" to CreateLiteralCommandPart("label")
+                "#temp1" to CreateLiteralCommandPart("label"),
             ),
             contributions = listOf(
                 CreateContributionCommandPart(
                     label = "Contribution 1",
-                    statements = statements
-                )
-            )
+                    statements = statements,
+                ),
+            ),
         )
 
         assertThrows<InvalidStatementSubject> {
@@ -359,9 +359,9 @@ internal class ContributionValidatorUnitTest : MockkBaseTest {
                 thingCommands = contents.all(),
                 validationCache = mutableMapOf(
                     "#temp1" from contents,
-                    Predicates.hasEvaluation.value to Either.right(createPredicate(Predicates.hasEvaluation))
+                    Predicates.hasEvaluation.value to Either.right(createPredicate(Predicates.hasEvaluation)),
                 ),
-                destination = mutableSetOf()
+                destination = mutableSetOf(),
             )
         }
     }
@@ -372,16 +372,16 @@ internal class ContributionValidatorUnitTest : MockkBaseTest {
             contributions = listOf(
                 CreateContributionCommandPart(
                     label = "\n",
-                    statements = mapOf("P32" to listOf(CreateContributionCommandPart.StatementObject("R3003")))
-                )
-            )
+                    statements = mapOf("P32" to listOf(CreateContributionCommandPart.StatementObject("R3003"))),
+                ),
+            ),
         )
 
         assertThrows<InvalidLabel> {
             contributionValidator.validate(
                 validationCacheIn = emptyMap(),
                 thingCommands = contents.all(),
-                contributionCommands = contents.contributions
+                contributionCommands = contents.contributions,
             )
         }
     }

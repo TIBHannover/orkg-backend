@@ -126,12 +126,12 @@ internal class LiteratureListControllerIntegrationTest : MockMvcBaseTest("litera
         resourceService.createResource(
             id = ThingId("R12"),
             label = "Computer Science",
-            classes = setOf(Classes.researchField)
+            classes = setOf(Classes.researchField),
         )
         resourceService.createResource(
             id = ThingId("R194"),
             label = "Engineering",
-            classes = setOf(Classes.researchField)
+            classes = setOf(Classes.researchField),
         )
 
         // Example specific entities
@@ -152,33 +152,33 @@ internal class LiteratureListControllerIntegrationTest : MockMvcBaseTest("litera
             subject = resourceService.createResource(
                 id = ThingId("R456"),
                 label = "Author with id and orcid",
-                classes = setOf(Classes.author)
+                classes = setOf(Classes.author),
             ),
             predicate = Predicates.hasORCID,
-            `object` = literalService.createLiteral(label = "1111-2222-3333-4444")
+            `object` = literalService.createLiteral(label = "1111-2222-3333-4444"),
         )
 
         statementService.createStatement(
             subject = resourceService.createResource(
                 id = ThingId("R4567"),
                 label = "Author with orcid",
-                classes = setOf(Classes.author)
+                classes = setOf(Classes.author),
             ),
             predicate = Predicates.hasORCID,
-            `object` = literalService.createLiteral(label = "0000-1111-2222-3333")
+            `object` = literalService.createLiteral(label = "0000-1111-2222-3333"),
         )
 
         val contributorId = contributorService.createContributor()
 
         organizationService.createOrganization(
             createdBy = contributorId,
-            id = OrganizationId("edc18168-c4ee-4cb8-a98a-136f748e912e")
+            id = OrganizationId("edc18168-c4ee-4cb8-a98a-136f748e912e"),
         )
 
         observatoryService.createObservatory(
             organizations = setOf(OrganizationId("edc18168-c4ee-4cb8-a98a-136f748e912e")),
             researchField = ThingId("R12"),
-            id = ObservatoryId("1afefdd0-5c09-4c9c-b718-2b35316b56f3")
+            id = ObservatoryId("1afefdd0-5c09-4c9c-b718-2b35316b56f3"),
         )
     }
 
@@ -211,26 +211,26 @@ internal class LiteratureListControllerIntegrationTest : MockMvcBaseTest("litera
             it.id shouldBe id
             it.title shouldBe "example literature list"
             it.researchFields shouldBe listOf(
-                ObjectIdAndLabel(ThingId("R12"), "Computer Science")
+                ObjectIdAndLabel(ThingId("R12"), "Computer Science"),
             )
             it.authors.size shouldBe 5
             it.authors[0] shouldBe AuthorRepresentation(
                 name = "Author with id",
                 id = ThingId("R123"),
                 identifiers = emptyMap(),
-                homepage = null
+                homepage = null,
             )
             it.authors[1] shouldBe AuthorRepresentation(
                 name = "Author with orcid",
                 id = ThingId("R4567"),
                 identifiers = mapOf("orcid" to listOf("0000-1111-2222-3333")),
-                homepage = null
+                homepage = null,
             )
             it.authors[2] shouldBe AuthorRepresentation(
                 name = "Author with id and orcid",
                 id = ThingId("R456"),
                 identifiers = mapOf("orcid" to listOf("1111-2222-3333-4444")),
-                homepage = null
+                homepage = null,
             )
             it.authors[3].asClue { author ->
                 author.name shouldBe "Author with homepage"
@@ -242,15 +242,15 @@ internal class LiteratureListControllerIntegrationTest : MockMvcBaseTest("litera
                 name = "Author that just has a name",
                 id = null,
                 identifiers = emptyMap(),
-                homepage = null
+                homepage = null,
             )
             it.versions shouldBe VersionInfoRepresentation(
                 head = HeadVersionRepresentation(id, it.title, it.createdAt, it.createdBy),
-                published = emptyList()
+                published = emptyList(),
             )
             it.sustainableDevelopmentGoals shouldBe setOf(
                 LabeledObjectRepresentation(ThingId("SDG_1"), "No poverty"),
-                LabeledObjectRepresentation(ThingId("SDG_2"), "Zero hunger")
+                LabeledObjectRepresentation(ThingId("SDG_2"), "Zero hunger"),
             )
             it.observatories shouldBe listOf(ObservatoryId("1afefdd0-5c09-4c9c-b718-2b35316b56f3"))
             it.organizations shouldBe listOf(OrganizationId("edc18168-c4ee-4cb8-a98a-136f748e912e"))
@@ -272,17 +272,17 @@ internal class LiteratureListControllerIntegrationTest : MockMvcBaseTest("litera
                 section.entries shouldBe listOf(
                     LiteratureListListSectionRepresentation.EntryRepresentation(
                         ResourceReferenceRepresentation(ThingId("R3003"), "Some resource", setOf(Classes.paper)),
-                        "example description"
+                        "example description",
                     ),
                     LiteratureListListSectionRepresentation.EntryRepresentation(
                         ResourceReferenceRepresentation(ThingId("R3004"), "Some other resource", setOf(Classes.software)),
-                        null
-                    )
+                        null,
+                    ),
                 )
             }
             it.acknowledgements shouldBe mapOf(
                 ContributorId(MockUserId.USER) to 0.6666666666666666,
-                ContributorId.UNKNOWN to 0.3333333333333333
+                ContributorId.UNKNOWN to 0.3333333333333333,
             )
         }
 
@@ -299,26 +299,26 @@ internal class LiteratureListControllerIntegrationTest : MockMvcBaseTest("litera
             it.id shouldBe id
             it.title shouldBe "updated literature list title"
             it.researchFields shouldBe listOf(
-                ObjectIdAndLabel(ThingId("R194"), "Engineering")
+                ObjectIdAndLabel(ThingId("R194"), "Engineering"),
             )
             it.authors.size shouldBe 5
             it.authors[0] shouldBe Author(
                 name = "Author with id",
                 id = ThingId("R123"),
                 identifiers = emptyMap(),
-                homepage = null
+                homepage = null,
             )
             it.authors[1] shouldBe Author(
                 name = "Author with orcid",
                 id = ThingId("R4567"),
                 identifiers = mapOf("orcid" to listOf("0000-1111-2222-3333")),
-                homepage = null
+                homepage = null,
             )
             it.authors[2] shouldBe Author(
                 name = "Author with id and orcid",
                 id = ThingId("R456"),
                 identifiers = mapOf("orcid" to listOf("1111-2222-3333-4444", "4444-3333-2222-1111")),
-                homepage = null
+                homepage = null,
             )
             it.authors[3].asClue { author ->
                 author.name shouldBe "Author with homepage"
@@ -330,15 +330,15 @@ internal class LiteratureListControllerIntegrationTest : MockMvcBaseTest("litera
                 name = "Another author that just has a name",
                 id = null,
                 identifiers = emptyMap(),
-                homepage = null
+                homepage = null,
             )
             it.versions shouldBe VersionInfo(
                 head = HeadVersion(id, it.title, it.createdAt, it.createdBy),
-                published = emptyList()
+                published = emptyList(),
             )
             it.sustainableDevelopmentGoals shouldBe setOf(
                 ObjectIdAndLabel(ThingId("SDG_3"), "Good health and well-being"),
-                ObjectIdAndLabel(ThingId("SDG_4"), "Quality education")
+                ObjectIdAndLabel(ThingId("SDG_4"), "Quality education"),
             )
             it.observatories shouldBe listOf(ObservatoryId("1afefdd0-5c09-4c9c-b718-2b35316b56f3"))
             it.organizations shouldBe listOf(OrganizationId("edc18168-c4ee-4cb8-a98a-136f748e912e"))
@@ -359,21 +359,21 @@ internal class LiteratureListControllerIntegrationTest : MockMvcBaseTest("litera
                 section.entries shouldBe listOf(
                     LiteratureListListSection.Entry(
                         ResourceReference(ThingId("R3004"), "Some other resource", setOf(Classes.software)),
-                        "new description"
+                        "new description",
                     ),
                     LiteratureListListSection.Entry(
                         ResourceReference(ThingId("R3003"), "Some resource", setOf(Classes.paper)),
-                        null
+                        null,
                     ),
                     LiteratureListListSection.Entry(
                         ResourceReference(ThingId("R3005"), "Some dataset resource", setOf(Classes.dataset)),
-                        "updated example description"
-                    )
+                        "updated example description",
+                    ),
                 )
             }
             it.acknowledgements shouldBe mapOf(
                 ContributorId(MockUserId.USER) to 0.625,
-                ContributorId.UNKNOWN to 0.375
+                ContributorId.UNKNOWN to 0.375,
             )
         }
     }
@@ -442,16 +442,16 @@ internal class LiteratureListControllerIntegrationTest : MockMvcBaseTest("litera
             it.entries shouldBe listOf(
                 LiteratureListListSection.Entry(
                     ResourceReference(ThingId("R3005"), "Some dataset resource", setOf(Classes.dataset)),
-                    "example description"
+                    "example description",
                 ),
                 LiteratureListListSection.Entry(
                     ResourceReference(ThingId("R3004"), "Some other resource", setOf(Classes.software)),
-                    null
+                    null,
                 ),
                 LiteratureListListSection.Entry(
                     ResourceReference(ThingId("R3003"), "Some resource", setOf(Classes.paper)),
-                    null
-                )
+                    null,
+                ),
             )
         }
 
@@ -472,16 +472,16 @@ internal class LiteratureListControllerIntegrationTest : MockMvcBaseTest("litera
             it.entries shouldBe listOf(
                 LiteratureListListSection.Entry(
                     ResourceReference(ThingId("R3003"), "Some resource", setOf(Classes.paper)),
-                    null
+                    null,
                 ),
                 LiteratureListListSection.Entry(
                     ResourceReference(ThingId("R3004"), "Some other resource", setOf(Classes.software)),
-                    "new description"
+                    "new description",
                 ),
                 LiteratureListListSection.Entry(
                     ResourceReference(ThingId("R3005"), "Some dataset resource", setOf(Classes.dataset)),
-                    "updated example description"
-                )
+                    "updated example description",
+                ),
             )
         }
     }

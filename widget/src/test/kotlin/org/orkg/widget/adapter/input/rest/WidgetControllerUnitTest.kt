@@ -70,7 +70,7 @@ internal class WidgetControllerUnitTest : MockMvcBaseTest("widget") {
                     The widget can obtain information via a `GET` request to `/api/widgets/` by providing one of the request parameters.
                     All request parameters are mutually exclusive.
                     Providing none or more than one will respond with status code 400 (Bad Request).
-                    """
+                    """,
                 )
                 queryParameters(
                     parameterWithName("doi").description("The DOI of the resource to search.").optional(),
@@ -93,7 +93,7 @@ internal class WidgetControllerUnitTest : MockMvcBaseTest("widget") {
         // TODO: this is not ideal, as it re-implements service logic.
         every { resolveDOIUseCase.resolveDOI(EXAMPLE_DOI, "some title") } throws TooManyParameters.atMostOneOf(
             "doi",
-            "title"
+            "title",
         )
 
         get("/api/widgets")

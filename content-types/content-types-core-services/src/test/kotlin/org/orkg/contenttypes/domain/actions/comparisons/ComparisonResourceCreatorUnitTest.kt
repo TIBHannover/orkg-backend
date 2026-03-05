@@ -30,7 +30,7 @@ internal class ComparisonResourceCreatorUnitTest : MockkBaseTest {
             classes = setOf(Classes.comparison),
             extractionMethod = command.extractionMethod,
             observatoryId = command.observatories.firstOrNull(),
-            organizationId = command.organizations.firstOrNull()
+            organizationId = command.organizations.firstOrNull(),
         )
         val id = ThingId("R123")
 

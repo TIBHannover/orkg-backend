@@ -47,7 +47,7 @@ internal class StatementServiceIntegrationTest {
         val id = service.createStatement(
             subjectId,
             predicateId,
-            objectId
+            objectId,
         )
         val statement = service.findById(id)
 

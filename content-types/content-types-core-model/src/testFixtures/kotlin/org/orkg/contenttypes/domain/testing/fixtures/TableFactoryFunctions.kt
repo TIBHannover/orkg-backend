@@ -32,19 +32,19 @@ fun createTable() = Table(
             data = listOf(
                 createLiteral(label = "Column 1"),
                 createLiteral(label = "Column 2"),
-                createLiteral(label = "Column 3")
-            )
+                createLiteral(label = "Column 3"),
+            ),
         ),
         createTableRow("Row 1"),
         createTableRow("Row 2"),
     ),
     observatories = listOf(
         ObservatoryId("cb71eebf-8afd-4fe3-9aea-d0966d71cece"),
-        ObservatoryId("73b2e081-9b50-4d55-b464-22d94e8a25f6")
+        ObservatoryId("73b2e081-9b50-4d55-b464-22d94e8a25f6"),
     ),
     organizations = listOf(
         OrganizationId("a700c55f-aae2-4696-b7d5-6e8b89f66a8f"),
-        OrganizationId("1f63b1da-3c70-4492-82e0-770ca94287ea")
+        OrganizationId("1f63b1da-3c70-4492-82e0-770ca94287ea"),
     ),
     extractionMethod = ExtractionMethod.UNKNOWN,
     createdAt = OffsetDateTime.parse("2023-04-12T16:05:05.959539600+02:00"),
@@ -58,7 +58,7 @@ fun createTableRow(
     data: List<Thing?> = listOf(
         createClass(),
         createLiteral(),
-        createResource()
+        createResource(),
     ),
 ) = Table.Row(label, data)
 
@@ -96,30 +96,30 @@ fun createTableStatements(
         val number = createLiteral(
             id = ThingId("Column_${columnIndex + 1}_Number"),
             label = (columnIndex + 1).toString(),
-            datatype = Literals.XSD.INT.prefixedUri
+            datatype = Literals.XSD.INT.prefixedUri,
         )
         val title = createLiteral(
             id = ThingId("Column_${columnIndex + 1}_Title"),
-            label = Base64.getEncoder().encodeToString(random.nextBytes(16))
+            label = Base64.getEncoder().encodeToString(random.nextBytes(16)),
         )
         listOf(
             createStatement(
                 id = StatementId("S_${table.id}--${hasColumns.id}--${column.id}"),
                 subject = table,
                 predicate = hasColumns,
-                `object` = column
+                `object` = column,
             ),
             createStatement(
                 id = StatementId("S_${column.id}--${hasNumber.id}--${number.id}"),
                 subject = column,
                 predicate = hasNumber,
-                `object` = number
+                `object` = number,
             ),
             createStatement(
                 id = StatementId("S_${column.id}--${hasTitle.id}--${title.id}"),
                 subject = column,
                 predicate = hasTitle,
-                `object` = title
+                `object` = title,
             ),
         )
     }
@@ -128,35 +128,35 @@ fun createTableStatements(
         val number = createLiteral(
             id = ThingId("Row_${rowIndex + 1}_Number"),
             label = (rowIndex + 1).toString(),
-            datatype = Literals.XSD.INT.prefixedUri
+            datatype = Literals.XSD.INT.prefixedUri,
         )
         val title = createLiteral(
             id = ThingId("Row_${rowIndex + 1}_Title"),
-            label = Base64.getEncoder().encodeToString(random.nextBytes(16))
+            label = Base64.getEncoder().encodeToString(random.nextBytes(16)),
         )
         listOf(
             createStatement(
                 id = StatementId("S_${table.id}--${hasRow.id}--${row.id}"),
                 subject = table,
                 predicate = hasRow,
-                `object` = row
+                `object` = row,
             ),
             createStatement(
                 id = StatementId("S_${row.id}--${hasNumber.id}--${number.id}"),
                 subject = row,
                 predicate = hasNumber,
-                `object` = number
+                `object` = number,
             ),
             createStatement(
                 id = StatementId("S_${row.id}--${hasTitle.id}--${title.id}"),
                 subject = row,
                 predicate = hasTitle,
-                `object` = title
+                `object` = title,
             ),
             *(0 until columnCount.toInt()).flatMap { columnIndex ->
                 val cell = createResource(
                     id = ThingId("Cell_${rowIndex + 1}_${columnIndex + 1}"),
-                    classes = setOf(Classes.cell)
+                    classes = setOf(Classes.cell),
                 )
                 val valueId = valueIds?.get(rowIndex)?.get(columnIndex) ?: ThingId("R${random.nextLong().absoluteValue}")
                 val value = createResource(valueId)
@@ -165,22 +165,22 @@ fun createTableStatements(
                         id = StatementId("S_${row.id}--${hasCell.id}--${cell.id}"),
                         subject = row,
                         predicate = hasCell,
-                        `object` = cell
+                        `object` = cell,
                     ),
                     createStatement(
                         id = StatementId("S_${cell.id}--${hasColumn.id}--${columns[columnIndex].id}"),
                         subject = cell,
                         predicate = hasColumn,
-                        `object` = columns[columnIndex]
+                        `object` = columns[columnIndex],
                     ),
                     createStatement(
                         id = StatementId("S_${cell.id}--${hasValue.id}--${value.id}"),
                         subject = cell,
                         predicate = hasValue,
-                        `object` = value
-                    )
+                        `object` = value,
+                    ),
                 )
-            }.toTypedArray()
+            }.toTypedArray(),
         )
     }
     return rowStatements + columnStatements

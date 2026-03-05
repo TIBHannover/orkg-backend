@@ -27,17 +27,17 @@ internal class LiteratureListSectionsUpdaterUnitTest : MockkBaseTest {
     private val literatureListSectionsUpdater = LiteratureListSectionsUpdater(
         abstractLiteratureListSectionCreator,
         abstractLiteratureListSectionDeleter,
-        statementCollectionPropertyUpdater
+        statementCollectionPropertyUpdater,
     )
 
     @Test
     fun `Given a literature list update command, when sections are not set, it does nothing`() {
         val literatureList = createLiteratureList()
         val command = updateLiteratureListCommand().copy(
-            sections = null
+            sections = null,
         )
         val state = UpdateLiteratureListState(
-            literatureList = literatureList
+            literatureList = literatureList,
         )
 
         literatureListSectionsUpdater(command, state)
@@ -47,10 +47,10 @@ internal class LiteratureListSectionsUpdaterUnitTest : MockkBaseTest {
     fun `Given a literature list update command, when sections are unchanged, it does nothing`() {
         val literatureList = createLiteratureList()
         val command = updateLiteratureListCommand().copy(
-            sections = literatureList.sections.map { it.toLiteratureListSectionCommand() }
+            sections = literatureList.sections.map { it.toLiteratureListSectionCommand() },
         )
         val state = UpdateLiteratureListState(
-            literatureList = literatureList
+            literatureList = literatureList,
         )
 
         literatureListSectionsUpdater(command, state)
@@ -60,14 +60,14 @@ internal class LiteratureListSectionsUpdaterUnitTest : MockkBaseTest {
     fun `Given a literature list update command, when a section is removed, it deletes the old section`() {
         val literatureList = createLiteratureList()
         val command = updateLiteratureListCommand().copy(
-            sections = literatureList.sections.dropLast(1).map { it.toLiteratureListSectionCommand() }
+            sections = literatureList.sections.dropLast(1).map { it.toLiteratureListSectionCommand() },
         )
         val state = UpdateLiteratureListState(
             literatureList = literatureList,
             statements = listOf(
                 createStatement(subject = createResource(command.literatureListId), predicate = createPredicate(Predicates.hasSection)),
-                createStatement(subject = createResource(command.literatureListId), predicate = createPredicate(Predicates.hasLink))
-            ).groupBy { it.subject.id }
+                createStatement(subject = createResource(command.literatureListId), predicate = createPredicate(Predicates.hasLink)),
+            ).groupBy { it.subject.id },
         )
 
         every {
@@ -76,7 +76,7 @@ internal class LiteratureListSectionsUpdaterUnitTest : MockkBaseTest {
                 contributorId = command.contributorId,
                 subjectId = command.literatureListId,
                 predicateId = Predicates.hasSection,
-                objects = any<List<ThingId>>()
+                objects = any<List<ThingId>>(),
             )
         } just runs
         every {
@@ -84,7 +84,7 @@ internal class LiteratureListSectionsUpdaterUnitTest : MockkBaseTest {
                 contributorId = command.contributorId,
                 literatureListId = command.literatureListId,
                 section = literatureList.sections.last(),
-                statements = state.statements
+                statements = state.statements,
             )
         } just runs
 
@@ -96,7 +96,7 @@ internal class LiteratureListSectionsUpdaterUnitTest : MockkBaseTest {
                 contributorId = command.contributorId,
                 subjectId = command.literatureListId,
                 predicateId = Predicates.hasSection,
-                objects = literatureList.sections.dropLast(1).map { it.id }
+                objects = literatureList.sections.dropLast(1).map { it.id },
             )
         }
         verify(exactly = 1) {
@@ -104,7 +104,7 @@ internal class LiteratureListSectionsUpdaterUnitTest : MockkBaseTest {
                 contributorId = command.contributorId,
                 literatureListId = command.literatureListId,
                 section = literatureList.sections.last(),
-                statements = state.statements
+                statements = state.statements,
             )
         }
     }
@@ -114,14 +114,14 @@ internal class LiteratureListSectionsUpdaterUnitTest : MockkBaseTest {
         val literatureList = createLiteratureList()
         val newSection = literatureListTextSectionCommand().copy(text = "new section")
         val command = updateLiteratureListCommand().copy(
-            sections = literatureList.sections.map { it.toLiteratureListSectionCommand() } + newSection
+            sections = literatureList.sections.map { it.toLiteratureListSectionCommand() } + newSection,
         )
         val state = UpdateLiteratureListState(
             literatureList = literatureList,
             statements = listOf(
                 createStatement(subject = createResource(command.literatureListId), predicate = createPredicate(Predicates.hasSection)),
-                createStatement(subject = createResource(command.literatureListId), predicate = createPredicate(Predicates.hasLink))
-            ).groupBy { it.subject.id }
+                createStatement(subject = createResource(command.literatureListId), predicate = createPredicate(Predicates.hasLink)),
+            ).groupBy { it.subject.id },
         )
         val newSectionId = ThingId("irrelevant")
 
@@ -134,7 +134,7 @@ internal class LiteratureListSectionsUpdaterUnitTest : MockkBaseTest {
                 contributorId = command.contributorId,
                 subjectId = command.literatureListId,
                 predicateId = Predicates.hasSection,
-                objects = any<List<ThingId>>()
+                objects = any<List<ThingId>>(),
             )
         } just runs
 
@@ -147,7 +147,7 @@ internal class LiteratureListSectionsUpdaterUnitTest : MockkBaseTest {
                 contributorId = command.contributorId,
                 subjectId = command.literatureListId,
                 predicateId = Predicates.hasSection,
-                objects = literatureList.sections.map { it.id } + newSectionId
+                objects = literatureList.sections.map { it.id } + newSectionId,
             )
         }
     }
@@ -157,14 +157,14 @@ internal class LiteratureListSectionsUpdaterUnitTest : MockkBaseTest {
         val literatureList = createLiteratureList()
         val newSection = literatureListTextSectionCommand().copy(text = "new section")
         val command = updateLiteratureListCommand().copy(
-            sections = literatureList.sections.dropLast(1).map { it.toLiteratureListSectionCommand() } + newSection
+            sections = literatureList.sections.dropLast(1).map { it.toLiteratureListSectionCommand() } + newSection,
         )
         val state = UpdateLiteratureListState(
             literatureList = literatureList,
             statements = listOf(
                 createStatement(subject = createResource(command.literatureListId), predicate = createPredicate(Predicates.hasSection)),
-                createStatement(subject = createResource(command.literatureListId), predicate = createPredicate(Predicates.hasLink))
-            ).groupBy { it.subject.id }
+                createStatement(subject = createResource(command.literatureListId), predicate = createPredicate(Predicates.hasLink)),
+            ).groupBy { it.subject.id },
         )
         val newSectionId = ThingId("irrelevant")
 
@@ -177,7 +177,7 @@ internal class LiteratureListSectionsUpdaterUnitTest : MockkBaseTest {
                 contributorId = command.contributorId,
                 subjectId = command.literatureListId,
                 predicateId = Predicates.hasSection,
-                objects = any<List<ThingId>>()
+                objects = any<List<ThingId>>(),
             )
         } just runs
         every {
@@ -185,7 +185,7 @@ internal class LiteratureListSectionsUpdaterUnitTest : MockkBaseTest {
                 contributorId = command.contributorId,
                 literatureListId = command.literatureListId,
                 section = literatureList.sections.last(),
-                statements = state.statements
+                statements = state.statements,
             )
         } just runs
 
@@ -198,7 +198,7 @@ internal class LiteratureListSectionsUpdaterUnitTest : MockkBaseTest {
                 contributorId = command.contributorId,
                 subjectId = command.literatureListId,
                 predicateId = Predicates.hasSection,
-                objects = literatureList.sections.dropLast(1).map { it.id } + newSectionId
+                objects = literatureList.sections.dropLast(1).map { it.id } + newSectionId,
             )
         }
         verify(exactly = 1) {
@@ -206,7 +206,7 @@ internal class LiteratureListSectionsUpdaterUnitTest : MockkBaseTest {
                 contributorId = command.contributorId,
                 literatureListId = command.literatureListId,
                 section = literatureList.sections.last(),
-                statements = state.statements
+                statements = state.statements,
             )
         }
     }

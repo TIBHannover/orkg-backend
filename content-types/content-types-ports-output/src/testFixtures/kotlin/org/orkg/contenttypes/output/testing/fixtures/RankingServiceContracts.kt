@@ -60,11 +60,11 @@ fun <
     val fabricator = Fabrikate(
         FabricatorConfig(
             collectionSizes = 12..12,
-            nullableStrategy = FabricatorConfig.NullableStrategy.NeverSetToNull // FIXME: because "id" is nullable
+            nullableStrategy = FabricatorConfig.NullableStrategy.NeverSetToNull, // FIXME: because "id" is nullable
         )
             .withStandardMappings()
             .withGraphMappings()
-            .withRosettaStoneStatementMappings()
+            .withRosettaStoneStatementMappings(),
     )
 
     val saveThing: (Thing) -> Unit = {
@@ -95,19 +95,19 @@ fun <
 
     describe("finding all statements about a paper") {
         val paper = fabricator.random<Resource>().copy(
-            classes = setOf(Classes.paper)
+            classes = setOf(Classes.paper),
         )
         val literalStatements = fabricator.random<List<Literal>>().map {
             fabricator.random<GeneralStatement>().copy(
                 subject = paper,
-                `object` = it
+                `object` = it,
             )
         }
         literalStatements.forEach(saveStatement)
         val resourceStatements = fabricator.random<List<Resource>>().map {
             fabricator.random<GeneralStatement>().copy(
                 subject = paper,
-                `object` = it
+                `object` = it,
             )
         }
         resourceStatements.forEach(saveStatement)
@@ -126,32 +126,32 @@ fun <
     describe("counting sum of distinct predicates for contributions") {
         val sharedPredicate = fabricator.random<Predicate>()
         val contribution1 = fabricator.random<Resource>().copy(
-            classes = setOf(Classes.contribution)
+            classes = setOf(Classes.contribution),
         )
         val statementAboutContribution1 = fabricator.random<GeneralStatement>().copy(
             subject = contribution1,
-            predicate = sharedPredicate
+            predicate = sharedPredicate,
         )
         val anotherStatementAboutContribution1 = fabricator.random<GeneralStatement>().copy(
             subject = contribution1,
-            predicate = sharedPredicate
+            predicate = sharedPredicate,
         )
         val independentStatementAboutContribution1 = fabricator.random<GeneralStatement>().copy(
-            subject = contribution1
+            subject = contribution1,
         )
         val contribution2 = fabricator.random<Resource>().copy(
-            classes = setOf(Classes.contribution)
+            classes = setOf(Classes.contribution),
         )
         val statementAboutContribution2 = fabricator.random<GeneralStatement>().copy(
             subject = contribution2,
-            predicate = sharedPredicate
+            predicate = sharedPredicate,
         )
         val anotherStatementAboutContribution2 = fabricator.random<GeneralStatement>().copy(
             subject = contribution2,
-            predicate = sharedPredicate
+            predicate = sharedPredicate,
         )
         val independentStatementAboutContribution2 = fabricator.random<GeneralStatement>().copy(
-            subject = contribution2
+            subject = contribution2,
         )
         saveStatement(statementAboutContribution1)
         saveStatement(anotherStatementAboutContribution1)
@@ -170,25 +170,25 @@ fun <
 
     describe("counting comparisons including a paper") {
         val publishedComparison = fabricator.random<Resource>().copy(
-            classes = setOf(Classes.comparisonPublished, Classes.latestVersion)
+            classes = setOf(Classes.comparisonPublished, Classes.latestVersion),
         )
         val contribution = fabricator.random<Resource>().copy(
-            classes = setOf(Classes.contribution)
+            classes = setOf(Classes.contribution),
         )
         val headComparison = fabricator.random<Resource>().copy(
-            classes = setOf(Classes.comparison)
+            classes = setOf(Classes.comparison),
         )
         val paper = fabricator.random<Resource>().copy(
-            classes = setOf(Classes.paper)
+            classes = setOf(Classes.paper),
         )
         val compareContribution = fabricator.random<Predicate>().copy(
-            id = Predicates.comparesContribution
+            id = Predicates.comparesContribution,
         )
         val hasContribution = fabricator.random<Predicate>().copy(
-            id = Predicates.hasContribution
+            id = Predicates.hasContribution,
         )
         val hasPublishedVersion = fabricator.random<Predicate>().copy(
-            id = Predicates.hasPublishedVersion
+            id = Predicates.hasPublishedVersion,
         )
         // create a head comparison linked to a published version, that
         // both compare the same contribution, that is part of a paper
@@ -196,29 +196,29 @@ fun <
             fabricator.random<GeneralStatement>().copy(
                 subject = publishedComparison,
                 predicate = compareContribution,
-                `object` = contribution
-            )
+                `object` = contribution,
+            ),
         )
         saveStatement(
             fabricator.random<GeneralStatement>().copy(
                 subject = headComparison,
                 predicate = compareContribution,
-                `object` = contribution
-            )
+                `object` = contribution,
+            ),
         )
         saveStatement(
             fabricator.random<GeneralStatement>().copy(
                 subject = paper,
                 predicate = hasContribution,
-                `object` = contribution
-            )
+                `object` = contribution,
+            ),
         )
         saveStatement(
             fabricator.random<GeneralStatement>().copy(
                 subject = headComparison,
                 predicate = hasPublishedVersion,
-                `object` = publishedComparison
-            )
+                `object` = publishedComparison,
+            ),
         )
 
         val expected = 1
@@ -231,44 +231,44 @@ fun <
 
     describe("counting literature lists including a paper") {
         val literatureList = fabricator.random<Resource>().copy(
-            classes = setOf(Classes.literatureList)
+            classes = setOf(Classes.literatureList),
         )
         val listSection = fabricator.random<Resource>().copy(
-            classes = setOf(Classes.listSection)
+            classes = setOf(Classes.listSection),
         )
         val entry = fabricator.random<Resource>()
         val paper = fabricator.random<Resource>().copy(
-            classes = setOf(Classes.paper)
+            classes = setOf(Classes.paper),
         )
         val hasSection = fabricator.random<Predicate>().copy(
-            id = Predicates.hasSection
+            id = Predicates.hasSection,
         )
         val hasEntry = fabricator.random<Predicate>().copy(
-            id = Predicates.hasEntry
+            id = Predicates.hasEntry,
         )
         val hasPaper = fabricator.random<Predicate>().copy(
-            id = Predicates.hasLink
+            id = Predicates.hasLink,
         )
         saveStatement(
             fabricator.random<GeneralStatement>().copy(
                 subject = literatureList,
                 predicate = hasSection,
-                `object` = listSection
-            )
+                `object` = listSection,
+            ),
         )
         saveStatement(
             fabricator.random<GeneralStatement>().copy(
                 subject = listSection,
                 predicate = hasEntry,
-                `object` = entry
-            )
+                `object` = entry,
+            ),
         )
         saveStatement(
             fabricator.random<GeneralStatement>().copy(
                 subject = entry,
                 predicate = hasPaper,
-                `object` = paper
-            )
+                `object` = paper,
+            ),
         )
 
         val expected = 1
@@ -281,10 +281,10 @@ fun <
 
     describe("counting rosetta stone statement associated to a paper") {
         val paper = fabricator.random<Resource>().copy(
-            classes = setOf(Classes.paper)
+            classes = setOf(Classes.paper),
         )
         val associatedStatement: RosettaStoneStatement = fabricator.random<RosettaStoneStatement>().copy(
-            contextId = paper.id
+            contextId = paper.id,
         )
         associatedStatement.requiredEntities().forEach(saveThing)
         rosettaStoneStatementRepository.save(associatedStatement)

@@ -30,19 +30,19 @@ fun createRowGraph(id: ThingId, cellValues: List<Thing?>): RowGraph {
             id = StatementId("S_${table.id}--${hasRow.id}--${row.id}"),
             subject = table,
             predicate = hasRow,
-            `object` = row
+            `object` = row,
         ),
         labelStatement = createStatement(
             id = StatementId("S_${row.id}--${hasTitle.id}--${title.id}"),
             subject = row,
             predicate = hasTitle,
-            `object` = title
+            `object` = title,
         ),
         indexStatement = createStatement(
             id = StatementId("S_${row.id}--${hasNumber.id}--${number.id}"),
             subject = row,
             predicate = hasNumber,
-            `object` = number
+            `object` = number,
         ),
         cells = cellValues.mapIndexed { index, value ->
             val cell = createResource(ThingId("Cell_${row.id}_$index"))
@@ -52,24 +52,24 @@ fun createRowGraph(id: ThingId, cellValues: List<Thing?>): RowGraph {
                     id = StatementId("S_${row.id}--${hasCell.id}--${cell.id}"),
                     subject = row,
                     predicate = hasCell,
-                    `object` = cell
+                    `object` = cell,
                 ),
                 valueStatement = value?.let {
                     createStatement(
                         id = StatementId("S_${cell.id}--${hasValue.id}--${value.id}"),
                         subject = cell,
                         predicate = hasValue,
-                        `object` = value
+                        `object` = value,
                     )
                 },
                 columnStatement = createStatement(
                     id = StatementId("S_${cell.id}--${hasValue.id}--${column.id}"),
                     subject = cell,
                     predicate = hasColumn,
-                    `object` = column
-                )
+                    `object` = column,
+                ),
             )
-        }
+        },
     )
 }
 
@@ -86,19 +86,19 @@ fun createColumnGraph(id: ThingId): ColumnGraph {
             id = StatementId("S_${table.id}--${hasColumn.id}--${column.id}"),
             subject = table,
             predicate = hasColumn,
-            `object` = column
+            `object` = column,
         ),
         labelStatement = createStatement(
             id = StatementId("S_${column.id}--${hasTitle.id}--${title.id}"),
             subject = column,
             predicate = hasTitle,
-            `object` = title
+            `object` = title,
         ),
         indexStatement = createStatement(
             id = StatementId("S_${column.id}--${hasNumber.id}--${number.id}"),
             subject = column,
             predicate = hasNumber,
-            `object` = number
-        )
+            `object` = number,
+        ),
     )
 }

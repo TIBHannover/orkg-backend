@@ -16,8 +16,8 @@ class ComparisonVisualizationCreator(
                     contributorId = command.contributorId,
                     subjectId = state.comparisonId!!,
                     predicateId = Predicates.hasVisualization,
-                    objectId = visualizationId
-                )
+                    objectId = visualizationId,
+                ),
             )
         }
         return state

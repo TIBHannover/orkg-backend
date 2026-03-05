@@ -10,7 +10,7 @@ internal class InMemoryResourceAdapterContractTest :
             resourceRepositoryContract(
                 InMemoryResourceRepository(inMemoryGraph),
                 InMemoryClassRepository(inMemoryGraph),
-                InMemoryClassRelationRepository(inMemoryGraph)
-            )
+                InMemoryClassRelationRepository(inMemoryGraph),
+            ),
         )
     })

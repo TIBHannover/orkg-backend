@@ -32,7 +32,7 @@ class SpringDataJpaObservatoryAdapter(
                 observatory,
                 postgresOrganizationRepository,
                 postgresContributorRepository,
-            )
+            ),
         )
     }
 

@@ -97,7 +97,7 @@ interface ContributorRepositoryContracts {
 
         val expected = contributors.take(2)
         val result = repository.findAll(
-            pageable = PageRequest.of(0, 2)
+            pageable = PageRequest.of(0, 2),
         )
 
         // returns the correct result
@@ -129,7 +129,7 @@ interface ContributorRepositoryContracts {
         val expected = contributors.take(2)
         val result = repository.findAll(
             pageable = PageRequest.of(0, 2),
-            label = "Doe"
+            label = "Doe",
         )
 
         // returns the correct result

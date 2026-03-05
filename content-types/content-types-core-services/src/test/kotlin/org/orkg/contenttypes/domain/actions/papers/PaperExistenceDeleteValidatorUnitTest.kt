@@ -32,7 +32,7 @@ internal class PaperExistenceDeleteValidatorUnitTest : MockkBaseTest {
         val root = createResource(
             id = paper.id,
             label = paper.title,
-            classes = setOf(Classes.paper)
+            classes = setOf(Classes.paper),
         )
         val statements = listOf(createStatement()).groupBy { it.subject.id }
 

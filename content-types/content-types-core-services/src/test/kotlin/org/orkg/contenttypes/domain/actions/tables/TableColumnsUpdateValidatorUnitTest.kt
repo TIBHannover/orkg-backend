@@ -28,7 +28,7 @@ internal class TableColumnsUpdateValidatorUnitTest : MockkBaseTest {
         val columnIds = listOf(
             ThingId("Column_1"),
             ThingId("Column_2"),
-            ThingId("Column_3")
+            ThingId("Column_3"),
         )
         val state = UpdateTableState(
             table = createTable(),
@@ -36,18 +36,18 @@ internal class TableColumnsUpdateValidatorUnitTest : MockkBaseTest {
                 tableId = command.tableId,
                 rowCount = 2,
                 columnCount = 3,
-            ).groupBy { it.subject.id }
+            ).groupBy { it.subject.id },
         )
 
         val validationCache = mapOf<String, Either<CreateThingCommandPart, Thing>>(
-            "R100" to Either.right(createResource())
+            "R100" to Either.right(createResource()),
         )
 
         every {
             abstractTableColumnsValidator.validate(
                 rows = command.rows!!,
                 thingCommands = command.all(),
-                validationCacheIn = state.validationCache
+                validationCacheIn = state.validationCache,
             )
         } returns validationCache
 
@@ -71,7 +71,7 @@ internal class TableColumnsUpdateValidatorUnitTest : MockkBaseTest {
             abstractTableColumnsValidator.validate(
                 rows = command.rows!!,
                 thingCommands = command.all(),
-                validationCacheIn = state.validationCache
+                validationCacheIn = state.validationCache,
             )
         }
     }

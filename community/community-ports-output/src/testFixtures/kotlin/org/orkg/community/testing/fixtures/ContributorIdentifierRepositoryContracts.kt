@@ -49,7 +49,7 @@ interface ContributorIdentifierRepositoryContracts {
 
         val result = repository.findAllByContributorId(
             contributorId = identifiers.first().contributorId,
-            pageable = PageRequest.of(0, 5)
+            pageable = PageRequest.of(0, 5),
         )
 
         result shouldNotBe null

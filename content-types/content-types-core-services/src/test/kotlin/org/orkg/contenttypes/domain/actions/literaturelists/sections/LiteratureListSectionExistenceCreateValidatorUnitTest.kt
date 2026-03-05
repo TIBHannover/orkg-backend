@@ -74,7 +74,7 @@ internal class LiteratureListSectionExistenceCreateValidatorUnitTest : MockkBase
         @JvmStatic
         fun createLiteratureListSectionCommands(): Stream<Arguments> = Stream.of(
             Arguments.of(createLiteratureListListSectionCommand()),
-            Arguments.of(createLiteratureListTextSectionCommand())
+            Arguments.of(createLiteratureListTextSectionCommand()),
         )
     }
 }

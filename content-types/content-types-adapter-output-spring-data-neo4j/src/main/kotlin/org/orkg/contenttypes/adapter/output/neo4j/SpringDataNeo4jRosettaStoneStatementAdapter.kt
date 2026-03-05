@@ -78,7 +78,7 @@ class SpringDataNeo4jRosettaStoneStatementAdapter(
         }
         WITH latest, contextId, templateId, COLLECT([version, metadata, subjects, objects]) AS versions
         RETURN latest, contextId, templateId, versions
-        """.trimIndent()
+        """.trimIndent(),
     )
         .bindAll(mapOf("id" to id.value))
         .fetchAs(RosettaStoneStatement::class.java)
@@ -119,7 +119,7 @@ class SpringDataNeo4jRosettaStoneStatementAdapter(
             commonQuery.optionalMatch(latest.relationshipTo(contextNode, "CONTEXT"))
                 .match(
                     latest.relationshipTo(version, "VERSION").relationshipTo(metadata, "METADATA"),
-                    latest.relationshipTo(template, "TEMPLATE")
+                    latest.relationshipTo(template, "TEMPLATE"),
                 )
                 .match(version.relationshipTo(subjectNode, "SUBJECT").relationshipTo(subject, "VALUE"))
                 .let { match ->
@@ -135,7 +135,7 @@ class SpringDataNeo4jRosettaStoneStatementAdapter(
                     metadata,
                     version,
                     subject,
-                    subjectNode
+                    subjectNode,
                 )
                 .where(
                     context.toCondition { contextNode.property("id").eq(anonParameter(it.value)) },
@@ -148,7 +148,7 @@ class SpringDataNeo4jRosettaStoneStatementAdapter(
                     createdAtStart.toCondition { latest.property("created_at").gte(anonParameter(it.format(ISO_OFFSET_DATE_TIME))) },
                     createdAtEnd.toCondition { latest.property("created_at").lte(anonParameter(it.format(ISO_OFFSET_DATE_TIME))) },
                     observatoryId.toCondition { latest.property("observatory_id").eq(anonParameter(it.value.toString())) },
-                    organizationId.toCondition { latest.property("organization_id").eq(anonParameter(it.value.toString())) }
+                    organizationId.toCondition { latest.property("organization_id").eq(anonParameter(it.value.toString())) },
                 )
                 .with(
                     latest,
@@ -162,20 +162,20 @@ class SpringDataNeo4jRosettaStoneStatementAdapter(
                     match(version.relationshipTo(objectNode, "OBJECT").relationshipTo(`object`, "VALUE"))
                         .returning(collect(listOf(`object`.asExpression(), objectNode.property("index"), objectNode.property("position"))).`as`(objects))
                         .build(),
-                    version
+                    version,
                 )
                 .with(
                     latest,
                     contextId,
                     templateIdVar,
-                    collect(listOf(version.asExpression(), metadata.asExpression(), subjects, objects)).`as`(versions)
+                    collect(listOf(version.asExpression(), metadata.asExpression(), subjects, objects)).`as`(versions),
                 )
                 .where(
                     orderByOptimizations(
                         node = latest.asExpression(),
                         sort = sort,
-                        properties = arrayOf("id", "label", "created_at", "created_by", "visibility")
-                    )
+                        properties = arrayOf("id", "label", "created_at", "created_by", "visibility"),
+                    ),
                 )
                 .with(latest, contextId, templateIdVar, versions)
                 .orderBy(
@@ -185,10 +185,10 @@ class SpringDataNeo4jRosettaStoneStatementAdapter(
                             "created_at" to latest.property("created_at"),
                             "created_by" to latest.property("created_by"),
                             "visibility" to latest.property("visibility"),
-                            "template_id" to templateIdVar
+                            "template_id" to templateIdVar,
                         ),
-                        knownProperties = arrayOf("id", "created_at", "created_by", "visibility", "template_id")
-                    )
+                        knownProperties = arrayOf("id", "created_at", "created_by", "visibility", "template_id"),
+                    ),
                 )
                 .returning(latest.asExpression(), contextId, templateIdVar, versions)
         }
@@ -220,7 +220,7 @@ class SpringDataNeo4jRosettaStoneStatementAdapter(
                     createdAtStart.toCondition { latest.property("created_at").gte(anonParameter(it.format(ISO_OFFSET_DATE_TIME))) },
                     createdAtEnd.toCondition { latest.property("created_at").lte(anonParameter(it.format(ISO_OFFSET_DATE_TIME))) },
                     observatoryId.toCondition { latest.property("observatory_id").eq(anonParameter(it.value.toString())) },
-                    organizationId.toCondition { latest.property("organization_id").eq(anonParameter(it.value.toString())) }
+                    organizationId.toCondition { latest.property("organization_id").eq(anonParameter(it.value.toString())) },
                 )
                 .returning(count(latest))
         }
@@ -250,13 +250,13 @@ class SpringDataNeo4jRosettaStoneStatementAdapter(
             RETURN COLLECT({latest: latest, contextId: contextId, templateId: templateId, versions: versions}) AS statements
         }
         RETURN context, statements
-        """.trimIndent()
+        """.trimIndent(),
     )
         .bindAll(
             mapOf(
                 "contextIds" to contextIds.map { it.value },
                 "templateIds" to templateIds.map { it.value },
-            )
+            ),
         )
         .fetchAs<Pair<Thing, List<RosettaStoneStatement>>>()
         .mappedBy { _, record ->
@@ -272,7 +272,7 @@ class SpringDataNeo4jRosettaStoneStatementAdapter(
             MATCH (latest:RosettaStoneStatement:LatestVersion {id: ${'$'}id})
             OPTIONAL MATCH (latest)-[:VERSION]->(version:RosettaStoneStatement:Version)
             RETURN latest.version AS latestVersion, COUNT(version) AS versionCount
-            """.trimIndent()
+            """.trimIndent(),
         )
             .bindAll(mapOf("id" to statement.id.value))
             .fetchAs<Pair<Long, Long>>()
@@ -382,7 +382,7 @@ class SpringDataNeo4jRosettaStoneStatementAdapter(
                 RETURN COUNT(latest) AS version_subquery_update
             }
             RETURN latest
-            """.trimIndent()
+            """.trimIndent(),
         )
             .bindAll(
                 mapOf(
@@ -400,7 +400,7 @@ class SpringDataNeo4jRosettaStoneStatementAdapter(
                         "verified" to false,
                         "visibility" to statement.visibility.name,
                         "unlisted_by" to statement.unlistedBy?.value?.toString(),
-                        "modifiable" to statement.modifiable
+                        "modifiable" to statement.modifiable,
                     ),
                     "__contextId__" to (statement.contextId?.value ?: NullValue.NULL),
                     "__templateId__" to statement.templateId.value,
@@ -425,7 +425,7 @@ class SpringDataNeo4jRosettaStoneStatementAdapter(
                                 "__subjects__" to version.subjects.mapIndexed { idx, subject ->
                                     mapOf(
                                         "index" to idx,
-                                        "id" to subject.id.value
+                                        "id" to subject.id.value,
                                     )
                                 },
                                 "__objects__" to version.objects.flatMapIndexed { position, objects ->
@@ -433,7 +433,7 @@ class SpringDataNeo4jRosettaStoneStatementAdapter(
                                         mapOf(
                                             "position" to position,
                                             "index" to idx,
-                                            "id" to it.id.value
+                                            "id" to it.id.value,
                                         )
                                     }
                                 },
@@ -444,11 +444,11 @@ class SpringDataNeo4jRosettaStoneStatementAdapter(
                                     "version" to index + (versionInfo?.second?.toInt() ?: 0),
                                     "object_count" to version.objects.size,
                                     "deleted_by" to version.deletedBy?.toString(),
-                                    "deleted_at" to version.deletedAt?.format(ISO_OFFSET_DATE_TIME)
-                                )
+                                    "deleted_at" to version.deletedAt?.format(ISO_OFFSET_DATE_TIME),
+                                ),
                             )
-                        }
-                )
+                        },
+                ),
             )
             .run()
     }
@@ -463,7 +463,7 @@ class SpringDataNeo4jRosettaStoneStatementAdapter(
             MATCH (version)-[:SUBJECT]->(subjectNode:SubjectNode)-[:VALUE]->(subject:Thing)
             OPTIONAL MATCH (version)-[:OBJECT]->(objectNode:ObjectNode)-[:VALUE]->(object:Thing)
             DETACH DELETE latest, version, metadata, subject, subjectNode, object, objectNode
-            """.trimIndent()
+            """.trimIndent(),
         ).run()
     }
 
@@ -477,14 +477,14 @@ class SpringDataNeo4jRosettaStoneStatementAdapter(
                 version.visibility = 'DELETED',
                 metadata.deleted_by = ${'$'}deleted_by,
                 metadata.deleted_at = ${'$'}deleted_at
-            """.trimIndent()
+            """.trimIndent(),
         )
             .bindAll(
                 mapOf(
                     "id" to id.value,
                     "deleted_by" to contributorId.toString(),
-                    "deleted_at" to OffsetDateTime.now(clock).format(ISO_OFFSET_DATE_TIME)
-                )
+                    "deleted_at" to OffsetDateTime.now(clock).format(ISO_OFFSET_DATE_TIME),
+                ),
             )
             .run()
     }
@@ -499,7 +499,7 @@ class SpringDataNeo4jRosettaStoneStatementAdapter(
             MATCH (version)-[:SUBJECT]->(subjectNode:SubjectNode)-[:VALUE]->(Thing)
             OPTIONAL MATCH (version)-[:OBJECT]->(objectNode:ObjectNode)-[:VALUE]->(Thing)
             DETACH DELETE latest, version, metadata, subjectNode, objectNode
-            """.trimIndent()
+            """.trimIndent(),
         )
             .bindAll(mapOf("id" to id.value))
             .run()
@@ -528,7 +528,7 @@ class SpringDataNeo4jRosettaStoneStatementAdapter(
             }
             WITH r
             RETURN COUNT(r) > 0 AS count
-            """.trimIndent()
+            """.trimIndent(),
         )
             .bindAll(mapOf("id" to id.value))
             .fetchAs<Boolean>()

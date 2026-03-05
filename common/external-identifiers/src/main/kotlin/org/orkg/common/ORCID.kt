@@ -8,7 +8,7 @@ value class ORCID private constructor(override val value: String) : IdentifierVa
     companion object : IdentifierValueFactory<ORCID>(
         fn = ::ORCID,
         validationRegex = VALID_ORCID_REGEX,
-        uriValidationRegex = VALID_ORCID_URI_REGEX
+        uriValidationRegex = VALID_ORCID_URI_REGEX,
     )
 
     override val uri: String get() = "https://orcid.org/$value"

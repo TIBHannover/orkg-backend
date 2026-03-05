@@ -30,7 +30,7 @@ data class CreateListRequestPart(
     fun toCreateCommand(): CreateListCommandPart =
         CreateListCommandPart(
             label = label,
-            elements = elements
+            elements = elements,
         )
 }
 
@@ -43,7 +43,7 @@ data class CreateLiteralRequestPart(
     fun toCreateCommand(): CreateLiteralCommandPart =
         CreateLiteralCommandPart(
             label = label,
-            dataType = dataType ?: Literals.XSD.STRING.prefixedUri
+            dataType = dataType ?: Literals.XSD.STRING.prefixedUri,
         )
 }
 
@@ -56,7 +56,7 @@ data class CreatePredicateRequestPart(
     fun toCreateCommand(): CreatePredicateCommandPart =
         CreatePredicateCommandPart(
             label = label,
-            description = description
+            description = description,
         )
 }
 
@@ -68,7 +68,7 @@ data class CreateResourceRequestPart(
     fun toCreateCommand(): CreateResourceCommandPart =
         CreateResourceCommandPart(
             label = label,
-            classes = classes.orEmpty()
+            classes = classes.orEmpty(),
         )
 }
 
@@ -80,7 +80,7 @@ data class CreateClassRequestPart(
     fun toCreateCommand(): CreateClassCommandPart =
         CreateClassCommandPart(
             label = label,
-            uri = uri
+            uri = uri,
         )
 }
 

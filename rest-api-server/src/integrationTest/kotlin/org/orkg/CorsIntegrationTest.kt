@@ -116,7 +116,7 @@ internal class CorsIntegrationTest : MockMvcBaseTest("cors") {
                 // AuthorizationServer endpoints
                 Arguments.of("/oauth/token", "POST"),
                 Arguments.of("/oauth/token_key", "POST"),
-                Arguments.of("/oauth/check_token", "POST")
+                Arguments.of("/oauth/check_token", "POST"),
             )
     }
 

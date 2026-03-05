@@ -14,7 +14,7 @@ class LiteratureListSDGCreator(
         unsafeLiteralUseCases: UnsafeLiteralUseCases,
         unsafeStatementUseCases: UnsafeStatementUseCases,
     ) : this(
-        StatementCollectionPropertyCreator(unsafeLiteralUseCases, unsafeStatementUseCases)
+        StatementCollectionPropertyCreator(unsafeLiteralUseCases, unsafeStatementUseCases),
     )
 
     override fun invoke(command: CreateLiteratureListCommand, state: State): State {
@@ -22,7 +22,7 @@ class LiteratureListSDGCreator(
             contributorId = command.contributorId,
             subjectId = state.literatureListId!!,
             predicateId = Predicates.sustainableDevelopmentGoal,
-            objects = command.sustainableDevelopmentGoals.toList()
+            objects = command.sustainableDevelopmentGoals.toList(),
         )
         return state
     }

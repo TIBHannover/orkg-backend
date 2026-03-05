@@ -45,7 +45,7 @@ class InMemoryClassRepository(inMemoryGraph: InMemoryGraph) :
             label = null,
             createdBy = null,
             createdAtStart = null,
-            createdAtEnd = null
+            createdAtEnd = null,
         )
 
     override fun findAll(
@@ -69,7 +69,7 @@ class InMemoryClassRepository(inMemoryGraph: InMemoryGraph) :
                     (createdAtStart == null || it.createdAt >= createdAtStart) &&
                     (createdAtEnd == null || it.createdAt <= createdAtEnd) &&
                     (uri == null || it.uri == uri)
-            }
+            },
         )
 
     override fun findByUri(uri: String) =

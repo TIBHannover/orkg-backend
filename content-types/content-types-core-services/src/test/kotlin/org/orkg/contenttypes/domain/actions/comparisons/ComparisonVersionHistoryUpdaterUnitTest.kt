@@ -40,8 +40,8 @@ internal class ComparisonVersionHistoryUpdaterUnitTest : MockkBaseTest {
                     contributorId = command.contributorId,
                     subjectId = comparison.id,
                     predicateId = Predicates.hasPublishedVersion,
-                    objectId = comparisonVersionId
-                )
+                    objectId = comparisonVersionId,
+                ),
             )
         } returns StatementId("S1")
         every { unsafeResourceUseCases.update(any()) } just runs
@@ -57,8 +57,8 @@ internal class ComparisonVersionHistoryUpdaterUnitTest : MockkBaseTest {
                     contributorId = command.contributorId,
                     subjectId = comparison.id,
                     predicateId = Predicates.hasPublishedVersion,
-                    objectId = comparisonVersionId
-                )
+                    objectId = comparisonVersionId,
+                ),
             )
         }
         verify(exactly = 1) {
@@ -66,8 +66,8 @@ internal class ComparisonVersionHistoryUpdaterUnitTest : MockkBaseTest {
                 UpdateResourceUseCase.UpdateCommand(
                     id = comparison.versions.published.first().id,
                     contributorId = command.contributorId,
-                    classes = setOf(Classes.comparisonPublished)
-                )
+                    classes = setOf(Classes.comparisonPublished),
+                ),
             )
         }
     }
@@ -87,8 +87,8 @@ internal class ComparisonVersionHistoryUpdaterUnitTest : MockkBaseTest {
                     contributorId = command.contributorId,
                     subjectId = comparison.id,
                     predicateId = Predicates.hasPublishedVersion,
-                    objectId = comparisonVersionId
-                )
+                    objectId = comparisonVersionId,
+                ),
             )
         } returns StatementId("S1")
 
@@ -103,8 +103,8 @@ internal class ComparisonVersionHistoryUpdaterUnitTest : MockkBaseTest {
                     contributorId = command.contributorId,
                     subjectId = comparison.id,
                     predicateId = Predicates.hasPublishedVersion,
-                    objectId = comparisonVersionId
-                )
+                    objectId = comparisonVersionId,
+                ),
             )
         }
     }

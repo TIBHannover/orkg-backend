@@ -68,10 +68,10 @@ fun <
     val fabricator = Fabrikate(
         FabricatorConfig(
             collectionSizes = 12..12,
-            nullableStrategy = FabricatorConfig.NullableStrategy.NeverSetToNull // FIXME: because "id" is nullable
+            nullableStrategy = FabricatorConfig.NullableStrategy.NeverSetToNull, // FIXME: because "id" is nullable
         )
             .withStandardMappings()
-            .withGraphMappings()
+            .withGraphMappings(),
     )
 
     val saveThing: (Thing) -> Unit = {
@@ -112,7 +112,7 @@ fun <
         xit("updates an already existing statement") {
             val original = createStatement(
                 subject = createResource(ThingId("R1")),
-                `object` = createResource(ThingId("R2"))
+                `object` = createResource(ThingId("R2")),
             )
             saveStatement(original)
             val found = repository.findByStatementId(original.id).get()
@@ -155,14 +155,14 @@ fun <
                 7 to 3,
                 1 to 5,
                 6 to 1,
-                8 to 9
+                8 to 9,
             ).map {
                 val subject = resources.getOrPut(it.first, resourceFactory(it.first))
                 val `object` = resources.getOrPut(it.second, resourceFactory(it.second))
                 val statement = createStatement(
                     id = fabricator.random(),
                     subject = subject,
-                    `object` = `object`
+                    `object` = `object`,
                 )
                 statement
             }
@@ -226,22 +226,22 @@ fun <
                 predicate = hasDescription,
                 `object` = fabricator.random<Literal>().copy(
                     label = "description 1",
-                    datatype = Literals.XSD.STRING.prefixedUri
-                )
+                    datatype = Literals.XSD.STRING.prefixedUri,
+                ),
             ),
             fabricator.random<GeneralStatement>().copy(
                 subject = fabricator.random<Resource>(),
                 predicate = hasDescription,
                 `object` = fabricator.random<Literal>().copy(
                     label = "description 2",
-                    datatype = Literals.XSD.STRING.prefixedUri
-                )
+                    datatype = Literals.XSD.STRING.prefixedUri,
+                ),
             ),
             fabricator.random<GeneralStatement>().copy(
                 subject = fabricator.random<Resource>(),
                 predicate = hasDescription,
-                `object` = fabricator.random<Resource>()
-            )
+                `object` = fabricator.random<Resource>(),
+            ),
         )
 
         it("returns the correct result") {
@@ -249,7 +249,7 @@ fun <
             val result = repository.findAllDescriptionsById(graph.map { it.subject.id }.toSet())
             result shouldBe mapOf(
                 graph[0].subject.id to "description 1",
-                graph[1].subject.id to "description 2"
+                graph[1].subject.id to "description 2",
             )
         }
         it("returns empty result when no ids are given") {
@@ -353,7 +353,7 @@ fun <
                 val expected = statements.take(expectedCount)
                 val result = repository.findAll(
                     pageable = PageRequest.of(0, 5),
-                    subjectClasses = subjectClasses
+                    subjectClasses = subjectClasses,
                 )
 
                 it("returns the correct result") {
@@ -386,7 +386,7 @@ fun <
                 val expected = statements.take(expectedCount)
                 val result = repository.findAll(
                     pageable = PageRequest.of(0, 5),
-                    subjectId = subject.id
+                    subjectId = subject.id,
                 )
 
                 it("returns the correct result") {
@@ -419,7 +419,7 @@ fun <
                 val expected = statements.take(expectedCount)
                 val result = repository.findAll(
                     pageable = PageRequest.of(0, 5),
-                    subjectLabel = label
+                    subjectLabel = label,
                 )
 
                 it("returns the correct result") {
@@ -452,7 +452,7 @@ fun <
                 val expected = statements.take(expectedCount)
                 val result = repository.findAll(
                     pageable = PageRequest.of(0, 5),
-                    predicateId = predicate.id
+                    predicateId = predicate.id,
                 )
 
                 it("returns the correct result") {
@@ -485,7 +485,7 @@ fun <
                 val expected = statements.take(expectedCount)
                 val result = repository.findAll(
                     pageable = PageRequest.of(0, 5),
-                    createdBy = createdBy
+                    createdBy = createdBy,
                 )
 
                 it("returns the correct result") {
@@ -510,7 +510,7 @@ fun <
                 val expectedCount = 3
                 val statements = fabricator.random<List<GeneralStatement>>().mapIndexed { index, statement ->
                     statement.copy(
-                        createdAt = OffsetDateTime.now(fixedClock).minusHours(index.toLong())
+                        createdAt = OffsetDateTime.now(fixedClock).minusHours(index.toLong()),
                     )
                 }
                 statements.forEach(saveStatement)
@@ -518,7 +518,7 @@ fun <
                 val expected = statements.take(expectedCount)
                 val result = repository.findAll(
                     pageable = PageRequest.of(0, 5),
-                    createdAtStart = expected.last().createdAt
+                    createdAtStart = expected.last().createdAt,
                 )
 
                 it("returns the correct result") {
@@ -543,7 +543,7 @@ fun <
                 val expectedCount = 3
                 val statements = fabricator.random<List<GeneralStatement>>().mapIndexed { index, statement ->
                     statement.copy(
-                        createdAt = OffsetDateTime.now(fixedClock).plusHours(index.toLong())
+                        createdAt = OffsetDateTime.now(fixedClock).plusHours(index.toLong()),
                     )
                 }
                 statements.forEach(saveStatement)
@@ -551,7 +551,7 @@ fun <
                 val expected = statements.take(expectedCount)
                 val result = repository.findAll(
                     pageable = PageRequest.of(0, 5),
-                    createdAtEnd = expected.last().createdAt
+                    createdAtEnd = expected.last().createdAt,
                 )
 
                 it("returns the correct result") {
@@ -587,7 +587,7 @@ fun <
                 val expected = statements.take(expectedCount)
                 val result = repository.findAll(
                     pageable = PageRequest.of(0, 5),
-                    objectClasses = objectClasses
+                    objectClasses = objectClasses,
                 )
 
                 it("returns the correct result") {
@@ -620,7 +620,7 @@ fun <
                 val expected = statements.take(expectedCount)
                 val result = repository.findAll(
                     pageable = PageRequest.of(0, 5),
-                    objectId = `object`.id
+                    objectId = `object`.id,
                 )
 
                 it("returns the correct result") {
@@ -653,7 +653,7 @@ fun <
                 val expected = statements.take(expectedCount)
                 val result = repository.findAll(
                     pageable = PageRequest.of(0, 5),
-                    objectLabel = label
+                    objectLabel = label,
                 )
 
                 it("returns the correct result") {
@@ -680,7 +680,7 @@ fun <
 
                 val expected = fabricator.random<GeneralStatement>().copy(
                     subject = fabricator.random<Resource>(),
-                    `object` = fabricator.random<Resource>()
+                    `object` = fabricator.random<Resource>(),
                 )
                 saveStatement(expected)
 
@@ -695,7 +695,7 @@ fun <
                     createdAtEnd = expected.createdAt,
                     objectClasses = (expected.`object` as Resource).classes,
                     objectId = expected.`object`.id,
-                    objectLabel = expected.`object`.label
+                    objectLabel = expected.`object`.label,
                 )
 
                 it("returns the correct result") {
@@ -743,7 +743,7 @@ fun <
 
                 val result = repository.findAllByStatementIdIn(
                     expected.map { it.id }.toSet(),
-                    PageRequest.of(0, 5)
+                    PageRequest.of(0, 5),
                 )
 
                 it("returns the correct result") {
@@ -773,7 +773,7 @@ fun <
 
                 val result = repository.findAllByStatementIdIn(
                     expected.map { it.id }.toSet(),
-                    PageRequest.of(0, 5)
+                    PageRequest.of(0, 5),
                 )
 
                 it("returns the correct result") {
@@ -799,10 +799,10 @@ fun <
             context("with a minimum level of hops") {
                 val statement1 = fabricator.random<GeneralStatement>()
                 val statement2 = fabricator.random<GeneralStatement>().copy(
-                    subject = statement1.`object`
+                    subject = statement1.`object`,
                 )
                 val statement3 = fabricator.random<GeneralStatement>().copy(
-                    subject = statement2.`object`
+                    subject = statement2.`object`,
                 )
                 saveStatement(statement1)
                 saveStatement(statement2)
@@ -813,9 +813,9 @@ fun <
                         minLevel = 1,
                         maxLevel = null,
                         blacklist = emptyList(),
-                        whitelist = emptyList()
+                        whitelist = emptyList(),
                     ),
-                    Sort.unsorted()
+                    Sort.unsorted(),
                 )
                 it("returns the correct result") {
                     result shouldNotBe null
@@ -831,13 +831,13 @@ fun <
             context("with a maximum level of hops") {
                 val statement1 = fabricator.random<GeneralStatement>()
                 val statement2 = fabricator.random<GeneralStatement>().copy(
-                    subject = statement1.`object`
+                    subject = statement1.`object`,
                 )
                 val statement3 = fabricator.random<GeneralStatement>().copy(
-                    subject = statement2.`object`
+                    subject = statement2.`object`,
                 )
                 val statement4 = fabricator.random<GeneralStatement>().copy(
-                    subject = statement3.`object`
+                    subject = statement3.`object`,
                 )
                 saveStatement(statement1)
                 saveStatement(statement2)
@@ -849,9 +849,9 @@ fun <
                         minLevel = null,
                         maxLevel = 2,
                         blacklist = emptyList(),
-                        whitelist = emptyList()
+                        whitelist = emptyList(),
                     ),
-                    Sort.unsorted()
+                    Sort.unsorted(),
                 )
                 it("returns the correct result") {
                     result shouldNotBe null
@@ -867,11 +867,11 @@ fun <
             context("with a blacklist for classes") {
                 val statement1 = fabricator.random<GeneralStatement>()
                 val statement2 = fabricator.random<GeneralStatement>().copy(
-                    subject = statement1.`object`
+                    subject = statement1.`object`,
                 )
                 val statement3 = fabricator.random<GeneralStatement>().copy(
                     subject = statement1.`object`,
-                    `object` = fabricator.random<Resource>()
+                    `object` = fabricator.random<Resource>(),
                 )
                 saveStatement(statement1)
                 saveStatement(statement2)
@@ -882,9 +882,9 @@ fun <
                         minLevel = null,
                         maxLevel = null,
                         blacklist = (statement3.`object` as Resource).classes.take(2),
-                        whitelist = emptyList()
+                        whitelist = emptyList(),
                     ),
-                    Sort.unsorted()
+                    Sort.unsorted(),
                 )
                 it("returns the correct result") {
                     result shouldNotBe null
@@ -899,14 +899,14 @@ fun <
             }
             context("with a whitelist for classes") {
                 val statement1 = fabricator.random<GeneralStatement>().copy(
-                    `object` = fabricator.random<Resource>()
+                    `object` = fabricator.random<Resource>(),
                 )
                 val statement2 = fabricator.random<GeneralStatement>().copy(
                     subject = statement1.`object`,
-                    `object` = fabricator.random<Resource>().copy(classes = (statement1.`object` as Resource).classes)
+                    `object` = fabricator.random<Resource>().copy(classes = (statement1.`object` as Resource).classes),
                 )
                 val statement3 = fabricator.random<GeneralStatement>().copy(
-                    subject = statement1.`object`
+                    subject = statement1.`object`,
                 )
                 saveStatement(statement1)
                 saveStatement(statement2)
@@ -917,9 +917,9 @@ fun <
                         minLevel = null,
                         maxLevel = null,
                         blacklist = emptyList(),
-                        whitelist = (statement1.`object` as Resource).classes.take(2)
+                        whitelist = (statement1.`object` as Resource).classes.take(2),
                     ),
-                    Sort.unsorted()
+                    Sort.unsorted(),
                 )
                 it("returns the correct result") {
                     result shouldNotBe null
@@ -937,15 +937,15 @@ fun <
                 val createdBy2 = ContributorId("6aaea2ec-394f-4fe9-ac78-4254d21f1181")
                 val statement1 = fabricator.random<GeneralStatement>().copy(
                     `object` = fabricator.random<Resource>(),
-                    createdBy = createdBy1
+                    createdBy = createdBy1,
                 )
                 val statement2 = fabricator.random<GeneralStatement>().copy(
                     subject = statement1.`object`,
-                    createdBy = createdBy1
+                    createdBy = createdBy1,
                 )
                 val statement3 = fabricator.random<GeneralStatement>().copy(
                     subject = statement1.`object`,
-                    createdBy = createdBy2
+                    createdBy = createdBy2,
                 )
                 saveStatement(statement1)
                 saveStatement(statement2)
@@ -959,9 +959,9 @@ fun <
                         minLevel = null,
                         maxLevel = null,
                         blacklist = emptyList(),
-                        whitelist = emptyList()
+                        whitelist = emptyList(),
                     ),
-                    Sort.by("created_by").descending().and(Sort.by("created_at").ascending())
+                    Sort.by("created_by").descending().and(Sort.by("created_at").ascending()),
                 )
                 it("returns the correct result") {
                     result shouldNotBe null
@@ -993,34 +993,34 @@ fun <
         context("by contribution id") {
             val statements = mutableListOf<GeneralStatement>()
             val hasContribution = createPredicate(
-                id = Predicates.hasContribution
+                id = Predicates.hasContribution,
             )
             val hasDOI = createPredicate(
-                id = Predicates.hasDOI
+                id = Predicates.hasDOI,
             )
             repeat(2) {
                 val paper = createResource(
                     id = fabricator.random(),
-                    classes = setOf(Classes.paper)
+                    classes = setOf(Classes.paper),
                 )
                 val contribution = createResource(
                     id = fabricator.random(),
                 )
                 val doi = createLiteral(
                     id = fabricator.random(),
-                    label = fabricator.random()
+                    label = fabricator.random(),
                 )
                 val paperHasContribution = createStatement(
                     id = fabricator.random(),
                     subject = paper,
                     predicate = hasContribution,
-                    `object` = contribution
+                    `object` = contribution,
                 )
                 val paperHasDoi = createStatement(
                     id = fabricator.random(),
                     subject = paper,
                     predicate = hasDOI,
-                    `object` = doi
+                    `object` = doi,
                 )
                 statements.add(paperHasContribution)
                 statements.add(paperHasDoi)
@@ -1045,34 +1045,34 @@ fun <
             val doi = fabricator.random<String>()
             val resource1 = createResource(
                 id = ThingId("R1"),
-                classes = setOf(Classes.paper)
+                classes = setOf(Classes.paper),
             )
             val resource2 = resource1.copy(
                 id = ThingId("R2"),
-                createdAt = resource1.createdAt.minusHours(1)
+                createdAt = resource1.createdAt.minusHours(1),
             )
             val resource3 = resource1.copy(
                 id = ThingId("R3"),
                 classes = setOf(ThingId(fabricator.random())),
-                createdAt = resource1.createdAt.plusHours(1)
+                createdAt = resource1.createdAt.plusHours(1),
             )
             val resource1HasDoi = createStatement(
                 id = fabricator.random(),
                 subject = resource1,
                 predicate = hasDOI,
-                `object` = createLiteral(id = fabricator.random(), label = doi)
+                `object` = createLiteral(id = fabricator.random(), label = doi),
             )
             val resource2HasDoi = createStatement(
                 id = fabricator.random(),
                 subject = resource2,
                 predicate = hasDOI,
-                `object` = createLiteral(id = fabricator.random(), label = doi)
+                `object` = createLiteral(id = fabricator.random(), label = doi),
             )
             val resource3HasDoi = createStatement(
                 id = fabricator.random(),
                 subject = resource3,
                 predicate = hasDOI,
-                `object` = createLiteral(id = fabricator.random(), label = doi)
+                `object` = createLiteral(id = fabricator.random(), label = doi),
             )
             saveStatement(resource1HasDoi)
             saveStatement(resource2HasDoi)
@@ -1100,24 +1100,24 @@ fun <
 
             val paper = createResource(
                 id = fabricator.random(),
-                classes = setOf(Classes.paper)
+                classes = setOf(Classes.paper),
             )
             val paperHasDoi = createStatement(
                 id = fabricator.random(),
                 subject = paper,
                 predicate = hasDoi,
-                `object` = doiLiteral
+                `object` = doiLiteral,
             )
 
             val deletedPaper = createResource(
                 id = fabricator.random(),
-                classes = setOf(Classes.paperDeleted)
+                classes = setOf(Classes.paperDeleted),
             )
             val deletedPaperHasDoi = createStatement(
                 id = fabricator.random(),
                 subject = deletedPaper,
                 predicate = hasDoi,
-                `object` = doiLiteral
+                `object` = doiLiteral,
             )
 
             context("with default case") {
@@ -1199,23 +1199,23 @@ fun <
             context("and visibility") {
                 val observatoryId = ObservatoryId(UUID.randomUUID())
                 val hasContribution = createPredicate(
-                    id = Predicates.hasContribution
+                    id = Predicates.hasContribution,
                 )
                 val paper1 = createResource(
                     id = fabricator.random(),
                     classes = setOf(Classes.paper),
                     observatoryId = observatoryId,
-                    visibility = Visibility.FEATURED
+                    visibility = Visibility.FEATURED,
                 )
                 val contribution1 = createResource(
                     id = fabricator.random(),
-                    classes = setOf(Classes.contribution)
+                    classes = setOf(Classes.contribution),
                 )
                 val paper1HasContribution1 = createStatement(
                     id = fabricator.random(),
                     subject = paper1,
                     predicate = hasContribution,
-                    `object` = contribution1
+                    `object` = contribution1,
                 )
 
                 saveStatement(paper1HasContribution1)
@@ -1223,13 +1223,13 @@ fun <
                 val paper2 = createResource(
                     id = fabricator.random(),
                     classes = setOf(Classes.paper),
-                    observatoryId = observatoryId
+                    observatoryId = observatoryId,
                 )
                 val paper2HasContribution1 = createStatement(
                     id = fabricator.random(),
                     subject = paper2,
                     predicate = hasContribution,
-                    `object` = contribution1
+                    `object` = contribution1,
                 )
 
                 saveStatement(paper2HasContribution1)
@@ -1257,40 +1257,40 @@ fun <
             context("and filter set") {
                 val observatoryId = ObservatoryId(UUID.randomUUID())
                 val hasContribution = createPredicate(
-                    id = Predicates.hasContribution
+                    id = Predicates.hasContribution,
                 )
                 val hasResearchProblem = createPredicate(
-                    id = Predicates.hasResearchProblem
+                    id = Predicates.hasResearchProblem,
                 )
                 val hasKeyword = createPredicate(
-                    id = ThingId("R394758")
+                    id = ThingId("R394758"),
                 )
 
                 val paper1 = createResource(
                     id = fabricator.random(),
                     classes = setOf(Classes.paper),
                     observatoryId = observatoryId,
-                    visibility = Visibility.FEATURED
+                    visibility = Visibility.FEATURED,
                 )
                 val contribution1 = createResource(
                     id = fabricator.random(),
-                    classes = setOf(Classes.contribution)
+                    classes = setOf(Classes.contribution),
                 )
                 val value1 = createResource(
                     id = fabricator.random(),
-                    classes = setOf(Classes.problem)
+                    classes = setOf(Classes.problem),
                 )
                 val paper1HasContribution1 = createStatement(
                     id = fabricator.random(),
                     subject = paper1,
                     predicate = hasContribution,
-                    `object` = contribution1
+                    `object` = contribution1,
                 )
                 val contribution1HasProblemValue1 = createStatement(
                     id = fabricator.random(),
                     subject = contribution1,
                     predicate = hasResearchProblem,
-                    `object` = value1
+                    `object` = value1,
                 )
 
                 saveStatement(paper1HasContribution1)
@@ -1300,13 +1300,13 @@ fun <
                     id = fabricator.random(),
                     classes = setOf(Classes.paper),
                     observatoryId = observatoryId,
-                    visibility = Visibility.DEFAULT
+                    visibility = Visibility.DEFAULT,
                 )
                 val paper2HasContribution1 = createStatement(
                     id = fabricator.random(),
                     subject = paper2,
                     predicate = hasContribution,
-                    `object` = contribution1
+                    `object` = contribution1,
                 )
 
                 saveStatement(paper2HasContribution1)
@@ -1315,26 +1315,26 @@ fun <
                     id = fabricator.random(),
                     classes = setOf(Classes.paper),
                     observatoryId = observatoryId,
-                    visibility = Visibility.FEATURED
+                    visibility = Visibility.FEATURED,
                 )
                 val contribution2 = createResource(
                     id = fabricator.random(),
-                    classes = setOf(Classes.contribution)
+                    classes = setOf(Classes.contribution),
                 )
                 val value2 = createLiteral(
-                    id = fabricator.random()
+                    id = fabricator.random(),
                 )
                 val paper3HasContribution2 = createStatement(
                     id = fabricator.random(),
                     subject = paper3,
                     predicate = hasContribution,
-                    `object` = contribution2
+                    `object` = contribution2,
                 )
                 val contribution2HasKeywordValue2 = createStatement(
                     id = fabricator.random(),
                     subject = contribution2,
                     predicate = hasKeyword,
-                    `object` = value2
+                    `object` = value2,
                 )
 
                 saveStatement(paper3HasContribution2)
@@ -1345,8 +1345,8 @@ fun <
                         path = listOf(Predicates.hasResearchProblem),
                         range = Classes.resources,
                         values = setOf(Value(Operator.EQ, value1.id.value)),
-                        exact = false
-                    )
+                        exact = false,
+                    ),
                 )
 
                 val result = repository.findAllPapersByObservatoryIdAndFilters(observatoryId, filterConfig, VisibilityFilter.FEATURED, PageRequest.of(0, 5))
@@ -1375,52 +1375,52 @@ fun <
     describe("finding a timeline") {
         context("by resource id") {
             val resource = fabricator.random<Resource>().copy(
-                createdAt = OffsetDateTime.now(fixedClock)
+                createdAt = OffsetDateTime.now(fixedClock),
             )
 
             setOf("ResearchField", "Problem", "Paper").forEach {
                 val resourceForIt = fabricator.random<Resource>().copy(
                     classes = setOf(ThingId(it)),
-                    createdAt = resource.createdAt.plusSeconds(145864)
+                    createdAt = resource.createdAt.plusSeconds(145864),
                 )
                 val resourceRelatesToIt = fabricator.random<GeneralStatement>().copy(
                     subject = resource,
                     `object` = resourceForIt,
-                    createdAt = resource.createdAt.plusSeconds(7897)
+                    createdAt = resource.createdAt.plusSeconds(7897),
                 )
                 saveStatement(resourceRelatesToIt)
             }
 
             // Relate to some other Resource
             val otherResource = fabricator.random<Resource>().copy(
-                createdAt = resource.createdAt.plusSeconds(5478)
+                createdAt = resource.createdAt.plusSeconds(5478),
             )
             val resourceRelatesToOtherResource = fabricator.random<GeneralStatement>().copy(
                 subject = resource,
                 `object` = otherResource,
-                createdAt = resource.createdAt.plusSeconds(26158)
+                createdAt = resource.createdAt.plusSeconds(26158),
             )
             saveStatement(resourceRelatesToOtherResource)
 
             // Relate otherResource to another Resource
             val anotherResource = fabricator.random<Resource>().copy(
-                createdAt = resource.createdAt.plusSeconds(9871)
+                createdAt = resource.createdAt.plusSeconds(9871),
             )
             val otherResourceRelatesToAnotherResource = fabricator.random<GeneralStatement>().copy(
                 subject = otherResource,
                 `object` = anotherResource,
-                createdAt = resource.createdAt.plusSeconds(14659)
+                createdAt = resource.createdAt.plusSeconds(14659),
             )
             saveStatement(otherResourceRelatesToAnotherResource)
 
             // Relate to an old Resource
             val oldResource = fabricator.random<Resource>().copy(
-                createdAt = resource.createdAt.minusSeconds(651456)
+                createdAt = resource.createdAt.minusSeconds(651456),
             )
             val resourceRelatesToOldResource = fabricator.random<GeneralStatement>().copy(
                 subject = resource,
                 `object` = oldResource,
-                createdAt = resource.createdAt.minusSeconds(156168)
+                createdAt = resource.createdAt.minusSeconds(156168),
             )
             saveStatement(resourceRelatesToOldResource)
 
@@ -1429,7 +1429,7 @@ fun <
                 ResourceContributor(otherResource.createdBy, otherResource.createdAt),
                 ResourceContributor(resourceRelatesToOtherResource.createdBy, resourceRelatesToOtherResource.createdAt!!),
                 ResourceContributor(anotherResource.createdBy, anotherResource.createdAt),
-                ResourceContributor(otherResourceRelatesToAnotherResource.createdBy, otherResourceRelatesToAnotherResource.createdAt!!)
+                ResourceContributor(otherResourceRelatesToAnotherResource.createdBy, otherResourceRelatesToAnotherResource.createdAt!!),
             ).map {
                 it.copy(createdAt = it.createdAt.withSecond(0).withNano(0).withOffsetSameInstant(ZoneOffset.UTC))
             }
@@ -1461,11 +1461,11 @@ fun <
 
             setOf("ResearchField", "Problem", "Paper").forEach {
                 val resourceForIt = fabricator.random<Resource>().copy(
-                    classes = setOf(ThingId(it))
+                    classes = setOf(ThingId(it)),
                 )
                 val resourceRelatesToIt = fabricator.random<GeneralStatement>().copy(
                     subject = resource,
-                    `object` = resourceForIt
+                    `object` = resourceForIt,
                 )
                 saveStatement(resourceRelatesToIt)
             }
@@ -1474,7 +1474,7 @@ fun <
             val otherResource = fabricator.random<Resource>()
             val resourceRelatesToOtherResource = fabricator.random<GeneralStatement>().copy(
                 subject = resource,
-                `object` = otherResource
+                `object` = otherResource,
             )
             saveStatement(resourceRelatesToOtherResource)
 
@@ -1482,7 +1482,7 @@ fun <
             val anotherResource = fabricator.random<Resource>()
             val otherResourceRelatesToAnotherResource = fabricator.random<GeneralStatement>().copy(
                 subject = otherResource,
-                `object` = anotherResource
+                `object` = anotherResource,
             )
             saveStatement(otherResourceRelatesToAnotherResource)
 
@@ -1491,7 +1491,7 @@ fun <
                 otherResource.createdBy,
                 resourceRelatesToOtherResource.createdBy,
                 anotherResource.createdBy,
-                otherResourceRelatesToAnotherResource.createdBy
+                otherResourceRelatesToAnotherResource.createdBy,
             )
 
             val result = repository.findAllContributorsByResourceId(resource.id, PageRequest.of(0, 5))

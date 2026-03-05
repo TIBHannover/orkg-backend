@@ -15,13 +15,13 @@ data class LegacyComparisonTable(
                 contributions = emptyList(),
                 transpose = false,
                 type = LegacyComparisonType.PATH,
-                shortCodes = emptyList()
+                shortCodes = emptyList(),
             ),
             data = LegacyComparisonData(
                 contributions = emptyList(),
                 predicates = emptyList(),
-                data = emptyMap()
-            )
+                data = emptyMap(),
+            ),
         )
     }
 }

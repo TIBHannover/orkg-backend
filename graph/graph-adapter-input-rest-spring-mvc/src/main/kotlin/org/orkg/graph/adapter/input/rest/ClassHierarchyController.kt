@@ -73,7 +73,7 @@ class ClassHierarchyController(
                 contributorId = currentUser.contributorId(),
                 parentId = request.parentId,
                 childIds = setOf(id),
-            )
+            ),
         )
         val location = uriComponentsBuilder
             .path("/api/classes/{id}/parent")
@@ -108,7 +108,7 @@ class ClassHierarchyController(
                 contributorId = currentUser.contributorId(),
                 parentId = id,
                 childIds = request.childIds,
-            )
+            ),
         )
         val location = uriComponentsBuilder
             .path("/api/classes/{id}/children")
@@ -131,7 +131,7 @@ class ClassHierarchyController(
                 contributorId = currentUser.contributorId(),
                 parentId = id,
                 childIds = request.childIds,
-            )
+            ),
         )
         val location = uriComponentsBuilder
             .path("/api/classes/{id}/children")

@@ -83,7 +83,7 @@ internal class ObservatoryFilterControllerUnitTest : MockMvcBaseTest("observator
                 description(
                     """
                     A `GET` request provides information about an observatory filter, which always belongs to a specific <<observatories,observatory>>.
-                    """
+                    """,
                 )
                 pathParameters(
                     parameterWithName("id").description("The identifier of the observatory that the filter belongs to."),
@@ -92,7 +92,7 @@ internal class ObservatoryFilterControllerUnitTest : MockMvcBaseTest("observator
                 responseFields<ObservatoryFilterRepresentation>(observatoryFilterResponseFields())
                 throws(
                     ObservatoryNotFound::class,
-                    ObservatoryFilterNotFound::class
+                    ObservatoryFilterNotFound::class,
                 )
             }
 
@@ -151,7 +151,7 @@ internal class ObservatoryFilterControllerUnitTest : MockMvcBaseTest("observator
                     """
                     A `GET` request returns a <<sorting-and-pagination,paged>> list of <<observatory-filters-fetch,observatory filters>> that belong to the specified <<observatories,observatory>>.
                     If no paging request parameters are provided, the default values will be used.
-                    """
+                    """,
                 )
                 pathParameters(
                     parameterWithName("id").description("The identifier of the observatory that the filters belongs to."),
@@ -173,7 +173,7 @@ internal class ObservatoryFilterControllerUnitTest : MockMvcBaseTest("observator
         val observatory = createObservatory()
         val user = createContributor(
             id = ContributorId(MockUserId.USER),
-            observatoryId = observatory.id
+            observatoryId = observatory.id,
         )
 
         every { contributorService.findById(any()) } returns Optional.of(user)
@@ -191,7 +191,7 @@ internal class ObservatoryFilterControllerUnitTest : MockMvcBaseTest("observator
                     The response will be `204 No Content` when successful.
                     
                     NOTE: The user performing the action needs to be a curator or a member of the observatory.
-                    """
+                    """,
                 )
                 pathParameters(
                     parameterWithName("id").description("The identifier of the observatory that the filters belongs to."),
@@ -212,7 +212,7 @@ internal class ObservatoryFilterControllerUnitTest : MockMvcBaseTest("observator
         val observatory = createObservatory()
         val user = createContributor(
             id = ContributorId(MockUserId.USER),
-            observatoryId = ObservatoryId(UUID.randomUUID())
+            observatoryId = ObservatoryId(UUID.randomUUID()),
         )
 
         every { contributorService.findById(any()) } returns Optional.of(user)
@@ -232,7 +232,7 @@ internal class ObservatoryFilterControllerUnitTest : MockMvcBaseTest("observator
         val observatory = createObservatory()
         val user = createContributor(
             id = ContributorId(MockUserId.USER),
-            observatoryId = observatory.id
+            observatoryId = observatory.id,
         )
 
         every { contributorService.findById(any()) } returns Optional.of(user)
@@ -255,14 +255,14 @@ internal class ObservatoryFilterControllerUnitTest : MockMvcBaseTest("observator
         val observatory = createObservatory()
         val user = createContributor(
             id = ContributorId(MockUserId.USER),
-            observatoryId = observatory.id
+            observatoryId = observatory.id,
         )
         val command = mapOf(
             "label" to "filter",
             "path" to listOf(Predicates.hasResearchProblem),
             "range" to Classes.resources,
             "exact" to false,
-            "featured" to false
+            "featured" to false,
         )
 
         every { contributorService.findById(any()) } returns Optional.of(user)
@@ -282,7 +282,7 @@ internal class ObservatoryFilterControllerUnitTest : MockMvcBaseTest("observator
                     The observatory filter can be retrieved by following the URI in the `Location` header field.
                     
                     NOTE: The user performing the action needs to be a curator or a member of the observatory.
-                    """
+                    """,
                 )
                 pathParameters(
                     parameterWithName("id").description("The identifier of the observatory that the filters belongs to."),
@@ -317,14 +317,14 @@ internal class ObservatoryFilterControllerUnitTest : MockMvcBaseTest("observator
         val observatory = createObservatory()
         val user = createContributor(
             id = ContributorId(MockUserId.USER),
-            observatoryId = observatory.id
+            observatoryId = observatory.id,
         )
         val command = mapOf(
             "label" to "filter",
             "path" to listOf(Predicates.hasResearchProblem),
             "range" to Classes.resources,
             "exact" to false,
-            "featured" to false
+            "featured" to false,
         )
         val exception = ObservatoryNotFound(observatory.id)
 
@@ -347,14 +347,14 @@ internal class ObservatoryFilterControllerUnitTest : MockMvcBaseTest("observator
         val observatory = createObservatory()
         val user = createContributor(
             id = ContributorId(MockUserId.USER),
-            observatoryId = observatory.id
+            observatoryId = observatory.id,
         )
         val command = mapOf(
             "label" to "filter",
             "path" to listOf(Predicates.hasResearchProblem),
             "range" to ThingId("Missing"),
             "exact" to false,
-            "featured" to false
+            "featured" to false,
         )
         val exception = ClassNotFound.withThingId(ThingId("Missing"))
 
@@ -377,14 +377,14 @@ internal class ObservatoryFilterControllerUnitTest : MockMvcBaseTest("observator
         val observatory = createObservatory()
         val user = createContributor(
             id = ContributorId(MockUserId.USER),
-            observatoryId = observatory.id
+            observatoryId = observatory.id,
         )
         val command = mapOf(
             "label" to "filter",
             "path" to listOf(ThingId("Missing")),
             "range" to Classes.resources,
             "exact" to false,
-            "featured" to false
+            "featured" to false,
         )
         val exception = PredicateNotFound(ThingId("Missing"))
 
@@ -407,14 +407,14 @@ internal class ObservatoryFilterControllerUnitTest : MockMvcBaseTest("observator
         val observatory = createObservatory()
         val user = createContributor(
             id = ContributorId(MockUserId.USER),
-            observatoryId = ObservatoryId(UUID.randomUUID())
+            observatoryId = ObservatoryId(UUID.randomUUID()),
         )
         val command = mapOf(
             "label" to "filter",
             "path" to listOf(Predicates.hasResearchProblem),
             "range" to Classes.resources,
             "exact" to false,
-            "featured" to false
+            "featured" to false,
         )
 
         every { contributorService.findById(any()) } returns Optional.of(user)
@@ -436,14 +436,14 @@ internal class ObservatoryFilterControllerUnitTest : MockMvcBaseTest("observator
         val observatory = createObservatory()
         val user = createContributor(
             id = ContributorId(MockUserId.USER),
-            observatoryId = observatory.id
+            observatoryId = observatory.id,
         )
         val command = mapOf(
             "label" to "filter",
             "path" to listOf(Predicates.hasResearchProblem),
             "range" to Classes.resources,
             "exact" to false,
-            "featured" to false
+            "featured" to false,
         )
 
         every { observatoryUseCases.findById(observatory.id) } returns Optional.of(observatory)
@@ -463,7 +463,7 @@ internal class ObservatoryFilterControllerUnitTest : MockMvcBaseTest("observator
                     The response will be `204 No Content` when successful.
                     
                     NOTE: The user performing the action needs to be a curator or a member of the observatory.
-                    """
+                    """,
                 )
                 pathParameters(
                     parameterWithName("id").description("The identifier of the observatory that the filters belongs to."),
@@ -501,14 +501,14 @@ internal class ObservatoryFilterControllerUnitTest : MockMvcBaseTest("observator
         val observatory = createObservatory()
         val user = createContributor(
             id = ContributorId(MockUserId.USER),
-            observatoryId = observatory.id
+            observatoryId = observatory.id,
         )
         val command = mapOf(
             "label" to "filter",
             "path" to listOf(Predicates.hasResearchProblem),
             "range" to Classes.resources,
             "exact" to false,
-            "featured" to false
+            "featured" to false,
         )
         val exception = ObservatoryNotFound(observatory.id)
 
@@ -534,14 +534,14 @@ internal class ObservatoryFilterControllerUnitTest : MockMvcBaseTest("observator
         val observatory = createObservatory()
         val user = createContributor(
             id = ContributorId(MockUserId.USER),
-            observatoryId = observatory.id
+            observatoryId = observatory.id,
         )
         val command = mapOf(
             "label" to "filter",
             "path" to listOf(Predicates.hasResearchProblem),
             "range" to ThingId("Missing"),
             "exact" to false,
-            "featured" to false
+            "featured" to false,
         )
         val exception = ClassNotFound.withThingId(ThingId("Missing"))
 
@@ -567,14 +567,14 @@ internal class ObservatoryFilterControllerUnitTest : MockMvcBaseTest("observator
         val observatory = createObservatory()
         val user = createContributor(
             id = ContributorId(MockUserId.USER),
-            observatoryId = observatory.id
+            observatoryId = observatory.id,
         )
         val command = mapOf(
             "label" to "filter",
             "path" to listOf(ThingId("Missing")),
             "range" to Classes.resources,
             "exact" to false,
-            "featured" to false
+            "featured" to false,
         )
         val exception = PredicateNotFound(ThingId("Missing"))
 
@@ -600,14 +600,14 @@ internal class ObservatoryFilterControllerUnitTest : MockMvcBaseTest("observator
         val observatory = createObservatory()
         val user = createContributor(
             id = ContributorId(MockUserId.USER),
-            observatoryId = ObservatoryId(UUID.randomUUID())
+            observatoryId = ObservatoryId(UUID.randomUUID()),
         )
         val command = mapOf(
             "label" to "filter",
             "path" to listOf(Predicates.hasResearchProblem),
             "range" to Classes.resources,
             "exact" to false,
-            "featured" to false
+            "featured" to false,
         )
 
         every { observatoryUseCases.findById(observatory.id) } returns Optional.of(observatory)
@@ -633,7 +633,7 @@ internal class ObservatoryFilterControllerUnitTest : MockMvcBaseTest("observator
             "path" to listOf(Predicates.hasResearchProblem),
             "range" to ThingId("Missing"),
             "exact" to false,
-            "featured" to false
+            "featured" to false,
         )
 
         every { observatoryUseCases.findById(observatoryId) } returns Optional.empty()

@@ -41,6 +41,6 @@ interface ComparisonRepresentationAdapter :
             isAnonymized = isAnonymized,
             visibility = visibility,
             unlistedBy = unlistedBy,
-            published = published
+            published = published,
         )
 }

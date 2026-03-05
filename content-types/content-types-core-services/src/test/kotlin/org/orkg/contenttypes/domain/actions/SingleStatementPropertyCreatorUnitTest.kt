@@ -33,8 +33,8 @@ internal class SingleStatementPropertyCreatorUnitTest : MockkBaseTest {
             unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = contributorId,
-                    label = description
-                )
+                    label = description,
+                ),
             )
         } returns literal
         every {
@@ -43,8 +43,8 @@ internal class SingleStatementPropertyCreatorUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     subjectId = subjectId,
                     predicateId = Predicates.description,
-                    objectId = literal
-                )
+                    objectId = literal,
+                ),
             )
         } returns StatementId("S1")
 
@@ -54,8 +54,8 @@ internal class SingleStatementPropertyCreatorUnitTest : MockkBaseTest {
             unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = contributorId,
-                    label = description
-                )
+                    label = description,
+                ),
             )
         }
         verify(exactly = 1) {
@@ -64,8 +64,8 @@ internal class SingleStatementPropertyCreatorUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     subjectId = subjectId,
                     predicateId = Predicates.description,
-                    objectId = literal
-                )
+                    objectId = literal,
+                ),
             )
         }
     }
@@ -79,7 +79,7 @@ internal class SingleStatementPropertyCreatorUnitTest : MockkBaseTest {
         val literalCreateCommand = CreateLiteralUseCase.CreateCommand(
             contributorId = contributorId,
             label = description,
-            datatype = Literals.XSD.BOOLEAN.prefixedUri
+            datatype = Literals.XSD.BOOLEAN.prefixedUri,
         )
 
         every { unsafeLiteralUseCases.create(literalCreateCommand) } returns literal
@@ -89,8 +89,8 @@ internal class SingleStatementPropertyCreatorUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     subjectId = subjectId,
                     predicateId = Predicates.isAnonymized,
-                    objectId = literal
-                )
+                    objectId = literal,
+                ),
             )
         } returns StatementId("S1")
 
@@ -99,7 +99,7 @@ internal class SingleStatementPropertyCreatorUnitTest : MockkBaseTest {
             subjectId = subjectId,
             predicateId = Predicates.isAnonymized,
             label = description,
-            datatype = Literals.XSD.BOOLEAN.prefixedUri
+            datatype = Literals.XSD.BOOLEAN.prefixedUri,
         )
 
         verify(exactly = 1) { unsafeLiteralUseCases.create(literalCreateCommand) }
@@ -109,8 +109,8 @@ internal class SingleStatementPropertyCreatorUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     subjectId = subjectId,
                     predicateId = Predicates.isAnonymized,
-                    objectId = literal
-                )
+                    objectId = literal,
+                ),
             )
         }
     }

@@ -13,7 +13,7 @@ class LiteratureListAuthorListCreateValidator(
         resourceRepository: ResourceRepository,
         statementRepository: StatementRepository,
     ) : this(
-        AbstractAuthorListValidator(resourceRepository, statementRepository)
+        AbstractAuthorListValidator(resourceRepository, statementRepository),
     )
 
     override fun invoke(command: CreateLiteratureListCommand, state: State): State =

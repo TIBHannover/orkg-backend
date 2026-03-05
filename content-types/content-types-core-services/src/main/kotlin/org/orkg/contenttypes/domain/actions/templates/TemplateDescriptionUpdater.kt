@@ -16,7 +16,7 @@ class TemplateDescriptionUpdater(
         statementService: StatementUseCases,
         unsafeStatementUseCases: UnsafeStatementUseCases,
     ) : this(
-        SingleStatementPropertyUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases)
+        SingleStatementPropertyUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases),
     )
 
     override fun invoke(command: UpdateTemplateCommand, state: State): State {
@@ -26,7 +26,7 @@ class TemplateDescriptionUpdater(
                 contributorId = command.contributorId,
                 subjectId = command.templateId,
                 predicateId = Predicates.description,
-                label = command.description
+                label = command.description,
             )
         }
         return state

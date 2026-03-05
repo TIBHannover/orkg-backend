@@ -27,6 +27,6 @@ interface VisualizationRepresentationAdapter :
             createdAt = createdAt,
             createdBy = createdBy,
             visibility = visibility,
-            unlistedBy = unlistedBy
+            unlistedBy = unlistedBy,
         )
 }

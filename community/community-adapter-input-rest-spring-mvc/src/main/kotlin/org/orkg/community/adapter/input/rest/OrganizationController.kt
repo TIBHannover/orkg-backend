@@ -81,7 +81,7 @@ class OrganizationController(
             organization.url,
             organization.displayId,
             OrganizationType.fromOrNull(organization.type)!!,
-            imageId
+            imageId,
         )
         val location = uriComponentsBuilder
             .path("/api/organizations/{id}")
@@ -149,10 +149,10 @@ class OrganizationController(
                     }
                     RawImage(
                         data = ImageData(bytes),
-                        mimeType = mimeType
+                        mimeType = mimeType,
                     )
-                }
-            )
+                },
+            ),
         )
         val location = uriComponentsBuilder
             .path("/api/organizations/{id}")
@@ -189,7 +189,7 @@ class OrganizationController(
         val url: String,
         @field:Pattern(
             regexp = "^[a-zA-Z0-9_]+\$",
-            message = "Only underscores ( _ ), numbers, and letters are allowed in the permalink field"
+            message = "Only underscores ( _ ), numbers, and letters are allowed in the permalink field",
         )
         @field:NotBlank
         @field:JsonProperty("display_id")

@@ -131,7 +131,7 @@ class ObservatoryController(
         val researchField: ThingId,
         @field:Pattern(
             regexp = "^[a-zA-Z0-9_]+$",
-            message = "Only underscores ( _ ), numbers, and letters are allowed in the permalink field"
+            message = "Only underscores ( _ ), numbers, and letters are allowed in the permalink field",
         )
         @field:NotBlank
         @field:JsonProperty("display_id")
@@ -146,7 +146,7 @@ class ObservatoryController(
             organizations = setOf(organizationId),
             researchField = researchField,
             displayId = displayId,
-            sustainableDevelopmentGoals = sustainableDevelopmentGoals.orEmpty()
+            sustainableDevelopmentGoals = sustainableDevelopmentGoals.orEmpty(),
         )
     }
 
@@ -168,7 +168,7 @@ class ObservatoryController(
             organizations = organizations,
             description = description,
             researchField = researchField,
-            sustainableDevelopmentGoals = sustainableDevelopmentGoals.orEmpty()
+            sustainableDevelopmentGoals = sustainableDevelopmentGoals.orEmpty(),
         )
     }
 }

@@ -31,7 +31,7 @@ interface ObservatoryFilterRepositoryContracts {
         postUserRegisteredEventToEventBus()
         val expected = createObservatoryFilter(
             exact = true,
-            featured = true
+            featured = true,
         )
 
         saveObservatoryFilter(expected)
@@ -88,14 +88,14 @@ interface ObservatoryFilterRepositoryContracts {
         val organization = createOrganization(
             id = organizationId,
             displayId = "displayId_${organizationId.value}",
-            createdBy = observatoryFilter.createdBy // The user has to exists in the database because of constraints, so we reuse the observatory filter creator
+            createdBy = observatoryFilter.createdBy, // The user has to exists in the database because of constraints, so we reuse the observatory filter creator
         )
         organizationRepository.save(organization)
         // Ensure observatory exists in the database
         val observatory = createObservatory(
             id = observatoryFilter.observatoryId,
             organizationIds = setOf(organizationId),
-            displayId = "displayId_${observatoryFilter.observatoryId}"
+            displayId = "displayId_${observatoryFilter.observatoryId}",
         )
         observatoryRepository.save(observatory)
         // Save the filter
@@ -120,7 +120,7 @@ interface ObservatoryFilterRepositoryContracts {
                 createdAt = OffsetDateTime.now(fixedClock),
                 observatoryId = null,
                 organizationId = null,
-            )
+            ),
         )
     }
 }

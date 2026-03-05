@@ -39,6 +39,6 @@ open class TypedCSVRecordParser(
             } catch (e: SimpleMessageException) {
                 e.body.setProperty("csv_id", csvId)
                 throw e
-            }
+            },
         )
 }

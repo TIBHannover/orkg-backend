@@ -39,14 +39,14 @@ internal class AbstractTemplatePropertyUpdaterRealNumberLiteralPropertyUnitTest 
         val contributorId = ContributorId(UUID.randomUUID())
         val oldProperty = createNumberLiteralTemplateProperty()
         val newProperty = oldProperty.toNumberLiteralTemplatePropertyCommand().copy(
-            minInclusive = RealNumber(1)
+            minInclusive = RealNumber(1),
         )
         val statements = listOf(
             createStatement(
                 subject = createResource(oldProperty.id),
                 predicate = createPredicate(Predicates.shMinInclusive),
-                `object` = createLiteral(label = "1.0", datatype = Literals.XSD.DECIMAL.prefixedUri)
-            )
+                `object` = createLiteral(label = "1.0", datatype = Literals.XSD.DECIMAL.prefixedUri),
+            ),
         )
 
         every {
@@ -56,7 +56,7 @@ internal class AbstractTemplatePropertyUpdaterRealNumberLiteralPropertyUnitTest 
                 subjectId = oldProperty.id,
                 predicateId = Predicates.shMinInclusive,
                 label = newProperty.minInclusive!!.toString(),
-                datatype = Literals.XSD.INT.prefixedUri
+                datatype = Literals.XSD.INT.prefixedUri,
             )
         } just runs
 
@@ -69,7 +69,7 @@ internal class AbstractTemplatePropertyUpdaterRealNumberLiteralPropertyUnitTest 
                 subjectId = oldProperty.id,
                 predicateId = Predicates.shMinInclusive,
                 label = newProperty.minInclusive!!.toString(),
-                datatype = Literals.XSD.INT.prefixedUri
+                datatype = Literals.XSD.INT.prefixedUri,
             )
         }
     }
@@ -78,7 +78,7 @@ internal class AbstractTemplatePropertyUpdaterRealNumberLiteralPropertyUnitTest 
     fun `Given an updated number literal template property, when old template property was of another type, it creates a minInclusive statement`() {
         val contributorId = ContributorId(UUID.randomUUID())
         val oldProperty = createOtherLiteralTemplateProperty().copy(
-            datatype = ClassReference(Classes.decimal, "Decimal", null)
+            datatype = ClassReference(Classes.decimal, "Decimal", null),
         )
         val newProperty = NumberLiteralPropertyCommand(
             label = oldProperty.label,
@@ -89,14 +89,14 @@ internal class AbstractTemplatePropertyUpdaterRealNumberLiteralPropertyUnitTest 
             minInclusive = RealNumber(5),
             maxInclusive = null,
             path = oldProperty.path.id,
-            datatype = Classes.decimal
+            datatype = Classes.decimal,
         )
         val statements = listOf(
             createStatement(
                 subject = createResource(oldProperty.id),
                 predicate = createPredicate(Predicates.shMinInclusive),
-                `object` = createLiteral(label = "1.0", datatype = Literals.XSD.DECIMAL.prefixedUri)
-            )
+                `object` = createLiteral(label = "1.0", datatype = Literals.XSD.DECIMAL.prefixedUri),
+            ),
         )
 
         every {
@@ -106,7 +106,7 @@ internal class AbstractTemplatePropertyUpdaterRealNumberLiteralPropertyUnitTest 
                 subjectId = oldProperty.id,
                 predicateId = Predicates.shMinInclusive,
                 label = newProperty.minInclusive!!.toString(),
-                datatype = Literals.XSD.DECIMAL.prefixedUri
+                datatype = Literals.XSD.DECIMAL.prefixedUri,
             )
         } just runs
 
@@ -119,7 +119,7 @@ internal class AbstractTemplatePropertyUpdaterRealNumberLiteralPropertyUnitTest 
                 subjectId = oldProperty.id,
                 predicateId = Predicates.shMinInclusive,
                 label = newProperty.minInclusive!!.toString(),
-                datatype = Literals.XSD.DECIMAL.prefixedUri
+                datatype = Literals.XSD.DECIMAL.prefixedUri,
             )
         }
     }
@@ -135,7 +135,7 @@ internal class AbstractTemplatePropertyUpdaterRealNumberLiteralPropertyUnitTest 
             minCount = oldProperty.minCount,
             maxCount = oldProperty.maxCount,
             path = oldProperty.path.id,
-            datatype = oldProperty.datatype.id
+            datatype = oldProperty.datatype.id,
         )
         val statementToRemove = StatementId("S123")
         val statements = listOf(
@@ -143,8 +143,8 @@ internal class AbstractTemplatePropertyUpdaterRealNumberLiteralPropertyUnitTest 
                 id = statementToRemove,
                 subject = createResource(oldProperty.id),
                 predicate = createPredicate(Predicates.shMinInclusive),
-                `object` = createLiteral(label = "1.0", datatype = Literals.XSD.DECIMAL.prefixedUri)
-            )
+                `object` = createLiteral(label = "1.0", datatype = Literals.XSD.DECIMAL.prefixedUri),
+            ),
         )
 
         every { statementService.deleteAllById(setOf(statementToRemove)) } just runs
@@ -159,14 +159,14 @@ internal class AbstractTemplatePropertyUpdaterRealNumberLiteralPropertyUnitTest 
         val contributorId = ContributorId(UUID.randomUUID())
         val oldProperty = createNumberLiteralTemplateProperty()
         val newProperty = oldProperty.toNumberLiteralTemplatePropertyCommand().copy(
-            maxInclusive = RealNumber(1)
+            maxInclusive = RealNumber(1),
         )
         val statements = listOf(
             createStatement(
                 subject = createResource(oldProperty.id),
                 predicate = createPredicate(Predicates.shMaxInclusive),
-                `object` = createLiteral(label = "1.0", datatype = Literals.XSD.DECIMAL.prefixedUri)
-            )
+                `object` = createLiteral(label = "1.0", datatype = Literals.XSD.DECIMAL.prefixedUri),
+            ),
         )
 
         every {
@@ -176,7 +176,7 @@ internal class AbstractTemplatePropertyUpdaterRealNumberLiteralPropertyUnitTest 
                 subjectId = oldProperty.id,
                 predicateId = Predicates.shMaxInclusive,
                 label = newProperty.maxInclusive!!.toString(),
-                datatype = Literals.XSD.INT.prefixedUri
+                datatype = Literals.XSD.INT.prefixedUri,
             )
         } just runs
 
@@ -189,7 +189,7 @@ internal class AbstractTemplatePropertyUpdaterRealNumberLiteralPropertyUnitTest 
                 subjectId = oldProperty.id,
                 predicateId = Predicates.shMaxInclusive,
                 label = newProperty.maxInclusive!!.toString(),
-                datatype = Literals.XSD.INT.prefixedUri
+                datatype = Literals.XSD.INT.prefixedUri,
             )
         }
     }
@@ -198,7 +198,7 @@ internal class AbstractTemplatePropertyUpdaterRealNumberLiteralPropertyUnitTest 
     fun `Given an updated number literal template property, when old template property was of another type, it creates a maxInclusive statement`() {
         val contributorId = ContributorId(UUID.randomUUID())
         val oldProperty = createOtherLiteralTemplateProperty().copy(
-            datatype = ClassReference(Classes.decimal, "Decimal", null)
+            datatype = ClassReference(Classes.decimal, "Decimal", null),
         )
         val newProperty = NumberLiteralPropertyCommand(
             label = oldProperty.label,
@@ -209,14 +209,14 @@ internal class AbstractTemplatePropertyUpdaterRealNumberLiteralPropertyUnitTest 
             maxInclusive = RealNumber(5),
             minInclusive = null,
             path = oldProperty.path.id,
-            datatype = Classes.decimal
+            datatype = Classes.decimal,
         )
         val statements = listOf(
             createStatement(
                 subject = createResource(oldProperty.id),
                 predicate = createPredicate(Predicates.shMaxInclusive),
-                `object` = createLiteral(label = "1.0", datatype = Literals.XSD.DECIMAL.prefixedUri)
-            )
+                `object` = createLiteral(label = "1.0", datatype = Literals.XSD.DECIMAL.prefixedUri),
+            ),
         )
 
         every {
@@ -226,7 +226,7 @@ internal class AbstractTemplatePropertyUpdaterRealNumberLiteralPropertyUnitTest 
                 subjectId = oldProperty.id,
                 predicateId = Predicates.shMaxInclusive,
                 label = newProperty.maxInclusive!!.toString(),
-                datatype = Literals.XSD.DECIMAL.prefixedUri
+                datatype = Literals.XSD.DECIMAL.prefixedUri,
             )
         } just runs
 
@@ -239,7 +239,7 @@ internal class AbstractTemplatePropertyUpdaterRealNumberLiteralPropertyUnitTest 
                 subjectId = oldProperty.id,
                 predicateId = Predicates.shMaxInclusive,
                 label = newProperty.maxInclusive!!.toString(),
-                datatype = Literals.XSD.DECIMAL.prefixedUri
+                datatype = Literals.XSD.DECIMAL.prefixedUri,
             )
         }
     }
@@ -255,7 +255,7 @@ internal class AbstractTemplatePropertyUpdaterRealNumberLiteralPropertyUnitTest 
             maxCount = oldProperty.maxCount,
             minCount = oldProperty.minCount,
             path = oldProperty.path.id,
-            datatype = oldProperty.datatype.id
+            datatype = oldProperty.datatype.id,
         )
         val statementToRemove = StatementId("S123")
         val statements = listOf(
@@ -263,8 +263,8 @@ internal class AbstractTemplatePropertyUpdaterRealNumberLiteralPropertyUnitTest 
                 id = statementToRemove,
                 subject = createResource(oldProperty.id),
                 predicate = createPredicate(Predicates.shMaxInclusive),
-                `object` = createLiteral(label = "1.0", datatype = Literals.XSD.DECIMAL.prefixedUri)
-            )
+                `object` = createLiteral(label = "1.0", datatype = Literals.XSD.DECIMAL.prefixedUri),
+            ),
         )
 
         every { statementService.deleteAllById(setOf(statementToRemove)) } just runs
@@ -279,19 +279,19 @@ internal class AbstractTemplatePropertyUpdaterRealNumberLiteralPropertyUnitTest 
         val contributorId = ContributorId(UUID.randomUUID())
         val oldProperty = createNumberLiteralTemplateProperty()
         val newProperty = oldProperty.toNumberLiteralTemplatePropertyCommand().copy(
-            datatype = Classes.decimal
+            datatype = Classes.decimal,
         )
         val statements = listOf(
             createStatement(
                 subject = createResource(oldProperty.id),
                 predicate = createPredicate(Predicates.shMinInclusive),
-                `object` = createLiteral(label = "1.0", datatype = Literals.XSD.INT.prefixedUri)
+                `object` = createLiteral(label = "1.0", datatype = Literals.XSD.INT.prefixedUri),
             ),
             createStatement(
                 subject = createResource(oldProperty.id),
                 predicate = createPredicate(Predicates.shMaxInclusive),
-                `object` = createLiteral(label = "1.0", datatype = Literals.XSD.INT.prefixedUri)
-            )
+                `object` = createLiteral(label = "1.0", datatype = Literals.XSD.INT.prefixedUri),
+            ),
         )
 
         every {
@@ -300,8 +300,8 @@ internal class AbstractTemplatePropertyUpdaterRealNumberLiteralPropertyUnitTest 
                     contributorId = contributorId,
                     subjectId = oldProperty.id,
                     predicateId = Predicates.shDatatype,
-                    objectId = newProperty.datatype
-                )
+                    objectId = newProperty.datatype,
+                ),
             )
         } returns StatementId("S1")
         every {
@@ -311,7 +311,7 @@ internal class AbstractTemplatePropertyUpdaterRealNumberLiteralPropertyUnitTest 
                 subjectId = oldProperty.id,
                 predicateId = Predicates.shMinInclusive,
                 label = newProperty.minInclusive!!.toString(),
-                datatype = Literals.XSD.DECIMAL.prefixedUri
+                datatype = Literals.XSD.DECIMAL.prefixedUri,
             )
         } just runs
         every {
@@ -321,7 +321,7 @@ internal class AbstractTemplatePropertyUpdaterRealNumberLiteralPropertyUnitTest 
                 subjectId = oldProperty.id,
                 predicateId = Predicates.shMaxInclusive,
                 label = newProperty.maxInclusive!!.toString(),
-                datatype = Literals.XSD.DECIMAL.prefixedUri
+                datatype = Literals.XSD.DECIMAL.prefixedUri,
             )
         } just runs
 
@@ -333,8 +333,8 @@ internal class AbstractTemplatePropertyUpdaterRealNumberLiteralPropertyUnitTest 
                     contributorId = contributorId,
                     subjectId = oldProperty.id,
                     predicateId = Predicates.shDatatype,
-                    objectId = newProperty.datatype
-                )
+                    objectId = newProperty.datatype,
+                ),
             )
         }
         verify(exactly = 1) {
@@ -344,7 +344,7 @@ internal class AbstractTemplatePropertyUpdaterRealNumberLiteralPropertyUnitTest 
                 subjectId = oldProperty.id,
                 predicateId = Predicates.shMinInclusive,
                 label = newProperty.minInclusive!!.toString(),
-                datatype = Literals.XSD.DECIMAL.prefixedUri
+                datatype = Literals.XSD.DECIMAL.prefixedUri,
             )
         }
         verify(exactly = 1) {
@@ -354,7 +354,7 @@ internal class AbstractTemplatePropertyUpdaterRealNumberLiteralPropertyUnitTest 
                 subjectId = oldProperty.id,
                 predicateId = Predicates.shMaxInclusive,
                 label = newProperty.maxInclusive!!.toString(),
-                datatype = Literals.XSD.DECIMAL.prefixedUri
+                datatype = Literals.XSD.DECIMAL.prefixedUri,
             )
         }
     }

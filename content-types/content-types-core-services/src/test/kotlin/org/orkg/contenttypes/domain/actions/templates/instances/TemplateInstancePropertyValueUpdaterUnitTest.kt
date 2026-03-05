@@ -28,7 +28,7 @@ internal class TemplateInstancePropertyValueUpdaterUnitTest : MockkBaseTest {
     fun `Given a template instance update command, when updating the properties, it returns success`() {
         val command = updateTemplateInstanceCommand()
         val state = UpdateTemplateInstanceState(
-            statementsToAdd = setOf(BakedStatement("R123", "P123", "L123"))
+            statementsToAdd = setOf(BakedStatement("R123", "P123", "L123")),
         )
         val thingsCommand = command.copy(literals = state.literals)
 
@@ -38,7 +38,7 @@ internal class TemplateInstancePropertyValueUpdaterUnitTest : MockkBaseTest {
                 extractionMethod = command.extractionMethod,
                 thingsCommand = thingsCommand,
                 validationCache = state.validationCache,
-                bakedStatements = state.statementsToAdd
+                bakedStatements = state.statementsToAdd,
             )
         } just runs
 
@@ -59,7 +59,7 @@ internal class TemplateInstancePropertyValueUpdaterUnitTest : MockkBaseTest {
                 extractionMethod = command.extractionMethod,
                 thingsCommand = thingsCommand,
                 validationCache = state.validationCache,
-                bakedStatements = state.statementsToAdd
+                bakedStatements = state.statementsToAdd,
             )
         }
     }
@@ -73,9 +73,9 @@ internal class TemplateInstancePropertyValueUpdaterUnitTest : MockkBaseTest {
                 BakedStatement(
                     first = statementToRemove.subject.id.value,
                     second = statementToRemove.predicate.id.value,
-                    third = statementToRemove.`object`.id.value
-                )
-            )
+                    third = statementToRemove.`object`.id.value,
+                ),
+            ),
         )
 
         every { statementService.findAll(subjectId = command.subject, pageable = PageRequests.ALL) } returns pageOf(statementToRemove)

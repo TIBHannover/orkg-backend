@@ -11,6 +11,6 @@ interface PublishedContentTypeRepresentationAdapter : StatementRepresentationAda
     ): PublishedContentTypeRepresentation =
         PublishedContentTypeRepresentation(
             rootId,
-            subgraph.mapToStatementRepresentation(mediaTypeCapabilities).toList()
+            subgraph.mapToStatementRepresentation(mediaTypeCapabilities).toList(),
         )
 }

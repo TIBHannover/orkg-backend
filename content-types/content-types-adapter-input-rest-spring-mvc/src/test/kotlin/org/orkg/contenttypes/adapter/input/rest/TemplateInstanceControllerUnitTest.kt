@@ -114,7 +114,7 @@ internal class TemplateInstanceControllerUnitTest : MockMvcBaseTest("template-in
                 description(
                     """
                     A `GET` request provides information about a template instance.
-                    """
+                    """,
                 )
                 pathParameters(
                     parameterWithName("id").description("The identifier of the template to fetch the statements for."),
@@ -213,7 +213,7 @@ internal class TemplateInstanceControllerUnitTest : MockMvcBaseTest("template-in
                     """
                     A `GET` request returns a <<sorting-and-pagination,paged>> list of <<template-instances-fetch,template instances>>.
                     If no paging request parameters are provided, the default values will be used.
-                    """
+                    """,
                 )
                 pathParameters(
                     parameterWithName("id").description("The identifier of the template to fetch the statements for."),
@@ -260,7 +260,7 @@ internal class TemplateInstanceControllerUnitTest : MockMvcBaseTest("template-in
                     A `PUT` request updates an existing template instance with all the given parameters.
                     The response will be `204 No Content` when successful.
                     The updated template instance (object) can be retrieved by following the URI in the `Location` header field.
-                    """
+                    """,
                 )
                 pathParameters(
                     parameterWithName("id").description("The identifier of the template."),
@@ -279,7 +279,7 @@ internal class TemplateInstanceControllerUnitTest : MockMvcBaseTest("template-in
                     *mapOfCreatePredicateRequestPartRequestFields().toTypedArray(),
                     *mapOfCreateListRequestPartRequestFields().toTypedArray(),
                     *mapOfCreateClassRequestPartRequestFields().toTypedArray(),
-                    fieldWithPath("extraction_method").description("""The method used to extract the template instance. Can be one of $allowedExtractionMethodValues. (optional)""").optional()
+                    fieldWithPath("extraction_method").description("""The method used to extract the template instance. Can be one of $allowedExtractionMethodValues. (optional)""").optional(),
                 )
                 throws(
                     InvalidTempId::class,
@@ -318,35 +318,35 @@ internal class TemplateInstanceControllerUnitTest : MockMvcBaseTest("template-in
         UpdateTemplateInstanceRequest(
             statements = mapOf(
                 Predicates.hasAuthor to listOf("#temp1", "#temp2", "#temp3"),
-                Predicates.field to listOf("#temp4", "#temp5", "R123")
+                Predicates.field to listOf("#temp4", "#temp5", "R123"),
             ),
             resources = mapOf(
                 "#temp1" to CreateResourceRequestPart(
                     label = "MOTO",
-                    classes = setOf(ThingId("Result"))
-                )
+                    classes = setOf(ThingId("Result")),
+                ),
             ),
             literals = mapOf(
-                "#temp2" to "0.1"
+                "#temp2" to "0.1",
             ),
             predicates = mapOf(
                 "#temp3" to CreatePredicateRequestPart(
                     label = "hasResult",
-                    description = "has result"
-                )
+                    description = "has result",
+                ),
             ),
             lists = mapOf(
                 "#temp4" to CreateListRequestPart(
                     label = "list",
-                    elements = listOf("#temp1", "C123")
-                )
+                    elements = listOf("#temp1", "C123"),
+                ),
             ),
             classes = mapOf(
                 "#temp5" to CreateClassRequestPart(
                     label = "class",
-                    uri = ParsedIRI.create("https://orkg.org/class/C1")
-                )
+                    uri = ParsedIRI.create("https://orkg.org/class/C1"),
+                ),
             ),
-            extractionMethod = ExtractionMethod.MANUAL
+            extractionMethod = ExtractionMethod.MANUAL,
         )
 }

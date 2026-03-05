@@ -154,7 +154,7 @@ class SmartReviewService(
             researchField = researchField,
             includeSubfields = includeSubfields,
             published = published,
-            sustainableDevelopmentGoal = sustainableDevelopmentGoal
+            sustainableDevelopmentGoal = sustainableDevelopmentGoal,
         ).pmap { it.toSmartReview() }
 
     override fun findPublishedContentById(
@@ -210,7 +210,7 @@ class SmartReviewService(
             SmartReviewResearchFieldCreator(unsafeLiteralUseCases, unsafeStatementUseCases),
             SmartReviewAuthorListCreator(unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases, listService),
             SmartReviewSDGCreator(unsafeLiteralUseCases, unsafeStatementUseCases),
-            SmartReviewSectionsCreator(unsafeLiteralUseCases, unsafeResourceUseCases, unsafeStatementUseCases)
+            SmartReviewSectionsCreator(unsafeLiteralUseCases, unsafeResourceUseCases, unsafeStatementUseCases),
         )
         return steps.execute(command, CreateSmartReviewState()).smartReviewId!!
     }
@@ -220,7 +220,7 @@ class SmartReviewService(
             SmartReviewSectionExistenceCreateValidator(statementRepository),
             SmartReviewSectionIndexValidator(statementRepository),
             SmartReviewSectionCreateValidator(resourceRepository, predicateRepository, thingRepository),
-            SmartReviewSectionCreator(unsafeLiteralUseCases, unsafeResourceUseCases, statementService, unsafeStatementUseCases)
+            SmartReviewSectionCreator(unsafeLiteralUseCases, unsafeResourceUseCases, statementService, unsafeStatementUseCases),
         )
         return steps.execute(command, CreateSmartReviewSectionState()).smartReviewSectionId!!
     }
@@ -243,7 +243,7 @@ class SmartReviewService(
             SmartReviewResearchFieldUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases),
             SmartReviewAuthorListUpdater(unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases, listService, listRepository),
             SmartReviewSDGUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases),
-            SmartReviewSectionsUpdater(unsafeLiteralUseCases, resourceService, unsafeResourceUseCases, statementService, unsafeStatementUseCases)
+            SmartReviewSectionsUpdater(unsafeLiteralUseCases, resourceService, unsafeResourceUseCases, statementService, unsafeStatementUseCases),
         )
         steps.execute(command, UpdateSmartReviewState())
     }
@@ -252,7 +252,7 @@ class SmartReviewService(
         val steps = listOf<Action<UpdateSmartReviewSectionCommand, UpdateSmartReviewSectionState>>(
             SmartReviewSectionExistenceUpdateValidator(this, resourceRepository),
             SmartReviewSectionUpdateValidator(resourceRepository, predicateRepository, thingRepository),
-            SmartReviewSectionUpdater(unsafeLiteralUseCases, unsafeResourceUseCases, statementService, unsafeStatementUseCases)
+            SmartReviewSectionUpdater(unsafeLiteralUseCases, unsafeResourceUseCases, statementService, unsafeStatementUseCases),
         )
         steps.execute(command, UpdateSmartReviewSectionState())
     }
@@ -260,7 +260,7 @@ class SmartReviewService(
     override fun delete(command: DeleteSmartReviewSectionCommand) {
         val steps = listOf<Action<DeleteSmartReviewSectionCommand, DeleteSmartReviewSectionState>>(
             SmartReviewSectionExistenceDeleteValidator(this, resourceRepository),
-            SmartReviewSectionDeleter(statementService, resourceService)
+            SmartReviewSectionDeleter(statementService, resourceService),
         )
         steps.execute(command, DeleteSmartReviewSectionState())
     }
@@ -274,7 +274,7 @@ class SmartReviewService(
             SmartReviewChangelogCreator(unsafeLiteralUseCases, unsafeStatementUseCases),
             SmartReviewVersionArchiver(statementService, smartReviewSnapshotRepository, snapshotIdGenerator, clock),
             SmartReviewVersionHistoryUpdater(unsafeStatementUseCases, unsafeResourceUseCases),
-            SmartReviewVersionDoiPublisher(unsafeStatementUseCases, unsafeLiteralUseCases, doiService, smartReviewPublishBaseUri)
+            SmartReviewVersionDoiPublisher(unsafeStatementUseCases, unsafeLiteralUseCases, doiService, smartReviewPublishBaseUri),
         )
         return steps.execute(command, PublishSmartReviewState()).smartReviewVersionId!!
     }
@@ -292,9 +292,9 @@ class SmartReviewService(
                         minLevel = null,
                         maxLevel = 2,
                         blacklist = emptyList(),
-                        whitelist = listOf(Classes.smartReview, Classes.smartReviewPublished, Classes.literal)
+                        whitelist = listOf(Classes.smartReview, Classes.smartReviewPublished, Classes.literal),
                     ),
-                    sort = Sort.unsorted()
+                    sort = Sort.unsorted(),
                 )
                 published.subgraph.filter { it.predicate.id != Predicates.hasPublishedVersion } + versions
             }
@@ -306,13 +306,13 @@ class SmartReviewService(
                         minLevel = null,
                         maxLevel = 3,
                         blacklist = listOf(Classes.researchField, Classes.venue),
-                        whitelist = emptyList()
+                        whitelist = emptyList(),
                     ),
-                    sort = Sort.unsorted()
+                    sort = Sort.unsorted(),
                 ) + statementRepository.findAll(
                     subjectId = resource.id,
                     objectClasses = setOf(Classes.researchField),
-                    pageable = PageRequests.ALL
+                    pageable = PageRequests.ALL,
                 )
             }
 

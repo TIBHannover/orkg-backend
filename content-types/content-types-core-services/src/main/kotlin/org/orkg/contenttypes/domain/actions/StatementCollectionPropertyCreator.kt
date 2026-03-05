@@ -24,16 +24,16 @@ class StatementCollectionPropertyCreator(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = contributorId,
                     label = label,
-                    datatype = datatype
-                )
+                    datatype = datatype,
+                ),
             )
             unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = contributorId,
                     subjectId = subjectId,
                     predicateId = predicateId,
-                    objectId = literal
-                )
+                    objectId = literal,
+                ),
             )
         }
     }
@@ -50,8 +50,8 @@ class StatementCollectionPropertyCreator(
                     contributorId = contributorId,
                     subjectId = subjectId,
                     predicateId = predicateId,
-                    objectId = objectId
-                )
+                    objectId = objectId,
+                ),
             )
         }
     }

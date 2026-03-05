@@ -66,10 +66,10 @@ fun <
     val fabricator = Fabrikate(
         FabricatorConfig(
             collectionSizes = 22..22,
-            nullableStrategy = FabricatorConfig.NullableStrategy.NeverSetToNull // FIXME: because "id" is nullable
+            nullableStrategy = FabricatorConfig.NullableStrategy.NeverSetToNull, // FIXME: because "id" is nullable
         )
             .withStandardMappings()
-            .withGraphMappings()
+            .withGraphMappings(),
     )
 
     val saveThing: (Thing) -> Unit = {
@@ -106,7 +106,7 @@ fun <
         fabricator.random<GeneralStatement>().copy(
             subject = this,
             predicate = createPredicate(Predicates.hasPublishedVersion),
-            `object` = previous
+            `object` = previous,
         )
 
     fun createTestGraph(transform: (Int, Resource) -> Resource = { _, it -> it.copy(visibility = Visibility.DEFAULT) }): TestGraph {
@@ -125,7 +125,7 @@ fun <
         resources[5] = resources[5].copy(classes = setOf(Classes.comparisonPublished, Classes.latestVersion))
         resources[6] = resources[6].copy( // ignored, because outdated
             classes = setOf(Classes.comparisonPublished),
-            createdAt = resources[5].createdAt.minusDays(1)
+            createdAt = resources[5].createdAt.minusDays(1),
         )
 
         statements += resources[4].hasPublishedVersion(resources[5])
@@ -145,7 +145,7 @@ fun <
         resources[13] = resources[13].copy(classes = setOf(Classes.literatureListPublished, Classes.latestVersion))
         resources[14] = resources[14].copy( // ignored, because outdated
             classes = setOf(Classes.literatureListPublished),
-            createdAt = resources[13].createdAt.minusDays(1)
+            createdAt = resources[13].createdAt.minusDays(1),
         )
 
         statements += resources[12].hasPublishedVersion(resources[13])
@@ -162,7 +162,7 @@ fun <
         resources[19] = resources[19].copy(classes = setOf(Classes.smartReviewPublished, Classes.latestVersion))
         resources[20] = resources[20].copy( // ignored, because outdated
             classes = setOf(Classes.smartReviewPublished),
-            createdAt = resources[19].createdAt.minusDays(1)
+            createdAt = resources[19].createdAt.minusDays(1),
         )
 
         statements += resources[18].hasPublishedVersion(resources[19])
@@ -172,7 +172,7 @@ fun <
         statements += fabricator.random<GeneralStatement>().copy(
             subject = resources[21],
             predicate = createPredicate(Predicates.shTargetClass),
-            `object` = fabricator.random<Class>()
+            `object` = fabricator.random<Class>(),
         )
 
         val ignored = listOf(2, 4, 6, 8, 14, 20).map { resources[it] }.toSet()
@@ -224,7 +224,7 @@ fun <
                         }
                         val result = repository.findAll(
                             classes = setOf(contentTypeClass),
-                            pageable = PageRequest.of(0, 10)
+                            pageable = PageRequest.of(0, 10),
                         )
 
                         expected.size shouldNotBe 0
@@ -259,7 +259,7 @@ fun <
                         val expected = graph.expected.filter { it.visibility in visibilityFilter.targets }
                         val result = repository.findAll(
                             visibility = visibilityFilter,
-                            pageable = PageRequest.of(0, 10)
+                            pageable = PageRequest.of(0, 10),
                         )
 
                         expected.size shouldNotBe 0
@@ -293,7 +293,7 @@ fun <
                 val expected = graph.expected.filter { it.createdBy == createdBy }
                 val result = repository.findAll(
                     pageable = PageRequest.of(0, 10),
-                    createdBy = createdBy
+                    createdBy = createdBy,
                 )
 
                 expected.size shouldNotBe 0
@@ -325,7 +325,7 @@ fun <
                 val expected = graph.expected.filter { it.createdAt >= createdAtStart }
                 val result = repository.findAll(
                     pageable = PageRequest.of(0, 10),
-                    createdAtStart = createdAtStart
+                    createdAtStart = createdAtStart,
                 )
 
                 expected.size shouldNotBe 0
@@ -357,7 +357,7 @@ fun <
                 val expected = graph.expected.filter { it.createdAt <= createdAtEnd }
                 val result = repository.findAll(
                     pageable = PageRequest.of(0, 10),
-                    createdAtEnd = createdAtEnd
+                    createdAtEnd = createdAtEnd,
                 )
 
                 expected.size shouldNotBe 0
@@ -389,7 +389,7 @@ fun <
                 val expected = graph.expected.filter { it.observatoryId == observatoryId }
                 val result = repository.findAll(
                     pageable = PageRequest.of(0, 10),
-                    observatoryId = observatoryId
+                    observatoryId = observatoryId,
                 )
 
                 expected.size shouldNotBe 0
@@ -421,7 +421,7 @@ fun <
                 val expected = graph.expected.filter { it.organizationId == organizationId }
                 val result = repository.findAll(
                     pageable = PageRequest.of(0, 10),
-                    organizationId = organizationId
+                    organizationId = organizationId,
                 )
 
                 expected.size shouldNotBe 0
@@ -449,7 +449,7 @@ fun <
                     val graph1 = createTestGraph().save()
                     val graph2 = createTestGraph().save()
                     val researchField = fabricator.random<Resource>().copy(
-                        classes = setOf(Classes.researchField)
+                        classes = setOf(Classes.researchField),
                     )
                     val hasResearchField = createPredicate(Predicates.hasResearchField)
 
@@ -458,8 +458,8 @@ fun <
                             fabricator.random<GeneralStatement>().copy(
                                 subject = it,
                                 predicate = hasResearchField,
-                                `object` = researchField
-                            )
+                                `object` = researchField,
+                            ),
                         )
                     }
 
@@ -469,16 +469,16 @@ fun <
                                 subject = it,
                                 predicate = hasResearchField,
                                 `object` = fabricator.random<Resource>().copy(
-                                    classes = setOf(Classes.researchField)
-                                )
-                            )
+                                    classes = setOf(Classes.researchField),
+                                ),
+                            ),
                         )
                     }
 
                     val expected = graph1.expected.sortedBy { it.createdAt }
                     val result = repository.findAll(
                         pageable = PageRequest.of(0, 5),
-                        researchField = researchField.id
+                        researchField = researchField.id,
                     )
 
                     it("returns the correct result") {
@@ -504,19 +504,19 @@ fun <
                     val graph2 = createTestGraph().save() // indirectly attached
                     val graph3 = createTestGraph().save() // random research field
                     val researchField = fabricator.random<Resource>().copy(
-                        classes = setOf(Classes.researchField)
+                        classes = setOf(Classes.researchField),
                     )
                     val hasResearchField = createPredicate(Predicates.hasResearchField)
                     val subfield = fabricator.random<Resource>().copy(
-                        classes = setOf(Classes.researchField)
+                        classes = setOf(Classes.researchField),
                     )
                     val hasSubfield = createPredicate(Predicates.hasSubfield)
                     saveStatement(
                         fabricator.random<GeneralStatement>().copy(
                             subject = researchField,
                             predicate = hasSubfield,
-                            `object` = subfield
-                        )
+                            `object` = subfield,
+                        ),
                     )
 
                     graph1.resources.forEach {
@@ -524,8 +524,8 @@ fun <
                             fabricator.random<GeneralStatement>().copy(
                                 subject = it,
                                 predicate = hasResearchField,
-                                `object` = researchField
-                            )
+                                `object` = researchField,
+                            ),
                         )
                     }
 
@@ -534,8 +534,8 @@ fun <
                             fabricator.random<GeneralStatement>().copy(
                                 subject = it,
                                 predicate = hasResearchField,
-                                `object` = subfield
-                            )
+                                `object` = subfield,
+                            ),
                         )
                     }
 
@@ -545,9 +545,9 @@ fun <
                                 subject = it,
                                 predicate = hasResearchField,
                                 `object` = fabricator.random<Resource>().copy(
-                                    classes = setOf(Classes.researchField)
-                                )
-                            )
+                                    classes = setOf(Classes.researchField),
+                                ),
+                            ),
                         )
                     }
 
@@ -555,7 +555,7 @@ fun <
                     val result = repository.findAll(
                         pageable = PageRequest.of(0, 5),
                         researchField = researchField.id,
-                        includeSubfields = true
+                        includeSubfields = true,
                     )
 
                     it("returns the correct result") {
@@ -588,15 +588,15 @@ fun <
                         fabricator.random<GeneralStatement>().copy(
                             subject = it,
                             predicate = hasSDG,
-                            `object` = sdg
-                        )
+                            `object` = sdg,
+                        ),
                     )
                 }
 
                 val expected = (resources - graph.ignored).sortedBy { it.createdAt }
                 val result = repository.findAll(
                     pageable = PageRequest.of(0, 10),
-                    sustainableDevelopmentGoal = sdg.id
+                    sustainableDevelopmentGoal = sdg.id,
                 )
 
                 expected.size shouldNotBe 0
@@ -632,23 +632,23 @@ fun <
                         fabricator.random<GeneralStatement>().copy(
                             subject = it,
                             predicate = hasAuthors,
-                            `object` = authorList
-                        )
+                            `object` = authorList,
+                        ),
                     )
                     saveStatement(
                         fabricator.random<GeneralStatement>().copy(
                             subject = authorList,
                             predicate = hasListElement,
                             `object` = author,
-                            index = 0
-                        )
+                            index = 0,
+                        ),
                     )
                 }
 
                 val expected = (resources - graph.ignored).sortedBy { it.createdAt }
                 val result = repository.findAll(
                     pageable = PageRequest.of(0, 10),
-                    authorId = author.id
+                    authorId = author.id,
                 )
 
                 expected.size shouldNotBe 0
@@ -684,23 +684,23 @@ fun <
                         fabricator.random<GeneralStatement>().copy(
                             subject = it,
                             predicate = hasAuthors,
-                            `object` = authorList
-                        )
+                            `object` = authorList,
+                        ),
                     )
                     saveStatement(
                         fabricator.random<GeneralStatement>().copy(
                             subject = authorList,
                             predicate = hasListElement,
                             `object` = author,
-                            index = 0
-                        )
+                            index = 0,
+                        ),
                     )
                 }
 
                 val expected = (resources - graph.ignored).sortedBy { it.createdAt }
                 val result = repository.findAll(
                     pageable = PageRequest.of(0, 10),
-                    authorName = author.label
+                    authorName = author.label,
                 )
 
                 expected.size shouldNotBe 0
@@ -727,7 +727,7 @@ fun <
                 val graph = createTestGraph().save()
                 val expected = graph.resources.first()
                 val researchField = fabricator.random<Resource>().copy(
-                    classes = setOf(Classes.researchField)
+                    classes = setOf(Classes.researchField),
                 )
                 val authorList = fabricator.random<Resource>().copy(classes = setOf(Classes.list))
 
@@ -735,39 +735,39 @@ fun <
                     fabricator.random<GeneralStatement>().copy(
                         subject = expected,
                         predicate = createPredicate(Predicates.sustainableDevelopmentGoal),
-                        `object` = createResource(ThingId("SDG_1"), classes = setOf(Classes.sustainableDevelopmentGoal))
-                    )
+                        `object` = createResource(ThingId("SDG_1"), classes = setOf(Classes.sustainableDevelopmentGoal)),
+                    ),
                 )
                 saveStatement(
                     fabricator.random<GeneralStatement>().copy(
                         subject = expected,
                         predicate = createPredicate(Predicates.hasResearchField),
-                        `object` = researchField
-                    )
+                        `object` = researchField,
+                    ),
                 )
 
                 saveStatement(
                     fabricator.random<GeneralStatement>().copy(
                         subject = expected,
                         predicate = createPredicate(Predicates.hasAuthors),
-                        `object` = authorList
-                    )
+                        `object` = authorList,
+                    ),
                 )
                 saveStatement(
                     fabricator.random<GeneralStatement>().copy(
                         subject = authorList,
                         predicate = createPredicate(Predicates.hasListElement),
                         `object` = createResource(ThingId("R102354"), classes = setOf(Classes.author)),
-                        index = 0
-                    )
+                        index = 0,
+                    ),
                 )
                 saveStatement(
                     fabricator.random<GeneralStatement>().copy(
                         subject = authorList,
                         predicate = createPredicate(Predicates.hasListElement),
                         `object` = createLiteral(ThingId("R102355"), label = "Famous Author"),
-                        index = 1
-                    )
+                        index = 1,
+                    ),
                 )
 
                 val result = repository.findAll(
@@ -782,7 +782,7 @@ fun <
                     researchField = researchField.id,
                     includeSubfields = true,
                     sustainableDevelopmentGoal = ThingId("SDG_1"),
-                    authorId = ThingId("R102354")
+                    authorId = ThingId("R102354"),
                     // authorName filter is not compatible with authorId in neo4j adapter
                 )
 

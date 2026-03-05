@@ -147,15 +147,15 @@ class SpringDataNeo4jResearchFieldAdapter(
                     orderByOptimizations(
                         node = node,
                         sort = sort,
-                        properties = arrayOf("id", "label", "created_at", "created_by", "visibility")
-                    )
+                        properties = arrayOf("id", "label", "created_at", "created_by", "visibility"),
+                    ),
                 )
                 .with(variables)
                 .orderBy(
                     sort.toSortItems(
                         propertyMappings = listOf("id", "label", "created_at", "created_by", "visibility").associateWith { node.property(it) },
-                        knownProperties = arrayOf("id", "label", "created_at", "created_by", "visibility", "research_problem_count")
-                    )
+                        knownProperties = arrayOf("id", "label", "created_at", "created_by", "visibility", "research_problem_count"),
+                    ),
                 )
                 .returningDistinct(node)
         }

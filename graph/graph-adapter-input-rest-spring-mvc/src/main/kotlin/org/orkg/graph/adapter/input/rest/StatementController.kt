@@ -70,7 +70,7 @@ class StatementController(
             createdAtEnd = createdAtEnd,
             objectClasses = objectClasses.orEmpty(),
             objectId = objectId,
-            objectLabel = objectLabel
+            objectLabel = objectLabel,
         ).mapToStatementRepresentation(capabilities)
 
     @GetMapping("/{id}")
@@ -94,8 +94,8 @@ class StatementController(
                 contributorId = currentUser.contributorId(),
                 subjectId = request.subjectId,
                 predicateId = request.predicateId,
-                objectId = request.objectId
-            )
+                objectId = request.objectId,
+            ),
         )
         val location = uriComponentsBuilder
             .path("/api/statements/{id}")
@@ -118,8 +118,8 @@ class StatementController(
                 contributorId = currentUser.contributorId(),
                 subjectId = request.subjectId,
                 predicateId = request.predicateId,
-                objectId = request.objectId
-            )
+                objectId = request.objectId,
+            ),
         )
         val location = uriComponentsBuilder
             .path("/api/statements/{id}")
@@ -158,10 +158,10 @@ class StatementController(
                 minLevel = minLevel ?: minLevelLegacy,
                 maxLevel = maxLevel ?: maxLevelLegacy,
                 blacklist = blacklist,
-                whitelist = whitelist
+                whitelist = whitelist,
             ),
             includeFirst = includeFirst ?: includeFirstLegacy,
-            sort = sort
+            sort = sort,
         ).toBundleRepresentation(capabilities)
 
     data class CreateStatementRequest(

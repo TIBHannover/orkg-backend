@@ -246,7 +246,7 @@ internal class BenchmarkControllerIntegrationTest : MockMvcBaseTest("benchmarks"
         val benchmark = resourceService.createResource(setOf(ThingId(labelsAndClasses.benchmarkClass)), label = "Benchmark #1")
         val dummyBenchmark = resourceService.createResource(
             classes = setOf(ThingId(labelsAndClasses.benchmarkClass)),
-            label = "Benchmark #2"
+            label = "Benchmark #2",
         )
 
         val dataset1 = resourceService.createResource(setOf(ThingId(labelsAndClasses.datasetClass)), label = "Dataset 1")

@@ -18,7 +18,7 @@ class LiteratureListSectionsCreator(
         unsafeStatementUseCases: UnsafeStatementUseCases,
     ) : this(
         unsafeStatementUseCases,
-        AbstractLiteratureListSectionCreator(unsafeStatementUseCases, unsafeResourceUseCases, unsafeLiteralUseCases)
+        AbstractLiteratureListSectionCreator(unsafeStatementUseCases, unsafeResourceUseCases, unsafeLiteralUseCases),
     )
 
     override fun invoke(command: CreateLiteratureListCommand, state: State): State {
@@ -28,8 +28,8 @@ class LiteratureListSectionsCreator(
                     contributorId = command.contributorId,
                     subjectId = state.literatureListId!!,
                     predicateId = Predicates.hasSection,
-                    objectId = abstractLiteratureListSectionCreator.create(command.contributorId, section)
-                )
+                    objectId = abstractLiteratureListSectionCreator.create(command.contributorId, section),
+                ),
             )
         }
         return state

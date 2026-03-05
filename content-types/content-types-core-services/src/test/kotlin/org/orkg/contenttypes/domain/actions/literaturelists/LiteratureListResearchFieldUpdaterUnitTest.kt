@@ -43,7 +43,7 @@ internal class LiteratureListResearchFieldUpdaterUnitTest : MockkBaseTest {
     @Test
     fun `Given a literature list update command, when research fields are unchanged, it does nothing`() {
         val literatureList = createLiteratureList().copy(
-            researchFields = listOf(ObjectIdAndLabel(ThingId("R12"), "Science"))
+            researchFields = listOf(ObjectIdAndLabel(ThingId("R12"), "Science")),
         )
         val command = updateLiteratureListCommand()
         val state = UpdateLiteratureListState(literatureList = literatureList)
@@ -66,8 +66,8 @@ internal class LiteratureListResearchFieldUpdaterUnitTest : MockkBaseTest {
             statements = listOf(
                 createStatement(subject = createResource(command.literatureListId), predicate = createPredicate(Predicates.hasResearchField)),
                 createStatement(subject = createResource(command.literatureListId), predicate = createPredicate(Predicates.hasContent)),
-                createStatement(subject = createResource())
-            ).groupBy { it.subject.id }
+                createStatement(subject = createResource()),
+            ).groupBy { it.subject.id },
         )
 
         every {
@@ -76,7 +76,7 @@ internal class LiteratureListResearchFieldUpdaterUnitTest : MockkBaseTest {
                 contributorId = command.contributorId,
                 subjectId = command.literatureListId,
                 predicateId = Predicates.hasResearchField,
-                objects = command.researchFields!!.toSet()
+                objects = command.researchFields!!.toSet(),
             )
         } just runs
 
@@ -94,7 +94,7 @@ internal class LiteratureListResearchFieldUpdaterUnitTest : MockkBaseTest {
                 contributorId = command.contributorId,
                 subjectId = command.literatureListId,
                 predicateId = Predicates.hasResearchField,
-                objects = command.researchFields!!.toSet()
+                objects = command.researchFields!!.toSet(),
             )
         }
     }

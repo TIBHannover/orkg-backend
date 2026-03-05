@@ -33,7 +33,7 @@ class PaperVersionCreator(
                 publishedIn = paper.publicationInfo.publishedIn?.label,
                 publishedYear = paper.publicationInfo.publishedYear,
                 publishedMonth = paper.publicationInfo.publishedMonth,
-                url = paper.publicationInfo.url
+                url = paper.publicationInfo.url,
             ),
             authors = command.authors,
             sustainableDevelopmentGoals = paper.sustainableDevelopmentGoals.ids,
@@ -41,7 +41,7 @@ class PaperVersionCreator(
             observatories = paper.observatories,
             organizations = paper.organizations,
             extractionMethod = paper.extractionMethod,
-            contents = null
+            contents = null,
         )
         val steps = listOf(
             PaperAuthorListCreateValidator(resourceRepository, statementRepository),
@@ -51,7 +51,7 @@ class PaperVersionCreator(
             PaperMentioningsCreator(unsafeLiteralUseCases, unsafeStatementUseCases),
             PaperAuthorListCreator(unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases, listService),
             PaperResearchFieldCreator(unsafeLiteralUseCases, unsafeStatementUseCases),
-            PaperPublicationInfoCreator(unsafeResourceUseCases, resourceRepository, unsafeStatementUseCases, unsafeLiteralUseCases)
+            PaperPublicationInfoCreator(unsafeResourceUseCases, resourceRepository, unsafeStatementUseCases, unsafeLiteralUseCases),
         )
         return state.copy(paperVersionId = steps.execute(createPaperCommand, CreatePaperState()).paperId!!)
     }

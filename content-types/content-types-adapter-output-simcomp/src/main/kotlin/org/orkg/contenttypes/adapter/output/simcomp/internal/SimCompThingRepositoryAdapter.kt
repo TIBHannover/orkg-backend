@@ -55,7 +55,7 @@ class SimCompThingRepositoryAdapter(
             thingType = type,
             thingKey = id,
             config = config,
-            data = data
+            data = data,
         )
         val uri = UriComponentsBuilder.fromUriString(host)
             .path("/thing/") // The trailing slash is important, otherwise we get a redirect (307)
@@ -82,7 +82,7 @@ class SimCompThingRepositoryAdapter(
             thingType = type,
             thingKey = id,
             config = config,
-            data = data
+            data = data,
         )
         val uri = UriComponentsBuilder.fromUriString(host)
             .path("/thing/") // The trailing slash is important, otherwise we get a redirect (307)

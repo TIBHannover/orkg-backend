@@ -36,7 +36,7 @@ class ListService(
             elements = command.elements,
             createdAt = OffsetDateTime.now(clock),
             createdBy = command.contributorId,
-            modifiable = command.modifiable
+            modifiable = command.modifiable,
         )
         repository.save(list, list.createdBy)
         return id

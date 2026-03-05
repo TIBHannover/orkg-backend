@@ -14,9 +14,9 @@ import org.springframework.test.context.TestConstructor
 @ContextConfiguration(
     classes = [
         SpringDataJpaImageAdapter::class,
-        MediaStorageJpaConfiguration::class
+        MediaStorageJpaConfiguration::class,
     ],
-    initializers = [PostgresContainerInitializer::class]
+    initializers = [PostgresContainerInitializer::class],
 )
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)

@@ -28,8 +28,8 @@ import org.orkg.testing.annotations.Neo4jContainerUnitTest
         SpringDataNeo4jClassAdapter::class,
         GraphNeo4jConfiguration::class,
         ContentTypesNeo4jConfiguration::class,
-        CypherQueryBuilderConfiguration::class
-    ]
+        CypherQueryBuilderConfiguration::class,
+    ],
 )
 internal class SpringDataNeo4jPaperAdapterContractTest(
     private val springDataNeo4jPaperAdapter: PaperRepository,
@@ -47,7 +47,7 @@ internal class SpringDataNeo4jPaperAdapterContractTest(
                 springDataNeo4jLiteralAdapter,
                 springDataNeo4jResourceAdapter,
                 springDataNeo4jPredicateAdapter,
-            )
+            ),
         )
 
         afterSpec {

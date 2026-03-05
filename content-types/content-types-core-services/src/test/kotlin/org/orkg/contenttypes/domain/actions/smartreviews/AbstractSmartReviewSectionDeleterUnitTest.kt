@@ -45,13 +45,13 @@ internal class AbstractSmartReviewSectionDeleterUnitTest : MockkBaseTest {
             id = StatementId("S123"),
             subject = createResource(contributionId),
             predicate = createPredicate(Predicates.hasSection),
-            `object` = createResource(section.id)
+            `object` = createResource(section.id),
         )
 
         every {
             statementService.findAll(
                 objectId = section.id,
-                pageable = PageRequests.ALL
+                pageable = PageRequests.ALL,
             )
         } returns pageOf(contributionHasSectionStatement)
         every { statementService.deleteAllById(any<Set<StatementId>>()) } just runs
@@ -62,7 +62,7 @@ internal class AbstractSmartReviewSectionDeleterUnitTest : MockkBaseTest {
         verify(exactly = 1) {
             statementService.findAll(
                 objectId = section.id,
-                pageable = PageRequests.ALL
+                pageable = PageRequests.ALL,
             )
         }
         verify(exactly = 1) { statementService.deleteAllById(setOf(StatementId("S1"), contributionHasSectionStatement.id)) }
@@ -79,19 +79,19 @@ internal class AbstractSmartReviewSectionDeleterUnitTest : MockkBaseTest {
             id = StatementId("S123"),
             subject = createResource(contributionId),
             predicate = createPredicate(Predicates.hasSection),
-            `object` = createResource(section.id)
+            `object` = createResource(section.id),
         )
         val otherStatementAboutComparisonSection = createStatement(
             id = StatementId("S456"),
             subject = createResource(),
             predicate = createPredicate(Predicates.hasLink),
-            `object` = createResource(section.id)
+            `object` = createResource(section.id),
         )
 
         every {
             statementService.findAll(
                 objectId = section.id,
-                pageable = PageRequests.ALL
+                pageable = PageRequests.ALL,
             )
         } returns pageOf(contributionHasSectionStatement, otherStatementAboutComparisonSection)
         every { statementService.deleteAllById(setOf(contributionHasSectionStatement.id)) } just runs
@@ -101,7 +101,7 @@ internal class AbstractSmartReviewSectionDeleterUnitTest : MockkBaseTest {
         verify(exactly = 1) {
             statementService.findAll(
                 objectId = section.id,
-                pageable = PageRequests.ALL
+                pageable = PageRequests.ALL,
             )
         }
         verify(exactly = 1) { statementService.deleteAllById(setOf(contributionHasSectionStatement.id)) }
@@ -117,14 +117,14 @@ internal class AbstractSmartReviewSectionDeleterUnitTest : MockkBaseTest {
             id = StatementId("S123"),
             subject = createResource(contributionId),
             predicate = createPredicate(Predicates.hasSection),
-            `object` = createResource(section.id)
+            `object` = createResource(section.id),
         )
         val exception = NeitherOwnerNorCurator(ContributorId(UUID.randomUUID()), contributorId, section.id)
 
         every {
             statementService.findAll(
                 objectId = section.id,
-                pageable = PageRequests.ALL
+                pageable = PageRequests.ALL,
             )
         } returns pageOf(contributionHasSectionStatement)
         every { statementService.deleteAllById(any<Set<StatementId>>()) } just runs
@@ -137,7 +137,7 @@ internal class AbstractSmartReviewSectionDeleterUnitTest : MockkBaseTest {
         verify(exactly = 1) {
             statementService.findAll(
                 objectId = section.id,
-                pageable = PageRequests.ALL
+                pageable = PageRequests.ALL,
             )
         }
         verify(exactly = 1) { statementService.deleteAllById(setOf(StatementId("S1"), contributionHasSectionStatement.id)) }
@@ -154,13 +154,13 @@ internal class AbstractSmartReviewSectionDeleterUnitTest : MockkBaseTest {
             id = StatementId("S123"),
             subject = createResource(contributionId),
             predicate = createPredicate(Predicates.hasSection),
-            `object` = createResource(section.id)
+            `object` = createResource(section.id),
         )
 
         every {
             statementService.findAll(
                 objectId = section.id,
-                pageable = PageRequests.ALL
+                pageable = PageRequests.ALL,
             )
         } returns pageOf(contributionHasSectionStatement)
         every { statementService.deleteAllById(any<Set<StatementId>>()) } just runs
@@ -171,7 +171,7 @@ internal class AbstractSmartReviewSectionDeleterUnitTest : MockkBaseTest {
         verify(exactly = 1) {
             statementService.findAll(
                 objectId = section.id,
-                pageable = PageRequests.ALL
+                pageable = PageRequests.ALL,
             )
         }
         verify(exactly = 1) { statementService.deleteAllById(setOf(StatementId("S1"), contributionHasSectionStatement.id)) }
@@ -188,19 +188,19 @@ internal class AbstractSmartReviewSectionDeleterUnitTest : MockkBaseTest {
             id = StatementId("S123"),
             subject = createResource(contributionId),
             predicate = createPredicate(Predicates.hasSection),
-            `object` = createResource(section.id)
+            `object` = createResource(section.id),
         )
         val otherStatementAboutVisualizationSection = createStatement(
             id = StatementId("S456"),
             subject = createResource(),
             predicate = createPredicate(Predicates.hasLink),
-            `object` = createResource(section.id)
+            `object` = createResource(section.id),
         )
 
         every {
             statementService.findAll(
                 objectId = section.id,
-                pageable = PageRequests.ALL
+                pageable = PageRequests.ALL,
             )
         } returns pageOf(contributionHasSectionStatement, otherStatementAboutVisualizationSection)
         every { statementService.deleteAllById(setOf(contributionHasSectionStatement.id)) } just runs
@@ -210,7 +210,7 @@ internal class AbstractSmartReviewSectionDeleterUnitTest : MockkBaseTest {
         verify(exactly = 1) {
             statementService.findAll(
                 objectId = section.id,
-                pageable = PageRequests.ALL
+                pageable = PageRequests.ALL,
             )
         }
         verify(exactly = 1) { statementService.deleteAllById(setOf(contributionHasSectionStatement.id)) }
@@ -226,14 +226,14 @@ internal class AbstractSmartReviewSectionDeleterUnitTest : MockkBaseTest {
             id = StatementId("S123"),
             subject = createResource(contributionId),
             predicate = createPredicate(Predicates.hasSection),
-            `object` = createResource(section.id)
+            `object` = createResource(section.id),
         )
         val exception = NeitherOwnerNorCurator(ContributorId(UUID.randomUUID()), contributorId, section.id)
 
         every {
             statementService.findAll(
                 objectId = section.id,
-                pageable = PageRequests.ALL
+                pageable = PageRequests.ALL,
             )
         } returns pageOf(contributionHasSectionStatement)
         every { statementService.deleteAllById(any<Set<StatementId>>()) } just runs
@@ -246,7 +246,7 @@ internal class AbstractSmartReviewSectionDeleterUnitTest : MockkBaseTest {
         verify(exactly = 1) {
             statementService.findAll(
                 objectId = section.id,
-                pageable = PageRequests.ALL
+                pageable = PageRequests.ALL,
             )
         }
         verify(exactly = 1) { statementService.deleteAllById(setOf(StatementId("S1"), contributionHasSectionStatement.id)) }
@@ -263,13 +263,13 @@ internal class AbstractSmartReviewSectionDeleterUnitTest : MockkBaseTest {
             id = StatementId("S123"),
             subject = createResource(contributionId),
             predicate = createPredicate(Predicates.hasSection),
-            `object` = createResource(section.id)
+            `object` = createResource(section.id),
         )
 
         every {
             statementService.findAll(
                 objectId = section.id,
-                pageable = PageRequests.ALL
+                pageable = PageRequests.ALL,
             )
         } returns pageOf(contributionHasSectionStatement)
         every { statementService.deleteAllById(any<Set<StatementId>>()) } just runs
@@ -280,7 +280,7 @@ internal class AbstractSmartReviewSectionDeleterUnitTest : MockkBaseTest {
         verify(exactly = 1) {
             statementService.findAll(
                 objectId = section.id,
-                pageable = PageRequests.ALL
+                pageable = PageRequests.ALL,
             )
         }
         verify(exactly = 1) { statementService.deleteAllById(setOf(StatementId("S1"), contributionHasSectionStatement.id)) }
@@ -297,19 +297,19 @@ internal class AbstractSmartReviewSectionDeleterUnitTest : MockkBaseTest {
             id = StatementId("S123"),
             subject = createResource(contributionId),
             predicate = createPredicate(Predicates.hasSection),
-            `object` = createResource(section.id)
+            `object` = createResource(section.id),
         )
         val otherStatementAboutResourceSection = createStatement(
             id = StatementId("S456"),
             subject = createResource(),
             predicate = createPredicate(Predicates.hasLink),
-            `object` = createResource(section.id)
+            `object` = createResource(section.id),
         )
 
         every {
             statementService.findAll(
                 objectId = section.id,
-                pageable = PageRequests.ALL
+                pageable = PageRequests.ALL,
             )
         } returns pageOf(contributionHasSectionStatement, otherStatementAboutResourceSection)
         every { statementService.deleteAllById(setOf(contributionHasSectionStatement.id)) } just runs
@@ -319,7 +319,7 @@ internal class AbstractSmartReviewSectionDeleterUnitTest : MockkBaseTest {
         verify(exactly = 1) {
             statementService.findAll(
                 objectId = section.id,
-                pageable = PageRequests.ALL
+                pageable = PageRequests.ALL,
             )
         }
         verify(exactly = 1) { statementService.deleteAllById(setOf(contributionHasSectionStatement.id)) }
@@ -335,14 +335,14 @@ internal class AbstractSmartReviewSectionDeleterUnitTest : MockkBaseTest {
             id = StatementId("S123"),
             subject = createResource(contributionId),
             predicate = createPredicate(Predicates.hasSection),
-            `object` = createResource(section.id)
+            `object` = createResource(section.id),
         )
         val exception = NeitherOwnerNorCurator(ContributorId(UUID.randomUUID()), contributorId, section.id)
 
         every {
             statementService.findAll(
                 objectId = section.id,
-                pageable = PageRequests.ALL
+                pageable = PageRequests.ALL,
             )
         } returns pageOf(contributionHasSectionStatement)
         every { statementService.deleteAllById(any<Set<StatementId>>()) } just runs
@@ -355,7 +355,7 @@ internal class AbstractSmartReviewSectionDeleterUnitTest : MockkBaseTest {
         verify(exactly = 1) {
             statementService.findAll(
                 objectId = section.id,
-                pageable = PageRequests.ALL
+                pageable = PageRequests.ALL,
             )
         }
         verify(exactly = 1) { statementService.deleteAllById(setOf(StatementId("S1"), contributionHasSectionStatement.id)) }
@@ -372,13 +372,13 @@ internal class AbstractSmartReviewSectionDeleterUnitTest : MockkBaseTest {
             id = StatementId("S123"),
             subject = createResource(contributionId),
             predicate = createPredicate(Predicates.hasSection),
-            `object` = createResource(section.id)
+            `object` = createResource(section.id),
         )
 
         every {
             statementService.findAll(
                 objectId = section.id,
-                pageable = PageRequests.ALL
+                pageable = PageRequests.ALL,
             )
         } returns pageOf(contributionHasSectionStatement)
         every { statementService.deleteAllById(any<Set<StatementId>>()) } just runs
@@ -389,7 +389,7 @@ internal class AbstractSmartReviewSectionDeleterUnitTest : MockkBaseTest {
         verify(exactly = 1) {
             statementService.findAll(
                 objectId = section.id,
-                pageable = PageRequests.ALL
+                pageable = PageRequests.ALL,
             )
         }
         verify(exactly = 1) { statementService.deleteAllById(setOf(StatementId("S1"), contributionHasSectionStatement.id)) }
@@ -406,19 +406,19 @@ internal class AbstractSmartReviewSectionDeleterUnitTest : MockkBaseTest {
             id = StatementId("S123"),
             subject = createResource(contributionId),
             predicate = createPredicate(Predicates.hasSection),
-            `object` = createResource(section.id)
+            `object` = createResource(section.id),
         )
         val otherStatementAboutPredicateSection = createStatement(
             id = StatementId("S456"),
             subject = createResource(),
             predicate = createPredicate(Predicates.hasLink),
-            `object` = createResource(section.id)
+            `object` = createResource(section.id),
         )
 
         every {
             statementService.findAll(
                 objectId = section.id,
-                pageable = PageRequests.ALL
+                pageable = PageRequests.ALL,
             )
         } returns pageOf(contributionHasSectionStatement, otherStatementAboutPredicateSection)
         every { statementService.deleteAllById(setOf(contributionHasSectionStatement.id)) } just runs
@@ -428,7 +428,7 @@ internal class AbstractSmartReviewSectionDeleterUnitTest : MockkBaseTest {
         verify(exactly = 1) {
             statementService.findAll(
                 objectId = section.id,
-                pageable = PageRequests.ALL
+                pageable = PageRequests.ALL,
             )
         }
         verify(exactly = 1) { statementService.deleteAllById(setOf(contributionHasSectionStatement.id)) }
@@ -443,14 +443,14 @@ internal class AbstractSmartReviewSectionDeleterUnitTest : MockkBaseTest {
         val smartReviewHasSectionStatement = createStatement(
             subject = createResource(contributionId),
             predicate = createPredicate(Predicates.hasSection),
-            `object` = createResource(section.id)
+            `object` = createResource(section.id),
         )
         val exception = NeitherOwnerNorCurator(ContributorId(UUID.randomUUID()), contributorId, section.id)
 
         every {
             statementService.findAll(
                 objectId = section.id,
-                pageable = PageRequests.ALL
+                pageable = PageRequests.ALL,
             )
         } returns pageOf(smartReviewHasSectionStatement)
         every { statementService.deleteAllById(any<Set<StatementId>>()) } just runs
@@ -463,7 +463,7 @@ internal class AbstractSmartReviewSectionDeleterUnitTest : MockkBaseTest {
         verify(exactly = 1) {
             statementService.findAll(
                 objectId = section.id,
-                pageable = PageRequests.ALL
+                pageable = PageRequests.ALL,
             )
         }
         verify(exactly = 1) { statementService.deleteAllById(setOf(StatementId("S1"))) }
@@ -480,13 +480,13 @@ internal class AbstractSmartReviewSectionDeleterUnitTest : MockkBaseTest {
             id = StatementId("S123"),
             subject = createResource(contributionId),
             predicate = createPredicate(Predicates.hasSection),
-            `object` = createResource(section.id)
+            `object` = createResource(section.id),
         )
 
         every {
             statementService.findAll(
                 objectId = section.id,
-                pageable = PageRequests.ALL
+                pageable = PageRequests.ALL,
             )
         } returns pageOf(contributionHasSectionStatement)
         every { statementService.deleteAllById(any<Set<StatementId>>()) } just runs
@@ -497,7 +497,7 @@ internal class AbstractSmartReviewSectionDeleterUnitTest : MockkBaseTest {
         verify(exactly = 1) {
             statementService.findAll(
                 objectId = section.id,
-                pageable = PageRequests.ALL
+                pageable = PageRequests.ALL,
             )
         }
         verify(exactly = 1) {
@@ -506,8 +506,8 @@ internal class AbstractSmartReviewSectionDeleterUnitTest : MockkBaseTest {
                     StatementId("S0"),
                     StatementId("S1"),
                     StatementId("S2"),
-                    StatementId("S123")
-                )
+                    StatementId("S123"),
+                ),
             )
         }
         verify(exactly = 1) { resourceService.delete(section.id, contributorId) }
@@ -522,18 +522,18 @@ internal class AbstractSmartReviewSectionDeleterUnitTest : MockkBaseTest {
         val contributionHasSectionStatement = createStatement(
             subject = createResource(contributionId),
             predicate = createPredicate(Predicates.hasSection),
-            `object` = createResource(section.id)
+            `object` = createResource(section.id),
         )
         val otherStatementAboutOntologySection = createStatement(
             subject = createResource(),
             predicate = createPredicate(Predicates.hasLink),
-            `object` = createResource(section.id)
+            `object` = createResource(section.id),
         )
 
         every {
             statementService.findAll(
                 objectId = section.id,
-                pageable = PageRequests.ALL
+                pageable = PageRequests.ALL,
             )
         } returns pageOf(contributionHasSectionStatement, otherStatementAboutOntologySection)
         every { statementService.deleteAllById(setOf(contributionHasSectionStatement.id)) } just runs
@@ -543,7 +543,7 @@ internal class AbstractSmartReviewSectionDeleterUnitTest : MockkBaseTest {
         verify(exactly = 1) {
             statementService.findAll(
                 objectId = section.id,
-                pageable = PageRequests.ALL
+                pageable = PageRequests.ALL,
             )
         }
         verify(exactly = 1) { statementService.deleteAllById(setOf(contributionHasSectionStatement.id)) }
@@ -559,14 +559,14 @@ internal class AbstractSmartReviewSectionDeleterUnitTest : MockkBaseTest {
             id = StatementId("S123"),
             subject = createResource(contributionId),
             predicate = createPredicate(Predicates.hasSection),
-            `object` = createResource(section.id)
+            `object` = createResource(section.id),
         )
         val exception = NeitherOwnerNorCurator(ContributorId(UUID.randomUUID()), contributorId, section.id)
 
         every {
             statementService.findAll(
                 objectId = section.id,
-                pageable = PageRequests.ALL
+                pageable = PageRequests.ALL,
             )
         } returns pageOf(smartReviewHasSectionStatement)
         every { statementService.deleteAllById(any<Set<StatementId>>()) } just runs
@@ -579,7 +579,7 @@ internal class AbstractSmartReviewSectionDeleterUnitTest : MockkBaseTest {
         verify(exactly = 1) {
             statementService.findAll(
                 objectId = section.id,
-                pageable = PageRequests.ALL
+                pageable = PageRequests.ALL,
             )
         }
         verify(exactly = 1) {
@@ -588,8 +588,8 @@ internal class AbstractSmartReviewSectionDeleterUnitTest : MockkBaseTest {
                     StatementId("S0"),
                     StatementId("S1"),
                     StatementId("S2"),
-                    StatementId("S123")
-                )
+                    StatementId("S123"),
+                ),
             )
         }
         verify(exactly = 1) { resourceService.delete(section.id, contributorId) }
@@ -605,13 +605,13 @@ internal class AbstractSmartReviewSectionDeleterUnitTest : MockkBaseTest {
             id = StatementId("S123"),
             subject = createResource(contributionId),
             predicate = createPredicate(Predicates.hasSection),
-            `object` = createResource(section.id)
+            `object` = createResource(section.id),
         )
 
         every {
             statementService.findAll(
                 objectId = section.id,
-                pageable = PageRequests.ALL
+                pageable = PageRequests.ALL,
             )
         } returns pageOf(contributionHasSectionStatement)
         every { statementService.deleteAllById(any<Set<StatementId>>()) } just runs
@@ -622,7 +622,7 @@ internal class AbstractSmartReviewSectionDeleterUnitTest : MockkBaseTest {
         verify(exactly = 1) {
             statementService.findAll(
                 objectId = section.id,
-                pageable = PageRequests.ALL
+                pageable = PageRequests.ALL,
             )
         }
         verify(exactly = 1) { statementService.deleteAllById(setOf(StatementId("S1"), contributionHasSectionStatement.id)) }
@@ -639,19 +639,19 @@ internal class AbstractSmartReviewSectionDeleterUnitTest : MockkBaseTest {
             id = StatementId("S123"),
             subject = createResource(contributionId),
             predicate = createPredicate(Predicates.hasSection),
-            `object` = createResource(section.id)
+            `object` = createResource(section.id),
         )
         val otherStatementAboutTextSection = createStatement(
             id = StatementId("S456"),
             subject = createResource(),
             predicate = createPredicate(Predicates.hasLink),
-            `object` = createResource(section.id)
+            `object` = createResource(section.id),
         )
 
         every {
             statementService.findAll(
                 objectId = section.id,
-                pageable = PageRequests.ALL
+                pageable = PageRequests.ALL,
             )
         } returns pageOf(contributionHasSectionStatement, otherStatementAboutTextSection)
         every { statementService.deleteAllById(setOf(contributionHasSectionStatement.id)) } just runs
@@ -661,7 +661,7 @@ internal class AbstractSmartReviewSectionDeleterUnitTest : MockkBaseTest {
         verify(exactly = 1) {
             statementService.findAll(
                 objectId = section.id,
-                pageable = PageRequests.ALL
+                pageable = PageRequests.ALL,
             )
         }
         verify(exactly = 1) { statementService.deleteAllById(setOf(contributionHasSectionStatement.id)) }
@@ -677,14 +677,14 @@ internal class AbstractSmartReviewSectionDeleterUnitTest : MockkBaseTest {
             id = StatementId("S123"),
             subject = createResource(contributionId),
             predicate = createPredicate(Predicates.hasSection),
-            `object` = createResource(section.id)
+            `object` = createResource(section.id),
         )
         val exception = NeitherOwnerNorCurator(ContributorId(UUID.randomUUID()), contributorId, section.id)
 
         every {
             statementService.findAll(
                 objectId = section.id,
-                pageable = PageRequests.ALL
+                pageable = PageRequests.ALL,
             )
         } returns pageOf(contributionHasSectionStatement)
         every { statementService.deleteAllById(any<Set<StatementId>>()) } just runs
@@ -697,7 +697,7 @@ internal class AbstractSmartReviewSectionDeleterUnitTest : MockkBaseTest {
         verify(exactly = 1) {
             statementService.findAll(
                 objectId = section.id,
-                pageable = PageRequests.ALL
+                pageable = PageRequests.ALL,
             )
         }
         verify(exactly = 1) { statementService.deleteAllById(setOf(StatementId("S1"), contributionHasSectionStatement.id)) }

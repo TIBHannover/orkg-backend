@@ -14,7 +14,7 @@ class PaperResearchFieldCreator(
         unsafeLiteralUseCases: UnsafeLiteralUseCases,
         unsafeStatementUseCases: UnsafeStatementUseCases,
     ) : this(
-        StatementCollectionPropertyCreator(unsafeLiteralUseCases, unsafeStatementUseCases)
+        StatementCollectionPropertyCreator(unsafeLiteralUseCases, unsafeStatementUseCases),
     )
 
     override fun invoke(command: CreatePaperCommand, state: State): State {
@@ -22,7 +22,7 @@ class PaperResearchFieldCreator(
             contributorId = command.contributorId,
             subjectId = state.paperId!!,
             predicateId = Predicates.hasResearchField,
-            objects = command.researchFields
+            objects = command.researchFields,
         )
         return state
     }

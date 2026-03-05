@@ -24,8 +24,8 @@ class TemplatePropertiesUpdater(
             resourceService,
             unsafeResourceUseCases,
             statementService,
-            unsafeStatementUseCases
-        )
+            unsafeStatementUseCases,
+        ),
     )
 
     override fun invoke(command: UpdateTemplateCommand, state: State): State {
@@ -35,7 +35,7 @@ class TemplatePropertiesUpdater(
                 subjectId = command.templateId,
                 newProperties = properties,
                 oldProperties = state.template!!.properties,
-                statements = state.statements
+                statements = state.statements,
             )
         }
         return state

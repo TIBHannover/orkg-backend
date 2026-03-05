@@ -39,7 +39,7 @@ class ContributorService(
                 emailHash = command.emailHash,
                 isCurator = command.isCurator,
                 isAdmin = command.isAdmin,
-            )
+            ),
         )
         return command.id
     }

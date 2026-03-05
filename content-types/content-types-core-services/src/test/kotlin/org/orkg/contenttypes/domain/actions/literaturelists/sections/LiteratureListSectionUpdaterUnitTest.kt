@@ -49,7 +49,7 @@ internal class LiteratureListSectionUpdaterUnitTest : MockkBaseTest {
         val oldSection = literatureList.sections.first()
         val state = UpdateLiteratureListSectionState(
             literatureList = literatureList,
-            statements = oldSection.toGroupedStatements()
+            statements = oldSection.toGroupedStatements(),
         )
         val command = oldSection.toUpdateListSectionCommand(contributorId, literatureList.id)
             .shouldBeInstanceOf<UpdateTextSectionCommand>()
@@ -64,7 +64,7 @@ internal class LiteratureListSectionUpdaterUnitTest : MockkBaseTest {
                 contributorId = command.contributorId,
                 newSection = command as AbstractLiteratureListTextSectionCommand,
                 oldSection = oldSection as LiteratureListTextSection,
-                statements = state.statements
+                statements = state.statements,
             )
         }
     }
@@ -88,7 +88,7 @@ internal class LiteratureListSectionUpdaterUnitTest : MockkBaseTest {
         val oldSection = literatureList.sections.last()
         val state = UpdateLiteratureListSectionState(
             literatureList = literatureList,
-            statements = oldSection.toGroupedStatements()
+            statements = oldSection.toGroupedStatements(),
         )
         val command = oldSection.toUpdateListSectionCommand(contributorId, literatureList.id)
             .shouldBeInstanceOf<UpdateListSectionCommand>()
@@ -103,7 +103,7 @@ internal class LiteratureListSectionUpdaterUnitTest : MockkBaseTest {
                 contributorId = command.contributorId,
                 newSection = command as AbstractLiteratureListListSectionCommand,
                 oldSection = oldSection as LiteratureListListSection,
-                statements = state.statements
+                statements = state.statements,
             )
         }
     }
@@ -124,7 +124,7 @@ internal class LiteratureListSectionUpdaterUnitTest : MockkBaseTest {
         literatureListSectionId = id,
         contributorId = contributorId,
         literatureListId = literatureListId,
-        entries = entries.map { it.toCommandEntry() }
+        entries = entries.map { it.toCommandEntry() },
     )
 
     private fun LiteratureListTextSection.toUpdateTextSectionCommand(
@@ -136,6 +136,6 @@ internal class LiteratureListSectionUpdaterUnitTest : MockkBaseTest {
         literatureListId = literatureListId,
         heading = heading,
         headingSize = headingSize,
-        text = text
+        text = text,
     )
 }

@@ -58,7 +58,7 @@ internal class TemplateBasedResourceSnapshotServiceUnitTest : MockkBaseTest {
             resourceId = resource.id,
             templateId = template.id,
             contributorId = contributorId,
-            registerHandle = true
+            registerHandle = true,
         )
         val handle = Handle.of("20.154665/1a2b3c")
 
@@ -80,7 +80,7 @@ internal class TemplateBasedResourceSnapshotServiceUnitTest : MockkBaseTest {
                 withArg {
                     it.url shouldBe URI.create("http://orkg.org/resources/${resource.id}/snapshots/$id")
                     it.suffix shouldBe id.value
-                }
+                },
             )
         }
         verify(exactly = 1) {
@@ -93,7 +93,7 @@ internal class TemplateBasedResourceSnapshotServiceUnitTest : MockkBaseTest {
                     it.resourceId shouldBe resource.id
                     it.templateId shouldBe template.id
                     it.handle shouldBe handle
-                }
+                },
             )
         }
     }
@@ -109,7 +109,7 @@ internal class TemplateBasedResourceSnapshotServiceUnitTest : MockkBaseTest {
             resourceId = resource.id,
             templateId = template.id,
             contributorId = contributorId,
-            registerHandle = false
+            registerHandle = false,
         )
 
         every { resourceRepository.findById(resource.id) } returns Optional.of(resource)
@@ -134,7 +134,7 @@ internal class TemplateBasedResourceSnapshotServiceUnitTest : MockkBaseTest {
                     it.resourceId shouldBe resource.id
                     it.templateId shouldBe template.id
                     it.handle shouldBe null
-                }
+                },
             )
         }
     }
@@ -148,7 +148,7 @@ internal class TemplateBasedResourceSnapshotServiceUnitTest : MockkBaseTest {
             resourceId = resource.id,
             templateId = template.id,
             contributorId = contributorId,
-            registerHandle = false
+            registerHandle = false,
         )
 
         every { resourceRepository.findById(resource.id) } returns Optional.empty()
@@ -167,7 +167,7 @@ internal class TemplateBasedResourceSnapshotServiceUnitTest : MockkBaseTest {
             resourceId = resource.id,
             templateId = template.id,
             contributorId = contributorId,
-            registerHandle = false
+            registerHandle = false,
         )
 
         every { resourceRepository.findById(resource.id) } returns Optional.of(resource)
@@ -188,7 +188,7 @@ internal class TemplateBasedResourceSnapshotServiceUnitTest : MockkBaseTest {
             resourceId = resource.id,
             templateId = template.id,
             contributorId = contributorId,
-            registerHandle = false
+            registerHandle = false,
         )
 
         every { resourceRepository.findById(resource.id) } returns Optional.of(resource)
@@ -209,7 +209,7 @@ internal class TemplateBasedResourceSnapshotServiceUnitTest : MockkBaseTest {
             resourceId = resource.id,
             templateId = template.id,
             contributorId = contributorId,
-            registerHandle = false
+            registerHandle = false,
         )
 
         every { resourceRepository.findById(resource.id) } returns Optional.of(resource)

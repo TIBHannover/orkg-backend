@@ -48,7 +48,7 @@ internal class SchemaBasedCSVRecordParserTest {
                 name = "a",
                 namespace = null,
                 columnType = null,
-            )
+            ),
         )
 
         schemaBasedCSVRecordParser.parseHeader(values) shouldBe expected
@@ -69,7 +69,7 @@ internal class SchemaBasedCSVRecordParserTest {
                 name = "a",
                 namespace = "open-namespace",
                 columnType = Classes.string,
-            )
+            ),
         )
 
         schemaBasedCSVRecordParser.parseHeader(values) shouldBe expected
@@ -170,7 +170,7 @@ internal class SchemaBasedCSVRecordParserTest {
                 namespace = "closed-value-namespace",
                 value = "option2",
                 type = Classes.string,
-            )
+            ),
         )
 
         schemaBasedCSVRecordParser.parseRecord(values, 1, headers) shouldBe expected
@@ -314,7 +314,7 @@ internal class SchemaBasedCSVRecordParserTest {
                 namespace = "closed-value-namespace",
                 value = "option2",
                 type = Classes.string,
-            )
+            ),
         )
 
         schemaBasedCSVRecordParser.parseRecord(values, 1, headers) shouldBe expected
@@ -343,7 +343,7 @@ internal class SchemaBasedCSVRecordParserTest {
                 namespace = "closed-value-namespace",
                 value = "option2",
                 type = Classes.string,
-            )
+            ),
         )
 
         schemaBasedCSVRecordParser.parseRecord(values, 1, headers) shouldBe expected

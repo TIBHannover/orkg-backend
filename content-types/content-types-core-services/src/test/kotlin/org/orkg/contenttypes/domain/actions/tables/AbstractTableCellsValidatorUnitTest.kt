@@ -21,7 +21,7 @@ import java.util.Optional
 
 private val header = CreateRowCommand(
     label = "header",
-    data = emptyList()
+    data = emptyList(),
 )
 
 internal class AbstractTableCellsValidatorUnitTest : MockkBaseTest {
@@ -37,12 +37,12 @@ internal class AbstractTableCellsValidatorUnitTest : MockkBaseTest {
             header,
             CreateRowCommand(
                 label = "header",
-                data = listOf("R123", "#temp2", null)
+                data = listOf("R123", "#temp2", null),
             ),
             CreateRowCommand(
                 label = "header",
-                data = listOf("#temp1", "R456", "R456")
-            )
+                data = listOf("#temp1", "R456", "R456"),
+            ),
         )
         val temp1 = CreateLiteralCommandPart("some label 1")
         val temp2 = CreateLiteralCommandPart("some label 2")
@@ -53,7 +53,7 @@ internal class AbstractTableCellsValidatorUnitTest : MockkBaseTest {
         )
         val validationCache = mapOf<String, Either<CreateThingCommandPart, Thing>>(
             "R123" to Either.right(r123),
-            "#temp4" to Either.left(temp4)
+            "#temp4" to Either.left(temp4),
         )
 
         every { thingRepository.findById(ThingId("R456")) } returns Optional.of(r456)
@@ -65,7 +65,7 @@ internal class AbstractTableCellsValidatorUnitTest : MockkBaseTest {
             "R456" to Either.right(r456),
             "#temp1" to Either.left(temp1),
             "#temp2" to Either.left(temp2),
-            "#temp4" to Either.left(temp4)
+            "#temp4" to Either.left(temp4),
         )
 
         verify(exactly = 1) { thingRepository.findById(ThingId("R456")) }
@@ -77,8 +77,8 @@ internal class AbstractTableCellsValidatorUnitTest : MockkBaseTest {
             header,
             CreateRowCommand(
                 label = "header",
-                data = listOf("#temp1")
-            )
+                data = listOf("#temp1"),
+            ),
         )
         val validationCache = emptyMap<String, Either<CreateThingCommandPart, Thing>>()
 
@@ -93,8 +93,8 @@ internal class AbstractTableCellsValidatorUnitTest : MockkBaseTest {
             header,
             CreateRowCommand(
                 label = "header",
-                data = listOf("L123")
-            )
+                data = listOf("L123"),
+            ),
         )
         val validationCache = emptyMap<String, Either<CreateThingCommandPart, Thing>>()
 

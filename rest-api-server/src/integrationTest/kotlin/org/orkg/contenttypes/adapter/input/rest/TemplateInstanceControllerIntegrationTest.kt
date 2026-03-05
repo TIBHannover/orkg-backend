@@ -106,40 +106,40 @@ internal class TemplateInstanceControllerIntegrationTest : MockMvcBaseTest("temp
             Predicates.templateOfResearchProblem,
             Predicates.hasResearchProblem,
             Predicates.hasURL,
-            Predicates.placeholder
+            Predicates.placeholder,
         )
 
         classService.createClasses(
             Classes.nodeShape,
             Classes.propertyShape,
             Classes.problem,
-            Classes.researchField
+            Classes.researchField,
         )
 
         resourceService.createResource(
             id = ThingId("R12"),
             label = "Computer Science",
-            classes = setOf(Classes.researchField)
+            classes = setOf(Classes.researchField),
         )
 
         // Example specific entities
 
         classService.createClasses(
             Classes.string,
-            ThingId("Test")
+            ThingId("Test"),
         )
 
         val contributorId = contributorService.createContributor()
 
         organizationService.createOrganization(
             id = OrganizationId("edc18168-c4ee-4cb8-a98a-136f748e912e"),
-            createdBy = contributorId
+            createdBy = contributorId,
         )
 
         observatoryService.createObservatory(
             id = ObservatoryId("1afefdd0-5c09-4c9c-b718-2b35316b56f3"),
             researchField = ThingId("R12"),
-            organizations = setOf(OrganizationId("edc18168-c4ee-4cb8-a98a-136f748e912e"))
+            organizations = setOf(OrganizationId("edc18168-c4ee-4cb8-a98a-136f748e912e")),
         )
 
         val targetClass = ThingId("Test")
@@ -154,7 +154,7 @@ internal class TemplateInstanceControllerIntegrationTest : MockMvcBaseTest("temp
                 relations = TemplateRelationsCommand(
                     researchFields = listOf(ThingId("R12")),
                     researchProblems = emptyList(),
-                    predicate = null
+                    predicate = null,
                 ),
                 properties = listOf(
                     StringLiteralPropertyCommand(
@@ -166,25 +166,25 @@ internal class TemplateInstanceControllerIntegrationTest : MockMvcBaseTest("temp
                         pattern = """https?\:\/\/.*""",
                         path = Predicates.hasURL,
                         datatype = Classes.string,
-                    )
+                    ),
                 ),
                 isClosed = true,
                 observatories = listOf(
-                    ObservatoryId("1afefdd0-5c09-4c9c-b718-2b35316b56f3")
+                    ObservatoryId("1afefdd0-5c09-4c9c-b718-2b35316b56f3"),
                 ),
                 organizations = listOf(
-                    OrganizationId("edc18168-c4ee-4cb8-a98a-136f748e912e")
+                    OrganizationId("edc18168-c4ee-4cb8-a98a-136f748e912e"),
                 ),
-                extractionMethod = ExtractionMethod.UNKNOWN
-            )
+                extractionMethod = ExtractionMethod.UNKNOWN,
+            ),
         )
         statementService.createStatement(
             subject = resourceService.createResource(
                 id = ThingId("R6458"),
-                classes = setOf(targetClass)
+                classes = setOf(targetClass),
             ),
             predicate = Predicates.hasURL,
-            `object` = literalService.createLiteral()
+            `object` = literalService.createLiteral(),
         )
     }
 
@@ -203,7 +203,7 @@ internal class TemplateInstanceControllerIntegrationTest : MockMvcBaseTest("temp
     fun update() {
         val id = resourceService.findAll(
             includeClasses = setOf(Classes.nodeShape),
-            pageable = PageRequests.SINGLE
+            pageable = PageRequests.SINGLE,
         ).single().id
 
         put("/api/templates/{id}/instances/{instanceId}", id, "R6458")

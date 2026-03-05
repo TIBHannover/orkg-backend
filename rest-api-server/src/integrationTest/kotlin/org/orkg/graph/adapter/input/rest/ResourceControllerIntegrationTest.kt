@@ -100,7 +100,7 @@ internal class ResourceControllerIntegrationTest : MockMvcBaseTest("resources") 
     fun addButClassDoesNotExist() {
         val resource = mapOf(
             "label" to "foo",
-            "classes" to setOf(ThingId("doesNotExist"))
+            "classes" to setOf(ThingId("doesNotExist")),
         )
 
         post("/api/resources")
@@ -132,7 +132,7 @@ internal class ResourceControllerIntegrationTest : MockMvcBaseTest("resources") 
             "label" to newLabel,
             "classes" to setOf(oldClass),
             "extraction_method" to ExtractionMethod.UNKNOWN,
-            "visibility" to Visibility.DEFAULT
+            "visibility" to Visibility.DEFAULT,
         )
 
         put("/api/resources/{id}", resource)
@@ -266,48 +266,48 @@ internal class ResourceControllerIntegrationTest : MockMvcBaseTest("resources") 
         // create required classes and predicates
         val nodeShapeClass = classService.createClass(
             label = "Node shape",
-            id = Classes.nodeShape
+            id = Classes.nodeShape,
         )
         val throwAwayClass = classService.createClass(label = "Templated Class")
         val templateLabelPredicate = predicateService.createPredicate(
             id = Predicates.templateLabelFormat,
-            label = "Template label format"
+            label = "Template label format",
         )
         val targetClassPredicate = predicateService.createPredicate(
             id = Predicates.shTargetClass,
-            label = "target class"
+            label = "target class",
         )
         val propertyPredicate = predicateService.createPredicate(
             id = Predicates.shProperty,
-            label = "property"
+            label = "property",
         )
         val propertyShapeClass = classService.createClass(
             label = "Property shape",
-            id = Classes.propertyShape
+            id = Classes.propertyShape,
         )
         val throwAwayProperty = predicateService.createPredicate(label = "Temp property")
         val pathPredicate = predicateService.createPredicate(
             id = Predicates.shPath,
-            label = "path"
+            label = "path",
         )
         // create the template
         val template = service.createResource(
             classes = setOf(nodeShapeClass),
-            label = "Throw-way template"
+            label = "Throw-way template",
         )
         val labelFormat = literalService.createLiteral(label = "xx{$throwAwayProperty}xx")
         statementService.createStatement(template, templateLabelPredicate, labelFormat)
         statementService.createStatement(template, targetClassPredicate, throwAwayClass)
         val templateComponent = service.createResource(
             classes = setOf(propertyShapeClass),
-            label = "component 1"
+            label = "component 1",
         )
         statementService.createStatement(template, propertyPredicate, templateComponent)
         statementService.createStatement(templateComponent, pathPredicate, throwAwayProperty)
         // Create resource and type it
         val templatedResource = service.createResource(
             classes = setOf(throwAwayClass),
-            label = "Fancy resource"
+            label = "Fancy resource",
         )
         val someValue = literalService.createLiteral(label = value)
         statementService.createStatement(templatedResource, throwAwayProperty, someValue)
@@ -318,7 +318,7 @@ internal class ResourceControllerIntegrationTest : MockMvcBaseTest("resources") 
         fun pageOfDetailedResourcesResponseFields(): ResponseFieldsSnippet = responseFields(pageableDetailedFieldParameters())
             .andWithPrefix(
                 "content[].",
-                resourceResponseFields()
+                resourceResponseFields(),
             ).andWithPrefix("")
     }
 }

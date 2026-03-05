@@ -32,20 +32,20 @@ class LiteratureListVersionCreator(
             observatories = literatureList.observatories,
             organizations = literatureList.organizations,
             extractionMethod = literatureList.extractionMethod,
-            sections = emptyList()
+            sections = emptyList(),
         )
         val steps = listOf(
             LiteratureListAuthorListCreateValidator(resourceRepository, statementRepository),
             LiteratureListVersionResourceCreator(unsafeResourceUseCases),
             LiteratureListResearchFieldCreator(unsafeLiteralUseCases, unsafeStatementUseCases),
             LiteratureListAuthorListCreator(unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases, listService),
-            LiteratureListSDGCreator(unsafeLiteralUseCases, unsafeStatementUseCases)
+            LiteratureListSDGCreator(unsafeLiteralUseCases, unsafeStatementUseCases),
         )
         return state.copy(
             literatureListVersionId = steps.execute(
                 createLiteratureListCommand,
-                CreateLiteratureListState()
-            ).literatureListId!!
+                CreateLiteratureListState(),
+            ).literatureListId!!,
         )
     }
 }

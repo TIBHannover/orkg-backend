@@ -38,7 +38,7 @@ class ComparisonVersionCreator(
             observatories = comparison.observatories,
             organizations = comparison.organizations,
             isAnonymized = comparison.isAnonymized,
-            extractionMethod = comparison.extractionMethod
+            extractionMethod = comparison.extractionMethod,
         )
         val steps = listOf(
             ComparisonAuthorListCreateValidator(resourceRepository, statementRepository),
@@ -56,8 +56,8 @@ class ComparisonVersionCreator(
         return state.copy(
             comparisonVersionId = steps.execute(
                 createComparisonCommand,
-                CreateComparisonState()
-            ).comparisonId!!
+                CreateComparisonState(),
+            ).comparisonId!!,
         )
     }
 }

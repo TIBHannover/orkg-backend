@@ -39,7 +39,7 @@ internal class ImageServiceUnitTest : MockkBaseTest {
                     image.mimeType,
                     contributor,
                     OffsetDateTime.now(fixedClock),
-                )
+                ),
             )
         }
     }

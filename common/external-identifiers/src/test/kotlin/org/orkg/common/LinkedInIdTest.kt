@@ -45,7 +45,7 @@ internal class LinkedInIdTest {
         @JvmStatic
         fun validLinkedInIds(): Stream<Arguments> = Stream.of(
             Arguments.of("author", "https://www.linkedin.com/in/author/"),
-            Arguments.of("author-with-dashes-and-numb3rs_", "https://www.linkedin.com/in/author-with-dashes-and-numb3rs_/")
+            Arguments.of("author-with-dashes-and-numb3rs_", "https://www.linkedin.com/in/author-with-dashes-and-numb3rs_/"),
         )
 
         @JvmStatic
@@ -53,7 +53,7 @@ internal class LinkedInIdTest {
             // Illegal character #
             Arguments.of("author#", "https://www.linkedin.com/in/author#/"),
             // Does not follow scheme at all
-            Arguments.of("example~", "https://example.com/")
+            Arguments.of("example~", "https://example.com/"),
         )
     }
 }

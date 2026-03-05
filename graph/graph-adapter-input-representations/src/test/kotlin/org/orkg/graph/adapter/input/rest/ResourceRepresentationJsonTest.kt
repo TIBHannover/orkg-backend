@@ -78,10 +78,10 @@ internal class ResourceRepresentationJsonTest {
                 ThingId("R100"),
                 "label",
                 OffsetDateTime.of(2018, 12, 25, 5, 23, 42, 123456789, ZoneOffset.ofHours(3)),
-                setOf(ThingId("C1"), ThingId("C2"), ThingId("C3"))
+                setOf(ThingId("C1"), ThingId("C2"), ThingId("C3")),
             ).toResourceRepresentation(
                 mapOf(ThingId("R100") to 11),
-                emptyMap()
+                emptyMap(),
             )
         }
 

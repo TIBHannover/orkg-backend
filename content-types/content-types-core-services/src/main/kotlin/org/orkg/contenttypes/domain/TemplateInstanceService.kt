@@ -104,7 +104,7 @@ class TemplateInstanceService(
             TemplateInstanceThingsCommandValidator(thingRepository, classRepository),
             TemplateInstancePropertyValueValidator(thingRepository, classRepository, statementRepository, classHierarchyRepository),
             TemplateInstanceSubjectUpdater(resourceRepository),
-            TemplateInstancePropertyValueUpdater(unsafeClassUseCases, unsafeResourceUseCases, statementService, unsafeStatementUseCases, unsafeLiteralUseCases, unsafePredicateUseCases, statementRepository, listService)
+            TemplateInstancePropertyValueUpdater(unsafeClassUseCases, unsafeResourceUseCases, statementService, unsafeStatementUseCases, unsafeLiteralUseCases, unsafePredicateUseCases, statementRepository, listService),
         )
         steps.execute(command, UpdateTemplateInstanceState())
     }
@@ -115,7 +115,7 @@ class TemplateInstanceService(
         val templateInstance = TemplateInstance(
             root = this,
             statements = associateTemplatePropertiesToStatements(template, statements, visitedPredicates),
-            predicates = visitedPredicates.associateBy { it.id }
+            predicates = visitedPredicates.associateBy { it.id },
         )
         if (nested) {
             val visitedThings = mutableSetOf(id)
@@ -126,9 +126,9 @@ class TemplateInstanceService(
                     statements = templateInstance.statements,
                     visitedThings = visitedThings,
                     visitedPredicates = visitedPredicates,
-                    visitedTemplates = visitedTemplates
+                    visitedTemplates = visitedTemplates,
                 ),
-                predicates = visitedPredicates.associateBy { it.id }
+                predicates = visitedPredicates.associateBy { it.id },
             )
         }
         return templateInstance
@@ -147,7 +147,7 @@ class TemplateInstanceService(
                     visitedPredicates += relevantStatements[0].predicate
                 }
                 relevantStatements.map { EmbeddedStatement(it.`object`, it.createdAt!!, it.createdBy, emptyMap()) }
-            }
+            },
         )
 
     private fun findNestedStatementsRecursively(
@@ -172,7 +172,7 @@ class TemplateInstanceService(
                     val nestedTemplate = visitedTemplates.getOrPut(property.`class`.id) {
                         templateService.findAll(
                             targetClass = property.`class`.id,
-                            pageable = PageRequests.SINGLE
+                            pageable = PageRequests.SINGLE,
                         ).singleOrNull()
                     }
                     if (nestedTemplate == null) {
@@ -180,7 +180,7 @@ class TemplateInstanceService(
                     }
                     val nestedStatements = statementService.findAll(
                         subjectId = `object`.thing.id,
-                        pageable = PageRequests.ALL
+                        pageable = PageRequests.ALL,
                     )
                     val associatedStatements = associateTemplatePropertiesToStatements(
                         template = nestedTemplate,
@@ -196,7 +196,7 @@ class TemplateInstanceService(
                     )
                     `object`.copy(statements = recursiveStatements)
                 }
-            }
+            },
         )
 
     private infix fun Thing.isInstanceOf(id: ThingId): Boolean =

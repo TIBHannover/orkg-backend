@@ -23,7 +23,7 @@ class IdentifierValidator(
                     predicateId = identifier.predicateId,
                     objectClasses = setOf(Classes.literal),
                     objectLabel = value,
-                    pageable = PageRequests.SINGLE
+                    pageable = PageRequests.SINGLE,
                 )
                     .content
                     .filter { it.subject.id != subjectId }

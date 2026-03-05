@@ -65,7 +65,7 @@ internal class ComparisonRelatedFigureControllerUnitTest : MockMvcBaseTest("comp
                 description(
                     """
                     A `GET` request provides information about a comparison related figure.
-                    """
+                    """,
                 )
                 pathParameters(
                     parameterWithName("id").description("The identifier of the comparison."),
@@ -114,7 +114,7 @@ internal class ComparisonRelatedFigureControllerUnitTest : MockMvcBaseTest("comp
                 description(
                     """
                     A `GET` request returns a <<sorting-and-pagination,paged>> list of <<comparisons-related-figure-fetch,comparison related figures>>.
-                    """
+                    """,
                 )
                 pathParameters(
                     parameterWithName("id").description("The identifier of the comparison."),
@@ -148,7 +148,7 @@ internal class ComparisonRelatedFigureControllerUnitTest : MockMvcBaseTest("comp
                     A `POST` request creates a new comparison related figure with all the given parameters.
                     The response will be `201 Created` when successful.
                     The comparison related figure (object) can be retrieved by following the URI in the `Location` header field.
-                    """
+                    """,
                 )
                 pathParameters(
                     parameterWithName("id").description("The comparison to attach the comparison related figure to."),
@@ -209,7 +209,7 @@ internal class ComparisonRelatedFigureControllerUnitTest : MockMvcBaseTest("comp
                     The updated comparison related figure (object) can be retrieved by following the URI in the `Location` header field.
                     
                     NOTE: Top level fields that were mandatory when creating the comparison related figure can be omitted or `null`, meaning that the corresponding fields should not be updated.
-                    """
+                    """,
                 )
                 responseHeaders(
                     headerWithName("Location").description("The uri path where the updated comparison related figure can be fetched from."),
@@ -246,7 +246,7 @@ internal class ComparisonRelatedFigureControllerUnitTest : MockMvcBaseTest("comp
             comparisonRelatedFigureService.deleteByIdAndComaprisonId(
                 comparisonId = comparisonId,
                 comparisonRelatedFigureId = comparisonRelatedFigureId,
-                contributorId = any()
+                contributorId = any(),
             )
         } just runs
 
@@ -262,7 +262,7 @@ internal class ComparisonRelatedFigureControllerUnitTest : MockMvcBaseTest("comp
                     A `DELETE` request deletes a comparison related figure by ID.
                     The response will be `204 No Content` when successful.
                     The updated comparison (object) can be retrieved by following the URI in the `Location` header field.
-                    """
+                    """,
                 )
                 pathParameters(
                     parameterWithName("id").description("The identifier of the comparison."),
@@ -278,7 +278,7 @@ internal class ComparisonRelatedFigureControllerUnitTest : MockMvcBaseTest("comp
             comparisonRelatedFigureService.deleteByIdAndComaprisonId(
                 comparisonId = comparisonId,
                 comparisonRelatedFigureId = comparisonRelatedFigureId,
-                contributorId = ContributorId(MockUserId.USER)
+                contributorId = ContributorId(MockUserId.USER),
             )
         }
     }
@@ -287,13 +287,13 @@ internal class ComparisonRelatedFigureControllerUnitTest : MockMvcBaseTest("comp
         CreateComparisonRelatedFigureRequest(
             label = "related resource",
             image = "https://example.org/test.png",
-            description = "comparison related resource description"
+            description = "comparison related resource description",
         )
 
     private fun updateComparisonRelatedFigureRequest() =
         UpdateComparisonRelatedFigureRequest(
             label = "related resource",
             image = "https://example.org/test.png",
-            description = "comparison related resource description"
+            description = "comparison related resource description",
         )
 }

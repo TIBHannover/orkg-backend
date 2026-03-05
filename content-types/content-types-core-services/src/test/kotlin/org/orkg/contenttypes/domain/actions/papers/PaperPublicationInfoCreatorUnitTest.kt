@@ -24,10 +24,10 @@ internal class PaperPublicationInfoCreatorUnitTest : MockkBaseTest {
     fun `Given a paper create command, when linking empty publication info, it does nothing`() {
         val paperId = ThingId("R123")
         val command = createPaperCommand().copy(
-            publicationInfo = null
+            publicationInfo = null,
         )
         val state = CreatePaperState(
-            paperId = paperId
+            paperId = paperId,
         )
 
         val result = paperPublicationInfoCreator(command, state)
@@ -49,18 +49,18 @@ internal class PaperPublicationInfoCreatorUnitTest : MockkBaseTest {
                 publishedMonth = month,
                 publishedYear = null,
                 publishedIn = null,
-                url = null
-            )
+                url = null,
+            ),
         )
         val state = CreatePaperState(
-            paperId = paperId
+            paperId = paperId,
         )
 
         every {
             publicationInfoCreator.create(
                 contributorId = command.contributorId,
                 subjectId = state.paperId!!,
-                publicationInfo = command.publicationInfo!!
+                publicationInfo = command.publicationInfo!!,
             )
         } just runs
 
@@ -77,7 +77,7 @@ internal class PaperPublicationInfoCreatorUnitTest : MockkBaseTest {
             publicationInfoCreator.create(
                 contributorId = command.contributorId,
                 subjectId = state.paperId!!,
-                publicationInfo = command.publicationInfo!!
+                publicationInfo = command.publicationInfo!!,
             )
         }
     }

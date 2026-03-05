@@ -28,7 +28,7 @@ internal class AbstractTemplatePropertiesUpdaterUnitTest : MockkBaseTest {
     private val abstractTemplatePropertiesUpdater = AbstractTemplatePropertiesUpdater(
         abstractTemplatePropertyCreator,
         abstractTemplatePropertyUpdater,
-        abstractTemplatePropertyDeleter
+        abstractTemplatePropertyDeleter,
     )
 
     @Test
@@ -42,7 +42,7 @@ internal class AbstractTemplatePropertiesUpdaterUnitTest : MockkBaseTest {
             subjectId = template.id,
             newProperties = properties,
             oldProperties = template.properties,
-            statements = emptyMap()
+            statements = emptyMap(),
         )
     }
 
@@ -61,7 +61,7 @@ internal class AbstractTemplatePropertiesUpdaterUnitTest : MockkBaseTest {
             subjectId = template.id,
             newProperties = properties,
             oldProperties = template.properties,
-            statements = emptyMap()
+            statements = emptyMap(),
         )
 
         verify(exactly = 1) {
@@ -74,8 +74,8 @@ internal class AbstractTemplatePropertiesUpdaterUnitTest : MockkBaseTest {
         val template = createTemplate().copy(
             properties = listOf(
                 createUntypedTemplateProperty(),
-                createStringLiteralTemplateProperty()
-            )
+                createStringLiteralTemplateProperty(),
+            ),
         )
         val contributorId = ContributorId(MockUserId.USER)
         val properties = template.properties.drop(1).map { it.toTemplatePropertyCommand() }
@@ -87,7 +87,7 @@ internal class AbstractTemplatePropertiesUpdaterUnitTest : MockkBaseTest {
                 contributorId = contributorId,
                 order = 0,
                 newProperty = properties[0],
-                oldProperty = template.properties[1]
+                oldProperty = template.properties[1],
             )
         } just runs
         every {
@@ -99,7 +99,7 @@ internal class AbstractTemplatePropertiesUpdaterUnitTest : MockkBaseTest {
             subjectId = template.id,
             newProperties = properties,
             oldProperties = template.properties,
-            statements = statements
+            statements = statements,
         )
 
         verify(exactly = 1) {
@@ -108,7 +108,7 @@ internal class AbstractTemplatePropertiesUpdaterUnitTest : MockkBaseTest {
                 contributorId = contributorId,
                 order = 0,
                 newProperty = properties[0],
-                oldProperty = template.properties[1]
+                oldProperty = template.properties[1],
             )
         }
         verify(exactly = 1) {
@@ -127,7 +127,7 @@ internal class AbstractTemplatePropertiesUpdaterUnitTest : MockkBaseTest {
                 contributorId = contributorId,
                 templateId = template.id,
                 order = 5,
-                property = properties[5]
+                property = properties[5],
             )
         } returns ThingId("irrelevant")
 
@@ -136,7 +136,7 @@ internal class AbstractTemplatePropertiesUpdaterUnitTest : MockkBaseTest {
             subjectId = template.id,
             newProperties = properties,
             oldProperties = template.properties,
-            statements = emptyMap()
+            statements = emptyMap(),
         )
 
         verify(exactly = 1) {
@@ -144,7 +144,7 @@ internal class AbstractTemplatePropertiesUpdaterUnitTest : MockkBaseTest {
                 contributorId = contributorId,
                 templateId = template.id,
                 order = 5,
-                property = properties[5]
+                property = properties[5],
             )
         }
     }
@@ -152,7 +152,7 @@ internal class AbstractTemplatePropertiesUpdaterUnitTest : MockkBaseTest {
     @Test
     fun `Given a template update command, when a property is added, it creates a new property and updates the order of the following properties`() {
         val template = createTemplate().copy(
-            properties = listOf(createOtherLiteralTemplateProperty())
+            properties = listOf(createOtherLiteralTemplateProperty()),
         )
         val contributorId = ContributorId(MockUserId.USER)
         val properties = listOf(updateResourceTemplatePropertyCommand(), template.properties.single().toTemplatePropertyCommand())
@@ -163,7 +163,7 @@ internal class AbstractTemplatePropertiesUpdaterUnitTest : MockkBaseTest {
                 contributorId = contributorId,
                 templateId = template.id,
                 order = 0,
-                property = properties[0]
+                property = properties[0],
             )
         } returns ThingId("irrelevant")
         every {
@@ -172,7 +172,7 @@ internal class AbstractTemplatePropertiesUpdaterUnitTest : MockkBaseTest {
                 contributorId = contributorId,
                 order = 1,
                 newProperty = properties[1],
-                oldProperty = template.properties[0]
+                oldProperty = template.properties[0],
             )
         } just runs
 
@@ -181,7 +181,7 @@ internal class AbstractTemplatePropertiesUpdaterUnitTest : MockkBaseTest {
             subjectId = template.id,
             newProperties = properties,
             oldProperties = template.properties,
-            statements = statements
+            statements = statements,
         )
 
         verify(exactly = 1) {
@@ -189,7 +189,7 @@ internal class AbstractTemplatePropertiesUpdaterUnitTest : MockkBaseTest {
                 contributorId = contributorId,
                 templateId = template.id,
                 order = 0,
-                property = properties[0]
+                property = properties[0],
             )
         }
         verify(exactly = 1) {
@@ -198,7 +198,7 @@ internal class AbstractTemplatePropertiesUpdaterUnitTest : MockkBaseTest {
                 contributorId = contributorId,
                 order = 1,
                 newProperty = properties[1],
-                oldProperty = template.properties[0]
+                oldProperty = template.properties[0],
             )
         }
     }
@@ -214,7 +214,7 @@ internal class AbstractTemplatePropertiesUpdaterUnitTest : MockkBaseTest {
                 contributorId = contributorId,
                 templateId = template.id,
                 order = 4,
-                property = properties[4]
+                property = properties[4],
             )
         } returns ThingId("irrelevant")
         every {
@@ -226,7 +226,7 @@ internal class AbstractTemplatePropertiesUpdaterUnitTest : MockkBaseTest {
             subjectId = template.id,
             newProperties = properties,
             oldProperties = template.properties,
-            statements = emptyMap()
+            statements = emptyMap(),
         )
 
         verify(exactly = 1) {
@@ -234,7 +234,7 @@ internal class AbstractTemplatePropertiesUpdaterUnitTest : MockkBaseTest {
                 contributorId = contributorId,
                 templateId = template.id,
                 order = 4,
-                property = properties[4]
+                property = properties[4],
             )
         }
         verify(exactly = 1) {

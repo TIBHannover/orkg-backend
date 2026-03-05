@@ -31,21 +31,21 @@ internal class FormattedLabelTest {
         createTemplatedResourceRepresentation(
             "xx{P0}xx",
             predicates = listOf("P0"),
-            values = listOf("YY")
+            values = listOf("YY"),
         )
 
     private fun createTemplatedResourceWithWrongFormat() =
         createTemplatedResourceRepresentation(
             "xx{P0xx",
             predicates = listOf("P0"),
-            values = listOf("YY")
+            values = listOf("YY"),
         )
 
     private fun createTemplatedResourceWithMissingProperty() =
         createTemplatedResourceRepresentation(
             "xx{P0}xx",
             predicates = listOf("P1"),
-            values = listOf("YY")
+            values = listOf("YY"),
         )
 
     private fun createTemplatedResourceRepresentation(
@@ -60,6 +60,6 @@ internal class FormattedLabelTest {
             classId = "C0",
             format = format,
             predicates = predicates,
-            values = values
+            values = values,
         ).composeFormattedLabel()
 }

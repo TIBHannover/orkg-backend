@@ -37,13 +37,13 @@ internal class PaperVersionArchiverUnitTest : MockkBaseTest {
         val state = PublishPaperState(
             paper = paper,
             statements = statements,
-            paperVersionId = paperVersionId
+            paperVersionId = paperVersionId,
         )
         val bundleConfiguration = BundleConfiguration(
             minLevel = null,
             maxLevel = 10,
             blacklist = listOf(Classes.researchField),
-            whitelist = emptyList()
+            whitelist = emptyList(),
         )
 
         paper.contributions.forEachIndexed { index, (id, _) ->
@@ -52,11 +52,11 @@ internal class PaperVersionArchiverUnitTest : MockkBaseTest {
                     thingId = id,
                     configuration = bundleConfiguration,
                     includeFirst = true,
-                    sort = Sort.unsorted()
+                    sort = Sort.unsorted(),
                 )
             } returns Bundle(
                 rootId = id,
-                bundle = mutableListOf(createStatement(StatementId("S$index")))
+                bundle = mutableListOf(createStatement(StatementId("S$index"))),
             )
         }
         every { paperPublishedRepository.save(any()) } just runs
@@ -73,7 +73,7 @@ internal class PaperVersionArchiverUnitTest : MockkBaseTest {
                     thingId = id,
                     configuration = bundleConfiguration,
                     includeFirst = true,
-                    sort = Sort.unsorted()
+                    sort = Sort.unsorted(),
                 )
             }
         }
@@ -85,7 +85,7 @@ internal class PaperVersionArchiverUnitTest : MockkBaseTest {
                     it.subgraph shouldBe paper.contributions.flatMapIndexed { index, _ ->
                         listOf(createStatement(StatementId("S$index")))
                     }
-                }
+                },
             )
         }
     }

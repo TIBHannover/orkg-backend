@@ -30,8 +30,8 @@ import org.orkg.testing.annotations.Neo4jContainerUnitTest
         SpringDataNeo4jThingAdapter::class,
         GraphNeo4jConfiguration::class,
         ContentTypesNeo4jConfiguration::class,
-        CypherQueryBuilderConfiguration::class
-    ]
+        CypherQueryBuilderConfiguration::class,
+    ],
 )
 internal class SpringDataNeo4jTemplateAdapterContractTest(
     private val springDataNeo4jTemplateAdapter: TemplateRepository,
@@ -48,7 +48,7 @@ internal class SpringDataNeo4jTemplateAdapterContractTest(
                 springDataNeo4jPredicateAdapter,
                 springDataNeo4jClassAdapter,
                 springDataNeo4jLiteralAdapter,
-                springDataNeo4jStatementAdapter
-            )
+                springDataNeo4jStatementAdapter,
+            ),
         )
     })

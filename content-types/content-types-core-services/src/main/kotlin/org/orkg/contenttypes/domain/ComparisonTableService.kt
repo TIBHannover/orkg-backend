@@ -133,7 +133,7 @@ class ComparisonTableService(
         }
         val contextToStatements = rosettaStoneStatementRepository.findAllByContextIdsAndTemplateIds(
             contextIds = rosettaStoneStatementRoots.toSet(),
-            templateIds = templateIds.toSet()
+            templateIds = templateIds.toSet(),
         )
         val statementColumnData = contextToStatements.map { (context, values) ->
             context.id to ComparisonColumnData(
@@ -148,10 +148,10 @@ class ComparisonTableService(
                             value = latestVersion.toResource(statement.templateTargetClassId),
                             children = valueIndices.mapNotNull { (id, index) ->
                                 id to inputs[index].map { value -> ComparisonTableValue(value, emptyMap()) }
-                            }.toMap()
+                            }.toMap(),
                         )
                     }
-                }
+                },
             )
         }.toMap()
         return sources.map { (id, type) ->

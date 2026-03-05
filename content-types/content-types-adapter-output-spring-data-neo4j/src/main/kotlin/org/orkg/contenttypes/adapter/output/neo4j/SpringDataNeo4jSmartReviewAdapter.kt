@@ -138,7 +138,7 @@ class SpringDataNeo4jSmartReviewAdapter(
                     sustainableDevelopmentGoal?.let {
                         node.relationshipTo(node("SustainableDevelopmentGoal").withProperties("id", anonParameter(it.value)), RELATED)
                             .withProperties("predicate_id", literalOf<String>(Predicates.sustainableDevelopmentGoal.value))
-                    }
+                    },
                 )
             }
             val node = name("node")
@@ -176,7 +176,7 @@ class SpringDataNeo4jSmartReviewAdapter(
                 createdAtStart.toCondition { node.property("created_at").gte(anonParameter(it.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))) },
                 createdAtEnd.toCondition { node.property("created_at").lte(anonParameter(it.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))) },
                 observatoryId.toCondition { node.property("observatory_id").eq(anonParameter(it.value.toString())) },
-                organizationId.toCondition { node.property("organization_id").eq(anonParameter(it.value.toString())) }
+                organizationId.toCondition { node.property("organization_id").eq(anonParameter(it.value.toString())) },
             )
         }
         .withQuery { commonQuery ->
@@ -189,8 +189,8 @@ class SpringDataNeo4jSmartReviewAdapter(
                     orderByOptimizations(
                         node = node,
                         sort = sort,
-                        properties = arrayOf("id", "label", "created_at", "created_by", "visibility")
-                    )
+                        properties = arrayOf("id", "label", "created_at", "created_by", "visibility"),
+                    ),
                 )
                 .with(variables)
                 .orderBy(
@@ -198,14 +198,14 @@ class SpringDataNeo4jSmartReviewAdapter(
                         listOf(
                             size(node.property("label")).ascending(),
                             score.descending(),
-                            node.property("created_at").ascending()
+                            node.property("created_at").ascending(),
                         )
                     } else {
                         sort.toSortItems(
                             node = node,
-                            knownProperties = arrayOf("id", "label", "created_at", "created_by", "visibility")
+                            knownProperties = arrayOf("id", "label", "created_at", "created_by", "visibility"),
                         )
-                    }
+                    },
                 )
                 .returning(node)
         }

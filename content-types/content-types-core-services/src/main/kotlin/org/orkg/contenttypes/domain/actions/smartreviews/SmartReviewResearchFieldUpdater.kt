@@ -17,7 +17,7 @@ class SmartReviewResearchFieldUpdater(
         statementService: StatementUseCases,
         unsafeStatementUseCases: UnsafeStatementUseCases,
     ) : this(
-        StatementCollectionPropertyUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases)
+        StatementCollectionPropertyUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases),
     )
 
     override fun invoke(command: UpdateSmartReviewCommand, state: State): State {
@@ -27,7 +27,7 @@ class SmartReviewResearchFieldUpdater(
                 contributorId = command.contributorId,
                 subjectId = command.smartReviewId,
                 predicateId = Predicates.hasResearchField,
-                objects = command.researchFields!!.toSet()
+                objects = command.researchFields!!.toSet(),
             )
         }
         return state

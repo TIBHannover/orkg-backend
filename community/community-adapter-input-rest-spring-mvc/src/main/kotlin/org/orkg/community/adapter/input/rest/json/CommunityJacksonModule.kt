@@ -16,7 +16,7 @@ class CommunityJacksonModule : SimpleModule() {
                 addSerializer(ConferenceSeriesId::class.java, ConferenceSeriesIdSerializer())
                 addSerializer(ObservatoryFilterId::class.java, ObservatoryFilterIdSerializer())
                 addSerializer(ContributorIdentifier.Type::class.java, ContributorIdentifierTypeSerializer())
-            }
+            },
         )
         context?.addDeserializers(
             SimpleDeserializers().apply {
@@ -25,7 +25,7 @@ class CommunityJacksonModule : SimpleModule() {
                 addDeserializer(Observatory::class.java, ObservatoryDeserializer())
                 addDeserializer(Contributor::class.java, ContributorDeserializer())
                 addDeserializer(ContributorIdentifier.Type::class.java, ContributorIdentifierTypeDeserializer())
-            }
+            },
         )
     }
 }

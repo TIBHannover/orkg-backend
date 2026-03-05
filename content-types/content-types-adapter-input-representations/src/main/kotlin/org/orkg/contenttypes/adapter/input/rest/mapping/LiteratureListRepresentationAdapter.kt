@@ -39,7 +39,7 @@ interface LiteratureListRepresentationAdapter :
             unlistedBy = unlistedBy,
             published = published,
             sections = sections.map { it.toLiteratureListSectionRepresentation() },
-            acknowledgements = acknowledgements
+            acknowledgements = acknowledgements,
         )
 
     private fun LiteratureListSection.toLiteratureListSectionRepresentation(): LiteratureListSectionRepresentation =

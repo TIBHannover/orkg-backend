@@ -22,7 +22,7 @@ class SmartReviewVersionDoiPublisher(
     ) : this(
         SingleStatementPropertyCreator(unsafeLiteralUseCases, unsafeStatementUseCases),
         doiService,
-        smartReviewPublishBaseUri
+        smartReviewPublishBaseUri,
     )
 
     override fun invoke(command: PublishSmartReviewCommand, state: State): State {
@@ -41,14 +41,14 @@ class SmartReviewVersionDoiPublisher(
                 creators = smartReview.authors,
                 resourceType = "Review",
                 resourceTypeGeneral = "Preprint",
-                relatedIdentifiers = emptyList()
-            )
+                relatedIdentifiers = emptyList(),
+            ),
         )
         singleStatementPropertyCreator.create(
             contributorId = command.contributorId,
             subjectId = smartReviewVersionId,
             predicateId = Predicates.hasDOI,
-            label = doi.value
+            label = doi.value,
         )
         return state
     }

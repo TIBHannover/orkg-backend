@@ -51,7 +51,7 @@ interface EmbeddedStatementRepresentationAdapter : ThingRepresentationAdapter {
             createdBy = createdBy,
             statements = statements.mapValues { (_, value) ->
                 value.map { it.toEmbeddedStatementRepresentation(statementCounts, formattedLabels, descriptions) }
-            }
+            },
         )
 
     fun List<EmbeddedStatement>.resources(): List<Resource> =

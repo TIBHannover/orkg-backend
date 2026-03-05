@@ -25,7 +25,7 @@ RETURN authorLabel, info, authorResource[0] AS authorResource $PAGE_PARAMS""",
         countQuery = """
 MATCH (c:Resource {id: $ID})-[rel:RELATED {predicate_id: 'compareContribution'}]->(cont:Contribution:Resource)<-[:RELATED {predicate_id: 'P31'}]-(p:Paper:Resource)-[:RELATED {predicate_id: 'hasAuthors'}]->(l:List)-[r:RELATED {predicate_id: "hasListElement"}]->(a:Thing)
 WITH a.label as authorLabel
-RETURN COUNT(DISTINCT authorLabel) as cnt"""
+RETURN COUNT(DISTINCT authorLabel) as cnt""",
     )
     fun findTopAuthorsOfComparison(id: ThingId, pageable: Pageable): Page<Neo4jAuthorOfComparison>
 }

@@ -18,7 +18,7 @@ class SmartReviewSectionExistenceCreateValidator(
             subjectId = command.smartReviewId,
             predicateId = Predicates.hasContribution,
             objectClasses = setOf(Classes.contribution, Classes.contributionSmartReview),
-            pageable = PageRequests.SINGLE
+            pageable = PageRequests.SINGLE,
         ).singleOrNull() ?: throw SmartReviewNotFound(command.smartReviewId)
         val smartReview = statement.subject as Resource
         if (Classes.smartReviewPublished in smartReview.classes) {

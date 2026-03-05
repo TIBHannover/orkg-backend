@@ -38,6 +38,6 @@ class ExceptionConfiguration {
             errorAttributes = errorAttributes,
             problemResponseFactory = problemResponseFactory,
             errorViewResolvers = errorViewResolvers.orderedStream().toList(),
-            clock = clock
+            clock = clock,
         )
 }

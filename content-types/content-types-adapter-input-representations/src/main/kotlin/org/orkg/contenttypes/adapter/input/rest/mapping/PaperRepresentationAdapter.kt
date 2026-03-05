@@ -35,6 +35,6 @@ interface PaperRepresentationAdapter :
             verified = verified,
             visibility = visibility,
             modifiable = modifiable,
-            unlistedBy = unlistedBy
+            unlistedBy = unlistedBy,
         )
 }

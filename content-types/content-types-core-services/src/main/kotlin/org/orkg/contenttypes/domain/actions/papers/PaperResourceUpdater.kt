@@ -20,8 +20,8 @@ class PaperResourceUpdater(
                 organizationId = command.organizations?.ifEmpty { listOf(OrganizationId.UNKNOWN) }?.singleOrNull(),
                 extractionMethod = command.extractionMethod,
                 verified = command.verified,
-                visibility = command.visibility
-            )
+                visibility = command.visibility,
+            ),
         )
         return state
     }

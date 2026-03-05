@@ -125,7 +125,7 @@ open class PaperCSVRecordParser(
                     id = researchFieldId,
                     itemNumber = item.itemNumber,
                     lineNumber = item.lineNumber,
-                    column = paperResearchFieldIndex!!.toLong()
+                    column = paperResearchFieldIndex!!.toLong(),
                 )
             }
         val researchProblem = item.getOrNull(contributionResearchProblemIndex)
@@ -157,7 +157,7 @@ open class PaperCSVRecordParser(
                             id = id,
                             itemNumber = item.itemNumber,
                             lineNumber = item.lineNumber,
-                            column = contributionResearchProblemIndex!!.toLong()
+                            column = contributionResearchProblemIndex!!.toLong(),
                         )
                     }
             }
@@ -177,7 +177,7 @@ open class PaperCSVRecordParser(
             doi = doi,
             researchFieldId = researchFieldId,
             extractionMethod = extractionMethod,
-            statements = statements
+            statements = statements,
         )
     }
 

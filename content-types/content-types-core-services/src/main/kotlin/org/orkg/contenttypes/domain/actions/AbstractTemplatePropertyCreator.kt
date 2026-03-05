@@ -32,8 +32,8 @@ class AbstractTemplatePropertyCreator(
             CreateResourceUseCase.CreateCommand(
                 contributorId = contributorId,
                 label = property.label,
-                classes = setOf(Classes.propertyShape)
-            )
+                classes = setOf(Classes.propertyShape),
+            ),
         )
         property.placeholder?.also { placeholder ->
             unsafeStatementUseCases.create(
@@ -44,10 +44,10 @@ class AbstractTemplatePropertyCreator(
                     objectId = unsafeLiteralUseCases.create(
                         CreateLiteralUseCase.CreateCommand(
                             contributorId = contributorId,
-                            label = placeholder
-                        )
-                    )
-                )
+                            label = placeholder,
+                        ),
+                    ),
+                ),
             )
         }
         property.description?.also { description ->
@@ -59,10 +59,10 @@ class AbstractTemplatePropertyCreator(
                     objectId = unsafeLiteralUseCases.create(
                         CreateLiteralUseCase.CreateCommand(
                             contributorId = contributorId,
-                            label = description
-                        )
-                    )
-                )
+                            label = description,
+                        ),
+                    ),
+                ),
             )
         }
         property.minCount?.also { min ->
@@ -75,10 +75,10 @@ class AbstractTemplatePropertyCreator(
                         CreateLiteralUseCase.CreateCommand(
                             contributorId = contributorId,
                             label = min.toString(),
-                            datatype = Literals.XSD.INT.prefixedUri
-                        )
-                    )
-                )
+                            datatype = Literals.XSD.INT.prefixedUri,
+                        ),
+                    ),
+                ),
             )
         }
         property.maxCount?.also { max ->
@@ -91,10 +91,10 @@ class AbstractTemplatePropertyCreator(
                         CreateLiteralUseCase.CreateCommand(
                             contributorId = contributorId,
                             label = max.toString(),
-                            datatype = Literals.XSD.INT.prefixedUri
-                        )
-                    )
-                )
+                            datatype = Literals.XSD.INT.prefixedUri,
+                        ),
+                    ),
+                ),
             )
         }
         if (property is StringLiteralTemplatePropertyCommand) {
@@ -107,10 +107,10 @@ class AbstractTemplatePropertyCreator(
                         objectId = unsafeLiteralUseCases.create(
                             CreateLiteralUseCase.CreateCommand(
                                 contributorId = contributorId,
-                                label = pattern
-                            )
-                        )
-                    )
+                                label = pattern,
+                            ),
+                        ),
+                    ),
                 )
             }
         } else if (property is NumberLiteralTemplatePropertyCommand) {
@@ -125,10 +125,10 @@ class AbstractTemplatePropertyCreator(
                                 contributorId = contributorId,
                                 label = minInclusive.toString(),
                                 datatype = Literals.XSD.fromClass(property.datatype)?.prefixedUri
-                                    ?: Literals.XSD.DECIMAL.prefixedUri
-                            )
-                        )
-                    )
+                                    ?: Literals.XSD.DECIMAL.prefixedUri,
+                            ),
+                        ),
+                    ),
                 )
             }
             property.maxInclusive?.also { maxInclusive ->
@@ -142,10 +142,10 @@ class AbstractTemplatePropertyCreator(
                                 contributorId = contributorId,
                                 label = maxInclusive.toString(),
                                 datatype = Literals.XSD.fromClass(property.datatype)?.prefixedUri
-                                    ?: Literals.XSD.DECIMAL.prefixedUri
-                            )
-                        )
-                    )
+                                    ?: Literals.XSD.DECIMAL.prefixedUri,
+                            ),
+                        ),
+                    ),
                 )
             }
         }
@@ -155,8 +155,8 @@ class AbstractTemplatePropertyCreator(
                     contributorId = contributorId,
                     subjectId = propertyId,
                     predicateId = Predicates.shDatatype,
-                    objectId = property.datatype
-                )
+                    objectId = property.datatype,
+                ),
             )
         } else if (property is ResourceTemplatePropertyCommand) {
             unsafeStatementUseCases.create(
@@ -164,8 +164,8 @@ class AbstractTemplatePropertyCreator(
                     contributorId = contributorId,
                     subjectId = propertyId,
                     predicateId = Predicates.shClass,
-                    objectId = property.`class`
-                )
+                    objectId = property.`class`,
+                ),
             )
         }
         unsafeStatementUseCases.create(
@@ -173,8 +173,8 @@ class AbstractTemplatePropertyCreator(
                 contributorId = contributorId,
                 subjectId = propertyId,
                 predicateId = Predicates.shPath,
-                objectId = property.path
-            )
+                objectId = property.path,
+            ),
         )
         unsafeStatementUseCases.create(
             CreateStatementUseCase.CreateCommand(
@@ -185,18 +185,18 @@ class AbstractTemplatePropertyCreator(
                     CreateLiteralUseCase.CreateCommand(
                         contributorId = contributorId,
                         label = order.toString(),
-                        datatype = Literals.XSD.INT.prefixedUri
-                    )
-                )
-            )
+                        datatype = Literals.XSD.INT.prefixedUri,
+                    ),
+                ),
+            ),
         )
         unsafeStatementUseCases.create(
             CreateStatementUseCase.CreateCommand(
                 contributorId = contributorId,
                 subjectId = templateId,
                 predicateId = Predicates.shProperty,
-                objectId = propertyId
-            )
+                objectId = propertyId,
+            ),
         )
         return propertyId
     }

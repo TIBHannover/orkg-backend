@@ -31,7 +31,7 @@ internal class UnsafePredicateServiceUnitTest : MockkBaseTest {
             id = id,
             contributorId = ContributorId(MockUserId.USER),
             label = "label",
-            modifiable = false
+            modifiable = false,
         )
 
         every { repository.save(any()) } just runs
@@ -46,7 +46,7 @@ internal class UnsafePredicateServiceUnitTest : MockkBaseTest {
                     it.createdAt shouldBe OffsetDateTime.now(fixedClock)
                     it.createdBy shouldBe command.contributorId
                     it.modifiable shouldBe command.modifiable
-                }
+                },
             )
         }
     }
@@ -57,7 +57,7 @@ internal class UnsafePredicateServiceUnitTest : MockkBaseTest {
         val contributorId = ContributorId(MockUserId.USER)
         val command = CreatePredicateUseCase.CreateCommand(
             contributorId = contributorId,
-            label = "label"
+            label = "label",
         )
 
         every { repository.nextIdentity() } returns id
@@ -74,7 +74,7 @@ internal class UnsafePredicateServiceUnitTest : MockkBaseTest {
                     it.createdAt shouldBe OffsetDateTime.now(fixedClock)
                     it.createdBy shouldBe contributorId
                     it.modifiable shouldBe command.modifiable
-                }
+                },
             )
         }
     }
@@ -95,7 +95,7 @@ internal class UnsafePredicateServiceUnitTest : MockkBaseTest {
                 contributorId = contributorId,
                 label = label,
                 modifiable = modifiable,
-            )
+            ),
         )
 
         verify(exactly = 1) { repository.findById(predicate.id) }
@@ -104,7 +104,7 @@ internal class UnsafePredicateServiceUnitTest : MockkBaseTest {
                 withArg {
                     it.label shouldBe label
                     it.modifiable shouldBe modifiable
-                }
+                },
             )
         }
     }
@@ -124,7 +124,7 @@ internal class UnsafePredicateServiceUnitTest : MockkBaseTest {
         val command = UpdatePredicateUseCase.UpdateCommand(
             id = predicate.id,
             contributorId = ContributorId(MockUserId.USER),
-            label = label
+            label = label,
         )
 
         every { repository.findById(predicate.id) } returns Optional.of(predicate)
@@ -142,7 +142,7 @@ internal class UnsafePredicateServiceUnitTest : MockkBaseTest {
         val command = UpdatePredicateUseCase.UpdateCommand(
             id = predicate.id,
             contributorId = ContributorId(MockUserId.USER),
-            label = "new label"
+            label = "new label",
         )
 
         every { repository.findById(predicate.id) } returns Optional.of(predicate)

@@ -30,13 +30,13 @@ internal class TableCellsUpdateValidatorUnitTest : MockkBaseTest {
             rows = listOf(
                 CreateRowCommand(
                     label = "header",
-                    data = listOf("#temp1", "#temp2")
+                    data = listOf("#temp1", "#temp2"),
                 ),
                 CreateRowCommand(
                     label = null,
-                    data = listOf("R456", "#temp4")
-                )
-            )
+                    data = listOf("R456", "#temp4"),
+                ),
+            ),
         )
         val existingRowIds = listOf(
             ThingId("Row_1"),
@@ -45,22 +45,22 @@ internal class TableCellsUpdateValidatorUnitTest : MockkBaseTest {
         val tableStatements = createTableStatements(
             tableId = command.tableId,
             rowCount = 2,
-            columnCount = 3
+            columnCount = 3,
         )
         val state = UpdateTableState(
             table = createTable(),
             headerIndices = listOf(1, 2, 3),
-            statements = (tableStatements + createStatement()).groupBy { it.subject.id }
+            statements = (tableStatements + createStatement()).groupBy { it.subject.id },
         )
         val validationCache = mapOf<String, Either<CreateThingCommandPart, Thing>>(
-            "R100" to Either.right(createResource())
+            "R100" to Either.right(createResource()),
         )
 
         every {
             abstractTableCellsValidator.validate(
                 rows = command.rows!!,
                 thingCommands = command.all(),
-                validationCacheIn = state.validationCache
+                validationCacheIn = state.validationCache,
             )
         } returns validationCache
 
@@ -84,7 +84,7 @@ internal class TableCellsUpdateValidatorUnitTest : MockkBaseTest {
             abstractTableCellsValidator.validate(
                 rows = command.rows!!,
                 thingCommands = command.all(),
-                validationCacheIn = state.validationCache
+                validationCacheIn = state.validationCache,
             )
         }
     }

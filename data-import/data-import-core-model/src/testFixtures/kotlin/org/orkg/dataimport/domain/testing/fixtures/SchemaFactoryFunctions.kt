@@ -63,7 +63,7 @@ fun createCSVHeaders() = listOf(
         name = "b",
         namespace = "open-namespace",
         columnType = Classes.string,
-    )
+    ),
 )
 
 private fun regexConstraint(regex: Regex): (String) -> Unit =

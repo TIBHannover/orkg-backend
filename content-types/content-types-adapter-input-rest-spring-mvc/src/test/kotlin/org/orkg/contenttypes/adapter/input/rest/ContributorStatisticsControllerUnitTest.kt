@@ -69,7 +69,7 @@ internal class ContributorStatisticsControllerUnitTest : MockMvcBaseTest("contri
                 description(
                     """
                     A `GET` request returns a <<sorting-and-pagination,paged>> list of contribution records.
-                    """
+                    """,
                 )
                 pagedQueryParameters(
                     parameterWithName("after").description("Filter for the 'created at' timestamp, limiting exploration to resources that were created after the specified date. (optional)").optional(),
@@ -111,7 +111,7 @@ internal class ContributorStatisticsControllerUnitTest : MockMvcBaseTest("contri
                 description(
                     """
                     A `GET` request returns a <<sorting-and-pagination,paged>> list of contribution records for the given research field.
-                    """
+                    """,
                 )
                 pagedQueryParameters(
                     parameterWithName("include_subfields").description("Flag for whether subfields are included in the search or not. (optional, default: false)").type(ParameterType.BOOLEAN).optional(),
@@ -156,7 +156,7 @@ internal class ContributorStatisticsControllerUnitTest : MockMvcBaseTest("contri
                 description(
                     """
                     A `GET` request returns a <<sorting-and-pagination,paged>> list of contribution records for the given research problem.
-                    """
+                    """,
                 )
                 pagedQueryParameters(
                     parameterWithName("include_subproblems").description("Flag for whether subproblems are included in the search or not. (optional, default: false)").optional(),

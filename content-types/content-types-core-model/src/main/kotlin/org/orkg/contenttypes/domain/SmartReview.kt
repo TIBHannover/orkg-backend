@@ -51,7 +51,7 @@ data class SmartReview(
                 published = directStatements.wherePredicate(Predicates.hasPublishedVersion)
                     .sortedByDescending { it.createdAt }
                     .objects()
-                    .map { PublishedVersion(it, statements[it.id]?.wherePredicate(Predicates.description)?.firstObjectLabel()) }
+                    .map { PublishedVersion(it, statements[it.id]?.wherePredicate(Predicates.description)?.firstObjectLabel()) },
             )
             val sections = contributionStatements.wherePredicate(Predicates.hasSection)
                 .filter { it.`object` is Resource }
@@ -60,7 +60,7 @@ data class SmartReview(
             val contributors = listOf(
                 versions.head.createdBy,
                 *versions.published.map { it.createdBy }.toTypedArray(),
-                *sections.flatMap { SmartReviewSection.contributors(it, statements) }.toTypedArray()
+                *sections.flatMap { SmartReviewSection.contributors(it, statements) }.toTypedArray(),
             )
             return SmartReview(
                 id = resource.id,
@@ -90,7 +90,7 @@ data class SmartReview(
                     .map { it.`object`.label },
                 acknowledgements = contributors.groupingBy { it }
                     .eachCount()
-                    .mapValues { (_, value) -> value.toDouble() / contributors.size }
+                    .mapValues { (_, value) -> value.toDouble() / contributors.size },
             )
         }
     }
@@ -107,7 +107,7 @@ sealed interface SmartReviewSection {
             Classes.resourceSection,
             Classes.propertySection,
             Classes.ontologySection,
-            Classes.section
+            Classes.section,
         )
 
         fun from(root: Resource, statements: Map<ThingId, List<GeneralStatement>>): SmartReviewSection =
@@ -145,7 +145,7 @@ data class SmartReviewComparisonSection(
                 id = root.id,
                 heading = root.label,
                 comparison = statements[root.id]?.hasLinkStatementTo<Resource>()
-                    ?.let { ResourceReference(it.`object` as Resource) }
+                    ?.let { ResourceReference(it.`object` as Resource) },
             )
 
         fun contributors(root: Resource, statements: Map<ThingId, List<GeneralStatement>>): List<ContributorId> =
@@ -164,7 +164,7 @@ data class SmartReviewVisualizationSection(
                 id = root.id,
                 heading = root.label,
                 visualization = statements[root.id]?.hasLinkStatementTo<Resource>()
-                    ?.let { ResourceReference(it.`object` as Resource) }
+                    ?.let { ResourceReference(it.`object` as Resource) },
             )
 
         fun contributors(root: Resource, statements: Map<ThingId, List<GeneralStatement>>): List<ContributorId> =
@@ -183,7 +183,7 @@ data class SmartReviewResourceSection(
                 id = root.id,
                 heading = root.label,
                 resource = statements[root.id]?.hasLinkStatementTo<Resource>()
-                    ?.let { ResourceReference(it.`object` as Resource) }
+                    ?.let { ResourceReference(it.`object` as Resource) },
             )
 
         fun contributors(root: Resource, statements: Map<ThingId, List<GeneralStatement>>): List<ContributorId> =
@@ -202,7 +202,7 @@ data class SmartReviewPredicateSection(
                 id = root.id,
                 heading = root.label,
                 predicate = statements[root.id]?.hasLinkStatementTo<Predicate>()
-                    ?.let { PredicateReference(it.`object` as Predicate) }
+                    ?.let { PredicateReference(it.`object` as Predicate) },
             )
 
         fun contributors(root: Resource, statements: Map<ThingId, List<GeneralStatement>>): List<ContributorId> =
@@ -230,7 +230,7 @@ data class SmartReviewOntologySection(
                     ?.filter { it.`object` is Predicate }
                     ?.sortedBy { it.createdAt }
                     ?.map { PredicateReference(it.`object` as Predicate) }
-                    .orEmpty()
+                    .orEmpty(),
             )
 
         fun contributors(root: Resource, statements: Map<ThingId, List<GeneralStatement>>): List<ContributorId> =
@@ -278,7 +278,7 @@ data class SmartReviewTextSection(
             Classes.relatedWork,
             Classes.results,
             Classes.scenario,
-            Classes.supplementaryInformationDescription
+            Classes.supplementaryInformationDescription,
         )
 
         fun from(root: Resource, statements: Map<ThingId, List<GeneralStatement>>): SmartReviewTextSection =
@@ -289,7 +289,7 @@ data class SmartReviewTextSection(
                 text = statements[root.id]
                     ?.wherePredicate(Predicates.hasContent)
                     ?.singleObjectLabel()
-                    .orEmpty()
+                    .orEmpty(),
             )
 
         fun contributors(root: Resource): List<ContributorId> =

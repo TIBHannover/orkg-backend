@@ -45,7 +45,7 @@ internal class AbstractLiteratureListSectionUpdaterUnitTest : MockkBaseTest {
         resourceService = resourceService,
         unsafeResourceUseCases = unsafeResourceUseCases,
         abstractLiteratureListSectionCreator = abstractLiteratureListSectionCreator,
-        singleStatementPropertyUpdater = singleStatementPropertyUpdater
+        singleStatementPropertyUpdater = singleStatementPropertyUpdater,
     )
 
     @Test
@@ -95,7 +95,7 @@ internal class AbstractLiteratureListSectionUpdaterUnitTest : MockkBaseTest {
         val contributorId = ContributorId(UUID.randomUUID())
         val oldSection = createLiteratureListListSection()
         val newSection = oldSection.toLiteratureListListSectionCommand().copy(
-            entries = listOf(AbstractLiteratureListListSectionCommand.Entry(ThingId("R789"))) + oldSection.entries.map { it.toCommandEntry() }
+            entries = listOf(AbstractLiteratureListListSectionCommand.Entry(ThingId("R789"))) + oldSection.entries.map { it.toCommandEntry() },
         )
         val statements = oldSection.toGroupedStatements()
         val entryId = ThingId("R1564")
@@ -113,8 +113,8 @@ internal class AbstractLiteratureListSectionUpdaterUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     subjectId = ThingId("R0"),
                     predicateId = Predicates.hasLink,
-                    objectId = ThingId("R789")
-                )
+                    objectId = ThingId("R789"),
+                ),
             )
         }
         verify(exactly = 1) {
@@ -123,7 +123,7 @@ internal class AbstractLiteratureListSectionUpdaterUnitTest : MockkBaseTest {
                 contributorId = contributorId,
                 subjectId = ThingId("R0"),
                 predicateId = Predicates.description,
-                label = null
+                label = null,
             )
         }
         verify(exactly = 1) {
@@ -132,8 +132,8 @@ internal class AbstractLiteratureListSectionUpdaterUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     subjectId = ThingId("R1"),
                     predicateId = Predicates.hasLink,
-                    objectId = ThingId("R154686")
-                )
+                    objectId = ThingId("R154686"),
+                ),
             )
         }
         verify(exactly = 1) {
@@ -142,14 +142,14 @@ internal class AbstractLiteratureListSectionUpdaterUnitTest : MockkBaseTest {
                 contributorId = contributorId,
                 subjectId = ThingId("R1"),
                 predicateId = Predicates.description,
-                label = "paper entry description"
+                label = "paper entry description",
             )
         }
         verify(exactly = 1) { statementService.deleteAllById(setOf(StatementId("S0_2"), StatementId("S1_2"))) }
         verify(exactly = 1) {
             abstractLiteratureListSectionCreator.createListSectionEntry(
                 contributorId = contributorId,
-                entry = oldSection.entries.last().toCommandEntry()
+                entry = oldSection.entries.last().toCommandEntry(),
             )
         }
         verify(exactly = 1) {
@@ -158,8 +158,8 @@ internal class AbstractLiteratureListSectionUpdaterUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     subjectId = oldSection.id,
                     predicateId = Predicates.hasEntry,
-                    objectId = entryId
-                )
+                    objectId = entryId,
+                ),
             )
         }
     }
@@ -170,7 +170,7 @@ internal class AbstractLiteratureListSectionUpdaterUnitTest : MockkBaseTest {
         val oldSection = createLiteratureListListSection()
         val newEntry = AbstractLiteratureListListSectionCommand.Entry(ThingId("R789"))
         val newSection = oldSection.toLiteratureListListSectionCommand().copy(
-            entries = oldSection.entries.map { it.toCommandEntry() } + newEntry
+            entries = oldSection.entries.map { it.toCommandEntry() } + newEntry,
         )
         val statements = oldSection.toGroupedStatements()
         val entryId = ThingId("R1564")
@@ -189,8 +189,8 @@ internal class AbstractLiteratureListSectionUpdaterUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     subjectId = oldSection.id,
                     predicateId = Predicates.hasEntry,
-                    objectId = entryId
-                )
+                    objectId = entryId,
+                ),
             )
         }
     }
@@ -204,8 +204,8 @@ internal class AbstractLiteratureListSectionUpdaterUnitTest : MockkBaseTest {
             entries = listOf(
                 oldSection.entries.first().toCommandEntry(),
                 AbstractLiteratureListListSectionCommand.Entry(ThingId("new")),
-                entry
-            )
+                entry,
+            ),
         )
         val statements = oldSection.toGroupedStatements()
         val entryId = ThingId("R1564")
@@ -223,8 +223,8 @@ internal class AbstractLiteratureListSectionUpdaterUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     subjectId = ThingId("R1"),
                     predicateId = Predicates.hasLink,
-                    objectId = ThingId("new")
-                )
+                    objectId = ThingId("new"),
+                ),
             )
         }
         verify(exactly = 1) { statementService.deleteAllById(setOf(StatementId("S1_2"))) }
@@ -237,8 +237,8 @@ internal class AbstractLiteratureListSectionUpdaterUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     subjectId = oldSection.id,
                     predicateId = Predicates.hasEntry,
-                    objectId = entryId
-                )
+                    objectId = entryId,
+                ),
             )
         }
         verify(exactly = 1) {
@@ -247,7 +247,7 @@ internal class AbstractLiteratureListSectionUpdaterUnitTest : MockkBaseTest {
                 contributorId = contributorId,
                 subjectId = ThingId("R1"),
                 predicateId = Predicates.description,
-                label = null
+                label = null,
             )
         }
     }
@@ -259,8 +259,8 @@ internal class AbstractLiteratureListSectionUpdaterUnitTest : MockkBaseTest {
         val newSection = LiteratureListListSectionCommand(
             entries = listOf(
                 oldSection.entries.first().toCommandEntry(),
-                oldSection.entries.last().toCommandEntry().copy(description = "updated description")
-            )
+                oldSection.entries.last().toCommandEntry().copy(description = "updated description"),
+            ),
         )
         val statements = oldSection.toGroupedStatements()
 
@@ -274,7 +274,7 @@ internal class AbstractLiteratureListSectionUpdaterUnitTest : MockkBaseTest {
                 contributorId = contributorId,
                 subjectId = ThingId("R1"),
                 predicateId = Predicates.description,
-                label = "updated description"
+                label = "updated description",
             )
         }
     }
@@ -305,8 +305,8 @@ internal class AbstractLiteratureListSectionUpdaterUnitTest : MockkBaseTest {
                 UpdateResourceUseCase.UpdateCommand(
                     id = oldSection.id,
                     contributorId = contributorId,
-                    label = newSection.heading
-                )
+                    label = newSection.heading,
+                ),
             )
         }
     }
@@ -325,7 +325,7 @@ internal class AbstractLiteratureListSectionUpdaterUnitTest : MockkBaseTest {
                 subjectId = oldSection.id,
                 predicateId = Predicates.hasHeadingLevel,
                 label = newSection.headingSize.toString(),
-                datatype = Literals.XSD.INT.prefixedUri
+                datatype = Literals.XSD.INT.prefixedUri,
             )
         } just runs
 
@@ -338,7 +338,7 @@ internal class AbstractLiteratureListSectionUpdaterUnitTest : MockkBaseTest {
                 subjectId = oldSection.id,
                 predicateId = Predicates.hasHeadingLevel,
                 label = newSection.headingSize.toString(),
-                datatype = Literals.XSD.INT.prefixedUri
+                datatype = Literals.XSD.INT.prefixedUri,
             )
         }
     }
@@ -356,7 +356,7 @@ internal class AbstractLiteratureListSectionUpdaterUnitTest : MockkBaseTest {
                 contributorId = contributorId,
                 subjectId = oldSection.id,
                 predicateId = Predicates.hasContent,
-                label = newSection.text
+                label = newSection.text,
             )
         } just runs
 
@@ -368,7 +368,7 @@ internal class AbstractLiteratureListSectionUpdaterUnitTest : MockkBaseTest {
                 contributorId = contributorId,
                 subjectId = oldSection.id,
                 predicateId = Predicates.hasContent,
-                label = newSection.text
+                label = newSection.text,
             )
         }
     }

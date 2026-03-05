@@ -76,7 +76,7 @@ class SpringDataNeo4jTemplateAdapter(
             researchField = researchField,
             includeSubfields = includeSubfields,
             researchProblem = researchProblem,
-            targetClassId = targetClassId
+            targetClassId = targetClassId,
         ).fetch(pageable, false)
 
     override fun count(
@@ -104,7 +104,7 @@ class SpringDataNeo4jTemplateAdapter(
             researchField = researchField,
             includeSubfields = includeSubfields,
             researchProblem = researchProblem,
-            targetClassId = targetClassId
+            targetClassId = targetClassId,
         ).count()
 
     private fun buildFindAllQuery(
@@ -129,7 +129,7 @@ class SpringDataNeo4jTemplateAdapter(
                             null -> node("Class")
                             else -> node("Class").withProperties("id", anonParameter(targetClassId.value))
                         },
-                        RELATED
+                        RELATED,
                     ).withProperties("predicate_id", literalOf<String>(Predicates.shTargetClass.value)),
                     researchField?.let {
                         val researchFieldNode = node(Classes.researchField).withProperties("id", anonParameter(it.value))
@@ -145,7 +145,7 @@ class SpringDataNeo4jTemplateAdapter(
                     researchProblem?.let {
                         node.relationshipTo(node("Problem").withProperties("id", anonParameter(it.value)), RELATED)
                             .withProperties("predicate_id", literalOf<String>(Predicates.templateOfResearchProblem.value))
-                    }
+                    },
                 )
             }
             val node = name("node")
@@ -183,7 +183,7 @@ class SpringDataNeo4jTemplateAdapter(
                 createdAtStart.toCondition { node.property("created_at").gte(anonParameter(it.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))) },
                 createdAtEnd.toCondition { node.property("created_at").lte(anonParameter(it.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))) },
                 observatoryId.toCondition { node.property("observatory_id").eq(anonParameter(it.value.toString())) },
-                organizationId.toCondition { node.property("organization_id").eq(anonParameter(it.value.toString())) }
+                organizationId.toCondition { node.property("organization_id").eq(anonParameter(it.value.toString())) },
             )
         }
         .withQuery { commonQuery ->
@@ -196,8 +196,8 @@ class SpringDataNeo4jTemplateAdapter(
                     orderByOptimizations(
                         node = node,
                         sort = sort,
-                        properties = arrayOf("id", "label", "created_at", "created_by", "visibility")
-                    )
+                        properties = arrayOf("id", "label", "created_at", "created_by", "visibility"),
+                    ),
                 )
                 .with(variables)
                 .orderBy(
@@ -205,14 +205,14 @@ class SpringDataNeo4jTemplateAdapter(
                         listOf(
                             size(node.property("label")).ascending(),
                             score.descending(),
-                            node.property("created_at").ascending()
+                            node.property("created_at").ascending(),
                         )
                     } else {
                         sort.toSortItems(
                             node = node,
-                            knownProperties = arrayOf("id", "label", "created_at", "created_by", "visibility")
+                            knownProperties = arrayOf("id", "label", "created_at", "created_by", "visibility"),
                         )
-                    }
+                    },
                 )
                 .returning(node)
         }

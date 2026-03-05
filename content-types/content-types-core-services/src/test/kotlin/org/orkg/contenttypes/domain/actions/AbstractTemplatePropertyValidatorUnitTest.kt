@@ -218,7 +218,7 @@ internal class AbstractTemplatePropertyValidatorUnitTest : MockkBaseTest {
         val property = createNumberLiteralTemplatePropertyCommand().copy(datatype = Classes.string)
         val exception = InvalidDataType(
             property.datatype,
-            *Literals.XSD.entries.filter { it.isNumber }.map { it.`class` }.toTypedArray()
+            *Literals.XSD.entries.filter { it.isNumber }.map { it.`class` }.toTypedArray(),
         )
 
         assertThrows<InvalidDataType> { abstractTemplatePropertyValidator.validate(property) }.message shouldBe exception.message

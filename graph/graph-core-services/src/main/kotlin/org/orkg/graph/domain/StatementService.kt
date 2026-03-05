@@ -58,7 +58,7 @@ class StatementService(
             createdAtEnd = createdAtEnd,
             objectClasses = objectClasses,
             objectId = objectId,
-            objectLabel = objectLabel
+            objectLabel = objectLabel,
         )
 
     override fun create(command: CreateStatementUseCase.CreateCommand): StatementId {
@@ -73,7 +73,7 @@ class StatementService(
             subjectId = command.subjectId,
             predicateId = command.predicateId,
             objectId = command.objectId,
-            pageable = PageRequests.SINGLE
+            pageable = PageRequests.SINGLE,
         ).singleOrNull()
         if (existing != null) {
             if (command.id != null && command.id != existing.id) {
@@ -91,7 +91,7 @@ class StatementService(
             `object` = `object`,
             createdBy = command.contributorId,
             createdAt = OffsetDateTime.now(clock),
-            modifiable = command.modifiable
+            modifiable = command.modifiable,
         )
         statementRepository.save(statement)
         return id
@@ -197,7 +197,7 @@ class StatementService(
         sort: Sort,
     ): Bundle = Bundle(
         thingId,
-        statementRepository.fetchAsBundle(thingId, configuration, sort).toMutableList()
+        statementRepository.fetchAsBundle(thingId, configuration, sort).toMutableList(),
     )
 
     /**
@@ -217,9 +217,9 @@ class StatementService(
         createBundle(thingId, configuration, sort).merge(
             Bundle(
                 thingId,
-                statementRepository.fetchAsBundle(thingId, BundleConfiguration.firstLevelConf(), sort).toMutableList()
+                statementRepository.fetchAsBundle(thingId, BundleConfiguration.firstLevelConf(), sort).toMutableList(),
             ),
-            sort
+            sort,
         )
 
     override fun deleteAll() = statementRepository.deleteAll()

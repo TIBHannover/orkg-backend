@@ -52,8 +52,8 @@ internal class AbstractLiteratureListSectionValidatorUnitTest : MockkBaseTest {
         val section = literatureListListSectionCommand().copy(
             entries = listOf(
                 Entry(ThingId("R2315")),
-                Entry(ThingId("R2315"))
-            )
+                Entry(ThingId("R2315")),
+            ),
         )
         val validationCache = mutableSetOf<ThingId>()
 
@@ -87,7 +87,7 @@ internal class AbstractLiteratureListSectionValidatorUnitTest : MockkBaseTest {
     @Test
     fun `Given a list section command, when description is invalid, it throws an exception`() {
         val section = literatureListListSectionCommand().copy(
-            entries = listOf(Entry(ThingId("R2315"), "a".repeat(MAX_LABEL_LENGTH + 1)))
+            entries = listOf(Entry(ThingId("R2315"), "a".repeat(MAX_LABEL_LENGTH + 1))),
         )
         val validationCache = mutableSetOf<ThingId>()
 

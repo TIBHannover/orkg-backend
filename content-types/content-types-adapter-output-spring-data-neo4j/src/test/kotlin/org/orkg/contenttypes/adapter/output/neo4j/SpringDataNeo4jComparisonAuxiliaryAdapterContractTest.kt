@@ -53,6 +53,6 @@ internal class SpringDataNeo4jComparisonAuxiliaryAdapterContractTest(
                 springDataNeo4jPredicateAdapter,
                 springDataNeo4jRosettaStoneStatementAdapter,
                 springDataNeo4jComparisonPathAdapter,
-            )
+            ),
         )
     })

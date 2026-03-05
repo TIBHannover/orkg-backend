@@ -47,7 +47,7 @@ interface Neo4jResourceRepository : Neo4jRepository<Neo4jResource, ThingId> {
 
     @Query(
         value = """MATCH (n:`Resource`) WHERE n.created_by <> "00000000-0000-0000-0000-000000000000" RETURN DISTINCT n.created_by AS id ORDER BY n.created_by ASC $ORDER_BY_PAGE_PARAMS""",
-        countQuery = """MATCH (n:`Resource`) WHERE n.created_by <> "00000000-0000-0000-0000-000000000000" RETURN COUNT(DISTINCT n.created_by) as cnt"""
+        countQuery = """MATCH (n:`Resource`) WHERE n.created_by <> "00000000-0000-0000-0000-000000000000" RETURN COUNT(DISTINCT n.created_by) as cnt""",
     )
     fun findAllContributorIds(pageable: Pageable): Page<ContributorId>
 

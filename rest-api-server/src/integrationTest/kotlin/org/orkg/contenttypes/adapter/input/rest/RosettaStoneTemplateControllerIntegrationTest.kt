@@ -133,14 +133,14 @@ internal class RosettaStoneTemplateControllerIntegrationTest : MockMvcBaseTest("
             classService.createClass(
                 label = xsd.`class`.value,
                 id = xsd.`class`,
-                uri = ParsedIRI.create(xsd.uri)
+                uri = ParsedIRI.create(xsd.uri),
             )
         }
 
         resourceService.createResource(
             id = ThingId("R12"),
             label = "Computer Science",
-            classes = setOf(Classes.researchField)
+            classes = setOf(Classes.researchField),
         )
 
         // Example specific entities
@@ -159,20 +159,20 @@ internal class RosettaStoneTemplateControllerIntegrationTest : MockMvcBaseTest("
         resourceService.createResource(
             id = ThingId("R13"),
             label = "Engineering",
-            classes = setOf(Classes.researchField)
+            classes = setOf(Classes.researchField),
         )
 
         val contributorId = contributorService.createContributor()
 
         organizationService.createOrganization(
             createdBy = contributorId,
-            id = OrganizationId("edc18168-c4ee-4cb8-a98a-136f748e912e")
+            id = OrganizationId("edc18168-c4ee-4cb8-a98a-136f748e912e"),
         )
 
         observatoryService.createObservatory(
             organizations = setOf(OrganizationId("edc18168-c4ee-4cb8-a98a-136f748e912e")),
             researchField = ThingId("R12"),
-            id = ObservatoryId("1afefdd0-5c09-4c9c-b718-2b35316b56f3")
+            id = ObservatoryId("1afefdd0-5c09-4c9c-b718-2b35316b56f3"),
         )
     }
 

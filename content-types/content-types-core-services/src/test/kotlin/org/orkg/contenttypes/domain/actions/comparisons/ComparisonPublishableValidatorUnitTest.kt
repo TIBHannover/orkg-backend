@@ -67,7 +67,7 @@ internal class ComparisonPublishableValidatorUnitTest : MockkBaseTest {
     @Test
     fun `Given a comparison publish command, when comparison has less than two sources, it throws an exception`() {
         val comparison = createComparison().copy(
-            sources = listOf(ComparisonDataSource(ThingId("R123456"), ComparisonDataSource.Type.THING))
+            sources = listOf(ComparisonDataSource(ThingId("R123456"), ComparisonDataSource.Type.THING)),
         )
         val command = publishComparisonCommand().copy(id = comparison.id)
         val state = PublishComparisonState()

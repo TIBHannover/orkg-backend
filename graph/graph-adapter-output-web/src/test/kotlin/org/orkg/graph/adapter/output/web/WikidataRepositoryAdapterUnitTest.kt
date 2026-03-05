@@ -65,7 +65,7 @@ internal class WikidataRepositoryAdapterUnitTest : MockkBaseTest {
                         USER_AGENT to listOf(userAgent),
                     )
                 },
-                any<HttpResponse.BodyHandler<String>>()
+                any<HttpResponse.BodyHandler<String>>(),
             )
         }
         verify(exactly = 1) { response.statusCode() }
@@ -94,7 +94,7 @@ internal class WikidataRepositoryAdapterUnitTest : MockkBaseTest {
                         USER_AGENT to listOf(userAgent),
                     )
                 },
-                any<HttpResponse.BodyHandler<String>>()
+                any<HttpResponse.BodyHandler<String>>(),
             )
         }
         verify(exactly = 1) { response.statusCode() }
@@ -124,7 +124,7 @@ internal class WikidataRepositoryAdapterUnitTest : MockkBaseTest {
                         USER_AGENT to listOf(userAgent),
                     )
                 },
-                any<HttpResponse.BodyHandler<String>>()
+                any<HttpResponse.BodyHandler<String>>(),
             )
         }
         verify(exactly = 1) { response.statusCode() }
@@ -155,7 +155,7 @@ internal class WikidataRepositoryAdapterUnitTest : MockkBaseTest {
                         USER_AGENT to listOf(userAgent),
                     )
                 },
-                any<HttpResponse.BodyHandler<String>>()
+                any<HttpResponse.BodyHandler<String>>(),
             )
         }
         verify(exactly = 2) { response.statusCode() }
@@ -209,8 +209,8 @@ internal class WikidataRepositoryAdapterUnitTest : MockkBaseTest {
                 expectedResult = ExternalThing(
                     uri = ParsedIRI.create("https://www.wikidata.org/entity/Q42"),
                     label = "Douglas Adams",
-                    description = "English author and humourist (1952-2001)"
-                )
+                    description = "English author and humourist (1952-2001)",
+                ),
             ),
             TestParameters(
                 entityId = "Q42",
@@ -221,8 +221,8 @@ internal class WikidataRepositoryAdapterUnitTest : MockkBaseTest {
                 expectedResult = ExternalThing(
                     uri = ParsedIRI.create("https://www.wikidata.org/entity/Q42"),
                     label = "Douglas Adams",
-                    description = "English author and humourist (1952-2001)"
-                )
+                    description = "English author and humourist (1952-2001)",
+                ),
             ),
             TestParameters(
                 entityId = "P30",
@@ -233,8 +233,8 @@ internal class WikidataRepositoryAdapterUnitTest : MockkBaseTest {
                 expectedResult = ExternalThing(
                     uri = ParsedIRI.create("https://www.wikidata.org/entity/P30"),
                     label = "continent",
-                    description = "continent of which the subject is a part"
-                )
+                    description = "continent of which the subject is a part",
+                ),
             ),
             TestParameters(
                 entityId = "Q42",
@@ -245,8 +245,8 @@ internal class WikidataRepositoryAdapterUnitTest : MockkBaseTest {
                 expectedResult = ExternalThing(
                     uri = ParsedIRI.create("https://www.wikidata.org/entity/Q42"),
                     label = "Douglas Adams",
-                    description = "English author and humourist (1952-2001)"
-                )
+                    description = "English author and humourist (1952-2001)",
+                ),
             ),
             TestParameters(
                 entityId = "Q42",
@@ -257,8 +257,8 @@ internal class WikidataRepositoryAdapterUnitTest : MockkBaseTest {
                 expectedResult = ExternalThing(
                     uri = ParsedIRI.create("https://www.wikidata.org/entity/Q42"),
                     label = "Douglas Adams",
-                    description = "English author and humourist (1952-2001)"
-                )
+                    description = "English author and humourist (1952-2001)",
+                ),
             ),
             TestParameters(
                 entityId = "P30",
@@ -269,9 +269,9 @@ internal class WikidataRepositoryAdapterUnitTest : MockkBaseTest {
                 expectedResult = ExternalThing(
                     uri = ParsedIRI.create("https://www.wikidata.org/entity/P30"),
                     label = "continent",
-                    description = "continent of which the subject is a part"
-                )
-            )
+                    description = "continent of which the subject is a part",
+                ),
+            ),
         ).map(Arguments::of)
 
         @JvmStatic
@@ -282,7 +282,7 @@ internal class WikidataRepositoryAdapterUnitTest : MockkBaseTest {
                 methodInvoker = WikidataServiceAdapter::findResourceByShortForm,
                 successResponse = responseJson("wikidata/resourceSuccess"),
                 notFoundResponse = responseJson("wikidata/classSuccess"), // should fail, because response contains a class and not a resource
-                throwable = ExternalEntityIsNotAResource("wikidata", "Q42")
+                throwable = ExternalEntityIsNotAResource("wikidata", "Q42"),
             ),
             TypeMismatchTestParameters(
                 entityId = "Q42",
@@ -290,7 +290,7 @@ internal class WikidataRepositoryAdapterUnitTest : MockkBaseTest {
                 methodInvoker = WikidataServiceAdapter::findClassByShortForm,
                 successResponse = responseJson("wikidata/classSuccess"),
                 notFoundResponse = responseJson("wikidata/resourceSuccess"), // should fail, because response contains a resource and not a class
-                throwable = ExternalEntityIsNotAClass("wikidata", "Q42")
+                throwable = ExternalEntityIsNotAClass("wikidata", "Q42"),
             ),
             TypeMismatchTestParameters(
                 entityId = "Q42",
@@ -298,7 +298,7 @@ internal class WikidataRepositoryAdapterUnitTest : MockkBaseTest {
                 methodInvoker = WikidataServiceAdapter::findResourceByURI,
                 successResponse = responseJson("wikidata/resourceSuccess"),
                 notFoundResponse = responseJson("wikidata/classSuccess"), // should fail, because response contains a class and not a resource
-                throwable = ExternalEntityIsNotAResource("wikidata", ParsedIRI.create("https://www.wikidata.org/entity/Q42"))
+                throwable = ExternalEntityIsNotAResource("wikidata", ParsedIRI.create("https://www.wikidata.org/entity/Q42")),
             ),
             TypeMismatchTestParameters(
                 entityId = "Q42",
@@ -306,7 +306,7 @@ internal class WikidataRepositoryAdapterUnitTest : MockkBaseTest {
                 methodInvoker = WikidataServiceAdapter::findClassByURI,
                 successResponse = responseJson("wikidata/classSuccess"),
                 notFoundResponse = responseJson("wikidata/resourceSuccess"), // should fail, because response contains a resource and not a class
-                throwable = ExternalEntityIsNotAClass("wikidata", ParsedIRI.create("https://www.wikidata.org/entity/Q42"))
+                throwable = ExternalEntityIsNotAClass("wikidata", ParsedIRI.create("https://www.wikidata.org/entity/Q42")),
             ),
         ).map(Arguments::of)
 

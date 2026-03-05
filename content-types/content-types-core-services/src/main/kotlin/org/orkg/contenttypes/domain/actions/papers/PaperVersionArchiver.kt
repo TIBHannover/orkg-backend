@@ -13,7 +13,7 @@ private val bundleConfiguration = BundleConfiguration(
     minLevel = null,
     maxLevel = 10,
     blacklist = listOf(Classes.researchField),
-    whitelist = emptyList()
+    whitelist = emptyList(),
 )
 
 class PaperVersionArchiver(
@@ -26,15 +26,15 @@ class PaperVersionArchiver(
                 thingId = id,
                 configuration = bundleConfiguration,
                 includeFirst = true,
-                sort = Sort.unsorted()
+                sort = Sort.unsorted(),
             ).bundle
         }
         paperPublishedRepository.save(
             PublishedContentType(
                 id = state.paperVersionId!!,
                 rootId = command.id,
-                subgraph = statementsToPersist
-            )
+                subgraph = statementsToPersist,
+            ),
         )
         return state
     }

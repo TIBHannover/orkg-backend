@@ -16,7 +16,7 @@ class PaperIdentifierUpdater(
         unsafeStatementUseCases: UnsafeStatementUseCases,
         unsafeLiteralUseCases: UnsafeLiteralUseCases,
     ) : this(
-        IdentifierUpdater(statementService, unsafeStatementUseCases, unsafeLiteralUseCases)
+        IdentifierUpdater(statementService, unsafeStatementUseCases, unsafeLiteralUseCases),
     )
 
     override fun invoke(command: UpdatePaperCommand, state: State): State {
@@ -26,7 +26,7 @@ class PaperIdentifierUpdater(
                 contributorId = command.contributorId,
                 newIdentifiers = command.identifiers!!,
                 identifierDefinitions = Identifiers.paper,
-                subjectId = state.paper!!.id
+                subjectId = state.paper!!.id,
             )
         }
         return state

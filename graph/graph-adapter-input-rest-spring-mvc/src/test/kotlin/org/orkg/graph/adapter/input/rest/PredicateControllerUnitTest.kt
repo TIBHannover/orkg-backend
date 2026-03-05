@@ -82,7 +82,7 @@ internal class PredicateControllerUnitTest : MockMvcBaseTest("predicates") {
                 pageable = PageRequests.SINGLE,
                 subjectId = predicate.id,
                 predicateId = Predicates.description,
-                objectClasses = setOf(Classes.literal)
+                objectClasses = setOf(Classes.literal),
             )
         } returns pageOf()
 
@@ -95,7 +95,7 @@ internal class PredicateControllerUnitTest : MockMvcBaseTest("predicates") {
                 description(
                     """
                     A `GET` request provides information about a predicate.
-                    """
+                    """,
                 )
                 pathParameters(
                     parameterWithName("id").description("The identifier of the predicate to retrieve."),
@@ -110,7 +110,7 @@ internal class PredicateControllerUnitTest : MockMvcBaseTest("predicates") {
                 pageable = PageRequests.SINGLE,
                 subjectId = predicate.id,
                 predicateId = Predicates.description,
-                objectClasses = setOf(Classes.literal)
+                objectClasses = setOf(Classes.literal),
             )
         }
     }
@@ -121,7 +121,7 @@ internal class PredicateControllerUnitTest : MockMvcBaseTest("predicates") {
     fun create() {
         val request = CreatePredicateRequest(
             id = null,
-            label = "predicate label"
+            label = "predicate label",
         )
         val id = ThingId("R123")
 
@@ -140,14 +140,14 @@ internal class PredicateControllerUnitTest : MockMvcBaseTest("predicates") {
                     A `POST` request creates a new predicate with a given label.
                     The response will be `201 Created` when successful.
                     The predicate can be retrieved by following the URI in the `Location` header field.
-                    """
+                    """,
                 )
                 requestFields<CreatePredicateRequest>(
                     fieldWithPath("label").description("The label of the predicate."),
-                    fieldWithPath("id").type("String").description("The id of the predicate. (optional)").optional()
+                    fieldWithPath("id").type("String").description("The id of the predicate. (optional)").optional(),
                 )
                 responseHeaders(
-                    headerWithName("Location").description("The uri path where the newly created predicate can be fetched from.")
+                    headerWithName("Location").description("The uri path where the newly created predicate can be fetched from."),
                 )
                 throws(InvalidLabel::class, PredicateAlreadyExists::class)
             }
@@ -158,7 +158,7 @@ internal class PredicateControllerUnitTest : MockMvcBaseTest("predicates") {
                     it.id shouldBe request.id
                     it.label shouldBe request.label
                     it.contributorId shouldBe ContributorId(MockUserId.USER)
-                }
+                },
             )
         }
     }
@@ -169,7 +169,7 @@ internal class PredicateControllerUnitTest : MockMvcBaseTest("predicates") {
         val id = ThingId("R123")
         val request = CreatePredicateRequest(
             id = id,
-            label = "predicate label"
+            label = "predicate label",
         )
 
         every { predicateService.create(any()) } returns id
@@ -187,7 +187,7 @@ internal class PredicateControllerUnitTest : MockMvcBaseTest("predicates") {
                     it.id shouldBe request.id
                     it.label shouldBe request.label
                     it.contributorId shouldBe ContributorId(MockUserId.USER)
-                }
+                },
             )
         }
     }
@@ -239,7 +239,7 @@ internal class PredicateControllerUnitTest : MockMvcBaseTest("predicates") {
                     """
                     A `GET` request returns a <<sorting-and-pagination,paged>> list of <<predicates-fetch,predicates>>.
                     If no paging request parameters are provided, the default values will be used.
-                    """
+                    """,
                 )
                 pagedQueryParameters(
                     parameterWithName("q").description("A search term that must be contained in the label. (optional)").optional(),
@@ -260,7 +260,7 @@ internal class PredicateControllerUnitTest : MockMvcBaseTest("predicates") {
                 },
                 createdBy = createdBy,
                 createdAtStart = createdAtStart,
-                createdAtEnd = createdAtEnd
+                createdAtEnd = createdAtEnd,
             )
         }
         verify(exactly = 1) { statementService.findAllDescriptionsById(any<Set<ThingId>>()) }
@@ -308,13 +308,13 @@ internal class PredicateControllerUnitTest : MockMvcBaseTest("predicates") {
                     A `PUT` request updates a predicate with the given parameters.
                     The response will be `204 NO CONTENT` when successful.
                     The updated predicate can be retrieved by following the URI in the `Location` header field.
-                    """
+                    """,
                 )
                 pathParameters(
-                    parameterWithName("id").description("The identifier of the predicate.")
+                    parameterWithName("id").description("The identifier of the predicate."),
                 )
                 responseHeaders(
-                    headerWithName("Location").description("The uri path where the updated predicate can be fetched from.")
+                    headerWithName("Location").description("The uri path where the updated predicate can be fetched from."),
                 )
                 requestFields<UpdatePredicateRequest>(
                     fieldWithPath("label").description("The updated predicate label. (optional)").optional(),
@@ -350,10 +350,10 @@ internal class PredicateControllerUnitTest : MockMvcBaseTest("predicates") {
                     3. If the predicate is used in a statement (excluding subject position), the return status will be `403 FORBIDDEN`.
                     4. If the performing user is not the creator of the predicate and does not have the curator role, the return status will be `403 FORBIDDEN`.
                     ====
-                    """
+                    """,
                 )
                 pathParameters(
-                    parameterWithName("id").description("The identifier of the predicate.")
+                    parameterWithName("id").description("The identifier of the predicate."),
                 )
                 throws(PredicateNotFound::class, PredicateNotModifiable::class, PredicateInUse::class, ContributorNotFound::class, NeitherOwnerNorCurator::class)
             }

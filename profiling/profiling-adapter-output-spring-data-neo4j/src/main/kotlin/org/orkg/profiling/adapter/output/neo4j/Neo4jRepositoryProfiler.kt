@@ -91,6 +91,6 @@ class Neo4jRepositoryProfiler(
         "equals",
         "save",
         "delete",
-        "nextIdentity"
+        "nextIdentity",
     )
 }

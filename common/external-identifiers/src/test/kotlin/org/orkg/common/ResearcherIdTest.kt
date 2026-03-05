@@ -45,7 +45,7 @@ internal class ResearcherIdTest {
         @JvmStatic
         fun validResearcherIds(): Stream<Arguments> = Stream.of(
             Arguments.of("K-8011-2013", "https://www.researcherid.com/rid/K-8011-2013"),
-            Arguments.of("JAA-3403-2017", "https://www.researcherid.com/rid/JAA-3403-2017")
+            Arguments.of("JAA-3403-2017", "https://www.researcherid.com/rid/JAA-3403-2017"),
         )
 
         @JvmStatic
@@ -55,7 +55,7 @@ internal class ResearcherIdTest {
             // Too many characters
             Arguments.of("JQKH-3403-2017", "https://www.researcherid.com/rid/JQKH-3403-2017"),
             // Does not follow scheme at all
-            Arguments.of("example", "https://example.com/")
+            Arguments.of("example", "https://example.com/"),
         )
     }
 }

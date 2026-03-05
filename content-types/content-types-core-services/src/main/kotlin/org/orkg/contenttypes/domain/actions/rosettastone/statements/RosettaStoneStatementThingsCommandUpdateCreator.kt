@@ -31,8 +31,8 @@ class RosettaStoneStatementThingsCommandUpdateCreator(
             unsafeLiteralUseCases,
             unsafePredicateUseCases,
             statementRepository,
-            listService
-        )
+            listService,
+        ),
     )
 
     override fun invoke(command: UpdateRosettaStoneStatementCommand, state: State): State {
@@ -42,7 +42,7 @@ class RosettaStoneStatementThingsCommandUpdateCreator(
             validationCache = state.validationCache,
             contributorId = command.contributorId,
             extractionMethod = command.extractionMethod,
-            lookup = tempIdToThingId
+            lookup = tempIdToThingId,
         )
         return state.copy(tempIdToThingId = tempIdToThingId)
     }

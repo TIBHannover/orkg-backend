@@ -129,18 +129,18 @@ internal class SmartReviewControllerIntegrationTest : MockMvcBaseTest("smart-rev
             Classes.author,
             Classes.section,
             Classes.sustainableDevelopmentGoal,
-            *SmartReviewTextSection.types.toTypedArray()
+            *SmartReviewTextSection.types.toTypedArray(),
         )
 
         resourceService.createResource(
             id = ThingId("R12"),
             label = "Computer Science",
-            classes = setOf(Classes.researchField)
+            classes = setOf(Classes.researchField),
         )
         resourceService.createResource(
             id = ThingId("R194"),
             label = "Engineering",
-            classes = setOf(Classes.researchField)
+            classes = setOf(Classes.researchField),
         )
 
         // Example specific entities
@@ -173,33 +173,33 @@ internal class SmartReviewControllerIntegrationTest : MockMvcBaseTest("smart-rev
             subject = resourceService.createResource(
                 id = ThingId("R456"),
                 label = "Author with id and orcid",
-                classes = setOf(Classes.author)
+                classes = setOf(Classes.author),
             ),
             predicate = Predicates.hasORCID,
-            `object` = literalService.createLiteral(label = "1111-2222-3333-4444")
+            `object` = literalService.createLiteral(label = "1111-2222-3333-4444"),
         )
 
         statementService.createStatement(
             subject = resourceService.createResource(
                 id = ThingId("R4567"),
                 label = "Author with orcid",
-                classes = setOf(Classes.author)
+                classes = setOf(Classes.author),
             ),
             predicate = Predicates.hasORCID,
-            `object` = literalService.createLiteral(label = "0000-1111-2222-3333")
+            `object` = literalService.createLiteral(label = "0000-1111-2222-3333"),
         )
 
         val contributorId = contributorService.createContributor()
 
         organizationService.createOrganization(
             createdBy = contributorId,
-            id = OrganizationId("edc18168-c4ee-4cb8-a98a-136f748e912e")
+            id = OrganizationId("edc18168-c4ee-4cb8-a98a-136f748e912e"),
         )
 
         observatoryService.createObservatory(
             organizations = setOf(OrganizationId("edc18168-c4ee-4cb8-a98a-136f748e912e")),
             researchField = ThingId("R12"),
-            id = ObservatoryId("1afefdd0-5c09-4c9c-b718-2b35316b56f3")
+            id = ObservatoryId("1afefdd0-5c09-4c9c-b718-2b35316b56f3"),
         )
     }
 
@@ -231,7 +231,7 @@ internal class SmartReviewControllerIntegrationTest : MockMvcBaseTest("smart-rev
             it.id shouldBe id
             it.title shouldBe "example smart review"
             it.researchFields shouldBe listOf(
-                ObjectIdAndLabel(ThingId("R12"), "Computer Science")
+                ObjectIdAndLabel(ThingId("R12"), "Computer Science"),
             )
             it.identifiers shouldBe emptyMap()
             it.authors.size shouldBe 5
@@ -239,19 +239,19 @@ internal class SmartReviewControllerIntegrationTest : MockMvcBaseTest("smart-rev
                 name = "Author with id",
                 id = ThingId("R123"),
                 identifiers = emptyMap(),
-                homepage = null
+                homepage = null,
             )
             it.authors[1] shouldBe AuthorRepresentation(
                 name = "Author with orcid",
                 id = ThingId("R4567"),
                 identifiers = mapOf("orcid" to listOf("0000-1111-2222-3333")),
-                homepage = null
+                homepage = null,
             )
             it.authors[2] shouldBe AuthorRepresentation(
                 name = "Author with id and orcid",
                 id = ThingId("R456"),
                 identifiers = mapOf("orcid" to listOf("1111-2222-3333-4444")),
-                homepage = null
+                homepage = null,
             )
             it.authors[3].asClue { author ->
                 author.name shouldBe "Author with homepage"
@@ -263,15 +263,15 @@ internal class SmartReviewControllerIntegrationTest : MockMvcBaseTest("smart-rev
                 name = "Author that just has a name",
                 id = null,
                 identifiers = emptyMap(),
-                homepage = null
+                homepage = null,
             )
             it.versions shouldBe VersionInfoRepresentation(
                 head = HeadVersionRepresentation(id, it.title, it.createdAt, it.createdBy),
-                published = emptyList()
+                published = emptyList(),
             )
             it.sustainableDevelopmentGoals shouldBe setOf(
                 LabeledObjectRepresentation(ThingId("SDG_1"), "No poverty"),
-                LabeledObjectRepresentation(ThingId("SDG_2"), "Zero hunger")
+                LabeledObjectRepresentation(ThingId("SDG_2"), "Zero hunger"),
             )
             it.observatories shouldBe listOf(ObservatoryId("1afefdd0-5c09-4c9c-b718-2b35316b56f3"))
             it.organizations shouldBe listOf(OrganizationId("edc18168-c4ee-4cb8-a98a-136f748e912e"))
@@ -307,7 +307,7 @@ internal class SmartReviewControllerIntegrationTest : MockMvcBaseTest("smart-rev
                 section.heading shouldBe "ontology section heading"
                 section.entities shouldBe listOf(
                     ResourceReferenceRepresentation(ThingId("R1"), "Some ontology resource", emptySet()),
-                    PredicateReferenceRepresentation(ThingId("P1"), "Some ontology predicate")
+                    PredicateReferenceRepresentation(ThingId("P1"), "Some ontology predicate"),
                 )
                 section.predicates shouldBe listOf(PredicateReferenceRepresentation(ThingId("P1"), "Some ontology predicate"))
             }
@@ -319,11 +319,11 @@ internal class SmartReviewControllerIntegrationTest : MockMvcBaseTest("smart-rev
             }
             it.references shouldBe listOf(
                 "@misc{R615465, title = {reference 1}}",
-                "@misc{R154146, title = {reference 2}}"
+                "@misc{R154146, title = {reference 2}}",
             )
             it.acknowledgements shouldBe mapOf(
                 ContributorId(MockUserId.USER) to (7.0 / 13.0),
-                ContributorId.UNKNOWN to (6.0 / 13.0)
+                ContributorId.UNKNOWN to (6.0 / 13.0),
             )
         }
 
@@ -340,7 +340,7 @@ internal class SmartReviewControllerIntegrationTest : MockMvcBaseTest("smart-rev
             it.id shouldBe id
             it.title shouldBe "updated smart review title"
             it.researchFields shouldBe listOf(
-                ObjectIdAndLabel(ThingId("R194"), "Engineering")
+                ObjectIdAndLabel(ThingId("R194"), "Engineering"),
             )
             it.identifiers shouldBe emptyMap()
             it.authors.size shouldBe 5
@@ -348,19 +348,19 @@ internal class SmartReviewControllerIntegrationTest : MockMvcBaseTest("smart-rev
                 name = "Author with id",
                 id = ThingId("R123"),
                 identifiers = emptyMap(),
-                homepage = null
+                homepage = null,
             )
             it.authors[1] shouldBe Author(
                 name = "Author with orcid",
                 id = ThingId("R4567"),
                 identifiers = mapOf("orcid" to listOf("0000-1111-2222-3333")),
-                homepage = null
+                homepage = null,
             )
             it.authors[2] shouldBe Author(
                 name = "Author with id and orcid",
                 id = ThingId("R456"),
                 identifiers = mapOf("orcid" to listOf("1111-2222-3333-4444", "4444-3333-2222-1111")),
-                homepage = null
+                homepage = null,
             )
             it.authors[3].asClue { author ->
                 author.name shouldBe "Author with homepage"
@@ -372,15 +372,15 @@ internal class SmartReviewControllerIntegrationTest : MockMvcBaseTest("smart-rev
                 name = "Another author that just has a name",
                 id = null,
                 identifiers = emptyMap(),
-                homepage = null
+                homepage = null,
             )
             it.versions shouldBe VersionInfo(
                 head = HeadVersion(id, it.title, it.createdAt, it.createdBy),
-                published = emptyList()
+                published = emptyList(),
             )
             it.sustainableDevelopmentGoals shouldBe setOf(
                 ObjectIdAndLabel(ThingId("SDG_3"), "Good health and well-being"),
-                ObjectIdAndLabel(ThingId("SDG_4"), "Quality education")
+                ObjectIdAndLabel(ThingId("SDG_4"), "Quality education"),
             )
             it.observatories shouldBe listOf(ObservatoryId("1afefdd0-5c09-4c9c-b718-2b35316b56f3"))
             it.organizations shouldBe listOf(OrganizationId("edc18168-c4ee-4cb8-a98a-136f748e912e"))
@@ -415,7 +415,7 @@ internal class SmartReviewControllerIntegrationTest : MockMvcBaseTest("smart-rev
                 section.heading shouldBe "updated ontology section heading"
                 section.entities shouldBe listOf(
                     ResourceReference(ThingId("R21"), "Some other ontology resource", emptySet()),
-                    PredicateReference(ThingId("P1"), "Some ontology predicate")
+                    PredicateReference(ThingId("P1"), "Some ontology predicate"),
                 )
                 section.predicates shouldBe listOf(PredicateReference(ThingId("P21"), "Some other ontology predicate"))
             }
@@ -427,11 +427,11 @@ internal class SmartReviewControllerIntegrationTest : MockMvcBaseTest("smart-rev
             }
             it.references shouldBe listOf(
                 "@misc{R615465, title = {updated reference 1}}",
-                "@misc{R154146, title = {updated reference 2}}"
+                "@misc{R154146, title = {updated reference 2}}",
             )
             it.acknowledgements shouldBe mapOf(
                 ContributorId(MockUserId.USER) to (7.0 / 13.0),
-                ContributorId.UNKNOWN to (6.0 / 13.0)
+                ContributorId.UNKNOWN to (6.0 / 13.0),
             )
         }
     }
@@ -621,7 +621,7 @@ internal class SmartReviewControllerIntegrationTest : MockMvcBaseTest("smart-rev
             it.heading shouldBe "new ontology section heading"
             it.entities shouldBe listOf(
                 ResourceReference(ThingId("R1"), "Some ontology resource", emptySet()),
-                PredicateReference(ThingId("P1"), "Some ontology predicate")
+                PredicateReference(ThingId("P1"), "Some ontology predicate"),
             )
             it.predicates shouldBe listOf(PredicateReference(ThingId("P1"), "Some ontology predicate"))
         }
@@ -643,7 +643,7 @@ internal class SmartReviewControllerIntegrationTest : MockMvcBaseTest("smart-rev
             it.heading shouldBe "updated ontology section heading"
             it.entities shouldBe listOf(
                 ResourceReference(ThingId("R21"), "Some other ontology resource", emptySet()),
-                PredicateReference(ThingId("P1"), "Some ontology predicate")
+                PredicateReference(ThingId("P1"), "Some ontology predicate"),
             )
             it.predicates shouldBe listOf(PredicateReference(ThingId("P21"), "Some other ontology predicate"))
         }

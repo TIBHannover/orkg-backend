@@ -14,7 +14,7 @@ class LiteratureListResearchFieldCreator(
         unsafeLiteralUseCases: UnsafeLiteralUseCases,
         unsafeStatementUseCases: UnsafeStatementUseCases,
     ) : this(
-        StatementCollectionPropertyCreator(unsafeLiteralUseCases, unsafeStatementUseCases)
+        StatementCollectionPropertyCreator(unsafeLiteralUseCases, unsafeStatementUseCases),
     )
 
     override fun invoke(command: CreateLiteratureListCommand, state: State): State {
@@ -22,7 +22,7 @@ class LiteratureListResearchFieldCreator(
             contributorId = command.contributorId,
             subjectId = state.literatureListId!!,
             predicateId = Predicates.hasResearchField,
-            objects = command.researchFields
+            objects = command.researchFields,
         )
         return state
     }

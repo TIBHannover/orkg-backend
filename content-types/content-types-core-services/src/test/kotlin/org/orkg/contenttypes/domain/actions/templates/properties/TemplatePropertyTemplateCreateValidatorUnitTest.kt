@@ -43,7 +43,7 @@ internal class TemplatePropertyTemplateCreateValidatorUnitTest : MockkBaseTest {
             Arguments.of(createStringLiteralTemplatePropertyCommand()),
             Arguments.of(createNumberLiteralTemplatePropertyCommand()),
             Arguments.of(createOtherLiteralTemplatePropertyCommand()),
-            Arguments.of(createResourceTemplatePropertyCommand())
+            Arguments.of(createResourceTemplatePropertyCommand()),
         )
     }
 }

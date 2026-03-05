@@ -50,7 +50,7 @@ internal class ContributorControllerUnitTest : MockMvcBaseTest("contributors") {
                 description(
                     """
                     Information about a specific contributor can be obtained by sending a `GET` request to the contributor endpoint:
-                    """
+                    """,
                 )
                 pathParameters(
                     parameterWithName("id").description("The identifier of the contributor."),
@@ -110,7 +110,7 @@ internal class ContributorControllerUnitTest : MockMvcBaseTest("contributors") {
                 description(
                     """
                     
-                    """
+                    """,
                 )
                 summary("Listing contributors")
                 description(
@@ -118,7 +118,7 @@ internal class ContributorControllerUnitTest : MockMvcBaseTest("contributors") {
                     A `GET` request returns a <<sorting-and-pagination,paged>> list of <<contributor-fetch,contributors>>.
 
                     NOTE: This endpoint requires authentication.
-                    """
+                    """,
                 )
                 pagedQueryParameters(
                     parameterWithName("q").description("A search term that must be contained in the display name of the contributor. (optional)").optional(),

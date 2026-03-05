@@ -36,23 +36,23 @@ internal class AbstractTemplatePropertyDeleterUnitTest : MockkBaseTest {
         val templateHasPropertyStatement = createStatement(
             subject = createResource(templateId),
             predicate = createPredicate(Predicates.shProperty),
-            `object` = createResource(propertyId)
+            `object` = createResource(propertyId),
         )
 
         every {
             statementService.findAll(
                 objectId = propertyId,
-                pageable = PageRequests.ALL
+                pageable = PageRequests.ALL,
             )
         } returns pageOf(templateHasPropertyStatement)
         every {
             statementService.findAll(
                 subjectId = propertyId,
-                pageable = PageRequests.ALL
+                pageable = PageRequests.ALL,
             )
         } returns pageOf(
             createStatement(StatementId("S123")),
-            createStatement(StatementId("S456"))
+            createStatement(StatementId("S456")),
         )
         every {
             statementService.deleteAllById(setOf(templateHasPropertyStatement.id, StatementId("S123"), StatementId("S456")))
@@ -64,13 +64,13 @@ internal class AbstractTemplatePropertyDeleterUnitTest : MockkBaseTest {
         verify(exactly = 1) {
             statementService.findAll(
                 objectId = propertyId,
-                pageable = PageRequests.ALL
+                pageable = PageRequests.ALL,
             )
         }
         verify(exactly = 1) {
             statementService.findAll(
                 subjectId = propertyId,
-                pageable = PageRequests.ALL
+                pageable = PageRequests.ALL,
             )
         }
         verify(exactly = 1) {
@@ -87,18 +87,18 @@ internal class AbstractTemplatePropertyDeleterUnitTest : MockkBaseTest {
         val templateHasPropertyStatement = createStatement(
             subject = createResource(templateId),
             predicate = createPredicate(Predicates.shProperty),
-            `object` = createResource(propertyId)
+            `object` = createResource(propertyId),
         )
         val otherStatementAboutTemplateProperty = createStatement(
             subject = createResource(),
             predicate = createPredicate(Predicates.hasLink),
-            `object` = createResource(propertyId)
+            `object` = createResource(propertyId),
         )
 
         every {
             statementService.findAll(
                 objectId = propertyId,
-                pageable = PageRequests.ALL
+                pageable = PageRequests.ALL,
             )
         } returns pageOf(templateHasPropertyStatement, otherStatementAboutTemplateProperty)
         every { statementService.deleteAllById(setOf(templateHasPropertyStatement.id)) } just runs
@@ -108,7 +108,7 @@ internal class AbstractTemplatePropertyDeleterUnitTest : MockkBaseTest {
         verify(exactly = 1) {
             statementService.findAll(
                 objectId = propertyId,
-                pageable = PageRequests.ALL
+                pageable = PageRequests.ALL,
             )
         }
         verify(exactly = 1) { statementService.deleteAllById(setOf(templateHasPropertyStatement.id)) }
@@ -122,24 +122,24 @@ internal class AbstractTemplatePropertyDeleterUnitTest : MockkBaseTest {
         val templateHasPropertyStatement = createStatement(
             subject = createResource(templateId),
             predicate = createPredicate(Predicates.shProperty),
-            `object` = createResource(propertyId)
+            `object` = createResource(propertyId),
         )
         val exception = NeitherOwnerNorCurator(ContributorId(UUID.randomUUID()), contributorId, propertyId)
 
         every {
             statementService.findAll(
                 objectId = propertyId,
-                pageable = PageRequests.ALL
+                pageable = PageRequests.ALL,
             )
         } returns pageOf(templateHasPropertyStatement)
         every {
             statementService.findAll(
                 subjectId = propertyId,
-                pageable = PageRequests.ALL
+                pageable = PageRequests.ALL,
             )
         } returns pageOf(
             createStatement(StatementId("S123")),
-            createStatement(StatementId("S456"))
+            createStatement(StatementId("S456")),
         )
         every {
             statementService.deleteAllById(setOf(templateHasPropertyStatement.id, StatementId("S123"), StatementId("S456")))
@@ -151,13 +151,13 @@ internal class AbstractTemplatePropertyDeleterUnitTest : MockkBaseTest {
         verify(exactly = 1) {
             statementService.findAll(
                 objectId = propertyId,
-                pageable = PageRequests.ALL
+                pageable = PageRequests.ALL,
             )
         }
         verify(exactly = 1) {
             statementService.findAll(
                 subjectId = propertyId,
-                pageable = PageRequests.ALL
+                pageable = PageRequests.ALL,
             )
         }
         verify(exactly = 1) {

@@ -67,7 +67,7 @@ class MergeComparisonTableMigrator(
                     label = proto.label,
                     description = proto.description,
                     type = ComparisonPath.Type.PREDICATE,
-                    children = children
+                    children = children,
                 )
                 parent.add(path)
                 parent = children
@@ -167,14 +167,14 @@ class MergeComparisonTableMigrator(
                         when (value) {
                             is ConfiguredComparisonTargetCell -> value.copy(
                                 path = alignPath(value.path, template.path),
-                                pathLabels = alignPath(value.pathLabels, template.pathLabels)
+                                pathLabels = alignPath(value.pathLabels, template.pathLabels),
                             )
 
                             is EmptyComparisonTargetCell -> value
                         }
                     }
                 }
-            }
+            },
         )
 
     private fun <T> alignPath(path: List<T>, template: List<T>): List<T> {

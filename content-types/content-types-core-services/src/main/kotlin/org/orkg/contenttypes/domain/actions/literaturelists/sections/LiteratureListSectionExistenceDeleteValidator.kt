@@ -13,7 +13,7 @@ class LiteratureListSectionExistenceDeleteValidator(
         literatureListService: LiteratureListService,
         resourceRepository: ResourceRepository,
     ) : this(
-        AbstractLiteratureListExistenceValidator(literatureListService, resourceRepository)
+        AbstractLiteratureListExistenceValidator(literatureListService, resourceRepository),
     )
 
     override fun invoke(command: DeleteLiteratureListSectionCommand, state: State): State =

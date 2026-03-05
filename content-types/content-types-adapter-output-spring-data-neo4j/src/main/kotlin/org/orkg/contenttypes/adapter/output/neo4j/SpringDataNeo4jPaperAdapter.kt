@@ -194,7 +194,7 @@ class SpringDataNeo4jPaperAdapter(
             )
             val patternBoundWhere = listOf(
                 doi.toCondition { toLower(doiLiteral.property("label")).eq(anonParameter(doi)) },
-                doiPrefix.toCondition { toLower(doiLiteral.property("label")).startsWith(anonParameter(it.lowercase().dropLastWhile { c -> c == '/' } + '/')) }
+                doiPrefix.toCondition { toLower(doiLiteral.property("label")).startsWith(anonParameter(it.lowercase().dropLastWhile { c -> c == '/' } + '/')) },
             ).reduceOrNull(Condition::and) ?: noCondition()
             val match = label?.let {
                 when (label) {
@@ -206,10 +206,10 @@ class SpringDataNeo4jPaperAdapter(
                                 function = "db.index.fulltext.queryNodes",
                                 arguments = arrayOf(
                                     anonParameter(FULLTEXT_INDEX_FOR_LABEL),
-                                    anonParameter(label.query)
+                                    anonParameter(label.query),
                                 ),
                                 yieldItems = arrayOf("node"),
-                                condition = toLower(node.property("label")).eq(toLower(anonParameter(label.input)))
+                                condition = toLower(node.property("label")).eq(toLower(anonParameter(label.input))),
                             )
                             .with(node)
                     }
@@ -222,10 +222,10 @@ class SpringDataNeo4jPaperAdapter(
                                 function = "db.index.fulltext.queryNodes",
                                 arguments = arrayOf(
                                     anonParameter(FULLTEXT_INDEX_FOR_LABEL),
-                                    anonParameter(label.query)
+                                    anonParameter(label.query),
                                 ),
                                 yieldItems = arrayOf("node", "score"),
-                                condition = size(node.property("label")).gte(anonParameter(label.input.length))
+                                condition = size(node.property("label")).gte(anonParameter(label.input.length)),
                             )
                             .with(node, name("score"))
                     }
@@ -250,7 +250,7 @@ class SpringDataNeo4jPaperAdapter(
                 createdAtEnd.toCondition { node.property("created_at").lte(anonParameter(it.format(ISO_OFFSET_DATE_TIME))) },
                 observatoryId.toCondition { node.property("observatory_id").eq(anonParameter(it.value.toString())) },
                 organizationId.toCondition { node.property("organization_id").eq(anonParameter(it.value.toString())) },
-                if (label != null && patterns.isNotEmpty()) node.asExpression().`in`(nodes) else noCondition()
+                if (label != null && patterns.isNotEmpty()) node.asExpression().`in`(nodes) else noCondition(),
             )
         }
         .withQuery { commonQuery ->
@@ -263,8 +263,8 @@ class SpringDataNeo4jPaperAdapter(
                     orderByOptimizations(
                         node = node,
                         sort = sort,
-                        properties = arrayOf("id", "label", "created_at", "created_by", "visibility")
-                    )
+                        properties = arrayOf("id", "label", "created_at", "created_by", "visibility"),
+                    ),
                 )
                 .with(variables)
                 .orderBy(
@@ -272,14 +272,14 @@ class SpringDataNeo4jPaperAdapter(
                         listOf(
                             size(node.property("label")).ascending(),
                             score.descending(),
-                            node.property("created_at").ascending()
+                            node.property("created_at").ascending(),
                         )
                     } else {
                         sort.toSortItems(
                             node = node,
-                            knownProperties = arrayOf("id", "label", "created_at", "created_by", "visibility")
+                            knownProperties = arrayOf("id", "label", "created_at", "created_by", "visibility"),
                         )
-                    }
+                    },
                 )
                 .returningDistinct(node)
         }
@@ -290,7 +290,7 @@ class SpringDataNeo4jPaperAdapter(
 fun Neo4jPaperWithPath.toPaperResourceWithPath() =
     PaperResourceWithPath(
         paper.toResource(),
-        aggregateAndConvertToModelObjects(paper.id!!, path)
+        aggregateAndConvertToModelObjects(paper.id!!, path),
     )
 
 private fun aggregateAndConvertToModelObjects(paperId: ThingId, path: Iterable<Neo4jThing>): List<List<Thing>> {

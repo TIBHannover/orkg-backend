@@ -51,7 +51,7 @@ internal class AuthorValidatorUnitTest : MockkBaseTest {
                 predicateId = Predicates.hasORCID,
                 objectClasses = setOf(Classes.literal),
                 objectLabel = "0000-1111-2222-3333",
-                pageable = PageRequests.ALL
+                pageable = PageRequests.ALL,
             )
         } returns Page.empty()
         every {
@@ -60,14 +60,14 @@ internal class AuthorValidatorUnitTest : MockkBaseTest {
                 predicateId = Predicates.hasORCID,
                 objectClasses = setOf(Classes.literal),
                 objectLabel = "1111-2222-3333-4444",
-                pageable = PageRequests.ALL
+                pageable = PageRequests.ALL,
             )
         } returns pageOf(
             createStatement(
                 subject = author2,
                 predicate = createPredicate(Predicates.hasORCID),
-                `object` = createLiteral(label = "1111-2222-3333-4444")
-            )
+                `object` = createLiteral(label = "1111-2222-3333-4444"),
+            ),
         )
 
         val result = authorValidator.validate(authors)
@@ -75,23 +75,23 @@ internal class AuthorValidatorUnitTest : MockkBaseTest {
         result shouldBe listOf(
             Author(
                 id = ThingId("R123"),
-                name = "Author with id"
+                name = "Author with id",
             ),
             Author(
                 name = "Author with orcid",
-                identifiers = mapOf("orcid" to listOf("0000-1111-2222-3333"))
+                identifiers = mapOf("orcid" to listOf("0000-1111-2222-3333")),
             ),
             Author(
                 id = ThingId("R456"),
-                name = "Author with id and orcid"
+                name = "Author with id and orcid",
             ),
             Author(
                 name = "Author with homepage",
-                homepage = ParsedIRI.create("https://example.org/author")
+                homepage = ParsedIRI.create("https://example.org/author"),
             ),
             Author(
-                name = "Author that just has a name"
-            )
+                name = "Author that just has a name",
+            ),
         )
 
         verify(exactly = 1) { resourceRepository.findById(author1.id) }
@@ -102,7 +102,7 @@ internal class AuthorValidatorUnitTest : MockkBaseTest {
                 predicateId = Predicates.hasORCID,
                 objectClasses = setOf(Classes.literal),
                 objectLabel = "0000-1111-2222-3333",
-                pageable = PageRequests.ALL
+                pageable = PageRequests.ALL,
             )
         }
         verify(exactly = 1) {
@@ -111,7 +111,7 @@ internal class AuthorValidatorUnitTest : MockkBaseTest {
                 predicateId = Predicates.hasORCID,
                 objectClasses = setOf(Classes.literal),
                 objectLabel = "1111-2222-3333-4444",
-                pageable = PageRequests.ALL
+                pageable = PageRequests.ALL,
             )
         }
     }
@@ -141,7 +141,7 @@ internal class AuthorValidatorUnitTest : MockkBaseTest {
     @Test
     fun `Given a list of authors, when name is not valid label, it throws an exception`() {
         val authors = listOf(
-            Author(name = "\n")
+            Author(name = "\n"),
         )
 
         assertThrows<InvalidLabel> { authorValidator.validate(authors) }.asClue {
@@ -156,8 +156,8 @@ internal class AuthorValidatorUnitTest : MockkBaseTest {
             Author(
                 id = ThingId("R123"),
                 name = "Author with orcid",
-                identifiers = mapOf("orcid" to listOf("0000-1111-2222-3333"))
-            )
+                identifiers = mapOf("orcid" to listOf("0000-1111-2222-3333")),
+            ),
         )
 
         val author1 = createResource(id = ThingId("R123"), classes = setOf(Classes.author))
@@ -170,14 +170,14 @@ internal class AuthorValidatorUnitTest : MockkBaseTest {
                 predicateId = Predicates.hasORCID,
                 objectClasses = setOf(Classes.literal),
                 objectLabel = "0000-1111-2222-3333",
-                pageable = PageRequests.ALL
+                pageable = PageRequests.ALL,
             )
         } returns pageOf(
             createStatement(
                 subject = author2,
                 predicate = createPredicate(Predicates.hasORCID),
-                `object` = createLiteral(label = "0000-1111-2222-3333")
-            )
+                `object` = createLiteral(label = "0000-1111-2222-3333"),
+            ),
         )
 
         assertThrows<AmbiguousAuthor> { authorValidator.validate(authors) }
@@ -189,7 +189,7 @@ internal class AuthorValidatorUnitTest : MockkBaseTest {
                 predicateId = Predicates.hasORCID,
                 objectClasses = setOf(Classes.literal),
                 objectLabel = "0000-1111-2222-3333",
-                pageable = PageRequests.ALL
+                pageable = PageRequests.ALL,
             )
         }
     }
@@ -202,9 +202,9 @@ internal class AuthorValidatorUnitTest : MockkBaseTest {
                 name = "Author with orcid",
                 identifiers = mapOf(
                     "orcid" to listOf("0000-1111-2222-3333"),
-                    "research_gate" to listOf("1111-2222-3333-4444")
-                )
-            )
+                    "research_gate" to listOf("1111-2222-3333-4444"),
+                ),
+            ),
         )
 
         val author1 = createResource(id = ThingId("R123"), classes = setOf(Classes.author))
@@ -217,14 +217,14 @@ internal class AuthorValidatorUnitTest : MockkBaseTest {
                 predicateId = Predicates.hasORCID,
                 objectClasses = setOf(Classes.literal),
                 objectLabel = "0000-1111-2222-3333",
-                pageable = PageRequests.ALL
+                pageable = PageRequests.ALL,
             )
         } returns pageOf(
             createStatement(
                 subject = author1,
                 predicate = createPredicate(Predicates.hasORCID),
-                `object` = createLiteral(label = "0000-1111-2222-3333")
-            )
+                `object` = createLiteral(label = "0000-1111-2222-3333"),
+            ),
         )
         every {
             statementRepository.findAll(
@@ -232,14 +232,14 @@ internal class AuthorValidatorUnitTest : MockkBaseTest {
                 predicateId = Predicates.hasResearchGateId,
                 objectClasses = setOf(Classes.literal),
                 objectLabel = "1111-2222-3333-4444",
-                pageable = PageRequests.ALL
+                pageable = PageRequests.ALL,
             )
         } returns pageOf(
             createStatement(
                 subject = author2,
                 predicate = createPredicate(Predicates.hasResearchGateId),
-                `object` = createLiteral(label = "1111-2222-3333-4444")
-            )
+                `object` = createLiteral(label = "1111-2222-3333-4444"),
+            ),
         )
 
         assertThrows<AmbiguousAuthor> { authorValidator.validate(authors) }
@@ -251,7 +251,7 @@ internal class AuthorValidatorUnitTest : MockkBaseTest {
                 predicateId = Predicates.hasORCID,
                 objectClasses = setOf(Classes.literal),
                 objectLabel = "0000-1111-2222-3333",
-                pageable = PageRequests.ALL
+                pageable = PageRequests.ALL,
             )
         }
         verify(exactly = 1) {
@@ -260,7 +260,7 @@ internal class AuthorValidatorUnitTest : MockkBaseTest {
                 predicateId = Predicates.hasResearchGateId,
                 objectClasses = setOf(Classes.literal),
                 objectLabel = "1111-2222-3333-4444",
-                pageable = PageRequests.ALL
+                pageable = PageRequests.ALL,
             )
         }
     }
@@ -271,9 +271,9 @@ internal class AuthorValidatorUnitTest : MockkBaseTest {
             Author(
                 name = "Invalid Author",
                 identifiers = mapOf(
-                    "orcid" to listOf("invalid")
-                )
-            )
+                    "orcid" to listOf("invalid"),
+                ),
+            ),
         )
 
         assertThrows<InvalidIdentifier> { authorValidator.validate(authors) }.name shouldBe "orcid"

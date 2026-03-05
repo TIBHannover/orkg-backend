@@ -8,7 +8,7 @@ value class WikidataId private constructor(override val value: String) : Identif
     companion object : IdentifierValueFactory<WikidataId>(
         fn = ::WikidataId,
         validationRegex = VALID_WIKIDATA_ID_REGEX,
-        uriValidationRegex = VALID_WIKIDATA_ID_URI_REGEX
+        uriValidationRegex = VALID_WIKIDATA_ID_URI_REGEX,
     )
 
     override val uri: String get() = "https://www.wikidata.org/wiki/$value"

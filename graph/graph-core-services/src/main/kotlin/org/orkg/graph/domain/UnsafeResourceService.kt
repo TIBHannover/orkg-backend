@@ -27,7 +27,7 @@ class UnsafeResourceService(
             createdBy = command.contributorId,
             observatoryId = command.observatoryId ?: ObservatoryId.UNKNOWN,
             organizationId = command.organizationId ?: OrganizationId.UNKNOWN,
-            modifiable = command.modifiable
+            modifiable = command.modifiable,
         )
         repository.save(resource)
         return resource.id

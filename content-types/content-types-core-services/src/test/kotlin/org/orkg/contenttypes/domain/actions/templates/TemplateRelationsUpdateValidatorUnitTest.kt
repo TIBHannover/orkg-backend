@@ -72,7 +72,7 @@ internal class TemplateRelationsUpdateValidatorUnitTest : MockkBaseTest {
     @Test
     fun `Given a template update command, when relations are empty, it returns success`() {
         val command = updateTemplateCommand().copy(
-            relations = TemplateRelationsCommand()
+            relations = TemplateRelationsCommand(),
         )
         val state = UpdateTemplateState(template = createTemplate())
 
@@ -87,8 +87,8 @@ internal class TemplateRelationsUpdateValidatorUnitTest : MockkBaseTest {
     fun `Given a template update command, when related research field is missing, it throws an exception`() {
         val command = updateTemplateCommand().copy(
             relations = TemplateRelationsCommand(
-                researchFields = listOf(ThingId("R24"))
-            )
+                researchFields = listOf(ThingId("R24")),
+            ),
         )
         val state = UpdateTemplateState(template = createTemplate())
 
@@ -105,8 +105,8 @@ internal class TemplateRelationsUpdateValidatorUnitTest : MockkBaseTest {
     fun `Given a template update command, when related research problem is missing, it throws an exception`() {
         val command = updateTemplateCommand().copy(
             relations = TemplateRelationsCommand(
-                researchProblems = listOf(ThingId("R29"))
-            )
+                researchProblems = listOf(ThingId("R29")),
+            ),
         )
         val state = UpdateTemplateState(template = createTemplate())
 
@@ -125,8 +125,8 @@ internal class TemplateRelationsUpdateValidatorUnitTest : MockkBaseTest {
             relations = TemplateRelationsCommand(
                 researchFields = emptyList(),
                 researchProblems = emptyList(),
-                predicate = ThingId("P23")
-            )
+                predicate = ThingId("P23"),
+            ),
         )
         val state = UpdateTemplateState(template = createTemplate())
 
@@ -143,18 +143,18 @@ internal class TemplateRelationsUpdateValidatorUnitTest : MockkBaseTest {
     fun `Given a template update command, when validating its relations, it only checks for previously unknown research fields`() {
         val command = updateTemplateCommand().copy(
             relations = TemplateRelationsCommand(
-                researchFields = listOf(ThingId("R123"), ThingId("R789"))
-            )
+                researchFields = listOf(ThingId("R123"), ThingId("R789")),
+            ),
         )
         val state = UpdateTemplateState(
             template = createTemplate().copy(
                 relations = TemplateRelations(
                     researchFields = listOf(
                         ObjectIdAndLabel(ThingId("R123"), "irrelevant"),
-                        ObjectIdAndLabel(ThingId("R456"), "irrelevant")
-                    )
-                )
-            )
+                        ObjectIdAndLabel(ThingId("R456"), "irrelevant"),
+                    ),
+                ),
+            ),
         )
 
         every {
@@ -174,18 +174,18 @@ internal class TemplateRelationsUpdateValidatorUnitTest : MockkBaseTest {
     fun `Given a template update command, when validating its relations, it only checks for previously unknown research problems`() {
         val command = updateTemplateCommand().copy(
             relations = TemplateRelationsCommand(
-                researchProblems = listOf(ThingId("R123"), ThingId("R789"))
-            )
+                researchProblems = listOf(ThingId("R123"), ThingId("R789")),
+            ),
         )
         val state = UpdateTemplateState(
             template = createTemplate().copy(
                 relations = TemplateRelations(
                     researchProblems = listOf(
                         ObjectIdAndLabel(ThingId("R123"), "irrelevant"),
-                        ObjectIdAndLabel(ThingId("R456"), "irrelevant")
-                    )
-                )
-            )
+                        ObjectIdAndLabel(ThingId("R456"), "irrelevant"),
+                    ),
+                ),
+            ),
         )
 
         every {
@@ -205,15 +205,15 @@ internal class TemplateRelationsUpdateValidatorUnitTest : MockkBaseTest {
     fun `Given a template update command, when validating its relations, it only checks for previously unknown predicates`() {
         val command = updateTemplateCommand().copy(
             relations = TemplateRelationsCommand(
-                predicate = ThingId("R123")
-            )
+                predicate = ThingId("R123"),
+            ),
         )
         val state = UpdateTemplateState(
             template = createTemplate().copy(
                 relations = TemplateRelations(
-                    predicate = ObjectIdAndLabel(ThingId("R123"), "irrelevant")
-                )
-            )
+                    predicate = ObjectIdAndLabel(ThingId("R123"), "irrelevant"),
+                ),
+            ),
         )
 
         val result = templateRelationsUpdateValidator(command, state)

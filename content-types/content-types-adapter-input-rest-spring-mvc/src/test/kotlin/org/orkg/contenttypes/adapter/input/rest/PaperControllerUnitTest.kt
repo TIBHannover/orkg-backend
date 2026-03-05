@@ -134,10 +134,10 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
                 description(
                     """
                     A `GET` request provides information about a paper.
-                    """
+                    """,
                 )
                 pathParameters(
-                    parameterWithName("id").description("The identifier of the paper to retrieve.")
+                    parameterWithName("id").description("The identifier of the paper to retrieve."),
                 )
                 responseFields<PaperRepresentation>(paperResponseFields())
                 throws(PaperNotFound::class)
@@ -237,7 +237,7 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
                     """
                     A `GET` request returns a <<sorting-and-pagination,paged>> list of <<papers-fetch,papers>>.
                     If no paging request parameters are provided, the default values will be used.
-                    """
+                    """,
                 )
                 pagedQueryParameters(
                     parameterWithName("title").description("A search term that must be contained in the title of the paper. (optional)").optional(),
@@ -322,7 +322,7 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
                 description(
                     """
                     A `GET` request returns a <<sorting-and-pagination,paged>> list of <<contributors,contributor>> ids.
-                    """
+                    """,
                 )
                 pathParameters(
                     parameterWithName("id").description("The identifier of the paper."),
@@ -384,10 +384,10 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
                     1. Author resources of the authors list will not be removed.
                     2. Only the subgraph up until the contribution resource(s) (including) will be removed.
                     ====
-                    """
+                    """,
                 )
                 pathParameters(
-                    parameterWithName("id").description("The identifier of the paper.")
+                    parameterWithName("id").description("The identifier of the paper."),
                 )
                 throws(PaperNotModifiable::class, NeitherOwnerNorCurator::class, ContributorNotFound::class, PaperInUse::class)
             }
@@ -397,7 +397,7 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
                 withArg {
                     it.paperId shouldBe id
                     it.contributorId shouldBe ContributorId(MockUserId.USER)
-                }
+                },
             )
         }
     }
@@ -413,7 +413,7 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
         val request = mapOf(
             "subject" to subject,
             "description" to description,
-            "authors" to authors
+            "authors" to authors,
         )
         val paperVersionId = ThingId("R456")
 
@@ -433,7 +433,7 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
                     All contribution statements of the original paper are archived in a separate database.
                     The response will be `201 Created` when successful.
                     The paper resource can be retrieved by following the URI in the `Location` header field.
-                    """
+                    """,
                 )
                 pathParameters(
                     parameterWithName("id").description("The identifier of the paper to publish."),
@@ -463,7 +463,7 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
                     it.description shouldBe description
                     it.subject shouldBe subject
                     it.authors shouldBe authors
-                }
+                },
             )
         }
     }
@@ -478,7 +478,7 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
         val request = mapOf(
             "subject" to subject,
             "description" to description,
-            "authors" to authors
+            "authors" to authors,
         )
         val exception = PaperNotFound.withId(id)
 
@@ -498,7 +498,7 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
                     it.description shouldBe description
                     it.subject shouldBe subject
                     it.authors shouldBe authors
-                }
+                },
             )
         }
     }
@@ -513,7 +513,7 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
         val request = mapOf(
             "subject" to subject,
             "description" to description,
-            "authors" to authors
+            "authors" to authors,
         )
         val exception = ServiceUnavailable.create("DOI", 500, "Internal error")
 
@@ -533,7 +533,7 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
                     it.description shouldBe description
                     it.subject shouldBe subject
                     it.authors shouldBe authors
-                }
+                },
             )
         }
     }
@@ -559,7 +559,7 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
                     A `POST` request creates a new paper with the provided details.
                     Upon successful creation, returns `201 Created` with the `Location` header pointing to the newly created paper.
                     The response body contains the created paper for convenience.
-                    """
+                    """,
                 )
                 requestFields<CreatePaperRequest>(
                     fieldWithPath("title").description("The title of the paper."),
@@ -775,8 +775,8 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
             Author(
                 id = ThingId("R123"),
                 name = "author",
-                identifiers = mapOf("orcid" to listOf("0000-1111-2222-3333"))
-            )
+                identifiers = mapOf("orcid" to listOf("0000-1111-2222-3333")),
+            ),
         )
         every { paperService.create(any<CreatePaperUseCase.CreateCommand>()) } throws exception
 
@@ -906,10 +906,10 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
                     ====
                     
                     WARNING: Author names will not be updated if a resource id is specified for a given author.
-                    """
+                    """,
                 )
                 pathParameters(
-                    parameterWithName("id").description("The identifier of the paper to update.")
+                    parameterWithName("id").description("The identifier of the paper to update."),
                 )
                 requestFields<UpdatePaperRequest>(
                     fieldWithPath("title").description("The title of the paper. (optional)").optional(),
@@ -998,8 +998,8 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
             Author(
                 id = ThingId("R123"),
                 name = "author",
-                identifiers = mapOf("orcid" to listOf("0000-1111-2222-3333"))
-            )
+                identifiers = mapOf("orcid" to listOf("0000-1111-2222-3333")),
+            ),
         )
         every { paperService.update(any()) } throws exception
 
@@ -1126,7 +1126,7 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
                     A `HEAD` request checks if a paper with the specified DOI exists.
                     The response will be `200 OK` when found, otherwise status will be `404 NOT FOUND`.
                     If found, the paper resource can be retrieved by following the URI in the `Location` header field.
-                    """
+                    """,
                 )
                 queryParameters(
                     parameterWithName("doi").description("The DOI of the paper."),
@@ -1188,7 +1188,7 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
                     A `HEAD` request checks if a paper with the specified title exists.
                     The response will be `200 OK` when found, otherwise status will be `404 NOT FOUND`.
                     If found, the paper resource can be retrieved by following the URI in the `Location` header field.
-                    """
+                    """,
                 )
                 queryParameters(
                     parameterWithName("title").description("An exact search term that must match the title of the paper."),
@@ -1227,7 +1227,7 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
                     The response will be `200 OK` when found, otherwise status will be `404 NOT FOUND`.
                     If found, the paper resource can be retrieved by following the URI in the `Location` header field.
                     The query parameters are mutually exclusive.
-                    """
+                    """,
                 )
                 queryParameters(
                     parameterWithName("doi").description("The DOI of the paper.").optional(),
@@ -1266,72 +1266,72 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
                 publishedMonth = 5,
                 publishedYear = 2015,
                 publishedIn = "conference",
-                url = ParsedIRI.create("https://www.example.org")
+                url = ParsedIRI.create("https://www.example.org"),
             ),
             authors = listOf(
                 AuthorRequest(
                     id = ThingId("R123"),
                     name = "Author with id",
                     identifiers = null,
-                    homepage = null
+                    homepage = null,
                 ),
                 AuthorRequest(
                     id = null,
                     name = "Author with orcid",
                     identifiers = IdentifierMapRequest(mapOf("orcid" to listOf("0000-1111-2222-3333"))),
-                    homepage = null
+                    homepage = null,
                 ),
                 AuthorRequest(
                     id = ThingId("R456"),
                     name = "Author with id and orcid",
                     identifiers = IdentifierMapRequest(mapOf("orcid" to listOf("1111-2222-3333-4444"))),
-                    homepage = null
+                    homepage = null,
                 ),
                 AuthorRequest(
                     id = null,
                     name = "Author with homepage",
                     identifiers = null,
-                    homepage = ParsedIRI.create("https://example.org/author")
+                    homepage = ParsedIRI.create("https://example.org/author"),
                 ),
                 AuthorRequest(
                     id = null,
                     name = "Author that just has a name",
                     identifiers = null,
-                    homepage = null
-                )
+                    homepage = null,
+                ),
             ),
             sustainableDevelopmentGoals = setOf(ThingId("SDG_1")),
             mentionings = setOf(ThingId("R159"), ThingId("R753")),
             observatories = listOf(
-                ObservatoryId("1afefdd0-5c09-4c9c-b718-2b35316b56f3")
+                ObservatoryId("1afefdd0-5c09-4c9c-b718-2b35316b56f3"),
             ),
             organizations = listOf(
-                OrganizationId("edc18168-c4ee-4cb8-a98a-136f748e912e")
+                OrganizationId("edc18168-c4ee-4cb8-a98a-136f748e912e"),
             ),
             contents = PaperContentsRequest(
                 resources = mapOf(
                     "#temp1" to CreateResourceRequestPart(
                         label = "MOTO",
-                        classes = setOf(ThingId("Result"))
-                    )
+                        classes = setOf(ThingId("Result")),
+                    ),
                 ),
                 literals = mapOf(
                     "#temp2" to CreateLiteralRequestPart(
                         label = "0.1",
-                        dataType = "xsd:decimal"
-                    )
+                        dataType = "xsd:decimal",
+                    ),
                 ),
                 predicates = mapOf(
                     "#temp3" to CreatePredicateRequestPart(
                         label = "hasResult",
-                        description = "has result"
-                    )
+                        description = "has result",
+                    ),
                 ),
                 lists = mapOf(
                     "#temp4" to CreateListRequestPart(
                         label = "list",
-                        elements = listOf("#temp1", "C123")
-                    )
+                        elements = listOf("#temp1", "C123"),
+                    ),
                 ),
                 contributions = listOf(
                     ContributionRequestPart(
@@ -1341,13 +1341,13 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
                             "P32" to listOf(
                                 StatementObjectRequest(
                                     id = "R3003",
-                                    statements = null
-                                )
+                                    statements = null,
+                                ),
                             ),
                             "HAS_EVALUATION" to listOf(
                                 StatementObjectRequest(
                                     id = "#temp1",
-                                    statements = null
+                                    statements = null,
                                 ),
                                 StatementObjectRequest(
                                     id = "R3004",
@@ -1355,31 +1355,31 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
                                         "#temp3" to listOf(
                                             StatementObjectRequest(
                                                 id = "R3003",
-                                                statements = null
+                                                statements = null,
                                             ),
                                             StatementObjectRequest(
                                                 id = "#temp2",
-                                                statements = null
+                                                statements = null,
                                             ),
                                             StatementObjectRequest(
                                                 id = "#temp4",
-                                                statements = null
-                                            )
+                                                statements = null,
+                                            ),
                                         ),
                                         "P32" to listOf(
                                             StatementObjectRequest(
                                                 id = "#temp2",
-                                                statements = null
-                                            )
-                                        )
-                                    )
-                                )
-                            )
-                        )
-                    )
-                )
+                                                statements = null,
+                                            ),
+                                        ),
+                                    ),
+                                ),
+                            ),
+                        ),
+                    ),
+                ),
             ),
-            extractionMethod = ExtractionMethod.MANUAL
+            extractionMethod = ExtractionMethod.MANUAL,
         )
 
     private fun updatePaperRequest() =
@@ -1391,56 +1391,56 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
                 publishedMonth = 5,
                 publishedYear = 2015,
                 publishedIn = "conference",
-                url = ParsedIRI.create("https://www.example.org")
+                url = ParsedIRI.create("https://www.example.org"),
             ),
             authors = listOf(
                 AuthorRequest(
                     id = ThingId("R123"),
                     name = "Author with id",
                     identifiers = null,
-                    homepage = null
+                    homepage = null,
                 ),
                 AuthorRequest(
                     id = null,
                     name = "Author with orcid",
                     identifiers = IdentifierMapRequest(mapOf("orcid" to listOf("0000-1111-2222-3333"))),
-                    homepage = null
+                    homepage = null,
                 ),
                 AuthorRequest(
                     id = ThingId("R456"),
                     name = "Author with id and orcid",
                     identifiers = IdentifierMapRequest(mapOf("orcid" to listOf("1111-2222-3333-4444"))),
-                    homepage = null
+                    homepage = null,
                 ),
                 AuthorRequest(
                     id = null,
                     name = "Author with homepage",
                     identifiers = null,
-                    homepage = ParsedIRI.create("https://example.org/author")
+                    homepage = ParsedIRI.create("https://example.org/author"),
                 ),
                 AuthorRequest(
                     id = null,
                     name = "Author that just has a name",
                     identifiers = null,
-                    homepage = null
-                )
+                    homepage = null,
+                ),
             ),
             sustainableDevelopmentGoals = setOf(
                 ThingId("SDG_3"),
-                ThingId("SDG_4")
+                ThingId("SDG_4"),
             ),
             mentionings = setOf(
                 ThingId("R953"),
-                ThingId("R357")
+                ThingId("R357"),
             ),
             observatories = listOf(
-                ObservatoryId("1afefdd0-5c09-4c9c-b718-2b35316b56f3")
+                ObservatoryId("1afefdd0-5c09-4c9c-b718-2b35316b56f3"),
             ),
             organizations = listOf(
-                OrganizationId("edc18168-c4ee-4cb8-a98a-136f748e912e")
+                OrganizationId("edc18168-c4ee-4cb8-a98a-136f748e912e"),
             ),
             extractionMethod = ExtractionMethod.AUTOMATIC,
             visibility = Visibility.FEATURED,
-            verified = true
+            verified = true,
         )
 }

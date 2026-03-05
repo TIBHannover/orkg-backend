@@ -54,7 +54,7 @@ private fun Resource.toAuthor(statements: List<GeneralStatement>): Author =
         id = id,
         name = label,
         identifiers = statements.associateIdentifiers(Identifiers.author),
-        homepage = statements.wherePredicate(Predicates.hasWebsite).firstObjectLabel()?.toIRIOrNull()
+        homepage = statements.wherePredicate(Predicates.hasWebsite).firstObjectLabel()?.toIRIOrNull(),
     )
 
 private fun Literal.toAuthor(): Author =
@@ -62,7 +62,7 @@ private fun Literal.toAuthor(): Author =
         id = null,
         name = label,
         identifiers = emptyMap(),
-        homepage = null
+        homepage = null,
     )
 
 fun Map<ThingId, List<GeneralStatement>>.authors(subjectId: ThingId): List<Author> =
@@ -94,7 +94,7 @@ fun parseComparisonDataSources(statements: List<GeneralStatement>): List<Compari
                     Predicates.comparesContribution -> ComparisonDataSource.Type.THING
                     Predicates.comparesRosettaStoneContribution -> ComparisonDataSource.Type.ROSETTA_STONE_STATEMENT
                     else -> throw IllegalStateException()
-                }
+                },
             )
         }
         .sortedBy { it.first }

@@ -29,6 +29,6 @@ class Neo4jContainerInitializer : ApplicationContextInitializer<ConfigurableAppl
     private fun settingsForSDN(neo4j: Neo4jContainer) = listOf(
         "spring.neo4j.uri=${neo4j.boltUrl}",
         "spring.neo4j.authentication.username=neo4j",
-        "spring.neo4j.authentication.password=${neo4j.adminPassword}"
+        "spring.neo4j.authentication.password=${neo4j.adminPassword}",
     )
 }

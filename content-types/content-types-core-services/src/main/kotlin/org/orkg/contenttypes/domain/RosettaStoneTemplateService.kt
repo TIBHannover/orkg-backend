@@ -111,7 +111,7 @@ class RosettaStoneTemplateService(
             includeClasses = setOf(Classes.rosettaNodeShape),
             organizationId = organizationId,
             observatoryId = observatoryId,
-            pageable = pageable
+            pageable = pageable,
         ).pmap { it.toRosettaStoneTemplate() }
 
     override fun create(command: CreateRosettaStoneTemplateCommand): ThingId {
@@ -127,7 +127,7 @@ class RosettaStoneTemplateService(
             RosettaStoneTemplateDescriptionCreator(unsafeLiteralUseCases, unsafeStatementUseCases),
             RosettaStoneTemplateDynamicLabelCreator(unsafeLiteralUseCases, unsafeStatementUseCases),
             RosettaStoneTemplateClosedCreator(unsafeLiteralUseCases, unsafeStatementUseCases),
-            RosettaStoneTemplatePropertiesCreator(unsafeResourceUseCases, unsafeLiteralUseCases, unsafeStatementUseCases)
+            RosettaStoneTemplatePropertiesCreator(unsafeResourceUseCases, unsafeLiteralUseCases, unsafeStatementUseCases),
         )
         return steps.execute(command, CreateRosettaStoneTemplateState()).rosettaStoneTemplateId!!
     }
@@ -168,7 +168,7 @@ class RosettaStoneTemplateService(
 
             val rosettaStoneStatements = rosettaStoneStatementRepository.findAll(
                 templateId = template.id,
-                pageable = PageRequests.SINGLE
+                pageable = PageRequests.SINGLE,
             )
 
             if (rosettaStoneStatements.totalElements > 0) {
@@ -203,10 +203,10 @@ class RosettaStoneTemplateService(
                 minLevel = null,
                 maxLevel = 2,
                 blacklist = emptyList(),
-                whitelist = emptyList()
+                whitelist = emptyList(),
             ),
-            sort = Sort.unsorted()
-        ).groupBy { it.subject.id }
+            sort = Sort.unsorted(),
+        ).groupBy { it.subject.id },
     )
 
     internal fun Resource.toRosettaStoneTemplate(): RosettaStoneTemplate =

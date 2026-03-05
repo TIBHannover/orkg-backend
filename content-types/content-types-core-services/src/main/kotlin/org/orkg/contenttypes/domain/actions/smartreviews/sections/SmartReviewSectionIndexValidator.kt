@@ -14,7 +14,7 @@ class SmartReviewSectionIndexValidator(
             val statements = statementRepository.findAll(
                 subjectId = state.contributionId,
                 predicateId = Predicates.hasSection,
-                pageable = PageRequests.ALL
+                pageable = PageRequests.ALL,
             )
             return state.copy(statements = statements.content.groupBy { it.subject.id })
         }

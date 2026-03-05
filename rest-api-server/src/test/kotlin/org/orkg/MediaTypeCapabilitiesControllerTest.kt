@@ -38,7 +38,7 @@ import tools.jackson.core.type.TypeReference
         TestConfiguration::class,
         SecurityConfiguration::class,
         JwtAuthenticationConverter::class,
-    ]
+    ],
 )
 @WebMvcTest(controllers = [ProducingFakeController::class, NonProducingFakeController::class])
 internal class MediaTypeCapabilitiesControllerTest : MockMvcBaseTest("media-type-capabilities") {

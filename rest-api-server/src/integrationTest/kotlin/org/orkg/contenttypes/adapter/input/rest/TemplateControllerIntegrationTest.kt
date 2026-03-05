@@ -130,14 +130,14 @@ internal class TemplateControllerIntegrationTest : MockMvcBaseTest("templates") 
             classService.createClass(
                 label = xsd.`class`.value,
                 id = xsd.`class`,
-                uri = ParsedIRI.create(xsd.uri)
+                uri = ParsedIRI.create(xsd.uri),
             )
         }
 
         resourceService.createResource(
             id = ThingId("R12"),
             label = "Computer Science",
-            classes = setOf(Classes.researchField)
+            classes = setOf(Classes.researchField),
         )
 
         // Example specific entities
@@ -162,20 +162,20 @@ internal class TemplateControllerIntegrationTest : MockMvcBaseTest("templates") 
         resourceService.createResource(
             id = ThingId("R13"),
             label = "Engineering",
-            classes = setOf(Classes.researchField)
+            classes = setOf(Classes.researchField),
         )
 
         val contributorId = contributorService.createContributor()
 
         organizationService.createOrganization(
             createdBy = contributorId,
-            id = OrganizationId("edc18168-c4ee-4cb8-a98a-136f748e912e")
+            id = OrganizationId("edc18168-c4ee-4cb8-a98a-136f748e912e"),
         )
 
         observatoryService.createObservatory(
             organizations = setOf(OrganizationId("edc18168-c4ee-4cb8-a98a-136f748e912e")),
             researchField = ThingId("R12"),
-            id = ObservatoryId("1afefdd0-5c09-4c9c-b718-2b35316b56f3")
+            id = ObservatoryId("1afefdd0-5c09-4c9c-b718-2b35316b56f3"),
         )
     }
 
@@ -215,7 +215,7 @@ internal class TemplateControllerIntegrationTest : MockMvcBaseTest("templates") 
             it.relations shouldBe TemplateRelationRepresentation(
                 researchFields = listOf(ObjectIdAndLabel(ThingId("R12"), "Computer Science")),
                 researchProblems = listOf(ObjectIdAndLabel(ThingId("R15"), "label")),
-                predicate = ObjectIdAndLabel(Predicates.hasResearchProblem, "P32")
+                predicate = ObjectIdAndLabel(Predicates.hasResearchProblem, "P32"),
             )
             it.properties.size shouldBe 5
             it.properties[0].shouldBeInstanceOf<UntypedTemplatePropertyRepresentation>().asClue { property ->
@@ -313,7 +313,7 @@ internal class TemplateControllerIntegrationTest : MockMvcBaseTest("templates") 
             it.relations shouldBe TemplateRelations(
                 researchFields = listOf(ObjectIdAndLabel(ThingId("R13"), "Engineering")),
                 researchProblems = listOf(ObjectIdAndLabel(ThingId("R16"), "label")),
-                predicate = ObjectIdAndLabel(Predicates.hasContribution, "P31")
+                predicate = ObjectIdAndLabel(Predicates.hasContribution, "P31"),
             )
             it.properties.size shouldBe 5
             it.properties[0].shouldBeInstanceOf<UntypedTemplateProperty>().asClue { property ->

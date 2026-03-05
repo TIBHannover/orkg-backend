@@ -132,7 +132,7 @@ fun Predicate.toNTriple(writer: Writer) {
     val pPrefix = RdfConstants.PREDICATE_NS
     val predicate = "<$pPrefix${this.id}> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <${cPrefix}Predicate> .\n" + "<$pPrefix${this.id}> <http://www.w3.org/2000/01/rdf-schema#label> \"${
         escapeLiteral(
-            label
+            label,
         )
     }\"^^<http://www.w3.org/2001/XMLSchema#string> .\n"
     writer.write(predicate)

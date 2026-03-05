@@ -107,7 +107,7 @@ class LiteratureListController(
             researchField = researchField,
             includeSubfields = includeSubfields,
             published = published,
-            sustainableDevelopmentGoal = sustainableDevelopmentGoal
+            sustainableDevelopmentGoal = sustainableDevelopmentGoal,
         ).mapToLiteratureListRepresentation()
 
     @GetMapping("/{id}/published-contents/{contentId}", produces = [MediaType.APPLICATION_JSON_VALUE])
@@ -252,7 +252,7 @@ class LiteratureListController(
                 observatories = observatories.orEmpty(),
                 organizations = organizations.orEmpty(),
                 extractionMethod = extractionMethod,
-                sections = sections?.map { it.toLiteratureListSectionCommand() }.orEmpty()
+                sections = sections?.map { it.toLiteratureListSectionCommand() }.orEmpty(),
             )
     }
 
@@ -296,8 +296,8 @@ class LiteratureListController(
     @JsonSubTypes(
         value = [
             JsonSubTypes.Type(LiteratureListListSectionRequest::class),
-            JsonSubTypes.Type(LiteratureListTextSectionRequest::class)
-        ]
+            JsonSubTypes.Type(LiteratureListTextSectionRequest::class),
+        ],
     )
     sealed interface LiteratureListSectionRequest {
         fun toLiteratureListSectionCommand(): AbstractLiteratureListSectionCommand
@@ -338,7 +338,7 @@ class LiteratureListController(
                 contributorId,
                 literatureListId,
                 index,
-                entries.map { it.toCommandEntry() }
+                entries.map { it.toCommandEntry() },
             )
 
         override fun toUpdateCommand(
@@ -350,7 +350,7 @@ class LiteratureListController(
                 literatureListSectionId,
                 contributorId,
                 literatureListId,
-                entries.map { it.toCommandEntry() }
+                entries.map { it.toCommandEntry() },
             )
     }
 
@@ -375,7 +375,7 @@ class LiteratureListController(
                 index,
                 heading,
                 headingSize,
-                text
+                text,
             )
 
         override fun toUpdateCommand(
@@ -389,7 +389,7 @@ class LiteratureListController(
                 literatureListId,
                 heading,
                 headingSize,
-                text
+                text,
             )
     }
 
@@ -401,7 +401,7 @@ class LiteratureListController(
             PublishLiteratureListUseCase.PublishCommand(
                 id = id,
                 contributorId = contributorId,
-                changelog = changelog
+                changelog = changelog,
             )
     }
 }

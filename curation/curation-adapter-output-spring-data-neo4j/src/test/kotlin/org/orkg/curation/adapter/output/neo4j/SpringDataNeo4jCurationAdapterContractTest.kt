@@ -28,8 +28,8 @@ import org.orkg.testing.annotations.Neo4jContainerUnitTest
         SpringDataNeo4jClassAdapter::class,
         GraphNeo4jConfiguration::class,
         CypherQueryBuilderConfiguration::class,
-        CurationNeo4jConfiguration::class
-    ]
+        CurationNeo4jConfiguration::class,
+    ],
 )
 internal class SpringDataNeo4jCurationAdapterContractTest(
     private val springDataNeo4jCurationAdapter: CurationRepository,
@@ -46,8 +46,8 @@ internal class SpringDataNeo4jCurationAdapterContractTest(
                 springDataNeo4jClassAdapter,
                 springDataNeo4jLiteralAdapter,
                 springDataNeo4jResourceAdapter,
-                springDataNeo4jPredicateAdapter
-            )
+                springDataNeo4jPredicateAdapter,
+            ),
         )
 
         afterSpec {

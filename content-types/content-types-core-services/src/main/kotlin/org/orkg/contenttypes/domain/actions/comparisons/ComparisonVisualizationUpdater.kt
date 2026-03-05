@@ -16,7 +16,7 @@ class ComparisonVisualizationUpdater(
         statementService: StatementUseCases,
         unsafeStatementUseCases: UnsafeStatementUseCases,
     ) : this(
-        StatementCollectionPropertyUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases)
+        StatementCollectionPropertyUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases),
     )
 
     override fun invoke(command: UpdateComparisonCommand, state: State): State {
@@ -26,7 +26,7 @@ class ComparisonVisualizationUpdater(
                 contributorId = command.contributorId,
                 subjectId = command.comparisonId,
                 predicateId = Predicates.hasVisualization,
-                objects = command.visualizations!!.toSet()
+                objects = command.visualizations!!.toSet(),
             )
         }
         return state

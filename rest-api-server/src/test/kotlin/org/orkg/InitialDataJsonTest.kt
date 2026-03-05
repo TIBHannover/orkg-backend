@@ -79,6 +79,6 @@ internal class InitialDataJsonTest {
     private inline fun <reified T> readDataFile(entitiesFileName: String): T =
         objectMapper.readValue<T>(
             this::class.java.classLoader.getResource("$directory/$entitiesFileName.json")?.openStream()
-                ?: throw IllegalStateException("Directory was configured, but file was not found")
+                ?: throw IllegalStateException("Directory was configured, but file was not found"),
         )
 }

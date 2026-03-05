@@ -90,8 +90,8 @@ class PostgresDummyDataSetup(
                     joinedAt = OffsetDateTime.now(),
                     emailHash = SHA256.fromEmail("user@example.org"),
                     isAdmin = true,
-                    isCurator = true
-                )
+                    isCurator = true,
+                ),
             )
         }
     }
@@ -117,8 +117,8 @@ class PostgresDummyDataSetup(
                         name = it.name,
                         url = it.homepage,
                         type = it.type!!,
-                        logo = null
-                    )
+                        logo = null,
+                    ),
                 )
             }, {
                 organizationService.create(
@@ -128,7 +128,7 @@ class PostgresDummyDataSetup(
                     url = organization.homepage!!,
                     displayId = organization.displayId!!,
                     type = organization.type!!,
-                    logoId = null
+                    logoId = null,
                 )
             })
         }
@@ -155,8 +155,8 @@ class PostgresDummyDataSetup(
                 observatoryService.update(
                     UpdateObservatoryUseCase.UpdateCommand(
                         id = observatory.id,
-                        organizations = it.organizationIds + observatory.organizationIds
-                    )
+                        organizations = it.organizationIds + observatory.organizationIds,
+                    ),
                 )
             }
         }
@@ -187,7 +187,7 @@ class PostgresDummyDataSetup(
             dummyDataUseCases.updateOrganizationAndObservatory(
                 contributorId = key,
                 organizationId = value.first ?: OrganizationId.UNKNOWN,
-                observatoryId = value.second ?: ObservatoryId.UNKNOWN
+                observatoryId = value.second ?: ObservatoryId.UNKNOWN,
             )
         }
     }
@@ -204,7 +204,7 @@ class PostgresDummyDataSetup(
                     startDate = conferenceSeries.metadata.startDate,
                     reviewType = PeerReviewType.fromOrNull(conferenceSeries.metadata.reviewType.name)
                         ?: throw InvalidPeerReviewType(conferenceSeries.metadata.reviewType.name),
-                )
+                ),
             )
         }
     }
@@ -223,8 +223,8 @@ class PostgresDummyDataSetup(
                 joinedAt = OffsetDateTime.now(),
                 organizationId = OrganizationId.UNKNOWN,
                 observatoryId = ObservatoryId.UNKNOWN,
-                emailHash = SHA256.fromEmail(email)
-            )
+                emailHash = SHA256.fromEmail(email),
+            ),
         )
     }
 

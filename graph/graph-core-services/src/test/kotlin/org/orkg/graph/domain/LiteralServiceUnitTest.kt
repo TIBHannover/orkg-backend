@@ -36,8 +36,8 @@ internal class LiteralServiceUnitTest {
                 CreateCommand(
                     contributorId = ContributorId(UUID.randomUUID()),
                     label = "irrelevant",
-                    datatype = "%§&invalid$§/"
-                )
+                    datatype = "%§&invalid$§/",
+                ),
             )
         }
     }
@@ -49,8 +49,8 @@ internal class LiteralServiceUnitTest {
                 CreateCommand(
                     contributorId = ContributorId(UUID.randomUUID()),
                     label = "irrelevant",
-                    datatype = "foo_bar:string"
-                )
+                    datatype = "foo_bar:string",
+                ),
             )
         }
     }
@@ -62,8 +62,8 @@ internal class LiteralServiceUnitTest {
             service.create(
                 CreateCommand(
                     contributorId = ContributorId(UUID.randomUUID()),
-                    label = tooLong
-                )
+                    label = tooLong,
+                ),
             )
         }
     }
@@ -76,8 +76,8 @@ internal class LiteralServiceUnitTest {
                 CreateCommand(
                     contributorId = ContributorId(UUID.randomUUID()),
                     label = notANumber,
-                    datatype = Literals.XSD.DECIMAL.prefixedUri
-                )
+                    datatype = Literals.XSD.DECIMAL.prefixedUri,
+                ),
             )
         }
     }
@@ -93,8 +93,8 @@ internal class LiteralServiceUnitTest {
                 CreateCommand(
                     id = id,
                     contributorId = ContributorId(UUID.randomUUID()),
-                    label = "value"
-                )
+                    label = "value",
+                ),
             )
         }
 
@@ -109,7 +109,7 @@ internal class LiteralServiceUnitTest {
             contributorId = contributorId,
             label = "3.141593",
             datatype = "xsd:float",
-            modifiable = false
+            modifiable = false,
         )
 
         every { unsafeLiteralUseCases.create(command) } returns randomId
@@ -134,7 +134,7 @@ internal class LiteralServiceUnitTest {
         val command = UpdateLiteralUseCase.UpdateCommand(
             id = ThingId("L123"),
             contributorId = ContributorId(MockUserId.USER),
-            label = "a".repeat(MAX_LABEL_LENGTH + 1)
+            label = "a".repeat(MAX_LABEL_LENGTH + 1),
         )
 
         shouldThrow<InvalidLiteralLabel> { service.update(command) }
@@ -145,7 +145,7 @@ internal class LiteralServiceUnitTest {
         val command = UpdateLiteralUseCase.UpdateCommand(
             id = ThingId("L123"),
             contributorId = ContributorId(MockUserId.USER),
-            label = "new label"
+            label = "new label",
         )
 
         every { literalRepository.findById(any()) } returns Optional.empty()
@@ -176,7 +176,7 @@ internal class LiteralServiceUnitTest {
             id = literal.id,
             contributorId = ContributorId(MockUserId.USER),
             label = "irrelevant",
-            datatype = "%§&invalid$§/"
+            datatype = "%§&invalid$§/",
         )
 
         every { literalRepository.findById(literal.id) } returns Optional.of(literal)
@@ -193,7 +193,7 @@ internal class LiteralServiceUnitTest {
             id = literal.id,
             contributorId = ContributorId(MockUserId.USER),
             label = "irrelevant",
-            datatype = "foo_bar:string"
+            datatype = "foo_bar:string",
         )
 
         every { literalRepository.findById(literal.id) } returns Optional.of(literal)
@@ -211,7 +211,7 @@ internal class LiteralServiceUnitTest {
             id = literal.id,
             contributorId = ContributorId(MockUserId.USER),
             label = notANumber,
-            datatype = Literals.XSD.DECIMAL.prefixedUri
+            datatype = Literals.XSD.DECIMAL.prefixedUri,
         )
 
         every { literalRepository.findById(literal.id) } returns Optional.of(literal)
@@ -234,8 +234,8 @@ internal class LiteralServiceUnitTest {
                 contributorId = contributorId,
                 label = literal.label,
                 datatype = literal.datatype,
-                modifiable = literal.modifiable
-            )
+                modifiable = literal.modifiable,
+            ),
         )
 
         verify(exactly = 1) { literalRepository.findById(literal.id) }
@@ -258,8 +258,8 @@ internal class LiteralServiceUnitTest {
                 contributorId = contributorId,
                 label = label,
                 datatype = datatype,
-                modifiable = modifiable
-            )
+                modifiable = modifiable,
+            ),
         )
 
         verify(exactly = 1) { literalRepository.findById(literal.id) }
@@ -272,7 +272,7 @@ internal class LiteralServiceUnitTest {
                     it.createdAt shouldBe literal.createdAt
                     it.createdBy shouldBe literal.createdBy
                     it.modifiable shouldBe modifiable
-                }
+                },
             )
         }
     }

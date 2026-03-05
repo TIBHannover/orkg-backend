@@ -87,19 +87,19 @@ internal class LiteratureListServiceUnitTest : MockkBaseTest {
         val expected = createResource(
             classes = setOf(Classes.literatureList),
             organizationId = OrganizationId(UUID.randomUUID()),
-            observatoryId = ObservatoryId(UUID.randomUUID())
+            observatoryId = ObservatoryId(UUID.randomUUID()),
         )
         val researchFieldId = ThingId("R20")
         val publishedVersion1 = createResource(
             id = ThingId("R235467"),
             label = "published1",
-            classes = setOf(Classes.literatureListPublished)
+            classes = setOf(Classes.literatureListPublished),
         )
         val changelog1 = createLiteral(id = ThingId("L13546"), label = "changelog1")
         val publishedVersion2 = createResource(
             id = ThingId("R154687"),
             label = "published2",
-            classes = setOf(Classes.literatureListPublished)
+            classes = setOf(Classes.literatureListPublished),
         )
         val changelog2 = createLiteral(id = ThingId("L5753"), label = "changelog2")
         val listSection = createResource(id = ThingId("R489"), classes = setOf(Classes.listSection))
@@ -116,7 +116,7 @@ internal class LiteratureListServiceUnitTest : MockkBaseTest {
             minLevel = null,
             maxLevel = 3,
             blacklist = listOf(Classes.researchField, Classes.contribution, Classes.venue),
-            whitelist = emptyList()
+            whitelist = emptyList(),
         )
 
         every { resourceRepository.findById(expected.id) } returns Optional.of(expected)
@@ -124,7 +124,7 @@ internal class LiteratureListServiceUnitTest : MockkBaseTest {
             statementRepository.fetchAsBundle(
                 id = expected.id,
                 configuration = bundleConfiguration,
-                sort = Sort.unsorted()
+                sort = Sort.unsorted(),
             )
         } returns pageOf(
             createStatement(
@@ -133,107 +133,107 @@ internal class LiteratureListServiceUnitTest : MockkBaseTest {
                 `object` = createResource(
                     classes = setOf(Classes.sustainableDevelopmentGoal),
                     label = "No poverty",
-                    id = ThingId("SDG_1")
-                )
+                    id = ThingId("SDG_1"),
+                ),
             ),
             createStatement(
                 subject = expected,
                 predicate = createPredicate(Predicates.hasPublishedVersion),
                 `object` = publishedVersion1,
-                createdAt = OffsetDateTime.now(fixedClock).minusDays(2)
+                createdAt = OffsetDateTime.now(fixedClock).minusDays(2),
             ),
             createStatement(
                 subject = publishedVersion1,
                 predicate = createPredicate(Predicates.description),
-                `object` = changelog1
+                `object` = changelog1,
             ),
             createStatement(
                 subject = expected,
                 predicate = createPredicate(Predicates.hasPublishedVersion),
                 `object` = publishedVersion2,
-                createdAt = OffsetDateTime.now(fixedClock).minusDays(1)
+                createdAt = OffsetDateTime.now(fixedClock).minusDays(1),
             ),
             createStatement(
                 subject = publishedVersion2,
                 predicate = createPredicate(Predicates.description),
-                `object` = changelog2
+                `object` = changelog2,
             ),
             createStatement(
                 subject = expected,
                 predicate = createPredicate(Predicates.hasSection),
-                `object` = textSection
+                `object` = textSection,
             ),
             createStatement(
                 subject = textSection,
                 predicate = createPredicate(Predicates.hasHeadingLevel),
-                `object` = createLiteral(label = 4.toString(), datatype = Literals.XSD.INT.prefixedUri)
+                `object` = createLiteral(label = 4.toString(), datatype = Literals.XSD.INT.prefixedUri),
             ),
             createStatement(
                 subject = textSection,
                 predicate = createPredicate(Predicates.hasContent),
-                `object` = createLiteral(label = textContent)
+                `object` = createLiteral(label = textContent),
             ),
             createStatement(
                 subject = expected,
                 predicate = createPredicate(Predicates.hasSection),
-                `object` = listSection
+                `object` = listSection,
             ),
             createStatement(
                 subject = listSection,
                 predicate = createPredicate(Predicates.hasEntry),
-                `object` = entry1
+                `object` = entry1,
             ),
             createStatement(
                 subject = entry1,
                 predicate = createPredicate(Predicates.hasPaper),
-                `object` = paper
+                `object` = paper,
             ),
             createStatement(
                 subject = entry1,
                 predicate = createPredicate(Predicates.description),
-                `object` = createLiteral(label = paperEntryDescription)
+                `object` = createLiteral(label = paperEntryDescription),
             ),
             createStatement(
                 subject = listSection,
                 predicate = createPredicate(Predicates.hasEntry),
-                `object` = entry2
+                `object` = entry2,
             ),
             createStatement(
                 subject = entry2,
                 predicate = createPredicate(Predicates.hasLink),
-                `object` = comparison
+                `object` = comparison,
             ),
             createStatement(
                 subject = expected,
                 predicate = createPredicate(Predicates.hasAuthors),
-                `object` = authorList
+                `object` = authorList,
             ),
             createStatement(
                 subject = authorList,
                 predicate = createPredicate(Predicates.hasListElement),
-                `object` = createLiteral(label = "Author 1")
+                `object` = createLiteral(label = "Author 1"),
             ),
             createStatement(
                 subject = authorList,
                 predicate = createPredicate(Predicates.hasListElement),
-                `object` = resourceAuthor
+                `object` = resourceAuthor,
             ),
             createStatement(
                 subject = resourceAuthor,
                 predicate = createPredicate(Predicates.hasORCID),
-                `object` = createLiteral(label = "0000-1111-2222-3333")
+                `object` = createLiteral(label = "0000-1111-2222-3333"),
             ),
             createStatement(
                 subject = resourceAuthor,
                 predicate = createPredicate(Predicates.hasWebsite),
-                `object` = createLiteral(label = "https://example.org", datatype = Literals.XSD.URI.prefixedUri)
-            )
+                `object` = createLiteral(label = "https://example.org", datatype = Literals.XSD.URI.prefixedUri),
+            ),
         )
         every {
             statementRepository.findAll(
                 subjectId = expected.id,
                 objectClasses = setOf(Classes.researchField),
-                pageable = PageRequests.ALL
+                pageable = PageRequests.ALL,
             )
         } returns pageOf(
             createStatement(
@@ -242,9 +242,9 @@ internal class LiteratureListServiceUnitTest : MockkBaseTest {
                 `object` = createResource(
                     id = researchFieldId,
                     classes = setOf(Classes.researchField),
-                    label = "Research Field 1"
-                )
-            )
+                    label = "Research Field 1",
+                ),
+            ),
         )
 
         val actual = service.findById(expected.id)
@@ -255,7 +255,7 @@ internal class LiteratureListServiceUnitTest : MockkBaseTest {
             it.id shouldBe expected.id
             it.title shouldBe expected.label
             it.researchFields shouldBe listOf(
-                ObjectIdAndLabel(id = researchFieldId, label = "Research Field 1")
+                ObjectIdAndLabel(id = researchFieldId, label = "Research Field 1"),
             )
             it.authors shouldNotBe null
             it.authors shouldBe listOf(
@@ -263,26 +263,26 @@ internal class LiteratureListServiceUnitTest : MockkBaseTest {
                     id = null,
                     name = "Author 1",
                     identifiers = emptyMap(),
-                    homepage = null
+                    homepage = null,
                 ),
                 Author(
                     id = resourceAuthor.id,
                     name = "Author 2",
                     identifiers = mapOf(
-                        "orcid" to listOf("0000-1111-2222-3333")
+                        "orcid" to listOf("0000-1111-2222-3333"),
                     ),
-                    homepage = ParsedIRI.create("https://example.org")
-                )
+                    homepage = ParsedIRI.create("https://example.org"),
+                ),
             )
             it.versions shouldBe VersionInfo(
                 head = HeadVersion(expected),
                 published = listOf(
                     PublishedVersion(publishedVersion2, changelog2.label),
-                    PublishedVersion(publishedVersion1, changelog1.label)
-                )
+                    PublishedVersion(publishedVersion1, changelog1.label),
+                ),
             )
             it.sustainableDevelopmentGoals shouldBe setOf(
-                ObjectIdAndLabel(ThingId("SDG_1"), "No poverty")
+                ObjectIdAndLabel(ThingId("SDG_1"), "No poverty"),
             )
             it.observatories shouldBe setOf(expected.observatoryId)
             it.organizations shouldBe setOf(expected.organizationId)
@@ -298,12 +298,12 @@ internal class LiteratureListServiceUnitTest : MockkBaseTest {
                     listSection.id,
                     listOf(
                         LiteratureListListSection.Entry(ResourceReference(paper), paperEntryDescription),
-                        LiteratureListListSection.Entry(ResourceReference(comparison))
-                    )
-                )
+                        LiteratureListListSection.Entry(ResourceReference(comparison)),
+                    ),
+                ),
             )
             it.acknowledgements shouldBe mapOf(
-                ContributorId.UNKNOWN to 1.0
+                ContributorId.UNKNOWN to 1.0,
             )
         }
 
@@ -312,14 +312,14 @@ internal class LiteratureListServiceUnitTest : MockkBaseTest {
             statementRepository.fetchAsBundle(
                 id = expected.id,
                 configuration = bundleConfiguration,
-                sort = Sort.unsorted()
+                sort = Sort.unsorted(),
             )
         }
         verify(exactly = 1) {
             statementRepository.findAll(
                 subjectId = expected.id,
                 objectClasses = setOf(Classes.researchField),
-                pageable = PageRequests.ALL
+                pageable = PageRequests.ALL,
             )
         }
     }
@@ -334,14 +334,14 @@ internal class LiteratureListServiceUnitTest : MockkBaseTest {
             label = "published1",
             classes = setOf(Classes.literatureListPublished),
             organizationId = OrganizationId(UUID.randomUUID()),
-            observatoryId = ObservatoryId(UUID.randomUUID())
+            observatoryId = ObservatoryId(UUID.randomUUID()),
         )
         val changelog1 = createLiteral(id = ThingId("L13546"), label = "changelog1")
 
         val expected = createResource(
             id = ThingId("R154687"),
             label = "published2",
-            classes = setOf(Classes.literatureListPublished)
+            classes = setOf(Classes.literatureListPublished),
         )
         val changelog = createLiteral(id = ThingId("L5753"), label = "changelog2")
 
@@ -360,7 +360,7 @@ internal class LiteratureListServiceUnitTest : MockkBaseTest {
             minLevel = null,
             maxLevel = 2,
             blacklist = emptyList(),
-            whitelist = listOf(Classes.literatureList, Classes.literatureListPublished, Classes.literal)
+            whitelist = listOf(Classes.literatureList, Classes.literatureListPublished, Classes.literal),
         )
 
         every { resourceRepository.findById(expected.id) } returns Optional.of(expected)
@@ -378,8 +378,8 @@ internal class LiteratureListServiceUnitTest : MockkBaseTest {
                         `object` = createResource(
                             classes = setOf(Classes.sustainableDevelopmentGoal),
                             label = "No poverty",
-                            id = ThingId("SDG_1")
-                        )
+                            id = ThingId("SDG_1"),
+                        ),
                     ),
                     createStatement(
                         subject = unpublished,
@@ -387,112 +387,112 @@ internal class LiteratureListServiceUnitTest : MockkBaseTest {
                         `object` = createResource(
                             id = researchFieldId,
                             classes = setOf(Classes.researchField),
-                            label = "Research Field 1"
-                        )
+                            label = "Research Field 1",
+                        ),
                     ),
                     createStatement(
                         subject = unpublished,
                         predicate = createPredicate(Predicates.hasSection),
-                        `object` = textSection
+                        `object` = textSection,
                     ),
                     createStatement(
                         subject = textSection,
                         predicate = createPredicate(Predicates.hasHeadingLevel),
-                        `object` = createLiteral(label = 4.toString(), datatype = Literals.XSD.INT.prefixedUri)
+                        `object` = createLiteral(label = 4.toString(), datatype = Literals.XSD.INT.prefixedUri),
                     ),
                     createStatement(
                         subject = textSection,
                         predicate = createPredicate(Predicates.hasContent),
-                        `object` = createLiteral(label = textContent)
+                        `object` = createLiteral(label = textContent),
                     ),
                     createStatement(
                         subject = unpublished,
                         predicate = createPredicate(Predicates.hasSection),
-                        `object` = listSection
+                        `object` = listSection,
                     ),
                     createStatement(
                         subject = listSection,
                         predicate = createPredicate(Predicates.hasEntry),
-                        `object` = entry1
+                        `object` = entry1,
                     ),
                     createStatement(
                         subject = entry1,
                         predicate = createPredicate(Predicates.hasPaper),
-                        `object` = paper
+                        `object` = paper,
                     ),
                     createStatement(
                         subject = entry1,
                         predicate = createPredicate(Predicates.description),
-                        `object` = createLiteral(label = paperEntryDescription)
+                        `object` = createLiteral(label = paperEntryDescription),
                     ),
                     createStatement(
                         subject = listSection,
                         predicate = createPredicate(Predicates.hasEntry),
-                        `object` = entry2
+                        `object` = entry2,
                     ),
                     createStatement(
                         subject = entry2,
                         predicate = createPredicate(Predicates.hasLink),
-                        `object` = comparison
+                        `object` = comparison,
                     ),
                     createStatement(
                         subject = unpublished,
                         predicate = createPredicate(Predicates.hasAuthors),
-                        `object` = authorList
+                        `object` = authorList,
                     ),
                     createStatement(
                         subject = authorList,
                         predicate = createPredicate(Predicates.hasListElement),
-                        `object` = createLiteral(label = "Author 1")
+                        `object` = createLiteral(label = "Author 1"),
                     ),
                     createStatement(
                         subject = authorList,
                         predicate = createPredicate(Predicates.hasListElement),
-                        `object` = resourceAuthor
+                        `object` = resourceAuthor,
                     ),
                     createStatement(
                         subject = resourceAuthor,
                         predicate = createPredicate(Predicates.hasORCID),
-                        `object` = createLiteral(label = "0000-1111-2222-3333")
+                        `object` = createLiteral(label = "0000-1111-2222-3333"),
                     ),
                     createStatement(
                         subject = resourceAuthor,
                         predicate = createPredicate(Predicates.hasWebsite),
-                        `object` = createLiteral(label = "https://example.org", datatype = Literals.XSD.URI.prefixedUri)
-                    )
-                )
-            )
+                        `object` = createLiteral(label = "https://example.org", datatype = Literals.XSD.URI.prefixedUri),
+                    ),
+                ),
+            ),
         )
 
         every {
             statementRepository.fetchAsBundle(
                 id = unpublished.id,
                 configuration = bundleConfiguration,
-                sort = Sort.unsorted()
+                sort = Sort.unsorted(),
             )
         } returns pageOf(
             createStatement(
                 subject = unpublished,
                 predicate = createPredicate(Predicates.hasPublishedVersion),
                 `object` = publishedVersion1,
-                createdAt = OffsetDateTime.now(fixedClock).minusDays(2)
+                createdAt = OffsetDateTime.now(fixedClock).minusDays(2),
             ),
             createStatement(
                 subject = publishedVersion1,
                 predicate = createPredicate(Predicates.description),
-                `object` = changelog1
+                `object` = changelog1,
             ),
             createStatement(
                 subject = unpublished,
                 predicate = createPredicate(Predicates.hasPublishedVersion),
                 `object` = expected,
-                createdAt = OffsetDateTime.now(fixedClock).minusDays(1)
+                createdAt = OffsetDateTime.now(fixedClock).minusDays(1),
             ),
             createStatement(
                 subject = expected,
                 predicate = createPredicate(Predicates.description),
-                `object` = changelog
-            )
+                `object` = changelog,
+            ),
         )
 
         val actual = service.findById(expected.id)
@@ -503,7 +503,7 @@ internal class LiteratureListServiceUnitTest : MockkBaseTest {
             it.id shouldBe expected.id
             it.title shouldBe expected.label
             it.researchFields shouldBe listOf(
-                ObjectIdAndLabel(id = researchFieldId, label = "Research Field 1")
+                ObjectIdAndLabel(id = researchFieldId, label = "Research Field 1"),
             )
             it.authors shouldNotBe null
             it.authors shouldBe listOf(
@@ -511,26 +511,26 @@ internal class LiteratureListServiceUnitTest : MockkBaseTest {
                     id = null,
                     name = "Author 1",
                     identifiers = emptyMap(),
-                    homepage = null
+                    homepage = null,
                 ),
                 Author(
                     id = resourceAuthor.id,
                     name = "Author 2",
                     identifiers = mapOf(
-                        "orcid" to listOf("0000-1111-2222-3333")
+                        "orcid" to listOf("0000-1111-2222-3333"),
                     ),
-                    homepage = ParsedIRI.create("https://example.org")
-                )
+                    homepage = ParsedIRI.create("https://example.org"),
+                ),
             )
             it.versions shouldBe VersionInfo(
                 head = HeadVersion(unpublished),
                 published = listOf(
                     PublishedVersion(expected, changelog.label),
-                    PublishedVersion(publishedVersion1, changelog1.label)
-                )
+                    PublishedVersion(publishedVersion1, changelog1.label),
+                ),
             )
             it.sustainableDevelopmentGoals shouldBe setOf(
-                ObjectIdAndLabel(ThingId("SDG_1"), "No poverty")
+                ObjectIdAndLabel(ThingId("SDG_1"), "No poverty"),
             )
             it.observatories shouldBe setOf(expected.observatoryId)
             it.organizations shouldBe setOf(expected.organizationId)
@@ -546,12 +546,12 @@ internal class LiteratureListServiceUnitTest : MockkBaseTest {
                     listSection.id,
                     listOf(
                         LiteratureListListSection.Entry(ResourceReference(paper), paperEntryDescription),
-                        LiteratureListListSection.Entry(ResourceReference(comparison))
-                    )
-                )
+                        LiteratureListListSection.Entry(ResourceReference(comparison)),
+                    ),
+                ),
             )
             it.acknowledgements shouldBe mapOf(
-                ContributorId.UNKNOWN to 1.0
+                ContributorId.UNKNOWN to 1.0,
             )
         }
 
@@ -561,7 +561,7 @@ internal class LiteratureListServiceUnitTest : MockkBaseTest {
             statementRepository.fetchAsBundle(
                 id = unpublished.id,
                 configuration = bundleConfiguration,
-                sort = Sort.unsorted()
+                sort = Sort.unsorted(),
             )
         }
     }
@@ -579,8 +579,8 @@ internal class LiteratureListServiceUnitTest : MockkBaseTest {
                 createdAt = OffsetDateTime.parse("2023-11-30T09:25:14.049085776+01:00"),
                 resourceId = literatureList.id,
                 rootId = ThingId("R456"),
-                subgraph = listOf(createStatement(`object` = content))
-            )
+                subgraph = listOf(createStatement(`object` = content)),
+            ),
         )
         every { statementRepository.fetchAsBundle(any(), any(), any()) } returns emptyList()
 
@@ -606,8 +606,8 @@ internal class LiteratureListServiceUnitTest : MockkBaseTest {
                 createdAt = OffsetDateTime.parse("2023-11-30T09:25:14.049085776+01:00"),
                 resourceId = literatureList.id,
                 rootId = ThingId("R456"),
-                subgraph = listOf(createStatement(`object` = content))
-            )
+                subgraph = listOf(createStatement(`object` = content)),
+            ),
         )
         every { statementRepository.fetchAsBundle(any(), any(), any()) } returns emptyList()
 
@@ -675,8 +675,8 @@ internal class LiteratureListServiceUnitTest : MockkBaseTest {
                 createdAt = OffsetDateTime.parse("2023-11-30T09:25:14.049085776+01:00"),
                 resourceId = literatureList.id,
                 rootId = ThingId("R456"),
-                subgraph = listOf()
-            )
+                subgraph = listOf(),
+            ),
         )
         every { statementRepository.fetchAsBundle(any(), any(), any()) } returns emptyList()
 
@@ -702,8 +702,8 @@ internal class LiteratureListServiceUnitTest : MockkBaseTest {
                 createdAt = OffsetDateTime.parse("2023-11-30T09:25:14.049085776+01:00"),
                 resourceId = literatureList.id,
                 rootId = ThingId("R456"),
-                subgraph = listOf()
-            )
+                subgraph = listOf(),
+            ),
         )
         every { statementRepository.fetchAsBundle(any(), any(), any()) } returns emptyList()
 

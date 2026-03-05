@@ -51,7 +51,7 @@ interface TemplateBasedResourceSnapshotRepresentationAdapter : TemplateInstanceR
                 data = templateInstance.toTemplateInstanceRepresentation(statementCounts, formattedLabels, descriptions),
                 resourceId = resourceId,
                 templateId = templateId,
-                handle = handle
+                handle = handle,
             )
         }
 

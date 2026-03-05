@@ -38,7 +38,7 @@ class AbstractSmartReviewSectionUpdater(
     ) : this(
         unsafeResourceUseCases,
         SingleStatementPropertyUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases),
-        StatementCollectionPropertyUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases)
+        StatementCollectionPropertyUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases),
     )
 
     internal fun updateComparisonSection(
@@ -52,8 +52,8 @@ class AbstractSmartReviewSectionUpdater(
                 UpdateResourceUseCase.UpdateCommand(
                     id = oldSection.id,
                     contributorId = contributorId,
-                    label = newSection.heading
-                )
+                    label = newSection.heading,
+                ),
             )
         }
         if (newSection.comparison != oldSection.comparison?.id) {
@@ -62,7 +62,7 @@ class AbstractSmartReviewSectionUpdater(
                 contributorId = contributorId,
                 subjectId = oldSection.id,
                 predicateId = Predicates.hasLink,
-                objectId = newSection.comparison
+                objectId = newSection.comparison,
             )
         }
     }
@@ -78,8 +78,8 @@ class AbstractSmartReviewSectionUpdater(
                 UpdateResourceUseCase.UpdateCommand(
                     id = oldSection.id,
                     contributorId = contributorId,
-                    label = newSection.heading
-                )
+                    label = newSection.heading,
+                ),
             )
         }
         if (newSection.visualization != oldSection.visualization?.id) {
@@ -88,7 +88,7 @@ class AbstractSmartReviewSectionUpdater(
                 contributorId = contributorId,
                 subjectId = oldSection.id,
                 predicateId = Predicates.hasLink,
-                objectId = newSection.visualization
+                objectId = newSection.visualization,
             )
         }
     }
@@ -104,8 +104,8 @@ class AbstractSmartReviewSectionUpdater(
                 UpdateResourceUseCase.UpdateCommand(
                     id = oldSection.id,
                     contributorId = contributorId,
-                    label = newSection.heading
-                )
+                    label = newSection.heading,
+                ),
             )
         }
         if (newSection.resource != oldSection.resource?.id) {
@@ -114,7 +114,7 @@ class AbstractSmartReviewSectionUpdater(
                 contributorId = contributorId,
                 subjectId = oldSection.id,
                 predicateId = Predicates.hasLink,
-                objectId = newSection.resource
+                objectId = newSection.resource,
             )
         }
     }
@@ -130,8 +130,8 @@ class AbstractSmartReviewSectionUpdater(
                 UpdateResourceUseCase.UpdateCommand(
                     id = oldSection.id,
                     contributorId = contributorId,
-                    label = newSection.heading
-                )
+                    label = newSection.heading,
+                ),
             )
         }
         if (newSection.predicate != oldSection.predicate?.id) {
@@ -140,7 +140,7 @@ class AbstractSmartReviewSectionUpdater(
                 contributorId = contributorId,
                 subjectId = oldSection.id,
                 predicateId = Predicates.hasLink,
-                objectId = newSection.predicate
+                objectId = newSection.predicate,
             )
         }
     }
@@ -156,8 +156,8 @@ class AbstractSmartReviewSectionUpdater(
                 UpdateResourceUseCase.UpdateCommand(
                     id = oldSection.id,
                     contributorId = contributorId,
-                    label = newSection.heading
-                )
+                    label = newSection.heading,
+                ),
             )
         }
         if (newSection.entities != oldSection.entities.map { it.id }) {
@@ -166,7 +166,7 @@ class AbstractSmartReviewSectionUpdater(
                 contributorId = contributorId,
                 subjectId = oldSection.id,
                 predicateId = Predicates.hasEntity,
-                objects = newSection.entities
+                objects = newSection.entities,
             )
         }
         if (newSection.predicates != oldSection.predicates.map { it.id }) {
@@ -175,7 +175,7 @@ class AbstractSmartReviewSectionUpdater(
                 contributorId = contributorId,
                 subjectId = oldSection.id,
                 predicateId = Predicates.showProperty,
-                objects = newSection.predicates
+                objects = newSection.predicates,
             )
         }
     }
@@ -192,8 +192,8 @@ class AbstractSmartReviewSectionUpdater(
                     id = oldSection.id,
                     contributorId = contributorId,
                     label = newSection.heading,
-                    classes = oldSection.classes.filterNot { it in SmartReviewTextSection.types } union setOfNotNull(newSection.`class`, Classes.section)
-                )
+                    classes = oldSection.classes.filterNot { it in SmartReviewTextSection.types } union setOfNotNull(newSection.`class`, Classes.section),
+                ),
             )
         }
         if (newSection.text != oldSection.text) {
@@ -202,7 +202,7 @@ class AbstractSmartReviewSectionUpdater(
                 contributorId = contributorId,
                 subjectId = oldSection.id,
                 predicateId = Predicates.hasContent,
-                label = newSection.text
+                label = newSection.text,
             )
         }
     }

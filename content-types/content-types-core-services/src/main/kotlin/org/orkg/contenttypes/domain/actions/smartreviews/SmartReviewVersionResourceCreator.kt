@@ -17,8 +17,8 @@ class SmartReviewVersionResourceCreator(
                 classes = setOf(Classes.smartReviewPublished, Classes.latestVersion),
                 extractionMethod = command.extractionMethod,
                 observatoryId = command.observatories.singleOrNull(),
-                organizationId = command.organizations.singleOrNull()
-            )
+                organizationId = command.organizations.singleOrNull(),
+            ),
         )
         return state.copy(smartReviewId = smartReviewId)
     }

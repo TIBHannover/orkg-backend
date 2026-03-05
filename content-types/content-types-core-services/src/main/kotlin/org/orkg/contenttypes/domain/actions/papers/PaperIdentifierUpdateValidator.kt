@@ -18,7 +18,7 @@ class PaperIdentifierUpdateValidator(
                 identifiers = command.identifiers!!,
                 `class` = Classes.paper,
                 subjectId = command.paperId,
-                exceptionFactory = PaperAlreadyExists::withIdentifier
+                exceptionFactory = PaperAlreadyExists::withIdentifier,
             )
         }
         return state

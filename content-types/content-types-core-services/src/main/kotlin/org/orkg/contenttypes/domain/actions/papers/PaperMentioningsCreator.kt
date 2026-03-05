@@ -14,7 +14,7 @@ class PaperMentioningsCreator(
         unsafeLiteralUseCases: UnsafeLiteralUseCases,
         unsafeStatementUseCases: UnsafeStatementUseCases,
     ) : this(
-        StatementCollectionPropertyCreator(unsafeLiteralUseCases, unsafeStatementUseCases)
+        StatementCollectionPropertyCreator(unsafeLiteralUseCases, unsafeStatementUseCases),
     )
 
     override operator fun invoke(command: CreatePaperCommand, state: State): State {
@@ -22,7 +22,7 @@ class PaperMentioningsCreator(
             contributorId = command.contributorId,
             subjectId = state.paperId!!,
             predicateId = Predicates.mentions,
-            objects = command.mentionings.toList()
+            objects = command.mentionings.toList(),
         )
         return state
     }

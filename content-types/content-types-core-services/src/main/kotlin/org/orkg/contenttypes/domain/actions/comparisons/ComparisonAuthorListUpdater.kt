@@ -24,8 +24,8 @@ class ComparisonAuthorListUpdater(
             unsafeStatementUseCases,
             unsafeLiteralUseCases,
             listService,
-            listRepository
-        )
+            listRepository,
+        ),
     )
 
     override fun invoke(command: UpdateComparisonCommand, state: State): State {

@@ -55,7 +55,7 @@ internal class ResourceServiceUnitTest : MockkBaseTest {
         thingRepository,
         unsafeResourceUseCases,
         observatoryRepository,
-        organizationRepository
+        organizationRepository,
     )
 
     @Test
@@ -69,7 +69,7 @@ internal class ResourceServiceUnitTest : MockkBaseTest {
             extractionMethod = ExtractionMethod.MANUAL,
             observatoryId = ObservatoryId("1255bbe4-1850-4033-ba10-c80d4b370e3e"),
             organizationId = OrganizationId("56a4b65e-de56-0d4b-255b-255b372b65ef"),
-            modifiable = false
+            modifiable = false,
         )
 
         every { repository.findById(id) } returns Optional.empty()
@@ -88,7 +88,7 @@ internal class ResourceServiceUnitTest : MockkBaseTest {
         val id = ThingId("R123")
         val command = CreateResourceUseCase.CreateCommand(
             contributorId = ContributorId(MockUserId.USER),
-            label = "label"
+            label = "label",
         )
 
         every { unsafeResourceUseCases.create(command) } returns id
@@ -105,7 +105,7 @@ internal class ResourceServiceUnitTest : MockkBaseTest {
             id = id,
             contributorId = ContributorId(MockUserId.USER),
             label = "\n",
-            classes = setOf(Classes.paper)
+            classes = setOf(Classes.paper),
         )
 
         assertThrows<InvalidLabel> { service.create(command) }
@@ -116,7 +116,7 @@ internal class ResourceServiceUnitTest : MockkBaseTest {
         val command = CreateResourceUseCase.CreateCommand(
             contributorId = ContributorId(MockUserId.USER),
             label = "label",
-            classes = setOf(reservedClassIds.first())
+            classes = setOf(reservedClassIds.first()),
         )
 
         assertThrows<ReservedClass> { service.create(command) }
@@ -127,7 +127,7 @@ internal class ResourceServiceUnitTest : MockkBaseTest {
         val command = CreateResourceUseCase.CreateCommand(
             contributorId = ContributorId(MockUserId.USER),
             label = "label",
-            classes = setOf(Classes.paper)
+            classes = setOf(Classes.paper),
         )
 
         every { classRepository.existsAllById(command.classes) } returns false
@@ -143,7 +143,7 @@ internal class ResourceServiceUnitTest : MockkBaseTest {
         val command = CreateResourceUseCase.CreateCommand(
             id = id,
             contributorId = ContributorId(MockUserId.USER),
-            label = "label"
+            label = "label",
         )
 
         every { repository.findById(id) } returns Optional.of(createResource(id))
@@ -259,7 +259,7 @@ internal class ResourceServiceUnitTest : MockkBaseTest {
         val command = UpdateResourceUseCase.UpdateCommand(
             id = ThingId("R123"),
             contributorId = ContributorId(MockUserId.USER),
-            label = "new label"
+            label = "new label",
         )
 
         every { repository.findById(any()) } returns Optional.empty()
@@ -297,7 +297,7 @@ internal class ResourceServiceUnitTest : MockkBaseTest {
         val command = UpdateResourceUseCase.UpdateCommand(
             id = resource.id,
             contributorId = ContributorId(MockUserId.USER),
-            label = "\n"
+            label = "\n",
         )
 
         every { repository.findById(resource.id) } returns Optional.of(resource)
@@ -313,7 +313,7 @@ internal class ResourceServiceUnitTest : MockkBaseTest {
         val command = UpdateResourceUseCase.UpdateCommand(
             id = resource.id,
             contributorId = ContributorId(MockUserId.USER),
-            classes = setOf(Classes.list)
+            classes = setOf(Classes.list),
         )
 
         every { repository.findById(resource.id) } returns Optional.of(resource)
@@ -346,7 +346,7 @@ internal class ResourceServiceUnitTest : MockkBaseTest {
         val command = UpdateResourceUseCase.UpdateCommand(
             id = resource.id,
             contributorId = curatorId,
-            visibility = Visibility.DELETED
+            visibility = Visibility.DELETED,
         )
         val curator = createContributor(curatorId, isCurator = true)
 
@@ -367,7 +367,7 @@ internal class ResourceServiceUnitTest : MockkBaseTest {
         val command = UpdateResourceUseCase.UpdateCommand(
             id = resource.id,
             contributorId = resource.createdBy,
-            visibility = Visibility.DELETED
+            visibility = Visibility.DELETED,
         )
 
         every { repository.findById(resource.id) } returns Optional.of(resource)
@@ -386,7 +386,7 @@ internal class ResourceServiceUnitTest : MockkBaseTest {
         val command = UpdateResourceUseCase.UpdateCommand(
             id = resource.id,
             contributorId = contributorId,
-            visibility = Visibility.DELETED
+            visibility = Visibility.DELETED,
         )
         val someUser = createContributor(contributorId, isCurator = false)
 
@@ -406,7 +406,7 @@ internal class ResourceServiceUnitTest : MockkBaseTest {
         val command = UpdateResourceUseCase.UpdateCommand(
             id = resource.id,
             contributorId = curatorId,
-            visibility = Visibility.FEATURED
+            visibility = Visibility.FEATURED,
         )
         val curator = createContributor(curatorId, isCurator = true)
 
@@ -427,7 +427,7 @@ internal class ResourceServiceUnitTest : MockkBaseTest {
         val command = UpdateResourceUseCase.UpdateCommand(
             id = resource.id,
             contributorId = resource.createdBy,
-            visibility = Visibility.FEATURED
+            visibility = Visibility.FEATURED,
         )
         val owner = createContributor(resource.createdBy)
 
@@ -447,7 +447,7 @@ internal class ResourceServiceUnitTest : MockkBaseTest {
         val command = UpdateResourceUseCase.UpdateCommand(
             id = resource.id,
             contributorId = contributorId,
-            visibility = Visibility.FEATURED
+            visibility = Visibility.FEATURED,
         )
         val someUser = createContributor(contributorId, isCurator = false)
 
@@ -467,7 +467,7 @@ internal class ResourceServiceUnitTest : MockkBaseTest {
         val command = UpdateResourceUseCase.UpdateCommand(
             id = resource.id,
             contributorId = contributorId,
-            verified = true
+            verified = true,
         )
         val someUser = createContributor(contributorId, isCurator = false)
 
@@ -489,7 +489,7 @@ internal class ResourceServiceUnitTest : MockkBaseTest {
         val command = UpdateResourceUseCase.UpdateCommand(
             id = resource.id,
             contributorId = curatorId,
-            verified = true
+            verified = true,
         )
         val curator = createContributor(curatorId, isCurator = true)
 
@@ -510,7 +510,7 @@ internal class ResourceServiceUnitTest : MockkBaseTest {
         val command = UpdateResourceUseCase.UpdateCommand(
             id = resource.id,
             contributorId = ContributorId(MockUserId.USER),
-            observatoryId = ObservatoryId("04c4d2f9-82e0-47c3-b0ef-79c1f515a940")
+            observatoryId = ObservatoryId("04c4d2f9-82e0-47c3-b0ef-79c1f515a940"),
         )
 
         every { repository.findById(resource.id) } returns Optional.of(resource)
@@ -528,7 +528,7 @@ internal class ResourceServiceUnitTest : MockkBaseTest {
         val command = UpdateResourceUseCase.UpdateCommand(
             id = resource.id,
             contributorId = ContributorId(MockUserId.USER),
-            observatoryId = ObservatoryId.UNKNOWN
+            observatoryId = ObservatoryId.UNKNOWN,
         )
 
         every { repository.findById(resource.id) } returns Optional.of(resource)
@@ -546,7 +546,7 @@ internal class ResourceServiceUnitTest : MockkBaseTest {
         val command = UpdateResourceUseCase.UpdateCommand(
             id = resource.id,
             contributorId = ContributorId(MockUserId.USER),
-            organizationId = OrganizationId("04c4d2f9-82e0-47c3-b0ef-79c1f515a940")
+            organizationId = OrganizationId("04c4d2f9-82e0-47c3-b0ef-79c1f515a940"),
         )
 
         every { repository.findById(resource.id) } returns Optional.of(resource)
@@ -564,7 +564,7 @@ internal class ResourceServiceUnitTest : MockkBaseTest {
         val command = UpdateResourceUseCase.UpdateCommand(
             id = resource.id,
             contributorId = ContributorId(MockUserId.USER),
-            organizationId = OrganizationId.UNKNOWN
+            organizationId = OrganizationId.UNKNOWN,
         )
 
         every { repository.findById(resource.id) } returns Optional.of(resource)
@@ -582,7 +582,7 @@ internal class ResourceServiceUnitTest : MockkBaseTest {
         val command = UpdateResourceUseCase.UpdateCommand(
             id = resource.id,
             contributorId = ContributorId(MockUserId.CURATOR),
-            visibility = Visibility.UNLISTED
+            visibility = Visibility.UNLISTED,
         )
         val curator = createContributor(command.contributorId, isCurator = true)
 
@@ -601,12 +601,12 @@ internal class ResourceServiceUnitTest : MockkBaseTest {
     fun `Given a resource update command, when visibility is changed from unlisted to something else, it clears the unlisted by metadata`() {
         val resource = createResource(
             visibility = Visibility.UNLISTED,
-            unlistedBy = ContributorId(MockUserId.USER)
+            unlistedBy = ContributorId(MockUserId.USER),
         )
         val command = UpdateResourceUseCase.UpdateCommand(
             id = resource.id,
             contributorId = ContributorId(MockUserId.CURATOR),
-            visibility = Visibility.DEFAULT
+            visibility = Visibility.DEFAULT,
         )
         val curator = createContributor(command.contributorId, isCurator = true)
 
@@ -625,13 +625,13 @@ internal class ResourceServiceUnitTest : MockkBaseTest {
     fun `Given a resource update command, when visibility is changed from unlisted to unlisted, it keeps the unlisted by metadata`() {
         val resource = createResource(
             visibility = Visibility.UNLISTED,
-            unlistedBy = ContributorId(MockUserId.ADMIN)
+            unlistedBy = ContributorId(MockUserId.ADMIN),
         )
         val command = UpdateResourceUseCase.UpdateCommand(
             id = resource.id,
             contributorId = ContributorId(MockUserId.CURATOR),
             label = "some change",
-            visibility = Visibility.UNLISTED
+            visibility = Visibility.UNLISTED,
         )
 
         every { repository.findById(resource.id) } returns Optional.of(resource)
@@ -662,7 +662,7 @@ internal class ResourceServiceUnitTest : MockkBaseTest {
                 modifiable = resource.modifiable,
                 visibility = resource.visibility,
                 verified = resource.verified,
-            )
+            ),
         )
 
         verify(exactly = 1) { repository.findById(resource.id) }
@@ -701,7 +701,7 @@ internal class ResourceServiceUnitTest : MockkBaseTest {
                 modifiable = modifiable,
                 visibility = visibility,
                 verified = verified,
-            )
+            ),
         )
 
         verify(exactly = 1) { repository.findById(resource.id) }
@@ -724,7 +724,7 @@ internal class ResourceServiceUnitTest : MockkBaseTest {
                     it.verified shouldBe verified
                     it.unlistedBy shouldBe resource.unlistedBy
                     it.modifiable shouldBe modifiable
-                }
+                },
             )
         }
     }

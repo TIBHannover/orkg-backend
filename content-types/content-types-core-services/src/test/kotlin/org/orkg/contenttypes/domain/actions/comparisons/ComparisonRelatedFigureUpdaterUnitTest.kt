@@ -46,7 +46,7 @@ internal class ComparisonRelatedFigureUpdaterUnitTest : MockkBaseTest {
         comparisonRelatedFigureUseCases,
         resourceService,
         statementService,
-        singleStatementPropertyUpdater
+        singleStatementPropertyUpdater,
     )
 
     @Test
@@ -59,7 +59,7 @@ internal class ComparisonRelatedFigureUpdaterUnitTest : MockkBaseTest {
         every {
             comparisonRelatedFigureUseCases.findByIdAndComparisonId(
                 comparisonId = command.comparisonId,
-                id = command.comparisonRelatedFigureId
+                id = command.comparisonRelatedFigureId,
             )
         } returns Optional.of(comparisonRelatedFigure)
 
@@ -69,7 +69,7 @@ internal class ComparisonRelatedFigureUpdaterUnitTest : MockkBaseTest {
         verify(exactly = 1) {
             comparisonRelatedFigureUseCases.findByIdAndComparisonId(
                 comparisonId = command.comparisonId,
-                id = command.comparisonRelatedFigureId
+                id = command.comparisonRelatedFigureId,
             )
         }
     }
@@ -118,7 +118,7 @@ internal class ComparisonRelatedFigureUpdaterUnitTest : MockkBaseTest {
         every {
             comparisonRelatedFigureUseCases.findByIdAndComparisonId(
                 comparisonId = command.comparisonId,
-                id = command.comparisonRelatedFigureId
+                id = command.comparisonRelatedFigureId,
             )
         } returns Optional.empty()
 
@@ -128,7 +128,7 @@ internal class ComparisonRelatedFigureUpdaterUnitTest : MockkBaseTest {
         verify(exactly = 1) {
             comparisonRelatedFigureUseCases.findByIdAndComparisonId(
                 comparisonId = command.comparisonId,
-                id = command.comparisonRelatedFigureId
+                id = command.comparisonRelatedFigureId,
             )
         }
     }
@@ -150,12 +150,12 @@ internal class ComparisonRelatedFigureUpdaterUnitTest : MockkBaseTest {
     fun `Given a comparison related figure update command, when label has changed, it updates the label`() {
         val comparisonRelatedFigure = createComparisonRelatedFigure()
         val command = comparisonRelatedFigure.toComparisonRelatedFigureUpdateCommand().copy(
-            label = "updated label"
+            label = "updated label",
         )
         val updateFigureCommand = UpdateResourceUseCase.UpdateCommand(
             id = comparisonRelatedFigure.id,
             contributorId = command.contributorId,
-            label = command.label
+            label = command.label,
         )
         val comparison = createResource(classes = setOf(Classes.comparison))
 
@@ -163,7 +163,7 @@ internal class ComparisonRelatedFigureUpdaterUnitTest : MockkBaseTest {
         every {
             comparisonRelatedFigureUseCases.findByIdAndComparisonId(
                 comparisonId = command.comparisonId,
-                id = command.comparisonRelatedFigureId
+                id = command.comparisonRelatedFigureId,
             )
         } returns Optional.of(comparisonRelatedFigure)
         every { resourceService.update(updateFigureCommand) } just runs
@@ -174,7 +174,7 @@ internal class ComparisonRelatedFigureUpdaterUnitTest : MockkBaseTest {
         verify(exactly = 1) {
             comparisonRelatedFigureUseCases.findByIdAndComparisonId(
                 comparisonId = command.comparisonId,
-                id = command.comparisonRelatedFigureId
+                id = command.comparisonRelatedFigureId,
             )
         }
         verify(exactly = 1) { resourceService.update(updateFigureCommand) }
@@ -184,11 +184,11 @@ internal class ComparisonRelatedFigureUpdaterUnitTest : MockkBaseTest {
     fun `Given a comparison related figure update command, when image has changed, it updates the image`() {
         val comparisonRelatedFigure = createComparisonRelatedFigure()
         val command = comparisonRelatedFigure.toComparisonRelatedFigureUpdateCommand().copy(
-            image = "https://orkg.org/path/to/new/image.png"
+            image = "https://orkg.org/path/to/new/image.png",
         )
         val statements = listOf(
             createStatement(StatementId("S123")),
-            createStatement(StatementId("S456"))
+            createStatement(StatementId("S456")),
         )
         val comparison = createResource(classes = setOf(Classes.comparison))
 
@@ -196,13 +196,13 @@ internal class ComparisonRelatedFigureUpdaterUnitTest : MockkBaseTest {
         every {
             comparisonRelatedFigureUseCases.findByIdAndComparisonId(
                 comparisonId = command.comparisonId,
-                id = command.comparisonRelatedFigureId
+                id = command.comparisonRelatedFigureId,
             )
         } returns Optional.of(comparisonRelatedFigure)
         every {
             statementService.findAll(
                 subjectId = command.comparisonRelatedFigureId,
-                pageable = PageRequests.ALL
+                pageable = PageRequests.ALL,
             )
         } returns pageOf(statements)
         every {
@@ -211,7 +211,7 @@ internal class ComparisonRelatedFigureUpdaterUnitTest : MockkBaseTest {
                 contributorId = command.contributorId,
                 subjectId = command.comparisonRelatedFigureId,
                 predicateId = Predicates.hasImage,
-                label = command.image
+                label = command.image,
             )
         } just runs
 
@@ -221,13 +221,13 @@ internal class ComparisonRelatedFigureUpdaterUnitTest : MockkBaseTest {
         verify(exactly = 1) {
             comparisonRelatedFigureUseCases.findByIdAndComparisonId(
                 comparisonId = command.comparisonId,
-                id = command.comparisonRelatedFigureId
+                id = command.comparisonRelatedFigureId,
             )
         }
         verify(exactly = 1) {
             statementService.findAll(
                 subjectId = command.comparisonRelatedFigureId,
-                pageable = PageRequests.ALL
+                pageable = PageRequests.ALL,
             )
         }
         verify(exactly = 1) {
@@ -236,7 +236,7 @@ internal class ComparisonRelatedFigureUpdaterUnitTest : MockkBaseTest {
                 contributorId = command.contributorId,
                 subjectId = command.comparisonRelatedFigureId,
                 predicateId = Predicates.hasImage,
-                label = command.image
+                label = command.image,
             )
         }
     }
@@ -245,11 +245,11 @@ internal class ComparisonRelatedFigureUpdaterUnitTest : MockkBaseTest {
     fun `Given a comparison related figure update command, when description has changed, it updates the description`() {
         val comparisonRelatedFigure = createComparisonRelatedFigure()
         val command = comparisonRelatedFigure.toComparisonRelatedFigureUpdateCommand().copy(
-            description = "updated description"
+            description = "updated description",
         )
         val statements = listOf(
             createStatement(StatementId("S123")),
-            createStatement(StatementId("S456"))
+            createStatement(StatementId("S456")),
         )
         val comparison = createResource(classes = setOf(Classes.comparison))
 
@@ -257,13 +257,13 @@ internal class ComparisonRelatedFigureUpdaterUnitTest : MockkBaseTest {
         every {
             comparisonRelatedFigureUseCases.findByIdAndComparisonId(
                 comparisonId = command.comparisonId,
-                id = command.comparisonRelatedFigureId
+                id = command.comparisonRelatedFigureId,
             )
         } returns Optional.of(comparisonRelatedFigure)
         every {
             statementService.findAll(
                 subjectId = command.comparisonRelatedFigureId,
-                pageable = PageRequests.ALL
+                pageable = PageRequests.ALL,
             )
         } returns pageOf(statements)
         every {
@@ -272,7 +272,7 @@ internal class ComparisonRelatedFigureUpdaterUnitTest : MockkBaseTest {
                 contributorId = command.contributorId,
                 subjectId = command.comparisonRelatedFigureId,
                 predicateId = Predicates.description,
-                label = command.description
+                label = command.description,
             )
         } just runs
 
@@ -282,13 +282,13 @@ internal class ComparisonRelatedFigureUpdaterUnitTest : MockkBaseTest {
         verify(exactly = 1) {
             comparisonRelatedFigureUseCases.findByIdAndComparisonId(
                 comparisonId = command.comparisonId,
-                id = command.comparisonRelatedFigureId
+                id = command.comparisonRelatedFigureId,
             )
         }
         verify(exactly = 1) {
             statementService.findAll(
                 subjectId = command.comparisonRelatedFigureId,
-                pageable = PageRequests.ALL
+                pageable = PageRequests.ALL,
             )
         }
         verify(exactly = 1) {
@@ -297,7 +297,7 @@ internal class ComparisonRelatedFigureUpdaterUnitTest : MockkBaseTest {
                 contributorId = command.contributorId,
                 subjectId = command.comparisonRelatedFigureId,
                 predicateId = Predicates.description,
-                label = command.description
+                label = command.description,
             )
         }
     }
@@ -309,6 +309,6 @@ internal class ComparisonRelatedFigureUpdaterUnitTest : MockkBaseTest {
             comparisonRelatedFigureId = id,
             label = label,
             image = image,
-            description = description
+            description = description,
         )
 }

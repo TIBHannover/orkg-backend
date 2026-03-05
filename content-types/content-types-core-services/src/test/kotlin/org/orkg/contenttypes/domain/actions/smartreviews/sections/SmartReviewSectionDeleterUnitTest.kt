@@ -34,22 +34,22 @@ internal class SmartReviewSectionDeleterUnitTest : MockkBaseTest {
             createStatement(
                 subject = createResource(command.smartReviewId),
                 predicate = createPredicate(Predicates.hasContribution),
-                `object` = createResource(contributionId, classes = setOf(Classes.contributionSmartReview))
+                `object` = createResource(contributionId, classes = setOf(Classes.contributionSmartReview)),
             ),
             createStatement(
                 subject = createResource(contributionId, classes = setOf(Classes.contributionSmartReview)),
                 predicate = createPredicate(Predicates.hasSection),
-                `object` = createResource(smartReview.sections.first().id)
+                `object` = createResource(smartReview.sections.first().id),
             ),
             createStatement(
                 subject = createResource(contributionId, classes = setOf(Classes.contributionSmartReview)),
                 predicate = createPredicate(Predicates.hasSection),
-                `object` = createResource(smartReview.sections.last().id)
-            )
+                `object` = createResource(smartReview.sections.last().id),
+            ),
         )
         val state = DeleteSmartReviewSectionState().copy(
             smartReview = smartReview,
-            statements = statements.groupBy { it.subject.id }
+            statements = statements.groupBy { it.subject.id },
         )
 
         every {
@@ -57,7 +57,7 @@ internal class SmartReviewSectionDeleterUnitTest : MockkBaseTest {
                 contributorId = command.contributorId,
                 contributionId = contributionId,
                 section = smartReview.sections.last(),
-                statements = state.statements
+                statements = state.statements,
             )
         } just runs
 
@@ -73,7 +73,7 @@ internal class SmartReviewSectionDeleterUnitTest : MockkBaseTest {
                 contributorId = command.contributorId,
                 contributionId = contributionId,
                 section = smartReview.sections.last(),
-                statements = state.statements
+                statements = state.statements,
             )
         }
     }
@@ -87,22 +87,22 @@ internal class SmartReviewSectionDeleterUnitTest : MockkBaseTest {
             createStatement(
                 subject = createResource(command.smartReviewId),
                 predicate = createPredicate(Predicates.hasContribution),
-                `object` = createResource(contributionId, classes = setOf(Classes.contributionSmartReview))
+                `object` = createResource(contributionId, classes = setOf(Classes.contributionSmartReview)),
             ),
             createStatement(
                 subject = createResource(contributionId, classes = setOf(Classes.contributionSmartReview)),
                 predicate = createPredicate(Predicates.hasSection),
-                `object` = createResource(smartReview.sections.first().id)
+                `object` = createResource(smartReview.sections.first().id),
             ),
             createStatement(
                 subject = createResource(contributionId, classes = setOf(Classes.contributionSmartReview)),
                 predicate = createPredicate(Predicates.hasSection),
-                `object` = createResource(smartReview.sections.last().id)
-            )
+                `object` = createResource(smartReview.sections.last().id),
+            ),
         )
         val state = DeleteSmartReviewSectionState().copy(
             smartReview = smartReview,
-            statements = statements.groupBy { it.subject.id }
+            statements = statements.groupBy { it.subject.id },
         )
 
         val result = smartReviewSectionDeleter(command, state)

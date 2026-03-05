@@ -70,7 +70,7 @@ internal class ResearchProblemControllerUnitTest : MockMvcBaseTest("research-pro
                 description(
                     """
                     A `GET` request provides information about a resource.
-                    """
+                    """,
                 )
                 pathParameters(
                     parameterWithName("id").description("The identifier of the research problem to retrieve."),
@@ -139,7 +139,7 @@ internal class ResearchProblemControllerUnitTest : MockMvcBaseTest("research-pro
                 description(
                     """
                     A `GET` request lists all research problems.
-                    """
+                    """,
                 )
                 pagedQueryParameters(
                     visibilityFilterQueryParameter(),

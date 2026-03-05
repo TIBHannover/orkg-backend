@@ -14,7 +14,7 @@ class AttributeConverter<T : Any>(
 ) : GenericConverter {
     override fun getConvertibleTypes(): MutableSet<ConvertiblePair> = mutableSetOf(
         ConvertiblePair(kClass.java, Value::class.java),
-        ConvertiblePair(Value::class.java, kClass.java)
+        ConvertiblePair(Value::class.java, kClass.java),
     )
 
     override fun convert(source: Any?, sourceType: TypeDescriptor, targetType: TypeDescriptor): Any? = if (kClass.java.isAssignableFrom(sourceType.type)) {

@@ -44,6 +44,6 @@ class ThingService(
             includeClasses = includeClasses,
             excludeClasses = excludeClasses,
             observatoryId = observatoryId,
-            organizationId = organizationId
+            organizationId = organizationId,
         )
 }

@@ -20,8 +20,8 @@ class RosettaStoneStatementPropertyValueUpdateValidator(
             thingRepository,
             statementRepository,
             rosettaStoneStatementService,
-            classHierarchyRepository
-        )
+            classHierarchyRepository,
+        ),
     )
 
     override fun invoke(command: UpdateRosettaStoneStatementCommand, state: State): State =
@@ -32,7 +32,7 @@ class RosettaStoneStatementPropertyValueUpdateValidator(
                 validationCacheIn = state.validationCache,
                 templateId = state.rosettaStoneTemplate.id,
                 subjects = command.subjects,
-                objects = command.objects
-            )
+                objects = command.objects,
+            ),
         )
 }

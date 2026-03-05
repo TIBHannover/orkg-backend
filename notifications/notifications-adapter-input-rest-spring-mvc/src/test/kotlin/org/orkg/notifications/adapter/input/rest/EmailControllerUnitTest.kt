@@ -42,7 +42,7 @@ internal class EmailControllerUnitTest : MockMvcBaseTest("emails") {
                 description(
                     """
                     A `POST` request sends a test email to the user who performed the request.
-                    """
+                    """,
                 )
                 requestFields<SendTestEmailRequest>(
                     fieldWithPath("message").description("The message to contain in the test email."),

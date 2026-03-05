@@ -28,16 +28,16 @@ fun createRosettaStoneTemplateCommand() = CreateRosettaStoneTemplateUseCase.Crea
         createStringLiteralObjectPositionTemplatePropertyCommand(),
         createNumberLiteralObjectPositionTemplatePropertyCommand(),
         createOtherLiteralObjectPositionTemplatePropertyCommand(),
-        createResourceObjectPositionTemplatePropertyCommand()
+        createResourceObjectPositionTemplatePropertyCommand(),
     ),
     observatories = listOf(
         ObservatoryId("cb71eebf-8afd-4fe3-9aea-d0966d71cece"),
-        ObservatoryId("73b2e081-9b50-4d55-b464-22d94e8a25f6")
+        ObservatoryId("73b2e081-9b50-4d55-b464-22d94e8a25f6"),
     ),
     organizations = listOf(
         OrganizationId("a700c55f-aae2-4696-b7d5-6e8b89f66a8f"),
-        OrganizationId("1f63b1da-3c70-4492-82e0-770ca94287ea")
-    )
+        OrganizationId("1f63b1da-3c70-4492-82e0-770ca94287ea"),
+    ),
 )
 
 fun updateRosettaStoneTemplateCommand() = UpdateRosettaStoneTemplateUseCase.UpdateCommand(
@@ -53,10 +53,10 @@ fun updateRosettaStoneTemplateCommand() = UpdateRosettaStoneTemplateUseCase.Upda
         createStringLiteralObjectPositionTemplatePropertyCommand(),
         createNumberLiteralObjectPositionTemplatePropertyCommand(),
         createOtherLiteralObjectPositionTemplatePropertyCommand(),
-        createResourceObjectPositionTemplatePropertyCommand()
+        createResourceObjectPositionTemplatePropertyCommand(),
     ),
     observatories = listOf(ObservatoryId("eeb1ab0f-0ef5-4bee-aba2-2d5cea2f0174")),
-    organizations = listOf(OrganizationId("f9965b2a-5222-45e1-8ef8-dbd8ce1f57bc"))
+    organizations = listOf(OrganizationId("f9965b2a-5222-45e1-8ef8-dbd8ce1f57bc")),
 )
 
 fun createSubjectPositionTemplatePropertyCommand() = ResourcePropertyCommand(
@@ -66,7 +66,7 @@ fun createSubjectPositionTemplatePropertyCommand() = ResourcePropertyCommand(
     minCount = 1,
     maxCount = 0,
     path = Predicates.hasSubjectPosition,
-    `class` = ThingId("C28")
+    `class` = ThingId("C28"),
 )
 
 fun createUntypedObjectPositionTemplatePropertyCommand() = UntypedPropertyCommand(
@@ -75,7 +75,7 @@ fun createUntypedObjectPositionTemplatePropertyCommand() = UntypedPropertyComman
     description = "property description",
     minCount = 1,
     maxCount = 2,
-    path = Predicates.hasObjectPosition
+    path = Predicates.hasObjectPosition,
 )
 
 fun createStringLiteralObjectPositionTemplatePropertyCommand() = StringLiteralPropertyCommand(
@@ -118,5 +118,5 @@ fun createResourceObjectPositionTemplatePropertyCommand() = ResourcePropertyComm
     minCount = 3,
     maxCount = 4,
     path = Predicates.hasObjectPosition,
-    `class` = ThingId("C28")
+    `class` = ThingId("C28"),
 )

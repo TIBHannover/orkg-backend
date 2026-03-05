@@ -91,7 +91,7 @@ internal class OpenAlexIdTest {
             // First digit is a 0
             Arguments.of("A0071765665", "https://openalex.org/authors/A0071765665"),
             // empty
-            Arguments.of("", "https://openalex.org/authors/")
+            Arguments.of("", "https://openalex.org/authors/"),
         )
     }
 }

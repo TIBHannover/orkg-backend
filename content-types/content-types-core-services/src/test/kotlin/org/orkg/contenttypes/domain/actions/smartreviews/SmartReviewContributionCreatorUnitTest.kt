@@ -28,7 +28,7 @@ internal class SmartReviewContributionCreatorUnitTest : MockkBaseTest {
     fun `Given a smart review create command, it crates a new smart review contribution resource`() {
         val command = createSmartReviewCommand()
         val state = CreateSmartReviewState(
-            smartReviewId = ThingId("R123")
+            smartReviewId = ThingId("R123"),
         )
 
         val resourceCreateCommand = CreateResourceUseCase.CreateCommand(
@@ -37,7 +37,7 @@ internal class SmartReviewContributionCreatorUnitTest : MockkBaseTest {
             classes = setOf(Classes.contribution, Classes.contributionSmartReview),
             extractionMethod = command.extractionMethod,
             observatoryId = command.observatories.firstOrNull(),
-            organizationId = command.organizations.firstOrNull()
+            organizationId = command.organizations.firstOrNull(),
         )
         val contributionId = ThingId("R456")
 
@@ -48,8 +48,8 @@ internal class SmartReviewContributionCreatorUnitTest : MockkBaseTest {
                     contributorId = command.contributorId,
                     subjectId = state.smartReviewId!!,
                     predicateId = Predicates.hasContribution,
-                    objectId = contributionId
-                )
+                    objectId = contributionId,
+                ),
             )
         } returns StatementId("S1")
 
@@ -68,8 +68,8 @@ internal class SmartReviewContributionCreatorUnitTest : MockkBaseTest {
                     contributorId = command.contributorId,
                     subjectId = state.smartReviewId!!,
                     predicateId = Predicates.hasContribution,
-                    objectId = contributionId
-                )
+                    objectId = contributionId,
+                ),
             )
         }
     }

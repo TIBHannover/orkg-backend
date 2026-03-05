@@ -63,7 +63,7 @@ class Neo4jResource : Neo4jThing() {
         visibility = visibility!!,
         verified = verified,
         unlistedBy = unlisted_by,
-        modifiable = modifiable!!
+        modifiable = modifiable!!,
     )
 
     override fun toThing() = toResource()

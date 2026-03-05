@@ -13,7 +13,7 @@ class LiteratureListSectionDeleter(
         statementService: StatementUseCases,
         resourceService: ResourceUseCases,
     ) : this(
-        AbstractLiteratureListSectionDeleter(statementService, resourceService)
+        AbstractLiteratureListSectionDeleter(statementService, resourceService),
     )
 
     override fun invoke(command: DeleteLiteratureListSectionCommand, state: State): State {
@@ -23,7 +23,7 @@ class LiteratureListSectionDeleter(
                 contributorId = command.contributorId,
                 literatureListId = command.literatureListId,
                 section = section,
-                statements = state.statements
+                statements = state.statements,
             )
         }
         return state

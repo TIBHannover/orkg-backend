@@ -53,7 +53,7 @@ internal class AbstractSmartReviewSectionValidatorVisualizationSectionUnitTest :
     @Test
     fun `Given a visualization section command, when heading is invalid, it throws an exception`() {
         val section = smartReviewVisualizationSectionCommand().copy(
-            heading = "a".repeat(MAX_LABEL_LENGTH + 1)
+            heading = "a".repeat(MAX_LABEL_LENGTH + 1),
         )
         val validationCache = mutableSetOf<ThingId>()
 

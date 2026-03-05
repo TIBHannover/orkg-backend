@@ -191,9 +191,18 @@ class SpringDataNeo4jContentTypeAdapter(
         patternGenerator: (Node) -> Collection<RelationshipPattern>,
     ): StatementBuilder.OrderableOngoingReadingAndWithWithoutWhere =
         when (this) {
-            ContentTypeClass.PAPER -> matchDistinct(node("Paper").named(node), patternGenerator)
-            ContentTypeClass.COMPARISON -> matchComparison(node, patternGenerator, true)
-            ContentTypeClass.VISUALIZATION -> matchDistinct(node("Visualization").named(node), patternGenerator)
+            ContentTypeClass.PAPER -> {
+                matchDistinct(node("Paper").named(node), patternGenerator)
+            }
+
+            ContentTypeClass.COMPARISON -> {
+                matchComparison(node, patternGenerator, true)
+            }
+
+            ContentTypeClass.VISUALIZATION -> {
+                matchDistinct(node("Visualization").named(node), patternGenerator)
+            }
+
             ContentTypeClass.TEMPLATE -> {
                 val n = node("NodeShape").named(node)
                 val patterns = listOf(
@@ -202,7 +211,13 @@ class SpringDataNeo4jContentTypeAdapter(
                 ) + patternGenerator(n)
                 match(n).match(patterns).with(node)
             }
-            ContentTypeClass.LITERATURE_LIST -> matchLiteratureList(node, patternGenerator)
-            ContentTypeClass.SMART_REVIEW -> matchSmartReview(node, patternGenerator)
+
+            ContentTypeClass.LITERATURE_LIST -> {
+                matchLiteratureList(node, patternGenerator)
+            }
+
+            ContentTypeClass.SMART_REVIEW -> {
+                matchSmartReview(node, patternGenerator)
+            }
         }
 }

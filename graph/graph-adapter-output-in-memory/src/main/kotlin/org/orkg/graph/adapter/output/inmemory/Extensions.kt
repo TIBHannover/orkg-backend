@@ -10,7 +10,10 @@ import org.orkg.graph.domain.SearchString
 import org.springframework.data.domain.Sort
 
 internal fun String.matches(searchString: SearchString): Boolean = when (searchString) {
-    is ExactSearchString -> equals(searchString.input, ignoreCase = true)
+    is ExactSearchString -> {
+        equals(searchString.input, ignoreCase = true)
+    }
+
     is FuzzySearchString -> {
         val searchWords = searchString.input
             .replace(Regex("""(\w)-(\w)"""), """$1 $2""")
@@ -21,9 +24,11 @@ internal fun String.matches(searchString: SearchString): Boolean = when (searchS
                 searchWord.startsWith("-") -> words.all {
                     !it.startsWith(searchWord.substring(1))
                 }
+
                 searchWord.startsWith("+") -> words.any {
                     it.startsWith(searchWord.substring(1))
                 }
+
                 else -> words.any { it.startsWith(searchWord) }
             }
         }

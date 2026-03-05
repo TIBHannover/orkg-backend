@@ -36,6 +36,7 @@ interface TemplatePropertyRepresentationAdapter : ThingReferenceRepresentationAd
                 createdAt,
                 createdBy
             )
+
             is StringLiteralTemplateProperty -> StringLiteralTemplatePropertyRepresentation(
                 id,
                 label,
@@ -50,6 +51,7 @@ interface TemplatePropertyRepresentationAdapter : ThingReferenceRepresentationAd
                 createdBy,
                 datatype.toClassReferenceRepresentation()
             )
+
             is NumberLiteralTemplateProperty -> NumberLiteralTemplatePropertyRepresentation(
                 id,
                 label,
@@ -65,6 +67,7 @@ interface TemplatePropertyRepresentationAdapter : ThingReferenceRepresentationAd
                 createdBy,
                 datatype.toClassReferenceRepresentation()
             )
+
             is OtherLiteralTemplateProperty -> OtherLiteralTemplatePropertyRepresentation(
                 id,
                 label,
@@ -78,6 +81,7 @@ interface TemplatePropertyRepresentationAdapter : ThingReferenceRepresentationAd
                 createdBy,
                 datatype.toClassReferenceRepresentation()
             )
+
             is ResourceTemplateProperty -> ResourceTemplatePropertyRepresentation(
                 id,
                 label,

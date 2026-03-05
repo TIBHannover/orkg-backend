@@ -43,6 +43,7 @@ interface LegacyAuthorRepresentationAdapter : ResourceRepresentationAdapter {
             is ResourceAuthor -> ResourceAuthorRepresentation(
                 value.toResourceRepresentation(usageCounts, formattedLabels)
             )
+
             is LiteralAuthor -> LiteralAuthorRepresentation(value)
         }
 

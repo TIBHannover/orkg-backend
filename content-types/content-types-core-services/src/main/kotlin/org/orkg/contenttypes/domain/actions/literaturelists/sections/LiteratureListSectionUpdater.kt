@@ -43,6 +43,7 @@ class LiteratureListSectionUpdater(
                     oldSection = section as LiteratureListListSection,
                     statements = state.statements
                 )
+
                 is AbstractLiteratureListTextSectionCommand -> abstractLiteratureListSectionUpdater.updateTextSection(
                     contributorId = command.contributorId,
                     newSection = command,

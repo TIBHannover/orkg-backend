@@ -30,7 +30,10 @@ interface PredicateRepresentationAdapter {
                 val ids = content.mapTo(mutableSetOf()) { it.id }
                 statementService.findAllDescriptionsById(ids)
             }
-            else -> emptyMap()
+
+            else -> {
+                emptyMap()
+            }
         }
         return map { it.toPredicateRepresentation(descriptions[it.id]) }
     }

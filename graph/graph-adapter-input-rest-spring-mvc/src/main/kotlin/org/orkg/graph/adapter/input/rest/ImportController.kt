@@ -35,6 +35,7 @@ class ImportController(
                 ontologyId = request.ontology,
                 uri = request.uri
             )
+
             is ImportByShortFormRequest -> service.importResourceByShortForm(
                 contributorId = currentUser.contributorId(),
                 ontologyId = request.ontology,
@@ -60,6 +61,7 @@ class ImportController(
                 ontologyId = request.ontology,
                 uri = request.uri
             )
+
             is ImportByShortFormRequest -> service.importPredicateByShortForm(
                 contributorId = currentUser.contributorId(),
                 ontologyId = request.ontology,
@@ -85,6 +87,7 @@ class ImportController(
                 ontologyId = request.ontology,
                 uri = request.uri
             )
+
             is ImportByShortFormRequest -> service.importClassByShortForm(
                 contributorId = currentUser.contributorId(),
                 ontologyId = request.ontology,

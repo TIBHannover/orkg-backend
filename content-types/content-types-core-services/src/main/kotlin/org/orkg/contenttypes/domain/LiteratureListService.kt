@@ -255,6 +255,7 @@ class LiteratureListService(
                 )
                 published.subgraph.filter { it.predicate.id != Predicates.hasPublishedVersion } + versions
             }
+
             Classes.literatureList in resource.classes -> {
                 statementRepository.fetchAsBundle(
                     id = resource.id,
@@ -271,7 +272,10 @@ class LiteratureListService(
                     pageable = PageRequests.ALL
                 )
             }
-            else -> throw IllegalStateException("""Unable to convert resource "${resource.id}" to literature list. This is a bug.""")
+
+            else -> {
+                throw IllegalStateException("""Unable to convert resource "${resource.id}" to literature list. This is a bug.""")
+            }
         }
         return ContentTypeSubgraph(root, statements.groupBy { it.subject.id })
     }

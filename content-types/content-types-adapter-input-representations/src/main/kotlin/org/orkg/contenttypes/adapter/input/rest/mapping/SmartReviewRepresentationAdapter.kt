@@ -59,27 +59,32 @@ interface SmartReviewRepresentationAdapter :
                 heading = heading,
                 comparison = comparison?.toResourceReferenceRepresentation()
             )
+
             is SmartReviewVisualizationSection -> SmartReviewVisualizationSectionRepresentation(
                 id = id,
                 heading = heading,
                 visualization = visualization?.toResourceReferenceRepresentation()
             )
+
             is SmartReviewResourceSection -> SmartReviewResourceSectionRepresentation(
                 id = id,
                 heading = heading,
                 resource = resource?.toResourceReferenceRepresentation()
             )
+
             is SmartReviewPredicateSection -> SmartReviewPredicateSectionRepresentation(
                 id = id,
                 heading = heading,
                 predicate = predicate?.toPredicateReferenceRepresentation()
             )
+
             is SmartReviewOntologySection -> SmartReviewOntologySectionRepresentation(
                 id = id,
                 heading = heading,
                 entities = entities.map { it.toThingReferenceRepresentation() },
                 predicates = predicates.map { it.toPredicateReferenceRepresentation() }
             )
+
             is SmartReviewTextSection -> SmartReviewTextSectionRepresentation(id, heading, classes, text)
         }
 }

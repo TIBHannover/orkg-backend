@@ -42,11 +42,16 @@ interface ThingRepresentationAdapter :
                 val count = statementService.countIncomingStatementsById(id)
                 toResourceRepresentation(mapOf(id to count), formatLabelFor(listOf(this), capabilities))
             }
+
             is Class -> {
                 val description = statementService.findAllDescriptionsById(setOf(id))
                 toClassRepresentation(description[id])
             }
-            is Literal -> toLiteralRepresentation()
+
+            is Literal -> {
+                toLiteralRepresentation()
+            }
+
             is Predicate -> {
                 val description = statementService.findAllDescriptionsById(setOf(id))
                 toPredicateRepresentation(description[id])

@@ -247,7 +247,7 @@ interface PublishSmartReviewUseCase {
         val description: String?,
     ) {
         init {
-            require(!assignDOI || assignDOI && !description.isNullOrBlank()) { "Description must not be blank when assigning a DOI." }
+            require(!assignDOI || (assignDOI && !description.isNullOrBlank())) { "Description must not be blank when assigning a DOI." }
         }
     }
 }

@@ -352,26 +352,33 @@ abstract class MockMvcBaseTest(val prefix: String) : MockkBaseTest {
             val descriptor = when (this) {
                 is HeaderDescriptor -> headerWithName(name)
                     .also { if (isOptional) it.optional() }
+
                 is ParameterDescriptor -> parameterWithName(name)
                     .also { if (isOptional) it.optional() }
                     .also { if (isIgnored) it.ignored() }
+
                 is LinkDescriptor -> linkWithRel(rel)
                     .also { if (isOptional) it.optional() }
                     .also { if (isIgnored) it.ignored() }
+
                 is CookieDescriptor -> cookieWithName(name)
                     .also { if (isOptional) it.optional() }
                     .also { if (isIgnored) it.ignored() }
+
                 is SubsectionDescriptor -> subsectionWithPath(path)
                     .type(type)
                     .also { if (isOptional) it.optional() }
                     .also { if (isIgnored) it.ignored() }
+
                 is FieldDescriptor -> fieldWithPath(path)
                     .type(type)
                     .also { if (isOptional) it.optional() }
                     .also { if (isIgnored) it.ignored() }
+
                 is RequestPartDescriptor -> partWithName(name)
                     .also { if (isOptional) it.optional() }
                     .also { if (isIgnored) it.ignored() }
+
                 is ParameterDescriptorWithType -> ParameterDescriptorWithType(name)
                     .type(type)
                     .also {
@@ -379,6 +386,7 @@ abstract class MockMvcBaseTest(val prefix: String) : MockkBaseTest {
                         if (optional) it.optional()
                         if (isIgnored) it.ignored()
                     }
+
                 is HeaderDescriptorWithType -> HeaderDescriptorWithType(name)
                     .type(type)
                     .also {
@@ -386,6 +394,7 @@ abstract class MockMvcBaseTest(val prefix: String) : MockkBaseTest {
                         it.example = example
                         if (optional) it.optional()
                     }
+
                 else -> throw IllegalArgumentException("Unknown descriptor class ${this::class}")
             }
 

@@ -122,7 +122,10 @@ sealed interface TemplateProperty {
                 ?.let { ClassReference(it.`object` as Class) }
             val `class` = statements.wherePredicate(Predicates.shClass).singleOrNull()?.objectIdAndLabel()
             return when {
-                order == null || path == null -> null
+                order == null || path == null -> {
+                    null
+                }
+
                 datatype != null -> {
                     when (datatype.id) {
                         Classes.string -> StringLiteralTemplateProperty(
@@ -139,6 +142,7 @@ sealed interface TemplateProperty {
                             createdAt = resource.createdAt,
                             datatype = datatype
                         )
+
                         in Literals.XSD.entries.filter { it.isNumber }.map { it.`class` } -> NumberLiteralTemplateProperty(
                             id = resource.id,
                             label = resource.label,
@@ -156,6 +160,7 @@ sealed interface TemplateProperty {
                             createdAt = resource.createdAt,
                             datatype = datatype
                         )
+
                         else -> OtherLiteralTemplateProperty(
                             id = resource.id,
                             label = resource.label,
@@ -171,31 +176,37 @@ sealed interface TemplateProperty {
                         )
                     }
                 }
-                `class` != null -> ResourceTemplateProperty(
-                    id = resource.id,
-                    label = resource.label,
-                    placeholder = placeholder,
-                    description = description,
-                    order = order,
-                    minCount = minCount,
-                    maxCount = maxCount,
-                    path = path,
-                    createdBy = resource.createdBy,
-                    createdAt = resource.createdAt,
-                    `class` = `class`
-                )
-                else -> UntypedTemplateProperty(
-                    id = resource.id,
-                    label = resource.label,
-                    placeholder = placeholder,
-                    description = description,
-                    order = order,
-                    minCount = minCount,
-                    maxCount = maxCount,
-                    path = path,
-                    createdBy = resource.createdBy,
-                    createdAt = resource.createdAt
-                )
+
+                `class` != null -> {
+                    ResourceTemplateProperty(
+                        id = resource.id,
+                        label = resource.label,
+                        placeholder = placeholder,
+                        description = description,
+                        order = order,
+                        minCount = minCount,
+                        maxCount = maxCount,
+                        path = path,
+                        createdBy = resource.createdBy,
+                        createdAt = resource.createdAt,
+                        `class` = `class`
+                    )
+                }
+
+                else -> {
+                    UntypedTemplateProperty(
+                        id = resource.id,
+                        label = resource.label,
+                        placeholder = placeholder,
+                        description = description,
+                        order = order,
+                        minCount = minCount,
+                        maxCount = maxCount,
+                        path = path,
+                        createdBy = resource.createdBy,
+                        createdAt = resource.createdAt
+                    )
+                }
             }
         }
     }

@@ -135,7 +135,9 @@ internal fun matchLiteratureList(
 ): StatementBuilder.OrderableOngoingReadingAndWithWithoutWhere =
     when (published) {
         true -> matchPublishedLiteratureLists(node, patternGenerator)
+
         false -> matchUnpublishedLiteratureLists(node, patternGenerator)
+
         else -> call(
             unionAll(
                 matchPublishedLiteratureLists(node, patternGenerator).returning(node).build(),
@@ -163,7 +165,9 @@ internal fun matchSmartReview(
 ): StatementBuilder.OrderableOngoingReadingAndWithWithoutWhere =
     when (published) {
         true -> matchPublishedSmartReviews(node, patternGenerator)
+
         false -> matchUnpublishedSmartReviews(node, patternGenerator)
+
         else -> call(
             unionAll(
                 matchPublishedSmartReviews(node, patternGenerator).returning(node).build(),
@@ -191,7 +195,9 @@ internal fun matchComparison(
 ): StatementBuilder.OrderableOngoingReadingAndWithWithoutWhere =
     when (published) {
         true -> matchPublishedComparisons(node, patternGenerator)
+
         false -> matchUnpublishedComparisons(node, patternGenerator)
+
         else -> call(
             unionAll(
                 matchPublishedComparisons(node, patternGenerator).returning(node).build(),

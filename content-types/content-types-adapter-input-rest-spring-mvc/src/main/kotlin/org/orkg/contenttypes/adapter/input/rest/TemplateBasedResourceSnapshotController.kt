@@ -75,6 +75,7 @@ class TemplateBasedResourceSnapshotController(
         when {
             templateId == null -> service.findAllByResourceId(resourceId, pageable)
                 .mapToTemplateBasedResourceSnapshotRepresentation(capabilities)
+
             else -> service.findAllByResourceIdAndTemplateId(resourceId, templateId, pageable)
                 .mapToTemplateBasedResourceSnapshotRepresentation(capabilities)
         }

@@ -149,9 +149,18 @@ data class DynamicLabel(
                         builder.append(char)
                         escaped = false
                     }
-                    char == '\\' -> escaped = true
-                    char in terminators -> return builder.toString()
-                    else -> builder.append(char)
+
+                    char == '\\' -> {
+                        escaped = true
+                    }
+
+                    char in terminators -> {
+                        return builder.toString()
+                    }
+
+                    else -> {
+                        builder.append(char)
+                    }
                 }
                 skip()
             }

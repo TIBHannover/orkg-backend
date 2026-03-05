@@ -334,6 +334,7 @@ class SpringDataNeo4jResourceAdapter(
                                 .with(node)
                         }
                     }
+
                     is FuzzySearchString -> {
                         if (skipNodeCollection) {
                             call("db.index.fulltext.queryNodes")

@@ -76,11 +76,17 @@ class SpringDataJpaContributorFromUserAdapter(
 
     override fun notify(event: Event) {
         when (event) {
-            is UserRegistered -> postgresContributorRepository.save(ContributorEntity.from(event))
-            is DisplayNameUpdated -> postgresContributorRepository.findById(event.id).ifPresent { entity ->
-                entity.displayName = event.displayName
-                postgresContributorRepository.save(entity)
+            is UserRegistered -> {
+                postgresContributorRepository.save(ContributorEntity.from(event))
             }
+
+            is DisplayNameUpdated -> {
+                postgresContributorRepository.findById(event.id).ifPresent { entity ->
+                    entity.displayName = event.displayName
+                    postgresContributorRepository.save(entity)
+                }
+            }
+
             else -> { // silently ignore unknown events
             }
         }

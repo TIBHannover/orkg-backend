@@ -33,10 +33,14 @@ class AbstractAuthorListCreator(
                     }
                     author.id!!
                 }
+
                 author.homepage == null && author.identifiers.isNullOrEmpty() -> {
                     createLiteralAuthor(author, contributorId)
                 }
-                else -> createResourceAuthor(author, contributorId)
+
+                else -> {
+                    createResourceAuthor(author, contributorId)
+                }
             }
         }
         val authorList = listService.create(

@@ -213,6 +213,7 @@ class SpringDataNeo4jPaperAdapter(
                             )
                             .with(node)
                     }
+
                     is FuzzySearchString -> {
                         patterns.toMatchOrNull(node)
                             ?.where(patternBoundWhere)

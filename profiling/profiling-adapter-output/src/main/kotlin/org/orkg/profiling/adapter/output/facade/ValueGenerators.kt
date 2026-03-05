@@ -71,12 +71,19 @@ class ThingIdValueGenerator(
     ): List<ThingId> =
         when {
             "resource" in name -> listOf(random.nextResourceId())
+
             "class" in name -> listOf(random.nextClassId())
+
             "predicate" in name -> listOf(random.nextPredicateId())
+
             "literal" in name -> listOf(random.nextLiteralId())
+
             "field" in name -> listOf(random.nextResourceId(Classes.researchField))
+
             "paper" in name -> listOf(random.nextResourceId(Classes.paper))
+
             "problem" in name -> listOf(random.nextResourceId(Classes.problem))
+
             else -> listOf(
                 random.nextResourceId(),
                 random.nextClassId(),
@@ -310,14 +317,18 @@ class StringValueGenerator : ValueGenerator<String> {
     ): List<String> =
         when {
             "class" in name -> labels
+
             "date" == name -> listOf("2023-01-01")
+
             "uri" == name -> listOf("http://purl.org/linked-data/cube#Observation")
+
             "doi" == name -> listOf(
                 "10.48366/r609337", // comparison
                 "10.1101/2020.03.03.20029983", // paper
                 "https://doi.org/10.48366/r609337", // comparison
                 "https://doi.org/10.1101/2020.03.03.20029983" // paper
             )
+
             else -> labels + listOf("covid", "2023-01-01")
         }
 }

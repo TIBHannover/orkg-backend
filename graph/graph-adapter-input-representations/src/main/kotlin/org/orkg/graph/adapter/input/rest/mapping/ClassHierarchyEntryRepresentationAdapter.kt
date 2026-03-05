@@ -11,7 +11,10 @@ interface ClassHierarchyEntryRepresentationAdapter : ClassRepresentationAdapter 
                 val ids = content.mapTo(mutableSetOf()) { it.`class`.id }
                 statementService.findAllDescriptionsById(ids)
             }
-            else -> emptyMap()
+
+            else -> {
+                emptyMap()
+            }
         }
         return map { it.toClassHierarchyEntryRepresentation(descriptions[it.`class`.id]) }
     }

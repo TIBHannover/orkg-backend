@@ -66,6 +66,7 @@ class AbstractTemplatePropertyValueValidator(
                     throw ResourceIsNotAnInstanceOfTargetClass(property.id, property.path.id, id, property.`class`.id)
                 }
             }
+
             is LiteralTemplateProperty -> {
                 if (`object` !is CreateLiteralCommandPart) {
                     throw ObjectIsNotALiteral(property.id, property.path.id, id)
@@ -85,6 +86,7 @@ class AbstractTemplatePropertyValueValidator(
                     )
                 }
             }
+
             is UntypedTemplateProperty -> {}
         }
     }

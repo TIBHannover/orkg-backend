@@ -9,9 +9,9 @@ tasks.withType<JavaCompile>().configureEach {
 
 spotless {
     kotlin {
-        ktlint("1.5.0") // TODO: Remove once Spotless uses this version
+        ktlint("1.8.0") // TODO: Remove once Spotless uses this version
     }
     kotlinGradle {
-        ktlint("1.5.0") // TODO: Remove once Spotless uses this version
+        ktlint("1.8.0") // TODO: Remove once Spotless uses this version
     }
 }

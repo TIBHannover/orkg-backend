@@ -153,6 +153,7 @@ class SpringDataNeo4jVisualizationAdapter(
                             .where(toLower(node.property("label")).eq(toLower(anonParameter(searchString.input))).and(node.`in`(nodes)))
                             .with(node)
                     }
+
                     is FuzzySearchString -> {
                         matchVisualizations
                             .with(collect(node).`as`(nodes))

@@ -330,7 +330,7 @@ val FuzzySearchString.query: String get() {
         } else if ((c == '+' || c == '-') &&
             reader.canRead(1) &&
             reader.peek(1).isWordCharacter() &&
-            (builder.isEmpty() || reader.cursor > 0 && reader.peek(-1).isWhitespace())
+            (builder.isEmpty() || (reader.cursor > 0 && reader.peek(-1).isWhitespace()))
         ) {
             reader.skip()
             if (builder.isNotEmpty()) {

@@ -155,6 +155,7 @@ class SpringDataNeo4jSmartReviewAdapter(
                             .where(toLower(node.property("label")).eq(toLower(anonParameter(searchString.input))).and(node.`in`(nodes)))
                             .with(node)
                     }
+
                     is FuzzySearchString -> {
                         matchSmartReviews
                             .with(collect(node).`as`(nodes))

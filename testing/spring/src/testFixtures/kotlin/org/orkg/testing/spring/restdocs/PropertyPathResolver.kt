@@ -54,14 +54,20 @@ class PropertyPathResolver {
         private fun Type.toClass(): Class<out Any>? =
             when (this) {
                 is ParameterizedType -> rawType.toClass()
-                is GenericArrayType -> Array::class.java // return generic array because we cannot convert GenericArrayType to Class<*>
+
+                // return generic array because we cannot convert GenericArrayType to Class<*>
+                is GenericArrayType -> Array::class.java
+
                 else -> this as? Class<*>
             }
 
         private fun Type.firstGenericType(): Type =
             when (this) {
-                is ParameterizedType -> actualTypeArguments.first() // type declared via generics
+                // type declared via generics
+                is ParameterizedType -> actualTypeArguments.first()
+
                 is GenericArrayType -> genericComponentType
+
                 else -> (this as Class<*>).componentType
             }
 

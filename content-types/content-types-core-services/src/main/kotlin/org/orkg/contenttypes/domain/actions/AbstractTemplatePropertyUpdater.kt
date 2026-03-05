@@ -121,7 +121,7 @@ class AbstractTemplatePropertyUpdater(
 
         if (newProperty is NumberLiteralTemplatePropertyCommand) {
             val oldMinInclusive = if (oldProperty is NumberLiteralTemplateProperty) oldProperty.minInclusive else null
-            if (newProperty.minInclusive != oldMinInclusive || oldProperty is NumberLiteralTemplateProperty && oldProperty.datatype.id != newProperty.datatype) {
+            if (newProperty.minInclusive != oldMinInclusive || (oldProperty is NumberLiteralTemplateProperty && oldProperty.datatype.id != newProperty.datatype)) {
                 singleStatementPropertyUpdater.updateOptionalProperty(
                     statements = statements,
                     contributorId = contributorId,
@@ -133,7 +133,7 @@ class AbstractTemplatePropertyUpdater(
                 )
             }
             val oldMaxInclusive = if (oldProperty is NumberLiteralTemplateProperty) oldProperty.maxInclusive else null
-            if (newProperty.maxInclusive != oldMaxInclusive || oldProperty is NumberLiteralTemplateProperty && oldProperty.datatype.id != newProperty.datatype) {
+            if (newProperty.maxInclusive != oldMaxInclusive || (oldProperty is NumberLiteralTemplateProperty && oldProperty.datatype.id != newProperty.datatype)) {
                 singleStatementPropertyUpdater.updateOptionalProperty(
                     statements = statements,
                     contributorId = contributorId,
@@ -152,7 +152,7 @@ class AbstractTemplatePropertyUpdater(
         }
 
         if (newProperty is LiteralTemplatePropertyCommand) {
-            if (oldProperty is LiteralTemplateProperty && newProperty.datatype != oldProperty.datatype.id || oldProperty !is LiteralTemplateProperty) {
+            if ((oldProperty is LiteralTemplateProperty && newProperty.datatype != oldProperty.datatype.id) || oldProperty !is LiteralTemplateProperty) {
                 val toRemove = statements.filter { it.predicate.id == Predicates.shDatatype || it.predicate.id == Predicates.shClass }
                 if (toRemove.isNotEmpty()) {
                     statementService.deleteAllById(toRemove.map { it.id }.toSet())
@@ -167,7 +167,7 @@ class AbstractTemplatePropertyUpdater(
                 )
             }
         } else if (newProperty is ResourceTemplatePropertyCommand) {
-            if (oldProperty is ResourceTemplateProperty && newProperty.`class` != oldProperty.`class`.id || oldProperty !is ResourceTemplateProperty) {
+            if ((oldProperty is ResourceTemplateProperty && newProperty.`class` != oldProperty.`class`.id) || oldProperty !is ResourceTemplateProperty) {
                 val toRemove = statements.filter { it.predicate.id == Predicates.shDatatype || it.predicate.id == Predicates.shClass }
                 if (toRemove.isNotEmpty()) {
                     statementService.deleteAllById(toRemove.map { it.id }.toSet())

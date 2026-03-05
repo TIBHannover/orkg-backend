@@ -40,6 +40,7 @@ class SmartReviewSectionUpdateValidator(
                 val validationCache = mutableSetOfNotNull(section.comparison?.id)
                 abstractSmartReviewSectionValidator.validate(command, validationCache)
             }
+
             is UpdateSmartReviewSectionUseCase.UpdateVisualizationSectionCommand -> {
                 if (section !is SmartReviewVisualizationSection) {
                     throw SmartReviewSectionTypeMismatch.mustBeVisualizationSection()
@@ -47,6 +48,7 @@ class SmartReviewSectionUpdateValidator(
                 val validationCache = mutableSetOfNotNull(section.visualization?.id)
                 abstractSmartReviewSectionValidator.validate(command, validationCache)
             }
+
             is UpdateSmartReviewSectionUseCase.UpdateResourceSectionCommand -> {
                 if (section !is SmartReviewResourceSection) {
                     throw SmartReviewSectionTypeMismatch.mustBeResourceSection()
@@ -54,6 +56,7 @@ class SmartReviewSectionUpdateValidator(
                 val validationCache = mutableSetOfNotNull(section.resource?.id)
                 abstractSmartReviewSectionValidator.validate(command, validationCache)
             }
+
             is UpdateSmartReviewSectionUseCase.UpdatePredicateSectionCommand -> {
                 if (section !is SmartReviewPredicateSection) {
                     throw SmartReviewSectionTypeMismatch.mustBePredicateSection()
@@ -61,6 +64,7 @@ class SmartReviewSectionUpdateValidator(
                 val validationCache = mutableSetOfNotNull(section.predicate?.id)
                 abstractSmartReviewSectionValidator.validate(command, validationCache)
             }
+
             is UpdateSmartReviewSectionUseCase.UpdateOntologySectionCommand -> {
                 if (section !is SmartReviewOntologySection) {
                     throw SmartReviewSectionTypeMismatch.mustBeOntologySection()
@@ -74,6 +78,7 @@ class SmartReviewSectionUpdateValidator(
                 }
                 abstractSmartReviewSectionValidator.validate(command, validationCache)
             }
+
             is UpdateSmartReviewSectionUseCase.UpdateTextSectionCommand -> {
                 if (section !is SmartReviewTextSection) {
                     throw SmartReviewSectionTypeMismatch.mustBeTextSection()

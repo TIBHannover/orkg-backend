@@ -26,13 +26,34 @@ private const val DOUBLE_QUOTES_CODEPOINT = '\"'.code
 internal fun escapeLiteral(literal: String): String = buildString(literal.length) {
     literal.codePoints().forEach { codePoint ->
         when (codePoint) {
-            BACKSLASH_CODEPOINT -> append("""\\""")
-            HORIZONTAL_TAB_CODEPOINT -> append("""\t""")
-            BACKSPACE_CODEPOINT -> append("""\b""")
-            NEW_LINE_CODEPOINT -> append("""\n""")
-            CARRIAGE_RETURN_CODEPOINT -> append("""\r""")
-            FORM_FEED_CODEPOINT -> append("""\f""")
-            DOUBLE_QUOTES_CODEPOINT -> append("""\"""")
+            BACKSLASH_CODEPOINT -> {
+                append("""\\""")
+            }
+
+            HORIZONTAL_TAB_CODEPOINT -> {
+                append("""\t""")
+            }
+
+            BACKSPACE_CODEPOINT -> {
+                append("""\b""")
+            }
+
+            NEW_LINE_CODEPOINT -> {
+                append("""\n""")
+            }
+
+            CARRIAGE_RETURN_CODEPOINT -> {
+                append("""\r""")
+            }
+
+            FORM_FEED_CODEPOINT -> {
+                append("""\f""")
+            }
+
+            DOUBLE_QUOTES_CODEPOINT -> {
+                append("""\"""")
+            }
+
             else -> {
                 val isIllegal = illegalCharRanges.any { codePoint in it }
                 if (isIllegal) {

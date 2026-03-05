@@ -94,14 +94,23 @@ class PaperRanker(
         val authors: MutableSet<ThingId> = mutableSetOf()
         rankingService.findAllStatementsAboutPaper(paper.id).forEach {
             when (it.first) {
-                Predicates.hasAuthor -> authors += it.second
+                Predicates.hasAuthor -> {
+                    authors += it.second
+                }
+
                 Predicates.hasAuthors -> {
                     listRepository.findById(it.second).ifPresent { list ->
                         authors += list.elements
                     }
                 }
-                Predicates.hasDOI -> stats.doi = it.second
-                Predicates.hasContribution -> contributions += it.second
+
+                Predicates.hasDOI -> {
+                    stats.doi = it.second
+                }
+
+                Predicates.hasContribution -> {
+                    contributions += it.second
+                }
             }
         }
         stats.authors = authors.size
@@ -154,7 +163,7 @@ class PaperRanker(
         val observatoryScore: Int,
     ) {
         constructor(stats: PaperStats) : this(
-            isRejected = !stats.hasTitle || stats.authors == 0 || stats.contributions == 0 && stats.rosettaStoneStatements == 0L && stats.properties == 0L,
+            isRejected = !stats.hasTitle || stats.authors == 0 || (stats.contributions == 0 && stats.rosettaStoneStatements == 0L && stats.properties == 0L),
             propertyScore = if (stats.properties > 0) (1 + log10(stats.properties.toDouble())) * 2 else 0.0,
             comparisonScore = if (stats.comparisons > 0) (1 + log10(stats.comparisons.toDouble())) * 2 else 0.0,
             listScore = if (stats.lists > 0) (1 + log10(stats.lists.toDouble())) else 0.0,

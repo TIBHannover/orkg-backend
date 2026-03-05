@@ -175,13 +175,19 @@ class SmartReviewService(
             ?.`object`
             ?: throw PublishedSmartReviewContentNotFound(smartReviewId, contentId)
         return when {
-            content is Resource && Classes.comparison in content.classes -> with(comparisonService) {
-                Either.left(Comparison.from(content, statements, content.findVersionInfo(statements)))
+            content is Resource && Classes.comparison in content.classes -> {
+                with(comparisonService) {
+                    Either.left(Comparison.from(content, statements, content.findVersionInfo(statements)))
+                }
             }
+
             content is Resource && Classes.visualization in content.classes -> {
                 Either.left(Visualization.from(content, statements))
             }
-            else -> Either.right(statements[contentId].orEmpty())
+
+            else -> {
+                Either.right(statements[contentId].orEmpty())
+            }
         }
     }
 
@@ -292,6 +298,7 @@ class SmartReviewService(
                 )
                 published.subgraph.filter { it.predicate.id != Predicates.hasPublishedVersion } + versions
             }
+
             Classes.smartReview in resource.classes -> {
                 statementRepository.fetchAsBundle(
                     id = resource.id,
@@ -308,7 +315,10 @@ class SmartReviewService(
                     pageable = PageRequests.ALL
                 )
             }
-            else -> throw IllegalStateException("""Unable to convert resource "${resource.id}" to smart review. This is a bug.""")
+
+            else -> {
+                throw IllegalStateException("""Unable to convert resource "${resource.id}" to smart review. This is a bug.""")
+            }
         }
         return ContentTypeSubgraph(root, statements.groupBy { it.subject.id })
     }

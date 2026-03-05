@@ -29,15 +29,30 @@ class SmartReviewSectionsUpdateValidator(
             val validationCache = mutableSetOf<ThingId>()
             state.smartReview!!.sections.forEach { section ->
                 when (section) {
-                    is SmartReviewComparisonSection -> section.comparison?.id?.also(validationCache::add)
-                    is SmartReviewVisualizationSection -> section.visualization?.id?.also(validationCache::add)
-                    is SmartReviewResourceSection -> section.resource?.id?.also(validationCache::add)
-                    is SmartReviewPredicateSection -> section.predicate?.id?.also(validationCache::add)
+                    is SmartReviewComparisonSection -> {
+                        section.comparison?.id?.also(validationCache::add)
+                    }
+
+                    is SmartReviewVisualizationSection -> {
+                        section.visualization?.id?.also(validationCache::add)
+                    }
+
+                    is SmartReviewResourceSection -> {
+                        section.resource?.id?.also(validationCache::add)
+                    }
+
+                    is SmartReviewPredicateSection -> {
+                        section.predicate?.id?.also(validationCache::add)
+                    }
+
                     is SmartReviewOntologySection -> {
                         section.entities.forEach { it.id?.also(validationCache::add) }
                         section.predicates.forEach { validationCache.add(it.id) }
                     }
-                    is SmartReviewTextSection -> Unit
+
+                    is SmartReviewTextSection -> {
+                        Unit
+                    }
                 }
             }
             sections.forEach { section ->

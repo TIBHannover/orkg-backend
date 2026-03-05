@@ -16,7 +16,10 @@ fun String.toSnakeCase(): String =
                         }
                         append(c.lowercase())
                     }
-                    else -> append(c)
+
+                    else -> {
+                        append(c)
+                    }
                 }
             }
         }
@@ -30,12 +33,18 @@ fun String.toCamelCase(): String =
             var nextUpper = false
             this@toCamelCase.forEach { c ->
                 when {
-                    c == '_' -> nextUpper = true
+                    c == '_' -> {
+                        nextUpper = true
+                    }
+
                     nextUpper -> {
                         append(c.uppercase())
                         nextUpper = false
                     }
-                    else -> append(c)
+
+                    else -> {
+                        append(c)
+                    }
                 }
             }
         }

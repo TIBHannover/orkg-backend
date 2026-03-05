@@ -41,6 +41,7 @@ class AbstractSmartReviewSectionValidator(
                         .orElseThrow { ComparisonNotFound(comparisonId) }
                 }
             }
+
             is AbstractSmartReviewVisualizationSectionCommand -> {
                 validateWithCache(section.visualization, validationCache) { visualizationId ->
                     resourceRepository.findById(visualizationId)
@@ -48,18 +49,21 @@ class AbstractSmartReviewSectionValidator(
                         .orElseThrow { VisualizationNotFound(visualizationId) }
                 }
             }
+
             is AbstractSmartReviewResourceSectionCommand -> {
                 validateWithCache(section.resource, validationCache) { resourceId ->
                     resourceRepository.findById(resourceId)
                         .orElseThrow { ResourceNotFound(resourceId) }
                 }
             }
+
             is AbstractSmartReviewPredicateSectionCommand -> {
                 validateWithCache(section.predicate, validationCache) { predicateId ->
                     predicateRepository.findById(predicateId)
                         .orElseThrow { PredicateNotFound(predicateId) }
                 }
             }
+
             is AbstractSmartReviewOntologySectionCommand -> {
                 val entitiesToValidate = section.entities.toSet() - validationCache
                 if (entitiesToValidate.isNotEmpty()) {
@@ -75,6 +79,7 @@ class AbstractSmartReviewSectionValidator(
                     }
                 }
             }
+
             is AbstractSmartReviewTextSectionCommand -> {
                 Description.ofOrNull(section.text) ?: throw InvalidDescription("text")
                 if (section.`class` != null && section.`class` !in SmartReviewTextSection.types) {

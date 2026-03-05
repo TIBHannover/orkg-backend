@@ -78,6 +78,7 @@ class SpringDataNeo4jPredicateAdapter(
                             .where(toLower(node.property("label")).eq(toLower(anonParameter(searchString.input))))
                             .with(node)
                     }
+
                     is FuzzySearchString -> {
                         call("db.index.fulltext.queryNodes")
                             .withArgs(anonParameter(FULLTEXT_INDEX_FOR_LABEL), anonParameter(searchString.query))

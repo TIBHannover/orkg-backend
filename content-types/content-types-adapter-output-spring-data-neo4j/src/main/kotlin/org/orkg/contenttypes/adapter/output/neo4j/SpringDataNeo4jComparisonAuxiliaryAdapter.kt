@@ -61,6 +61,7 @@ class SpringDataNeo4jComparisonAuxiliaryAdapter(
                     children = when {
                         // filter object ids if present in parent tree?
                         depth > 1 -> buildTree(entries, entry.objectIds.toSet() - parents, depth - 1, parents + rootIds)
+
                         else -> emptyList()
                     },
                 )
@@ -69,17 +70,29 @@ class SpringDataNeo4jComparisonAuxiliaryAdapter(
 
     private fun List<LabeledComparisonPath>.merge(): List<LabeledComparisonPath> =
         when {
-            isEmpty() || size == 1 && first().children.isEmpty() -> this
+            isEmpty() || (size == 1 && first().children.isEmpty()) -> this
+
             size == 1 -> map { it.copy(children = it.children.merge()) }
+
             else -> groupBy { it.id }.values.map { paths -> paths.reduce { a, b -> a.merge(b) } }.sortedBy {
                 when (it.type) {
-                    ComparisonPath.Type.PREDICATE -> it.label
-                    ComparisonPath.Type.ROSETTA_STONE_STATEMENT -> it.label
+                    ComparisonPath.Type.PREDICATE -> {
+                        it.label
+                    }
+
+                    ComparisonPath.Type.ROSETTA_STONE_STATEMENT -> {
+                        it.label
+                    }
+
                     ComparisonPath.Type.ROSETTA_STONE_STATEMENT_VALUE -> {
                         val id = it.id.value
                         when {
-                            id == "hasSubjectPosition" -> "0" // always sort rs subject to first position
-                            id.startsWith("hasObjectPosition") -> id // sort rs objects by id
+                            id == "hasSubjectPosition" -> "0"
+
+                            // always sort rs subject to first position
+                            id.startsWith("hasObjectPosition") -> id
+
+                            // sort rs objects by id
                             else -> throw IllegalStateException("""Illegal id "$id" for rosetta stone statement value while fetching comparison paths. This is a bug.""")
                         }
                     }
@@ -122,6 +135,7 @@ class SpringDataNeo4jComparisonAuxiliaryAdapter(
                         ?.takeIf { entry -> entry.type == it.type }
                         ?: return@mapNotNull null
                 }
+
                 ComparisonPath.Type.ROSETTA_STONE_STATEMENT_VALUE -> {
                     templateIdToEntryMap[parentId]
                         ?.get(it.id)

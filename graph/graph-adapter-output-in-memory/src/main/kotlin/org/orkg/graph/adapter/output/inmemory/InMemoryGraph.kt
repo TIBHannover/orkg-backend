@@ -113,8 +113,14 @@ class InMemoryGraph {
     fun delete(thingId: ThingId): Thing? =
         things.remove(thingId)?.also { thing ->
             when (thing) {
-                is Resource -> resources.remove(thingId)
-                is Predicate -> predicates.remove(thingId)
+                is Resource -> {
+                    resources.remove(thingId)
+                }
+
+                is Predicate -> {
+                    predicates.remove(thingId)
+                }
+
                 is Class -> {
                     classes.remove(thingId)
                     childClassIdToClassRelation.remove(thingId)
@@ -122,7 +128,10 @@ class InMemoryGraph {
                         .map { it.value.child.id }
                         .forEach { childClassIdToClassRelation.remove(it) }
                 }
-                is Literal -> literals.remove(thingId)
+
+                is Literal -> {
+                    literals.remove(thingId)
+                }
             }
             statements.values.filter { it.subject.id == thingId || it.predicate.id == thingId || it.`object`.id == thingId }
                 .forEach { statements.remove(it.id) }

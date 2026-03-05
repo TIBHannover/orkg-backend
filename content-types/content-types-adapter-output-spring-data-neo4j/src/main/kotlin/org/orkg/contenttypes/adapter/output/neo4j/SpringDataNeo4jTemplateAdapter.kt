@@ -162,6 +162,7 @@ class SpringDataNeo4jTemplateAdapter(
                             .where(toLower(node.property("label")).eq(toLower(anonParameter(searchString.input))).and(node.`in`(nodes)))
                             .with(node)
                     }
+
                     is FuzzySearchString -> {
                         matchTemplates
                             .with(collect(node).`as`(nodes))

@@ -409,6 +409,7 @@ class InMemoryStatementRepository(private val inMemoryGraph: InMemoryGraph) :
             }.any {
                 when (it) {
                     is Resource -> filter.range == Classes.resources || filter.range in it.classes
+
                     is Literal -> when (it.datatype.toUri()) {
                         Literals.XSD.INT.uri -> Classes.integer == filter.range
                         Literals.XSD.STRING.uri -> Classes.string == filter.range
@@ -418,7 +419,9 @@ class InMemoryStatementRepository(private val inMemoryGraph: InMemoryGraph) :
                         Literals.XSD.URI.uri -> Classes.uri == filter.range
                         else -> false
                     }
+
                     is Predicate -> Classes.predicates == filter.range
+
                     is Class -> Classes.classes == filter.range
                 } &&
                     filter.values.any { (op, value) ->
@@ -430,6 +433,7 @@ class InMemoryStatementRepository(private val inMemoryGraph: InMemoryGraph) :
                                 Literals.XSD.BOOLEAN.uri -> op.matches(it.label.toBoolean(), value.toBoolean())
                                 else -> op.matches(it.label, value)
                             }
+
                             else -> op.matches(it.id.value, value)
                         }
                     }
@@ -476,13 +480,14 @@ class InMemoryStatementRepository(private val inMemoryGraph: InMemoryGraph) :
 
     private infix fun Thing.isInstanceOfAll(classes: Set<ThingId>) =
         classes.isEmpty() ||
-            classes.size == 1 &&
-            when (this) {
-                is Resource -> classes.single() == Classes.resource
-                is Predicate -> classes.single() == Classes.predicate
-                is Literal -> classes.single() == Classes.literal
-                is Class -> classes.single() == Classes.`class`
-            } ||
-            this is Resource &&
-            (classes - Classes.resource).all { it in classes }
+            (
+                classes.size == 1 &&
+                    when (this) {
+                        is Resource -> classes.single() == Classes.resource
+                        is Predicate -> classes.single() == Classes.predicate
+                        is Literal -> classes.single() == Classes.literal
+                        is Class -> classes.single() == Classes.`class`
+                    }
+            ) ||
+            (this is Resource && (classes - Classes.resource).all { it in classes })
 }

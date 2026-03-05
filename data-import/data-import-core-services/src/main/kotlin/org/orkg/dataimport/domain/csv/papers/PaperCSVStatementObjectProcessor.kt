@@ -49,6 +49,7 @@ open class PaperCSVStatementObjectProcessor(
                             )
                         )
                     }
+
                     else -> unsafeLiteralUseCases.create(
                         CreateLiteralUseCase.CreateCommand(
                             contributorId = contributorId,

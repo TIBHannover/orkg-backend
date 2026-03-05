@@ -27,7 +27,9 @@ private fun Neo4jAuthorOfComparison.toComparisonAuthor() =
         when (authorResource) {
             // TODO: Replace with proper abstraction of Author
             is Neo4jResource -> SimpleAuthor.ResourceAuthor(authorResource.toResource())
+
             is Neo4jLiteral -> SimpleAuthor.LiteralAuthor(authorResource.label!!)
+
             else -> throw IllegalStateException()
         },
         info.map {

@@ -261,6 +261,7 @@ class ComparisonService(
     internal fun Resource.findVersionInfo(statements: Map<ThingId, List<GeneralStatement>>): VersionInfo =
         when {
             Classes.comparisonPublished in classes -> comparisonRepository.findVersionHistoryForPublishedComparison(id)
+
             else -> VersionInfo(
                 head = HeadVersion(this),
                 published = statements[id].orEmpty().wherePredicate(Predicates.hasPublishedVersion)

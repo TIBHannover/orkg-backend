@@ -30,7 +30,10 @@ interface ClassRepresentationAdapter {
                 val ids = content.mapTo(mutableSetOf()) { it.id }
                 statementService.findAllDescriptionsById(ids)
             }
-            else -> emptyMap()
+
+            else -> {
+                emptyMap()
+            }
         }
         return map { it.toClassRepresentation(descriptions[it.id]) }
     }

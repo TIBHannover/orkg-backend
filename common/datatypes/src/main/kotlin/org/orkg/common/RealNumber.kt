@@ -46,9 +46,13 @@ class RealNumber(value: String) : BigDecimal(validate(value)) {
             }
 
             when {
-                !reader.canRead() && reader.cursor > 0 -> return true // value has been fully read and there is at least one number
+                // value has been fully read and there is at least one number
+                !reader.canRead() && reader.cursor > 0 -> return true
+
                 reader.canRead() && reader.peek() == '.' -> reader.skip()
-                else -> return false // value does not contain a '.' character after first block of digits
+
+                // value does not contain a '.' character after first block of digits
+                else -> return false
             }
 
             while (reader.canRead() && reader.peek() in '0'..'9') {

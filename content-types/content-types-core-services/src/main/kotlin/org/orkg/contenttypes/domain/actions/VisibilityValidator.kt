@@ -32,8 +32,7 @@ class VisibilityValidator<T, S>(
 
     private fun isAllowedVisibilityChangeByOwner(source: Visibility, target: Visibility) =
         // allow restoring deleted resources
-        source == Visibility.DELETED &&
-            target == Visibility.DEFAULT ||
+        (source == Visibility.DELETED && target == Visibility.DEFAULT) ||
             // allow deletion of resources from any state
             target == Visibility.DELETED
 }

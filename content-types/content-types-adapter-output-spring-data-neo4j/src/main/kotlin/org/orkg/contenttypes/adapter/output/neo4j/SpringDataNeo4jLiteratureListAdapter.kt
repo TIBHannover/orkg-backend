@@ -155,6 +155,7 @@ class SpringDataNeo4jLiteratureListAdapter(
                             .where(toLower(node.property("label")).eq(toLower(anonParameter(searchString.input))).and(node.`in`(nodes)))
                             .with(node)
                     }
+
                     is FuzzySearchString -> {
                         matchLiteratureLists
                             .with(collect(node).`as`(nodes))

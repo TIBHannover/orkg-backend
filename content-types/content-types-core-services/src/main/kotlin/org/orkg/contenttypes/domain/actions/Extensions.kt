@@ -26,23 +26,33 @@ internal fun <T, S> List<Action<T, S>>.execute(command: T, initialState: S) =
 
 internal fun Thing.toThingCommandPart(statementRepository: StatementRepository? = null): CreateThingCommandPart =
     when (this) {
-        is Resource ->
+        is Resource -> {
             if (Classes.list in classes) {
                 CreateListCommandPart(label, emptyList())
             } else {
                 CreateResourceCommandPart(label, classes)
             }
-        is Class -> CreateClassCommandPart(label, uri)
-        is Predicate -> CreatePredicateCommandPart(
-            label = label,
-            description = statementRepository?.findAll(
-                pageable = PageRequests.SINGLE,
-                subjectId = id,
-                predicateId = Predicates.description,
-                objectClasses = setOf(Classes.literal)
-            )?.singleOrNull()?.`object`?.label
-        )
-        is Literal -> CreateLiteralCommandPart(label, datatype)
+        }
+
+        is Class -> {
+            CreateClassCommandPart(label, uri)
+        }
+
+        is Predicate -> {
+            CreatePredicateCommandPart(
+                label = label,
+                description = statementRepository?.findAll(
+                    pageable = PageRequests.SINGLE,
+                    subjectId = id,
+                    predicateId = Predicates.description,
+                    objectClasses = setOf(Classes.literal)
+                )?.singleOrNull()?.`object`?.label
+            )
+        }
+
+        is Literal -> {
+            CreateLiteralCommandPart(label, datatype)
+        }
     }
 
 internal fun DeleteResourceUseCase.tryDelete(id: ThingId, contributorId: ContributorId): Boolean {

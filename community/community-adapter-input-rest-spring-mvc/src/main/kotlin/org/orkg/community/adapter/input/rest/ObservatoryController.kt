@@ -122,22 +122,22 @@ class ObservatoryController(
     }
 
     data class CreateObservatoryRequest(
-        @JsonAlias("observatory_name")
+        @field:JsonAlias("observatory_name")
         val name: String,
-        @JsonProperty("organization_id")
+        @field:JsonProperty("organization_id")
         val organizationId: OrganizationId,
         val description: String,
-        @JsonProperty("research_field")
+        @field:JsonProperty("research_field")
         val researchField: ThingId,
         @field:Pattern(
             regexp = "^[a-zA-Z0-9_]+$",
             message = "Only underscores ( _ ), numbers, and letters are allowed in the permalink field"
         )
         @field:NotBlank
-        @JsonProperty("display_id")
+        @field:JsonProperty("display_id")
         val displayId: String,
         @field:Valid
-        @JsonProperty("sdgs")
+        @field:JsonProperty("sdgs")
         val sustainableDevelopmentGoals: Set<ThingId>?,
     ) {
         fun toCreateCommand() = CreateCommand(
@@ -157,9 +157,9 @@ class ObservatoryController(
         @field:Valid
         val organizations: Set<OrganizationId>?,
         val description: String?,
-        @JsonProperty("research_field")
+        @field:JsonProperty("research_field")
         val researchField: ThingId?,
-        @JsonProperty("sdgs")
+        @field:JsonProperty("sdgs")
         val sustainableDevelopmentGoals: Set<ThingId>?,
     ) {
         fun toUpdateCommand(id: ObservatoryId) = UpdateCommand(

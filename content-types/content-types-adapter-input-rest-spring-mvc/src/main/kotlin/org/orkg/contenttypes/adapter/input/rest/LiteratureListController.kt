@@ -227,17 +227,17 @@ class LiteratureListController(
         @field:NotBlank
         val title: String,
         @field:Size(min = 1, max = 1)
-        @JsonProperty("research_fields")
+        @field:JsonProperty("research_fields")
         val researchFields: List<ThingId>,
         @field:Valid
         val authors: List<AuthorRequest>?,
-        @JsonProperty("sdgs")
+        @field:JsonProperty("sdgs")
         val sustainableDevelopmentGoals: Set<ThingId>?,
         @field:Size(max = 1)
         val observatories: List<ObservatoryId>?,
         @field:Size(max = 1)
         val organizations: List<OrganizationId>?,
-        @JsonProperty("extraction_method")
+        @field:JsonProperty("extraction_method")
         val extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN,
         @field:Valid
         val sections: List<LiteratureListSectionRequest>?,
@@ -260,17 +260,17 @@ class LiteratureListController(
         @field:NullableNotBlank
         val title: String?,
         @field:Size(min = 1, max = 1)
-        @JsonProperty("research_fields")
+        @field:JsonProperty("research_fields")
         val researchFields: List<ThingId>?,
         @field:Valid
         val authors: List<AuthorRequest>?,
-        @JsonProperty("sdgs")
+        @field:JsonProperty("sdgs")
         val sustainableDevelopmentGoals: Set<ThingId>?,
         @field:Size(max = 1)
         val observatories: List<ObservatoryId>?,
         @field:Size(max = 1)
         val organizations: List<OrganizationId>?,
-        @JsonProperty("extraction_method")
+        @field:JsonProperty("extraction_method")
         val extractionMethod: ExtractionMethod?,
         @field:Valid
         val sections: List<LiteratureListSectionRequest>?,
@@ -357,7 +357,7 @@ class LiteratureListController(
     data class LiteratureListTextSectionRequest(
         val heading: String,
         @field:Positive
-        @JsonProperty("heading_size")
+        @field:JsonProperty("heading_size")
         val headingSize: Int,
         val text: String,
     ) : LiteratureListSectionRequest {

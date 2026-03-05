@@ -26,22 +26,22 @@ data class Contributor(
     /**
      * The name the users wants to be displayed.
      */
-    @get:JsonProperty("display_name")
+    @field:JsonProperty("display_name")
     val name: String,
     /**
      * The date and time the user joined the project, i.e., the time the corresponding account was created.
      */
-    @get:JsonProperty("joined_at")
+    @field:JsonProperty("joined_at")
     val joinedAt: OffsetDateTime,
     /**
      * The ID of the organization the user belongs to.
      */
-    @get:JsonProperty("organization_id")
+    @field:JsonProperty("organization_id")
     val organizationId: OrganizationId = OrganizationId.UNKNOWN,
     /**
      * The ID of the observatory the user belongs to.
      */
-    @get:JsonProperty("observatory_id")
+    @field:JsonProperty("observatory_id")
     val observatoryId: ObservatoryId = ObservatoryId.UNKNOWN,
     /**
      * The MD5-hashed email address of the contributor.
@@ -65,7 +65,7 @@ data class Contributor(
      * The Gravatar ID of the user, e.g., the hashed email address.
      */
     @Suppress("unused")
-    @get:JsonProperty("gravatar_id")
+    @field:JsonProperty("gravatar_id")
     val gravatarId: String = emailHash.toDigestHex()
 
     /**
@@ -74,7 +74,7 @@ data class Contributor(
      * This currently returns a URL to the Gravatar service.
      */
     @Suppress("unused")
-    @get:JsonProperty("avatar_url")
+    @field:JsonProperty("avatar_url")
     val avatarURL: String = "https://www.gravatar.com/avatar/${emailHash.toDigestHex()}"
 
     companion object {

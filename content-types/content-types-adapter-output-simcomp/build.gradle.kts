@@ -7,7 +7,6 @@ plugins {
 }
 
 dependencies {
-    api("com.fasterxml.jackson.core:jackson-annotations")
     api("org.springframework.data:spring-data-commons")
     api("org.springframework:spring-beans")
     api("org.springframework:spring-context")
@@ -19,6 +18,7 @@ dependencies {
     api(project(":graph:graph-core-model"))
     api(project(":graph:graph-ports-input"))
     api(project(":graph:graph-adapter-input-representations"))
+    implementation("com.fasterxml.jackson.core:jackson-annotations")
     implementation("tools.jackson.core:jackson-core")
     implementation("org.springframework:spring-web")
     testFixturesApi(project(":common:core-identifiers"))

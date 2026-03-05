@@ -13,9 +13,9 @@ data class DataCiteJson(
 ) {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     data class Attributes(
-        @JsonInclude(JsonInclude.Include.NON_NULL)
+        @field:JsonInclude(JsonInclude.Include.NON_NULL)
         val doi: String? = null,
-        @JsonInclude(JsonInclude.Include.NON_NULL)
+        @field:JsonInclude(JsonInclude.Include.NON_NULL)
         val event: String? = null,
         val creators: List<Creator>,
         val titles: List<Title>,

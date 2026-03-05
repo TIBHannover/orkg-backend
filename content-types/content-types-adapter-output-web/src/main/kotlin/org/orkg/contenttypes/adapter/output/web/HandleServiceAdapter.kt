@@ -14,13 +14,13 @@ internal const val TERM_IDENTIFIER = "https://doi.org/21.T11969/d56564a9795e9d9c
 
 @Component
 class HandleServiceAdapter(
-    @Value("\${orkg.handles.prefix}")
+    @param:Value("\${orkg.handles.prefix}")
     private val prefix: String,
-    @Value("\${orkg.handles.admin-handle}")
+    @param:Value("\${orkg.handles.admin-handle}")
     private val adminHandle: String,
-    @Value("\${orkg.handles.key-index}")
+    @param:Value("\${orkg.handles.key-index}")
     private val keyIndex: Int,
-    @Value("\${orkg.handles.password}")
+    @param:Value("\${orkg.handles.password}")
     private val secretKey: String,
 ) : HandleService {
     private val adapter: Result<HSAdapter> by lazy {

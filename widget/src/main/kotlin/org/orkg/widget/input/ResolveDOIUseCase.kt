@@ -10,7 +10,7 @@ interface ResolveDOIUseCase {
         val id: ThingId,
         val doi: String?,
         val title: String,
-        @JsonProperty("num_statements")
+        @field:JsonProperty("num_statements")
         val numberOfStatements: Long,
         val `class`: String,
     )

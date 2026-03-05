@@ -8,13 +8,13 @@ import java.util.UUID
 
 data class BaseThing(
     val id: UUID,
-    @JsonProperty("created_at")
+    @field:JsonProperty("created_at")
     val createdAt: LocalDateTime,
-    @JsonProperty("updated_at")
+    @field:JsonProperty("updated_at")
     val updatedAt: LocalDateTime,
-    @JsonProperty("thing_type")
+    @field:JsonProperty("thing_type")
     val thingType: ThingType,
-    @JsonProperty("thing_key")
+    @field:JsonProperty("thing_key")
     val thingKey: ThingId,
     val config: JsonNode,
     val data: JsonNode,

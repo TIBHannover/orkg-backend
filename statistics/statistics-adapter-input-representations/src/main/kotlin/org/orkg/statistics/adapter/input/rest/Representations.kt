@@ -25,7 +25,7 @@ data class ParameterSpecRepresentation<T>(
     val description: String,
     val type: String,
     val multivalued: Boolean,
-    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    @field:JsonInclude(JsonInclude.Include.NON_EMPTY)
     val values: List<T>,
 )
 

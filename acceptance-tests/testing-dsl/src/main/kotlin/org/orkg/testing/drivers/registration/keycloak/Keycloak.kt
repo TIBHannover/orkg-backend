@@ -96,23 +96,23 @@ class Keycloak private constructor(
     }
 
     data class RealmInformation(
-        @get:JsonProperty("realm") val realm: String,
-        @get:JsonProperty("public_key") val publicKey: String,
-        @get:JsonProperty("token-service") val tokenService: String,
-        @get:JsonProperty("account-service") val accountService: String,
+        @field:JsonProperty("realm") val realm: String,
+        @field:JsonProperty("public_key") val publicKey: String,
+        @field:JsonProperty("token-service") val tokenService: String,
+        @field:JsonProperty("account-service") val accountService: String,
     )
 
     data class OpenIDConnetConfiguration(
-        @get:JsonProperty("issuer") val issuer: String,
-        @get:JsonProperty("token_endpoint") val tokenEndpoint: String,
+        @field:JsonProperty("issuer") val issuer: String,
+        @field:JsonProperty("token_endpoint") val tokenEndpoint: String,
     )
 
     data class TokenResponse(
-        @get:JsonProperty("access_token") val accessToken: String,
-        @get:JsonProperty("refresh_token") val refreshToken: String,
-        @get:JsonProperty("token_type") val tokenType: String,
-        @get:JsonProperty("scope") val scope: String,
-        @get:JsonProperty("session_state") val sessionState: String,
-        @get:JsonProperty("not-before-policy") val notBeforePolicy: UInt,
+        @field:JsonProperty("access_token") val accessToken: String,
+        @field:JsonProperty("refresh_token") val refreshToken: String,
+        @field:JsonProperty("token_type") val tokenType: String,
+        @field:JsonProperty("scope") val scope: String,
+        @field:JsonProperty("session_state") val sessionState: String,
+        @field:JsonProperty("not-before-policy") val notBeforePolicy: UInt,
     )
 }

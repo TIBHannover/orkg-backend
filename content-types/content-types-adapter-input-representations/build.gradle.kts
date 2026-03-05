@@ -9,7 +9,6 @@ dependencies {
     api(project(":common:datatypes"))
     api(project(":common:core-identifiers"))
     api(project(":common:spring-webmvc"))
-    api(project(":community:community-core-model"))
     api(project(":content-types:content-types-core-model"))
     api(project(":content-types:content-types-ports-input"))
     api(project(":graph:graph-adapter-input-representations"))

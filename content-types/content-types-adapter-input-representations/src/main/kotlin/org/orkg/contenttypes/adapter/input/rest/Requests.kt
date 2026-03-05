@@ -37,7 +37,7 @@ data class CreateListRequestPart(
 data class CreateLiteralRequestPart(
     @field:NotBlank
     val label: String,
-    @JsonProperty("data_type")
+    @field:JsonProperty("data_type")
     val dataType: String?,
 ) {
     fun toCreateCommand(): CreateLiteralCommandPart =
@@ -100,10 +100,10 @@ data class UntypedPropertyRequest(
     override val placeholder: String?,
     override val description: String?,
     @field:PositiveOrZero
-    @JsonProperty("min_count")
+    @field:JsonProperty("min_count")
     override val minCount: Int?,
     @field:PositiveOrZero
-    @JsonProperty("max_count")
+    @field:JsonProperty("max_count")
     override val maxCount: Int?,
     override val path: ThingId,
 ) : TemplatePropertyRequest {
@@ -116,10 +116,10 @@ data class StringLiteralPropertyRequest(
     override val placeholder: String?,
     override val description: String?,
     @field:PositiveOrZero
-    @JsonProperty("min_count")
+    @field:JsonProperty("min_count")
     override val minCount: Int?,
     @field:PositiveOrZero
-    @JsonProperty("max_count")
+    @field:JsonProperty("max_count")
     override val maxCount: Int?,
     val pattern: String?,
     override val path: ThingId,
@@ -134,14 +134,14 @@ data class NumberLiteralPropertyRequest(
     override val placeholder: String?,
     override val description: String?,
     @field:PositiveOrZero
-    @JsonProperty("min_count")
+    @field:JsonProperty("min_count")
     override val minCount: Int?,
     @field:PositiveOrZero
-    @JsonProperty("max_count")
+    @field:JsonProperty("max_count")
     override val maxCount: Int?,
-    @JsonProperty("min_inclusive")
+    @field:JsonProperty("min_inclusive")
     val minInclusive: RealNumber?,
-    @JsonProperty("max_inclusive")
+    @field:JsonProperty("max_inclusive")
     val maxInclusive: RealNumber?,
     override val path: ThingId,
     val datatype: ThingId,
@@ -155,10 +155,10 @@ data class OtherLiteralPropertyRequest(
     override val placeholder: String?,
     override val description: String?,
     @field:PositiveOrZero
-    @JsonProperty("min_count")
+    @field:JsonProperty("min_count")
     override val minCount: Int?,
     @field:PositiveOrZero
-    @JsonProperty("max_count")
+    @field:JsonProperty("max_count")
     override val maxCount: Int?,
     override val path: ThingId,
     val datatype: ThingId,
@@ -172,10 +172,10 @@ data class ResourcePropertyRequest(
     override val placeholder: String?,
     override val description: String?,
     @field:PositiveOrZero
-    @JsonProperty("min_count")
+    @field:JsonProperty("min_count")
     override val minCount: Int?,
     @field:PositiveOrZero
-    @JsonProperty("max_count")
+    @field:JsonProperty("max_count")
     override val maxCount: Int?,
     override val path: ThingId,
     val `class`: ThingId,

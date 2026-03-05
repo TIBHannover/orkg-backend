@@ -226,17 +226,17 @@ class SmartReviewController(
         @field:NotBlank
         val title: String,
         @field:Size(min = 1, max = 1)
-        @JsonProperty("research_fields")
+        @field:JsonProperty("research_fields")
         val researchFields: List<ThingId>,
         @field:Valid
         val authors: List<AuthorRequest>?,
-        @JsonProperty("sdgs")
+        @field:JsonProperty("sdgs")
         val sustainableDevelopmentGoals: Set<ThingId>?,
         @field:Size(max = 1)
         val observatories: List<ObservatoryId>?,
         @field:Size(max = 1)
         val organizations: List<OrganizationId>?,
-        @JsonProperty("extraction_method")
+        @field:JsonProperty("extraction_method")
         val extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN,
         @field:Valid
         val sections: List<SmartReviewSectionRequest>?,
@@ -262,17 +262,17 @@ class SmartReviewController(
         @field:NullableNotBlank
         val title: String?,
         @field:Size(min = 1, max = 1)
-        @JsonProperty("research_fields")
+        @field:JsonProperty("research_fields")
         val researchFields: List<ThingId>?,
         @field:Valid
         val authors: List<AuthorRequest>?,
-        @JsonProperty("sdgs")
+        @field:JsonProperty("sdgs")
         val sustainableDevelopmentGoals: Set<ThingId>?,
         @field:Size(max = 1)
         val observatories: List<ObservatoryId>?,
         @field:Size(max = 1)
         val organizations: List<OrganizationId>?,
-        @JsonProperty("extraction_method")
+        @field:JsonProperty("extraction_method")
         val extractionMethod: ExtractionMethod?,
         @field:Valid
         val sections: List<SmartReviewSectionRequest>?,
@@ -539,7 +539,7 @@ class SmartReviewController(
     data class PublishSmartReviewRequest(
         @field:NotBlank
         val changelog: String,
-        @JsonProperty("assign_doi")
+        @field:JsonProperty("assign_doi")
         val assignDOI: Boolean,
         @field:NullableNotBlank
         val description: String?,

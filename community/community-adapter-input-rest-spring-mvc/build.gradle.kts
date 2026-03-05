@@ -43,7 +43,6 @@ testing {
 }
 
 dependencies {
-    api("com.fasterxml.jackson.core:jackson-annotations")
     api("tools.jackson.core:jackson-core")
     api("tools.jackson.core:jackson-databind")
     api("jakarta.validation:jakarta.validation-api")
@@ -62,6 +61,7 @@ dependencies {
     api(project(":graph:graph-ports-input"))
     api(project(":media-storage:media-storage-core-model"))
     api(project(":media-storage:media-storage-ports-input"))
+    implementation("com.fasterxml.jackson.core:jackson-annotations")
     implementation("com.github.multiformats:java-multibase")
     implementation("com.github.multiformats:java-multihash")
     implementation("org.springframework:spring-core")

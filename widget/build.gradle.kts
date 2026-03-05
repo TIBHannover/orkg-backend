@@ -6,11 +6,11 @@ plugins {
 }
 
 dependencies {
-    api("com.fasterxml.jackson.core:jackson-annotations")
     api("org.springframework:spring-context")
     api("org.springframework:spring-web")
     api(project(":common:core-identifiers"))
     api(project(":graph:graph-ports-input"))
+    implementation("com.fasterxml.jackson.core:jackson-annotations")
     implementation(project(":common:spring-webmvc"))
     implementation(project(":content-types:content-types-core-model"))
     implementation(project(":graph:graph-core-model"))

@@ -180,11 +180,11 @@ class OrganizationController(
     }
 
     data class CreateOrganizationRequest(
-        @JsonProperty("organization_name")
+        @field:JsonProperty("organization_name")
         val organizationName: String,
-        @JsonProperty("organization_logo")
+        @field:JsonProperty("organization_logo")
         var organizationLogo: String,
-        @JsonProperty("created_by")
+        @field:JsonProperty("created_by")
         val createdBy: ContributorId,
         val url: String,
         @field:Pattern(
@@ -192,7 +192,7 @@ class OrganizationController(
             message = "Only underscores ( _ ), numbers, and letters are allowed in the permalink field"
         )
         @field:NotBlank
-        @JsonProperty("display_id")
+        @field:JsonProperty("display_id")
         val displayId: String,
         @field:NotBlank
         val type: String,

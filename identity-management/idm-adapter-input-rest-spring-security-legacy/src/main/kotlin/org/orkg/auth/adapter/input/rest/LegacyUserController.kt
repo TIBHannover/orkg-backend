@@ -44,19 +44,19 @@ class LegacyUserController(
      * This class prevents user data from leaking by only exposing data that is relevant to the client.
      */
     data class UserDetails(
-        @JsonProperty("id")
+        @field:JsonProperty("id")
         val id: ContributorId,
-        @JsonProperty("email")
+        @field:JsonProperty("email")
         val email: String,
-        @JsonProperty("display_name")
+        @field:JsonProperty("display_name")
         val displayName: String,
-        @JsonProperty("created_at")
+        @field:JsonProperty("created_at")
         val created: OffsetDateTime,
-        @JsonProperty("organization_id")
+        @field:JsonProperty("organization_id")
         val organizationId: OrganizationId?, // nullable for legacy reasons, see orkg-backend#592
-        @JsonProperty("observatory_id")
+        @field:JsonProperty("observatory_id")
         val observatoryId: ObservatoryId?, // nullable for legacy reasons, see orkg-backend#592
-        @get:JsonProperty("is_curation_allowed")
+        @field:JsonProperty("is_curation_allowed")
         val isCurationAllowed: Boolean,
     ) {
         companion object {

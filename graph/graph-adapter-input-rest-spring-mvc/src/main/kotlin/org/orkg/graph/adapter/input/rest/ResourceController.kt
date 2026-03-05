@@ -150,7 +150,7 @@ class ResourceController(
         val id: ThingId?,
         val label: String,
         val classes: Set<ThingId> = emptySet(),
-        @JsonProperty("extraction_method")
+        @field:JsonProperty("extraction_method")
         val extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN,
     )
 
@@ -158,11 +158,11 @@ class ResourceController(
         val id: ThingId?,
         val label: String?,
         val classes: Set<ThingId>?,
-        @JsonProperty("observatory_id")
+        @field:JsonProperty("observatory_id")
         val observatoryId: ObservatoryId?,
-        @JsonProperty("organization_id")
+        @field:JsonProperty("organization_id")
         val organizationId: OrganizationId?,
-        @JsonProperty("extraction_method")
+        @field:JsonProperty("extraction_method")
         val extractionMethod: ExtractionMethod?,
         val visibility: Visibility?,
     ) {

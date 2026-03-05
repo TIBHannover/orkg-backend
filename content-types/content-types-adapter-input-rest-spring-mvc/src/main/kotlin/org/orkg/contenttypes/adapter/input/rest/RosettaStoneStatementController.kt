@@ -142,7 +142,7 @@ class RosettaStoneStatementController(
     }
 
     data class CreateRosettaStoneStatementRequest(
-        @JsonProperty("template_id")
+        @field:JsonProperty("template_id")
         val templateId: ThingId,
         val context: ThingId?,
         @field:Valid
@@ -165,7 +165,7 @@ class RosettaStoneStatementController(
         val observatories: List<ObservatoryId>,
         @field:Size(max = 1)
         val organizations: List<OrganizationId>,
-        @JsonProperty("extraction_method")
+        @field:JsonProperty("extraction_method")
         val extractionMethod: ExtractionMethod,
     ) {
         fun toCreateCommand(contributorId: ContributorId): CreateRosettaStoneStatementUseCase.CreateCommand =
@@ -209,7 +209,7 @@ class RosettaStoneStatementController(
         val observatories: List<ObservatoryId>,
         @field:Size(max = 1)
         val organizations: List<OrganizationId>,
-        @JsonProperty("extraction_method")
+        @field:JsonProperty("extraction_method")
         val extractionMethod: ExtractionMethod,
     ) {
         fun toUpdateCommand(id: ThingId, contributorId: ContributorId): UpdateRosettaStoneStatementUseCase.UpdateCommand =

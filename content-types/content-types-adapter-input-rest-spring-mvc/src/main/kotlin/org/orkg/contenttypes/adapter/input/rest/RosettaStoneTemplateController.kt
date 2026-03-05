@@ -127,10 +127,10 @@ class RosettaStoneTemplateController(
         @field:NotBlank
         val description: String,
         @field:NotBlank
-        @JsonProperty("formatted_label")
+        @field:JsonProperty("formatted_label")
         val dynamicLabel: String,
         @field:NotBlank
-        @JsonProperty("example_usage")
+        @field:JsonProperty("example_usage")
         val exampleUsage: String,
         @field:Valid
         @field:Size(min = 1)
@@ -159,10 +159,10 @@ class RosettaStoneTemplateController(
         @field:NullableNotBlank
         val description: String?,
         @field:NullableNotBlank
-        @JsonProperty("formatted_label")
+        @field:JsonProperty("formatted_label")
         val dynamicLabel: String?,
         @field:NotBlank
-        @JsonProperty("example_usage")
+        @field:JsonProperty("example_usage")
         val exampleUsage: String?,
         @field:Valid
         @field:Size(min = 1)

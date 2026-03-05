@@ -4,9 +4,9 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import org.orkg.common.ThingId
 
 data class ThingAddRequest(
-    @JsonProperty("thing_type")
+    @field:JsonProperty("thing_type")
     val thingType: ThingType,
-    @JsonProperty("thing_key")
+    @field:JsonProperty("thing_key")
     val thingKey: ThingId,
     val config: Any,
     val data: Any,

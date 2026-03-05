@@ -21,9 +21,9 @@ class GeoNamesServiceAdapter(
     private val httpClient: HttpClient,
     @param:Value("\${orkg.http.user-agent}")
     private val userAgent: String,
-    @Value("\${orkg.external-services.geonames.host}")
+    @param:Value("\${orkg.external-services.geonames.host}")
     private val host: String,
-    @Value("\${orkg.external-services.geonames.username}")
+    @param:Value("\${orkg.external-services.geonames.username}")
     private val username: String,
 ) : ExternalResourceService {
     private val pattern = Pattern.compile("""https?://(?:sws\.|www\.|)geonames\.org/([0-9]+)(?:/\S*\.html|/)?""")

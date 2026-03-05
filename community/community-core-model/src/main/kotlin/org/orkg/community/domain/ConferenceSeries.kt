@@ -9,15 +9,15 @@ data class ConferenceSeries(
     val organizationId: OrganizationId,
     var name: String,
     var homepage: String,
-    @JsonProperty("display_id")
+    @field:JsonProperty("display_id")
     var displayId: String,
     var metadata: Metadata,
 )
 
 data class Metadata(
-    @JsonProperty("start_date")
+    @field:JsonProperty("start_date")
     var startDate: LocalDate,
-    @JsonProperty("review_process")
+    @field:JsonProperty("review_process")
     var reviewType: PeerReviewType,
 )
 

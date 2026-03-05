@@ -27,9 +27,9 @@ class SimCompThingRepositoryAdapter(
     private val bodyPublisherFactory: (String) -> HttpRequest.BodyPublisher = HttpRequest.BodyPublishers::ofString,
     @param:Value("\${orkg.http.user-agent}")
     private val userAgent: String,
-    @Value("\${orkg.simcomp.host}")
+    @param:Value("\${orkg.simcomp.host}")
     private val host: String,
-    @Value("\${orkg.simcomp.api-key}")
+    @param:Value("\${orkg.simcomp.api-key}")
     private val apiKey: String,
 ) : SimCompThingRepository {
     override fun findById(id: ThingId, type: ThingType): Optional<BaseThing> {

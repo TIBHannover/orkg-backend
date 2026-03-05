@@ -212,15 +212,15 @@ class PaperController(
         @field:NotBlank
         val title: String,
         @field:Size(min = 1, max = 1)
-        @JsonProperty("research_fields")
+        @field:JsonProperty("research_fields")
         val researchFields: List<ThingId>,
         @field:Valid
         val identifiers: IdentifierMapRequest?,
-        @JsonProperty("publication_info")
+        @field:JsonProperty("publication_info")
         val publicationInfo: PublicationInfoRequest?,
         @field:Valid
         val authors: List<AuthorRequest>,
-        @JsonProperty("sdgs")
+        @field:JsonProperty("sdgs")
         val sustainableDevelopmentGoals: Set<ThingId>?,
         val mentionings: Set<ThingId>?,
         @field:Size(max = 1)
@@ -229,7 +229,7 @@ class PaperController(
         val organizations: List<OrganizationId>,
         @field:Valid
         val contents: PaperContentsRequest?,
-        @JsonProperty("extraction_method")
+        @field:JsonProperty("extraction_method")
         val extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN,
     ) {
         data class PaperContentsRequest(
@@ -304,23 +304,23 @@ class PaperController(
         @field:Size(min = 1)
         val title: String?,
         @field:Size(min = 1, max = 1)
-        @JsonProperty("research_fields")
+        @field:JsonProperty("research_fields")
         val researchFields: List<ThingId>?,
         @field:Valid
         val identifiers: IdentifierMapRequest?,
         @field:Valid
-        @JsonProperty("publication_info")
+        @field:JsonProperty("publication_info")
         val publicationInfo: PublicationInfoRequest?,
         @field:Valid
         val authors: List<AuthorRequest>?,
-        @JsonProperty("sdgs")
+        @field:JsonProperty("sdgs")
         val sustainableDevelopmentGoals: Set<ThingId>?,
         val mentionings: Set<ThingId>?,
         @field:Size(max = 1)
         val observatories: List<ObservatoryId>?,
         @field:Size(max = 1)
         val organizations: List<OrganizationId>?,
-        @JsonProperty("extraction_method")
+        @field:JsonProperty("extraction_method")
         val extractionMethod: ExtractionMethod?,
         val visibility: Visibility?,
         val verified: Boolean?,

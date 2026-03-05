@@ -120,7 +120,7 @@ class SmartReviewService(
     private val contributorRepository: ContributorRepository,
     private val doiService: DoiService,
     private val clock: Clock,
-    @Value("\${orkg.publishing.base-url.smart-review}")
+    @param:Value("\${orkg.publishing.base-url.smart-review}")
     private val smartReviewPublishBaseUri: String = "http://localhost/review/",
 ) : SmartReviewUseCases {
     override fun findById(id: ThingId): Optional<SmartReview> =

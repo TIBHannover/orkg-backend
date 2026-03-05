@@ -72,7 +72,7 @@ class ContributionController(
         val lists: Map<String, CreateListRequestPart>?,
         @field:Valid
         val contribution: CreatePaperRequest.ContributionRequestPart,
-        @JsonProperty("extraction_method")
+        @field:JsonProperty("extraction_method")
         val extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN,
     ) {
         fun toCreateCommand(contributorId: ContributorId, paperId: ThingId): CreateContributionUseCase.CreateCommand =

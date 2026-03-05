@@ -93,10 +93,10 @@ class ConferenceSeriesController(
     }
 
     data class ConferenceSeriesRequest(
-        @JsonProperty("organization_id")
+        @field:JsonProperty("organization_id")
         val organizationId: OrganizationId,
         val name: String,
-        @JsonProperty("display_id")
+        @field:JsonProperty("display_id")
         val displayId: String,
         val url: String,
         val metadata: MetadataRequest,
@@ -104,9 +104,9 @@ class ConferenceSeriesController(
 
     data class MetadataRequest(
         // conference start date
-        @JsonProperty("start_date")
+        @field:JsonProperty("start_date")
         val startDate: LocalDate,
-        @JsonProperty("review_type")
+        @field:JsonProperty("review_type")
         val reviewType: String,
     )
 }

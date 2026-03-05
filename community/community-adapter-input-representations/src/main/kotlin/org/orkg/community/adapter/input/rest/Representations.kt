@@ -14,14 +14,14 @@ data class ObservatoryRepresentation(
     val id: ObservatoryId,
     val name: String,
     val description: String?,
-    @get:JsonProperty("research_field")
+    @field:JsonProperty("research_field")
     val researchField: ResearchFieldRepresentation,
     val members: Set<ContributorId>,
-    @get:JsonProperty("organization_ids")
+    @field:JsonProperty("organization_ids")
     val organizationIds: Set<OrganizationId>,
-    @get:JsonProperty("display_id")
+    @field:JsonProperty("display_id")
     val displayId: String,
-    @get:JsonProperty("sdgs")
+    @field:JsonProperty("sdgs")
     val sustainableDevelopmentGoals: Set<ThingId>,
 )
 
@@ -32,12 +32,12 @@ data class ResearchFieldRepresentation(
 
 data class ObservatoryFilterRepresentation(
     val id: ObservatoryFilterId,
-    @get:JsonProperty("observatory_id")
+    @field:JsonProperty("observatory_id")
     val observatoryId: ObservatoryId,
     val label: String,
-    @get:JsonProperty("created_by")
+    @field:JsonProperty("created_by")
     val createdBy: ContributorId,
-    @get:JsonProperty("created_at")
+    @field:JsonProperty("created_at")
     val createdAt: OffsetDateTime,
     val path: PredicatePath,
     val range: ThingId,
@@ -48,6 +48,6 @@ data class ObservatoryFilterRepresentation(
 data class ContributorIdentifierRepresentation(
     val type: ContributorIdentifier.Type,
     val value: String,
-    @get:JsonProperty("created_at")
+    @field:JsonProperty("created_at")
     val createdAt: OffsetDateTime,
 )

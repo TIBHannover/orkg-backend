@@ -3,6 +3,6 @@ plugins {
 }
 
 dependencies {
-    api("com.fasterxml.jackson.core:jackson-annotations")
     api(project(":statistics:statistics-core-model"))
+    implementation("com.fasterxml.jackson.core:jackson-annotations")
 }

@@ -87,23 +87,23 @@ class MailBox(
         val messages: List<Message>,
     ) {
         data class Message(
-            @get:JsonProperty("ID")
+            @field:JsonProperty("ID")
             val id: String,
-            @get:JsonProperty("MessageID")
+            @field:JsonProperty("MessageID")
             val messageID: String,
-            @get:JsonProperty("Subject")
+            @field:JsonProperty("Subject")
             val subject: String,
-            @get:JsonProperty("From")
+            @field:JsonProperty("From")
             val from: MailAddress,
-            @get:JsonProperty("To")
+            @field:JsonProperty("To")
             val to: List<MailAddress>,
-            @get:JsonProperty("Created")
+            @field:JsonProperty("Created")
             val created: String,
         ) {
             data class MailAddress(
-                @get:JsonProperty("Address")
+                @field:JsonProperty("Address")
                 val address: String,
-                @get:JsonProperty("Name")
+                @field:JsonProperty("Name")
                 val name: String,
             )
         }
@@ -111,7 +111,7 @@ class MailBox(
 
     // Returns only what we need, nothing more.
     private data class SingleMessageResponse(
-        @get:JsonProperty("HTML")
+        @field:JsonProperty("HTML")
         val html: String,
     )
 }

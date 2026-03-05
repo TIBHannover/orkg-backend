@@ -112,7 +112,7 @@ class ImportController(
     ) : ImportRequest
 
     data class ImportByShortFormRequest(
-        @JsonProperty("short_form")
+        @field:JsonProperty("short_form")
         val shortForm: String,
         val ontology: String,
     ) : ImportRequest

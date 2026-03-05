@@ -10,12 +10,12 @@ import org.orkg.mediastorage.domain.ImageId
 data class Organization(
     val id: OrganizationId?,
     var name: String?,
-    @JsonProperty("created_by")
+    @field:JsonProperty("created_by")
     val createdBy: ContributorId? = ContributorId.UNKNOWN,
     var homepage: String?,
-    @JsonProperty("observatory_ids")
+    @field:JsonProperty("observatory_ids")
     val observatoryIds: Set<ObservatoryId> = emptySet(),
-    @JsonProperty("display_id")
+    @field:JsonProperty("display_id")
     var displayId: String?,
     var type: OrganizationType?,
     @JsonIgnore

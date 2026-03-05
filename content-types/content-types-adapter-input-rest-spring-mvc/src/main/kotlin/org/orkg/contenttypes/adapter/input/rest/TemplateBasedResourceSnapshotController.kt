@@ -39,7 +39,7 @@ class TemplateBasedResourceSnapshotController(
     private val service: TemplateBasedResourceSnapshotUseCases,
     override val formattedLabelService: FormattedLabelUseCases,
     override val statementService: StatementUseCases,
-    @Value("\${orkg.snapshots.resources.url-templates.frontend}")
+    @param:Value("\${orkg.snapshots.resources.url-templates.frontend}")
     private val frontendUrlTemplate: String,
 ) : TemplateBasedResourceSnapshotRepresentationAdapter {
     @GetMapping("/{snapshotId}", produces = [APPLICATION_JSON_VALUE])
@@ -57,8 +57,6 @@ class TemplateBasedResourceSnapshotController(
     fun redirectById(
         @PathVariable(name = "id") resourceId: ThingId,
         @PathVariable snapshotId: SnapshotId,
-        uriComponentsBuilder: UriComponentsBuilder,
-        capabilities: MediaTypeCapabilities,
     ): ResponseEntity<Any> {
         val location = UriComponentsBuilder.fromUriString(frontendUrlTemplate)
             .build(resourceId, snapshotId)
@@ -99,9 +97,9 @@ class TemplateBasedResourceSnapshotController(
     }
 
     data class CreateTemplateBasedResourceSnapshotRequest(
-        @JsonProperty("template_id")
+        @field:JsonProperty("template_id")
         val templateId: ThingId,
-        @JsonProperty("register_handle")
+        @field:JsonProperty("register_handle")
         val registerHandle: Boolean = true,
     ) {
         fun toCreateCommand(contributorId: ContributorId, resourceId: ThingId) =

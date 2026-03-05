@@ -19,7 +19,6 @@ import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.RealNumber
 import org.orkg.common.ThingId
-import org.orkg.community.domain.Contributor
 import org.orkg.contenttypes.domain.Author
 import org.orkg.contenttypes.domain.Certainty
 import org.orkg.contenttypes.domain.ClassReference
@@ -51,45 +50,45 @@ sealed interface ContentTypeRepresentation {
 data class PaperRepresentation(
     val id: ThingId,
     val title: String,
-    @get:JsonProperty("research_fields")
+    @field:JsonProperty("research_fields")
     val researchFields: List<LabeledObjectRepresentation>,
     val identifiers: Map<String, List<String>>,
-    @get:JsonProperty("publication_info")
+    @field:JsonProperty("publication_info")
     val publicationInfo: PublicationInfoRepresentation,
     val authors: List<AuthorRepresentation>,
     val contributions: List<LabeledObjectRepresentation>,
-    @get:JsonProperty("sdgs")
+    @field:JsonProperty("sdgs")
     val sustainableDevelopmentGoals: Set<LabeledObjectRepresentation>,
     val mentionings: Set<ResourceReferenceRepresentation>,
-    @get:JsonProperty("observatories")
+    @field:JsonProperty("observatories")
     val observatories: List<ObservatoryId>,
-    @get:JsonProperty("organizations")
+    @field:JsonProperty("organizations")
     val organizations: List<OrganizationId>,
-    @get:JsonProperty("extraction_method")
+    @field:JsonProperty("extraction_method")
     val extractionMethod: ExtractionMethod,
-    @get:JsonProperty("created_at")
+    @field:JsonProperty("created_at")
     val createdAt: OffsetDateTime,
-    @get:JsonProperty("created_by")
+    @field:JsonProperty("created_by")
     val createdBy: ContributorId,
     val verified: Boolean,
     val visibility: Visibility,
     val modifiable: Boolean,
     @get:JsonInclude(Include.NON_NULL)
-    @get:JsonProperty("unlisted_by")
+    @field:JsonProperty("unlisted_by")
     val unlistedBy: ContributorId?,
     override val jsonClass: String = "paper",
 ) : ContentTypeRepresentation
 
 data class PublicationInfoRepresentation(
-    @get:JsonProperty("published_month")
+    @field:JsonProperty("published_month")
     // no runtime effect, but used for documentation
     @field:Min(1)
     // no runtime effect, but used for documentation
     @field:Max(12)
     val publishedMonth: Int?,
-    @get:JsonProperty("published_year")
+    @field:JsonProperty("published_year")
     val publishedYear: Long?,
-    @get:JsonProperty("published_in")
+    @field:JsonProperty("published_in")
     val publishedIn: ObjectIdAndLabel?,
     val url: ParsedIRI?,
 )
@@ -111,15 +110,15 @@ data class ContributionRepresentation(
     val label: String,
     val classes: Set<ThingId>,
     val properties: Map<ThingId, List<ThingId>>,
-    @get:JsonProperty("extraction_method")
+    @field:JsonProperty("extraction_method")
     val extractionMethod: ExtractionMethod,
-    @get:JsonProperty("created_at")
+    @field:JsonProperty("created_at")
     val createdAt: OffsetDateTime,
-    @get:JsonProperty("created_by")
+    @field:JsonProperty("created_by")
     val createdBy: ContributorId,
     val visibility: Visibility,
     @get:JsonInclude(Include.NON_NULL)
-    @get:JsonProperty("unlisted_by")
+    @field:JsonProperty("unlisted_by")
     val unlistedBy: ContributorId?,
 )
 
@@ -127,36 +126,36 @@ data class ComparisonRepresentation(
     val id: ThingId,
     val title: String,
     val description: String?,
-    @get:JsonProperty("research_fields")
+    @field:JsonProperty("research_fields")
     val researchFields: List<LabeledObjectRepresentation>,
     val identifiers: Map<String, List<String>>,
-    @get:JsonProperty("publication_info")
+    @field:JsonProperty("publication_info")
     val publicationInfo: PublicationInfoRepresentation,
     val authors: List<AuthorRepresentation>,
-    @get:JsonProperty("sdgs")
+    @field:JsonProperty("sdgs")
     val sustainableDevelopmentGoals: Set<LabeledObjectRepresentation>,
     val sources: List<ComparisonDataSourceRepresentation>,
     val visualizations: List<LabeledObjectRepresentation>,
-    @get:JsonProperty("related_figures")
+    @field:JsonProperty("related_figures")
     val relatedFigures: List<LabeledObjectRepresentation>,
-    @get:JsonProperty("related_resources")
+    @field:JsonProperty("related_resources")
     val relatedResources: List<LabeledObjectRepresentation>,
     val references: List<String>,
     val observatories: List<ObservatoryId>,
     val organizations: List<OrganizationId>,
-    @get:JsonProperty("extraction_method")
+    @field:JsonProperty("extraction_method")
     val extractionMethod: ExtractionMethod,
-    @get:JsonProperty("created_at")
+    @field:JsonProperty("created_at")
     val createdAt: OffsetDateTime,
-    @get:JsonProperty("created_by")
+    @field:JsonProperty("created_by")
     val createdBy: ContributorId,
-    @get:JsonProperty("versions")
+    @field:JsonProperty("versions")
     val versions: VersionInfoRepresentation,
-    @get:JsonProperty("is_anonymized")
+    @field:JsonProperty("is_anonymized")
     val isAnonymized: Boolean,
     val visibility: Visibility,
     @get:JsonInclude(Include.NON_NULL)
-    @get:JsonProperty("unlisted_by")
+    @field:JsonProperty("unlisted_by")
     val unlistedBy: ContributorId?,
     val published: Boolean,
     override val jsonClass: String = "comparison",
@@ -168,9 +167,9 @@ data class ComparisonRelatedResourceRepresentation(
     val image: String?,
     val url: String?,
     val description: String?,
-    @get:JsonProperty("created_at")
+    @field:JsonProperty("created_at")
     val createdAt: OffsetDateTime,
-    @get:JsonProperty("created_by")
+    @field:JsonProperty("created_by")
     val createdBy: ContributorId,
 )
 
@@ -179,9 +178,9 @@ data class ComparisonRelatedFigureRepresentation(
     val label: String,
     val image: String?,
     val description: String?,
-    @get:JsonProperty("created_at")
+    @field:JsonProperty("created_at")
     val createdAt: OffsetDateTime,
-    @get:JsonProperty("created_by")
+    @field:JsonProperty("created_by")
     val createdBy: ContributorId,
 )
 
@@ -193,18 +192,18 @@ data class VersionInfoRepresentation(
 data class HeadVersionRepresentation(
     val id: ThingId,
     val label: String,
-    @get:JsonProperty("created_at")
+    @field:JsonProperty("created_at")
     val createdAt: OffsetDateTime,
-    @get:JsonProperty("created_by")
+    @field:JsonProperty("created_by")
     val createdBy: ContributorId,
 )
 
 data class PublishedVersionRepresentation(
     val id: ThingId,
     val label: String,
-    @get:JsonProperty("created_at")
+    @field:JsonProperty("created_at")
     val createdAt: OffsetDateTime,
-    @get:JsonProperty("created_by")
+    @field:JsonProperty("created_by")
     val createdBy: ContributorId,
     val changelog: String?,
 )
@@ -216,15 +215,15 @@ data class VisualizationRepresentation(
     val authors: List<AuthorRepresentation>,
     val observatories: List<ObservatoryId>,
     val organizations: List<OrganizationId>,
-    @get:JsonProperty("extraction_method")
+    @field:JsonProperty("extraction_method")
     val extractionMethod: ExtractionMethod,
-    @get:JsonProperty("created_at")
+    @field:JsonProperty("created_at")
     val createdAt: OffsetDateTime,
-    @get:JsonProperty("created_by")
+    @field:JsonProperty("created_by")
     val createdBy: ContributorId,
     val visibility: Visibility,
     @get:JsonInclude(Include.NON_NULL)
-    @get:JsonProperty("unlisted_by")
+    @field:JsonProperty("unlisted_by")
     val unlistedBy: ContributorId?,
     override val jsonClass: String = "visualization",
 ) : ContentTypeRepresentation
@@ -249,12 +248,12 @@ data class AuthorRequest(
 data class PublicationInfoRequest(
     @field:Min(1)
     @field:Max(12)
-    @JsonProperty("published_month")
+    @field:JsonProperty("published_month")
     val publishedMonth: Int?,
-    @JsonProperty("published_year")
+    @field:JsonProperty("published_year")
     val publishedYear: Long?,
     @field:Size(min = 1)
-    @JsonProperty("published_in")
+    @field:JsonProperty("published_in")
     val publishedIn: String?,
     val url: ParsedIRI?,
 ) {
@@ -271,33 +270,33 @@ data class TemplateRepresentation(
     val id: ThingId,
     val label: String,
     val description: String?,
-    @get:JsonProperty("formatted_label")
+    @field:JsonProperty("formatted_label")
     val formattedLabel: String?, // FIXME: The type should be FormattedLabel, but value classes cannot be parsed by jackson
-    @get:JsonProperty("target_class")
+    @field:JsonProperty("target_class")
     val targetClass: ClassReferenceRepresentation,
     val relations: TemplateRelationRepresentation,
     val properties: List<TemplatePropertyRepresentation>,
-    @get:JsonProperty("is_closed")
+    @field:JsonProperty("is_closed")
     val isClosed: Boolean,
-    @get:JsonProperty("created_at")
+    @field:JsonProperty("created_at")
     val createdAt: OffsetDateTime,
-    @get:JsonProperty("created_by")
+    @field:JsonProperty("created_by")
     val createdBy: ContributorId,
     val observatories: List<ObservatoryId>,
     val organizations: List<OrganizationId>,
-    @get:JsonProperty("extraction_method")
+    @field:JsonProperty("extraction_method")
     val extractionMethod: ExtractionMethod,
     val visibility: Visibility,
     @get:JsonInclude(Include.NON_NULL)
-    @get:JsonProperty("unlisted_by")
+    @field:JsonProperty("unlisted_by")
     val unlistedBy: ContributorId?,
     override val jsonClass: String = "template",
 ) : ContentTypeRepresentation
 
 data class TemplateRelationRepresentation(
-    @get:JsonProperty("research_fields")
+    @field:JsonProperty("research_fields")
     val researchFields: List<ObjectIdAndLabel>,
-    @get:JsonProperty("research_problems")
+    @field:JsonProperty("research_problems")
     val researchProblems: List<ObjectIdAndLabel>,
     val predicate: ObjectIdAndLabel?,
 )
@@ -363,9 +362,9 @@ data class NumberLiteralTemplatePropertyRepresentation(
     override val order: Long,
     override val minCount: Int?,
     override val maxCount: Int?,
-    @JsonProperty("min_inclusive")
+    @field:JsonProperty("min_inclusive")
     val minInclusive: RealNumber?,
-    @JsonProperty("max_inclusive")
+    @field:JsonProperty("max_inclusive")
     val maxInclusive: RealNumber?,
     override val path: ObjectIdAndLabel,
     override val createdAt: OffsetDateTime,
@@ -405,22 +404,22 @@ data class RosettaStoneTemplateRepresentation(
     val id: ThingId,
     val label: String,
     val description: String?,
-    @get:JsonProperty("formatted_label")
+    @field:JsonProperty("formatted_label")
     val dynamicLabel: DynamicLabel?,
-    @get:JsonProperty("target_class")
+    @field:JsonProperty("target_class")
     val targetClass: ThingId,
-    @get:JsonProperty("example_usage")
+    @field:JsonProperty("example_usage")
     val exampleUsage: String?,
     val properties: List<TemplatePropertyRepresentation>,
-    @get:JsonProperty("created_at")
+    @field:JsonProperty("created_at")
     val createdAt: OffsetDateTime,
-    @get:JsonProperty("created_by")
+    @field:JsonProperty("created_by")
     val createdBy: ContributorId,
     val observatories: List<ObservatoryId>,
     val organizations: List<OrganizationId>,
     val visibility: Visibility,
     @get:JsonInclude(Include.NON_NULL)
-    @get:JsonProperty("unlisted_by")
+    @field:JsonProperty("unlisted_by")
     val unlistedBy: ContributorId?,
     val modifiable: Boolean,
 )
@@ -433,9 +432,9 @@ data class TemplateInstanceRepresentation(
 
 data class EmbeddedStatementRepresentation(
     val thing: ThingRepresentation,
-    @get:JsonProperty("created_at")
+    @field:JsonProperty("created_at")
     val createdAt: OffsetDateTime,
-    @get:JsonProperty("created_by")
+    @field:JsonProperty("created_by")
     val createdBy: ContributorId,
     val statements: Map<ThingId, List<EmbeddedStatementRepresentation>>,
 )
@@ -443,23 +442,23 @@ data class EmbeddedStatementRepresentation(
 data class LiteratureListRepresentation(
     val id: ThingId,
     val title: String,
-    @get:JsonProperty("research_fields")
+    @field:JsonProperty("research_fields")
     val researchFields: List<ObjectIdAndLabel>,
     val authors: List<AuthorRepresentation>,
     val versions: VersionInfoRepresentation,
-    @get:JsonProperty("sdgs")
+    @field:JsonProperty("sdgs")
     val sustainableDevelopmentGoals: Set<LabeledObjectRepresentation>,
     val observatories: List<ObservatoryId>,
     val organizations: List<OrganizationId>,
-    @get:JsonProperty("extraction_method")
+    @field:JsonProperty("extraction_method")
     val extractionMethod: ExtractionMethod,
-    @get:JsonProperty("created_at")
+    @field:JsonProperty("created_at")
     val createdAt: OffsetDateTime,
-    @get:JsonProperty("created_by")
+    @field:JsonProperty("created_by")
     val createdBy: ContributorId,
     val visibility: Visibility,
     @get:JsonInclude(Include.NON_NULL)
-    @get:JsonProperty("unlisted_by")
+    @field:JsonProperty("unlisted_by")
     val unlistedBy: ContributorId? = null,
     val published: Boolean,
     val sections: List<LiteratureListSectionRepresentation>,
@@ -497,7 +496,7 @@ data class LiteratureListListSectionRepresentation(
 data class LiteratureListTextSectionRepresentation(
     override val id: ThingId,
     val heading: String,
-    @get:JsonProperty("heading_size")
+    @field:JsonProperty("heading_size")
     val headingSize: Int,
     val text: String,
 ) : LiteratureListSectionRepresentation
@@ -505,24 +504,24 @@ data class LiteratureListTextSectionRepresentation(
 data class SmartReviewRepresentation(
     val id: ThingId,
     val title: String,
-    @get:JsonProperty("research_fields")
+    @field:JsonProperty("research_fields")
     val researchFields: List<ObjectIdAndLabel>,
     val identifiers: Map<String, List<String>>,
     val authors: List<AuthorRepresentation>,
     val versions: VersionInfoRepresentation,
-    @get:JsonProperty("sdgs")
+    @field:JsonProperty("sdgs")
     val sustainableDevelopmentGoals: Set<LabeledObjectRepresentation>,
     val observatories: List<ObservatoryId>,
     val organizations: List<OrganizationId>,
-    @get:JsonProperty("extraction_method")
+    @field:JsonProperty("extraction_method")
     val extractionMethod: ExtractionMethod,
-    @get:JsonProperty("created_at")
+    @field:JsonProperty("created_at")
     val createdAt: OffsetDateTime,
-    @get:JsonProperty("created_by")
+    @field:JsonProperty("created_by")
     val createdBy: ContributorId,
     val visibility: Visibility,
     @get:JsonInclude(Include.NON_NULL)
-    @get:JsonProperty("unlisted_by")
+    @field:JsonProperty("unlisted_by")
     val unlistedBy: ContributorId? = null,
     val published: Boolean,
     val sections: List<SmartReviewSectionRepresentation>,
@@ -597,41 +596,41 @@ data class SmartReviewTextSectionRepresentation(
 
 data class RosettaStoneStatementRepresentation(
     val id: ThingId,
-    @get:JsonProperty("context")
+    @field:JsonProperty("context")
     val context: ThingId?,
-    @get:JsonProperty("template_id")
+    @field:JsonProperty("template_id")
     val templateId: ThingId,
-    @get:JsonProperty("class_id")
+    @field:JsonProperty("class_id")
     val classId: ThingId,
-    @get:JsonProperty("version_id")
+    @field:JsonProperty("version_id")
     val versionId: ThingId,
-    @get:JsonProperty("latest_version_id")
+    @field:JsonProperty("latest_version_id")
     val latestVersion: ThingId,
     val label: String,
-    @get:JsonProperty("formatted_label")
+    @field:JsonProperty("formatted_label")
     val dynamicLabel: DynamicLabel,
     val subjects: List<ThingReferenceRepresentation>,
     val objects: List<List<ThingReferenceRepresentation>>,
-    @get:JsonProperty("created_at")
+    @field:JsonProperty("created_at")
     val createdAt: OffsetDateTime,
-    @get:JsonProperty("created_by")
+    @field:JsonProperty("created_by")
     val createdBy: ContributorId,
     val certainty: Certainty,
     val negated: Boolean,
     val observatories: List<ObservatoryId>,
     val organizations: List<OrganizationId>,
-    @get:JsonProperty("extraction_method")
+    @field:JsonProperty("extraction_method")
     val extractionMethod: ExtractionMethod,
     val visibility: Visibility,
     @get:JsonInclude(Include.NON_NULL)
-    @get:JsonProperty("unlisted_by")
+    @field:JsonProperty("unlisted_by")
     val unlistedBy: ContributorId?,
     val modifiable: Boolean,
     @get:JsonInclude(Include.NON_NULL)
-    @get:JsonProperty("deleted_by")
+    @field:JsonProperty("deleted_by")
     val deletedBy: ContributorId?,
     @get:JsonInclude(Include.NON_NULL)
-    @get:JsonProperty("deleted_at")
+    @field:JsonProperty("deleted_at")
     val deletedAt: OffsetDateTime?,
 )
 
@@ -694,15 +693,15 @@ data class TableRepresentation(
     val rows: List<RowRepresentation>,
     val observatories: List<ObservatoryId>,
     val organizations: List<OrganizationId>,
-    @get:JsonProperty("extraction_method")
+    @field:JsonProperty("extraction_method")
     val extractionMethod: ExtractionMethod,
-    @get:JsonProperty("created_at")
+    @field:JsonProperty("created_at")
     val createdAt: OffsetDateTime,
-    @get:JsonProperty("created_by")
+    @field:JsonProperty("created_by")
     val createdBy: ContributorId,
     val visibility: Visibility,
     val modifiable: Boolean,
-    @get:JsonProperty("unlisted_by")
+    @field:JsonProperty("unlisted_by")
     val unlistedBy: ContributorId? = null,
 ) {
     data class RowRepresentation(
@@ -717,89 +716,84 @@ data class ComparisonAuthorRepresentation(
 )
 
 data class ComparisonAuthorInfoRepresentation(
-    @get:JsonProperty("paper_id")
+    @field:JsonProperty("paper_id")
     val paperId: ThingId,
-    @get:JsonProperty("author_index")
+    @field:JsonProperty("author_index")
     val authorIndex: Int,
-    @get:JsonProperty("paper_year")
+    @field:JsonProperty("paper_year")
     val paperYear: Int?,
 )
 
-data class ContributorWithContributionCountRepresentation(
-    val user: Contributor,
-    val contributions: Long,
-)
-
 data class BenchmarkSummaryRepresentation(
-    @get:JsonProperty("research_problem")
+    @field:JsonProperty("research_problem")
     val researchProblem: ResearchProblem,
-    @get:JsonProperty("research_fields")
+    @field:JsonProperty("research_fields")
     val researchFields: List<ResearchField> = emptyList(),
-    @get:JsonProperty("total_papers")
+    @field:JsonProperty("total_papers")
     val totalPapers: Int,
-    @get:JsonProperty("total_datasets")
+    @field:JsonProperty("total_datasets")
     val totalDatasets: Int,
-    @get:JsonProperty("total_codes")
+    @field:JsonProperty("total_codes")
     val totalCodes: Int,
 )
 
 data class DatasetRepresentation(
     val id: ThingId,
     val label: String,
-    @get:JsonProperty("total_models")
+    @field:JsonProperty("total_models")
     val totalModels: Int,
-    @get:JsonProperty("total_papers")
+    @field:JsonProperty("total_papers")
     val totalPapers: Int,
-    @get:JsonProperty("total_codes")
+    @field:JsonProperty("total_codes")
     val totalCodes: Int,
 )
 
 data class DatasetSummaryRepresentation(
-    @get:JsonProperty("model_name")
+    @field:JsonProperty("model_name")
     val modelName: String?,
-    @get:JsonProperty("model_id")
+    @field:JsonProperty("model_id")
     val modelId: ThingId?,
     val score: String,
     val metric: String,
-    @get:JsonProperty("paper_id")
+    @field:JsonProperty("paper_id")
     val paperId: ThingId,
-    @get:JsonProperty("paper_title")
+    @field:JsonProperty("paper_title")
     val paperTitle: String,
-    @get:JsonProperty("paper_month")
+    @field:JsonProperty("paper_month")
     val paperMonth: Int?,
-    @get:JsonProperty("paper_year")
+    @field:JsonProperty("paper_year")
     val paperYear: Int?,
-    @get:JsonProperty("code_urls")
+    @field:JsonProperty("code_urls")
     val codeURLs: List<String>,
 )
 
 data class ContributionInfoRepresentation(
     val id: ThingId,
     val label: String,
-    @get:JsonProperty("paper_title")
+    @field:JsonProperty("paper_title")
     val paperTitle: String,
-    @get:JsonProperty("paper_year")
+    @field:JsonProperty("paper_year")
     val paperYear: Int?,
-    @get:JsonProperty("paper_id")
+    @field:JsonProperty("paper_id")
     val paperId: ThingId,
 )
 
 data class TemplateBasedResourceSnapshotRepresentation(
     val id: SnapshotId,
-    @get:JsonProperty("created_by")
+    @field:JsonProperty("created_by")
     val createdBy: ContributorId,
-    @get:JsonProperty("created_at")
+    @field:JsonProperty("created_at")
     val createdAt: OffsetDateTime,
     val data: TemplateInstanceRepresentation,
-    @get:JsonProperty("resource_id")
+    @field:JsonProperty("resource_id")
     val resourceId: ThingId,
-    @get:JsonProperty("template_id")
+    @field:JsonProperty("template_id")
     val templateId: ThingId,
     val handle: Handle?,
 )
 
 data class ComparisonTableRepresentation(
-    @get:JsonProperty("selected_paths")
+    @field:JsonProperty("selected_paths")
     val selectedPaths: List<LabeledComparisonPathRepresentation> = emptyList(),
     val titles: List<ThingReferenceRepresentation> = emptyList(),
     val subtitles: List<ThingReferenceRepresentation?> = emptyList(),
@@ -825,33 +819,33 @@ data class ComparisonDataSourceRepresentation(
 )
 
 data class ContributorRecordRepresentation(
-    @get:JsonProperty("contributor_id")
+    @field:JsonProperty("contributor_id")
     val contributorId: ContributorId,
-    @get:JsonProperty("comparison_count")
+    @field:JsonProperty("comparison_count")
     val comparisonCount: Long,
-    @get:JsonProperty("paper_count")
+    @field:JsonProperty("paper_count")
     val paperCount: Long,
-    @get:JsonProperty("contribution_count")
+    @field:JsonProperty("contribution_count")
     val contributionCount: Long,
-    @get:JsonProperty("research_problem_count")
+    @field:JsonProperty("research_problem_count")
     val researchProblemCount: Long,
-    @get:JsonProperty("visualization_count")
+    @field:JsonProperty("visualization_count")
     val visualizationCount: Long,
-    @get:JsonProperty("total_count")
+    @field:JsonProperty("total_count")
     val totalCount: Long,
 )
 
 data class AuthorRecordRepresentation(
-    @get:JsonProperty("author_id")
+    @field:JsonProperty("author_id")
     val authorId: ThingId?,
-    @get:JsonProperty("author_name")
+    @field:JsonProperty("author_name")
     val authorName: String,
-    @get:JsonProperty("comparison_count")
+    @field:JsonProperty("comparison_count")
     val comparisonCount: Long,
-    @get:JsonProperty("paper_count")
+    @field:JsonProperty("paper_count")
     val paperCount: Long,
-    @get:JsonProperty("visualization_count")
+    @field:JsonProperty("visualization_count")
     val visualizationCount: Long,
-    @get:JsonProperty("total_count")
+    @field:JsonProperty("total_count")
     val totalCount: Long,
 )

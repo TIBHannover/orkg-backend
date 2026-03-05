@@ -53,11 +53,11 @@ class LegacyUserObservatoryController(
     }
 
     data class UserObservatoryRequest(
-        @JsonProperty("contributor_id")
+        @field:JsonProperty("contributor_id")
         val contributorId: ContributorId,
-        @JsonProperty("observatory_id")
+        @field:JsonProperty("observatory_id")
         val observatoryId: ObservatoryId,
-        @JsonProperty("organization_id")
+        @field:JsonProperty("organization_id")
         val organizationId: OrganizationId,
     )
 }

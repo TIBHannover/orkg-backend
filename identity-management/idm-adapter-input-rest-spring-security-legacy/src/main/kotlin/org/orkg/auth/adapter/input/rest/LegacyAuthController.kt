@@ -37,13 +37,13 @@ class LegacyAuthController(
     private val bodyPublisherFactory: (String) -> HttpRequest.BodyPublisher = BodyPublishers::ofString,
     @param:Value("\${orkg.http.user-agent}")
     private val userAgent: String,
-    @Value("\${orkg.oauth.legacy-client-id}")
+    @param:Value("\${orkg.oauth.legacy-client-id}")
     private val legacyClientId: String,
-    @Value("\${orkg.oauth.legacy-client-secret}")
+    @param:Value("\${orkg.oauth.legacy-client-secret}")
     private val legacyClientSecret: String,
-    @Value("\${orkg.oauth.token-endpoint}")
+    @param:Value("\${orkg.oauth.token-endpoint}")
     private val tokenEndpoint: String,
-    @Value("\${orkg.oauth.registration-endpoint}")
+    @param:Value("\${orkg.oauth.registration-endpoint}")
     private val registrationEndpoint: String,
 ) {
     @PostMapping("/api/auth/register", consumes = [MediaType.APPLICATION_JSON_VALUE])
@@ -134,11 +134,11 @@ class LegacyAuthController(
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     data class LegacyTokenResponse(
-        @JsonProperty("access_token")
+        @field:JsonProperty("access_token")
         val accessToken: String,
-        @JsonProperty("token_type")
+        @field:JsonProperty("token_type")
         val tokenType: String,
-        @JsonProperty("expires_in")
+        @field:JsonProperty("expires_in")
         val expiresIn: Int,
         val scope: String,
     )

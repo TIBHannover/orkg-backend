@@ -147,11 +147,11 @@ class ComparisonController(
         val title: String,
         val description: String,
         @field:Size(max = 1)
-        @JsonProperty("research_fields")
+        @field:JsonProperty("research_fields")
         val researchFields: List<ThingId>,
         @field:Valid
         val authors: List<AuthorRequest>,
-        @JsonProperty("sdgs")
+        @field:JsonProperty("sdgs")
         val sustainableDevelopmentGoals: Set<ThingId>?,
         val sources: List<ComparisonDataSource>,
         val visualizations: List<ThingId>?,
@@ -160,9 +160,9 @@ class ComparisonController(
         val observatories: List<ObservatoryId>,
         @field:Size(max = 1)
         val organizations: List<OrganizationId>,
-        @JsonProperty("is_anonymized")
+        @field:JsonProperty("is_anonymized")
         val isAnonymized: Boolean,
-        @JsonProperty("extraction_method")
+        @field:JsonProperty("extraction_method")
         val extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN,
     ) {
         fun toCreateCommand(contributorId: ContributorId): CreateComparisonUseCase.CreateCommand =
@@ -189,11 +189,11 @@ class ComparisonController(
         @field:NullableNotBlank
         val description: String?,
         @field:Size(min = 1, max = 1)
-        @JsonProperty("research_fields")
+        @field:JsonProperty("research_fields")
         val researchFields: List<ThingId>?,
         @field:Valid
         val authors: List<AuthorRequest>?,
-        @JsonProperty("sdgs")
+        @field:JsonProperty("sdgs")
         val sustainableDevelopmentGoals: Set<ThingId>?,
         val sources: List<ComparisonDataSource>?,
         val visualizations: List<ThingId>?,
@@ -202,9 +202,9 @@ class ComparisonController(
         val observatories: List<ObservatoryId>?,
         @field:Size(max = 1)
         val organizations: List<OrganizationId>?,
-        @JsonProperty("is_anonymized")
+        @field:JsonProperty("is_anonymized")
         val isAnonymized: Boolean?,
-        @JsonProperty("extraction_method")
+        @field:JsonProperty("extraction_method")
         val extractionMethod: ExtractionMethod?,
         val visibility: Visibility?,
     ) {
@@ -236,7 +236,7 @@ class ComparisonController(
         @field:Valid
         @field:Size(min = 1)
         val authors: List<AuthorRequest>,
-        @JsonProperty("assign_doi")
+        @field:JsonProperty("assign_doi")
         val assignDOI: Boolean,
     ) {
         fun toPublishCommand(id: ThingId, contributorId: ContributorId): PublishComparisonUseCase.PublishCommand =

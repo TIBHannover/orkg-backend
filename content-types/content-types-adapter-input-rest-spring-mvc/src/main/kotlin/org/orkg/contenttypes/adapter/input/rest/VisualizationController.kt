@@ -106,7 +106,7 @@ class VisualizationController(
         val observatories: List<ObservatoryId>,
         @field:Size(max = 1)
         val organizations: List<OrganizationId>,
-        @JsonProperty("extraction_method")
+        @field:JsonProperty("extraction_method")
         val extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN,
     ) {
         fun toCreateCommand(contributorId: ContributorId): CreateVisualizationUseCase.CreateCommand =

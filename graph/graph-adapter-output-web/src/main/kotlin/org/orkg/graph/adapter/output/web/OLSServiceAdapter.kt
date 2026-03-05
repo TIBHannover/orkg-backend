@@ -24,9 +24,9 @@ class OLSServiceAdapter(
     private val httpClient: HttpClient,
     @param:Value("\${orkg.http.user-agent}")
     private val userAgent: String,
-    @Value("\${orkg.external-services.ols.host}")
+    @param:Value("\${orkg.external-services.ols.host}")
     private val host: String,
-    @Value("\${orkg.external-services.ols.caller}")
+    @param:Value("\${orkg.external-services.ols.caller}")
     private val caller: String?,
 ) : ExternalResourceService,
     ExternalClassService,

@@ -164,21 +164,21 @@ class TemplateController(
         @field:NullableNotBlank
         val description: String?,
         @field:NullableNotBlank
-        @JsonProperty("formatted_label")
+        @field:JsonProperty("formatted_label")
         val formattedLabel: String?,
-        @JsonProperty("target_class")
+        @field:JsonProperty("target_class")
         val targetClass: ThingId,
         @field:Valid
         val relations: TemplateRelationsRequestPart,
         @field:Valid
         val properties: List<TemplatePropertyRequest>,
-        @JsonProperty("is_closed")
+        @field:JsonProperty("is_closed")
         val isClosed: Boolean,
         @field:Size(max = 1)
         val observatories: List<ObservatoryId>,
         @field:Size(max = 1)
         val organizations: List<OrganizationId>,
-        @JsonProperty("extraction_method")
+        @field:JsonProperty("extraction_method")
         val extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN,
     ) {
         fun toCreateCommand(contributorId: ContributorId): CreateTemplateUseCase.CreateCommand =
@@ -203,22 +203,22 @@ class TemplateController(
         @field:NullableNotBlank
         val description: String?,
         @field:NullableNotBlank
-        @JsonProperty("formatted_label")
+        @field:JsonProperty("formatted_label")
         val formattedLabel: String?,
-        @JsonProperty("target_class")
+        @field:JsonProperty("target_class")
         val targetClass: ThingId?,
         @field:Valid
         val relations: TemplateRelationsRequestPart?,
         @field:Valid
         @field:Size(min = 1)
         val properties: List<TemplatePropertyRequest>?,
-        @JsonProperty("is_closed")
+        @field:JsonProperty("is_closed")
         val isClosed: Boolean?,
         @field:Size(max = 1)
         val observatories: List<ObservatoryId>?,
         @field:Size(max = 1)
         val organizations: List<OrganizationId>?,
-        @JsonProperty("extraction_method")
+        @field:JsonProperty("extraction_method")
         val extractionMethod: ExtractionMethod?,
         val visibility: Visibility?,
     ) {
@@ -440,9 +440,9 @@ class TemplateController(
         )
 
     data class TemplateRelationsRequestPart(
-        @JsonProperty("research_fields")
+        @field:JsonProperty("research_fields")
         val researchFields: List<ThingId>,
-        @JsonProperty("research_problems")
+        @field:JsonProperty("research_problems")
         val researchProblems: List<ThingId>,
         val predicate: ThingId?,
     ) {

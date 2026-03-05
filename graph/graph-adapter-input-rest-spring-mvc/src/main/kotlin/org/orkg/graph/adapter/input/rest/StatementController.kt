@@ -166,20 +166,20 @@ class StatementController(
 
     data class CreateStatementRequest(
         val id: StatementId? = null,
-        @JsonProperty("subject_id")
+        @field:JsonProperty("subject_id")
         val subjectId: ThingId,
-        @JsonProperty("predicate_id")
+        @field:JsonProperty("predicate_id")
         val predicateId: ThingId,
-        @JsonProperty("object_id")
+        @field:JsonProperty("object_id")
         val objectId: ThingId,
     )
 
     data class UpdateStatementRequest(
-        @JsonProperty("subject_id")
+        @field:JsonProperty("subject_id")
         val subjectId: ThingId?,
-        @JsonProperty("predicate_id")
+        @field:JsonProperty("predicate_id")
         val predicateId: ThingId?,
-        @JsonProperty("object_id")
+        @field:JsonProperty("object_id")
         val objectId: ThingId?,
     )
 }

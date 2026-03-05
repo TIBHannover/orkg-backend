@@ -111,7 +111,7 @@ class TemplateInstanceController(
         val classes: Map<String, CreateClassRequestPart>?,
         @field:Valid
         val lists: Map<String, CreateListRequestPart>?,
-        @JsonProperty("extraction_method")
+        @field:JsonProperty("extraction_method")
         val extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN,
     ) {
         fun toUpdateCommand(

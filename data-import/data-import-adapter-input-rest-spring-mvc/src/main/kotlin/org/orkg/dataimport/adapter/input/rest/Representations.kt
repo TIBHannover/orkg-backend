@@ -22,16 +22,16 @@ data class CSVRepresentation(
     val type: CSV.Type,
     val format: CSV.Format,
     val state: CSV.State,
-    @get:JsonProperty("created_by")
+    @field:JsonProperty("created_by")
     val createdBy: ContributorId,
-    @get:JsonProperty("created_at")
+    @field:JsonProperty("created_at")
     val createdAt: OffsetDateTime,
 )
 
 data class JobStatusRepresentation(
-    @get:JsonProperty("job_id")
+    @field:JsonProperty("job_id")
     val jobId: JobId,
-    @get:JsonProperty("job_name")
+    @field:JsonProperty("job_name")
     val jobName: String,
     val context: Map<String, Any?>,
     val status: Status,
@@ -39,25 +39,25 @@ data class JobStatusRepresentation(
 
 data class PaperCSVRecordRepresentation(
     val id: UUID,
-    @get:JsonProperty("csv_id")
+    @field:JsonProperty("csv_id")
     val csvId: CSVID,
-    @get:JsonProperty("item_number")
+    @field:JsonProperty("item_number")
     val itemNumber: Long,
-    @get:JsonProperty("line_number")
+    @field:JsonProperty("line_number")
     val lineNumber: Long,
     val title: String,
     val authors: List<AuthorRepresentation>,
-    @get:JsonProperty("published_month")
+    @field:JsonProperty("published_month")
     val publishedMonth: Int?,
-    @get:JsonProperty("published_year")
+    @field:JsonProperty("published_year")
     val publishedYear: Long?,
-    @get:JsonProperty("published_in")
+    @field:JsonProperty("published_in")
     val publishedIn: String?,
     val url: ParsedIRI?,
     val doi: String?,
-    @get:JsonProperty("research_field_id")
+    @field:JsonProperty("research_field_id")
     val researchFieldId: ThingId,
-    @get:JsonProperty("extraction_method")
+    @field:JsonProperty("extraction_method")
     val extractionMethod: ExtractionMethod,
     val statements: Set<ContributionStatementRepresentation>,
 )
@@ -72,13 +72,13 @@ data class PaperCSVRecordRepresentation(
 sealed interface ContributionStatementRepresentation
 
 data class ExistingPredicateContributionStatementRepresentation(
-    @get:JsonProperty("predicate_id")
+    @field:JsonProperty("predicate_id")
     val predicateId: ThingId,
     val `object`: TypedValueRepresentation,
 ) : ContributionStatementRepresentation
 
 data class NewPredicateContributionStatementRepresentation(
-    @get:JsonProperty("predicate_label")
+    @field:JsonProperty("predicate_label")
     val predicateLabel: String,
     val `object`: TypedValueRepresentation,
 ) : ContributionStatementRepresentation
@@ -91,14 +91,14 @@ data class TypedValueRepresentation(
 
 data class PaperCSVRecordImportResultRepresentation(
     val id: UUID,
-    @get:JsonProperty("imported_entity_id")
+    @field:JsonProperty("imported_entity_id")
     val importedEntityId: ThingId,
-    @get:JsonProperty("imported_entity_type")
+    @field:JsonProperty("imported_entity_type")
     val importedEntityType: Type,
-    @get:JsonProperty("csv_id")
+    @field:JsonProperty("csv_id")
     val csvId: CSVID,
-    @get:JsonProperty("item_number")
+    @field:JsonProperty("item_number")
     val itemNumber: Long,
-    @get:JsonProperty("line_number")
+    @field:JsonProperty("line_number")
     val lineNumber: Long,
 )

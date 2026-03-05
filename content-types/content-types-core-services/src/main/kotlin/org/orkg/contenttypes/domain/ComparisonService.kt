@@ -107,7 +107,7 @@ class ComparisonService(
     private val comparisonTableUseCases: ComparisonTableUseCases,
     private val comparisonTableRepository: ComparisonTableRepository,
     private val clock: Clock,
-    @Value("\${orkg.publishing.base-url.comparison}")
+    @param:Value("\${orkg.publishing.base-url.comparison}")
     private val comparisonPublishBaseUri: String = "http://localhost/comparison/",
 ) : ComparisonUseCases,
     ComparisonContributionsUseCases {

@@ -5,8 +5,8 @@ import org.orkg.common.ContributorId
 import java.time.OffsetDateTime
 
 data class ResourceContributor(
-    @JsonProperty("created_by")
+    @field:JsonProperty("created_by")
     val createdBy: ContributorId,
-    @JsonProperty("created_at")
+    @field:JsonProperty("created_at")
     val createdAt: OffsetDateTime,
 )

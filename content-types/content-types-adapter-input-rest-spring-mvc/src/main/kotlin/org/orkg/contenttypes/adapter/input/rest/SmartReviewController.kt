@@ -16,10 +16,12 @@ import org.orkg.common.annotations.RequireLogin
 import org.orkg.common.contributorId
 import org.orkg.common.validation.NullableNotBlank
 import org.orkg.contenttypes.adapter.input.rest.mapping.ContentTypeRepresentationAdapter
+import org.orkg.contenttypes.adapter.input.rest.mapping.SmartReviewJatsXmlAdapter
 import org.orkg.contenttypes.adapter.input.rest.mapping.SmartReviewRepresentationAdapter
 import org.orkg.contenttypes.adapter.input.rest.mapping.StatementListRepresentationAdapter
 import org.orkg.contenttypes.domain.SmartReviewNotFound
 import org.orkg.contenttypes.input.AbstractSmartReviewSectionCommand
+import org.orkg.contenttypes.input.ComparisonTableUseCases
 import org.orkg.contenttypes.input.CreateSmartReviewSectionUseCase
 import org.orkg.contenttypes.input.CreateSmartReviewUseCase
 import org.orkg.contenttypes.input.DeleteSmartReviewSectionUseCase
@@ -39,6 +41,7 @@ import org.orkg.graph.domain.Visibility
 import org.orkg.graph.domain.VisibilityFilter
 import org.orkg.graph.input.FormattedLabelUseCases
 import org.orkg.graph.input.StatementUseCases
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.format.annotation.DateTimeFormat
@@ -58,6 +61,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.util.UriComponentsBuilder
+import java.time.Clock
 import java.time.OffsetDateTime
 
 const val SMART_REVIEW_JSON_V1 = "application/vnd.orkg.smart-review.v1+json"
@@ -68,8 +72,15 @@ const val SMART_REVIEW_SECTION_JSON_V1 = "application/vnd.orkg.smart-review-sect
 class SmartReviewController(
     override val formattedLabelService: FormattedLabelUseCases,
     override val statementService: StatementUseCases,
+    override val comparisonTableUseCases: ComparisonTableUseCases,
+    override val smartReviewUseCases: SmartReviewUseCases,
+    override val statementUseCases: StatementUseCases,
+    @param:Value($$"${spring.rdf.frontend-uri}")
+    override val frontendUri: String,
+    override val clock: Clock,
     private val service: SmartReviewUseCases,
 ) : SmartReviewRepresentationAdapter,
+    SmartReviewJatsXmlAdapter,
     ContentTypeRepresentationAdapter,
     StatementListRepresentationAdapter {
     @GetMapping("/{id}")
@@ -77,6 +88,13 @@ class SmartReviewController(
         @PathVariable id: ThingId,
     ): SmartReviewRepresentation = service.findById(id)
         .mapToSmartReviewRepresentation()
+        .orElseThrow { SmartReviewNotFound(id) }
+
+    @GetMapping("/{id}", produces = [MediaType.APPLICATION_XML_VALUE, MediaType.TEXT_XML_VALUE])
+    fun findByIdAsXml(
+        @PathVariable id: ThingId,
+    ): String = service.findById(id)
+        .mapToSmartReviewJatsXml()
         .orElseThrow { SmartReviewNotFound(id) }
 
     @GetMapping

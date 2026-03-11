@@ -16,33 +16,34 @@ import kotlinx.html.th
 import kotlinx.html.thead
 import kotlinx.html.tr
 import org.orkg.common.ThingId
-import org.orkg.contenttypes.adapter.input.rest.jats.`article-categories`
-import org.orkg.contenttypes.adapter.input.rest.jats.`article-id`
-import org.orkg.contenttypes.adapter.input.rest.jats.`article-meta`
-import org.orkg.contenttypes.adapter.input.rest.jats.`article-title`
-import org.orkg.contenttypes.adapter.input.rest.jats.body
-import org.orkg.contenttypes.adapter.input.rest.jats.contrib
-import org.orkg.contenttypes.adapter.input.rest.jats.`contrib-group`
-import org.orkg.contenttypes.adapter.input.rest.jats.`contrib-id`
-import org.orkg.contenttypes.adapter.input.rest.jats.`copyright-holder`
-import org.orkg.contenttypes.adapter.input.rest.jats.`copyright-year`
-import org.orkg.contenttypes.adapter.input.rest.jats.day
-import org.orkg.contenttypes.adapter.input.rest.jats.description
-import org.orkg.contenttypes.adapter.input.rest.jats.`ext-link`
-import org.orkg.contenttypes.adapter.input.rest.jats.front
-import org.orkg.contenttypes.adapter.input.rest.jats.italic
-import org.orkg.contenttypes.adapter.input.rest.jats.license
-import org.orkg.contenttypes.adapter.input.rest.jats.`license-p`
-import org.orkg.contenttypes.adapter.input.rest.jats.license_ref
-import org.orkg.contenttypes.adapter.input.rest.jats.month
-import org.orkg.contenttypes.adapter.input.rest.jats.permissions
-import org.orkg.contenttypes.adapter.input.rest.jats.`pub-date`
-import org.orkg.contenttypes.adapter.input.rest.jats.`string-name`
-import org.orkg.contenttypes.adapter.input.rest.jats.`subj-group`
-import org.orkg.contenttypes.adapter.input.rest.jats.subject
-import org.orkg.contenttypes.adapter.input.rest.jats.`table-wrap`
-import org.orkg.contenttypes.adapter.input.rest.jats.`title-group`
-import org.orkg.contenttypes.adapter.input.rest.jats.year
+import org.orkg.contenttypes.adapter.input.rest.jats.DocumentState
+import org.orkg.contenttypes.adapter.input.rest.jats.dsl.`article-categories`
+import org.orkg.contenttypes.adapter.input.rest.jats.dsl.`article-id`
+import org.orkg.contenttypes.adapter.input.rest.jats.dsl.`article-meta`
+import org.orkg.contenttypes.adapter.input.rest.jats.dsl.`article-title`
+import org.orkg.contenttypes.adapter.input.rest.jats.dsl.body
+import org.orkg.contenttypes.adapter.input.rest.jats.dsl.contrib
+import org.orkg.contenttypes.adapter.input.rest.jats.dsl.`contrib-group`
+import org.orkg.contenttypes.adapter.input.rest.jats.dsl.`contrib-id`
+import org.orkg.contenttypes.adapter.input.rest.jats.dsl.`copyright-holder`
+import org.orkg.contenttypes.adapter.input.rest.jats.dsl.`copyright-year`
+import org.orkg.contenttypes.adapter.input.rest.jats.dsl.day
+import org.orkg.contenttypes.adapter.input.rest.jats.dsl.description
+import org.orkg.contenttypes.adapter.input.rest.jats.dsl.`ext-link`
+import org.orkg.contenttypes.adapter.input.rest.jats.dsl.front
+import org.orkg.contenttypes.adapter.input.rest.jats.dsl.italic
+import org.orkg.contenttypes.adapter.input.rest.jats.dsl.license
+import org.orkg.contenttypes.adapter.input.rest.jats.dsl.`license-p`
+import org.orkg.contenttypes.adapter.input.rest.jats.dsl.license_ref
+import org.orkg.contenttypes.adapter.input.rest.jats.dsl.month
+import org.orkg.contenttypes.adapter.input.rest.jats.dsl.permissions
+import org.orkg.contenttypes.adapter.input.rest.jats.dsl.`pub-date`
+import org.orkg.contenttypes.adapter.input.rest.jats.dsl.`string-name`
+import org.orkg.contenttypes.adapter.input.rest.jats.dsl.`subj-group`
+import org.orkg.contenttypes.adapter.input.rest.jats.dsl.subject
+import org.orkg.contenttypes.adapter.input.rest.jats.dsl.`table-wrap`
+import org.orkg.contenttypes.adapter.input.rest.jats.dsl.`title-group`
+import org.orkg.contenttypes.adapter.input.rest.jats.dsl.year
 import org.orkg.contenttypes.domain.Comparison
 import org.orkg.contenttypes.domain.ComparisonTable
 import org.orkg.contenttypes.domain.ComparisonTableRow
@@ -142,8 +143,9 @@ interface ComparisonJatsXmlAdapter {
             }
         }.toXml()
 
-    fun Tag.comparisonTable(table: ComparisonTable) {
+    fun Tag.comparisonTable(table: ComparisonTable, state: DocumentState = DocumentState()) {
         `table-wrap` {
+            attributes["id"] = state.nextTableId().toString()
             table {
                 thead {
                     tableHead(table.titles, table.subtitles)

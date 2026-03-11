@@ -79,6 +79,7 @@ testing {
                 implementation("io.kotest:kotest-assertions-core")
                 implementation("io.kotest:kotest-assertions-shared")
                 implementation("com.ninja-squad:springmockk")
+                implementation(project(":common:pagination"))
                 implementation(project(":community:community-core-model"))
                 implementation(project(":community:community-ports-input"))
                 implementation(project(":content-types:content-types-adapter-input-rest-spring-mvc"))

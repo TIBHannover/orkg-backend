@@ -1,6 +1,7 @@
 package org.orkg.contenttypes.adapter.input.rest
 
 import com.epages.restdocs.apispec.ParameterType
+import com.epages.restdocs.apispec.SimpleType
 import com.ninjasquad.springmockk.MockkBean
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
@@ -16,9 +17,11 @@ import org.orkg.common.ContributorId
 import org.orkg.common.Either
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
+import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
 import org.orkg.common.exceptions.ServiceUnavailable
 import org.orkg.common.exceptions.UnknownSortingProperty
+import org.orkg.common.testing.fixtures.Assets.responseXml
 import org.orkg.common.testing.fixtures.fixedClock
 import org.orkg.common.thingIdConstraint
 import org.orkg.community.domain.ContributorNotFound
@@ -52,8 +55,10 @@ import org.orkg.contenttypes.domain.SustainableDevelopmentGoalNotFound
 import org.orkg.contenttypes.domain.UnrelatedSmartReviewSection
 import org.orkg.contenttypes.domain.VisualizationNotFound
 import org.orkg.contenttypes.domain.testing.fixtures.createComparison
+import org.orkg.contenttypes.domain.testing.fixtures.createComparisonTable
 import org.orkg.contenttypes.domain.testing.fixtures.createSmartReview
 import org.orkg.contenttypes.domain.testing.fixtures.createVisualization
+import org.orkg.contenttypes.input.ComparisonTableUseCases
 import org.orkg.contenttypes.input.CreateSmartReviewSectionUseCase
 import org.orkg.contenttypes.input.CreateSmartReviewUseCase
 import org.orkg.contenttypes.input.DeleteSmartReviewSectionUseCase
@@ -100,11 +105,14 @@ import org.orkg.testing.spring.restdocs.format
 import org.orkg.testing.spring.restdocs.type
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest
 import org.springframework.http.HttpStatus.BAD_REQUEST
+import org.springframework.http.MediaType
 import org.springframework.restdocs.headers.HeaderDocumentation.headerWithName
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.subsectionWithPath
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import org.springframework.test.context.ContextConfiguration
+import org.springframework.test.context.TestPropertySource
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.time.OffsetDateTime
@@ -112,6 +120,7 @@ import java.time.format.DateTimeFormatter
 import java.util.Optional
 import java.util.UUID
 
+@TestPropertySource(properties = ["spring.rdf.frontend-uri=http://localhost:3000"])
 @ContextConfiguration(classes = [SmartReviewController::class, ContentTypeControllerUnitTestConfiguration::class])
 @WebMvcTest(controllers = [SmartReviewController::class])
 internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") {
@@ -123,6 +132,9 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
 
     @MockkBean
     private lateinit var statementService: StatementUseCases
+
+    @MockkBean
+    private lateinit var comparisonTableUseCases: ComparisonTableUseCases
 
     @Test
     @DisplayName("Given a smart review, when it is fetched by id and service succeeds, then status is 200 OK and smart review is returned")
@@ -151,6 +163,65 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
             }
 
         verify(exactly = 1) { smartReviewService.findById(smartReview.id) }
+    }
+
+    @Test
+    @DisplayName("Given a smart review, when it is fetched by idas JATS XML  and service succeeds, then status is 200 OK and smart review is returned")
+    fun findById_asJatsXml() {
+        val smartReview = createSmartReview().copy(
+            references = listOf(
+                "@misc{R615465, title = {reference 1}}",
+                """
+                @journal{fullexample,
+                    type={journal},
+                    author={Josiah {Stinkney} Carberry},
+                    doi={10.1000/182},
+                    edition={Special Edition},
+                    editor={John Doe},
+                    journal={Famous Journal},
+                    month={3},
+                    number={45},
+                    pages={10-12},
+                    publisher={Open Research Knowledge Graph},
+                    series={First series},
+                    title={Famous title},
+                    volume={1},
+                    year={2026}
+                }
+                """.trimIndent(),
+            ),
+        )
+        every { smartReviewService.findById(smartReview.id) } returns Optional.of(smartReview)
+        every { comparisonTableUseCases.findByComparisonId(ThingId("R6416")) } returns Optional.of(createComparisonTable())
+        every { statementService.findAll(subjectId = ThingId("R1"), pageable = PageRequests.ALL) } returns pageOf(
+            createStatement(subject = createResource(ThingId("R1"))),
+            createStatement(subject = createResource(ThingId("R1")), `object` = createResource(ThingId("R2"))),
+        )
+        every { statementService.findAll(subjectId = ThingId("P1"), pageable = PageRequests.ALL) } returns pageOf()
+
+        documentedGetRequestTo("/api/smart-reviews/{id}", smartReview.id)
+            .accept(MediaType.APPLICATION_XML_VALUE)
+            .perform()
+            .andExpect(status().isOk)
+            .andExpect(content().xml(responseXml("smartReviewSuccess")))
+            .andDocument {
+                summary("Fetching smart reviews")
+                description(
+                    """
+                    A `GET` request provides information about a smart review.
+                    """,
+                )
+                pathParameters(
+                    parameterWithName("id").description("The identifier of the smart review to retrieve."),
+                )
+                simpleResponse(SimpleType.STRING)
+                throws(SmartReviewNotFound::class)
+            }
+
+        verify(exactly = 1) { smartReviewService.findById(smartReview.id) }
+        verify(exactly = 1) { comparisonTableUseCases.findByComparisonId(ThingId("R6416")) }
+        verify(exactly = 2) { statementService.findAll(subjectId = ThingId("R1"), pageable = PageRequests.ALL) }
+        verify(exactly = 2) { statementService.findAll(subjectId = ThingId("P1"), pageable = PageRequests.ALL) }
     }
 
     @Test

@@ -4,6 +4,9 @@ plugins {
 
 dependencies {
     api("com.fasterxml.jackson.core:jackson-annotations")
+    api("org.commonmark:commonmark")
+    api("org.commonmark:commonmark-ext-gfm-strikethrough")
+    api("org.commonmark:commonmark-ext-gfm-tables")
     api("org.eclipse.rdf4j:rdf4j-common-io")
     api("org.jetbrains.kotlinx:kotlinx-html-jvm")
     api("org.springframework.data:spring-data-commons")
@@ -14,8 +17,25 @@ dependencies {
     api(project(":content-types:content-types-ports-input"))
     api(project(":graph:graph-adapter-input-representations"))
     api(project(":graph:graph-core-model"))
+    api(project(":graph:graph-ports-input"))
+    implementation("org.commonmark:commonmark-ext-autolink")
+    implementation("org.jbibtex:jbibtex")
     implementation("jakarta.validation:jakarta.validation-api")
     implementation(project(":common:serialization"))
     implementation(project(":common:external-identifiers"))
+    implementation(project(":common:functional"))
+    implementation(project(":common:pagination"))
     implementation(project(":graph:graph-core-constants"))
+}
+
+testing {
+    suites {
+        val test by getting(JvmTestSuite::class) {
+            dependencies {
+                implementation("org.junit.jupiter:junit-jupiter-api")
+                implementation("org.springframework:spring-test")
+                runtimeOnly("org.xmlunit:xmlunit-core") // required by XmlExpectationsHelper in AbstractJatsRendererTest
+            }
+        }
+    }
 }

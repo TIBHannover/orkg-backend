@@ -19,6 +19,10 @@ dependencies {
 
     // Third-party versions not provided by Spring, and without platform/BOM
     api("io.mockk:mockk:1.14.7") // anchor for MockKVirtualPlatformAlignmentRule
+    api("org.commonmark:commonmark:0.27.1") // anchor for CommonMarkVirtualPlatformAlignmentRule
+    api("org.commonmark:commonmark-ext-autolink:0.27.1")
+    api("org.commonmark:commonmark-ext-gfm-strikethrough:0.27.1")
+    api("org.commonmark:commonmark-ext-gfm-tables:0.27.1")
 
     // The Lucene Query Parser version should match the one used by the currently used Neo4j database.
     // Although newer versions should not be a problem, differences in the syntax can be a problem.

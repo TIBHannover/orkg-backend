@@ -11,6 +11,7 @@ dependencies {
     api("tools.jackson.core:jackson-core")
     api("tools.jackson.core:jackson-databind")
     api("jakarta.validation:jakarta.validation-api")
+    api("org.jetbrains.kotlinx:kotlinx-html-jvm")
     api("org.springframework.data:spring-data-commons")
     api("org.springframework.security:spring-security-core")
     api("org.springframework:spring-beans")

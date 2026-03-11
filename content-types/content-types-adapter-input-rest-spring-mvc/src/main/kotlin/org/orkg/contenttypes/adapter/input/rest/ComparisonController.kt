@@ -11,9 +11,11 @@ import org.orkg.common.ThingId
 import org.orkg.common.annotations.RequireLogin
 import org.orkg.common.contributorId
 import org.orkg.common.validation.NullableNotBlank
+import org.orkg.contenttypes.adapter.input.rest.mapping.ComparisonJatsXmlAdapter
 import org.orkg.contenttypes.adapter.input.rest.mapping.ComparisonRepresentationAdapter
 import org.orkg.contenttypes.domain.ComparisonDataSource
 import org.orkg.contenttypes.domain.ComparisonNotFound
+import org.orkg.contenttypes.input.ComparisonTableUseCases
 import org.orkg.contenttypes.input.ComparisonUseCases
 import org.orkg.contenttypes.input.CreateComparisonUseCase
 import org.orkg.contenttypes.input.PublishComparisonUseCase
@@ -22,6 +24,7 @@ import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.SearchString
 import org.orkg.graph.domain.Visibility
 import org.orkg.graph.domain.VisibilityFilter
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.format.annotation.DateTimeFormat
@@ -40,6 +43,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.util.UriComponentsBuilder
+import java.time.Clock
 import java.time.OffsetDateTime
 
 const val COMPARISON_JSON_V3 = "application/vnd.orkg.comparison.v3+json"
@@ -48,13 +52,26 @@ const val COMPARISON_JSON_V3 = "application/vnd.orkg.comparison.v3+json"
 @RequestMapping("/api/comparisons", produces = [MediaType.APPLICATION_JSON_VALUE])
 class ComparisonController(
     private val service: ComparisonUseCases,
-) : ComparisonRepresentationAdapter {
+    override val comparisonTableUseCases: ComparisonTableUseCases,
+    @param:Value($$"${spring.rdf.frontend-uri}")
+    override val frontendUri: String,
+    override val clock: Clock,
+) : ComparisonRepresentationAdapter,
+    ComparisonJatsXmlAdapter {
     @GetMapping("/{id}", produces = [COMPARISON_JSON_V3])
     fun findById(
         @PathVariable id: ThingId,
     ): ComparisonRepresentation =
         service.findById(id)
             .mapToComparisonRepresentation()
+            .orElseThrow { ComparisonNotFound(id) }
+
+    @GetMapping("/{id}", produces = [MediaType.APPLICATION_XML_VALUE, MediaType.TEXT_XML_VALUE])
+    fun findByIdAsXml(
+        @PathVariable id: ThingId,
+    ): String =
+        service.findById(id)
+            .mapToJatsXml()
             .orElseThrow { ComparisonNotFound(id) }
 
     @GetMapping(produces = [COMPARISON_JSON_V3])

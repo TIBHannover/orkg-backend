@@ -10,6 +10,8 @@ object Assets {
 
     fun responseYaml(name: String): String = fileContents("responses/$name.yaml").decodeToString()
 
+    fun responseXml(name: String): String = fileContents("responses/$name.xml").decodeToString()
+
     fun representationJson(name: String): String = fileContents("representations/$name.json").decodeToString()
 
     fun modelJson(name: String): String = fileContents("models/$name.json").decodeToString()

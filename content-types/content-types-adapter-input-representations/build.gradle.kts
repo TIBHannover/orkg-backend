@@ -5,6 +5,7 @@ plugins {
 dependencies {
     api("com.fasterxml.jackson.core:jackson-annotations")
     api("org.eclipse.rdf4j:rdf4j-common-io")
+    api("org.jetbrains.kotlinx:kotlinx-html-jvm")
     api("org.springframework.data:spring-data-commons")
     api(project(":common:datatypes"))
     api(project(":common:core-identifiers"))
@@ -16,4 +17,5 @@ dependencies {
     implementation("jakarta.validation:jakarta.validation-api")
     implementation(project(":common:serialization"))
     implementation(project(":common:external-identifiers"))
+    implementation(project(":graph:graph-core-constants"))
 }

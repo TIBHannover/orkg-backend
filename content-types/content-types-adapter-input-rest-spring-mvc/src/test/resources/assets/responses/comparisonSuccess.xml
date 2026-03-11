@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<article
+  xmlns:ali="http://www.niso.org/schemas/ali/1.0"
+  xmlns:xlink="https://www.w3.org/1999/xlink">
+  <front>
+    <article-meta>
+      <article-categories>
+        <subj-group xml:lang="en">
+          <subject>Research Field 1</subject>
+        </subj-group>
+        <subj-group xml:lang="en">
+          <subject>Research Field 2</subject>
+        </subj-group>
+      </article-categories>
+      <article-id pub-id-type="orkg">R8186</article-id>
+      <article-id pub-id-type="doi">10.1000/182</article-id>
+      <title-group>
+        <article-title>Dummy Comparison Title</article-title>
+      </title-group>
+      <description>
+        <p>Some description about the contents</p>
+      </description>
+      <contrib-group content-type="author">
+        <contrib contrib-type="person">
+          <string-name>Josiah Stinkney Carberry</string-name>
+          <contrib-id contrib-id-type="orkg">147</contrib-id>
+          <contrib-id contrib-id-type="orcid">0000-0002-1825-0097</contrib-id>
+        </contrib>
+        <contrib contrib-type="person">
+          <string-name>Author 2</string-name>
+        </contrib>
+      </contrib-group>
+      <pub-date date-type="pub">
+        <day>--</day>
+        <month>4</month>
+        <year>2023</year>
+      </pub-date>
+      <permissions id="permission">
+        <copyright-year>2023</copyright-year>
+        <copyright-holder>Open Research Knowledge Graph</copyright-holder>
+        <license>
+          <ali:license_ref>http://creativecommons.org/licenses/by-sa/4.0/</ali:license_ref>
+          <license-p>This work is licensed under a Creative Commons Attribution-ShareAlike 4.0 International License (CC BY-SA 4.0)</license-p>
+        </license>
+      </permissions>
+    </article-meta>
+  </front>
+  <body id="body">
+    <table-wrap>
+      <table>
+        <thead>
+          <tr style="text-align: left;">
+            <th/>
+            <th>
+              <ext-link ext-link-type="uri" xlink:href="http://localhost:3000/resources/R396">Title 1
+                <italic>Contribution 1</italic>
+              </ext-link>
+            </th>
+            <th>
+              <ext-link ext-link-type="uri" xlink:href="http://localhost:3000/resources/R258">Title 2</ext-link>
+            </th>
+            <th>
+              <ext-link ext-link-type="uri" xlink:href="http://localhost:3000/resources/R021">Default Label</ext-link>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th style="padding-left: 0px; text-align: left;">addresses</th>
+            <td>Some research problem</td>
+            <td>Some link
+              <ext-link ext-link-type="uri" xlink:href="https://example.com">https://example.com</ext-link> to a website
+            </td>
+            <td/>
+          </tr>
+          <tr>
+            <th style="padding-left: 0px; text-align: left;">mentions</th>
+            <td>Some resource</td>
+            <td>Some Resource</td>
+            <td/>
+          </tr>
+          <tr>
+            <th style="padding-left: 0px; text-align: left;">mentions</th>
+            <td>Some predicate</td>
+            <td>Some Predicate</td>
+            <td/>
+          </tr>
+          <tr>
+            <th style="padding-left: 12px; text-align: left;">description</th>
+            <td>Predicate description</td>
+            <td>Predicate description</td>
+            <td/>
+          </tr>
+          <tr>
+            <th style="padding-left: 0px; text-align: left;">Dummy Rosetta Stone Template Label</th>
+            <td/>
+            <td/>
+            <td>Subject 1 and Subject 2 Object 1-1 and Object 1-2 Object 2-1 and Object 2-2</td>
+          </tr>
+          <tr>
+            <th style="padding-left: 12px; text-align: left;">resource property placeholder</th>
+            <td/>
+            <td/>
+            <td>Subject 1</td>
+          </tr>
+          <tr>
+            <th style="padding-left: 12px; text-align: left;">resource property placeholder</th>
+            <td/>
+            <td/>
+            <td>Subject 2</td>
+          </tr>
+          <tr>
+            <th style="padding-left: 12px; text-align: left;">string property placeholder</th>
+            <td/>
+            <td/>
+            <td>Object 1-1</td>
+          </tr>
+          <tr>
+            <th style="padding-left: 12px; text-align: left;">string property placeholder</th>
+            <td/>
+            <td/>
+            <td>Object 1-2</td>
+          </tr>
+          <tr>
+            <th style="padding-left: 12px; text-align: left;">number literal property placeholder</th>
+            <td/>
+            <td/>
+            <td>Object 2-1</td>
+          </tr>
+          <tr>
+            <th style="padding-left: 12px; text-align: left;">number literal property placeholder</th>
+            <td/>
+            <td/>
+            <td>Object 2-2</td>
+          </tr>
+        </tbody>
+      </table>
+    </table-wrap>
+  </body>
+</article>

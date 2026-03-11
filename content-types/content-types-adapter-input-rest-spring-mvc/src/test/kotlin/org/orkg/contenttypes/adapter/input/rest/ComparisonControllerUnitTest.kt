@@ -1,6 +1,7 @@
 package org.orkg.contenttypes.adapter.input.rest
 
 import com.epages.restdocs.apispec.ParameterType
+import com.epages.restdocs.apispec.SimpleType
 import com.ninjasquad.springmockk.MockkBean
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
@@ -18,6 +19,7 @@ import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
 import org.orkg.common.exceptions.ServiceUnavailable
 import org.orkg.common.exceptions.UnknownSortingProperty
+import org.orkg.common.testing.fixtures.Assets.responseXml
 import org.orkg.common.testing.fixtures.fixedClock
 import org.orkg.common.thingIdConstraint
 import org.orkg.community.domain.ContributorNotFound
@@ -44,6 +46,8 @@ import org.orkg.contenttypes.domain.SustainableDevelopmentGoalNotFound
 import org.orkg.contenttypes.domain.VisualizationNotFound
 import org.orkg.contenttypes.domain.testing.asciidoc.allowedComparisonDataSourceTypeValues
 import org.orkg.contenttypes.domain.testing.fixtures.createComparison
+import org.orkg.contenttypes.domain.testing.fixtures.createComparisonTable
+import org.orkg.contenttypes.input.ComparisonTableUseCases
 import org.orkg.contenttypes.input.ComparisonUseCases
 import org.orkg.contenttypes.input.testing.fixtures.authorListFields
 import org.orkg.contenttypes.input.testing.fixtures.comparisonResponseFields
@@ -53,11 +57,14 @@ import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.InvalidDescription
 import org.orkg.graph.domain.InvalidLabel
 import org.orkg.graph.domain.NeitherOwnerNorCurator
+import org.orkg.graph.domain.Predicates
+import org.orkg.graph.domain.Thing
 import org.orkg.graph.domain.Visibility
 import org.orkg.graph.domain.VisibilityFilter
 import org.orkg.graph.testing.asciidoc.allowedExtractionMethodValues
 import org.orkg.graph.testing.asciidoc.allowedVisibilityValues
 import org.orkg.graph.testing.asciidoc.visibilityFilterQueryParameter
+import org.orkg.graph.testing.fixtures.createLiteral
 import org.orkg.testing.MockUserId
 import org.orkg.testing.andExpectComparison
 import org.orkg.testing.andExpectPage
@@ -74,21 +81,28 @@ import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest
 import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.http.HttpStatus.SERVICE_UNAVAILABLE
+import org.springframework.http.MediaType
 import org.springframework.restdocs.headers.HeaderDocumentation.headerWithName
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import org.springframework.test.context.ContextConfiguration
+import org.springframework.test.context.TestPropertySource
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Optional
 
+@TestPropertySource(properties = ["spring.rdf.frontend-uri=http://localhost:3000"])
 @ContextConfiguration(classes = [ComparisonController::class, ContentTypeControllerUnitTestConfiguration::class])
 @WebMvcTest(controllers = [ComparisonController::class])
 internal class ComparisonControllerUnitTest : MockMvcBaseTest("comparisons") {
     @MockkBean
     private lateinit var comparisonService: ComparisonUseCases
+
+    @MockkBean
+    private lateinit var comparisonTableService: ComparisonTableUseCases
 
     @Test
     @DisplayName("Given a comparison, when it is fetched by id and service succeeds, then status is 200 OK and comparison is returned")
@@ -117,6 +131,42 @@ internal class ComparisonControllerUnitTest : MockMvcBaseTest("comparisons") {
             }
 
         verify(exactly = 1) { comparisonService.findById(comparison.id) }
+    }
+
+    @Test
+    @DisplayName("Given a comparison, when it is fetched by id as JATS XML and service succeeds, then status is 200 OK and comparison is returned")
+    fun findById_asJatsXml() {
+        val comparison = createComparison()
+        val table = createComparisonTable()
+        val addressesRow = table.values[Predicates.addresses]!![0].values as MutableList<Thing?>
+        addressesRow[1] = createLiteral(
+            id = ThingId("L260"),
+            label = "Some link https://example.com to a website",
+        )
+        every { comparisonService.findById(comparison.id) } returns Optional.of(comparison)
+        every { comparisonTableService.findByComparisonId(comparison.id) } returns Optional.of(table)
+
+        documentedGetRequestTo("/api/comparisons/{id}", comparison.id)
+            .accept(MediaType.APPLICATION_XML_VALUE)
+            .perform()
+            .andExpect(status().isOk)
+            .andExpect(content().xml(responseXml("comparisonSuccess")))
+            .andDocument {
+                summary("Fetching comparisons")
+                description(
+                    """
+                    A `GET` request provides information about a comparison.
+                    """,
+                )
+                pathParameters(
+                    parameterWithName("id").description("The identifier of the comparison to retrieve."),
+                )
+                simpleResponse(SimpleType.STRING)
+                throws(ComparisonNotFound::class)
+            }
+
+        verify(exactly = 1) { comparisonService.findById(comparison.id) }
+        verify(exactly = 1) { comparisonTableService.findByComparisonId(comparison.id) }
     }
 
     @Test

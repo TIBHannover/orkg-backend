@@ -49,6 +49,7 @@ dependencies {
     api("org.freemarker:freemarker:2.3.34")
     api("org.apache.commons:commons-csv:1.14.1")
     api("com.github.multiformats:java-multihash:1.3.6")
+    api("org.jetbrains.kotlinx:kotlinx-html-jvm:0.12.0")
 
     // Declare constraints on all components that need alignment
     constraints {

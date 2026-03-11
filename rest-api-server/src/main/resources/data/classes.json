@@ -415,7 +415,8 @@
     },
     {
         "id": "Dataset",
-        "label": "Dataset"
+        "label": "Dataset",
+        "uri": "https://schema.org/Dataset"
     },
     {
         "id": "ComparisonDeleted",
@@ -467,7 +468,8 @@
     },
     {
         "id": "Software",
-        "label": "Software"
+        "label": "Software",
+        "uri": "https://schema.org/SoftwareApplication"
     },
     {
         "id": "TextSection",
@@ -504,5 +506,15 @@
         "id": "Row",
         "label": "Row",
         "uri": "http://www.w3.org/ns/csvw#Row"
+    },
+    {
+        "id": "CreativeWork",
+        "label": "CreativeWork",
+        "uri": "https://schema.org/CreativeWork"
+    },
+    {
+        "id": "SCHEMAORG:Thing",
+        "label": "Thing",
+        "uri": "https://schema.org/Thing"
     }
 ]

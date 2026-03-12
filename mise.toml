@@ -1,0 +1,6 @@
+[tools]
+java = "zulu-21"
+
+[env]
+# Prefer Podman over Docker, e.g. when using TestContainers
+DOCKER_HOST = "unix://{{env.XDG_RUNTIME_DIR}}/podman/podman.sock"

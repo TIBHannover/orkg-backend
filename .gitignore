@@ -32,3 +32,6 @@ dumps/
 .kotlin
 
 modules.*
+
+# Mise-en-place
+mise.local.toml

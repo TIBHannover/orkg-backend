@@ -8,6 +8,19 @@ Manuel Prinz <manuel.prinz@tib.eu>
 This repository contains a backend API for the Open Research Knowledge Graph (ORKG) written in https://kotlinlang.org/[Kotlin].
 It is based on the https://spring.io/[Spring Framework] and uses https://gradle.org/[Gradle] for its build process.
 
+== Prerequisites
+
+This project requires Java and Podman/Docker to be installed on the development system.
+Other software, e. g. the Gradle build system, will be downloaded when required.
+
+On Linux, https://mise.jdx.dev/[Mise-en-place] can be used to install software required to develop and run this project.
+After installation, run `mise install` to fetch Java other software.
+
+To make use of the installed versions, run commands via `mise exec`, e. g. `mise exec -- ./gradlew build`.
+
+The default configuration prefers Podman over Docker.
+If you do not like that change or run into problems, you can override the settings in `mise.local.toml`.
+
 == REST API documentation
 
 The documentation can be found at {apidoc_url}.

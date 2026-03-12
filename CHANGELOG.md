@@ -6,6 +6,35 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Added a new endpoint to fetch available comparison paths.
+  (See [!1321](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1321))
+- Added a new endpoint to fetch comparison contents.
+  (See [!1321](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1321))
+- Added a new endpoint to update selected comparison paths .
+  (See [!1321](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1321))
+- Added the classes "CreativeWork" and "SCHEMAORG:Thing" to initial data setup.
+  (See [!1445](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1445))
+- Added a new endpoint for fetching comparisons as JATS XML.
+  (See [!1431](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1431))
+- Added a new endpoint for fetching smart reviews as JATS XML.
+  (See [!1432](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1432))
+- Added a `type` field to template property responses for easier parsing.
+  (See [!1438](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1438))
+### Changed
+- Smart Review snapshots are now stored in the backend database.
+  (See [!1424](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1424))
+- Literature List snapshots are now stored in the backend database.
+  (See [!1425](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1425))
+- Updated to Gradle 8.14.4.
+  (See [!1439](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1439))
+### Fixed
+- Fixed a possible status 500 `INTERNAL SERVER ERROR` when importing external entities.
+- Fixed several template related issues with the generated OpenAPI python client.
+  (See [!1438](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1438))
+### Breaking
+- Reworked comparison responses. Old endpoints will respond with status 406 `NOT ACCEPTABLE`.
+  (See [!1321](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1321))
 
 ## [0.93.0] - 2026-02-24
 ### Breaking
@@ -37,7 +66,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   (See [!1428](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1428))
 - It is no longer possible to create templates with properties that have the same property path.
   (See [!1427](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1427))
-
 ### Fixed
 - Fixed the query parameters `addressed_by_observatory` and `addressed_by_organization` not working for research problem listing endpoint.
 - Fixed sorting by `research_field_count` not working correctly for the research problem listing endpoint.
@@ -46,7 +74,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   (See [!1430](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1430))
 - Fixed contributor statistics computation for research problems.
   (See [!1430](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1430))
-
 ### Breaking
 - The REST-API now requires Kotlin 2.2.
   (See [!1419](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1419))

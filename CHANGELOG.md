@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [0.94.0] - 2026-03-12
 ### Added
 - Added a new endpoint to fetch available comparison paths.
   (See [!1321](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1321))

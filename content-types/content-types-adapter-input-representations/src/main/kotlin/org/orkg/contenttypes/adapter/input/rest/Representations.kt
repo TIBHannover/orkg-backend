@@ -301,6 +301,20 @@ data class TemplateRelationRepresentation(
     val predicate: ObjectIdAndLabel?,
 )
 
+@JsonTypeInfo(
+    use = JsonTypeInfo.Id.NAME,
+    include = JsonTypeInfo.As.PROPERTY,
+    property = "type",
+)
+@JsonSubTypes(
+    value = [
+        JsonSubTypes.Type(UntypedTemplatePropertyRepresentation::class),
+        JsonSubTypes.Type(StringLiteralTemplatePropertyRepresentation::class),
+        JsonSubTypes.Type(NumberLiteralTemplatePropertyRepresentation::class),
+        JsonSubTypes.Type(OtherLiteralTemplatePropertyRepresentation::class),
+        JsonSubTypes.Type(ResourceTemplatePropertyRepresentation::class),
+    ],
+)
 sealed interface TemplatePropertyRepresentation {
     val id: ThingId
     val label: String
@@ -322,6 +336,7 @@ sealed interface TemplatePropertyRepresentation {
     val createdBy: ContributorId
 }
 
+@JsonTypeName("untyped")
 data class UntypedTemplatePropertyRepresentation(
     override val id: ThingId,
     override val label: String,
@@ -339,6 +354,7 @@ sealed interface LiteralTemplatePropertyRepresentation : TemplatePropertyReprese
     val datatype: ClassReferenceRepresentation
 }
 
+@JsonTypeName("string_literal")
 data class StringLiteralTemplatePropertyRepresentation(
     override val id: ThingId,
     override val label: String,
@@ -354,6 +370,7 @@ data class StringLiteralTemplatePropertyRepresentation(
     override val datatype: ClassReferenceRepresentation,
 ) : LiteralTemplatePropertyRepresentation
 
+@JsonTypeName("number_literal")
 data class NumberLiteralTemplatePropertyRepresentation(
     override val id: ThingId,
     override val label: String,
@@ -372,6 +389,7 @@ data class NumberLiteralTemplatePropertyRepresentation(
     override val datatype: ClassReferenceRepresentation,
 ) : LiteralTemplatePropertyRepresentation
 
+@JsonTypeName("other_literal")
 data class OtherLiteralTemplatePropertyRepresentation(
     override val id: ThingId,
     override val label: String,
@@ -386,6 +404,7 @@ data class OtherLiteralTemplatePropertyRepresentation(
     override val datatype: ClassReferenceRepresentation,
 ) : LiteralTemplatePropertyRepresentation
 
+@JsonTypeName("resource")
 data class ResourceTemplatePropertyRepresentation(
     override val id: ThingId,
     override val label: String,

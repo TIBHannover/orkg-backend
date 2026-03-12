@@ -24,11 +24,13 @@ import org.orkg.contenttypes.domain.SimpleComparisonPath
 import org.orkg.contenttypes.domain.testing.fixtures.createLiteratureListTextSection
 import org.orkg.contenttypes.domain.testing.fixtures.createPaper
 import org.orkg.contenttypes.domain.testing.fixtures.createSmartReviewComparisonSection
+import org.orkg.contenttypes.input.testing.fixtures.classReferenceResponseFields
 import org.orkg.contenttypes.input.testing.fixtures.commonTemplatePropertyResponseFields
 import org.orkg.contenttypes.input.testing.fixtures.comparisonTableRowResponseFields
 import org.orkg.contenttypes.input.testing.fixtures.configuration.ContentTypeControllerUnitTestConfiguration
 import org.orkg.contenttypes.input.testing.fixtures.embeddedStatementResponseFields
 import org.orkg.contenttypes.input.testing.fixtures.labeledComparisonPathResponseFields
+import org.orkg.contenttypes.input.testing.fixtures.labeledObjectResponseFields
 import org.orkg.contenttypes.input.testing.fixtures.literalReferenceResponseFields
 import org.orkg.contenttypes.input.testing.fixtures.literatureListListSectionResponseFields
 import org.orkg.contenttypes.input.testing.fixtures.literatureListTextSectionResponseFields
@@ -52,6 +54,7 @@ import org.orkg.graph.domain.Visibility
 import org.orkg.testing.spring.MockMvcOpenApiBaseTest
 import org.orkg.testing.spring.restdocs.oneOf
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest
+import org.springframework.restdocs.payload.PayloadDocumentation.applyPathPrefix
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.subsectionWithPath
 import org.springframework.test.context.ContextConfiguration
@@ -261,11 +264,14 @@ internal class OpenApiDocTest : MockMvcOpenApiBaseTest() {
         document(createUntypedTemplatePropertyRepresentation()) {
             responseFields<TemplatePropertyRepresentation>(
                 oneOf(
-                    UntypedTemplatePropertyRepresentation::class,
-                    StringLiteralTemplatePropertyRepresentation::class,
-                    NumberLiteralTemplatePropertyRepresentation::class,
-                    OtherLiteralTemplatePropertyRepresentation::class,
-                    ResourceTemplatePropertyRepresentation::class,
+                    "type",
+                    mapOf(
+                        "untyped" to UntypedTemplatePropertyRepresentation::class,
+                        "string_literal" to StringLiteralTemplatePropertyRepresentation::class,
+                        "number_literal" to NumberLiteralTemplatePropertyRepresentation::class,
+                        "other_literal" to OtherLiteralTemplatePropertyRepresentation::class,
+                        "resource" to ResourceTemplatePropertyRepresentation::class,
+                    ),
                 ),
             )
         }
@@ -275,7 +281,8 @@ internal class OpenApiDocTest : MockMvcOpenApiBaseTest() {
     fun untypedTemplatePropertyRepresentation() {
         document(createUntypedTemplatePropertyRepresentation()) {
             responseFields<UntypedTemplatePropertyRepresentation>(
-                commonTemplatePropertyResponseFields(),
+                *commonTemplatePropertyResponseFields().toTypedArray(),
+                fieldWithPath("type").description("""The type of the template property. Always has the value `untyped`."""),
             )
         }
     }
@@ -302,10 +309,8 @@ internal class OpenApiDocTest : MockMvcOpenApiBaseTest() {
                 *commonTemplatePropertyResponseFields().toTypedArray(),
                 fieldWithPath("pattern").description("The pattern that the string must have. (optional)").optional(),
                 fieldWithPath("datatype").description("""The class reference representation of the datatype of the property. Always has the value "String"."""),
-                fieldWithPath("datatype.id").description("""The id of the thing."""),
-                fieldWithPath("datatype.label").description("""The label of the thing."""),
-                fieldWithPath("datatype.uri").description("""The uri of the class."""),
-                fieldWithPath("datatype._class").description("""Indicates which type of entity was returned. Alaways has the value `class_ref`."""),
+                *applyPathPrefix("datatype.", classReferenceResponseFields()).toTypedArray(),
+                fieldWithPath("type").description("""The type of the template property. Always has the value `string_literal`."""),
             )
         }
     }
@@ -334,10 +339,8 @@ internal class OpenApiDocTest : MockMvcOpenApiBaseTest() {
                 fieldWithPath("min_inclusive").description("The minimum value (inclusive) that the number can have (optional).").optional(),
                 fieldWithPath("max_inclusive").description("The maximum value (inclusive) that the number can have (optional).").optional(),
                 fieldWithPath("datatype").description("""The class reference representation of the datatype of the property. Either of "Integer", "Decimal" or "Float"."""),
-                fieldWithPath("datatype.id").description("""The id of the class."""),
-                fieldWithPath("datatype.label").description("""The label of the class."""),
-                fieldWithPath("datatype.uri").description("""The uri of the class."""),
-                fieldWithPath("datatype._class").description("""Indicates which type of entity was returned. Alaways has the value `class_ref`."""),
+                *applyPathPrefix("datatype.", classReferenceResponseFields()).toTypedArray(),
+                fieldWithPath("type").description("""The type of the template property. Always has the value `number_literal`."""),
             )
         }
     }
@@ -362,10 +365,8 @@ internal class OpenApiDocTest : MockMvcOpenApiBaseTest() {
             responseFields<OtherLiteralTemplatePropertyRepresentation>(
                 *commonTemplatePropertyResponseFields().toTypedArray(),
                 fieldWithPath("datatype").description("""The class reference representation of the datatype of the property, indicating a literal property."""),
-                fieldWithPath("datatype.id").description("""The id of the thing."""),
-                fieldWithPath("datatype.label").description("""The label of the thing."""),
-                fieldWithPath("datatype.uri").description("""The uri of the class."""),
-                fieldWithPath("datatype._class").description("""Indicates which type of entity was returned. Alaways has the value `class_ref`."""),
+                *applyPathPrefix("datatype.", classReferenceResponseFields()).toTypedArray(),
+                fieldWithPath("type").description("""The type of the template property. Always has the value `other_literal`."""),
             )
         }
     }
@@ -390,8 +391,8 @@ internal class OpenApiDocTest : MockMvcOpenApiBaseTest() {
             responseFields<ResourceTemplatePropertyRepresentation>(
                 *commonTemplatePropertyResponseFields().toTypedArray(),
                 fieldWithPath("class").description("""The object id and label of the range of the property, indicating a resource property."""),
-                fieldWithPath("class.id").description("""The id of the thing."""),
-                fieldWithPath("class.label").description("""The label of the thing."""),
+                *applyPathPrefix("class.", labeledObjectResponseFields()).toTypedArray(),
+                fieldWithPath("type").description("""The type of the template property. Always has the value `resource`."""),
             )
         }
     }

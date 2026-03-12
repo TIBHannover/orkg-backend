@@ -455,7 +455,7 @@ fun templateResponseFields() = listOf(
     fieldWithPath("id").description("The identifier of the template."),
     fieldWithPath("label").description("The label of the template."),
     fieldWithPath("description").description("The description of the template."),
-    fieldWithPath("formatted_label").description("The formatted label pattern of the template."),
+    fieldWithPath("formatted_label").description("The formatted label pattern of the template. (optional)").optional(),
     fieldWithPath("target_class").description("The id of target class of the template."),
     *applyPathPrefix("target_class.", classReferenceResponseFields()).toTypedArray(),
     fieldWithPath("relations").description("The relations class of the template. Used for suggestions."),

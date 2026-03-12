@@ -61,7 +61,8 @@ build:
     name: build
     when: always
     paths:
-      - '**/build/reports/'
+      - '**/build/reports/tests'
+      - '**/build/reports/dependency-analysis/build-health-report.txt'
       - rest-api-server/build/libs/rest-api-server-*.jar
       - documentation/build/docs/asciidoc/
       - documentation/build/api-spec/openapi3.yaml

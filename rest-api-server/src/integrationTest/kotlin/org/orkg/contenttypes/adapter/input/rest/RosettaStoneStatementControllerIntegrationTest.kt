@@ -57,16 +57,14 @@ import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.UnsafeClassUseCases
 import org.orkg.testing.MockUserId
 import org.orkg.testing.andExpectRosettaStoneStatement
-import org.orkg.testing.annotations.Neo4jContainerIntegrationTest
-import org.orkg.testing.annotations.PostgresContainerIntegrationTest
+import org.orkg.testing.annotations.IntegrationTest
 import org.orkg.testing.annotations.TestWithMockUser
 import org.orkg.testing.spring.MockMvcBaseTest
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Import
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
-@Neo4jContainerIntegrationTest
-@PostgresContainerIntegrationTest
+@IntegrationTest
 @Import(ContentTypeJacksonModule::class)
 internal class RosettaStoneStatementControllerIntegrationTest : MockMvcBaseTest("rosetta-stone-statements") {
     @Autowired

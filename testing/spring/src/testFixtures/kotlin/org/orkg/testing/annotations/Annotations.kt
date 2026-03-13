@@ -23,6 +23,10 @@ import org.springframework.test.context.TestPropertySource
 import kotlin.annotation.AnnotationRetention.RUNTIME
 import kotlin.reflect.KClass
 
+@Neo4jContainerIntegrationTest
+@PostgresContainerIntegrationTest
+annotation class IntegrationTest
+
 @SpringBootTest
 @ContextConfiguration(initializers = [Neo4jContainerInitializer::class])
 @ImportAutoConfiguration(MigrationsAutoConfiguration::class)

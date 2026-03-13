@@ -27,7 +27,7 @@ import org.orkg.graph.output.ClassRepository
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.StatementRepository
 import org.orkg.graph.output.ThingRepository
-import org.orkg.testing.annotations.PostgresContainerIntegrationTest
+import org.orkg.testing.annotations.IntegrationTest
 import org.orkg.testing.spring.MockMvcBaseTest
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.TestComponent
@@ -48,7 +48,7 @@ import org.springframework.web.util.UriComponentsBuilder
 import java.time.OffsetDateTime
 import java.util.stream.Stream
 
-@PostgresContainerIntegrationTest
+@IntegrationTest
 @Import(CorsIntegrationTest.FakeController::class)
 @Suppress("HttpUrlsUsage")
 internal class CorsIntegrationTest : MockMvcBaseTest("cors") {

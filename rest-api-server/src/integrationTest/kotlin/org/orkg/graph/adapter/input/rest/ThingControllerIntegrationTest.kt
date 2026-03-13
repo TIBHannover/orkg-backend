@@ -18,7 +18,7 @@ import org.orkg.testing.andExpectLiteral
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.andExpectPredicate
 import org.orkg.testing.andExpectResource
-import org.orkg.testing.annotations.Neo4jContainerIntegrationTest
+import org.orkg.testing.annotations.IntegrationTest
 import org.orkg.testing.spring.MockMvcBaseTest
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.PageRequest
@@ -26,7 +26,7 @@ import org.springframework.test.context.TestPropertySource
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
-@Neo4jContainerIntegrationTest
+@IntegrationTest
 @TestPropertySource(properties = ["orkg.features.formatted_labels=false"])
 internal class ThingControllerIntegrationTest : MockMvcBaseTest("things") {
     @Autowired

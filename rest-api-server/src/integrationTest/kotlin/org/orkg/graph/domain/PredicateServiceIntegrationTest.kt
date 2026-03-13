@@ -5,11 +5,11 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.orkg.createPredicate
-import org.orkg.testing.annotations.Neo4jContainerIntegrationTest
+import org.orkg.testing.annotations.IntegrationTest
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.PageRequest
 
-@Neo4jContainerIntegrationTest
+@IntegrationTest
 internal class PredicateServiceIntegrationTest {
     @Autowired
     private lateinit var service: PredicateService

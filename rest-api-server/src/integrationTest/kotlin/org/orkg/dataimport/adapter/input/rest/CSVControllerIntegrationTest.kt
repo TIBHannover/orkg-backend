@@ -30,8 +30,7 @@ import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.ClassUseCases
 import org.orkg.graph.input.PredicateUseCases
 import org.orkg.graph.input.ResourceUseCases
-import org.orkg.testing.annotations.Neo4jContainerIntegrationTest
-import org.orkg.testing.annotations.PostgresContainerIntegrationTest
+import org.orkg.testing.annotations.IntegrationTest
 import org.orkg.testing.annotations.TestWithMockUser
 import org.orkg.testing.configuration.JpaTransactionManagerConfiguration
 import org.orkg.testing.configuration.SpringBatchTestConfiguration
@@ -43,8 +42,7 @@ import org.springframework.mock.web.MockPart
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import tools.jackson.module.kotlin.readValue
 
-@Neo4jContainerIntegrationTest
-@PostgresContainerIntegrationTest
+@IntegrationTest
 @Import(
     value = [
         ImportPaperCSVJobConfiguration::class,

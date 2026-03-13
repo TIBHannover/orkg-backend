@@ -9,11 +9,11 @@ import org.orkg.createResource
 import org.orkg.createStatement
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
-import org.orkg.testing.annotations.Neo4jContainerIntegrationTest
+import org.orkg.testing.annotations.IntegrationTest
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.PageRequest
 
-@Neo4jContainerIntegrationTest
+@IntegrationTest
 internal class StatementServiceIntegrationTest {
     @Autowired
     private lateinit var resourceService: ResourceUseCases

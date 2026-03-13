@@ -23,7 +23,7 @@ import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.testing.MockUserId
-import org.orkg.testing.annotations.Neo4jContainerIntegrationTest
+import org.orkg.testing.annotations.IntegrationTest
 import org.orkg.testing.annotations.TestWithMockAdmin
 import org.orkg.testing.annotations.TestWithMockUser
 import org.orkg.testing.spring.MockMvcBaseTest
@@ -36,7 +36,7 @@ import org.springframework.test.context.TestPropertySource
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
-@Neo4jContainerIntegrationTest
+@IntegrationTest
 @TestPropertySource(properties = ["orkg.features.formatted_labels=false"])
 internal class ResourceControllerIntegrationTest : MockMvcBaseTest("resources") {
     @Autowired

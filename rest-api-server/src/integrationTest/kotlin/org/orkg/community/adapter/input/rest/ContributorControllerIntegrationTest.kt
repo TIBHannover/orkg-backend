@@ -5,12 +5,12 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.orkg.community.output.ContributorRepository
 import org.orkg.community.testing.fixtures.createContributor
-import org.orkg.testing.annotations.PostgresContainerIntegrationTest
+import org.orkg.testing.annotations.IntegrationTest
 import org.orkg.testing.spring.MockMvcBaseTest
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
-@PostgresContainerIntegrationTest
+@IntegrationTest
 internal class ContributorControllerIntegrationTest : MockMvcBaseTest("contributors") {
     @Autowired
     private lateinit var repository: ContributorRepository

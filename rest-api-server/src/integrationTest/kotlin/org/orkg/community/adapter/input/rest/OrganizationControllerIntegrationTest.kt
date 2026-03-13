@@ -25,8 +25,7 @@ import org.orkg.graph.input.ResourceUseCases
 import org.orkg.mediastorage.domain.ImageData
 import org.orkg.mediastorage.input.CreateImageUseCase
 import org.orkg.mediastorage.input.ImageUseCases
-import org.orkg.testing.annotations.Neo4jContainerIntegrationTest
-import org.orkg.testing.annotations.PostgresContainerIntegrationTest
+import org.orkg.testing.annotations.IntegrationTest
 import org.orkg.testing.spring.MockMvcBaseTest
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Import
@@ -35,8 +34,7 @@ import org.springframework.restdocs.request.RequestDocumentation.parameterWithNa
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.util.MimeType
 
-@Neo4jContainerIntegrationTest
-@PostgresContainerIntegrationTest
+@IntegrationTest
 @Import(CommonDocumentationContextProvider::class, CommunityDocumentationContextProvider::class)
 internal class OrganizationControllerIntegrationTest : MockMvcBaseTest("organizations") {
     @Autowired

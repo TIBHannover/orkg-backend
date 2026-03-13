@@ -12,11 +12,11 @@ import org.orkg.graph.input.ClassUseCases
 import org.orkg.graph.input.CreateResourceUseCase
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.testing.MockUserId
-import org.orkg.testing.annotations.Neo4jContainerIntegrationTest
+import org.orkg.testing.annotations.IntegrationTest
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.PageRequest
 
-@Neo4jContainerIntegrationTest
+@IntegrationTest
 internal class ResourceServiceIntegrationTest {
     @Autowired
     private lateinit var service: ResourceUseCases

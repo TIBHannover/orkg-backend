@@ -33,7 +33,7 @@ import org.orkg.contenttypes.input.testing.fixtures.mapOfCreateResourceRequestPa
 import org.orkg.graph.domain.InvalidLabel
 import org.orkg.graph.domain.InvalidLiteralDatatype
 import org.orkg.graph.domain.InvalidLiteralLabel
-import org.orkg.graph.domain.ReservedClass
+import org.orkg.graph.domain.ReservedClassId
 import org.orkg.graph.domain.ThingNotFound
 import org.orkg.graph.domain.URIAlreadyInUse
 import org.orkg.graph.domain.URINotAbsolute
@@ -178,7 +178,7 @@ internal class ContributionControllerUnitTest : MockMvcBaseTest("contributions")
                     PaperNotModifiable::class,
                     ThingNotDefined::class,
                     ThingNotFound::class,
-                    ReservedClass::class,
+                    ReservedClassId::class,
                     ThingIsNotAClass::class,
                     InvalidLabel::class,
                     InvalidLiteralLabel::class,

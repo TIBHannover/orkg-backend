@@ -14,7 +14,7 @@ import org.orkg.contenttypes.domain.TemplateAlreadyExistsForClass
 import org.orkg.graph.domain.ClassNotFound
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Predicates
-import org.orkg.graph.domain.ReservedClass
+import org.orkg.graph.domain.ReservedClassId
 import org.orkg.graph.output.ClassRepository
 import org.orkg.graph.output.StatementRepository
 import org.orkg.graph.testing.fixtures.createClass
@@ -145,8 +145,8 @@ internal class TemplateTargetClassValidatorUnitTest : MockkBaseTest {
     @Test
     fun `Given a target class id, when target class id equals rosetta stone statement class id, it throws an exception`() {
         val targetClassId = Classes.rosettaStoneStatement
-        val exception = ReservedClass(targetClassId)
-        assertThrows<ReservedClass> { templateTargetClassValidator(targetClassId, null) } shouldBe exception
+        val exception = ReservedClassId(targetClassId)
+        assertThrows<ReservedClassId> { templateTargetClassValidator(targetClassId, null) } shouldBe exception
     }
 
     @Test
@@ -154,7 +154,7 @@ internal class TemplateTargetClassValidatorUnitTest : MockkBaseTest {
         val targetClassId = ThingId("targetClass")
         val otherTemplate = createResource()
         val targetClass = createClass(targetClassId)
-        val exception = ReservedClass(targetClassId)
+        val exception = ReservedClassId(targetClassId)
 
         every { classRepository.findById(targetClassId) } returns Optional.of(targetClass)
         every {
@@ -172,7 +172,7 @@ internal class TemplateTargetClassValidatorUnitTest : MockkBaseTest {
             ),
         )
 
-        assertThrows<ReservedClass> { templateTargetClassValidator(targetClassId, null) } shouldBe exception
+        assertThrows<ReservedClassId> { templateTargetClassValidator(targetClassId, null) } shouldBe exception
 
         verify(exactly = 1) { classRepository.findById(targetClassId) }
         verify(exactly = 1) {

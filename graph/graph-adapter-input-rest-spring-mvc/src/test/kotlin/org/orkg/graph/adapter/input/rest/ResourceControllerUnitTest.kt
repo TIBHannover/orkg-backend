@@ -33,7 +33,7 @@ import org.orkg.graph.domain.InvalidClassCollection
 import org.orkg.graph.domain.InvalidLabel
 import org.orkg.graph.domain.NeitherOwnerNorCurator
 import org.orkg.graph.domain.NotACurator
-import org.orkg.graph.domain.ReservedClass
+import org.orkg.graph.domain.ReservedClassId
 import org.orkg.graph.domain.ResourceAlreadyExists
 import org.orkg.graph.domain.ResourceContributor
 import org.orkg.graph.domain.ResourceInUse
@@ -365,7 +365,7 @@ internal class ResourceControllerUnitTest : MockMvcBaseTest("resources") {
                     ResourceNotModifiable::class,
                     RosettaStoneStatementResourceNotModifiable::class,
                     InvalidLabel::class,
-                    ReservedClass::class,
+                    ReservedClassId::class,
                     InvalidClassCollection::class,
                     ObservatoryNotFound::class,
                     OrganizationNotFound::class,
@@ -440,7 +440,7 @@ internal class ResourceControllerUnitTest : MockMvcBaseTest("resources") {
                     fieldWithPath("classes[]").type("Array").description("The classes of the resource. (optional)").optional(),
                     fieldWithPath("extraction_method").type("Enum").description("""The method used to extract the resource. Can be one of $allowedExtractionMethodValues. (optional, default: `UNKNOWN`)""").optional(),
                 )
-                throws(InvalidLabel::class, ReservedClass::class, InvalidClassCollection::class, ResourceAlreadyExists::class)
+                throws(InvalidLabel::class, ReservedClassId::class, InvalidClassCollection::class, ResourceAlreadyExists::class)
             }
 
         verify(exactly = 1) {

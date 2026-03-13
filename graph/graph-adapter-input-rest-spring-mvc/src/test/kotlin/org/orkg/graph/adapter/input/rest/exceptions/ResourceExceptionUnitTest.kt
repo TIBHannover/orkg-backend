@@ -6,11 +6,9 @@ import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
 import org.orkg.common.thingIdConstraint
 import org.orkg.graph.adapter.input.rest.testing.fixtures.configuration.GraphControllerExceptionUnitTestConfiguration
-import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ExternalEntityIsNotAResource
 import org.orkg.graph.domain.ExternalResourceNotFound
 import org.orkg.graph.domain.InvalidClassCollection
-import org.orkg.graph.domain.ReservedClass
 import org.orkg.graph.domain.ResourceAlreadyExists
 import org.orkg.graph.domain.ResourceInUse
 import org.orkg.graph.domain.ResourceNotFound
@@ -153,23 +151,6 @@ internal class ResourceExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andDocument {
                 responseFields<InvalidClassCollection>(
                     fieldWithPath("class_ids[]").description("The list of invalid classes.").arrayItemsType("String").constraints(thingIdConstraint),
-                    *exceptionResponseFields(type).toTypedArray(),
-                )
-            }
-    }
-
-    @Test
-    fun reservedClass() {
-        val type = "orkg:problem:reserved_class"
-        documentedGetRequestTo(ReservedClass(Classes.list))
-            .andExpectErrorStatus(BAD_REQUEST)
-            .andExpectType(type)
-            .andExpectTitle("Bad Request")
-            .andExpectDetail("""Class "${Classes.list}" is reserved and therefor cannot be set.""")
-            .andExpect(jsonPath("$.class_id", `is`(Classes.list.value)))
-            .andDocument {
-                responseFields<ReservedClass>(
-                    fieldWithPath("class_id").description("The id of the class.").type<ThingId>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }

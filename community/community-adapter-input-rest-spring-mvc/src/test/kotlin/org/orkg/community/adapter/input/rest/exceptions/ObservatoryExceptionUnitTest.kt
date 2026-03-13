@@ -2,10 +2,8 @@ package org.orkg.community.adapter.input.rest.exceptions
 
 import org.hamcrest.Matchers.`is`
 import org.junit.jupiter.api.Test
-import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.community.domain.ObservatoryAlreadyExists
-import org.orkg.community.domain.ObservatoryMemberNotFound
 import org.orkg.community.domain.ObservatoryNotFound
 import org.orkg.community.testing.fixtures.configuration.CommunityControllerExceptionUnitTestConfiguration
 import org.orkg.testing.spring.MockMvcExceptionBaseTest
@@ -17,7 +15,6 @@ import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
-import java.util.UUID
 
 @WebMvcTest
 @ContextConfiguration(classes = [CommunityControllerExceptionUnitTestConfiguration::class])
@@ -87,22 +84,5 @@ internal class ObservatoryExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Not Found")
             .andExpectDetail("""Observatory with display id "display_name" not found.""")
             .andExpect(jsonPath("$.observatory_display_id", `is`("display_name")))
-    }
-
-    @Test
-    fun observatoryMemberNotFound() {
-        val type = "orkg:problem:observatory_member_not_found"
-        documentedGetRequestTo(ObservatoryMemberNotFound(UUID.fromString("eeb1ab0f-0ef5-4bee-aba2-2d5cea2f0174")))
-            .andExpectErrorStatus(NOT_FOUND)
-            .andExpectType(type)
-            .andExpectTitle("Not Found")
-            .andExpectDetail("""Observatory member "eeb1ab0f-0ef5-4bee-aba2-2d5cea2f0174" not found.""")
-            .andExpect(jsonPath("$.contributor_id", `is`("eeb1ab0f-0ef5-4bee-aba2-2d5cea2f0174")))
-            .andDocument {
-                responseFields<ObservatoryMemberNotFound>(
-                    fieldWithPath("contributor_id").description("The id of the contributor.").type<ContributorId>(),
-                    *exceptionResponseFields(type).toTypedArray(),
-                )
-            }
     }
 }

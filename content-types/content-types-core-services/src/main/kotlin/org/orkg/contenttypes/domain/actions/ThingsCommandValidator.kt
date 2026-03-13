@@ -13,7 +13,7 @@ import org.orkg.graph.domain.InvalidLiteralLabel
 import org.orkg.graph.domain.Label
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.MAX_LABEL_LENGTH
-import org.orkg.graph.domain.ReservedClass
+import org.orkg.graph.domain.ReservedClassId
 import org.orkg.graph.domain.Thing
 import org.orkg.graph.domain.URIAlreadyInUse
 import org.orkg.graph.domain.URINotAbsolute
@@ -57,7 +57,7 @@ class ThingsCommandValidator(
             .toSet()
             .forEach {
                 if (it in reservedClassIds) {
-                    throw ReservedClass(it)
+                    throw ReservedClassId(it)
                 }
                 thingIdValidator.validate(it.value, thingCommands, validationCache).onRight { thing ->
                     if (thing !is Class) {

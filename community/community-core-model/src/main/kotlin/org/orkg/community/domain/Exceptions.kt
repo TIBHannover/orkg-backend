@@ -5,7 +5,6 @@ import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.exceptions.SimpleMessageException
 import org.springframework.http.HttpStatus
-import java.util.UUID
 
 class ObservatoryNotFound : SimpleMessageException {
     constructor(id: ObservatoryId) : super(
@@ -176,14 +175,6 @@ class ObservatoryFilterAlreadyExists(id: ObservatoryFilterId) :
         HttpStatus.BAD_REQUEST,
         """Observatory filter "$id" already exists.""",
         properties = mapOf("observatory_filter_id" to id),
-    )
-
-// TODO: Replace with ContributorNotFound?
-class ObservatoryMemberNotFound(userId: UUID) :
-    SimpleMessageException(
-        HttpStatus.NOT_FOUND,
-        """Observatory member "$userId" not found.""",
-        properties = mapOf("contributor_id" to userId),
     )
 
 class UnknownIdentifierType(type: String) :

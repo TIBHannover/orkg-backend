@@ -8,8 +8,8 @@ import org.orkg.community.adapter.output.jpa.internal.PostgresContributorReposit
 import org.orkg.community.adapter.output.jpa.internal.PostgresObservatoryRepository
 import org.orkg.community.adapter.output.jpa.internal.PostgresOrganizationRepository
 import org.orkg.community.domain.ConferenceSeries
+import org.orkg.community.domain.ContributorNotFound
 import org.orkg.community.domain.Observatory
-import org.orkg.community.domain.ObservatoryMemberNotFound
 import org.orkg.community.domain.ObservatoryNotFound
 import org.orkg.community.domain.Organization
 import org.orkg.community.domain.OrganizationNotFound
@@ -26,7 +26,7 @@ internal fun PostgresObservatoryRepository.toObservatoryEntity(
         researchField = observatory.researchField?.value
         users = observatory.members.map {
             contributorRepository.findById(it.value)
-                .orElseThrow { ObservatoryMemberNotFound(it.value) }
+                .orElseThrow { ContributorNotFound(it) }
         }.toMutableSet()
         displayId = observatory.displayId
         organizations = observatory.organizationIds.map {

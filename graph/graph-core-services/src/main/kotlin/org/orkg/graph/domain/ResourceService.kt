@@ -171,7 +171,7 @@ class ResourceService(
         if (classes.isNotEmpty()) {
             val reserved = classes.intersect(reservedClassIds)
             if (reserved.isNotEmpty()) {
-                throw ReservedClass(reserved.first())
+                throw ReservedClassId(reserved.first())
             }
             if (!classRepository.existsAllById(classes - reservedClassIds)) {
                 throw InvalidClassCollection(classes)

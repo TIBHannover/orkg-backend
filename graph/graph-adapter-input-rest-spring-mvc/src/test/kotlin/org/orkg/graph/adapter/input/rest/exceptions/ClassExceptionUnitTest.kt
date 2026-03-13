@@ -183,21 +183,4 @@ internal class ClassExceptionUnitTest : MockMvcExceptionBaseTest() {
                 )
             }
     }
-
-    @Test
-    fun reservedClassId() {
-        val type = "orkg:problem:reserved_class_id"
-        documentedGetRequestTo(ReservedClassId(ThingId("C123")))
-            .andExpectErrorStatus(BAD_REQUEST)
-            .andExpectType(type)
-            .andExpectTitle("Bad Request")
-            .andExpectDetail("""Class id "C123" is reserved.""")
-            .andExpect(jsonPath("$.class_id", `is`("C123")))
-            .andDocument {
-                responseFields<ReservedClassId>(
-                    fieldWithPath("class_id").description("The id of the class.").type<ThingId>(),
-                    *exceptionResponseFields(type).toTypedArray(),
-                )
-            }
-    }
 }

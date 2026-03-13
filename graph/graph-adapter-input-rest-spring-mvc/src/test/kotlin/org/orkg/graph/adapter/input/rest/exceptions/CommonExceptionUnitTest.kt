@@ -10,6 +10,7 @@ import org.orkg.graph.domain.InvalidLabel
 import org.orkg.graph.domain.MAX_LABEL_LENGTH
 import org.orkg.graph.domain.NeitherOwnerNorCurator
 import org.orkg.graph.domain.NotACurator
+import org.orkg.graph.domain.ReservedClassId
 import org.orkg.testing.MockUserId
 import org.orkg.testing.spring.MockMvcExceptionBaseTest
 import org.orkg.testing.spring.restdocs.exceptionResponseFields
@@ -126,5 +127,22 @@ internal class CommonExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Forbidden")
             .andExpectDetail("""Cannot change verified status: Contributor <b7c81eed-52e1-4f7a-93bf-e6d331b8df7b> is not a curator.""")
             .andExpect(jsonPath("$.contributor_id").value("b7c81eed-52e1-4f7a-93bf-e6d331b8df7b"))
+    }
+
+    @Test
+    fun reservedClassId() {
+        val type = "orkg:problem:reserved_class_id"
+        documentedGetRequestTo(ReservedClassId(ThingId("C123")))
+            .andExpectErrorStatus(BAD_REQUEST)
+            .andExpectType(type)
+            .andExpectTitle("Bad Request")
+            .andExpectDetail("""Class id "C123" is reserved.""")
+            .andExpect(jsonPath("$.class_id", `is`("C123")))
+            .andDocument {
+                responseFields<ReservedClassId>(
+                    fieldWithPath("class_id").description("The id of the class.").type<ThingId>(),
+                    *exceptionResponseFields(type).toTypedArray(),
+                )
+            }
     }
 }

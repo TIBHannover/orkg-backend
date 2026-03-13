@@ -25,7 +25,7 @@ import org.orkg.graph.domain.InvalidLiteralDatatype
 import org.orkg.graph.domain.InvalidLiteralLabel
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.MAX_LABEL_LENGTH
-import org.orkg.graph.domain.ReservedClass
+import org.orkg.graph.domain.ReservedClassId
 import org.orkg.graph.domain.Thing
 import org.orkg.graph.domain.ThingNotFound
 import org.orkg.graph.domain.URIAlreadyInUse
@@ -155,7 +155,7 @@ internal class ThingsCommandValidatorUnitTest : MockkBaseTest {
             contributions = emptyList(),
         )
 
-        assertThrows<ReservedClass> { thingsCommandValidator.validate(contents, mutableMapOf()) }
+        assertThrows<ReservedClassId> { thingsCommandValidator.validate(contents, mutableMapOf()) }
     }
 
     @Test

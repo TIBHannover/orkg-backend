@@ -1,3 +1,5 @@
+@file:Suppress("serial")
+
 package org.orkg.graph.domain
 
 import org.eclipse.rdf4j.common.net.ParsedIRI
@@ -301,13 +303,6 @@ class InvalidClassCollection(ids: Iterable<ThingId>) :
         HttpStatus.BAD_REQUEST,
         """The collection of classes "$ids" contains one or more invalid classes.""",
         properties = mapOf("class_ids" to ids),
-    )
-
-class ReservedClass(id: ThingId) :
-    SimpleMessageException(
-        HttpStatus.BAD_REQUEST,
-        """Class "$id" is reserved and therefor cannot be set.""",
-        properties = mapOf("class_id" to id),
     )
 
 class URIAlreadyInUse(

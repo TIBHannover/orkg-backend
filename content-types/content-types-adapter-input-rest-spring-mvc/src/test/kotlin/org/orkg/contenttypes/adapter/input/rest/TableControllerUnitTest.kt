@@ -63,7 +63,7 @@ import org.orkg.graph.domain.InvalidLabel
 import org.orkg.graph.domain.InvalidLiteralDatatype
 import org.orkg.graph.domain.InvalidLiteralLabel
 import org.orkg.graph.domain.Literals
-import org.orkg.graph.domain.ReservedClass
+import org.orkg.graph.domain.ReservedClassId
 import org.orkg.graph.domain.ThingNotFound
 import org.orkg.graph.domain.URIAlreadyInUse
 import org.orkg.graph.domain.URINotAbsolute
@@ -306,7 +306,7 @@ internal class TableControllerUnitTest : MockMvcBaseTest("tables") {
                     OrganizationNotFound::class,
                     ThingNotDefined::class,
                     ThingNotFound::class,
-                    ReservedClass::class,
+                    ReservedClassId::class,
                     ThingIsNotAClass::class,
                     InvalidLiteralLabel::class,
                     InvalidLiteralDatatype::class,
@@ -385,7 +385,7 @@ internal class TableControllerUnitTest : MockMvcBaseTest("tables") {
                     OrganizationNotFound::class,
                     ThingNotDefined::class,
                     ThingNotFound::class,
-                    ReservedClass::class,
+                    ReservedClassId::class,
                     ThingIsNotAClass::class,
                     InvalidLiteralLabel::class,
                     InvalidLiteralDatatype::class,
@@ -470,7 +470,7 @@ internal class TableControllerUnitTest : MockMvcBaseTest("tables") {
                     InvalidLabel::class,
                     ThingNotDefined::class,
                     ThingNotFound::class,
-                    ReservedClass::class,
+                    ReservedClassId::class,
                     ThingIsNotAClass::class,
                     InvalidLiteralLabel::class,
                     InvalidLiteralDatatype::class,
@@ -537,7 +537,7 @@ internal class TableControllerUnitTest : MockMvcBaseTest("tables") {
                     InvalidLabel::class,
                     ThingNotDefined::class,
                     ThingNotFound::class,
-                    ReservedClass::class,
+                    ReservedClassId::class,
                     ThingIsNotAClass::class,
                     InvalidLiteralLabel::class,
                     InvalidLiteralDatatype::class,
@@ -670,7 +670,7 @@ internal class TableControllerUnitTest : MockMvcBaseTest("tables") {
                     InvalidLabel::class,
                     ThingNotDefined::class,
                     ThingNotFound::class,
-                    ReservedClass::class,
+                    ReservedClassId::class,
                     ThingIsNotAClass::class,
                     InvalidLiteralLabel::class,
                     InvalidLiteralDatatype::class,
@@ -735,7 +735,7 @@ internal class TableControllerUnitTest : MockMvcBaseTest("tables") {
                     InvalidLabel::class,
                     ThingNotDefined::class,
                     ThingNotFound::class,
-                    ReservedClass::class,
+                    ReservedClassId::class,
                     ThingIsNotAClass::class,
                     InvalidLiteralLabel::class,
                     InvalidLiteralDatatype::class,

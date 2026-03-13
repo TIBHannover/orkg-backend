@@ -119,7 +119,7 @@ internal class ResourceServiceUnitTest : MockkBaseTest {
             classes = setOf(reservedClassIds.first()),
         )
 
-        assertThrows<ReservedClass> { service.create(command) }
+        assertThrows<ReservedClassId> { service.create(command) }
     }
 
     @Test
@@ -318,8 +318,8 @@ internal class ResourceServiceUnitTest : MockkBaseTest {
 
         every { repository.findById(resource.id) } returns Optional.of(resource)
 
-        shouldThrow<ReservedClass> { service.update(command) }.asClue {
-            it.message shouldBe """Class "${Classes.list}" is reserved and therefor cannot be set."""
+        shouldThrow<ReservedClassId> { service.update(command) }.asClue {
+            it.message shouldBe """Class id "${Classes.list}" is reserved."""
         }
 
         verify(exactly = 1) { repository.findById(resource.id) }

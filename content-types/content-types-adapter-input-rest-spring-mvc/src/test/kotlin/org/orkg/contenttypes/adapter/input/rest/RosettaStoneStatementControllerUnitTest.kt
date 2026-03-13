@@ -62,7 +62,7 @@ import org.orkg.graph.domain.InvalidLiteralDatatype
 import org.orkg.graph.domain.InvalidLiteralLabel
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.NotACurator
-import org.orkg.graph.domain.ReservedClass
+import org.orkg.graph.domain.ReservedClassId
 import org.orkg.graph.domain.ResourceNotFound
 import org.orkg.graph.domain.ThingNotFound
 import org.orkg.graph.domain.URIAlreadyInUse
@@ -329,7 +329,7 @@ internal class RosettaStoneStatementControllerUnitTest : MockMvcBaseTest("rosett
                     OrganizationNotFound::class,
                     ThingNotDefined::class,
                     ThingNotFound::class,
-                    ReservedClass::class,
+                    ReservedClassId::class,
                     ThingIsNotAClass::class,
                     InvalidLabel::class,
                     InvalidLiteralLabel::class,
@@ -413,7 +413,7 @@ internal class RosettaStoneStatementControllerUnitTest : MockMvcBaseTest("rosett
                     OrganizationNotFound::class,
                     ThingNotDefined::class,
                     ThingNotFound::class,
-                    ReservedClass::class,
+                    ReservedClassId::class,
                     ThingIsNotAClass::class,
                     InvalidLabel::class,
                     InvalidLiteralLabel::class,

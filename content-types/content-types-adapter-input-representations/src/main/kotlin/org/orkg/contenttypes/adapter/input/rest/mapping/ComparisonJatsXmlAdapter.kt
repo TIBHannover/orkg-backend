@@ -163,7 +163,7 @@ interface ComparisonJatsXmlAdapter {
     ) {
         tr {
             style = "text-align: left;"
-            th()
+            th { +"Properties" }
             titles.zip(subtitles).forEach { (title, subtitle) ->
                 th {
                     `ext-link` {

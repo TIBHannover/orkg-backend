@@ -179,13 +179,13 @@
           </thead>
           <tbody>
             <tr>
-              <td>some resource label</td>
-              <td>some predicate label</td>
+              <td>Some resource label</td>
+              <td>Some predicate label</td>
               <td>some label</td>
             </tr>
             <tr>
               <td/>
-              <td>some predicate label</td>
+              <td>Some predicate label</td>
               <td>Default Label</td>
             </tr>
           </tbody>

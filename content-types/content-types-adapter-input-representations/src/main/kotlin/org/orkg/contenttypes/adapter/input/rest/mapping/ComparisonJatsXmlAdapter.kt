@@ -193,7 +193,7 @@ interface ComparisonJatsXmlAdapter {
                         +rowLabel
                     }
                     row.values.forEach { value ->
-                        td { comparisonCell(value) }
+                        td { tableValue(value) }
                     }
                 }
                 tableBody(row.children, predicateLabelLookup, depth + 1)
@@ -214,7 +214,7 @@ interface ComparisonJatsXmlAdapter {
         }
     }
 
-    private fun TD.comparisonCell(value: Thing?) {
+    fun TD.tableValue(value: Thing?) {
         val label = value?.label.orEmpty()
         if (label.isEmpty() || value !is Literal) {
             +label

@@ -231,12 +231,12 @@ interface SmartReviewJatsXmlAdapter : ComparisonJatsXmlAdapter {
                                 tr {
                                     td {
                                         if (!skipLabel) {
-                                            +entity.label
+                                            +entity.label.capitalize()
                                             skipLabel = true
                                         }
                                     }
-                                    td { +predicate.label }
-                                    td { +value.label }
+                                    td { +predicate.label.capitalize() }
+                                    td { tableValue(value) }
                                 }
                             }
                         }
@@ -375,4 +375,7 @@ interface SmartReviewJatsXmlAdapter : ComparisonJatsXmlAdapter {
             .nodeRendererFactory { JatsTableRenderer(state, it) }
             .nodeRendererFactory { JatsStrikethroughRenderer(it) }
             .build()
+
+    private fun String.capitalize(): String =
+        lowercase().replaceFirstChar { it.uppercase() }
 }

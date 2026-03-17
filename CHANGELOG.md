@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [0.94.1] - 2026-03-17
 ### Fixed
 - Added missing 'Properties' label to comparison table of JATS XML export.
 
@@ -1815,7 +1817,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - This CHANGELOG file. Finally!
 
-[unreleased]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/compare/0.94.0...master
+[unreleased]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/compare/0.94.1...master
+[0.94.1]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.91.0
 [0.94.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.94.0
 [0.93.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.93.0
 [0.92.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.92.0

@@ -1815,7 +1815,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - This CHANGELOG file. Finally!
 
-[unreleased]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/compare/0.91.4...master
+[unreleased]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/compare/0.94.0...master
+[0.94.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.94.0
+[0.93.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.93.0
+[0.92.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.92.0
 [0.91.4]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.91.4
 [0.91.3]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.91.3
 [0.91.2]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.91.2

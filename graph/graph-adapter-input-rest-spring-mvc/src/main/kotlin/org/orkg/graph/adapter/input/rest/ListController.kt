@@ -1,5 +1,6 @@
 package org.orkg.graph.adapter.input.rest
 
+import com.fasterxml.jackson.annotation.JsonProperty
 import org.orkg.common.ContributorId
 import org.orkg.common.MediaTypeCapabilities
 import org.orkg.common.ThingId
@@ -7,6 +8,7 @@ import org.orkg.common.annotations.RequireLogin
 import org.orkg.common.contributorId
 import org.orkg.graph.adapter.input.rest.mapping.ListRepresentationAdapter
 import org.orkg.graph.adapter.input.rest.mapping.ThingRepresentationAdapter
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.ListNotFound
 import org.orkg.graph.input.CreateListUseCase.CreateCommand
 import org.orkg.graph.input.FormattedLabelUseCases
@@ -54,7 +56,7 @@ class ListController(
 
     @RequireLogin
     @PostMapping(consumes = [MediaType.APPLICATION_JSON_VALUE])
-    fun add(
+    fun create(
         @RequestBody request: CreateListRequest,
         uriComponentsBuilder: UriComponentsBuilder,
         currentUser: Authentication?,
@@ -84,16 +86,25 @@ class ListController(
     data class CreateListRequest(
         val label: String,
         val elements: List<ThingId>,
+        @field:JsonProperty("extraction_method")
+        val extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN,
     ) {
         fun toCreateCommand(contributorId: ContributorId): CreateCommand =
-            CreateCommand(contributorId, label, elements)
+            CreateCommand(
+                contributorId = contributorId,
+                label = label,
+                elements = elements,
+                extractionMethod = extractionMethod,
+            )
     }
 
     data class UpdateListRequest(
         val label: String? = null,
         val elements: List<ThingId>? = null,
+        @field:JsonProperty("extraction_method")
+        val extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN,
     ) {
         fun toUpdateCommand(id: ThingId, contributorId: ContributorId): UpdateCommand =
-            UpdateCommand(id, contributorId, label, elements)
+            UpdateCommand(id, contributorId, label, elements, extractionMethod)
     }
 }

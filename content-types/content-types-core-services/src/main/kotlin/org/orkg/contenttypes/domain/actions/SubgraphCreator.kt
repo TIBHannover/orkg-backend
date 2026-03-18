@@ -56,7 +56,7 @@ class SubgraphCreator(
         createResources(thingsCommand, validationCache, lookup, contributorId, extractionMethod)
         createLiterals(thingsCommand, validationCache, lookup, contributorId, extractionMethod)
         createPredicates(thingsCommand, validationCache, contributorId, lookup, extractionMethod)
-        createLists(thingsCommand, validationCache, lookup, contributorId)
+        createLists(thingsCommand, validationCache, lookup, contributorId, extractionMethod)
     }
 
     private fun createClasses(
@@ -165,6 +165,7 @@ class SubgraphCreator(
         validationCache: Map<String, Either<CreateThingCommandPart, Thing>>,
         lookup: MutableMap<String, ThingId>,
         contributorId: ContributorId,
+        extractionMethod: ExtractionMethod,
     ) {
         val lists = thingsCommand.lists.filter { it.key.isTempId && it.key in validationCache }
         // create all lists without contents first, so other lists can reference them
@@ -174,6 +175,7 @@ class SubgraphCreator(
                     label = it.value.label,
                     elements = emptyList(),
                     contributorId = contributorId,
+                    extractionMethod = extractionMethod,
                 ),
             )
         }
@@ -183,6 +185,7 @@ class SubgraphCreator(
                     id = lookup[it.key]!!,
                     contributorId = contributorId,
                     elements = it.value.elements.map { id -> resolve(id, lookup) },
+                    extractionMethod = extractionMethod,
                 ),
             )
         }

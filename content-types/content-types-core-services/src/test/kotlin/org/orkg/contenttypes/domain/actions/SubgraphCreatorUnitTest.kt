@@ -442,40 +442,32 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
             contributions = emptyList(),
         )
         val listId = ThingId("R456")
+        val extractionMethod = ExtractionMethod.MANUAL
+        val createListCommand = CreateListUseCase.CreateCommand(
+            label = listCommand.label,
+            elements = emptyList(),
+            contributorId = contributorId,
+            extractionMethod = extractionMethod,
+        )
         val updateCommand = UpdateListUseCase.UpdateCommand(
             id = listId,
             contributorId = contributorId,
             elements = listOf(ThingId("R2000")),
+            extractionMethod = extractionMethod,
         )
 
-        every {
-            listService.create(
-                CreateListUseCase.CreateCommand(
-                    label = listCommand.label,
-                    elements = emptyList(),
-                    contributorId = contributorId,
-                ),
-            )
-        } returns listId
+        every { listService.create(createListCommand) } returns listId
         every { listService.update(updateCommand) } just runs
 
         subgraphCreator.createThingsAndStatements(
             contributorId = contributorId,
-            extractionMethod = ExtractionMethod.MANUAL,
+            extractionMethod = extractionMethod,
             thingsCommand = contents,
             validationCache = mapOf("#temp1" from contents),
             bakedStatements = emptySet(),
         )
 
-        verify(exactly = 1) {
-            listService.create(
-                CreateListUseCase.CreateCommand(
-                    label = listCommand.label,
-                    elements = emptyList(),
-                    contributorId = contributorId,
-                ),
-            )
-        }
+        verify(exactly = 1) { listService.create(createListCommand) }
         verify(exactly = 1) { listService.update(updateCommand) }
     }
 

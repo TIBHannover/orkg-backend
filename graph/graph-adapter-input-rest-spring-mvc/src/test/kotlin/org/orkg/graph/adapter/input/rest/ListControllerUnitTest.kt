@@ -23,6 +23,7 @@ import org.orkg.graph.domain.ThingAlreadyExists
 import org.orkg.graph.input.FormattedLabelUseCases
 import org.orkg.graph.input.ListUseCases
 import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.testing.asciidoc.allowedExtractionMethodValues
 import org.orkg.graph.testing.fixtures.createClass
 import org.orkg.graph.testing.fixtures.createList
 import org.orkg.graph.testing.fixtures.createLiteral
@@ -33,7 +34,6 @@ import org.orkg.testing.annotations.TestWithMockUser
 import org.orkg.testing.spring.MockMvcBaseTest
 import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectErrorStatus
 import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectType
-import org.orkg.testing.spring.restdocs.timestampFieldWithPath
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest
 import org.springframework.data.domain.PageImpl
 import org.springframework.http.HttpStatus.BAD_REQUEST
@@ -48,6 +48,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPat
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.time.OffsetDateTime
 import java.util.Optional
+import org.orkg.graph.adapter.input.rest.testing.fixtures.listResponseFields as orkgListResponseFields
 
 @ContextConfiguration(classes = [ListController::class, GraphControllerUnitTestConfiguration::class])
 @WebMvcTest(controllers = [ListController::class])
@@ -91,17 +92,7 @@ internal class ListControllerUnitTest : MockMvcBaseTest("lists") {
                 pathParameters(
                     parameterWithName("id").description("The identifier of the list."),
                 )
-                responseFields<ListRepresentation>(
-                    // The order here determines the order in the generated table. More relevant items should be up.
-                    fieldWithPath("id").description("The identifier of the list."),
-                    fieldWithPath("label").description("The label of the list."),
-                    fieldWithPath("elements[]").description("The ids of the elements of the list."),
-                    timestampFieldWithPath("created_at", "the list was created"),
-                    // TODO: Add links to documentation of special user UUIDs.
-                    fieldWithPath("created_by").description("The UUID of the user or service who created this list."),
-                    fieldWithPath("modifiable").description("Whether this list can be modified."),
-                    fieldWithPath("_class").description("The type of object this json contains. Always has the value \"list\"."),
-                )
+                responseFields<ListRepresentation>(orkgListResponseFields())
                 throws(ListNotFound::class)
             }
 
@@ -159,6 +150,7 @@ internal class ListControllerUnitTest : MockMvcBaseTest("lists") {
                 requestFields<CreateListRequest>(
                     fieldWithPath("label").description("The label of the list."),
                     fieldWithPath("elements[]").description("The ids of the elements of the list."),
+                    fieldWithPath("extraction_method").description("""The method used to extract the list. Can be one of $allowedExtractionMethodValues. (optional)""").optional(),
                 )
                 throws(InvalidLabel::class, ThingAlreadyExists::class, ListElementNotFound::class)
             }
@@ -249,6 +241,7 @@ internal class ListControllerUnitTest : MockMvcBaseTest("lists") {
                 requestFields<UpdateListRequest>(
                     fieldWithPath("label").description("The new label of the list. (optional)").optional(),
                     fieldWithPath("elements[]").description("The new ids of the elements of the list. (optional)").optional(),
+                    fieldWithPath("extraction_method").description("""The method used to extract the list. Can be one of $allowedExtractionMethodValues. (optional)""").optional(),
                 )
                 throws(ListNotFound::class, ListNotModifiable::class, InvalidLabel::class, ListElementNotFound::class)
             }

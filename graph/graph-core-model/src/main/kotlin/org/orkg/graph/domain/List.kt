@@ -10,5 +10,6 @@ data class List(
     val elements: kotlin.collections.List<ThingId>,
     val createdAt: OffsetDateTime,
     val createdBy: ContributorId = ContributorId.UNKNOWN,
+    val extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN,
     val modifiable: Boolean = true,
 )

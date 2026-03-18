@@ -189,12 +189,14 @@ fun ListUseCases.createList(
     elements: List<ThingId> = emptyList(),
     id: ThingId? = null,
     contributorId: ContributorId = ContributorId.UNKNOWN,
+    extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN,
 ) = create(
     CreateListUseCase.CreateCommand(
         contributorId = contributorId,
         label = label,
         elements = elements,
         id = id,
+        extractionMethod = extractionMethod,
     ),
 )
 

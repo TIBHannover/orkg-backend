@@ -2,6 +2,7 @@ package org.orkg.graph.input
 
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Thing
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -29,6 +30,7 @@ interface CreateListUseCase {
         val label: String,
         val elements: List<ThingId>,
         val id: ThingId? = null,
+        val extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN,
         val modifiable: Boolean = true,
     )
 }
@@ -41,6 +43,7 @@ interface UpdateListUseCase {
         val contributorId: ContributorId,
         val label: String? = null,
         val elements: List<ThingId>? = null,
+        val extractionMethod: ExtractionMethod? = null,
     )
 }
 

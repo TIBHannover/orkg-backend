@@ -52,6 +52,12 @@ internal class AuthorCreatorUnitTest : MockkBaseTest {
             label = author.name,
         )
         val extractionMethod = ExtractionMethod.MANUAL
+        val createListCommand = CreateListUseCase.CreateCommand(
+            label = "authors list",
+            elements = listOf(authorId),
+            contributorId = contributorId,
+            extractionMethod = extractionMethod,
+        )
 
         every {
             unsafeLiteralUseCases.create(
@@ -72,15 +78,7 @@ internal class AuthorCreatorUnitTest : MockkBaseTest {
                 ),
             )
         } returns StatementId("S1")
-        every {
-            listService.create(
-                CreateListUseCase.CreateCommand(
-                    label = "authors list",
-                    elements = listOf(authorId),
-                    contributorId = contributorId,
-                ),
-            )
-        } returns authorListId
+        every { listService.create(createListCommand) } returns authorListId
         every {
             unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
@@ -113,15 +111,7 @@ internal class AuthorCreatorUnitTest : MockkBaseTest {
                 ),
             )
         }
-        verify(exactly = 1) {
-            listService.create(
-                CreateListUseCase.CreateCommand(
-                    label = "authors list",
-                    elements = listOf(authorId),
-                    contributorId = contributorId,
-                ),
-            )
-        }
+        verify(exactly = 1) { listService.create(createListCommand) }
         verify(exactly = 1) {
             unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
@@ -145,6 +135,12 @@ internal class AuthorCreatorUnitTest : MockkBaseTest {
         val authorListId = ThingId("R1456")
         val contributorId = ContributorId(UUID.randomUUID())
         val extractionMethod = ExtractionMethod.MANUAL
+        val createListCommand = CreateListUseCase.CreateCommand(
+            label = "authors list",
+            elements = listOf(authorId),
+            contributorId = contributorId,
+            extractionMethod = extractionMethod,
+        )
 
         every {
             unsafeLiteralUseCases.create(
@@ -155,15 +151,7 @@ internal class AuthorCreatorUnitTest : MockkBaseTest {
                 ),
             )
         } returns literal.id
-        every {
-            listService.create(
-                CreateListUseCase.CreateCommand(
-                    label = "authors list",
-                    elements = listOf(authorId),
-                    contributorId = contributorId,
-                ),
-            )
-        } returns authorListId
+        every { listService.create(createListCommand) } returns authorListId
         every {
             unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
@@ -186,15 +174,7 @@ internal class AuthorCreatorUnitTest : MockkBaseTest {
                 ),
             )
         }
-        verify(exactly = 1) {
-            listService.create(
-                CreateListUseCase.CreateCommand(
-                    label = "authors list",
-                    elements = listOf(authorId),
-                    contributorId = contributorId,
-                ),
-            )
-        }
+        verify(exactly = 1) { listService.create(createListCommand) }
         verify(exactly = 1) {
             unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
@@ -229,6 +209,12 @@ internal class AuthorCreatorUnitTest : MockkBaseTest {
         val homepageLiteralId = ThingId("L13254")
         val authorListId = ThingId("R1456")
         val extractionMethod = ExtractionMethod.MANUAL
+        val createListCommand = CreateListUseCase.CreateCommand(
+            label = "authors list",
+            elements = listOf(authorId),
+            contributorId = contributorId,
+            extractionMethod = extractionMethod,
+        )
 
         every { unsafeResourceUseCases.create(resourceCreateCommand) } returns authorId
         every {
@@ -270,15 +256,7 @@ internal class AuthorCreatorUnitTest : MockkBaseTest {
                 ),
             )
         } returns StatementId("S2")
-        every {
-            listService.create(
-                CreateListUseCase.CreateCommand(
-                    label = "authors list",
-                    elements = listOf(authorId),
-                    contributorId = contributorId,
-                ),
-            )
-        } returns authorListId
+        every { listService.create(createListCommand) } returns authorListId
         every {
             unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
@@ -332,15 +310,7 @@ internal class AuthorCreatorUnitTest : MockkBaseTest {
                 ),
             )
         }
-        verify(exactly = 1) {
-            listService.create(
-                CreateListUseCase.CreateCommand(
-                    label = "authors list",
-                    elements = listOf(authorId),
-                    contributorId = contributorId,
-                ),
-            )
-        }
+        verify(exactly = 1) { listService.create(createListCommand) }
         verify(exactly = 1) {
             unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(

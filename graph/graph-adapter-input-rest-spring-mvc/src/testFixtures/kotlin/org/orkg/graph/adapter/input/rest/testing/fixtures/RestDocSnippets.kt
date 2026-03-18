@@ -98,3 +98,14 @@ fun thingResponseFields() = listOf(
     // literal specific
     fieldWithPath("datatype").type("String").description("The data type of the literal value. Defaults to `xsd:string`. (literal only)").optional(),
 )
+
+fun listResponseFields() = listOf(
+    fieldWithPath("id").description("The identifier of the list."),
+    fieldWithPath("label").description("The label of the list."),
+    fieldWithPath("elements[]").description("The ids of the elements of the list."),
+    timestampFieldWithPath("created_at", "the list was created"),
+    fieldWithPath("created_by").description("The UUID of the user or service who created this list."),
+    fieldWithPath("extraction_method").description("Determines how the list was created. Can be one of $allowedExtractionMethodValues."),
+    fieldWithPath("modifiable").description("Whether this list can be modified."),
+    fieldWithPath("_class").description("The type of object this json contains. Always has the value \"list\"."),
+)

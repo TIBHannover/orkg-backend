@@ -143,6 +143,8 @@ data class ListRepresentation(
     val elements: List<ThingId>,
     override val createdAt: OffsetDateTime,
     override val createdBy: ContributorId,
+    @field:JsonProperty("extraction_method")
+    val extractionMethod: ExtractionMethod,
     val modifiable: Boolean,
     @field:JsonProperty("_class")
     val jsonClass: String = "list",

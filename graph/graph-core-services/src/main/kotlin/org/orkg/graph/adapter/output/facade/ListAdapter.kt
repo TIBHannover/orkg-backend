@@ -39,6 +39,7 @@ class ListAdapter(
             label = list.label,
             createdAt = list.createdAt,
             createdBy = list.createdBy,
+            extractionMethod = list.extractionMethod,
             modifiable = list.modifiable,
         )
         resourceRepository.save(listResource)
@@ -130,6 +131,7 @@ class ListAdapter(
             .map { it.`object`.id },
         createdAt = createdAt,
         createdBy = createdBy,
+        extractionMethod = extractionMethod,
         modifiable = modifiable,
     )
 }

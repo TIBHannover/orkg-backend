@@ -39,6 +39,7 @@ internal class ListServiceUnitTest : MockkBaseTest {
             contributorId = ContributorId(UUID.randomUUID()),
             label = "label",
             elements = listOf(ThingId("R1")),
+            extractionMethod = ExtractionMethod.MANUAL,
             modifiable = false,
         )
 
@@ -122,11 +123,13 @@ internal class ListServiceUnitTest : MockkBaseTest {
             contributorId = ContributorId.UNKNOWN,
             label = "label",
             elements = listOf(ThingId("R1")),
+            extractionMethod = ExtractionMethod.AUTOMATIC,
         )
         val list = createList(id)
         val expected = list.copy(
             label = command.label!!,
             elements = command.elements!!,
+            extractionMethod = command.extractionMethod!!,
         )
 
         every { repository.findById(id) } returns Optional.of(list)
@@ -240,6 +243,30 @@ internal class ListServiceUnitTest : MockkBaseTest {
 
         verify(exactly = 1) { repository.findById(id) }
         verify(exactly = 1) { thingRepository.existsAllById(command.elements!!.toSet()) }
+        verify(exactly = 1) { repository.save(expected, ContributorId.UNKNOWN) }
+    }
+
+    @Test
+    fun `given a list is updated, when only the extraction method is updated, it returns success`() {
+        val id = ThingId("List1")
+        val command = UpdateListUseCase.UpdateCommand(
+            id = id,
+            contributorId = ContributorId.UNKNOWN,
+            label = null,
+            elements = null,
+            extractionMethod = ExtractionMethod.AUTOMATIC,
+        )
+        val list = createList(id = id)
+        val expected = list.copy(
+            extractionMethod = command.extractionMethod!!,
+        )
+
+        every { repository.findById(id) } returns Optional.of(list)
+        every { repository.save(any(), any()) } just runs
+
+        service.update(command)
+
+        verify(exactly = 1) { repository.findById(id) }
         verify(exactly = 1) { repository.save(expected, ContributorId.UNKNOWN) }
     }
 

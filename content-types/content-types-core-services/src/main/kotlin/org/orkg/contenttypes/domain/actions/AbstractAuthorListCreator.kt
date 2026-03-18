@@ -49,6 +49,7 @@ class AbstractAuthorListCreator(
                 label = "authors list",
                 elements = authorIds,
                 contributorId = contributorId,
+                extractionMethod = extractionMethod,
             ),
         )
         unsafeStatementUseCases.create(

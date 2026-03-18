@@ -36,6 +36,7 @@ internal class IdentifierCreatorUnitTest : MockkBaseTest {
             subjectId = paperId,
             predicateId = Predicates.hasDOI,
             objectId = doiLiteralId,
+            extractionMethod = extractionMethod,
         )
 
         every {

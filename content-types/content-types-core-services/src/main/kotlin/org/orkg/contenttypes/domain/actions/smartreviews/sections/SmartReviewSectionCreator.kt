@@ -44,6 +44,7 @@ class SmartReviewSectionCreator(
                 predicateId = Predicates.hasSection,
                 objects = sectionStatements.mapTo(mutableListOf()) { it.`object`.id }
                     .also { it.add(command.index!!.coerceAtMost(it.size), sectionId) },
+                extractionMethod = ExtractionMethod.UNKNOWN, // TODO: Get from command
             )
         } else {
             unsafeStatementUseCases.create(
@@ -52,6 +53,7 @@ class SmartReviewSectionCreator(
                     subjectId = state.contributionId!!,
                     predicateId = Predicates.hasSection,
                     objectId = sectionId,
+                    extractionMethod = ExtractionMethod.UNKNOWN, // TODO: Get from command
                 ),
             )
         }

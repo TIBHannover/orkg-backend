@@ -23,6 +23,7 @@ class SmartReviewSDGCreator(
             subjectId = state.smartReviewId!!,
             predicateId = Predicates.sustainableDevelopmentGoal,
             objects = command.sustainableDevelopmentGoals.toList(),
+            extractionMethod = command.extractionMethod,
         )
         return state
     }

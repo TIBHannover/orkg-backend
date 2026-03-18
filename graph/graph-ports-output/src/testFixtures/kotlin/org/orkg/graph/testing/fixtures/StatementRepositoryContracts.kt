@@ -105,7 +105,9 @@ fun <
                 it.`object` shouldBe expected.`object`
                 it.createdAt shouldBe expected.createdAt
                 it.createdBy shouldBe expected.createdBy
+                it.extractionMethod shouldBe expected.extractionMethod
                 it.index shouldBe expected.index
+                it.modifiable shouldBe expected.modifiable
             }
         }
         // Disabled because the expected functionality is not supported by Spring Data Neo4j

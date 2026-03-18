@@ -37,7 +37,7 @@ fun Resource.apply(command: UpdateResourceUseCase.UpdateCommand): Resource =
     )
 
 fun UpdateStatementUseCase.UpdateCommand.hasNoContents(): Boolean =
-    subjectId == null && predicateId == null && objectId == null && modifiable == null
+    subjectId == null && predicateId == null && objectId == null && modifiable == null && extractionMethod == null
 
 fun GeneralStatement.apply(
     command: UpdateStatementUseCase.UpdateCommand,
@@ -59,6 +59,7 @@ fun GeneralStatement.apply(
         ?.let { id -> thingRepository.findById(id).orElseThrow { StatementObjectNotFound(id) } }
         ?.also(objectValidator)
         ?: `object`,
+    extractionMethod = command.extractionMethod ?: extractionMethod,
     modifiable = command.modifiable ?: modifiable,
 )
 

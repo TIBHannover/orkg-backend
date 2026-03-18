@@ -244,6 +244,7 @@ internal class TableCellsUpdaterUnitTest : MockkBaseTest {
                 rowId = ThingId("Row_1"),
                 columnId = ThingId("Column_3"),
                 value = ThingId("RNEW"),
+                extractionMethod = command.extractionMethod!!,
             )
         } returns ThingId("NewCellId")
         every { unsafeResourceUseCases.delete(any(), command.contributorId) } just runs
@@ -271,6 +272,7 @@ internal class TableCellsUpdaterUnitTest : MockkBaseTest {
                 rowId = ThingId("Row_1"),
                 columnId = ThingId("Column_3"),
                 value = ThingId("RNEW"),
+                extractionMethod = command.extractionMethod!!,
             )
         }
         verify(exactly = 1) { unsafeResourceUseCases.delete(any(), command.contributorId) }
@@ -335,6 +337,7 @@ internal class TableCellsUpdaterUnitTest : MockkBaseTest {
                 rowId = ThingId("Row_2"),
                 columnId = any(),
                 value = any(),
+                extractionMethod = command.extractionMethod!!,
             )
         } returnsMany listOf(ThingId("NewCellId1"), ThingId("NewCellId2"), ThingId("NewCellId3"))
         every { unsafeResourceUseCases.delete(any(), command.contributorId) } just runs
@@ -362,6 +365,7 @@ internal class TableCellsUpdaterUnitTest : MockkBaseTest {
                 rowId = ThingId("Row_2"),
                 columnId = ThingId("Column_1"),
                 value = ThingId("R321"),
+                extractionMethod = command.extractionMethod!!,
             )
         }
         verify(exactly = 1) {
@@ -370,6 +374,7 @@ internal class TableCellsUpdaterUnitTest : MockkBaseTest {
                 rowId = ThingId("Row_2"),
                 columnId = ThingId("Column_2"),
                 value = ThingId("R654"),
+                extractionMethod = command.extractionMethod!!,
             )
         }
         verify(exactly = 1) {
@@ -378,6 +383,7 @@ internal class TableCellsUpdaterUnitTest : MockkBaseTest {
                 rowId = ThingId("Row_2"),
                 columnId = ThingId("Column_3"),
                 value = ThingId("R987"),
+                extractionMethod = command.extractionMethod!!,
             )
         }
         verify(exactly = 1) { unsafeResourceUseCases.delete(any(), command.contributorId) }
@@ -434,6 +440,7 @@ internal class TableCellsUpdaterUnitTest : MockkBaseTest {
                 rowId = ThingId("Row_1"),
                 columnId = ThingId("Column_3"),
                 value = ThingId("R789"),
+                extractionMethod = command.extractionMethod!!,
             )
         } returns ThingId("NewCellId")
         every { unsafeResourceUseCases.delete(any(), command.contributorId) } just runs
@@ -461,6 +468,7 @@ internal class TableCellsUpdaterUnitTest : MockkBaseTest {
                 rowId = ThingId("Row_1"),
                 columnId = ThingId("Column_3"),
                 value = ThingId("R789"),
+                extractionMethod = command.extractionMethod!!,
             )
         }
         verify(exactly = 1) { unsafeResourceUseCases.delete(any(), command.contributorId) }

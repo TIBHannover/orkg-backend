@@ -101,6 +101,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
                     subjectId = propertyId,
                     predicateId = Predicates.shDatatype,
                     objectId = property.datatype,
+                    extractionMethod = extractionMethod,
                 ),
             )
         } returns StatementId("S1")
@@ -120,6 +121,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
                     subjectId = propertyId,
                     predicateId = Predicates.shPattern,
                     objectId = patternLiteralId,
+                    extractionMethod = extractionMethod,
                 ),
             )
         } returns StatementId("S2")
@@ -144,6 +146,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
                     subjectId = propertyId,
                     predicateId = Predicates.shDatatype,
                     objectId = property.datatype,
+                    extractionMethod = extractionMethod,
                 ),
             )
         }
@@ -163,6 +166,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
                     subjectId = propertyId,
                     predicateId = Predicates.shPattern,
                     objectId = patternLiteralId,
+                    extractionMethod = extractionMethod,
                 ),
             )
         }
@@ -198,6 +202,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
                     subjectId = propertyId,
                     predicateId = Predicates.shDatatype,
                     objectId = property.datatype,
+                    extractionMethod = extractionMethod,
                 ),
             )
         } returns StatementId("S1")
@@ -222,6 +227,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
                     subjectId = propertyId,
                     predicateId = Predicates.shDatatype,
                     objectId = property.datatype,
+                    extractionMethod = extractionMethod,
                 ),
             )
         }
@@ -257,6 +263,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
                     subjectId = propertyId,
                     predicateId = Predicates.shDatatype,
                     objectId = property.datatype,
+                    extractionMethod = extractionMethod,
                 ),
             )
         } returns StatementId("S1")
@@ -281,6 +288,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
                     subjectId = propertyId,
                     predicateId = Predicates.shDatatype,
                     objectId = property.datatype,
+                    extractionMethod = extractionMethod,
                 ),
             )
         }
@@ -318,6 +326,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
                     subjectId = propertyId,
                     predicateId = Predicates.shDatatype,
                     objectId = property.datatype,
+                    extractionMethod = extractionMethod,
                 ),
             )
         } returns StatementId("S1")
@@ -338,6 +347,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
                     subjectId = propertyId,
                     predicateId = Predicates.shMinInclusive,
                     objectId = minInclusiveLiteralId,
+                    extractionMethod = extractionMethod,
                 ),
             )
         } returns StatementId("S2")
@@ -358,6 +368,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
                     subjectId = propertyId,
                     predicateId = Predicates.shMaxInclusive,
                     objectId = maxInclusiveLiteralId,
+                    extractionMethod = extractionMethod,
                 ),
             )
         } returns StatementId("S3")
@@ -382,6 +393,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
                     subjectId = propertyId,
                     predicateId = Predicates.shDatatype,
                     objectId = property.datatype,
+                    extractionMethod = extractionMethod,
                 ),
             )
         }
@@ -402,6 +414,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
                     subjectId = propertyId,
                     predicateId = Predicates.shMinInclusive,
                     objectId = minInclusiveLiteralId,
+                    extractionMethod = extractionMethod,
                 ),
             )
         }
@@ -422,6 +435,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
                     subjectId = propertyId,
                     predicateId = Predicates.shMaxInclusive,
                     objectId = maxInclusiveLiteralId,
+                    extractionMethod = extractionMethod,
                 ),
             )
         }
@@ -460,6 +474,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
                     subjectId = propertyId,
                     predicateId = Predicates.shDatatype,
                     objectId = property.datatype,
+                    extractionMethod = extractionMethod,
                 ),
             )
         } returns StatementId("S1")
@@ -484,6 +499,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
                     subjectId = propertyId,
                     predicateId = Predicates.shDatatype,
                     objectId = property.datatype,
+                    extractionMethod = extractionMethod,
                 ),
             )
         }
@@ -519,6 +535,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
                     subjectId = propertyId,
                     predicateId = Predicates.shClass,
                     objectId = property.`class`,
+                    extractionMethod = extractionMethod,
                 ),
             )
         } returns StatementId("S1")
@@ -543,6 +560,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
                     subjectId = propertyId,
                     predicateId = Predicates.shClass,
                     objectId = property.`class`,
+                    extractionMethod = extractionMethod,
                 ),
             )
         }
@@ -565,6 +583,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
                     contributorId = property.contributorId,
                     label = property.label,
                     classes = setOf(Classes.propertyShape),
+                    extractionMethod = extractionMethod,
                 ),
             )
         } returns propertyId
@@ -585,6 +604,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
                         subjectId = propertyId,
                         predicateId = Predicates.placeholder,
                         objectId = placeholderLiteralId,
+                        extractionMethod = extractionMethod,
                     ),
                 )
             } returns StatementId("Splaceholder")
@@ -606,6 +626,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
                         subjectId = propertyId,
                         predicateId = Predicates.description,
                         objectId = descriptionLiteralId,
+                        extractionMethod = extractionMethod,
                     ),
                 )
             } returns StatementId("Sdescription")
@@ -627,6 +648,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
                     subjectId = propertyId,
                     predicateId = Predicates.shMinCount,
                     objectId = minLiteralId,
+                    extractionMethod = extractionMethod,
                 ),
             )
         } returns StatementId("SminCount")
@@ -647,6 +669,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
                     subjectId = propertyId,
                     predicateId = Predicates.shMaxCount,
                     objectId = maxLiteralId,
+                    extractionMethod = extractionMethod,
                 ),
             )
         } returns StatementId("SmaxCount")
@@ -657,6 +680,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
                     subjectId = propertyId,
                     predicateId = Predicates.shPath,
                     objectId = property.path,
+                    extractionMethod = extractionMethod,
                 ),
             )
         } returns StatementId("Spath")
@@ -677,6 +701,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
                     subjectId = propertyId,
                     predicateId = Predicates.shOrder,
                     objectId = orderLiteralId,
+                    extractionMethod = extractionMethod,
                 ),
             )
         } returns StatementId("Sorder")
@@ -687,6 +712,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
                     subjectId = property.templateId,
                     predicateId = Predicates.shProperty,
                     objectId = propertyId,
+                    extractionMethod = extractionMethod,
                 ),
             )
         } returns StatementId("Sproperty")
@@ -709,6 +735,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
                     contributorId = property.contributorId,
                     label = property.label,
                     classes = setOf(Classes.propertyShape),
+                    extractionMethod = extractionMethod,
                 ),
             )
         }
@@ -729,6 +756,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
                         subjectId = propertyId,
                         predicateId = Predicates.placeholder,
                         objectId = placeholderLiteralId,
+                        extractionMethod = extractionMethod,
                     ),
                 )
             }
@@ -750,6 +778,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
                         subjectId = propertyId,
                         predicateId = Predicates.description,
                         objectId = descriptionLiteralId,
+                        extractionMethod = extractionMethod,
                     ),
                 )
             }
@@ -772,6 +801,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
                     subjectId = propertyId,
                     predicateId = Predicates.shMinCount,
                     objectId = minLiteralId,
+                    extractionMethod = extractionMethod,
                 ),
             )
         }
@@ -793,6 +823,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
                     subjectId = propertyId,
                     predicateId = Predicates.shMaxCount,
                     objectId = maxLiteralId,
+                    extractionMethod = extractionMethod,
                 ),
             )
         }
@@ -804,6 +835,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
                     subjectId = propertyId,
                     predicateId = Predicates.shPath,
                     objectId = property.path,
+                    extractionMethod = extractionMethod,
                 ),
             )
         }
@@ -824,6 +856,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
                     subjectId = propertyId,
                     predicateId = Predicates.shOrder,
                     objectId = orderLiteralId,
+                    extractionMethod = extractionMethod,
                 ),
             )
         }
@@ -834,6 +867,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
                     subjectId = property.templateId,
                     predicateId = Predicates.shProperty,
                     objectId = propertyId,
+                    extractionMethod = extractionMethod,
                 ),
             )
         }

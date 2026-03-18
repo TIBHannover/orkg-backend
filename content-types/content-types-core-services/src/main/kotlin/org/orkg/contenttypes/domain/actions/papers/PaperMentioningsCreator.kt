@@ -23,6 +23,7 @@ class PaperMentioningsCreator(
             subjectId = state.paperId!!,
             predicateId = Predicates.mentions,
             objects = command.mentionings.toList(),
+            extractionMethod = command.extractionMethod,
         )
         return state
     }

@@ -49,6 +49,7 @@ internal class SmartReviewContributionCreatorUnitTest : MockkBaseTest {
                     subjectId = state.smartReviewId!!,
                     predicateId = Predicates.hasContribution,
                     objectId = contributionId,
+                    extractionMethod = command.extractionMethod,
                 ),
             )
         } returns StatementId("S1")
@@ -69,6 +70,7 @@ internal class SmartReviewContributionCreatorUnitTest : MockkBaseTest {
                     subjectId = state.smartReviewId!!,
                     predicateId = Predicates.hasContribution,
                     objectId = contributionId,
+                    extractionMethod = command.extractionMethod,
                 ),
             )
         }

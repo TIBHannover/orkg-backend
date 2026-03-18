@@ -58,6 +58,7 @@ class PaperPublicationInfoUpdater(
                     newVenue = command.publicationInfo!!.publishedIn,
                     contributorId = command.contributorId,
                     subjectId = command.paperId,
+                    extractionMethod = command.extractionMethod ?: ExtractionMethod.UNKNOWN,
                 )
             }
             if (state.paper?.publicationInfo?.url != command.publicationInfo!!.url) {
@@ -110,13 +111,14 @@ class PaperPublicationInfoUpdater(
         newVenue: String?,
         contributorId: ContributorId,
         subjectId: ThingId,
+        extractionMethod: ExtractionMethod,
     ) {
         if (statements.isNotEmpty()) {
             statementService.deleteAllById(statements.ids)
         }
 
         if (newVenue != null) {
-            publicationInfoCreator.linkPublicationVenue(contributorId, subjectId, newVenue)
+            publicationInfoCreator.linkPublicationVenue(contributorId, subjectId, newVenue, extractionMethod)
         }
     }
 

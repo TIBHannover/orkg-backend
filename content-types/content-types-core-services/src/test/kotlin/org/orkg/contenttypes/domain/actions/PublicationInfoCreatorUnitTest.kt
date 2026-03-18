@@ -77,6 +77,7 @@ internal class PublicationInfoCreatorUnitTest : MockkBaseTest {
                     subjectId = state.paperId!!,
                     predicateId = Predicates.monthPublished,
                     objectId = monthLiteralId,
+                    extractionMethod = extractionMethod,
                 ),
             )
         } returns StatementId("S1")
@@ -100,6 +101,7 @@ internal class PublicationInfoCreatorUnitTest : MockkBaseTest {
                     subjectId = state.paperId!!,
                     predicateId = Predicates.monthPublished,
                     objectId = monthLiteralId,
+                    extractionMethod = extractionMethod,
                 ),
             )
         }
@@ -136,6 +138,7 @@ internal class PublicationInfoCreatorUnitTest : MockkBaseTest {
                     subjectId = paperId,
                     predicateId = Predicates.yearPublished,
                     objectId = yearLiteralId,
+                    extractionMethod = extractionMethod,
                 ),
             )
         } returns StatementId("S1")
@@ -159,6 +162,7 @@ internal class PublicationInfoCreatorUnitTest : MockkBaseTest {
                     subjectId = paperId,
                     predicateId = Predicates.yearPublished,
                     objectId = yearLiteralId,
+                    extractionMethod = extractionMethod,
                 ),
             )
         }
@@ -192,6 +196,7 @@ internal class PublicationInfoCreatorUnitTest : MockkBaseTest {
                     subjectId = paperId,
                     predicateId = Predicates.hasVenue,
                     objectId = venueResource.id,
+                    extractionMethod = extractionMethod,
                 ),
             )
         } returns StatementId("S1")
@@ -215,6 +220,7 @@ internal class PublicationInfoCreatorUnitTest : MockkBaseTest {
                     subjectId = paperId,
                     predicateId = Predicates.hasVenue,
                     objectId = venueResource.id,
+                    extractionMethod = extractionMethod,
                 ),
             )
         }
@@ -254,6 +260,7 @@ internal class PublicationInfoCreatorUnitTest : MockkBaseTest {
                     subjectId = paperId,
                     predicateId = Predicates.hasVenue,
                     objectId = venueId,
+                    extractionMethod = extractionMethod,
                 ),
             )
         } returns StatementId("S1")
@@ -278,6 +285,7 @@ internal class PublicationInfoCreatorUnitTest : MockkBaseTest {
                     subjectId = paperId,
                     predicateId = Predicates.hasVenue,
                     objectId = venueId,
+                    extractionMethod = extractionMethod,
                 ),
             )
         }
@@ -314,6 +322,7 @@ internal class PublicationInfoCreatorUnitTest : MockkBaseTest {
                     subjectId = paperId,
                     predicateId = Predicates.hasURL,
                     objectId = urlLiteralId,
+                    extractionMethod = extractionMethod,
                 ),
             )
         } returns StatementId("S1")
@@ -337,6 +346,7 @@ internal class PublicationInfoCreatorUnitTest : MockkBaseTest {
                     subjectId = paperId,
                     predicateId = Predicates.hasURL,
                     objectId = urlLiteralId,
+                    extractionMethod = extractionMethod,
                 ),
             )
         }

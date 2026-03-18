@@ -35,6 +35,7 @@ class AbstractTemplatePropertyCreator(
                 contributorId = contributorId,
                 label = property.label,
                 classes = setOf(Classes.propertyShape),
+                extractionMethod = extractionMethod,
             ),
         )
         property.placeholder?.also { placeholder ->
@@ -50,6 +51,7 @@ class AbstractTemplatePropertyCreator(
                             extractionMethod = extractionMethod,
                         ),
                     ),
+                    extractionMethod = extractionMethod,
                 ),
             )
         }
@@ -66,6 +68,7 @@ class AbstractTemplatePropertyCreator(
                             extractionMethod = extractionMethod,
                         ),
                     ),
+                    extractionMethod = extractionMethod,
                 ),
             )
         }
@@ -83,6 +86,7 @@ class AbstractTemplatePropertyCreator(
                             extractionMethod = extractionMethod,
                         ),
                     ),
+                    extractionMethod = extractionMethod,
                 ),
             )
         }
@@ -100,6 +104,7 @@ class AbstractTemplatePropertyCreator(
                             extractionMethod = extractionMethod,
                         ),
                     ),
+                    extractionMethod = extractionMethod,
                 ),
             )
         }
@@ -117,6 +122,7 @@ class AbstractTemplatePropertyCreator(
                                 extractionMethod = extractionMethod,
                             ),
                         ),
+                        extractionMethod = extractionMethod,
                     ),
                 )
             }
@@ -136,6 +142,7 @@ class AbstractTemplatePropertyCreator(
                                 extractionMethod = extractionMethod,
                             ),
                         ),
+                        extractionMethod = extractionMethod,
                     ),
                 )
             }
@@ -154,6 +161,7 @@ class AbstractTemplatePropertyCreator(
                                 extractionMethod = extractionMethod,
                             ),
                         ),
+                        extractionMethod = extractionMethod,
                     ),
                 )
             }
@@ -165,6 +173,7 @@ class AbstractTemplatePropertyCreator(
                     subjectId = propertyId,
                     predicateId = Predicates.shDatatype,
                     objectId = property.datatype,
+                    extractionMethod = extractionMethod,
                 ),
             )
         } else if (property is ResourceTemplatePropertyCommand) {
@@ -174,6 +183,7 @@ class AbstractTemplatePropertyCreator(
                     subjectId = propertyId,
                     predicateId = Predicates.shClass,
                     objectId = property.`class`,
+                    extractionMethod = extractionMethod,
                 ),
             )
         }
@@ -183,6 +193,7 @@ class AbstractTemplatePropertyCreator(
                 subjectId = propertyId,
                 predicateId = Predicates.shPath,
                 objectId = property.path,
+                extractionMethod = extractionMethod,
             ),
         )
         unsafeStatementUseCases.create(
@@ -198,6 +209,7 @@ class AbstractTemplatePropertyCreator(
                         extractionMethod = extractionMethod,
                     ),
                 ),
+                extractionMethod = extractionMethod,
             ),
         )
         unsafeStatementUseCases.create(
@@ -206,6 +218,7 @@ class AbstractTemplatePropertyCreator(
                 subjectId = templateId,
                 predicateId = Predicates.shProperty,
                 objectId = propertyId,
+                extractionMethod = extractionMethod,
             ),
         )
         return propertyId

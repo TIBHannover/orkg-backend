@@ -75,6 +75,7 @@ class ListAdapter(
                     `object` = thingRepository.findById(entry.key).get(),
                     createdAt = OffsetDateTime.now(clock),
                     createdBy = contributorId,
+                    extractionMethod = list.extractionMethod,
                     index = entry.value,
                 )
             }

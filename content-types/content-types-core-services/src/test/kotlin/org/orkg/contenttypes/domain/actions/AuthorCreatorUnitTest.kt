@@ -75,6 +75,7 @@ internal class AuthorCreatorUnitTest : MockkBaseTest {
                     subjectId = authorId,
                     predicateId = Predicates.hasORCID,
                     objectId = orcidLiteral.id,
+                    extractionMethod = extractionMethod,
                 ),
             )
         } returns StatementId("S1")
@@ -86,6 +87,7 @@ internal class AuthorCreatorUnitTest : MockkBaseTest {
                     subjectId = subjectId,
                     predicateId = Predicates.hasAuthors,
                     objectId = authorListId,
+                    extractionMethod = extractionMethod,
                 ),
             )
         } returns StatementId("S2")
@@ -108,6 +110,7 @@ internal class AuthorCreatorUnitTest : MockkBaseTest {
                     subjectId = authorId,
                     predicateId = Predicates.hasORCID,
                     objectId = orcidLiteral.id,
+                    extractionMethod = extractionMethod,
                 ),
             )
         }
@@ -119,6 +122,7 @@ internal class AuthorCreatorUnitTest : MockkBaseTest {
                     subjectId = subjectId,
                     predicateId = Predicates.hasAuthors,
                     objectId = authorListId,
+                    extractionMethod = extractionMethod,
                 ),
             )
         }
@@ -159,6 +163,7 @@ internal class AuthorCreatorUnitTest : MockkBaseTest {
                     subjectId = subjectId,
                     predicateId = Predicates.hasAuthors,
                     objectId = authorListId,
+                    extractionMethod = extractionMethod,
                 ),
             )
         } returns StatementId("S1")
@@ -182,6 +187,7 @@ internal class AuthorCreatorUnitTest : MockkBaseTest {
                     subjectId = subjectId,
                     predicateId = Predicates.hasAuthors,
                     objectId = authorListId,
+                    extractionMethod = extractionMethod,
                 ),
             )
         }
@@ -233,6 +239,7 @@ internal class AuthorCreatorUnitTest : MockkBaseTest {
                     subjectId = authorId,
                     predicateId = Predicates.hasORCID,
                     objectId = orcidLiteralId,
+                    extractionMethod = extractionMethod,
                 ),
             )
         } returns StatementId("S1")
@@ -253,6 +260,7 @@ internal class AuthorCreatorUnitTest : MockkBaseTest {
                     subjectId = authorId,
                     predicateId = Predicates.hasWebsite,
                     objectId = homepageLiteralId,
+                    extractionMethod = extractionMethod,
                 ),
             )
         } returns StatementId("S2")
@@ -264,6 +272,7 @@ internal class AuthorCreatorUnitTest : MockkBaseTest {
                     subjectId = subjectId,
                     predicateId = Predicates.hasAuthors,
                     objectId = authorListId,
+                    extractionMethod = extractionMethod,
                 ),
             )
         } returns StatementId("S3")
@@ -287,6 +296,7 @@ internal class AuthorCreatorUnitTest : MockkBaseTest {
                     subjectId = authorId,
                     predicateId = Predicates.hasORCID,
                     objectId = orcidLiteralId,
+                    extractionMethod = extractionMethod,
                 ),
             )
         }
@@ -307,6 +317,7 @@ internal class AuthorCreatorUnitTest : MockkBaseTest {
                     subjectId = authorId,
                     predicateId = Predicates.hasWebsite,
                     objectId = homepageLiteralId,
+                    extractionMethod = extractionMethod,
                 ),
             )
         }
@@ -318,6 +329,7 @@ internal class AuthorCreatorUnitTest : MockkBaseTest {
                     subjectId = subjectId,
                     predicateId = Predicates.hasAuthors,
                     objectId = authorListId,
+                    extractionMethod = extractionMethod,
                 ),
             )
         }

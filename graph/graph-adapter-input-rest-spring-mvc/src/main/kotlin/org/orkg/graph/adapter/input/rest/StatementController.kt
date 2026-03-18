@@ -9,6 +9,7 @@ import org.orkg.common.contributorId
 import org.orkg.graph.adapter.input.rest.mapping.BundleRepresentationAdapter
 import org.orkg.graph.adapter.input.rest.mapping.StatementRepresentationAdapter
 import org.orkg.graph.domain.BundleConfiguration
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.StatementId
 import org.orkg.graph.domain.StatementNotFound
 import org.orkg.graph.input.CreateStatementUseCase.CreateCommand
@@ -95,6 +96,7 @@ class StatementController(
                 subjectId = request.subjectId,
                 predicateId = request.predicateId,
                 objectId = request.objectId,
+                extractionMethod = request.extractionMethod,
             ),
         )
         val location = uriComponentsBuilder
@@ -119,6 +121,7 @@ class StatementController(
                 subjectId = request.subjectId,
                 predicateId = request.predicateId,
                 objectId = request.objectId,
+                extractionMethod = request.extractionMethod,
             ),
         )
         val location = uriComponentsBuilder
@@ -172,6 +175,8 @@ class StatementController(
         val predicateId: ThingId,
         @field:JsonProperty("object_id")
         val objectId: ThingId,
+        @field:JsonProperty("extraction_method")
+        val extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN,
     )
 
     data class UpdateStatementRequest(
@@ -181,5 +186,7 @@ class StatementController(
         val predicateId: ThingId?,
         @field:JsonProperty("object_id")
         val objectId: ThingId?,
+        @field:JsonProperty("extraction_method")
+        val extractionMethod: ExtractionMethod?,
     )
 }

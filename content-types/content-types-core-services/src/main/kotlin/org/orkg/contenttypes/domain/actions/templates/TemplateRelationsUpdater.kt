@@ -4,6 +4,7 @@ import org.orkg.contenttypes.domain.actions.SingleStatementPropertyUpdater
 import org.orkg.contenttypes.domain.actions.StatementCollectionPropertyUpdater
 import org.orkg.contenttypes.domain.actions.UpdateTemplateCommand
 import org.orkg.contenttypes.domain.actions.templates.UpdateTemplateAction.State
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UnsafeLiteralUseCases
@@ -31,6 +32,7 @@ class TemplateRelationsUpdater(
                 subjectId = command.templateId,
                 predicateId = Predicates.templateOfResearchField,
                 objects = relations.researchFields,
+                extractionMethod = command.extractionMethod ?: ExtractionMethod.UNKNOWN,
             )
             statementCollectionPropertyUpdater.update(
                 statements = statements,
@@ -38,6 +40,7 @@ class TemplateRelationsUpdater(
                 subjectId = command.templateId,
                 predicateId = Predicates.templateOfResearchProblem,
                 objects = relations.researchProblems,
+                extractionMethod = command.extractionMethod ?: ExtractionMethod.UNKNOWN,
             )
             singleStatementPropertyUpdater.updateOptionalProperty(
                 statements = statements,
@@ -45,6 +48,7 @@ class TemplateRelationsUpdater(
                 subjectId = command.templateId,
                 predicateId = Predicates.templateOfPredicate,
                 objectId = relations.predicate,
+                extractionMethod = command.extractionMethod ?: ExtractionMethod.UNKNOWN,
             )
         }
         return state

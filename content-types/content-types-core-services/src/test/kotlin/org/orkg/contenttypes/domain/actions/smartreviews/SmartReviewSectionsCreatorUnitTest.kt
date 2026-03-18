@@ -49,6 +49,7 @@ internal class SmartReviewSectionsCreatorUnitTest : MockkBaseTest {
                         subjectId = contributionId,
                         predicateId = Predicates.hasSection,
                         objectId = sectionId,
+                        extractionMethod = command.extractionMethod,
                     ),
                 )
             } returns StatementId("S1")
@@ -67,6 +68,7 @@ internal class SmartReviewSectionsCreatorUnitTest : MockkBaseTest {
                         subjectId = contributionId,
                         predicateId = Predicates.hasSection,
                         objectId = ThingId("Section$index"),
+                        extractionMethod = command.extractionMethod,
                     ),
                 )
             }

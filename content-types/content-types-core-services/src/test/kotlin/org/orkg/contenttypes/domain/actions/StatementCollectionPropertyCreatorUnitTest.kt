@@ -57,6 +57,7 @@ internal class StatementCollectionPropertyCreatorUnitTest : MockkBaseTest {
                     subjectId = subjectId,
                     predicateId = Predicates.description,
                     objectId = literal,
+                    extractionMethod = extractionMethod,
                 ),
             )
         } returns StatementId("S1")
@@ -85,6 +86,7 @@ internal class StatementCollectionPropertyCreatorUnitTest : MockkBaseTest {
                     subjectId = subjectId,
                     predicateId = Predicates.description,
                     objectId = literal,
+                    extractionMethod = extractionMethod,
                 ),
             )
         }
@@ -95,10 +97,11 @@ internal class StatementCollectionPropertyCreatorUnitTest : MockkBaseTest {
         val ids = listOf(ThingId("R12"), ThingId("R13"))
         val contributorId = ContributorId(UUID.randomUUID())
         val subjectId = ThingId("R123")
+        val extractionMethod = ExtractionMethod.MANUAL
 
         every { unsafeStatementUseCases.create(any()) } returns StatementId("S1")
 
-        statementCollectionPropertyCreator.create(contributorId, subjectId, Predicates.hasLink, ids)
+        statementCollectionPropertyCreator.create(contributorId, subjectId, Predicates.hasLink, ids, extractionMethod)
 
         verify(exactly = 1) {
             unsafeStatementUseCases.create(
@@ -107,6 +110,7 @@ internal class StatementCollectionPropertyCreatorUnitTest : MockkBaseTest {
                     subjectId = subjectId,
                     predicateId = Predicates.hasLink,
                     objectId = ids.first(),
+                    extractionMethod = extractionMethod,
                 ),
             )
         }
@@ -117,6 +121,7 @@ internal class StatementCollectionPropertyCreatorUnitTest : MockkBaseTest {
                     subjectId = subjectId,
                     predicateId = Predicates.hasLink,
                     objectId = ids.last(),
+                    extractionMethod = extractionMethod,
                 ),
             )
         }

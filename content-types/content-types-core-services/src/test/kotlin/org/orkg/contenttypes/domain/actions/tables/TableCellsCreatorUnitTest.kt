@@ -49,7 +49,7 @@ internal class TableCellsCreatorUnitTest : MockkBaseTest {
         )
 
         every {
-            abstractTableCellCreator.create(command.contributorId, any(), any(), any())
+            abstractTableCellCreator.create(command.contributorId, any(), any(), any(), any())
         } returns ThingId("irrelevant")
 
         val result = tableCellsCreator(command, state)
@@ -68,6 +68,7 @@ internal class TableCellsCreatorUnitTest : MockkBaseTest {
                 rowId = ThingId("Row1"),
                 columnId = ThingId("Column1"),
                 value = ThingId("R456"),
+                extractionMethod = command.extractionMethod,
             )
         }
         verify(exactly = 1) {
@@ -76,6 +77,7 @@ internal class TableCellsCreatorUnitTest : MockkBaseTest {
                 rowId = ThingId("Row1"),
                 columnId = ThingId("Column2"),
                 value = ThingId("R1"),
+                extractionMethod = command.extractionMethod,
             )
         }
         verify(exactly = 1) {
@@ -84,6 +86,7 @@ internal class TableCellsCreatorUnitTest : MockkBaseTest {
                 rowId = ThingId("Row1"),
                 columnId = ThingId("Column3"),
                 value = ThingId("P2"),
+                extractionMethod = command.extractionMethod,
             )
         }
         verify(exactly = 1) {
@@ -92,6 +95,7 @@ internal class TableCellsCreatorUnitTest : MockkBaseTest {
                 rowId = ThingId("Row2"),
                 columnId = ThingId("Column1"),
                 value = ThingId("C3"),
+                extractionMethod = command.extractionMethod,
             )
         }
         verify(exactly = 1) {
@@ -100,6 +104,7 @@ internal class TableCellsCreatorUnitTest : MockkBaseTest {
                 rowId = ThingId("Row2"),
                 columnId = ThingId("Column2"),
                 value = null,
+                extractionMethod = command.extractionMethod,
             )
         }
         verify(exactly = 1) {
@@ -108,6 +113,7 @@ internal class TableCellsCreatorUnitTest : MockkBaseTest {
                 rowId = ThingId("Row2"),
                 columnId = ThingId("Column3"),
                 value = ThingId("L4"),
+                extractionMethod = command.extractionMethod,
             )
         }
     }

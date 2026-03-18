@@ -138,6 +138,7 @@ class AbstractLiteratureListSectionUpdater(
                         subjectId = oldSection.id,
                         predicateId = Predicates.hasEntry,
                         objectId = entryId,
+                        extractionMethod = ExtractionMethod.UNKNOWN,
                     ),
                 )
             }

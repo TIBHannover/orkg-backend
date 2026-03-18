@@ -30,6 +30,7 @@ class AbstractTableColumnCreator(
                 contributorId = contributorId,
                 label = "",
                 classes = setOf(Classes.column),
+                extractionMethod = extractionMethod,
             ),
         )
         val columnNumberLiteralId = unsafeLiteralUseCases.create(
@@ -46,6 +47,7 @@ class AbstractTableColumnCreator(
                 subjectId = columnId,
                 predicateId = Predicates.csvwNumber,
                 objectId = columnNumberLiteralId,
+                extractionMethod = extractionMethod,
             ),
         )
         unsafeStatementUseCases.create(
@@ -54,6 +56,7 @@ class AbstractTableColumnCreator(
                 subjectId = columnId,
                 predicateId = Predicates.csvwTitles,
                 objectId = titleLiteralId,
+                extractionMethod = extractionMethod,
             ),
         )
         unsafeStatementUseCases.create(
@@ -62,6 +65,7 @@ class AbstractTableColumnCreator(
                 subjectId = tableId,
                 predicateId = Predicates.csvwColumns,
                 objectId = columnId,
+                extractionMethod = extractionMethod,
             ),
         )
         return columnId

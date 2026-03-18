@@ -47,6 +47,7 @@ internal class SingleStatementPropertyCreatorUnitTest : MockkBaseTest {
                     subjectId = subjectId,
                     predicateId = Predicates.description,
                     objectId = literal,
+                    extractionMethod = extractionMethod,
                 ),
             )
         } returns StatementId("S1")
@@ -75,6 +76,7 @@ internal class SingleStatementPropertyCreatorUnitTest : MockkBaseTest {
                     subjectId = subjectId,
                     predicateId = Predicates.description,
                     objectId = literal,
+                    extractionMethod = extractionMethod,
                 ),
             )
         }
@@ -102,6 +104,7 @@ internal class SingleStatementPropertyCreatorUnitTest : MockkBaseTest {
                     subjectId = subjectId,
                     predicateId = Predicates.isAnonymized,
                     objectId = literal,
+                    extractionMethod = extractionMethod,
                 ),
             )
         } returns StatementId("S1")
@@ -123,6 +126,7 @@ internal class SingleStatementPropertyCreatorUnitTest : MockkBaseTest {
                     subjectId = subjectId,
                     predicateId = Predicates.isAnonymized,
                     objectId = literal,
+                    extractionMethod = extractionMethod,
                 ),
             )
         }

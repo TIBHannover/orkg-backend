@@ -42,7 +42,7 @@ class SubgraphCreator(
         lookup: MutableMap<String, ThingId> = mutableMapOf(),
     ) {
         createThings(thingsCommand, validationCache, contributorId, extractionMethod, lookup)
-        createStatements(bakedStatements, lookup, contributorId)
+        createStatements(bakedStatements, lookup, contributorId, extractionMethod)
     }
 
     internal fun createThings(
@@ -153,6 +153,7 @@ class SubgraphCreator(
                             subjectId = predicate,
                             predicateId = Predicates.description,
                             objectId = literal,
+                            extractionMethod = extractionMethod,
                         ),
                     )
                 }
@@ -195,6 +196,7 @@ class SubgraphCreator(
         bakedStatements: Set<BakedStatement>,
         lookup: MutableMap<String, ThingId>,
         contributorId: ContributorId,
+        extractionMethod: ExtractionMethod,
     ) {
         bakedStatements.forEach { (subjectId, predicateId, objectId) ->
             val subject = resolve(subjectId, lookup)
@@ -208,6 +210,7 @@ class SubgraphCreator(
                         subjectId = subject,
                         predicateId = predicate,
                         objectId = `object`,
+                        extractionMethod = extractionMethod,
                     ),
                 )
             }

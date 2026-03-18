@@ -30,6 +30,7 @@ class SmartReviewContributionCreator(
                 subjectId = state.smartReviewId!!,
                 predicateId = Predicates.hasContribution,
                 objectId = contributionId,
+                extractionMethod = command.extractionMethod,
             ),
         )
         return state.copy(contributionId = contributionId)

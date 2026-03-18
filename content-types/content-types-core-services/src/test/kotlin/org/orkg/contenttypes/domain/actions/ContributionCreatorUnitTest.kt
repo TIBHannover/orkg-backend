@@ -45,6 +45,7 @@ internal class ContributionCreatorUnitTest : MockkBaseTest {
             contributions = listOf(contributionCommand),
         )
         val contributionId = ThingId("R456")
+        val extractionMethod = ExtractionMethod.MANUAL
 
         every {
             unsafeResourceUseCases.create(
@@ -52,7 +53,7 @@ internal class ContributionCreatorUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     label = contributionCommand.label,
                     classes = setOf(Classes.contribution),
-                    extractionMethod = ExtractionMethod.MANUAL,
+                    extractionMethod = extractionMethod,
                 ),
             )
         } returns contributionId
@@ -63,13 +64,14 @@ internal class ContributionCreatorUnitTest : MockkBaseTest {
                     subjectId = paperId,
                     predicateId = Predicates.hasContribution,
                     objectId = contributionId,
+                    extractionMethod = extractionMethod,
                 ),
             )
         } returns StatementId("S1")
         every {
             subgraphCreator.createThingsAndStatements(
                 contributorId = contributorId,
-                extractionMethod = ExtractionMethod.MANUAL,
+                extractionMethod = extractionMethod,
                 thingsCommand = contents,
                 validationCache = emptyMap(),
                 bakedStatements = emptySet(),
@@ -80,7 +82,7 @@ internal class ContributionCreatorUnitTest : MockkBaseTest {
         val result = contributionCreator.create(
             paperId = paperId,
             contributorId = contributorId,
-            extractionMethod = ExtractionMethod.MANUAL,
+            extractionMethod = extractionMethod,
             thingsCommand = contents,
             contributionCommands = contents.contributions,
             validationCache = emptyMap(),
@@ -95,7 +97,7 @@ internal class ContributionCreatorUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     label = contributionCommand.label,
                     classes = setOf(Classes.contribution),
-                    extractionMethod = ExtractionMethod.MANUAL,
+                    extractionMethod = extractionMethod,
                 ),
             )
         }
@@ -106,13 +108,14 @@ internal class ContributionCreatorUnitTest : MockkBaseTest {
                     subjectId = paperId,
                     predicateId = Predicates.hasContribution,
                     objectId = contributionId,
+                    extractionMethod = extractionMethod,
                 ),
             )
         }
         verify(exactly = 1) {
             subgraphCreator.createThingsAndStatements(
                 contributorId = contributorId,
-                extractionMethod = ExtractionMethod.MANUAL,
+                extractionMethod = extractionMethod,
                 thingsCommand = contents,
                 validationCache = emptyMap(),
                 bakedStatements = emptySet(),

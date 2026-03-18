@@ -77,6 +77,7 @@ internal class LiteratureListResearchFieldUpdaterUnitTest : MockkBaseTest {
                 subjectId = command.literatureListId,
                 predicateId = Predicates.hasResearchField,
                 objects = command.researchFields!!.toSet(),
+                extractionMethod = command.extractionMethod!!,
             )
         } just runs
 
@@ -95,6 +96,7 @@ internal class LiteratureListResearchFieldUpdaterUnitTest : MockkBaseTest {
                 subjectId = command.literatureListId,
                 predicateId = Predicates.hasResearchField,
                 objects = command.researchFields!!.toSet(),
+                extractionMethod = command.extractionMethod!!,
             )
         }
     }

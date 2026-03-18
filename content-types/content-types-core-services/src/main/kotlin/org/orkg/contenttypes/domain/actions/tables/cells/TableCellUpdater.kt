@@ -6,6 +6,7 @@ import org.orkg.contenttypes.domain.actions.tables.AbstractTableCellCreator
 import org.orkg.contenttypes.domain.actions.tables.cells.UpdateTableCellAction.State
 import org.orkg.contenttypes.domain.actions.tables.parseColumnGraphs
 import org.orkg.contenttypes.domain.actions.tables.parseRowGraphs
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UnsafeLiteralUseCases
@@ -38,6 +39,7 @@ class TableCellUpdater(
                     subjectId = columnGraph.columnId,
                     predicateId = Predicates.csvwTitles,
                     objectId = command.id!!,
+                    extractionMethod = ExtractionMethod.UNKNOWN,
                 )
             }
         } else {
@@ -51,6 +53,7 @@ class TableCellUpdater(
                     rowId = rowGraph.rowId,
                     columnId = columns[command.columnIndex].columnId,
                     value = command.id,
+                    extractionMethod = ExtractionMethod.UNKNOWN,
                 )
             } else if (cellGraph.value?.id != command.id) {
                 singleStatementPropertyUpdater.updateOptionalProperty(
@@ -59,6 +62,7 @@ class TableCellUpdater(
                     subjectId = cellGraph.cellId,
                     predicateId = Predicates.csvwValue,
                     objectId = command.id,
+                    extractionMethod = ExtractionMethod.UNKNOWN,
                 )
             }
         }

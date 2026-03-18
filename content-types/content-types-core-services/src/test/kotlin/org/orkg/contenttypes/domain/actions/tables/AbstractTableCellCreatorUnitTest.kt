@@ -9,6 +9,7 @@ import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.graph.domain.Classes
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.StatementId
 import org.orkg.graph.input.CreateResourceUseCase
@@ -33,29 +34,34 @@ internal class AbstractTableCellCreatorUnitTest : MockkBaseTest {
         val columnId = ThingId("Column1")
         val cellValueId = ThingId("CellValue")
         val cellId = ThingId("Cell")
+        val extractionMethod = ExtractionMethod.MANUAL
 
         val createCellResourceCommand = CreateResourceUseCase.CreateCommand(
             contributorId = contributorId,
             label = "",
             classes = setOf(Classes.cell),
+            extractionMethod = extractionMethod,
         )
         val createCellColumnStatementCommand = CreateStatementUseCase.CreateCommand(
             contributorId = contributorId,
             subjectId = cellId,
             predicateId = Predicates.csvwColumn,
             objectId = columnId,
+            extractionMethod = extractionMethod,
         )
         val createCellValueStatementCommand = CreateStatementUseCase.CreateCommand(
             contributorId = contributorId,
             subjectId = cellId,
             predicateId = Predicates.csvwValue,
             objectId = cellValueId,
+            extractionMethod = extractionMethod,
         )
         val createCellStatementCommand = CreateStatementUseCase.CreateCommand(
             contributorId = contributorId,
             subjectId = rowId,
             predicateId = Predicates.csvwCells,
             objectId = cellId,
+            extractionMethod = extractionMethod,
         )
 
         every { unsafeResourceUseCases.create(createCellResourceCommand) } returns cellId
@@ -63,7 +69,7 @@ internal class AbstractTableCellCreatorUnitTest : MockkBaseTest {
         every { unsafeStatementUseCases.create(createCellValueStatementCommand) } returns StatementId("S2")
         every { unsafeStatementUseCases.create(createCellStatementCommand) } returns StatementId("S3")
 
-        val result = abstractTableCellCreator.create(contributorId, rowId, columnId, cellValueId)
+        val result = abstractTableCellCreator.create(contributorId, rowId, columnId, cellValueId, extractionMethod)
 
         result shouldBe cellId
 
@@ -79,30 +85,34 @@ internal class AbstractTableCellCreatorUnitTest : MockkBaseTest {
         val rowId = ThingId("Row1")
         val columnId = ThingId("Column1")
         val cellId = ThingId("Cell")
+        val extractionMethod = ExtractionMethod.MANUAL
 
         val createCellResourceCommand = CreateResourceUseCase.CreateCommand(
             contributorId = contributorId,
             label = "",
             classes = setOf(Classes.cell),
+            extractionMethod = extractionMethod,
         )
         val createCellColumnStatementCommand = CreateStatementUseCase.CreateCommand(
             contributorId = contributorId,
             subjectId = cellId,
             predicateId = Predicates.csvwColumn,
             objectId = columnId,
+            extractionMethod = extractionMethod,
         )
         val createCellStatementCommand = CreateStatementUseCase.CreateCommand(
             contributorId = contributorId,
             subjectId = rowId,
             predicateId = Predicates.csvwCells,
             objectId = cellId,
+            extractionMethod = extractionMethod,
         )
 
         every { unsafeResourceUseCases.create(createCellResourceCommand) } returns cellId
         every { unsafeStatementUseCases.create(createCellColumnStatementCommand) } returns StatementId("S1")
         every { unsafeStatementUseCases.create(createCellStatementCommand) } returns StatementId("S3")
 
-        val result = abstractTableCellCreator.create(contributorId, rowId, columnId, null)
+        val result = abstractTableCellCreator.create(contributorId, rowId, columnId, null, extractionMethod)
 
         result shouldBe cellId
 

@@ -260,6 +260,7 @@ internal class AbstractTemplatePropertyUpdaterOtherLiteralPropertyUnitTest : Abs
                     subjectId = oldProperty.id,
                     predicateId = Predicates.shDatatype,
                     objectId = newProperty.datatype,
+                    extractionMethod = extractionMethod,
                 ),
             )
         } returns StatementId("S1")
@@ -274,6 +275,7 @@ internal class AbstractTemplatePropertyUpdaterOtherLiteralPropertyUnitTest : Abs
                     subjectId = oldProperty.id,
                     predicateId = Predicates.shDatatype,
                     objectId = newProperty.datatype,
+                    extractionMethod = extractionMethod,
                 ),
             )
         }
@@ -311,6 +313,7 @@ internal class AbstractTemplatePropertyUpdaterOtherLiteralPropertyUnitTest : Abs
                     subjectId = oldProperty.id,
                     predicateId = Predicates.shClass,
                     objectId = newProperty.`class`,
+                    extractionMethod = extractionMethod,
                 ),
             )
         } returns StatementId("S1")
@@ -325,6 +328,7 @@ internal class AbstractTemplatePropertyUpdaterOtherLiteralPropertyUnitTest : Abs
                     subjectId = oldProperty.id,
                     predicateId = Predicates.shClass,
                     objectId = newProperty.`class`,
+                    extractionMethod = extractionMethod,
                 ),
             )
         }
@@ -353,6 +357,7 @@ internal class AbstractTemplatePropertyUpdaterOtherLiteralPropertyUnitTest : Abs
                 subjectId = oldProperty.id,
                 predicateId = Predicates.shPath,
                 objectId = newProperty.path,
+                extractionMethod = extractionMethod,
             )
         } just runs
 
@@ -365,6 +370,7 @@ internal class AbstractTemplatePropertyUpdaterOtherLiteralPropertyUnitTest : Abs
                 subjectId = oldProperty.id,
                 predicateId = Predicates.shPath,
                 objectId = newProperty.path,
+                extractionMethod = extractionMethod,
             )
         }
     }

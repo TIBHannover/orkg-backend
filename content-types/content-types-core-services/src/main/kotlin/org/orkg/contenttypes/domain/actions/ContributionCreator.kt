@@ -73,6 +73,7 @@ class ContributionCreator(
                     subjectId = paperId,
                     predicateId = Predicates.hasContribution,
                     objectId = contributionId,
+                    extractionMethod = extractionMethod,
                 ),
             )
             contributionId

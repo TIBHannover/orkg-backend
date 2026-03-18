@@ -132,6 +132,8 @@ data class StatementRepresentation(
     val `object`: ThingRepresentation,
     override val createdAt: OffsetDateTime,
     override val createdBy: ContributorId,
+    @field:JsonProperty("extraction_method")
+    val extractionMethod: ExtractionMethod,
     val modifiable: Boolean,
     @get:JsonInclude(Include.NON_NULL)
     val index: Int?,

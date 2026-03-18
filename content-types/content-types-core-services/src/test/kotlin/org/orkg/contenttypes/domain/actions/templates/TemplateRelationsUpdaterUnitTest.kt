@@ -71,6 +71,7 @@ internal class TemplateRelationsUpdaterUnitTest : MockkBaseTest {
                 subjectId = command.templateId,
                 predicateId = any(),
                 objects = any<List<ThingId>>(),
+                extractionMethod = command.extractionMethod!!,
             )
         } just runs
         every {
@@ -80,6 +81,7 @@ internal class TemplateRelationsUpdaterUnitTest : MockkBaseTest {
                 subjectId = command.templateId,
                 predicateId = any(),
                 objectId = any(),
+                extractionMethod = command.extractionMethod!!,
             )
         } just runs
 
@@ -96,6 +98,7 @@ internal class TemplateRelationsUpdaterUnitTest : MockkBaseTest {
                 subjectId = command.templateId,
                 predicateId = Predicates.templateOfResearchField,
                 objects = command.relations!!.researchFields,
+                extractionMethod = command.extractionMethod!!,
             )
         }
         verify(exactly = 1) {
@@ -105,6 +108,7 @@ internal class TemplateRelationsUpdaterUnitTest : MockkBaseTest {
                 subjectId = command.templateId,
                 predicateId = Predicates.templateOfResearchProblem,
                 objects = command.relations!!.researchProblems,
+                extractionMethod = command.extractionMethod!!,
             )
         }
         verify(exactly = 1) {
@@ -114,6 +118,7 @@ internal class TemplateRelationsUpdaterUnitTest : MockkBaseTest {
                 subjectId = command.templateId,
                 predicateId = Predicates.templateOfPredicate,
                 objectId = command.relations!!.predicate,
+                extractionMethod = command.extractionMethod!!,
             )
         }
     }

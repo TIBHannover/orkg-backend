@@ -23,6 +23,7 @@ class LiteratureListResearchFieldCreator(
             subjectId = state.literatureListId!!,
             predicateId = Predicates.hasResearchField,
             objects = command.researchFields,
+            extractionMethod = command.extractionMethod,
         )
         return state
     }

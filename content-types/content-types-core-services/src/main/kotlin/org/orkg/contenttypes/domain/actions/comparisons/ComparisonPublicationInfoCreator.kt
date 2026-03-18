@@ -33,6 +33,7 @@ class ComparisonPublicationInfoCreator(
                 subjectId = comparisonId,
                 predicateId = Predicates.yearPublished,
                 objectId = publicationYearLiteralId,
+                extractionMethod = command.extractionMethod,
             ),
         )
         val publicationMonthLiteralId = unsafeLiteralUseCases.create(
@@ -49,6 +50,7 @@ class ComparisonPublicationInfoCreator(
                 subjectId = comparisonId,
                 predicateId = Predicates.yearPublished,
                 objectId = publicationMonthLiteralId,
+                extractionMethod = command.extractionMethod,
             ),
         )
         return state

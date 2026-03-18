@@ -46,13 +46,14 @@ internal class AbstractSmartReviewSectionCreatorUnitTest : MockkBaseTest {
         val section = smartReviewComparisonSectionCommand()
         val contributorId = ContributorId(UUID.randomUUID())
 
+        val extractionMethod = ExtractionMethod.MANUAL
         val resourceCreateCommand = CreateResourceUseCase.CreateCommand(
             contributorId = contributorId,
             label = section.heading,
             classes = setOf(Classes.comparisonSection),
+            extractionMethod = extractionMethod,
         )
         val sectionId = ThingId("R156465")
-        val extractionMethod = ExtractionMethod.MANUAL
 
         every { unsafeResourceUseCases.create(resourceCreateCommand) } returns sectionId
         every {
@@ -62,6 +63,7 @@ internal class AbstractSmartReviewSectionCreatorUnitTest : MockkBaseTest {
                     subjectId = sectionId,
                     predicateId = Predicates.hasLink,
                     objectId = section.comparison!!,
+                    extractionMethod = extractionMethod,
                 ),
             )
         } returns StatementId("S1")
@@ -76,6 +78,7 @@ internal class AbstractSmartReviewSectionCreatorUnitTest : MockkBaseTest {
                     subjectId = sectionId,
                     predicateId = Predicates.hasLink,
                     objectId = section.comparison!!,
+                    extractionMethod = extractionMethod,
                 ),
             )
         }
@@ -86,13 +89,14 @@ internal class AbstractSmartReviewSectionCreatorUnitTest : MockkBaseTest {
         val section = smartReviewComparisonSectionCommand().copy(comparison = null)
         val contributorId = ContributorId(UUID.randomUUID())
 
+        val extractionMethod = ExtractionMethod.MANUAL
         val resourceCreateCommand = CreateResourceUseCase.CreateCommand(
             contributorId = contributorId,
             label = section.heading,
             classes = setOf(Classes.comparisonSection),
+            extractionMethod = extractionMethod,
         )
         val sectionId = ThingId("R156465")
-        val extractionMethod = ExtractionMethod.MANUAL
 
         every { unsafeResourceUseCases.create(resourceCreateCommand) } returns sectionId
 
@@ -106,13 +110,14 @@ internal class AbstractSmartReviewSectionCreatorUnitTest : MockkBaseTest {
         val section = smartReviewVisualizationSectionCommand()
         val contributorId = ContributorId(UUID.randomUUID())
 
+        val extractionMethod = ExtractionMethod.MANUAL
         val resourceCreateCommand = CreateResourceUseCase.CreateCommand(
             contributorId = contributorId,
             label = section.heading,
             classes = setOf(Classes.visualizationSection),
+            extractionMethod = extractionMethod,
         )
         val sectionId = ThingId("R156465")
-        val extractionMethod = ExtractionMethod.MANUAL
 
         every { unsafeResourceUseCases.create(resourceCreateCommand) } returns sectionId
         every {
@@ -122,6 +127,7 @@ internal class AbstractSmartReviewSectionCreatorUnitTest : MockkBaseTest {
                     subjectId = sectionId,
                     predicateId = Predicates.hasLink,
                     objectId = section.visualization!!,
+                    extractionMethod = extractionMethod,
                 ),
             )
         } returns StatementId("S1")
@@ -136,6 +142,7 @@ internal class AbstractSmartReviewSectionCreatorUnitTest : MockkBaseTest {
                     subjectId = sectionId,
                     predicateId = Predicates.hasLink,
                     objectId = section.visualization!!,
+                    extractionMethod = extractionMethod,
                 ),
             )
         }
@@ -146,13 +153,14 @@ internal class AbstractSmartReviewSectionCreatorUnitTest : MockkBaseTest {
         val section = smartReviewVisualizationSectionCommand().copy(visualization = null)
         val contributorId = ContributorId(UUID.randomUUID())
 
+        val extractionMethod = ExtractionMethod.MANUAL
         val resourceCreateCommand = CreateResourceUseCase.CreateCommand(
             contributorId = contributorId,
             label = section.heading,
             classes = setOf(Classes.visualizationSection),
+            extractionMethod = extractionMethod,
         )
         val sectionId = ThingId("R156465")
-        val extractionMethod = ExtractionMethod.MANUAL
 
         every { unsafeResourceUseCases.create(resourceCreateCommand) } returns sectionId
 
@@ -166,13 +174,14 @@ internal class AbstractSmartReviewSectionCreatorUnitTest : MockkBaseTest {
         val section = smartReviewResourceSectionCommand()
         val contributorId = ContributorId(UUID.randomUUID())
 
+        val extractionMethod = ExtractionMethod.MANUAL
         val resourceCreateCommand = CreateResourceUseCase.CreateCommand(
             contributorId = contributorId,
             label = section.heading,
             classes = setOf(Classes.resourceSection),
+            extractionMethod = extractionMethod,
         )
         val sectionId = ThingId("R156465")
-        val extractionMethod = ExtractionMethod.MANUAL
 
         every { unsafeResourceUseCases.create(resourceCreateCommand) } returns sectionId
         every {
@@ -182,6 +191,7 @@ internal class AbstractSmartReviewSectionCreatorUnitTest : MockkBaseTest {
                     subjectId = sectionId,
                     predicateId = Predicates.hasLink,
                     objectId = section.resource!!,
+                    extractionMethod = extractionMethod,
                 ),
             )
         } returns StatementId("S1")
@@ -196,6 +206,7 @@ internal class AbstractSmartReviewSectionCreatorUnitTest : MockkBaseTest {
                     subjectId = sectionId,
                     predicateId = Predicates.hasLink,
                     objectId = section.resource!!,
+                    extractionMethod = extractionMethod,
                 ),
             )
         }
@@ -206,13 +217,14 @@ internal class AbstractSmartReviewSectionCreatorUnitTest : MockkBaseTest {
         val section = smartReviewResourceSectionCommand().copy(resource = null)
         val contributorId = ContributorId(UUID.randomUUID())
 
+        val extractionMethod = ExtractionMethod.MANUAL
         val resourceCreateCommand = CreateResourceUseCase.CreateCommand(
             contributorId = contributorId,
             label = section.heading,
             classes = setOf(Classes.resourceSection),
+            extractionMethod = extractionMethod,
         )
         val sectionId = ThingId("R156465")
-        val extractionMethod = ExtractionMethod.MANUAL
 
         every { unsafeResourceUseCases.create(resourceCreateCommand) } returns sectionId
 
@@ -226,13 +238,14 @@ internal class AbstractSmartReviewSectionCreatorUnitTest : MockkBaseTest {
         val section = smartReviewPredicateSectionCommand()
         val contributorId = ContributorId(UUID.randomUUID())
 
+        val extractionMethod = ExtractionMethod.MANUAL
         val resourceCreateCommand = CreateResourceUseCase.CreateCommand(
             contributorId = contributorId,
             label = section.heading,
             classes = setOf(Classes.propertySection),
+            extractionMethod = extractionMethod,
         )
         val sectionId = ThingId("R156465")
-        val extractionMethod = ExtractionMethod.MANUAL
 
         every { unsafeResourceUseCases.create(resourceCreateCommand) } returns sectionId
         every {
@@ -242,6 +255,7 @@ internal class AbstractSmartReviewSectionCreatorUnitTest : MockkBaseTest {
                     subjectId = sectionId,
                     predicateId = Predicates.hasLink,
                     objectId = section.predicate!!,
+                    extractionMethod = extractionMethod,
                 ),
             )
         } returns StatementId("S1")
@@ -256,6 +270,7 @@ internal class AbstractSmartReviewSectionCreatorUnitTest : MockkBaseTest {
                     subjectId = sectionId,
                     predicateId = Predicates.hasLink,
                     objectId = section.predicate!!,
+                    extractionMethod = extractionMethod,
                 ),
             )
         }
@@ -266,13 +281,14 @@ internal class AbstractSmartReviewSectionCreatorUnitTest : MockkBaseTest {
         val section = smartReviewPredicateSectionCommand().copy(predicate = null)
         val contributorId = ContributorId(UUID.randomUUID())
 
+        val extractionMethod = ExtractionMethod.MANUAL
         val resourceCreateCommand = CreateResourceUseCase.CreateCommand(
             contributorId = contributorId,
             label = section.heading,
             classes = setOf(Classes.propertySection),
+            extractionMethod = extractionMethod,
         )
         val sectionId = ThingId("R156465")
-        val extractionMethod = ExtractionMethod.MANUAL
 
         every { unsafeResourceUseCases.create(resourceCreateCommand) } returns sectionId
 
@@ -286,13 +302,14 @@ internal class AbstractSmartReviewSectionCreatorUnitTest : MockkBaseTest {
         val section = smartReviewOntologySectionCommand()
         val contributorId = ContributorId(UUID.randomUUID())
 
+        val extractionMethod = ExtractionMethod.MANUAL
         val resourceCreateCommand = CreateResourceUseCase.CreateCommand(
             contributorId = contributorId,
             label = section.heading,
             classes = setOf(Classes.ontologySection),
+            extractionMethod = extractionMethod,
         )
         val sectionId = ThingId("R156465")
-        val extractionMethod = ExtractionMethod.MANUAL
 
         every { unsafeResourceUseCases.create(resourceCreateCommand) } returns sectionId
         every {
@@ -301,6 +318,7 @@ internal class AbstractSmartReviewSectionCreatorUnitTest : MockkBaseTest {
                 subjectId = sectionId,
                 predicateId = Predicates.hasEntity,
                 objects = section.entities,
+                extractionMethod = extractionMethod,
             )
         } just runs
         every {
@@ -309,6 +327,7 @@ internal class AbstractSmartReviewSectionCreatorUnitTest : MockkBaseTest {
                 subjectId = sectionId,
                 predicateId = Predicates.showProperty,
                 objects = section.predicates,
+                extractionMethod = extractionMethod,
             )
         } just runs
 
@@ -321,6 +340,7 @@ internal class AbstractSmartReviewSectionCreatorUnitTest : MockkBaseTest {
                 subjectId = sectionId,
                 predicateId = Predicates.hasEntity,
                 objects = section.entities,
+                extractionMethod = extractionMethod,
             )
         }
         verify(exactly = 1) {
@@ -329,6 +349,7 @@ internal class AbstractSmartReviewSectionCreatorUnitTest : MockkBaseTest {
                 subjectId = sectionId,
                 predicateId = Predicates.showProperty,
                 objects = section.predicates,
+                extractionMethod = extractionMethod,
             )
         }
     }
@@ -338,13 +359,14 @@ internal class AbstractSmartReviewSectionCreatorUnitTest : MockkBaseTest {
         val section = smartReviewTextSectionCommand()
         val contributorId = ContributorId(UUID.randomUUID())
 
+        val extractionMethod = ExtractionMethod.MANUAL
         val resourceCreateCommand = CreateResourceUseCase.CreateCommand(
             contributorId = contributorId,
             label = section.heading,
             classes = setOfNotNull(Classes.section, section.`class`),
+            extractionMethod = extractionMethod,
         )
         val sectionId = ThingId("R156465")
-        val extractionMethod = ExtractionMethod.MANUAL
         val literalCreateCommand = CreateLiteralUseCase.CreateCommand(
             contributorId = contributorId,
             label = section.text,
@@ -361,6 +383,7 @@ internal class AbstractSmartReviewSectionCreatorUnitTest : MockkBaseTest {
                     subjectId = sectionId,
                     predicateId = Predicates.hasContent,
                     objectId = textId,
+                    extractionMethod = extractionMethod,
                 ),
             )
         } returns StatementId("S1")
@@ -376,6 +399,7 @@ internal class AbstractSmartReviewSectionCreatorUnitTest : MockkBaseTest {
                     subjectId = sectionId,
                     predicateId = Predicates.hasContent,
                     objectId = textId,
+                    extractionMethod = extractionMethod,
                 ),
             )
         }

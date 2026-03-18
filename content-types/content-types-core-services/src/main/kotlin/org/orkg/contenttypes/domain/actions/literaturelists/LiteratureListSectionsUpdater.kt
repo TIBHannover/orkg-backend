@@ -48,6 +48,7 @@ class LiteratureListSectionsUpdater(
                     subjectId = command.literatureListId,
                     predicateId = Predicates.hasSection,
                     objects = sectionIds,
+                    extractionMethod = command.extractionMethod ?: ExtractionMethod.UNKNOWN,
                 )
                 oldSections.forEach {
                     abstractLiteratureListSectionDeleter.delete(command.contributorId, command.literatureListId, it, state.statements)

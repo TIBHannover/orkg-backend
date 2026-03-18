@@ -4,6 +4,7 @@ import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
 import org.orkg.graph.domain.Bundle
 import org.orkg.graph.domain.BundleConfiguration
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.GeneralStatement
 import org.orkg.graph.domain.StatementId
 import org.springframework.data.domain.Page
@@ -62,6 +63,7 @@ interface CreateStatementUseCase {
         val subjectId: ThingId,
         val predicateId: ThingId,
         val objectId: ThingId,
+        val extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN,
         val modifiable: Boolean = true,
     )
 }
@@ -75,6 +77,7 @@ interface UpdateStatementUseCase {
         val subjectId: ThingId? = null,
         val predicateId: ThingId? = null,
         val objectId: ThingId? = null,
+        val extractionMethod: ExtractionMethod? = null,
         val modifiable: Boolean? = null,
     )
 }

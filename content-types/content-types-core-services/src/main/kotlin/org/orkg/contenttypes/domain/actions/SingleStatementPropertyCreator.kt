@@ -35,6 +35,7 @@ class SingleStatementPropertyCreator(
                 subjectId = subjectId,
                 predicateId = predicateId,
                 objectId = literal,
+                extractionMethod = extractionMethod,
             ),
         )
     }

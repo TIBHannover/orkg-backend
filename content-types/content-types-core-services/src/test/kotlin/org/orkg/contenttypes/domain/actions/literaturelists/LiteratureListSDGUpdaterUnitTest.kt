@@ -84,6 +84,7 @@ internal class LiteratureListSDGUpdaterUnitTest : MockkBaseTest {
                 subjectId = command.literatureListId,
                 predicateId = Predicates.sustainableDevelopmentGoal,
                 objects = command.sustainableDevelopmentGoals!!.toSet(),
+                extractionMethod = command.extractionMethod!!,
             )
         } just runs
 
@@ -102,6 +103,7 @@ internal class LiteratureListSDGUpdaterUnitTest : MockkBaseTest {
                 subjectId = command.literatureListId,
                 predicateId = Predicates.sustainableDevelopmentGoal,
                 objects = command.sustainableDevelopmentGoals!!.toSet(),
+                extractionMethod = command.extractionMethod!!,
             )
         }
     }

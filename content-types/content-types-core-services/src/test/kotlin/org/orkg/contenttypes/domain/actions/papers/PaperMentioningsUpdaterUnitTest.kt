@@ -93,6 +93,7 @@ internal class PaperMentioningsUpdaterUnitTest : MockkBaseTest {
                 subjectId = command.paperId,
                 predicateId = Predicates.mentions,
                 objects = command.mentionings!!,
+                extractionMethod = command.extractionMethod!!,
             )
         } just runs
 
@@ -111,6 +112,7 @@ internal class PaperMentioningsUpdaterUnitTest : MockkBaseTest {
                 subjectId = command.paperId,
                 predicateId = Predicates.mentions,
                 objects = command.mentionings!!,
+                extractionMethod = command.extractionMethod!!,
             )
         }
     }

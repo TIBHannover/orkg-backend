@@ -51,8 +51,9 @@ internal class AbstractSmartReviewSectionUpdaterUnitTest : MockkBaseTest {
         val oldSection = createSmartReviewComparisonSection()
         val newSection = oldSection.toSmartReviewComparisonSectionCommand()
         val statements = oldSection.toGroupedStatements()
+        val extractionMethod = ExtractionMethod.MANUAL
 
-        abstractSmartReviewSectionUpdater.updateComparisonSection(contributorId, newSection, oldSection, statements)
+        abstractSmartReviewSectionUpdater.updateComparisonSection(contributorId, newSection, oldSection, statements, extractionMethod)
     }
 
     @Test
@@ -61,10 +62,11 @@ internal class AbstractSmartReviewSectionUpdaterUnitTest : MockkBaseTest {
         val oldSection = createSmartReviewComparisonSection()
         val newSection = oldSection.toSmartReviewComparisonSectionCommand().copy(heading = "new heading")
         val statements = oldSection.toGroupedStatements()
+        val extractionMethod = ExtractionMethod.MANUAL
 
         every { unsafeResourceUseCases.update(any()) } just runs
 
-        abstractSmartReviewSectionUpdater.updateComparisonSection(contributorId, newSection, oldSection, statements)
+        abstractSmartReviewSectionUpdater.updateComparisonSection(contributorId, newSection, oldSection, statements, extractionMethod)
 
         verify(exactly = 1) {
             unsafeResourceUseCases.update(
@@ -85,6 +87,7 @@ internal class AbstractSmartReviewSectionUpdaterUnitTest : MockkBaseTest {
         val oldSection = createSmartReviewComparisonSection()
         val newSection = oldSection.toSmartReviewComparisonSectionCommand().copy(comparison = id?.let(::ThingId))
         val statements = oldSection.toGroupedStatements()
+        val extractionMethod = ExtractionMethod.MANUAL
 
         every {
             singleStatementPropertyUpdater.updateOptionalProperty(
@@ -93,10 +96,11 @@ internal class AbstractSmartReviewSectionUpdaterUnitTest : MockkBaseTest {
                 subjectId = oldSection.id,
                 predicateId = Predicates.hasLink,
                 objectId = newSection.comparison,
+                extractionMethod = extractionMethod,
             )
         } just runs
 
-        abstractSmartReviewSectionUpdater.updateComparisonSection(contributorId, newSection, oldSection, statements)
+        abstractSmartReviewSectionUpdater.updateComparisonSection(contributorId, newSection, oldSection, statements, extractionMethod)
 
         verify(exactly = 1) {
             singleStatementPropertyUpdater.updateOptionalProperty(
@@ -105,6 +109,7 @@ internal class AbstractSmartReviewSectionUpdaterUnitTest : MockkBaseTest {
                 subjectId = oldSection.id,
                 predicateId = Predicates.hasLink,
                 objectId = newSection.comparison,
+                extractionMethod = extractionMethod,
             )
         }
     }
@@ -115,8 +120,9 @@ internal class AbstractSmartReviewSectionUpdaterUnitTest : MockkBaseTest {
         val oldSection = createSmartReviewVisualizationSection()
         val newSection = oldSection.toSmartReviewVisualizationSectionCommand()
         val statements = oldSection.toGroupedStatements()
+        val extractionMethod = ExtractionMethod.MANUAL
 
-        abstractSmartReviewSectionUpdater.updateVisualizationSection(contributorId, newSection, oldSection, statements)
+        abstractSmartReviewSectionUpdater.updateVisualizationSection(contributorId, newSection, oldSection, statements, extractionMethod)
     }
 
     @Test
@@ -125,10 +131,11 @@ internal class AbstractSmartReviewSectionUpdaterUnitTest : MockkBaseTest {
         val oldSection = createSmartReviewVisualizationSection()
         val newSection = oldSection.toSmartReviewVisualizationSectionCommand().copy(heading = "new heading")
         val statements = oldSection.toGroupedStatements()
+        val extractionMethod = ExtractionMethod.MANUAL
 
         every { unsafeResourceUseCases.update(any()) } just runs
 
-        abstractSmartReviewSectionUpdater.updateVisualizationSection(contributorId, newSection, oldSection, statements)
+        abstractSmartReviewSectionUpdater.updateVisualizationSection(contributorId, newSection, oldSection, statements, extractionMethod)
 
         verify(exactly = 1) {
             unsafeResourceUseCases.update(
@@ -149,6 +156,7 @@ internal class AbstractSmartReviewSectionUpdaterUnitTest : MockkBaseTest {
         val oldSection = createSmartReviewVisualizationSection()
         val newSection = oldSection.toSmartReviewVisualizationSectionCommand().copy(visualization = id?.let(::ThingId))
         val statements = oldSection.toGroupedStatements()
+        val extractionMethod = ExtractionMethod.MANUAL
 
         every {
             singleStatementPropertyUpdater.updateOptionalProperty(
@@ -157,10 +165,11 @@ internal class AbstractSmartReviewSectionUpdaterUnitTest : MockkBaseTest {
                 subjectId = oldSection.id,
                 predicateId = Predicates.hasLink,
                 objectId = newSection.visualization,
+                extractionMethod = extractionMethod,
             )
         } just runs
 
-        abstractSmartReviewSectionUpdater.updateVisualizationSection(contributorId, newSection, oldSection, statements)
+        abstractSmartReviewSectionUpdater.updateVisualizationSection(contributorId, newSection, oldSection, statements, extractionMethod)
 
         verify(exactly = 1) {
             singleStatementPropertyUpdater.updateOptionalProperty(
@@ -169,6 +178,7 @@ internal class AbstractSmartReviewSectionUpdaterUnitTest : MockkBaseTest {
                 subjectId = oldSection.id,
                 predicateId = Predicates.hasLink,
                 objectId = newSection.visualization,
+                extractionMethod = extractionMethod,
             )
         }
     }
@@ -179,8 +189,9 @@ internal class AbstractSmartReviewSectionUpdaterUnitTest : MockkBaseTest {
         val oldSection = createSmartReviewResourceSection()
         val newSection = oldSection.toSmartReviewResourceSectionCommand()
         val statements = oldSection.toGroupedStatements()
+        val extractionMethod = ExtractionMethod.MANUAL
 
-        abstractSmartReviewSectionUpdater.updateResourceSection(contributorId, newSection, oldSection, statements)
+        abstractSmartReviewSectionUpdater.updateResourceSection(contributorId, newSection, oldSection, statements, extractionMethod)
     }
 
     @Test
@@ -189,10 +200,11 @@ internal class AbstractSmartReviewSectionUpdaterUnitTest : MockkBaseTest {
         val oldSection = createSmartReviewResourceSection()
         val newSection = oldSection.toSmartReviewResourceSectionCommand().copy(heading = "new heading")
         val statements = oldSection.toGroupedStatements()
+        val extractionMethod = ExtractionMethod.MANUAL
 
         every { unsafeResourceUseCases.update(any()) } just runs
 
-        abstractSmartReviewSectionUpdater.updateResourceSection(contributorId, newSection, oldSection, statements)
+        abstractSmartReviewSectionUpdater.updateResourceSection(contributorId, newSection, oldSection, statements, extractionMethod)
 
         verify(exactly = 1) {
             unsafeResourceUseCases.update(
@@ -213,6 +225,7 @@ internal class AbstractSmartReviewSectionUpdaterUnitTest : MockkBaseTest {
         val oldSection = createSmartReviewResourceSection()
         val newSection = oldSection.toSmartReviewResourceSectionCommand().copy(resource = id?.let(::ThingId))
         val statements = oldSection.toGroupedStatements()
+        val extractionMethod = ExtractionMethod.MANUAL
 
         every {
             singleStatementPropertyUpdater.updateOptionalProperty(
@@ -221,10 +234,11 @@ internal class AbstractSmartReviewSectionUpdaterUnitTest : MockkBaseTest {
                 subjectId = oldSection.id,
                 predicateId = Predicates.hasLink,
                 objectId = newSection.resource,
+                extractionMethod = extractionMethod,
             )
         } just runs
 
-        abstractSmartReviewSectionUpdater.updateResourceSection(contributorId, newSection, oldSection, statements)
+        abstractSmartReviewSectionUpdater.updateResourceSection(contributorId, newSection, oldSection, statements, extractionMethod)
 
         verify(exactly = 1) {
             singleStatementPropertyUpdater.updateOptionalProperty(
@@ -233,6 +247,7 @@ internal class AbstractSmartReviewSectionUpdaterUnitTest : MockkBaseTest {
                 subjectId = oldSection.id,
                 predicateId = Predicates.hasLink,
                 objectId = newSection.resource,
+                extractionMethod = extractionMethod,
             )
         }
     }
@@ -243,8 +258,9 @@ internal class AbstractSmartReviewSectionUpdaterUnitTest : MockkBaseTest {
         val oldSection = createSmartReviewPredicateSection()
         val newSection = oldSection.toSmartReviewPredicateSectionCommand()
         val statements = oldSection.toGroupedStatements()
+        val extractionMethod = ExtractionMethod.MANUAL
 
-        abstractSmartReviewSectionUpdater.updatePredicateSection(contributorId, newSection, oldSection, statements)
+        abstractSmartReviewSectionUpdater.updatePredicateSection(contributorId, newSection, oldSection, statements, extractionMethod)
     }
 
     @Test
@@ -253,10 +269,11 @@ internal class AbstractSmartReviewSectionUpdaterUnitTest : MockkBaseTest {
         val oldSection = createSmartReviewPredicateSection()
         val newSection = oldSection.toSmartReviewPredicateSectionCommand().copy(heading = "new heading")
         val statements = oldSection.toGroupedStatements()
+        val extractionMethod = ExtractionMethod.MANUAL
 
         every { unsafeResourceUseCases.update(any()) } just runs
 
-        abstractSmartReviewSectionUpdater.updatePredicateSection(contributorId, newSection, oldSection, statements)
+        abstractSmartReviewSectionUpdater.updatePredicateSection(contributorId, newSection, oldSection, statements, extractionMethod)
 
         verify(exactly = 1) {
             unsafeResourceUseCases.update(
@@ -277,6 +294,7 @@ internal class AbstractSmartReviewSectionUpdaterUnitTest : MockkBaseTest {
         val oldSection = createSmartReviewPredicateSection()
         val newSection = oldSection.toSmartReviewPredicateSectionCommand().copy(predicate = id?.let(::ThingId))
         val statements = oldSection.toGroupedStatements()
+        val extractionMethod = ExtractionMethod.MANUAL
 
         every {
             singleStatementPropertyUpdater.updateOptionalProperty(
@@ -285,10 +303,11 @@ internal class AbstractSmartReviewSectionUpdaterUnitTest : MockkBaseTest {
                 subjectId = oldSection.id,
                 predicateId = Predicates.hasLink,
                 objectId = newSection.predicate,
+                extractionMethod = extractionMethod,
             )
         } just runs
 
-        abstractSmartReviewSectionUpdater.updatePredicateSection(contributorId, newSection, oldSection, statements)
+        abstractSmartReviewSectionUpdater.updatePredicateSection(contributorId, newSection, oldSection, statements, extractionMethod)
 
         verify(exactly = 1) {
             singleStatementPropertyUpdater.updateOptionalProperty(
@@ -297,6 +316,7 @@ internal class AbstractSmartReviewSectionUpdaterUnitTest : MockkBaseTest {
                 subjectId = oldSection.id,
                 predicateId = Predicates.hasLink,
                 objectId = newSection.predicate,
+                extractionMethod = extractionMethod,
             )
         }
     }
@@ -307,8 +327,9 @@ internal class AbstractSmartReviewSectionUpdaterUnitTest : MockkBaseTest {
         val oldSection = createSmartReviewOntologySection()
         val newSection = oldSection.toSmartReviewOntologySectionCommand()
         val statements = oldSection.toGroupedStatements()
+        val extractionMethod = ExtractionMethod.MANUAL
 
-        abstractSmartReviewSectionUpdater.updateOntologySection(contributorId, newSection, oldSection, statements)
+        abstractSmartReviewSectionUpdater.updateOntologySection(contributorId, newSection, oldSection, statements, extractionMethod)
     }
 
     @Test
@@ -317,10 +338,11 @@ internal class AbstractSmartReviewSectionUpdaterUnitTest : MockkBaseTest {
         val oldSection = createSmartReviewOntologySection()
         val newSection = oldSection.toSmartReviewOntologySectionCommand().copy(heading = "new heading")
         val statements = oldSection.toGroupedStatements()
+        val extractionMethod = ExtractionMethod.MANUAL
 
         every { unsafeResourceUseCases.update(any()) } just runs
 
-        abstractSmartReviewSectionUpdater.updateOntologySection(contributorId, newSection, oldSection, statements)
+        abstractSmartReviewSectionUpdater.updateOntologySection(contributorId, newSection, oldSection, statements, extractionMethod)
 
         verify(exactly = 1) {
             unsafeResourceUseCases.update(
@@ -341,6 +363,7 @@ internal class AbstractSmartReviewSectionUpdaterUnitTest : MockkBaseTest {
             entities = listOf(ThingId("different")),
         )
         val statements = oldSection.toGroupedStatements()
+        val extractionMethod = ExtractionMethod.MANUAL
 
         every {
             statementCollectionPropertyUpdater.update(
@@ -349,10 +372,11 @@ internal class AbstractSmartReviewSectionUpdaterUnitTest : MockkBaseTest {
                 subjectId = oldSection.id,
                 predicateId = Predicates.hasEntity,
                 objects = newSection.entities,
+                extractionMethod = extractionMethod,
             )
         } just runs
 
-        abstractSmartReviewSectionUpdater.updateOntologySection(contributorId, newSection, oldSection, statements)
+        abstractSmartReviewSectionUpdater.updateOntologySection(contributorId, newSection, oldSection, statements, extractionMethod)
 
         verify(exactly = 1) {
             statementCollectionPropertyUpdater.update(
@@ -361,6 +385,7 @@ internal class AbstractSmartReviewSectionUpdaterUnitTest : MockkBaseTest {
                 subjectId = oldSection.id,
                 predicateId = Predicates.hasEntity,
                 objects = newSection.entities,
+                extractionMethod = extractionMethod,
             )
         }
     }
@@ -373,6 +398,7 @@ internal class AbstractSmartReviewSectionUpdaterUnitTest : MockkBaseTest {
             predicates = listOf(ThingId("different")),
         )
         val statements = oldSection.toGroupedStatements()
+        val extractionMethod = ExtractionMethod.MANUAL
 
         every {
             statementCollectionPropertyUpdater.update(
@@ -381,10 +407,11 @@ internal class AbstractSmartReviewSectionUpdaterUnitTest : MockkBaseTest {
                 subjectId = oldSection.id,
                 predicateId = Predicates.showProperty,
                 objects = newSection.predicates,
+                extractionMethod = extractionMethod,
             )
         } just runs
 
-        abstractSmartReviewSectionUpdater.updateOntologySection(contributorId, newSection, oldSection, statements)
+        abstractSmartReviewSectionUpdater.updateOntologySection(contributorId, newSection, oldSection, statements, extractionMethod)
 
         verify(exactly = 1) {
             statementCollectionPropertyUpdater.update(
@@ -393,6 +420,7 @@ internal class AbstractSmartReviewSectionUpdaterUnitTest : MockkBaseTest {
                 subjectId = oldSection.id,
                 predicateId = Predicates.showProperty,
                 objects = newSection.predicates,
+                extractionMethod = extractionMethod,
             )
         }
     }
@@ -403,8 +431,9 @@ internal class AbstractSmartReviewSectionUpdaterUnitTest : MockkBaseTest {
         val oldSection = createSmartReviewTextSection()
         val newSection = oldSection.toSmartReviewTextSectionCommand()
         val statements = oldSection.toGroupedStatements()
+        val extractionMethod = ExtractionMethod.MANUAL
 
-        abstractSmartReviewSectionUpdater.updateTextSection(contributorId, newSection, oldSection, statements)
+        abstractSmartReviewSectionUpdater.updateTextSection(contributorId, newSection, oldSection, statements, extractionMethod)
     }
 
     @Test
@@ -413,10 +442,11 @@ internal class AbstractSmartReviewSectionUpdaterUnitTest : MockkBaseTest {
         val oldSection = createSmartReviewTextSection()
         val newSection = oldSection.toSmartReviewTextSectionCommand().copy(heading = "new heading")
         val statements = oldSection.toGroupedStatements()
+        val extractionMethod = ExtractionMethod.MANUAL
 
         every { unsafeResourceUseCases.update(any()) } just runs
 
-        abstractSmartReviewSectionUpdater.updateTextSection(contributorId, newSection, oldSection, statements)
+        abstractSmartReviewSectionUpdater.updateTextSection(contributorId, newSection, oldSection, statements, extractionMethod)
 
         verify(exactly = 1) {
             unsafeResourceUseCases.update(
@@ -436,10 +466,11 @@ internal class AbstractSmartReviewSectionUpdaterUnitTest : MockkBaseTest {
         val oldSection = createSmartReviewTextSection()
         val newSection = oldSection.toSmartReviewTextSectionCommand().copy(`class` = Classes.epilogue)
         val statements = oldSection.toGroupedStatements()
+        val extractionMethod = ExtractionMethod.MANUAL
 
         every { unsafeResourceUseCases.update(any()) } just runs
 
-        abstractSmartReviewSectionUpdater.updateTextSection(contributorId, newSection, oldSection, statements)
+        abstractSmartReviewSectionUpdater.updateTextSection(contributorId, newSection, oldSection, statements, extractionMethod)
 
         verify(exactly = 1) {
             unsafeResourceUseCases.update(
@@ -459,6 +490,7 @@ internal class AbstractSmartReviewSectionUpdaterUnitTest : MockkBaseTest {
         val oldSection = createSmartReviewTextSection()
         val newSection = oldSection.toSmartReviewTextSectionCommand().copy(text = "new and different text")
         val statements = oldSection.toGroupedStatements()
+        val extractionMethod = ExtractionMethod.MANUAL
 
         every {
             singleStatementPropertyUpdater.updateRequiredProperty(
@@ -467,11 +499,11 @@ internal class AbstractSmartReviewSectionUpdaterUnitTest : MockkBaseTest {
                 subjectId = oldSection.id,
                 predicateId = Predicates.hasContent,
                 label = newSection.text,
-                extractionMethod = ExtractionMethod.UNKNOWN,
+                extractionMethod = extractionMethod,
             )
         } just runs
 
-        abstractSmartReviewSectionUpdater.updateTextSection(contributorId, newSection, oldSection, statements)
+        abstractSmartReviewSectionUpdater.updateTextSection(contributorId, newSection, oldSection, statements, extractionMethod)
 
         verify(exactly = 1) {
             singleStatementPropertyUpdater.updateRequiredProperty(
@@ -480,7 +512,7 @@ internal class AbstractSmartReviewSectionUpdaterUnitTest : MockkBaseTest {
                 subjectId = oldSection.id,
                 predicateId = Predicates.hasContent,
                 label = newSection.text,
-                extractionMethod = ExtractionMethod.UNKNOWN,
+                extractionMethod = extractionMethod,
             )
         }
     }

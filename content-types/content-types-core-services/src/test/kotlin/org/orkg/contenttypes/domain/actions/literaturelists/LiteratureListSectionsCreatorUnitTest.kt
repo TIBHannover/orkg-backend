@@ -62,6 +62,7 @@ internal class LiteratureListSectionsCreatorUnitTest : MockkBaseTest {
                     subjectId = state.literatureListId!!,
                     predicateId = Predicates.hasSection,
                     objectId = sectionId1,
+                    extractionMethod = extractionMethod,
                 ),
             )
         }
@@ -75,6 +76,7 @@ internal class LiteratureListSectionsCreatorUnitTest : MockkBaseTest {
                     subjectId = state.literatureListId!!,
                     predicateId = Predicates.hasSection,
                     objectId = sectionId2,
+                    extractionMethod = extractionMethod,
                 ),
             )
         }

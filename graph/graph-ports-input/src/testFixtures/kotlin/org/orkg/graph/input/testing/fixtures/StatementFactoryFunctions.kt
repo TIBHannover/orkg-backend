@@ -2,6 +2,7 @@ package org.orkg.graph.input.testing.fixtures
 
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.StatementId
 import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.UpdateStatementUseCase
@@ -13,6 +14,7 @@ fun createStatementCommand(): CreateStatementUseCase.CreateCommand =
         subjectId = ThingId("R123"),
         predicateId = ThingId("P123"),
         objectId = ThingId("L123"),
+        extractionMethod = ExtractionMethod.UNKNOWN,
         modifiable = true,
     )
 
@@ -23,5 +25,6 @@ fun updateStatementCommand(): UpdateStatementUseCase.UpdateCommand =
         subjectId = ThingId("R123"),
         predicateId = ThingId("P123"),
         objectId = ThingId("L123"),
+        extractionMethod = ExtractionMethod.UNKNOWN,
         modifiable = true,
     )

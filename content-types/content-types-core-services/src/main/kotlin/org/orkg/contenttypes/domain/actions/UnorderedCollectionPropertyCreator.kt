@@ -33,6 +33,7 @@ class UnorderedCollectionPropertyCreator(
                     subjectId = subjectId,
                     predicateId = predicateId,
                     objectId = literal,
+                    extractionMethod = extractionMethod,
                 ),
             )
         }

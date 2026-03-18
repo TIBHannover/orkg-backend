@@ -4,6 +4,7 @@ import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.actions.CreateTemplateCommand
 import org.orkg.contenttypes.domain.actions.templates.CreateTemplateAction.State
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.CreateStatementUseCase.CreateCommand
 import org.orkg.graph.input.UnsafeStatementUseCases
@@ -12,10 +13,10 @@ class TemplateRelationsCreator(
     private val unsafeStatementUseCases: UnsafeStatementUseCases,
 ) : CreateTemplateAction {
     override fun invoke(command: CreateTemplateCommand, state: State): State {
-        linkResearchFields(command.contributorId, state.templateId!!, command.relations.researchFields)
-        linkResearchProblems(command.contributorId, state.templateId, command.relations.researchProblems)
+        linkResearchFields(command.contributorId, state.templateId!!, command.relations.researchFields, command.extractionMethod)
+        linkResearchProblems(command.contributorId, state.templateId, command.relations.researchProblems, command.extractionMethod)
         command.relations.predicate?.also { predicateId ->
-            linkPredicate(command.contributorId, state.templateId, predicateId)
+            linkPredicate(command.contributorId, state.templateId, predicateId, command.extractionMethod)
         }
         return state
     }
@@ -24,6 +25,7 @@ class TemplateRelationsCreator(
         contributorId: ContributorId,
         subjectId: ThingId,
         researchFields: List<ThingId>,
+        extractionMethod: ExtractionMethod,
     ) {
         researchFields.forEach { researchFieldId ->
             unsafeStatementUseCases.create(
@@ -32,6 +34,7 @@ class TemplateRelationsCreator(
                     subjectId = subjectId,
                     predicateId = Predicates.templateOfResearchField,
                     objectId = researchFieldId,
+                    extractionMethod = extractionMethod,
                 ),
             )
         }
@@ -41,6 +44,7 @@ class TemplateRelationsCreator(
         contributorId: ContributorId,
         subjectId: ThingId,
         researchProblems: List<ThingId>,
+        extractionMethod: ExtractionMethod,
     ) {
         researchProblems.forEach { researchProblemId ->
             unsafeStatementUseCases.create(
@@ -49,6 +53,7 @@ class TemplateRelationsCreator(
                     subjectId = subjectId,
                     predicateId = Predicates.templateOfResearchProblem,
                     objectId = researchProblemId,
+                    extractionMethod = extractionMethod,
                 ),
             )
         }
@@ -58,6 +63,7 @@ class TemplateRelationsCreator(
         contributorId: ContributorId,
         subjectId: ThingId,
         predicateId: ThingId,
+        extractionMethod: ExtractionMethod,
     ) {
         unsafeStatementUseCases.create(
             CreateCommand(
@@ -65,6 +71,7 @@ class TemplateRelationsCreator(
                 subjectId = subjectId,
                 predicateId = Predicates.templateOfPredicate,
                 objectId = predicateId,
+                extractionMethod = extractionMethod,
             ),
         )
     }

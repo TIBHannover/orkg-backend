@@ -30,6 +30,7 @@ class AbstractTableRowCreator(
                 contributorId = contributorId,
                 label = "",
                 classes = setOf(Classes.row),
+                extractionMethod = extractionMethod,
             ),
         )
         val rowNumberLiteralId = unsafeLiteralUseCases.create(
@@ -46,6 +47,7 @@ class AbstractTableRowCreator(
                 subjectId = rowId,
                 predicateId = Predicates.csvwNumber,
                 objectId = rowNumberLiteralId,
+                extractionMethod = extractionMethod,
             ),
         )
         if (label != null) {
@@ -62,6 +64,7 @@ class AbstractTableRowCreator(
                     subjectId = rowId,
                     predicateId = Predicates.csvwTitles,
                     objectId = rowLabelLiteralId,
+                    extractionMethod = extractionMethod,
                 ),
             )
         }
@@ -71,6 +74,7 @@ class AbstractTableRowCreator(
                 subjectId = tableId,
                 predicateId = Predicates.csvwRows,
                 objectId = rowId,
+                extractionMethod = extractionMethod,
             ),
         )
         return rowId

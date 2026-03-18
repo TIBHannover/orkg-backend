@@ -21,6 +21,7 @@ class ComparisonSDGCreator(
             subjectId = state.comparisonId!!,
             predicateId = Predicates.sustainableDevelopmentGoal,
             objects = command.sustainableDevelopmentGoals.toList(),
+            extractionMethod = command.extractionMethod,
         )
         return state
     }

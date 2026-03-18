@@ -293,6 +293,7 @@ internal class AbstractTemplatePropertyUpdaterUntypedPropertyUnitTest : Abstract
                 subjectId = oldProperty.id,
                 predicateId = Predicates.shPath,
                 objectId = newProperty.path,
+                extractionMethod = extractionMethod,
             )
         } just runs
 
@@ -305,6 +306,7 @@ internal class AbstractTemplatePropertyUpdaterUntypedPropertyUnitTest : Abstract
                 subjectId = oldProperty.id,
                 predicateId = Predicates.shPath,
                 objectId = newProperty.path,
+                extractionMethod = extractionMethod,
             )
         }
     }

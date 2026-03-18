@@ -35,23 +35,25 @@ class AbstractSmartReviewSectionCreator(
         extractionMethod: ExtractionMethod,
     ): ThingId =
         when (section) {
-            is AbstractSmartReviewComparisonSectionCommand -> createComparisonSection(contributorId, section)
-            is AbstractSmartReviewVisualizationSectionCommand -> createVisualizationSection(contributorId, section)
-            is AbstractSmartReviewResourceSectionCommand -> createResourceSection(contributorId, section)
-            is AbstractSmartReviewPredicateSectionCommand -> createPredicateSection(contributorId, section)
-            is AbstractSmartReviewOntologySectionCommand -> createOntologySection(contributorId, section)
+            is AbstractSmartReviewComparisonSectionCommand -> createComparisonSection(contributorId, section, extractionMethod)
+            is AbstractSmartReviewVisualizationSectionCommand -> createVisualizationSection(contributorId, section, extractionMethod)
+            is AbstractSmartReviewResourceSectionCommand -> createResourceSection(contributorId, section, extractionMethod)
+            is AbstractSmartReviewPredicateSectionCommand -> createPredicateSection(contributorId, section, extractionMethod)
+            is AbstractSmartReviewOntologySectionCommand -> createOntologySection(contributorId, section, extractionMethod)
             is AbstractSmartReviewTextSectionCommand -> createTextSection(contributorId, section, extractionMethod)
         }
 
     private fun createComparisonSection(
         contributorId: ContributorId,
         section: AbstractSmartReviewComparisonSectionCommand,
+        extractionMethod: ExtractionMethod,
     ): ThingId {
         val sectionId = unsafeResourceUseCases.create(
             CreateResourceUseCase.CreateCommand(
                 contributorId = contributorId,
                 label = section.heading,
                 classes = setOf(Classes.comparisonSection),
+                extractionMethod = extractionMethod,
             ),
         )
         section.comparison?.also { comparisonId ->
@@ -61,6 +63,7 @@ class AbstractSmartReviewSectionCreator(
                     subjectId = sectionId,
                     predicateId = Predicates.hasLink,
                     objectId = comparisonId,
+                    extractionMethod = extractionMethod,
                 ),
             )
         }
@@ -70,12 +73,14 @@ class AbstractSmartReviewSectionCreator(
     private fun createVisualizationSection(
         contributorId: ContributorId,
         section: AbstractSmartReviewVisualizationSectionCommand,
+        extractionMethod: ExtractionMethod,
     ): ThingId {
         val sectionId = unsafeResourceUseCases.create(
             CreateResourceUseCase.CreateCommand(
                 contributorId = contributorId,
                 label = section.heading,
                 classes = setOf(Classes.visualizationSection),
+                extractionMethod = extractionMethod,
             ),
         )
         section.visualization?.also { visualizationId ->
@@ -85,6 +90,7 @@ class AbstractSmartReviewSectionCreator(
                     subjectId = sectionId,
                     predicateId = Predicates.hasLink,
                     objectId = visualizationId,
+                    extractionMethod = extractionMethod,
                 ),
             )
         }
@@ -94,12 +100,14 @@ class AbstractSmartReviewSectionCreator(
     private fun createResourceSection(
         contributorId: ContributorId,
         section: AbstractSmartReviewResourceSectionCommand,
+        extractionMethod: ExtractionMethod,
     ): ThingId {
         val sectionId = unsafeResourceUseCases.create(
             CreateResourceUseCase.CreateCommand(
                 contributorId = contributorId,
                 label = section.heading,
                 classes = setOf(Classes.resourceSection),
+                extractionMethod = extractionMethod,
             ),
         )
         section.resource?.also { resourceId ->
@@ -109,6 +117,7 @@ class AbstractSmartReviewSectionCreator(
                     subjectId = sectionId,
                     predicateId = Predicates.hasLink,
                     objectId = resourceId,
+                    extractionMethod = extractionMethod,
                 ),
             )
         }
@@ -118,12 +127,14 @@ class AbstractSmartReviewSectionCreator(
     private fun createPredicateSection(
         contributorId: ContributorId,
         section: AbstractSmartReviewPredicateSectionCommand,
+        extractionMethod: ExtractionMethod,
     ): ThingId {
         val sectionId = unsafeResourceUseCases.create(
             CreateResourceUseCase.CreateCommand(
                 contributorId = contributorId,
                 label = section.heading,
                 classes = setOf(Classes.propertySection),
+                extractionMethod = extractionMethod,
             ),
         )
         section.predicate?.also { predicateId ->
@@ -133,6 +144,7 @@ class AbstractSmartReviewSectionCreator(
                     subjectId = sectionId,
                     predicateId = Predicates.hasLink,
                     objectId = predicateId,
+                    extractionMethod = extractionMethod,
                 ),
             )
         }
@@ -142,12 +154,14 @@ class AbstractSmartReviewSectionCreator(
     private fun createOntologySection(
         contributorId: ContributorId,
         section: AbstractSmartReviewOntologySectionCommand,
+        extractionMethod: ExtractionMethod,
     ): ThingId {
         val sectionId = unsafeResourceUseCases.create(
             CreateResourceUseCase.CreateCommand(
                 contributorId = contributorId,
                 label = section.heading,
                 classes = setOf(Classes.ontologySection),
+                extractionMethod = extractionMethod,
             ),
         )
         statementCollectionPropertyCreator.create(
@@ -155,12 +169,14 @@ class AbstractSmartReviewSectionCreator(
             subjectId = sectionId,
             predicateId = Predicates.hasEntity,
             objects = section.entities,
+            extractionMethod = extractionMethod,
         )
         statementCollectionPropertyCreator.create(
             contributorId = contributorId,
             subjectId = sectionId,
             predicateId = Predicates.showProperty,
             objects = section.predicates,
+            extractionMethod = extractionMethod,
         )
         return sectionId
     }
@@ -175,6 +191,7 @@ class AbstractSmartReviewSectionCreator(
                 contributorId = contributorId,
                 label = section.heading,
                 classes = setOfNotNull(Classes.section, section.`class`),
+                extractionMethod = extractionMethod,
             ),
         )
         val textId = unsafeLiteralUseCases.create(
@@ -190,6 +207,7 @@ class AbstractSmartReviewSectionCreator(
                 subjectId = sectionId,
                 predicateId = Predicates.hasContent,
                 objectId = textId,
+                extractionMethod = extractionMethod,
             ),
         )
         return sectionId

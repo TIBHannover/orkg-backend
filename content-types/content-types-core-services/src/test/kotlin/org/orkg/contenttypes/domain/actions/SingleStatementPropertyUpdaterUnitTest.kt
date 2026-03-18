@@ -318,6 +318,7 @@ internal class SingleStatementPropertyUpdaterUnitTest : MockkBaseTest {
         val contributorId = ContributorId(UUID.randomUUID())
         val contributionId = ThingId("R456")
         val statements = emptyList<GeneralStatement>()
+        val extractionMethod = ExtractionMethod.MANUAL
 
         every {
             unsafeStatementUseCases.create(
@@ -326,11 +327,19 @@ internal class SingleStatementPropertyUpdaterUnitTest : MockkBaseTest {
                     subjectId = subjectId,
                     predicateId = Predicates.hasContribution,
                     objectId = contributionId,
+                    extractionMethod = extractionMethod,
                 ),
             )
         } returns StatementId("S1")
 
-        singleStatementPropertyUpdater.updateRequiredProperty(statements, contributorId, subjectId, Predicates.hasContribution, contributionId)
+        singleStatementPropertyUpdater.updateRequiredProperty(
+            statements = statements,
+            contributorId = contributorId,
+            subjectId = subjectId,
+            predicateId = Predicates.hasContribution,
+            objectId = contributionId,
+            extractionMethod = extractionMethod,
+        )
 
         verify(exactly = 1) {
             unsafeStatementUseCases.create(
@@ -339,6 +348,7 @@ internal class SingleStatementPropertyUpdaterUnitTest : MockkBaseTest {
                     subjectId = subjectId,
                     predicateId = Predicates.hasContribution,
                     objectId = contributionId,
+                    extractionMethod = extractionMethod,
                 ),
             )
         }
@@ -353,6 +363,7 @@ internal class SingleStatementPropertyUpdaterUnitTest : MockkBaseTest {
             createStatement(StatementId("S159")),
             createStatement(StatementId("S357"), predicate = createPredicate(Predicates.hasContribution)),
         )
+        val extractionMethod = ExtractionMethod.MANUAL
 
         every { statementService.deleteAllById(setOf(StatementId("S357"))) } just runs
         every {
@@ -362,11 +373,19 @@ internal class SingleStatementPropertyUpdaterUnitTest : MockkBaseTest {
                     subjectId = subjectId,
                     predicateId = Predicates.hasContribution,
                     objectId = contributionId,
+                    extractionMethod = extractionMethod,
                 ),
             )
         } returns StatementId("S1")
 
-        singleStatementPropertyUpdater.updateRequiredProperty(statements, contributorId, subjectId, Predicates.hasContribution, contributionId)
+        singleStatementPropertyUpdater.updateRequiredProperty(
+            statements = statements,
+            contributorId = contributorId,
+            subjectId = subjectId,
+            predicateId = Predicates.hasContribution,
+            objectId = contributionId,
+            extractionMethod = extractionMethod,
+        )
 
         verify(exactly = 1) { statementService.deleteAllById(setOf(StatementId("S357"))) }
         verify(exactly = 1) {
@@ -376,6 +395,7 @@ internal class SingleStatementPropertyUpdaterUnitTest : MockkBaseTest {
                     subjectId = subjectId,
                     predicateId = Predicates.hasContribution,
                     objectId = contributionId,
+                    extractionMethod = extractionMethod,
                 ),
             )
         }
@@ -387,6 +407,7 @@ internal class SingleStatementPropertyUpdaterUnitTest : MockkBaseTest {
         val contributorId = ContributorId(UUID.randomUUID())
         val objectId = ThingId("R456")
         val statements = emptyList<GeneralStatement>()
+        val extractionMethod = ExtractionMethod.MANUAL
 
         every {
             unsafeStatementUseCases.create(
@@ -395,11 +416,19 @@ internal class SingleStatementPropertyUpdaterUnitTest : MockkBaseTest {
                     subjectId = subjectId,
                     predicateId = Predicates.hasContribution,
                     objectId = objectId,
+                    extractionMethod = extractionMethod,
                 ),
             )
         } returns StatementId("S1")
 
-        singleStatementPropertyUpdater.updateOptionalProperty(statements, contributorId, subjectId, Predicates.hasContribution, objectId)
+        singleStatementPropertyUpdater.updateOptionalProperty(
+            statements = statements,
+            contributorId = contributorId,
+            subjectId = subjectId,
+            predicateId = Predicates.hasContribution,
+            objectId = objectId,
+            extractionMethod = extractionMethod,
+        )
 
         verify(exactly = 1) {
             unsafeStatementUseCases.create(
@@ -408,6 +437,7 @@ internal class SingleStatementPropertyUpdaterUnitTest : MockkBaseTest {
                     subjectId = subjectId,
                     predicateId = Predicates.hasContribution,
                     objectId = objectId,
+                    extractionMethod = extractionMethod,
                 ),
             )
         }
@@ -422,6 +452,7 @@ internal class SingleStatementPropertyUpdaterUnitTest : MockkBaseTest {
             createStatement(StatementId("S159")),
             createStatement(StatementId("S357"), predicate = createPredicate(Predicates.hasContribution)),
         )
+        val extractionMethod = ExtractionMethod.MANUAL
 
         every { statementService.deleteAllById(setOf(StatementId("S357"))) } just runs
         every {
@@ -431,11 +462,19 @@ internal class SingleStatementPropertyUpdaterUnitTest : MockkBaseTest {
                     subjectId = subjectId,
                     predicateId = Predicates.hasContribution,
                     objectId = objectId,
+                    extractionMethod = extractionMethod,
                 ),
             )
         } returns StatementId("S1")
 
-        singleStatementPropertyUpdater.updateOptionalProperty(statements, contributorId, subjectId, Predicates.hasContribution, objectId)
+        singleStatementPropertyUpdater.updateOptionalProperty(
+            statements = statements,
+            contributorId = contributorId,
+            subjectId = subjectId,
+            predicateId = Predicates.hasContribution,
+            objectId = objectId,
+            extractionMethod = extractionMethod,
+        )
 
         verify(exactly = 1) { statementService.deleteAllById(setOf(StatementId("S357"))) }
         verify(exactly = 1) {
@@ -445,6 +484,7 @@ internal class SingleStatementPropertyUpdaterUnitTest : MockkBaseTest {
                     subjectId = subjectId,
                     predicateId = Predicates.hasContribution,
                     objectId = objectId,
+                    extractionMethod = extractionMethod,
                 ),
             )
         }
@@ -459,10 +499,18 @@ internal class SingleStatementPropertyUpdaterUnitTest : MockkBaseTest {
             createStatement(StatementId("S159")),
             createStatement(StatementId("S357"), predicate = createPredicate(Predicates.hasContribution)),
         )
+        val extractionMethod = ExtractionMethod.MANUAL
 
         every { statementService.deleteAllById(setOf(StatementId("S357"))) } just runs
 
-        singleStatementPropertyUpdater.updateOptionalProperty(statements, contributorId, subjectId, Predicates.hasContribution, objectId as ThingId?)
+        singleStatementPropertyUpdater.updateOptionalProperty(
+            statements = statements,
+            contributorId = contributorId,
+            subjectId = subjectId,
+            predicateId = Predicates.hasContribution,
+            objectId = objectId as ThingId?,
+            extractionMethod = extractionMethod,
+        )
 
         verify(exactly = 1) { statementService.deleteAllById(setOf(StatementId("S357"))) }
     }

@@ -44,6 +44,7 @@ class TableColumnsUpdater(
                         subjectId = columnGraph.columnId,
                         predicateId = Predicates.csvwTitles,
                         objectId = state.resolve(value!!)!!,
+                        extractionMethod = command.extractionMethod ?: ExtractionMethod.UNKNOWN,
                     ),
                 )
             }

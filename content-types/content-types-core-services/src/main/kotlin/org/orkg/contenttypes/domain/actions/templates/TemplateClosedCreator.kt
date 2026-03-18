@@ -30,6 +30,7 @@ class TemplateClosedCreator(
                     subjectId = state.templateId!!,
                     predicateId = Predicates.shClosed,
                     objectId = trueLiteralId,
+                    extractionMethod = command.extractionMethod,
                 ),
             )
         }

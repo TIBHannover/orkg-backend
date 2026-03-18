@@ -3,6 +3,7 @@ package org.orkg.contenttypes.domain.actions.comparisons
 import org.orkg.contenttypes.domain.actions.StatementCollectionPropertyUpdater
 import org.orkg.contenttypes.domain.actions.UpdateComparisonCommand
 import org.orkg.contenttypes.domain.actions.comparisons.UpdateComparisonAction.State
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UnsafeLiteralUseCases
@@ -29,6 +30,7 @@ class ComparisonContributionUpdater(
                 objects = command.sources!!,
                 predicateSelector = { it.type.predicateId },
                 objectIdSelector = { it.id },
+                extractionMethod = command.extractionMethod ?: ExtractionMethod.UNKNOWN,
             )
         }
         return state

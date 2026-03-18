@@ -80,6 +80,7 @@ class ComparisonRelatedFigureService(
                 subjectId = command.comparisonId,
                 predicateId = Predicates.hasRelatedFigure,
                 objectId = figureId,
+                extractionMethod = ExtractionMethod.UNKNOWN, // TODO: Get from command
             ),
         )
         if (command.image != null) {
@@ -95,6 +96,7 @@ class ComparisonRelatedFigureService(
                             extractionMethod = ExtractionMethod.UNKNOWN, // TODO: Get extraction method from command
                         ),
                     ),
+                    extractionMethod = ExtractionMethod.UNKNOWN, // TODO: Get extraction method from command
                 ),
             )
         }
@@ -111,6 +113,7 @@ class ComparisonRelatedFigureService(
                             extractionMethod = ExtractionMethod.UNKNOWN, // TODO: Get extraction method from command
                         ),
                     ),
+                    extractionMethod = ExtractionMethod.UNKNOWN, // TODO: Get extraction method from command
                 ),
             )
         }

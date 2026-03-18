@@ -54,6 +54,7 @@ internal class UnorderedCollectionPropertyCreatorUnitTest : MockkBaseTest {
                     subjectId = subjectId,
                     predicateId = Predicates.description,
                     objectId = literal,
+                    extractionMethod = extractionMethod,
                 ),
             )
         } returns StatementId("S1")
@@ -68,6 +69,7 @@ internal class UnorderedCollectionPropertyCreatorUnitTest : MockkBaseTest {
                     subjectId = subjectId,
                     predicateId = Predicates.description,
                     objectId = literal,
+                    extractionMethod = extractionMethod,
                 ),
             )
         }

@@ -33,6 +33,7 @@ class UnsafeStatementService(
             `object` = `object`,
             createdBy = command.contributorId,
             createdAt = OffsetDateTime.now(clock),
+            extractionMethod = command.extractionMethod,
             modifiable = command.modifiable,
         )
         statementRepository.save(statement)

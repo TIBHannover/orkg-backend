@@ -4,6 +4,7 @@ import org.orkg.contenttypes.domain.actions.StatementCollectionPropertyUpdater
 import org.orkg.contenttypes.domain.actions.UpdateLiteratureListCommand
 import org.orkg.contenttypes.domain.actions.literaturelists.UpdateLiteratureListAction.State
 import org.orkg.contenttypes.domain.ids
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UnsafeLiteralUseCases
@@ -28,6 +29,7 @@ class LiteratureListResearchFieldUpdater(
                 subjectId = command.literatureListId,
                 predicateId = Predicates.hasResearchField,
                 objects = command.researchFields!!.toSet(),
+                extractionMethod = command.extractionMethod ?: ExtractionMethod.UNKNOWN,
             )
         }
         return state

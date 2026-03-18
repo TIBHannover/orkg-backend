@@ -53,6 +53,7 @@ class TableRowsUpdater(
                         subjectId = existingRowGraph.rowId,
                         predicateId = Predicates.csvwTitles,
                         objectId = rowLabelLiteralId,
+                        extractionMethod = command.extractionMethod ?: ExtractionMethod.UNKNOWN,
                     ),
                 )
             } else if (rowCommand.label != existingRowGraph.label) {

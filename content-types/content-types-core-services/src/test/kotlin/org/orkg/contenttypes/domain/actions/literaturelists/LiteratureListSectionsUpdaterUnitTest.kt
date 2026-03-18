@@ -77,6 +77,7 @@ internal class LiteratureListSectionsUpdaterUnitTest : MockkBaseTest {
                 subjectId = command.literatureListId,
                 predicateId = Predicates.hasSection,
                 objects = any<List<ThingId>>(),
+                extractionMethod = command.extractionMethod!!,
             )
         } just runs
         every {
@@ -97,6 +98,7 @@ internal class LiteratureListSectionsUpdaterUnitTest : MockkBaseTest {
                 subjectId = command.literatureListId,
                 predicateId = Predicates.hasSection,
                 objects = literatureList.sections.dropLast(1).map { it.id },
+                extractionMethod = command.extractionMethod!!,
             )
         }
         verify(exactly = 1) {
@@ -135,6 +137,7 @@ internal class LiteratureListSectionsUpdaterUnitTest : MockkBaseTest {
                 subjectId = command.literatureListId,
                 predicateId = Predicates.hasSection,
                 objects = any<List<ThingId>>(),
+                extractionMethod = command.extractionMethod!!,
             )
         } just runs
 
@@ -148,6 +151,7 @@ internal class LiteratureListSectionsUpdaterUnitTest : MockkBaseTest {
                 subjectId = command.literatureListId,
                 predicateId = Predicates.hasSection,
                 objects = literatureList.sections.map { it.id } + newSectionId,
+                extractionMethod = command.extractionMethod!!,
             )
         }
     }
@@ -178,6 +182,7 @@ internal class LiteratureListSectionsUpdaterUnitTest : MockkBaseTest {
                 subjectId = command.literatureListId,
                 predicateId = Predicates.hasSection,
                 objects = any<List<ThingId>>(),
+                extractionMethod = command.extractionMethod!!,
             )
         } just runs
         every {
@@ -199,6 +204,7 @@ internal class LiteratureListSectionsUpdaterUnitTest : MockkBaseTest {
                 subjectId = command.literatureListId,
                 predicateId = Predicates.hasSection,
                 objects = literatureList.sections.dropLast(1).map { it.id } + newSectionId,
+                extractionMethod = command.extractionMethod!!,
             )
         }
         verify(exactly = 1) {

@@ -21,6 +21,7 @@ import org.orkg.graph.adapter.input.rest.testing.fixtures.statementResponseField
 import org.orkg.graph.domain.Bundle
 import org.orkg.graph.domain.BundleConfiguration
 import org.orkg.graph.domain.Classes
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.InvalidStatement
 import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.StatementAlreadyExists
@@ -35,6 +36,7 @@ import org.orkg.graph.domain.ThingNotFound
 import org.orkg.graph.input.CreateStatementUseCase.CreateCommand
 import org.orkg.graph.input.FormattedLabelUseCases
 import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.testing.asciidoc.allowedExtractionMethodValues
 import org.orkg.graph.testing.fixtures.createLiteral
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.createStatement
@@ -274,6 +276,7 @@ internal class StatementControllerUnitTest : MockMvcBaseTest("statements") {
                     fieldWithPath("subject_id").description("The id of the subject of the statement."),
                     fieldWithPath("predicate_id").description("The id of the predicate of the statement."),
                     fieldWithPath("object_id").description("The id of the object of the statement."),
+                    fieldWithPath("extraction_method").description("""The method used to extract the statement. Can be one of $allowedExtractionMethodValues. (optional)""").optional(),
                 )
                 throws(
                     StatementSubjectNotFound::class,
@@ -382,10 +385,12 @@ internal class StatementControllerUnitTest : MockMvcBaseTest("statements") {
         val subjectId = ThingId("R123")
         val predicateId = ThingId("P123")
         val objectId = ThingId("C123")
+        val extractionMethod = ExtractionMethod.MANUAL
         val request = UpdateStatementRequest(
             subjectId = subjectId,
             predicateId = predicateId,
             objectId = objectId,
+            extractionMethod = extractionMethod,
         )
         every { statementService.update(any()) } just runs
 
@@ -413,6 +418,7 @@ internal class StatementControllerUnitTest : MockMvcBaseTest("statements") {
                     fieldWithPath("subject_id").description("The updated id of the subject entity of the statement. (optional)").optional(),
                     fieldWithPath("predicate_id").description("The updated id of the predicate of the statement. (optional)").optional(),
                     fieldWithPath("object_id").description("The updated id of the object entity of the statement. (optional)").optional(),
+                    fieldWithPath("extraction_method").description("""The method used to extract the statement. Can be one of $allowedExtractionMethodValues. (optional)""").optional(),
                 )
                 throws(
                     StatementNotFound::class,
@@ -431,6 +437,7 @@ internal class StatementControllerUnitTest : MockMvcBaseTest("statements") {
                     it.subjectId shouldBe subjectId
                     it.predicateId shouldBe predicateId
                     it.objectId shouldBe objectId
+                    it.extractionMethod shouldBe extractionMethod
                 },
             )
         }

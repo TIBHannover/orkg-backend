@@ -23,6 +23,7 @@ class PaperSDGCreator(
             subjectId = state.paperId!!,
             predicateId = Predicates.sustainableDevelopmentGoal,
             objects = command.sustainableDevelopmentGoals.toList(),
+            extractionMethod = command.extractionMethod,
         )
         return state
     }

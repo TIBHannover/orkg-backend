@@ -77,6 +77,7 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
             ),
             contributions = emptyList(),
         )
+        val extractionMethod = ExtractionMethod.MANUAL
 
         every {
             unsafeResourceUseCases.create(
@@ -84,14 +85,14 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     label = resourceCommand.label,
                     classes = resourceCommand.classes,
-                    extractionMethod = ExtractionMethod.MANUAL,
+                    extractionMethod = extractionMethod,
                 ),
             )
         } returns ThingId("R456")
 
         subgraphCreator.createThingsAndStatements(
             contributorId = contributorId,
-            extractionMethod = ExtractionMethod.MANUAL,
+            extractionMethod = extractionMethod,
             thingsCommand = contents,
             validationCache = mapOf("#temp1" from contents),
             bakedStatements = emptySet(),
@@ -103,7 +104,7 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     label = resourceCommand.label,
                     classes = resourceCommand.classes,
-                    extractionMethod = ExtractionMethod.MANUAL,
+                    extractionMethod = extractionMethod,
                 ),
             )
         }
@@ -364,6 +365,7 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
                     subjectId = predicateId,
                     predicateId = Predicates.description,
                     objectId = literal,
+                    extractionMethod = extractionMethod,
                 ),
             )
         } returns StatementId("S1")
@@ -401,6 +403,7 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
                     subjectId = predicateId,
                     predicateId = Predicates.description,
                     objectId = literal,
+                    extractionMethod = extractionMethod,
                 ),
             )
         }
@@ -564,6 +567,7 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
                     subjectId = resourceId,
                     predicateId = predicateId,
                     objectId = literal,
+                    extractionMethod = extractionMethod,
                 ),
             )
         } returns StatementId("S1")
@@ -616,6 +620,7 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
                     subjectId = resourceId,
                     predicateId = predicateId,
                     objectId = literal,
+                    extractionMethod = extractionMethod,
                 ),
             )
         }
@@ -627,6 +632,7 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
         val contents = CreatePaperUseCase.CreateCommand.PaperContents(
             contributions = emptyList(),
         )
+        val extractionMethod = ExtractionMethod.MANUAL
 
         every {
             statementRepository.findAll(
@@ -643,13 +649,14 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
                     subjectId = ThingId("R1000"),
                     predicateId = ThingId("R2000"),
                     objectId = ThingId("R3000"),
+                    extractionMethod = extractionMethod,
                 ),
             )
         } returns StatementId("S1")
 
         subgraphCreator.createThingsAndStatements(
             contributorId = contributorId,
-            extractionMethod = ExtractionMethod.MANUAL,
+            extractionMethod = extractionMethod,
             thingsCommand = contents,
             validationCache = emptyMap(),
             bakedStatements = setOf(BakedStatement("R1000", "R2000", "R3000")),
@@ -670,6 +677,7 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
                     subjectId = ThingId("R1000"),
                     predicateId = ThingId("R2000"),
                     objectId = ThingId("R3000"),
+                    extractionMethod = extractionMethod,
                 ),
             )
         }

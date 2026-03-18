@@ -133,6 +133,7 @@ internal class SmartReviewSectionCreatorUnitTest : MockkBaseTest {
                 subjectId = contributionId,
                 predicateId = Predicates.hasSection,
                 objects = any<List<ThingId>>(),
+                extractionMethod = extractionMethod,
             )
         } just runs
 
@@ -156,6 +157,7 @@ internal class SmartReviewSectionCreatorUnitTest : MockkBaseTest {
                 subjectId = contributionId,
                 predicateId = Predicates.hasSection,
                 objects = listOf(ThingId("Section1"), sectionId, ThingId("Section2")),
+                extractionMethod = extractionMethod,
             )
         }
     }
@@ -197,6 +199,7 @@ internal class SmartReviewSectionCreatorUnitTest : MockkBaseTest {
                 subjectId = contributionId,
                 predicateId = Predicates.hasSection,
                 objects = any<List<ThingId>>(),
+                extractionMethod = extractionMethod,
             )
         } just runs
 
@@ -220,6 +223,7 @@ internal class SmartReviewSectionCreatorUnitTest : MockkBaseTest {
                 subjectId = contributionId,
                 predicateId = Predicates.hasSection,
                 objects = listOf(ThingId("Section1"), ThingId("Section2"), sectionId),
+                extractionMethod = extractionMethod,
             )
         }
     }

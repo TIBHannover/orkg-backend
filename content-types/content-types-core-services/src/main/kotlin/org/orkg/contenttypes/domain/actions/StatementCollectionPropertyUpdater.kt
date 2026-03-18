@@ -24,6 +24,7 @@ data class StatementCollectionPropertyUpdater(
         subjectId: ThingId,
         predicateId: ThingId,
         objects: Set<ThingId>,
+        extractionMethod: ExtractionMethod,
     ) {
         // Find out what already exists and what needs to be created or removed
         val objectIdToStatementId = statements.wherePredicate(predicateId)
@@ -44,6 +45,7 @@ data class StatementCollectionPropertyUpdater(
                     subjectId = subjectId,
                     predicateId = predicateId,
                     objectId = objectId,
+                    extractionMethod = extractionMethod,
                 ),
             )
         }
@@ -55,6 +57,7 @@ data class StatementCollectionPropertyUpdater(
         subjectId: ThingId,
         predicateId: ThingId,
         objects: List<ThingId>,
+        extractionMethod: ExtractionMethod,
     ) = update(
         statements = statements,
         contributorId = contributorId,
@@ -63,6 +66,7 @@ data class StatementCollectionPropertyUpdater(
         objects = objects,
         predicateSelector = { predicateId },
         objectIdSelector = { it },
+        extractionMethod = extractionMethod,
     )
 
     internal fun <T> update(
@@ -73,6 +77,7 @@ data class StatementCollectionPropertyUpdater(
         objects: List<T>,
         predicateSelector: (T) -> ThingId,
         objectIdSelector: (T) -> ThingId,
+        extractionMethod: ExtractionMethod,
     ) {
         val statementsIterator = statements.filter { it.predicate.id in predicates }
             .sortedBy { it.createdAt }
@@ -100,6 +105,7 @@ data class StatementCollectionPropertyUpdater(
                         subjectId = subjectId,
                         predicateId = predicateId,
                         objectId = objectId,
+                        extractionMethod = extractionMethod,
                     ),
                 )
             }
@@ -150,6 +156,7 @@ data class StatementCollectionPropertyUpdater(
                     subjectId = subjectId,
                     predicateId = predicateId,
                     objectId = literalId,
+                    extractionMethod = extractionMethod,
                 ),
             )
         }
@@ -196,6 +203,7 @@ data class StatementCollectionPropertyUpdater(
                         subjectId = subjectId,
                         predicateId = predicateId,
                         objectId = literalId,
+                        extractionMethod = extractionMethod,
                     ),
                 )
             }

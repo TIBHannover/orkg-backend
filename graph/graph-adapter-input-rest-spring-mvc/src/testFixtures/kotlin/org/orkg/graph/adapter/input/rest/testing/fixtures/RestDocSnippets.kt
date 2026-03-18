@@ -66,7 +66,8 @@ fun literalResponseFields() = listOf(
 fun statementResponseFields(): List<FieldDescriptor> = listOf(
     fieldWithPath("id").description("The statement ID"),
     fieldWithPath("created_at").description("The statement creation datetime"),
-    fieldWithPath("created_by").description("The ID of the user that created the statement.."),
+    fieldWithPath("created_by").description("The ID of the user that created the statement."),
+    fieldWithPath("extraction_method").description("Determines how the statement was created. Can be one of $allowedExtractionMethodValues."),
     fieldWithPath("modifiable").description("Whether the statement can be modified."),
     subsectionWithPath("subject").type("Object").description("The representation of the subject entity of the statement. Either a <<classes-fetch,class>>, <<resources-fetch,resource>> or <<predicates-fetch,predicate>>."),
     subsectionWithPath("predicate").type("Object").description("The representation of the <<predicates-fetch,predicate>> of the statement."),

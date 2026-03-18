@@ -37,7 +37,7 @@ class PublicationInfoCreator(
             linkPublicationYear(contributorId, subjectId, publicationInfo.publishedYear!!, extractionMethod)
         }
         if (publicationInfo.publishedIn != null) {
-            linkPublicationVenue(contributorId, subjectId, publicationInfo.publishedIn!!)
+            linkPublicationVenue(contributorId, subjectId, publicationInfo.publishedIn!!, extractionMethod)
         }
         if (publicationInfo.url != null) {
             linkPublicationUrl(contributorId, subjectId, publicationInfo.url!!, extractionMethod)
@@ -64,6 +64,7 @@ class PublicationInfoCreator(
                 subjectId = subjectId,
                 predicateId = Predicates.monthPublished,
                 objectId = monthLiteralId,
+                extractionMethod = extractionMethod,
             ),
         )
     }
@@ -88,6 +89,7 @@ class PublicationInfoCreator(
                 subjectId = subjectId,
                 predicateId = Predicates.yearPublished,
                 objectId = yearLiteralId,
+                extractionMethod = extractionMethod,
             ),
         )
     }
@@ -96,6 +98,7 @@ class PublicationInfoCreator(
         contributorId: ContributorId,
         subjectId: ThingId,
         publishedIn: String,
+        extractionMethod: ExtractionMethod,
     ) {
         val venueId = resourceRepository.findAll(
             includeClasses = setOf(Classes.venue),
@@ -114,6 +117,7 @@ class PublicationInfoCreator(
                 subjectId = subjectId,
                 predicateId = Predicates.hasVenue,
                 objectId = venueId,
+                extractionMethod = extractionMethod,
             ),
         )
     }
@@ -138,6 +142,7 @@ class PublicationInfoCreator(
                 subjectId = subjectId,
                 predicateId = Predicates.hasURL,
                 objectId = urlLiteralId,
+                extractionMethod = extractionMethod,
             ),
         )
     }

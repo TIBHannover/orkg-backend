@@ -81,6 +81,7 @@ class ComparisonRelatedResourceService(
                 subjectId = command.comparisonId,
                 predicateId = Predicates.hasRelatedResource,
                 objectId = resourceId,
+                extractionMethod = ExtractionMethod.UNKNOWN, // TODO: Get extraction method from command
             ),
         )
         if (command.image != null) {
@@ -96,6 +97,7 @@ class ComparisonRelatedResourceService(
                             extractionMethod = ExtractionMethod.UNKNOWN, // TODO: Get extraction method from command
                         ),
                     ),
+                    extractionMethod = ExtractionMethod.UNKNOWN, // TODO: Get extraction method from command
                 ),
             )
         }
@@ -112,6 +114,7 @@ class ComparisonRelatedResourceService(
                             extractionMethod = ExtractionMethod.UNKNOWN, // TODO: Get extraction method from command
                         ),
                     ),
+                    extractionMethod = ExtractionMethod.UNKNOWN, // TODO: Get extraction method from command
                 ),
             )
         }
@@ -128,6 +131,7 @@ class ComparisonRelatedResourceService(
                             extractionMethod = ExtractionMethod.UNKNOWN, // TODO: Get extraction method from command
                         ),
                     ),
+                    extractionMethod = ExtractionMethod.UNKNOWN, // TODO: Get extraction method from command
                 ),
             )
         }

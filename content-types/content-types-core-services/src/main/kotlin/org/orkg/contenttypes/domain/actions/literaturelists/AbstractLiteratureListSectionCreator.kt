@@ -41,6 +41,7 @@ class AbstractLiteratureListSectionCreator(
                 contributorId = contributorId,
                 label = "Entry",
                 classes = setOf(Classes.listSection),
+                extractionMethod = extractionMethod,
             ),
         )
         unsafeStatementUseCases.create(
@@ -49,6 +50,7 @@ class AbstractLiteratureListSectionCreator(
                 subjectId = entryId,
                 predicateId = Predicates.hasLink,
                 objectId = entry.id,
+                extractionMethod = extractionMethod,
             ),
         )
         entry.description?.also { description ->
@@ -65,6 +67,7 @@ class AbstractLiteratureListSectionCreator(
                     subjectId = entryId,
                     predicateId = Predicates.description,
                     objectId = descriptionLiteral,
+                    extractionMethod = extractionMethod,
                 ),
             )
         }
@@ -81,6 +84,7 @@ class AbstractLiteratureListSectionCreator(
                 contributorId = contributorId,
                 label = "",
                 classes = setOf(Classes.listSection),
+                extractionMethod = extractionMethod,
             ),
         )
         section.entries.forEach {
@@ -91,6 +95,7 @@ class AbstractLiteratureListSectionCreator(
                     subjectId = sectionId,
                     predicateId = Predicates.hasEntry,
                     objectId = entryId,
+                    extractionMethod = extractionMethod,
                 ),
             )
         }
@@ -107,6 +112,7 @@ class AbstractLiteratureListSectionCreator(
                 contributorId = contributorId,
                 label = section.heading,
                 classes = setOf(Classes.textSection),
+                extractionMethod = extractionMethod,
             ),
         )
         val headingSizeId = unsafeLiteralUseCases.create(
@@ -123,6 +129,7 @@ class AbstractLiteratureListSectionCreator(
                 subjectId = sectionId,
                 predicateId = Predicates.hasHeadingLevel,
                 objectId = headingSizeId,
+                extractionMethod = extractionMethod,
             ),
         )
         val textId = unsafeLiteralUseCases.create(
@@ -138,6 +145,7 @@ class AbstractLiteratureListSectionCreator(
                 subjectId = sectionId,
                 predicateId = Predicates.hasContent,
                 objectId = textId,
+                extractionMethod = extractionMethod,
             ),
         )
         return sectionId

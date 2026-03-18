@@ -85,6 +85,7 @@ internal class SmartReviewSectionsUpdaterUnitTest : MockkBaseTest {
                 subjectId = contributionId,
                 predicateId = Predicates.hasSection,
                 objects = any<List<ThingId>>(),
+                extractionMethod = command.extractionMethod!!,
             )
         } just runs
         every {
@@ -105,6 +106,7 @@ internal class SmartReviewSectionsUpdaterUnitTest : MockkBaseTest {
                 subjectId = contributionId,
                 predicateId = Predicates.hasSection,
                 objects = smartReview.sections.dropLast(1).map { it.id },
+                extractionMethod = command.extractionMethod!!,
             )
         }
         verify(exactly = 1) {
@@ -150,6 +152,7 @@ internal class SmartReviewSectionsUpdaterUnitTest : MockkBaseTest {
                 subjectId = contributionId,
                 predicateId = Predicates.hasSection,
                 objects = any<List<ThingId>>(),
+                extractionMethod = command.extractionMethod!!,
             )
         } just runs
 
@@ -163,6 +166,7 @@ internal class SmartReviewSectionsUpdaterUnitTest : MockkBaseTest {
                 subjectId = contributionId,
                 predicateId = Predicates.hasSection,
                 objects = smartReview.sections.map { it.id } + newSectionId,
+                extractionMethod = command.extractionMethod!!,
             )
         }
     }
@@ -200,6 +204,7 @@ internal class SmartReviewSectionsUpdaterUnitTest : MockkBaseTest {
                 subjectId = contributionId,
                 predicateId = Predicates.hasSection,
                 objects = any<List<ThingId>>(),
+                extractionMethod = command.extractionMethod!!,
             )
         } just runs
         every {
@@ -221,6 +226,7 @@ internal class SmartReviewSectionsUpdaterUnitTest : MockkBaseTest {
                 subjectId = contributionId,
                 predicateId = Predicates.hasSection,
                 objects = smartReview.sections.dropLast(1).map { it.id } + newSectionId,
+                extractionMethod = command.extractionMethod!!,
             )
         }
         verify(exactly = 1) {

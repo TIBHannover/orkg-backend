@@ -53,6 +53,7 @@ internal class AbstractLiteratureListSectionCreatorUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     label = "",
                     classes = setOf(Classes.listSection),
+                    extractionMethod = extractionMethod,
                 ),
             )
         } returns sectionId
@@ -62,6 +63,7 @@ internal class AbstractLiteratureListSectionCreatorUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     label = "Entry",
                     classes = setOf(Classes.listSection),
+                    extractionMethod = extractionMethod,
                 ),
             )
         } returns entryId
@@ -72,6 +74,7 @@ internal class AbstractLiteratureListSectionCreatorUnitTest : MockkBaseTest {
                     subjectId = sectionId,
                     predicateId = Predicates.hasEntry,
                     objectId = entryId,
+                    extractionMethod = extractionMethod,
                 ),
             )
         } returns StatementId("S1")
@@ -82,6 +85,7 @@ internal class AbstractLiteratureListSectionCreatorUnitTest : MockkBaseTest {
                     subjectId = entryId,
                     predicateId = Predicates.hasLink,
                     objectId = entry,
+                    extractionMethod = extractionMethod,
                 ),
             )
         } returns StatementId("S2")
@@ -93,6 +97,7 @@ internal class AbstractLiteratureListSectionCreatorUnitTest : MockkBaseTest {
                     subjectId = entryId,
                     predicateId = Predicates.description,
                     objectId = descriptionId,
+                    extractionMethod = extractionMethod,
                 ),
             )
         } returns StatementId("S3")
@@ -105,6 +110,7 @@ internal class AbstractLiteratureListSectionCreatorUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     label = "",
                     classes = setOf(Classes.listSection),
+                    extractionMethod = extractionMethod,
                 ),
             )
         }
@@ -114,6 +120,7 @@ internal class AbstractLiteratureListSectionCreatorUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     label = "Entry",
                     classes = setOf(Classes.listSection),
+                    extractionMethod = extractionMethod,
                 ),
             )
         }
@@ -124,6 +131,7 @@ internal class AbstractLiteratureListSectionCreatorUnitTest : MockkBaseTest {
                     subjectId = sectionId,
                     predicateId = Predicates.hasEntry,
                     objectId = entryId,
+                    extractionMethod = extractionMethod,
                 ),
             )
         }
@@ -134,6 +142,7 @@ internal class AbstractLiteratureListSectionCreatorUnitTest : MockkBaseTest {
                     subjectId = entryId,
                     predicateId = Predicates.hasLink,
                     objectId = entry,
+                    extractionMethod = extractionMethod,
                 ),
             )
         }
@@ -153,6 +162,7 @@ internal class AbstractLiteratureListSectionCreatorUnitTest : MockkBaseTest {
                     subjectId = entryId,
                     predicateId = Predicates.description,
                     objectId = descriptionId,
+                    extractionMethod = extractionMethod,
                 ),
             )
         }
@@ -175,6 +185,7 @@ internal class AbstractLiteratureListSectionCreatorUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     label = "",
                     classes = setOf(Classes.listSection),
+                    extractionMethod = extractionMethod,
                 ),
             )
         } returns sectionId
@@ -184,6 +195,7 @@ internal class AbstractLiteratureListSectionCreatorUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     label = "Entry",
                     classes = setOf(Classes.listSection),
+                    extractionMethod = extractionMethod,
                 ),
             )
         } returns entryId
@@ -194,6 +206,7 @@ internal class AbstractLiteratureListSectionCreatorUnitTest : MockkBaseTest {
                     subjectId = sectionId,
                     predicateId = Predicates.hasEntry,
                     objectId = entryId,
+                    extractionMethod = extractionMethod,
                 ),
             )
         } returns StatementId("S1")
@@ -204,6 +217,7 @@ internal class AbstractLiteratureListSectionCreatorUnitTest : MockkBaseTest {
                     subjectId = entryId,
                     predicateId = Predicates.hasLink,
                     objectId = entry,
+                    extractionMethod = extractionMethod,
                 ),
             )
         } returns StatementId("S2")
@@ -216,6 +230,7 @@ internal class AbstractLiteratureListSectionCreatorUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     label = "",
                     classes = setOf(Classes.listSection),
+                    extractionMethod = extractionMethod,
                 ),
             )
         }
@@ -225,6 +240,7 @@ internal class AbstractLiteratureListSectionCreatorUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     label = "Entry",
                     classes = setOf(Classes.listSection),
+                    extractionMethod = extractionMethod,
                 ),
             )
         }
@@ -235,6 +251,7 @@ internal class AbstractLiteratureListSectionCreatorUnitTest : MockkBaseTest {
                     subjectId = sectionId,
                     predicateId = Predicates.hasEntry,
                     objectId = entryId,
+                    extractionMethod = extractionMethod,
                 ),
             )
         }
@@ -245,6 +262,7 @@ internal class AbstractLiteratureListSectionCreatorUnitTest : MockkBaseTest {
                     subjectId = entryId,
                     predicateId = Predicates.hasLink,
                     objectId = entry,
+                    extractionMethod = extractionMethod,
                 ),
             )
         }
@@ -265,6 +283,7 @@ internal class AbstractLiteratureListSectionCreatorUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     label = section.heading,
                     classes = setOf(Classes.textSection),
+                    extractionMethod = extractionMethod,
                 ),
             )
         } returns sectionId
@@ -285,6 +304,7 @@ internal class AbstractLiteratureListSectionCreatorUnitTest : MockkBaseTest {
                     subjectId = sectionId,
                     predicateId = Predicates.hasHeadingLevel,
                     objectId = headingSizeId,
+                    extractionMethod = extractionMethod,
                 ),
             )
         } returns StatementId("S1")
@@ -304,6 +324,7 @@ internal class AbstractLiteratureListSectionCreatorUnitTest : MockkBaseTest {
                     subjectId = sectionId,
                     predicateId = Predicates.hasContent,
                     objectId = textId,
+                    extractionMethod = extractionMethod,
                 ),
             )
         } returns StatementId("S2")
@@ -316,6 +337,7 @@ internal class AbstractLiteratureListSectionCreatorUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     label = section.heading,
                     classes = setOf(Classes.textSection),
+                    extractionMethod = extractionMethod,
                 ),
             )
         }
@@ -336,6 +358,7 @@ internal class AbstractLiteratureListSectionCreatorUnitTest : MockkBaseTest {
                     subjectId = sectionId,
                     predicateId = Predicates.hasHeadingLevel,
                     objectId = headingSizeId,
+                    extractionMethod = extractionMethod,
                 ),
             )
         }
@@ -355,6 +378,7 @@ internal class AbstractLiteratureListSectionCreatorUnitTest : MockkBaseTest {
                     subjectId = sectionId,
                     predicateId = Predicates.hasContent,
                     objectId = textId,
+                    extractionMethod = extractionMethod,
                 ),
             )
         }

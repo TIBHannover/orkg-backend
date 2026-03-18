@@ -126,6 +126,7 @@ internal class LiteratureListSectionCreatorUnitTest : MockkBaseTest {
                 subjectId = command.literatureListId,
                 predicateId = Predicates.hasSection,
                 objects = any<List<ThingId>>(),
+                extractionMethod = extractionMethod,
             )
         } just runs
 
@@ -149,6 +150,7 @@ internal class LiteratureListSectionCreatorUnitTest : MockkBaseTest {
                 subjectId = command.literatureListId,
                 predicateId = Predicates.hasSection,
                 objects = listOf(ThingId("Section1"), sectionId, ThingId("Section2")),
+                extractionMethod = extractionMethod,
             )
         }
     }
@@ -188,6 +190,7 @@ internal class LiteratureListSectionCreatorUnitTest : MockkBaseTest {
                 subjectId = command.literatureListId,
                 predicateId = Predicates.hasSection,
                 objects = any<List<ThingId>>(),
+                extractionMethod = extractionMethod,
             )
         } just runs
 
@@ -211,6 +214,7 @@ internal class LiteratureListSectionCreatorUnitTest : MockkBaseTest {
                 subjectId = command.literatureListId,
                 predicateId = Predicates.hasSection,
                 objects = listOf(ThingId("Section1"), ThingId("Section2"), sectionId),
+                extractionMethod = extractionMethod,
             )
         }
     }

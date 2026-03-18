@@ -17,6 +17,7 @@ class ComparisonVisualizationCreator(
                     subjectId = state.comparisonId!!,
                     predicateId = Predicates.hasVisualization,
                     objectId = visualizationId,
+                    extractionMethod = command.extractionMethod,
                 ),
             )
         }

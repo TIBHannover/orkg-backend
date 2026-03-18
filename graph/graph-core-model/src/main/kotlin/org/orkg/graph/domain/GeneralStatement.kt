@@ -10,6 +10,7 @@ data class GeneralStatement(
     val `object`: Thing,
     val createdAt: OffsetDateTime?,
     val createdBy: ContributorId = ContributorId.UNKNOWN,
+    val extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN,
     val modifiable: Boolean = true,
     val index: Int? = null,
 ) {

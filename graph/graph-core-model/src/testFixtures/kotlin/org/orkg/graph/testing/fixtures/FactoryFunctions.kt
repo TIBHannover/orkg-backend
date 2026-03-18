@@ -88,9 +88,10 @@ fun createStatement(
     `object`: Thing = createClass(),
     createdAt: OffsetDateTime = OffsetDateTime.parse("2023-10-02T15:32:18.753961+01:00"),
     createdBy: ContributorId = ContributorId("34da5516-7901-4b0d-94c5-b062082e11a7"),
+    extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN,
     modifiable: Boolean = true,
     index: Int? = null,
-) = GeneralStatement(id, subject, predicate, `object`, createdAt, createdBy, modifiable, index)
+) = GeneralStatement(id, subject, predicate, `object`, createdAt, createdBy, extractionMethod, modifiable, index)
 
 fun createList(
     id: ThingId = ThingId("List1"),

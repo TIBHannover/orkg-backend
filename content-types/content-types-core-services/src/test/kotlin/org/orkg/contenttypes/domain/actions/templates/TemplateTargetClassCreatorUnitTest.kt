@@ -34,6 +34,7 @@ internal class TemplateTargetClassCreatorUnitTest : MockkBaseTest {
                     subjectId = state.templateId!!,
                     predicateId = Predicates.shTargetClass,
                     objectId = command.targetClass,
+                    extractionMethod = command.extractionMethod,
                 ),
             )
         } returns StatementId("S1")
@@ -51,6 +52,7 @@ internal class TemplateTargetClassCreatorUnitTest : MockkBaseTest {
                     subjectId = state.templateId!!,
                     predicateId = Predicates.shTargetClass,
                     objectId = command.targetClass,
+                    extractionMethod = command.extractionMethod,
                 ),
             )
         }

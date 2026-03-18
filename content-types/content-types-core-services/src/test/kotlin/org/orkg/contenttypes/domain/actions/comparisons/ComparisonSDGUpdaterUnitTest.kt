@@ -31,6 +31,7 @@ internal class ComparisonSDGUpdaterUnitTest : MockkBaseTest {
                 subjectId = command.comparisonId,
                 predicateId = Predicates.sustainableDevelopmentGoal,
                 objects = command.sustainableDevelopmentGoals!!,
+                extractionMethod = command.extractionMethod!!,
             )
         } just runs
 
@@ -43,6 +44,7 @@ internal class ComparisonSDGUpdaterUnitTest : MockkBaseTest {
                 subjectId = command.comparisonId,
                 predicateId = Predicates.sustainableDevelopmentGoal,
                 objects = command.sustainableDevelopmentGoals!!,
+                extractionMethod = command.extractionMethod!!,
             )
         }
     }

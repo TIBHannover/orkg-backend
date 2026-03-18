@@ -47,6 +47,7 @@ class AbstractSmartReviewSectionUpdater(
         newSection: AbstractSmartReviewComparisonSectionCommand,
         oldSection: SmartReviewComparisonSection,
         statements: Map<ThingId, List<GeneralStatement>>,
+        extractionMethod: ExtractionMethod,
     ) {
         if (newSection.heading != oldSection.heading) {
             unsafeResourceUseCases.update(
@@ -64,6 +65,7 @@ class AbstractSmartReviewSectionUpdater(
                 subjectId = oldSection.id,
                 predicateId = Predicates.hasLink,
                 objectId = newSection.comparison,
+                extractionMethod = extractionMethod,
             )
         }
     }
@@ -73,6 +75,7 @@ class AbstractSmartReviewSectionUpdater(
         newSection: AbstractSmartReviewVisualizationSectionCommand,
         oldSection: SmartReviewVisualizationSection,
         statements: Map<ThingId, List<GeneralStatement>>,
+        extractionMethod: ExtractionMethod,
     ) {
         if (newSection.heading != oldSection.heading) {
             unsafeResourceUseCases.update(
@@ -90,6 +93,7 @@ class AbstractSmartReviewSectionUpdater(
                 subjectId = oldSection.id,
                 predicateId = Predicates.hasLink,
                 objectId = newSection.visualization,
+                extractionMethod = extractionMethod,
             )
         }
     }
@@ -99,6 +103,7 @@ class AbstractSmartReviewSectionUpdater(
         newSection: AbstractSmartReviewResourceSectionCommand,
         oldSection: SmartReviewResourceSection,
         statements: Map<ThingId, List<GeneralStatement>>,
+        extractionMethod: ExtractionMethod,
     ) {
         if (newSection.heading != oldSection.heading) {
             unsafeResourceUseCases.update(
@@ -116,6 +121,7 @@ class AbstractSmartReviewSectionUpdater(
                 subjectId = oldSection.id,
                 predicateId = Predicates.hasLink,
                 objectId = newSection.resource,
+                extractionMethod = extractionMethod,
             )
         }
     }
@@ -125,6 +131,7 @@ class AbstractSmartReviewSectionUpdater(
         newSection: AbstractSmartReviewPredicateSectionCommand,
         oldSection: SmartReviewPredicateSection,
         statements: Map<ThingId, List<GeneralStatement>>,
+        extractionMethod: ExtractionMethod,
     ) {
         if (newSection.heading != oldSection.heading) {
             unsafeResourceUseCases.update(
@@ -142,6 +149,7 @@ class AbstractSmartReviewSectionUpdater(
                 subjectId = oldSection.id,
                 predicateId = Predicates.hasLink,
                 objectId = newSection.predicate,
+                extractionMethod = extractionMethod,
             )
         }
     }
@@ -151,6 +159,7 @@ class AbstractSmartReviewSectionUpdater(
         newSection: AbstractSmartReviewOntologySectionCommand,
         oldSection: SmartReviewOntologySection,
         statements: Map<ThingId, List<GeneralStatement>>,
+        extractionMethod: ExtractionMethod,
     ) {
         if (newSection.heading != oldSection.heading) {
             unsafeResourceUseCases.update(
@@ -168,6 +177,7 @@ class AbstractSmartReviewSectionUpdater(
                 subjectId = oldSection.id,
                 predicateId = Predicates.hasEntity,
                 objects = newSection.entities,
+                extractionMethod = extractionMethod,
             )
         }
         if (newSection.predicates != oldSection.predicates.map { it.id }) {
@@ -177,6 +187,7 @@ class AbstractSmartReviewSectionUpdater(
                 subjectId = oldSection.id,
                 predicateId = Predicates.showProperty,
                 objects = newSection.predicates,
+                extractionMethod = extractionMethod,
             )
         }
     }
@@ -186,6 +197,7 @@ class AbstractSmartReviewSectionUpdater(
         newSection: AbstractSmartReviewTextSectionCommand,
         oldSection: SmartReviewTextSection,
         statements: Map<ThingId, List<GeneralStatement>>,
+        extractionMethod: ExtractionMethod,
     ) {
         if (newSection.heading != oldSection.heading || newSection.`class` !in oldSection.classes) {
             unsafeResourceUseCases.update(
@@ -204,7 +216,7 @@ class AbstractSmartReviewSectionUpdater(
                 subjectId = oldSection.id,
                 predicateId = Predicates.hasContent,
                 label = newSection.text,
-                extractionMethod = ExtractionMethod.UNKNOWN,
+                extractionMethod = extractionMethod,
             )
         }
     }

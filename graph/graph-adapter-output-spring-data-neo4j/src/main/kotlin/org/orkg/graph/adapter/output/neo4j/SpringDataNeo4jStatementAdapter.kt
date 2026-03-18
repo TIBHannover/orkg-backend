@@ -103,6 +103,8 @@ class SpringDataNeo4jStatementAdapter(
                             parameter("createdBy"),
                             "created_at",
                             parameter("createdAt"),
+                            "extraction_method",
+                            parameter("extractionMethod"),
                             "index",
                             parameter("index"),
                             "modifiable",
@@ -117,6 +119,7 @@ class SpringDataNeo4jStatementAdapter(
                 "predicateId" to statement.predicate.id.value,
                 "createdBy" to statement.createdBy.value.toString(),
                 "createdAt" to statement.createdAt!!.format(ISO_OFFSET_DATE_TIME),
+                "extractionMethod" to statement.extractionMethod.name,
                 "index" to (statement.index ?: NullValue.NULL),
                 "modifiable" to statement.modifiable,
             )
@@ -144,10 +147,12 @@ class SpringDataNeo4jStatementAdapter(
                             valueAt(statement, 4),
                             "created_at",
                             valueAt(statement, 5),
-                            "index",
+                            "extraction_method",
                             valueAt(statement, 6),
-                            "modifiable",
+                            "index",
                             valueAt(statement, 7),
+                            "modifiable",
+                            valueAt(statement, 8),
                         ),
                     )
             }
@@ -160,6 +165,7 @@ class SpringDataNeo4jStatementAdapter(
                         it.predicate.id.value,
                         it.createdBy.value.toString(),
                         it.createdAt?.format(ISO_OFFSET_DATE_TIME),
+                        it.extractionMethod.name,
                         it.index,
                         it.modifiable,
                     )

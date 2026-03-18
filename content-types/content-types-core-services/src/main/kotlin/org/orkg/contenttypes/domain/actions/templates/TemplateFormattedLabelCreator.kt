@@ -27,6 +27,7 @@ class TemplateFormattedLabelCreator(
                     subjectId = state.templateId!!,
                     predicateId = Predicates.templateLabelFormat,
                     objectId = labelLiteralId,
+                    extractionMethod = command.extractionMethod,
                 ),
             )
         }

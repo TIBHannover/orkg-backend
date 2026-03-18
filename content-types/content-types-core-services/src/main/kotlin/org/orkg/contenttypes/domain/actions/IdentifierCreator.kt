@@ -37,6 +37,7 @@ class IdentifierCreator(
                         subjectId = subjectId,
                         predicateId = identifier.predicateId,
                         objectId = identifierLiteralId,
+                        extractionMethod = extractionMethod,
                     ),
                 )
             }

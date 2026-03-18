@@ -84,6 +84,7 @@ internal class SmartReviewSDGUpdaterUnitTest : MockkBaseTest {
                 subjectId = command.smartReviewId,
                 predicateId = Predicates.sustainableDevelopmentGoal,
                 objects = command.sustainableDevelopmentGoals!!.toSet(),
+                extractionMethod = command.extractionMethod!!,
             )
         } just runs
 
@@ -102,6 +103,7 @@ internal class SmartReviewSDGUpdaterUnitTest : MockkBaseTest {
                 subjectId = command.smartReviewId,
                 predicateId = Predicates.sustainableDevelopmentGoal,
                 objects = command.sustainableDevelopmentGoals!!.toSet(),
+                extractionMethod = command.extractionMethod!!,
             )
         }
     }

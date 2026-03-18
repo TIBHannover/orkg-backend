@@ -493,6 +493,7 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
                 contributorId = command.contributorId,
                 subjectId = command.paperId,
                 publishedIn = venue,
+                extractionMethod = command.extractionMethod!!,
             )
         } just runs
 
@@ -508,6 +509,7 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
                 contributorId = command.contributorId,
                 subjectId = command.paperId,
                 publishedIn = venue,
+                extractionMethod = command.extractionMethod!!,
             )
         }
     }

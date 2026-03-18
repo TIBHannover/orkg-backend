@@ -318,6 +318,7 @@ internal class AbstractTemplatePropertyUpdaterRealNumberLiteralPropertyUnitTest 
                     subjectId = oldProperty.id,
                     predicateId = Predicates.shDatatype,
                     objectId = newProperty.datatype,
+                    extractionMethod = extractionMethod,
                 ),
             )
         } returns StatementId("S1")
@@ -353,6 +354,7 @@ internal class AbstractTemplatePropertyUpdaterRealNumberLiteralPropertyUnitTest 
                     subjectId = oldProperty.id,
                     predicateId = Predicates.shDatatype,
                     objectId = newProperty.datatype,
+                    extractionMethod = extractionMethod,
                 ),
             )
         }

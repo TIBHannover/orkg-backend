@@ -4,6 +4,7 @@ import org.orkg.contenttypes.domain.actions.StatementCollectionPropertyUpdater
 import org.orkg.contenttypes.domain.actions.UpdatePaperCommand
 import org.orkg.contenttypes.domain.actions.papers.UpdatePaperAction.State
 import org.orkg.contenttypes.domain.ids
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UnsafeLiteralUseCases
@@ -28,6 +29,7 @@ class PaperResearchFieldUpdater(
                 subjectId = command.paperId,
                 predicateId = Predicates.hasResearchField,
                 objects = command.researchFields!!,
+                extractionMethod = command.extractionMethod ?: ExtractionMethod.UNKNOWN,
             )
         }
         return state

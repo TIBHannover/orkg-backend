@@ -14,15 +14,14 @@ import org.orkg.contenttypes.domain.SmartReviewComparisonSection
 import org.orkg.contenttypes.domain.SmartReviewOntologySection
 import org.orkg.contenttypes.domain.SmartReviewPredicateSection
 import org.orkg.contenttypes.domain.SmartReviewResourceSection
-import org.orkg.contenttypes.domain.SmartReviewSection
 import org.orkg.contenttypes.domain.SmartReviewTextSection
 import org.orkg.contenttypes.domain.SmartReviewVisualizationSection
-import org.orkg.contenttypes.domain.actions.UpdateSmartReviewSectionCommand
 import org.orkg.contenttypes.domain.actions.UpdateSmartReviewSectionState
 import org.orkg.contenttypes.domain.actions.smartreviews.AbstractSmartReviewSectionUpdater
 import org.orkg.contenttypes.domain.testing.fixtures.createSmartReview
 import org.orkg.contenttypes.domain.testing.fixtures.toGroupedStatements
 import org.orkg.contenttypes.input.UpdateSmartReviewSectionUseCase
+import org.orkg.graph.domain.ExtractionMethod
 import java.util.UUID
 
 internal class SmartReviewSectionUpdaterUnitTest : MockkBaseTest {
@@ -54,7 +53,7 @@ internal class SmartReviewSectionUpdaterUnitTest : MockkBaseTest {
             .shouldBeInstanceOf<UpdateSmartReviewSectionUseCase.UpdateComparisonSectionCommand>()
             .copy(heading = "updated heading")
 
-        every { abstractSmartReviewSectionUpdater.updateComparisonSection(any(), any(), any(), any()) } just runs
+        every { abstractSmartReviewSectionUpdater.updateComparisonSection(any(), any(), any(), any(), any()) } just runs
 
         smartReviewSectionUpdateValidator(command, state)
 
@@ -64,6 +63,7 @@ internal class SmartReviewSectionUpdaterUnitTest : MockkBaseTest {
                 newSection = command,
                 oldSection = oldSection,
                 statements = state.statements,
+                extractionMethod = ExtractionMethod.UNKNOWN,
             )
         }
     }
@@ -92,7 +92,7 @@ internal class SmartReviewSectionUpdaterUnitTest : MockkBaseTest {
             .shouldBeInstanceOf<UpdateSmartReviewSectionUseCase.UpdateVisualizationSectionCommand>()
             .copy(heading = "updated heading")
 
-        every { abstractSmartReviewSectionUpdater.updateVisualizationSection(any(), any(), any(), any()) } just runs
+        every { abstractSmartReviewSectionUpdater.updateVisualizationSection(any(), any(), any(), any(), any()) } just runs
 
         smartReviewSectionUpdateValidator(command, state)
 
@@ -102,6 +102,7 @@ internal class SmartReviewSectionUpdaterUnitTest : MockkBaseTest {
                 newSection = command,
                 oldSection = oldSection,
                 statements = state.statements,
+                extractionMethod = ExtractionMethod.UNKNOWN,
             )
         }
     }
@@ -130,7 +131,7 @@ internal class SmartReviewSectionUpdaterUnitTest : MockkBaseTest {
             .shouldBeInstanceOf<UpdateSmartReviewSectionUseCase.UpdateResourceSectionCommand>()
             .copy(heading = "updated heading")
 
-        every { abstractSmartReviewSectionUpdater.updateResourceSection(any(), any(), any(), any()) } just runs
+        every { abstractSmartReviewSectionUpdater.updateResourceSection(any(), any(), any(), any(), any()) } just runs
 
         smartReviewSectionUpdateValidator(command, state)
 
@@ -140,6 +141,7 @@ internal class SmartReviewSectionUpdaterUnitTest : MockkBaseTest {
                 newSection = command,
                 oldSection = oldSection,
                 statements = state.statements,
+                extractionMethod = ExtractionMethod.UNKNOWN,
             )
         }
     }
@@ -168,7 +170,7 @@ internal class SmartReviewSectionUpdaterUnitTest : MockkBaseTest {
             .shouldBeInstanceOf<UpdateSmartReviewSectionUseCase.UpdatePredicateSectionCommand>()
             .copy(heading = "updated heading")
 
-        every { abstractSmartReviewSectionUpdater.updatePredicateSection(any(), any(), any(), any()) } just runs
+        every { abstractSmartReviewSectionUpdater.updatePredicateSection(any(), any(), any(), any(), any()) } just runs
 
         smartReviewSectionUpdateValidator(command, state)
 
@@ -178,6 +180,7 @@ internal class SmartReviewSectionUpdaterUnitTest : MockkBaseTest {
                 newSection = command,
                 oldSection = oldSection,
                 statements = state.statements,
+                extractionMethod = ExtractionMethod.UNKNOWN,
             )
         }
     }
@@ -206,7 +209,7 @@ internal class SmartReviewSectionUpdaterUnitTest : MockkBaseTest {
             .shouldBeInstanceOf<UpdateSmartReviewSectionUseCase.UpdateOntologySectionCommand>()
             .copy(heading = "updated heading")
 
-        every { abstractSmartReviewSectionUpdater.updateOntologySection(any(), any(), any(), any()) } just runs
+        every { abstractSmartReviewSectionUpdater.updateOntologySection(any(), any(), any(), any(), any()) } just runs
 
         smartReviewSectionUpdateValidator(command, state)
 
@@ -216,6 +219,7 @@ internal class SmartReviewSectionUpdaterUnitTest : MockkBaseTest {
                 newSection = command,
                 oldSection = oldSection,
                 statements = state.statements,
+                extractionMethod = ExtractionMethod.UNKNOWN,
             )
         }
     }
@@ -244,7 +248,7 @@ internal class SmartReviewSectionUpdaterUnitTest : MockkBaseTest {
             .shouldBeInstanceOf<UpdateSmartReviewSectionUseCase.UpdateTextSectionCommand>()
             .copy(text = "updated text")
 
-        every { abstractSmartReviewSectionUpdater.updateTextSection(any(), any(), any(), any()) } just runs
+        every { abstractSmartReviewSectionUpdater.updateTextSection(any(), any(), any(), any(), any()) } just runs
 
         smartReviewSectionUpdateValidator(command, state)
 
@@ -254,22 +258,10 @@ internal class SmartReviewSectionUpdaterUnitTest : MockkBaseTest {
                 newSection = command,
                 oldSection = oldSection,
                 statements = state.statements,
+                extractionMethod = ExtractionMethod.UNKNOWN,
             )
         }
     }
-
-    private fun SmartReviewSection.toUpdateCommand(
-        contributorId: ContributorId,
-        smartReviewId: ThingId,
-    ): UpdateSmartReviewSectionCommand =
-        when (this) {
-            is SmartReviewComparisonSection -> toUpdateCommand(contributorId, smartReviewId)
-            is SmartReviewVisualizationSection -> toUpdateCommand(contributorId, smartReviewId)
-            is SmartReviewResourceSection -> toUpdateCommand(contributorId, smartReviewId)
-            is SmartReviewPredicateSection -> toUpdateCommand(contributorId, smartReviewId)
-            is SmartReviewOntologySection -> toUpdateCommand(contributorId, smartReviewId)
-            is SmartReviewTextSection -> toUpdateCommand(contributorId, smartReviewId)
-        }
 
     private fun SmartReviewComparisonSection.toUpdateCommand(
         contributorId: ContributorId,

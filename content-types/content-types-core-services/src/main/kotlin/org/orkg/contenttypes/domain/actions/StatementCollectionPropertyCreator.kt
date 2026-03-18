@@ -36,6 +36,7 @@ class StatementCollectionPropertyCreator(
                     subjectId = subjectId,
                     predicateId = predicateId,
                     objectId = literal,
+                    extractionMethod = extractionMethod,
                 ),
             )
         }
@@ -46,6 +47,7 @@ class StatementCollectionPropertyCreator(
         subjectId: ThingId,
         predicateId: ThingId,
         objects: List<ThingId>,
+        extractionMethod: ExtractionMethod,
     ) {
         objects.distinct().forEach { objectId ->
             unsafeStatementUseCases.create(
@@ -54,6 +56,7 @@ class StatementCollectionPropertyCreator(
                     subjectId = subjectId,
                     predicateId = predicateId,
                     objectId = objectId,
+                    extractionMethod = extractionMethod,
                 ),
             )
         }

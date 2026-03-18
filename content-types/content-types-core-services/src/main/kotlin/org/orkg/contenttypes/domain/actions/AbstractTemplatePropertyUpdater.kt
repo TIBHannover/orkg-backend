@@ -172,6 +172,7 @@ class AbstractTemplatePropertyUpdater(
                         subjectId = oldProperty.id,
                         predicateId = Predicates.shDatatype,
                         objectId = newProperty.datatype,
+                        extractionMethod = extractionMethod,
                     ),
                 )
             }
@@ -187,6 +188,7 @@ class AbstractTemplatePropertyUpdater(
                         subjectId = oldProperty.id,
                         predicateId = Predicates.shClass,
                         objectId = newProperty.`class`,
+                        extractionMethod = extractionMethod,
                     ),
                 )
             }
@@ -204,6 +206,7 @@ class AbstractTemplatePropertyUpdater(
                 subjectId = oldProperty.id,
                 predicateId = Predicates.shPath,
                 objectId = newProperty.path,
+                extractionMethod = extractionMethod,
             )
         }
 

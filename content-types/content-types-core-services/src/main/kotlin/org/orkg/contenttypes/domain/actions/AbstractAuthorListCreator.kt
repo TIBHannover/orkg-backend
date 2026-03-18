@@ -58,6 +58,7 @@ class AbstractAuthorListCreator(
                 subjectId = subjectId,
                 predicateId = Predicates.hasAuthors,
                 objectId = authorList,
+                extractionMethod = extractionMethod,
             ),
         )
     }
@@ -99,6 +100,7 @@ class AbstractAuthorListCreator(
                     subjectId = authorId,
                     predicateId = Predicates.hasWebsite,
                     objectId = homepage,
+                    extractionMethod = extractionMethod,
                 ),
             )
         }
@@ -128,6 +130,7 @@ class AbstractAuthorListCreator(
                         subjectId = authorId,
                         predicateId = identifier.predicateId,
                         objectId = literalId,
+                        extractionMethod = extractionMethod,
                     ),
                 )
             }

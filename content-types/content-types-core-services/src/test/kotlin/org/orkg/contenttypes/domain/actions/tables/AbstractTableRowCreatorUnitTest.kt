@@ -47,6 +47,7 @@ internal class AbstractTableRowCreatorUnitTest : MockkBaseTest {
             contributorId = contributorId,
             label = "",
             classes = setOf(Classes.row),
+            extractionMethod = extractionMethod,
         )
         val createRowNumberLiteralCommand = CreateLiteralUseCase.CreateCommand(
             contributorId = contributorId,
@@ -59,6 +60,7 @@ internal class AbstractTableRowCreatorUnitTest : MockkBaseTest {
             subjectId = rowId,
             predicateId = Predicates.csvwNumber,
             objectId = rowNumberLiteralId,
+            extractionMethod = extractionMethod,
         )
         val createRowLabelLiteralCommand = CreateLiteralUseCase.CreateCommand(
             contributorId = contributorId,
@@ -70,12 +72,14 @@ internal class AbstractTableRowCreatorUnitTest : MockkBaseTest {
             subjectId = rowId,
             predicateId = Predicates.csvwTitles,
             objectId = rowLabelLiteralId,
+            extractionMethod = extractionMethod,
         )
         val createRowStatementCommand = CreateStatementUseCase.CreateCommand(
             contributorId = contributorId,
             subjectId = tableId,
             predicateId = Predicates.csvwRows,
             objectId = rowId,
+            extractionMethod = extractionMethod,
         )
 
         every { unsafeResourceUseCases.create(createRowResourceCommand) } returns rowId
@@ -111,6 +115,7 @@ internal class AbstractTableRowCreatorUnitTest : MockkBaseTest {
             contributorId = contributorId,
             label = "",
             classes = setOf(Classes.row),
+            extractionMethod = extractionMethod,
         )
         val createRowNumberLiteralCommand = CreateLiteralUseCase.CreateCommand(
             contributorId = contributorId,
@@ -123,12 +128,14 @@ internal class AbstractTableRowCreatorUnitTest : MockkBaseTest {
             subjectId = rowId,
             predicateId = Predicates.csvwNumber,
             objectId = rowNumberLiteralId,
+            extractionMethod = extractionMethod,
         )
         val createRowStatementCommand = CreateStatementUseCase.CreateCommand(
             contributorId = contributorId,
             subjectId = tableId,
             predicateId = Predicates.csvwRows,
             objectId = rowId,
+            extractionMethod = extractionMethod,
         )
 
         every { unsafeResourceUseCases.create(createRowResourceCommand) } returns rowId

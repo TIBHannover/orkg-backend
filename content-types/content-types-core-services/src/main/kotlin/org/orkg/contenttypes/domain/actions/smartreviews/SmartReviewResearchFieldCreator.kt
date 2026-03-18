@@ -23,6 +23,7 @@ class SmartReviewResearchFieldCreator(
             subjectId = state.smartReviewId!!,
             predicateId = Predicates.hasResearchField,
             objects = command.researchFields,
+            extractionMethod = command.extractionMethod,
         )
         return state
     }

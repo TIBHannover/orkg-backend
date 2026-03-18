@@ -23,6 +23,7 @@ class TableCellsCreator(
                     rowId = state.rows[rowIndex],
                     columnId = state.columns[columnIndex],
                     value = value?.let(state::resolve),
+                    extractionMethod = command.extractionMethod,
                 )
             }
         }

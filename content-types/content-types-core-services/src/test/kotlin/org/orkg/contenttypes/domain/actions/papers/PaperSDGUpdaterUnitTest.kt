@@ -84,6 +84,7 @@ internal class PaperSDGUpdaterUnitTest : MockkBaseTest {
                 subjectId = command.paperId,
                 predicateId = Predicates.sustainableDevelopmentGoal,
                 objects = command.sustainableDevelopmentGoals!!,
+                extractionMethod = command.extractionMethod!!,
             )
         } just runs
 
@@ -102,6 +103,7 @@ internal class PaperSDGUpdaterUnitTest : MockkBaseTest {
                 subjectId = command.paperId,
                 predicateId = Predicates.sustainableDevelopmentGoal,
                 objects = command.sustainableDevelopmentGoals!!,
+                extractionMethod = command.extractionMethod!!,
             )
         }
     }

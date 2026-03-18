@@ -18,6 +18,7 @@ import org.orkg.contenttypes.domain.actions.tables.AbstractTableCellCreator
 import org.orkg.contenttypes.domain.testing.fixtures.createTable
 import org.orkg.contenttypes.domain.testing.fixtures.createTableStatements
 import org.orkg.contenttypes.input.testing.fixtures.updateTableCellCommand
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Predicates
 
 internal class TableCellUpdaterUnitTest : MockkBaseTest {
@@ -42,7 +43,7 @@ internal class TableCellUpdaterUnitTest : MockkBaseTest {
             statements = statements.groupBy { it.subject.id },
         )
 
-        every { abstractTableCellCreator.create(any(), any(), any(), any()) } returns ThingId("irrelevant")
+        every { abstractTableCellCreator.create(any(), any(), any(), any(), any()) } returns ThingId("irrelevant")
 
         tableCellUpdater(command, state) shouldBe state
 
@@ -52,6 +53,7 @@ internal class TableCellUpdaterUnitTest : MockkBaseTest {
                 rowId = ThingId("Row_1"),
                 columnId = ThingId("Column_2"),
                 value = command.id,
+                extractionMethod = ExtractionMethod.UNKNOWN,
             )
         }
     }
@@ -71,7 +73,7 @@ internal class TableCellUpdaterUnitTest : MockkBaseTest {
             statements = statements.groupBy { it.subject.id },
         )
 
-        every { singleStatementPropertyUpdater.updateOptionalProperty(any(), any(), any(), any(), any<ThingId>()) } just runs
+        every { singleStatementPropertyUpdater.updateOptionalProperty(any(), any(), any(), any(), any<ThingId>(), any()) } just runs
 
         tableCellUpdater(command, state) shouldBe state
 
@@ -82,6 +84,7 @@ internal class TableCellUpdaterUnitTest : MockkBaseTest {
                 subjectId = ThingId("Cell_1_2"),
                 predicateId = Predicates.csvwValue,
                 objectId = command.id,
+                extractionMethod = ExtractionMethod.UNKNOWN,
             )
         }
     }
@@ -120,7 +123,7 @@ internal class TableCellUpdaterUnitTest : MockkBaseTest {
             statements = statements.groupBy { it.subject.id },
         )
 
-        every { singleStatementPropertyUpdater.updateRequiredProperty(any(), any(), any(), any(), any<ThingId>()) } just runs
+        every { singleStatementPropertyUpdater.updateRequiredProperty(any(), any(), any(), any(), any<ThingId>(), any()) } just runs
 
         tableCellUpdater(command, state) shouldBe state
 
@@ -131,6 +134,7 @@ internal class TableCellUpdaterUnitTest : MockkBaseTest {
                 subjectId = ThingId("Column_2"),
                 predicateId = Predicates.csvwTitles,
                 objectId = command.id!!,
+                extractionMethod = ExtractionMethod.UNKNOWN,
             )
         }
     }

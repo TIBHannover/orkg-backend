@@ -16,6 +16,7 @@ class ComparisonContributionCreator(
                     subjectId = state.comparisonId!!,
                     predicateId = source.type.predicateId,
                     objectId = source.id,
+                    extractionMethod = command.extractionMethod,
                 ),
             )
         }

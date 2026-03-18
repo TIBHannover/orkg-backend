@@ -3,6 +3,7 @@ package org.orkg.contenttypes.domain.actions.comparisons
 import org.orkg.contenttypes.domain.actions.PublishComparisonCommand
 import org.orkg.contenttypes.domain.actions.comparisons.PublishComparisonAction.State
 import org.orkg.graph.domain.Classes
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.UnsafeResourceUseCases
@@ -20,6 +21,7 @@ class ComparisonVersionHistoryUpdater(
                 subjectId = state.comparison!!.id,
                 predicateId = Predicates.hasPublishedVersion,
                 objectId = state.comparisonVersionId!!,
+                extractionMethod = ExtractionMethod.UNKNOWN,
             ),
         )
         state.comparison.versions.published.firstOrNull()?.let { latestVersion ->

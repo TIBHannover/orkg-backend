@@ -245,6 +245,7 @@ internal class UnsafeStatementServiceUnitTest : MockkBaseTest {
             subjectId = statement.subject.id,
             predicateId = statement.predicate.id,
             objectId = statement.`object`.id,
+            extractionMethod = statement.extractionMethod,
             modifiable = statement.modifiable,
         )
 

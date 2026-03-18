@@ -16,6 +16,7 @@ import org.orkg.contenttypes.input.AbstractSmartReviewResourceSectionCommand
 import org.orkg.contenttypes.input.AbstractSmartReviewSectionCommand
 import org.orkg.contenttypes.input.AbstractSmartReviewTextSectionCommand
 import org.orkg.contenttypes.input.AbstractSmartReviewVisualizationSectionCommand
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UnsafeLiteralUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
@@ -47,6 +48,7 @@ class SmartReviewSectionUpdater(
                     newSection = command,
                     oldSection = section as SmartReviewComparisonSection,
                     statements = state.statements,
+                    extractionMethod = ExtractionMethod.UNKNOWN,
                 )
 
                 is AbstractSmartReviewVisualizationSectionCommand -> abstractSmartReviewSectionUpdater.updateVisualizationSection(
@@ -54,6 +56,7 @@ class SmartReviewSectionUpdater(
                     newSection = command,
                     oldSection = section as SmartReviewVisualizationSection,
                     statements = state.statements,
+                    extractionMethod = ExtractionMethod.UNKNOWN,
                 )
 
                 is AbstractSmartReviewResourceSectionCommand -> abstractSmartReviewSectionUpdater.updateResourceSection(
@@ -61,6 +64,7 @@ class SmartReviewSectionUpdater(
                     newSection = command,
                     oldSection = section as SmartReviewResourceSection,
                     statements = state.statements,
+                    extractionMethod = ExtractionMethod.UNKNOWN,
                 )
 
                 is AbstractSmartReviewPredicateSectionCommand -> abstractSmartReviewSectionUpdater.updatePredicateSection(
@@ -68,6 +72,7 @@ class SmartReviewSectionUpdater(
                     newSection = command,
                     oldSection = section as SmartReviewPredicateSection,
                     statements = state.statements,
+                    extractionMethod = ExtractionMethod.UNKNOWN,
                 )
 
                 is AbstractSmartReviewOntologySectionCommand -> abstractSmartReviewSectionUpdater.updateOntologySection(
@@ -75,6 +80,7 @@ class SmartReviewSectionUpdater(
                     newSection = command,
                     oldSection = section as SmartReviewOntologySection,
                     statements = state.statements,
+                    extractionMethod = ExtractionMethod.UNKNOWN,
                 )
 
                 is AbstractSmartReviewTextSectionCommand -> abstractSmartReviewSectionUpdater.updateTextSection(
@@ -82,6 +88,7 @@ class SmartReviewSectionUpdater(
                     newSection = command,
                     oldSection = section as SmartReviewTextSection,
                     statements = state.statements,
+                    extractionMethod = ExtractionMethod.UNKNOWN,
                 )
             }
         }

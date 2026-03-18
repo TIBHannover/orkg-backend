@@ -52,6 +52,7 @@ internal class TemplateClosedCreatorUnitTest : MockkBaseTest {
                     subjectId = state.templateId!!,
                     predicateId = Predicates.shClosed,
                     objectId = closedLiteralId,
+                    extractionMethod = extractionMethod,
                 ),
             )
         } returns StatementId("S1")
@@ -79,6 +80,7 @@ internal class TemplateClosedCreatorUnitTest : MockkBaseTest {
                     subjectId = state.templateId!!,
                     predicateId = Predicates.shClosed,
                     objectId = closedLiteralId,
+                    extractionMethod = extractionMethod,
                 ),
             )
         }

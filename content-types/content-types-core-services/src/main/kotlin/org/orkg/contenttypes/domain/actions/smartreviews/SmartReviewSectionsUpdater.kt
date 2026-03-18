@@ -49,6 +49,7 @@ class SmartReviewSectionsUpdater(
                     subjectId = contributionId,
                     predicateId = Predicates.hasSection,
                     objects = sectionIds,
+                    extractionMethod = command.extractionMethod ?: ExtractionMethod.UNKNOWN,
                 )
                 oldSections.forEach {
                     abstractSmartReviewSectionDeleter.delete(command.contributorId, contributionId, it, state.statements)

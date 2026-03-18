@@ -77,6 +77,7 @@ internal class SmartReviewResearchFieldUpdaterUnitTest : MockkBaseTest {
                 subjectId = command.smartReviewId,
                 predicateId = Predicates.hasResearchField,
                 objects = command.researchFields!!.toSet(),
+                extractionMethod = command.extractionMethod!!,
             )
         } just runs
 
@@ -95,6 +96,7 @@ internal class SmartReviewResearchFieldUpdaterUnitTest : MockkBaseTest {
                 subjectId = command.smartReviewId,
                 predicateId = Predicates.hasResearchField,
                 objects = command.researchFields!!.toSet(),
+                extractionMethod = command.extractionMethod!!,
             )
         }
     }

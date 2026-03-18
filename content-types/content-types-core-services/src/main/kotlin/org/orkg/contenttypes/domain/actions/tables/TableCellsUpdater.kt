@@ -3,6 +3,7 @@ package org.orkg.contenttypes.domain.actions.tables
 import org.orkg.contenttypes.domain.actions.UpdateTableCommand
 import org.orkg.contenttypes.domain.actions.tables.UpdateTableAction.State
 import org.orkg.contenttypes.domain.actions.tryDelete
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Resource
 import org.orkg.graph.input.CreateStatementUseCase
@@ -46,6 +47,7 @@ class TableCellsUpdater(
                         rowId = state.rows[rowIndex],
                         columnId = state.columns[columnIndex],
                         value = value?.let(state::resolve),
+                        extractionMethod = command.extractionMethod ?: ExtractionMethod.UNKNOWN,
                     )
                 } else if (value != cellGraph.value?.id?.value) {
                     // new value differs from old value, unlink old value if present
@@ -60,6 +62,7 @@ class TableCellsUpdater(
                                 subjectId = cellGraph.cellId,
                                 predicateId = Predicates.csvwValue,
                                 objectId = state.resolve(value)!!,
+                                extractionMethod = command.extractionMethod ?: ExtractionMethod.UNKNOWN,
                             ),
                         )
                     }
@@ -72,6 +75,7 @@ class TableCellsUpdater(
                     rowId = state.rows[rowIndex],
                     columnId = state.columns[columnIndex],
                     value = value?.let(state::resolve),
+                    extractionMethod = command.extractionMethod ?: ExtractionMethod.UNKNOWN,
                 )
             }
             // mark exceeding cells for deletion
@@ -91,6 +95,7 @@ class TableCellsUpdater(
                     rowId = state.rows[rowIndex],
                     columnId = state.columns[columnIndex],
                     value = value?.let(state::resolve),
+                    extractionMethod = command.extractionMethod ?: ExtractionMethod.UNKNOWN,
                 )
             }
         }

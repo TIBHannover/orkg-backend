@@ -23,6 +23,7 @@ class PaperResearchFieldCreator(
             subjectId = state.paperId!!,
             predicateId = Predicates.hasResearchField,
             objects = command.researchFields,
+            extractionMethod = command.extractionMethod,
         )
         return state
     }

@@ -3,6 +3,7 @@ package org.orkg.contenttypes.domain.actions.comparisons
 import org.orkg.contenttypes.domain.actions.CreateComparisonCommand
 import org.orkg.contenttypes.domain.actions.StatementCollectionPropertyCreator
 import org.orkg.contenttypes.domain.actions.comparisons.CreateComparisonAction.State
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.UnsafeLiteralUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
@@ -21,6 +22,7 @@ class ComparisonResearchFieldCreator(
             subjectId = state.comparisonId!!,
             predicateId = Predicates.hasSubject,
             objects = command.researchFields,
+            extractionMethod = command.extractionMethod,
         )
         return state
     }

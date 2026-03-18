@@ -42,6 +42,7 @@ internal class TemplateRelationsCreatorUnitTest : MockkBaseTest {
                     subjectId = state.templateId!!,
                     predicateId = Predicates.templateOfResearchField,
                     objectId = researchFieldId,
+                    extractionMethod = command.extractionMethod,
                 ),
             )
         } returns StatementId("S1")
@@ -59,6 +60,7 @@ internal class TemplateRelationsCreatorUnitTest : MockkBaseTest {
                     subjectId = state.templateId!!,
                     predicateId = Predicates.templateOfResearchField,
                     objectId = researchFieldId,
+                    extractionMethod = command.extractionMethod,
                 ),
             )
         }
@@ -85,6 +87,7 @@ internal class TemplateRelationsCreatorUnitTest : MockkBaseTest {
                     subjectId = state.templateId!!,
                     predicateId = Predicates.templateOfResearchProblem,
                     objectId = researchProblemId,
+                    extractionMethod = command.extractionMethod,
                 ),
             )
         } returns StatementId("S1")
@@ -102,6 +105,7 @@ internal class TemplateRelationsCreatorUnitTest : MockkBaseTest {
                     subjectId = state.templateId!!,
                     predicateId = Predicates.templateOfResearchProblem,
                     objectId = researchProblemId,
+                    extractionMethod = command.extractionMethod,
                 ),
             )
         }
@@ -128,6 +132,7 @@ internal class TemplateRelationsCreatorUnitTest : MockkBaseTest {
                     subjectId = state.templateId!!,
                     predicateId = Predicates.templateOfPredicate,
                     objectId = predicateId,
+                    extractionMethod = command.extractionMethod,
                 ),
             )
         } returns StatementId("S1")
@@ -145,6 +150,7 @@ internal class TemplateRelationsCreatorUnitTest : MockkBaseTest {
                     subjectId = state.templateId!!,
                     predicateId = Predicates.templateOfPredicate,
                     objectId = predicateId,
+                    extractionMethod = command.extractionMethod,
                 ),
             )
         }

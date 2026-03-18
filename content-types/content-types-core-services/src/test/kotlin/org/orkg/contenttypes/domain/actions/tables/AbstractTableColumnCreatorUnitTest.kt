@@ -46,6 +46,7 @@ internal class AbstractTableColumnCreatorUnitTest : MockkBaseTest {
             contributorId = contributorId,
             label = "",
             classes = setOf(Classes.column),
+            extractionMethod = extractionMethod,
         )
         val createColumnNumberLiteralCommand = CreateLiteralUseCase.CreateCommand(
             contributorId = contributorId,
@@ -58,18 +59,21 @@ internal class AbstractTableColumnCreatorUnitTest : MockkBaseTest {
             subjectId = columnId,
             predicateId = Predicates.csvwNumber,
             objectId = columnNumberLiteralId,
+            extractionMethod = extractionMethod,
         )
         val createColumnTitleStatementCommand = CreateStatementUseCase.CreateCommand(
             contributorId = contributorId,
             subjectId = columnId,
             predicateId = Predicates.csvwTitles,
             objectId = columnTitleLiteralId,
+            extractionMethod = extractionMethod,
         )
         val createColumnStatementCommand = CreateStatementUseCase.CreateCommand(
             contributorId = contributorId,
             subjectId = tableId,
             predicateId = Predicates.csvwColumns,
             objectId = columnId,
+            extractionMethod = extractionMethod,
         )
 
         every { unsafeResourceUseCases.create(createColumnResourceCommand) } returns columnId

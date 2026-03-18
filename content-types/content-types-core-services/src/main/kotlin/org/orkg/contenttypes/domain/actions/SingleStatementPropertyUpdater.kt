@@ -86,6 +86,7 @@ class SingleStatementPropertyUpdater(
         subjectId: ThingId,
         predicateId: ThingId,
         objectId: ThingId,
+        extractionMethod: ExtractionMethod,
     ) {
         val toRemove = statements.wherePredicate(predicateId).toMutableSet()
         if (toRemove.isNotEmpty()) {
@@ -97,6 +98,7 @@ class SingleStatementPropertyUpdater(
                 subjectId = subjectId,
                 predicateId = predicateId,
                 objectId = objectId,
+                extractionMethod = extractionMethod,
             ),
         )
     }
@@ -107,6 +109,7 @@ class SingleStatementPropertyUpdater(
         subjectId: ThingId,
         predicateId: ThingId,
         objectId: ThingId?,
+        extractionMethod: ExtractionMethod,
     ) {
         val toRemove = statements.wherePredicate(predicateId).toMutableSet()
         if (toRemove.isNotEmpty()) {
@@ -119,6 +122,7 @@ class SingleStatementPropertyUpdater(
                     subjectId = subjectId,
                     predicateId = predicateId,
                     objectId = objectId,
+                    extractionMethod = extractionMethod,
                 ),
             )
         }

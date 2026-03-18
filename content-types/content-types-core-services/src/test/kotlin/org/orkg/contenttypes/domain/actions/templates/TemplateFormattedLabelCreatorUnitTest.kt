@@ -50,6 +50,7 @@ internal class TemplateFormattedLabelCreatorUnitTest : MockkBaseTest {
                     subjectId = state.templateId!!,
                     predicateId = Predicates.templateLabelFormat,
                     objectId = formattedLabelLiteralId,
+                    extractionMethod = extractionMethod,
                 ),
             )
         } returns StatementId("S1")
@@ -76,6 +77,7 @@ internal class TemplateFormattedLabelCreatorUnitTest : MockkBaseTest {
                     subjectId = state.templateId!!,
                     predicateId = Predicates.templateLabelFormat,
                     objectId = formattedLabelLiteralId,
+                    extractionMethod = extractionMethod,
                 ),
             )
         }

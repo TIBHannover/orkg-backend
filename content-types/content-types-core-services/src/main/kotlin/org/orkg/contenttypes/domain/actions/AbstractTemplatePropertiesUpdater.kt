@@ -4,6 +4,7 @@ import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.TemplateProperty
 import org.orkg.contenttypes.input.TemplatePropertyCommand
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.GeneralStatement
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
@@ -34,6 +35,7 @@ class AbstractTemplatePropertiesUpdater(
         newProperties: List<TemplatePropertyCommand>,
         oldProperties: List<TemplateProperty>,
         statements: Map<ThingId, List<GeneralStatement>>,
+        extractionMethod: ExtractionMethod,
     ) {
         val properties = oldProperties.toMutableList()
         val newToOld = newProperties.associateWith { newProperty ->
@@ -49,6 +51,7 @@ class AbstractTemplatePropertiesUpdater(
                         order = index,
                         newProperty = newProperty,
                         oldProperty = oldProperty,
+                        extractionMethod = extractionMethod,
                     )
                 }
             } else {
@@ -57,6 +60,7 @@ class AbstractTemplatePropertiesUpdater(
                     templateId = subjectId,
                     order = index,
                     property = newProperty,
+                    extractionMethod = extractionMethod,
                 )
             }
         }

@@ -23,6 +23,7 @@ import org.orkg.contenttypes.domain.actions.UpdateComparisonRelatedResourceComma
 import org.orkg.contenttypes.domain.testing.fixtures.createComparisonRelatedResource
 import org.orkg.contenttypes.input.ComparisonRelatedResourceUseCases
 import org.orkg.graph.domain.Classes
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.InvalidDescription
 import org.orkg.graph.domain.InvalidLabel
 import org.orkg.graph.domain.MAX_LABEL_LENGTH
@@ -202,6 +203,7 @@ internal class ComparisonRelatedResourceUpdaterUnitTest : MockkBaseTest {
             createStatement(StatementId("S456")),
         )
         val comparison = createResource(classes = setOf(Classes.comparison))
+        val extractionMethod = ExtractionMethod.UNKNOWN
 
         every { resourceService.findById(command.comparisonId) } returns Optional.of(comparison)
         every {
@@ -223,6 +225,7 @@ internal class ComparisonRelatedResourceUpdaterUnitTest : MockkBaseTest {
                 subjectId = command.comparisonRelatedResourceId,
                 predicateId = Predicates.hasImage,
                 label = command.image,
+                extractionMethod = extractionMethod,
             )
         } just runs
 
@@ -248,6 +251,7 @@ internal class ComparisonRelatedResourceUpdaterUnitTest : MockkBaseTest {
                 subjectId = command.comparisonRelatedResourceId,
                 predicateId = Predicates.hasImage,
                 label = command.image,
+                extractionMethod = extractionMethod,
             )
         }
     }
@@ -263,6 +267,7 @@ internal class ComparisonRelatedResourceUpdaterUnitTest : MockkBaseTest {
             createStatement(StatementId("S456")),
         )
         val comparison = createResource(classes = setOf(Classes.comparison))
+        val extractionMethod = ExtractionMethod.UNKNOWN
 
         every { resourceService.findById(command.comparisonId) } returns Optional.of(comparison)
         every {
@@ -284,6 +289,7 @@ internal class ComparisonRelatedResourceUpdaterUnitTest : MockkBaseTest {
                 subjectId = command.comparisonRelatedResourceId,
                 predicateId = Predicates.hasURL,
                 label = command.url,
+                extractionMethod = extractionMethod,
             )
         } just runs
 
@@ -309,6 +315,7 @@ internal class ComparisonRelatedResourceUpdaterUnitTest : MockkBaseTest {
                 subjectId = command.comparisonRelatedResourceId,
                 predicateId = Predicates.hasURL,
                 label = command.url,
+                extractionMethod = extractionMethod,
             )
         }
     }
@@ -324,6 +331,7 @@ internal class ComparisonRelatedResourceUpdaterUnitTest : MockkBaseTest {
             createStatement(StatementId("S456")),
         )
         val comparison = createResource(classes = setOf(Classes.comparison))
+        val extractionMethod = ExtractionMethod.UNKNOWN
 
         every { resourceService.findById(command.comparisonId) } returns Optional.of(comparison)
         every {
@@ -345,6 +353,7 @@ internal class ComparisonRelatedResourceUpdaterUnitTest : MockkBaseTest {
                 subjectId = command.comparisonRelatedResourceId,
                 predicateId = Predicates.description,
                 label = command.description,
+                extractionMethod = extractionMethod,
             )
         } just runs
 
@@ -370,6 +379,7 @@ internal class ComparisonRelatedResourceUpdaterUnitTest : MockkBaseTest {
                 subjectId = command.comparisonRelatedResourceId,
                 predicateId = Predicates.description,
                 label = command.description,
+                extractionMethod = extractionMethod,
             )
         }
     }

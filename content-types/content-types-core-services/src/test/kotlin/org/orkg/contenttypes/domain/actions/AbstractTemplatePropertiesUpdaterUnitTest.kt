@@ -43,6 +43,7 @@ internal class AbstractTemplatePropertiesUpdaterUnitTest : MockkBaseTest {
             newProperties = properties,
             oldProperties = template.properties,
             statements = emptyMap(),
+            extractionMethod = template.extractionMethod,
         )
     }
 
@@ -62,6 +63,7 @@ internal class AbstractTemplatePropertiesUpdaterUnitTest : MockkBaseTest {
             newProperties = properties,
             oldProperties = template.properties,
             statements = emptyMap(),
+            extractionMethod = template.extractionMethod,
         )
 
         verify(exactly = 1) {
@@ -88,6 +90,7 @@ internal class AbstractTemplatePropertiesUpdaterUnitTest : MockkBaseTest {
                 order = 0,
                 newProperty = properties[0],
                 oldProperty = template.properties[1],
+                extractionMethod = template.extractionMethod,
             )
         } just runs
         every {
@@ -100,6 +103,7 @@ internal class AbstractTemplatePropertiesUpdaterUnitTest : MockkBaseTest {
             newProperties = properties,
             oldProperties = template.properties,
             statements = statements,
+            extractionMethod = template.extractionMethod,
         )
 
         verify(exactly = 1) {
@@ -109,6 +113,7 @@ internal class AbstractTemplatePropertiesUpdaterUnitTest : MockkBaseTest {
                 order = 0,
                 newProperty = properties[0],
                 oldProperty = template.properties[1],
+                extractionMethod = template.extractionMethod,
             )
         }
         verify(exactly = 1) {
@@ -128,6 +133,7 @@ internal class AbstractTemplatePropertiesUpdaterUnitTest : MockkBaseTest {
                 templateId = template.id,
                 order = 5,
                 property = properties[5],
+                extractionMethod = template.extractionMethod,
             )
         } returns ThingId("irrelevant")
 
@@ -137,6 +143,7 @@ internal class AbstractTemplatePropertiesUpdaterUnitTest : MockkBaseTest {
             newProperties = properties,
             oldProperties = template.properties,
             statements = emptyMap(),
+            extractionMethod = template.extractionMethod,
         )
 
         verify(exactly = 1) {
@@ -145,6 +152,7 @@ internal class AbstractTemplatePropertiesUpdaterUnitTest : MockkBaseTest {
                 templateId = template.id,
                 order = 5,
                 property = properties[5],
+                extractionMethod = template.extractionMethod,
             )
         }
     }
@@ -164,6 +172,7 @@ internal class AbstractTemplatePropertiesUpdaterUnitTest : MockkBaseTest {
                 templateId = template.id,
                 order = 0,
                 property = properties[0],
+                extractionMethod = template.extractionMethod,
             )
         } returns ThingId("irrelevant")
         every {
@@ -173,6 +182,7 @@ internal class AbstractTemplatePropertiesUpdaterUnitTest : MockkBaseTest {
                 order = 1,
                 newProperty = properties[1],
                 oldProperty = template.properties[0],
+                extractionMethod = template.extractionMethod,
             )
         } just runs
 
@@ -182,6 +192,7 @@ internal class AbstractTemplatePropertiesUpdaterUnitTest : MockkBaseTest {
             newProperties = properties,
             oldProperties = template.properties,
             statements = statements,
+            extractionMethod = template.extractionMethod,
         )
 
         verify(exactly = 1) {
@@ -190,6 +201,7 @@ internal class AbstractTemplatePropertiesUpdaterUnitTest : MockkBaseTest {
                 templateId = template.id,
                 order = 0,
                 property = properties[0],
+                extractionMethod = template.extractionMethod,
             )
         }
         verify(exactly = 1) {
@@ -199,6 +211,7 @@ internal class AbstractTemplatePropertiesUpdaterUnitTest : MockkBaseTest {
                 order = 1,
                 newProperty = properties[1],
                 oldProperty = template.properties[0],
+                extractionMethod = template.extractionMethod,
             )
         }
     }
@@ -215,6 +228,7 @@ internal class AbstractTemplatePropertiesUpdaterUnitTest : MockkBaseTest {
                 templateId = template.id,
                 order = 4,
                 property = properties[4],
+                extractionMethod = template.extractionMethod,
             )
         } returns ThingId("irrelevant")
         every {
@@ -227,6 +241,7 @@ internal class AbstractTemplatePropertiesUpdaterUnitTest : MockkBaseTest {
             newProperties = properties,
             oldProperties = template.properties,
             statements = emptyMap(),
+            extractionMethod = template.extractionMethod,
         )
 
         verify(exactly = 1) {
@@ -235,6 +250,7 @@ internal class AbstractTemplatePropertiesUpdaterUnitTest : MockkBaseTest {
                 templateId = template.id,
                 order = 4,
                 property = properties[4],
+                extractionMethod = template.extractionMethod,
             )
         }
         verify(exactly = 1) {

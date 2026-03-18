@@ -28,7 +28,7 @@ class SmartReviewSectionsCreator(
                     contributorId = command.contributorId,
                     subjectId = state.contributionId!!,
                     predicateId = Predicates.hasSection,
-                    objectId = abstractSmartReviewSectionCreator.create(command.contributorId, section),
+                    objectId = abstractSmartReviewSectionCreator.create(command.contributorId, section, command.extractionMethod),
                 ),
             )
         }

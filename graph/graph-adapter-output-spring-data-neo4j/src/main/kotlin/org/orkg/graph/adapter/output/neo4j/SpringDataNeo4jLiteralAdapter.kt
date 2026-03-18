@@ -158,6 +158,7 @@ class SpringDataNeo4jLiteralAdapter(
             datatype = this@toNeo4jLiteral.datatype
             created_at = this@toNeo4jLiteral.createdAt
             created_by = this@toNeo4jLiteral.createdBy
+            extraction_method = this@toNeo4jLiteral.extractionMethod
             modifiable = this@toNeo4jLiteral.modifiable
         }
 }

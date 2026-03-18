@@ -28,7 +28,7 @@ class LiteratureListSectionsCreator(
                     contributorId = command.contributorId,
                     subjectId = state.literatureListId!!,
                     predicateId = Predicates.hasSection,
-                    objectId = abstractLiteratureListSectionCreator.create(command.contributorId, section),
+                    objectId = abstractLiteratureListSectionCreator.create(command.contributorId, section, command.extractionMethod),
                 ),
             )
         }

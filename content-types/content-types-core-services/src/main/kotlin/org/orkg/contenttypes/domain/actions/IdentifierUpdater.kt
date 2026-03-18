@@ -4,6 +4,7 @@ import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.associateIdentifiers
 import org.orkg.contenttypes.domain.identifiers.Identifier
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.GeneralStatement
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UnsafeLiteralUseCases
@@ -30,6 +31,7 @@ class IdentifierUpdater(
         newIdentifiers: Map<String, List<String>>,
         identifierDefinitions: Set<Identifier>,
         subjectId: ThingId,
+        extractionMethod: ExtractionMethod,
     ) {
         val directStatements = statements[subjectId].orEmpty()
         val oldIdentifiers = directStatements.associateIdentifiers(identifierDefinitions)
@@ -45,6 +47,7 @@ class IdentifierUpdater(
                 subjectId = subjectId,
                 predicateId = identifier.predicateId,
                 literals = newIdentifiers[identifier.id].orEmpty().toSet(),
+                extractionMethod = extractionMethod,
             )
         }
     }

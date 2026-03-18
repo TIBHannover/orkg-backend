@@ -21,5 +21,5 @@ class PaperAuthorListCreator(
     )
 
     override fun invoke(command: CreatePaperCommand, state: State): State =
-        state.apply { authorCreator.create(command.contributorId, authors, paperId!!) }
+        state.apply { authorCreator.create(command.contributorId, authors, paperId!!, command.extractionMethod) }
 }

@@ -8,6 +8,7 @@ import org.orkg.contenttypes.input.ResourceTemplatePropertyCommand
 import org.orkg.contenttypes.input.StringLiteralTemplatePropertyCommand
 import org.orkg.contenttypes.input.TemplatePropertyCommand
 import org.orkg.graph.domain.Classes
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.CreateLiteralUseCase
@@ -27,6 +28,7 @@ class AbstractTemplatePropertyCreator(
         templateId: ThingId,
         order: Int,
         property: TemplatePropertyCommand,
+        extractionMethod: ExtractionMethod,
     ): ThingId {
         val propertyId = unsafeResourceUseCases.create(
             CreateResourceUseCase.CreateCommand(
@@ -45,6 +47,7 @@ class AbstractTemplatePropertyCreator(
                         CreateLiteralUseCase.CreateCommand(
                             contributorId = contributorId,
                             label = placeholder,
+                            extractionMethod = extractionMethod,
                         ),
                     ),
                 ),
@@ -60,6 +63,7 @@ class AbstractTemplatePropertyCreator(
                         CreateLiteralUseCase.CreateCommand(
                             contributorId = contributorId,
                             label = description,
+                            extractionMethod = extractionMethod,
                         ),
                     ),
                 ),
@@ -76,6 +80,7 @@ class AbstractTemplatePropertyCreator(
                             contributorId = contributorId,
                             label = min.toString(),
                             datatype = Literals.XSD.INT.prefixedUri,
+                            extractionMethod = extractionMethod,
                         ),
                     ),
                 ),
@@ -92,6 +97,7 @@ class AbstractTemplatePropertyCreator(
                             contributorId = contributorId,
                             label = max.toString(),
                             datatype = Literals.XSD.INT.prefixedUri,
+                            extractionMethod = extractionMethod,
                         ),
                     ),
                 ),
@@ -108,6 +114,7 @@ class AbstractTemplatePropertyCreator(
                             CreateLiteralUseCase.CreateCommand(
                                 contributorId = contributorId,
                                 label = pattern,
+                                extractionMethod = extractionMethod,
                             ),
                         ),
                     ),
@@ -126,6 +133,7 @@ class AbstractTemplatePropertyCreator(
                                 label = minInclusive.toString(),
                                 datatype = Literals.XSD.fromClass(property.datatype)?.prefixedUri
                                     ?: Literals.XSD.DECIMAL.prefixedUri,
+                                extractionMethod = extractionMethod,
                             ),
                         ),
                     ),
@@ -143,6 +151,7 @@ class AbstractTemplatePropertyCreator(
                                 label = maxInclusive.toString(),
                                 datatype = Literals.XSD.fromClass(property.datatype)?.prefixedUri
                                     ?: Literals.XSD.DECIMAL.prefixedUri,
+                                extractionMethod = extractionMethod,
                             ),
                         ),
                     ),
@@ -186,6 +195,7 @@ class AbstractTemplatePropertyCreator(
                         contributorId = contributorId,
                         label = order.toString(),
                         datatype = Literals.XSD.INT.prefixedUri,
+                        extractionMethod = extractionMethod,
                     ),
                 ),
             ),

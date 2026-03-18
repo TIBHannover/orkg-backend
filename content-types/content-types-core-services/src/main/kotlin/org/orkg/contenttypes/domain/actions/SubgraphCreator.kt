@@ -54,7 +54,7 @@ class SubgraphCreator(
     ) {
         createClasses(thingsCommand, validationCache, lookup, contributorId, extractionMethod)
         createResources(thingsCommand, validationCache, lookup, contributorId, extractionMethod)
-        createLiterals(thingsCommand, validationCache, lookup, contributorId)
+        createLiterals(thingsCommand, validationCache, lookup, contributorId, extractionMethod)
         createPredicates(thingsCommand, validationCache, contributorId, lookup, extractionMethod)
         createLists(thingsCommand, validationCache, lookup, contributorId)
     }
@@ -106,6 +106,7 @@ class SubgraphCreator(
         validationCache: Map<String, Either<CreateThingCommandPart, Thing>>,
         lookup: MutableMap<String, ThingId>,
         contributorId: ContributorId,
+        extractionMethod: ExtractionMethod,
     ) {
         thingsCommand.literals.forEach {
             if (it.key.isTempId && it.key in validationCache) {
@@ -114,6 +115,7 @@ class SubgraphCreator(
                         contributorId = contributorId,
                         label = it.value.label,
                         datatype = it.value.dataType,
+                        extractionMethod = extractionMethod,
                     ),
                 )
             }
@@ -142,6 +144,7 @@ class SubgraphCreator(
                         CreateLiteralUseCase.CreateCommand(
                             contributorId = contributorId,
                             label = description,
+                            extractionMethod = extractionMethod,
                         ),
                     )
                     unsafeStatementUseCases.create(

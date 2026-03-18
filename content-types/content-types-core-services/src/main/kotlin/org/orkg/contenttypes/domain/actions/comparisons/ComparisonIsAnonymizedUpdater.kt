@@ -3,6 +3,7 @@ package org.orkg.contenttypes.domain.actions.comparisons
 import org.orkg.contenttypes.domain.actions.SingleStatementPropertyUpdater
 import org.orkg.contenttypes.domain.actions.UpdateComparisonCommand
 import org.orkg.contenttypes.domain.actions.comparisons.UpdateComparisonAction.State
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.StatementUseCases
@@ -27,6 +28,7 @@ class ComparisonIsAnonymizedUpdater(
                 predicateId = Predicates.isAnonymized,
                 label = command.isAnonymized!!.toString(),
                 datatype = Literals.XSD.BOOLEAN.prefixedUri,
+                extractionMethod = command.extractionMethod ?: ExtractionMethod.UNKNOWN,
             )
         }
         return state

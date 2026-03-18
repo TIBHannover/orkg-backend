@@ -46,6 +46,7 @@ internal class TemplatePropertiesUpdaterUnitTest : MockkBaseTest {
                 newProperties = command.properties!!,
                 oldProperties = state.template!!.properties,
                 statements = state.statements,
+                extractionMethod = command.extractionMethod!!,
             )
         } just runs
 
@@ -58,6 +59,7 @@ internal class TemplatePropertiesUpdaterUnitTest : MockkBaseTest {
                 newProperties = command.properties!!,
                 oldProperties = state.template!!.properties,
                 statements = state.statements,
+                extractionMethod = command.extractionMethod!!,
             )
         }
     }

@@ -3,6 +3,7 @@ package org.orkg.contenttypes.domain.actions.rosettastone.templates
 import org.orkg.contenttypes.domain.actions.SingleStatementPropertyUpdater
 import org.orkg.contenttypes.domain.actions.UpdateRosettaStoneTemplateCommand
 import org.orkg.contenttypes.domain.actions.rosettastone.templates.UpdateRosettaStoneTemplateAction.State
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UnsafeLiteralUseCases
@@ -27,6 +28,7 @@ class RosettaStoneTemplateExampleUsageUpdater(
                 subjectId = state.rosettaStoneTemplate.targetClass,
                 predicateId = Predicates.exampleOfUsage,
                 label = command.exampleUsage,
+                extractionMethod = ExtractionMethod.UNKNOWN,
             )
         }
         return state

@@ -11,6 +11,7 @@ import org.orkg.contenttypes.input.AbstractLiteratureListListSectionCommand
 import org.orkg.contenttypes.input.testing.fixtures.literatureListListSectionCommand
 import org.orkg.contenttypes.input.testing.fixtures.literatureListTextSectionCommand
 import org.orkg.graph.domain.Classes
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.StatementId
@@ -44,6 +45,7 @@ internal class AbstractLiteratureListSectionCreatorUnitTest : MockkBaseTest {
         val sectionId = ThingId("R123")
         val entryId = ThingId("R456")
         val descriptionId = ThingId("L1")
+        val extractionMethod = ExtractionMethod.MANUAL
 
         every {
             unsafeResourceUseCases.create(
@@ -95,7 +97,7 @@ internal class AbstractLiteratureListSectionCreatorUnitTest : MockkBaseTest {
             )
         } returns StatementId("S3")
 
-        abstractLiteratureListSectionCreator.create(contributorId, section)
+        abstractLiteratureListSectionCreator.create(contributorId, section, extractionMethod)
 
         verify(exactly = 1) {
             unsafeResourceUseCases.create(
@@ -140,6 +142,7 @@ internal class AbstractLiteratureListSectionCreatorUnitTest : MockkBaseTest {
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = contributorId,
                     label = description,
+                    extractionMethod = extractionMethod,
                 ),
             )
         }
@@ -164,6 +167,7 @@ internal class AbstractLiteratureListSectionCreatorUnitTest : MockkBaseTest {
         val contributorId = ContributorId(UUID.randomUUID())
         val sectionId = ThingId("R123")
         val entryId = ThingId("R456")
+        val extractionMethod = ExtractionMethod.MANUAL
 
         every {
             unsafeResourceUseCases.create(
@@ -204,7 +208,7 @@ internal class AbstractLiteratureListSectionCreatorUnitTest : MockkBaseTest {
             )
         } returns StatementId("S2")
 
-        abstractLiteratureListSectionCreator.create(contributorId, section)
+        abstractLiteratureListSectionCreator.create(contributorId, section, extractionMethod)
 
         verify(exactly = 1) {
             unsafeResourceUseCases.create(
@@ -253,6 +257,7 @@ internal class AbstractLiteratureListSectionCreatorUnitTest : MockkBaseTest {
         val sectionId = ThingId("R123")
         val headingSizeId = ThingId("R456")
         val textId = ThingId("R789")
+        val extractionMethod = ExtractionMethod.MANUAL
 
         every {
             unsafeResourceUseCases.create(
@@ -269,6 +274,7 @@ internal class AbstractLiteratureListSectionCreatorUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     label = section.headingSize.toString(),
                     datatype = Literals.XSD.INT.prefixedUri,
+                    extractionMethod = extractionMethod,
                 ),
             )
         } returns headingSizeId
@@ -287,6 +293,7 @@ internal class AbstractLiteratureListSectionCreatorUnitTest : MockkBaseTest {
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = contributorId,
                     label = section.text,
+                    extractionMethod = extractionMethod,
                 ),
             )
         } returns textId
@@ -301,7 +308,7 @@ internal class AbstractLiteratureListSectionCreatorUnitTest : MockkBaseTest {
             )
         } returns StatementId("S2")
 
-        abstractLiteratureListSectionCreator.create(contributorId, section)
+        abstractLiteratureListSectionCreator.create(contributorId, section, extractionMethod)
 
         verify(exactly = 1) {
             unsafeResourceUseCases.create(
@@ -318,6 +325,7 @@ internal class AbstractLiteratureListSectionCreatorUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     label = section.headingSize.toString(),
                     datatype = Literals.XSD.INT.prefixedUri,
+                    extractionMethod = extractionMethod,
                 ),
             )
         }
@@ -336,6 +344,7 @@ internal class AbstractLiteratureListSectionCreatorUnitTest : MockkBaseTest {
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = contributorId,
                     label = section.text,
+                    extractionMethod = extractionMethod,
                 ),
             )
         }

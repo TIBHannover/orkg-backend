@@ -2,6 +2,7 @@ package org.orkg.contenttypes.domain.actions.tables
 
 import org.orkg.contenttypes.domain.actions.CreateTableCommand
 import org.orkg.contenttypes.domain.actions.tables.CreateTableAction.State
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.input.UnsafeLiteralUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
@@ -24,6 +25,7 @@ class TableRowsCreator(
                 tableId = state.tableId!!,
                 index = index,
                 label = row.label,
+                extractionMethod = command.extractionMethod,
             )
         }
         return state.copy(rows = rows.toList())

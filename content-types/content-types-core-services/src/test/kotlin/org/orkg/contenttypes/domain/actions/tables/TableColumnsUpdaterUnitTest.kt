@@ -187,6 +187,7 @@ internal class TableColumnsUpdaterUnitTest : MockkBaseTest {
                 tableId = command.tableId,
                 index = 2,
                 titleLiteralId = ThingId("L3"),
+                extractionMethod = command.extractionMethod!!,
             )
         } returns newColumnId
 
@@ -232,6 +233,7 @@ internal class TableColumnsUpdaterUnitTest : MockkBaseTest {
                 tableId = command.tableId,
                 index = 2,
                 titleLiteralId = ThingId("L3"),
+                extractionMethod = command.extractionMethod!!,
             )
         }
     }

@@ -23,6 +23,7 @@ class UnsafeLiteralService(
             datatype = command.datatype,
             createdBy = command.contributorId,
             createdAt = OffsetDateTime.now(clock),
+            extractionMethod = command.extractionMethod,
             modifiable = command.modifiable,
         )
         repository.save(literal)

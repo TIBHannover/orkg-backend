@@ -3,6 +3,7 @@ package org.orkg.contenttypes.domain.actions.templates.properties
 import org.orkg.contenttypes.domain.actions.AbstractTemplatePropertyCreator
 import org.orkg.contenttypes.domain.actions.CreateTemplatePropertyCommand
 import org.orkg.contenttypes.domain.actions.templates.properties.CreateTemplatePropertyAction.State
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.input.UnsafeLiteralUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
@@ -24,6 +25,7 @@ class TemplatePropertyCreator(
             templateId = command.templateId,
             order = state.template!!.properties.size,
             property = command,
+            extractionMethod = ExtractionMethod.UNKNOWN, // TODO: Get from command
         ),
     )
 }

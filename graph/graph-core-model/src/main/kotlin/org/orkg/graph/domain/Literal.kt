@@ -10,5 +10,6 @@ data class Literal(
     val datatype: String = "xsd:string",
     override val createdAt: OffsetDateTime,
     override val createdBy: ContributorId = ContributorId.UNKNOWN,
+    val extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN,
     override val modifiable: Boolean = true,
 ) : Thing

@@ -24,6 +24,7 @@ class ComparisonPublicationInfoCreator(
                 contributorId = command.contributorId,
                 label = now.year.toString(),
                 datatype = Literals.XSD.INT.prefixedUri,
+                extractionMethod = command.extractionMethod,
             ),
         )
         unsafeStatementUseCases.create(
@@ -39,6 +40,7 @@ class ComparisonPublicationInfoCreator(
                 contributorId = command.contributorId,
                 label = now.monthValue.toString(),
                 datatype = Literals.XSD.INT.prefixedUri,
+                extractionMethod = command.extractionMethod,
             ),
         )
         unsafeStatementUseCases.create(

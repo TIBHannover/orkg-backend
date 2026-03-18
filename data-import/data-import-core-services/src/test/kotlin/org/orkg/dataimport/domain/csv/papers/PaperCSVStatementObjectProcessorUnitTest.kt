@@ -81,6 +81,7 @@ internal class PaperCSVStatementObjectProcessorUnitTest : MockkBaseTest {
             contributorId = contributorId,
             label = "5",
             datatype = Literals.XSD.INT.prefixedUri,
+            extractionMethod = record.extractionMethod,
         )
 
         paperCSVStatementObjectProcessor.beforeStep(stepExecution)

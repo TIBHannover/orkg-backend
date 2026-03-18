@@ -17,6 +17,7 @@ import org.orkg.contenttypes.input.AbstractSmartReviewResourceSectionCommand
 import org.orkg.contenttypes.input.AbstractSmartReviewTextSectionCommand
 import org.orkg.contenttypes.input.AbstractSmartReviewVisualizationSectionCommand
 import org.orkg.graph.domain.Classes
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.GeneralStatement
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.StatementUseCases
@@ -203,6 +204,7 @@ class AbstractSmartReviewSectionUpdater(
                 subjectId = oldSection.id,
                 predicateId = Predicates.hasContent,
                 label = newSection.text,
+                extractionMethod = ExtractionMethod.UNKNOWN,
             )
         }
     }

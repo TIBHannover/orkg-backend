@@ -3,6 +3,7 @@ package org.orkg.contenttypes.domain.actions.smartreviews
 import org.orkg.contenttypes.domain.actions.StatementCollectionPropertyUpdater
 import org.orkg.contenttypes.domain.actions.UpdateSmartReviewCommand
 import org.orkg.contenttypes.domain.actions.smartreviews.UpdateSmartReviewAction.State
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UnsafeLiteralUseCases
@@ -29,6 +30,7 @@ class SmartReviewReferencesUpdater(
                     subjectId = contributionId,
                     predicateId = Predicates.hasReference,
                     literals = command.references!!,
+                    extractionMethod = command.extractionMethod ?: ExtractionMethod.UNKNOWN,
                 )
             }
         }

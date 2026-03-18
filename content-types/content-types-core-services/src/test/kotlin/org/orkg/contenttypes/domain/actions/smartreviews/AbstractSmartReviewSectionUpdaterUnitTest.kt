@@ -28,6 +28,7 @@ import org.orkg.contenttypes.input.testing.fixtures.toSmartReviewResourceSection
 import org.orkg.contenttypes.input.testing.fixtures.toSmartReviewTextSectionCommand
 import org.orkg.contenttypes.input.testing.fixtures.toSmartReviewVisualizationSectionCommand
 import org.orkg.graph.domain.Classes
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.input.UpdateResourceUseCase
@@ -466,6 +467,7 @@ internal class AbstractSmartReviewSectionUpdaterUnitTest : MockkBaseTest {
                 subjectId = oldSection.id,
                 predicateId = Predicates.hasContent,
                 label = newSection.text,
+                extractionMethod = ExtractionMethod.UNKNOWN,
             )
         } just runs
 
@@ -478,6 +480,7 @@ internal class AbstractSmartReviewSectionUpdaterUnitTest : MockkBaseTest {
                 subjectId = oldSection.id,
                 predicateId = Predicates.hasContent,
                 label = newSection.text,
+                extractionMethod = ExtractionMethod.UNKNOWN,
             )
         }
     }

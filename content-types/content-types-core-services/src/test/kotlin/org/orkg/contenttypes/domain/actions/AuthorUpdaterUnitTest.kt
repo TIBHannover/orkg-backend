@@ -11,6 +11,7 @@ import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.Author
 import org.orkg.graph.domain.Classes
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.GeneralStatement
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.output.ListRepository
@@ -37,12 +38,13 @@ internal class AuthorUpdaterUnitTest : MockkBaseTest {
         )
         val contributorId = ContributorId(UUID.randomUUID())
         val statements = emptyMap<ThingId, List<GeneralStatement>>()
+        val extractionMethod = ExtractionMethod.MANUAL
 
-        every { authorCreator.create(contributorId, authors, subjectId) } just runs
+        every { authorCreator.create(contributorId, authors, subjectId, extractionMethod) } just runs
 
-        authorUpdater.update(statements, contributorId, authors, subjectId)
+        authorUpdater.update(statements, contributorId, authors, subjectId, extractionMethod)
 
-        verify(exactly = 1) { authorCreator.create(contributorId, authors, subjectId) }
+        verify(exactly = 1) { authorCreator.create(contributorId, authors, subjectId, extractionMethod) }
     }
 
     @Test
@@ -66,13 +68,14 @@ internal class AuthorUpdaterUnitTest : MockkBaseTest {
                 ),
             ),
         )
+        val extractionMethod = ExtractionMethod.MANUAL
 
         every { listRepository.deleteById(authorListId) } just runs
-        every { authorCreator.create(contributorId, authors, subjectId) } just runs
+        every { authorCreator.create(contributorId, authors, subjectId, extractionMethod) } just runs
 
-        authorUpdater.update(statements, contributorId, authors, subjectId)
+        authorUpdater.update(statements, contributorId, authors, subjectId, extractionMethod)
 
         verify(exactly = 1) { listRepository.deleteById(authorListId) }
-        verify(exactly = 1) { authorCreator.create(contributorId, authors, subjectId) }
+        verify(exactly = 1) { authorCreator.create(contributorId, authors, subjectId, extractionMethod) }
     }
 }

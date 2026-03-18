@@ -8,6 +8,7 @@ import org.orkg.contenttypes.domain.actions.UpdatePaperCommand
 import org.orkg.contenttypes.domain.actions.papers.UpdatePaperAction.State
 import org.orkg.contenttypes.domain.ids
 import org.orkg.contenttypes.domain.wherePredicate
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.GeneralStatement
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.StatementUseCases
@@ -39,6 +40,7 @@ class PaperPublicationInfoUpdater(
                     newMonth = command.publicationInfo!!.publishedMonth,
                     contributorId = command.contributorId,
                     subjectId = command.paperId,
+                    extractionMethod = command.extractionMethod ?: ExtractionMethod.UNKNOWN,
                 )
             }
             if (state.paper?.publicationInfo?.publishedYear != command.publicationInfo!!.publishedYear) {
@@ -47,6 +49,7 @@ class PaperPublicationInfoUpdater(
                     newYear = command.publicationInfo!!.publishedYear,
                     contributorId = command.contributorId,
                     subjectId = command.paperId,
+                    extractionMethod = command.extractionMethod ?: ExtractionMethod.UNKNOWN,
                 )
             }
             if (state.paper?.publicationInfo?.publishedIn?.label != command.publicationInfo!!.publishedIn) {
@@ -63,6 +66,7 @@ class PaperPublicationInfoUpdater(
                     newUrl = command.publicationInfo!!.url,
                     contributorId = command.contributorId,
                     subjectId = command.paperId,
+                    extractionMethod = command.extractionMethod ?: ExtractionMethod.UNKNOWN,
                 )
             }
         }
@@ -74,13 +78,14 @@ class PaperPublicationInfoUpdater(
         newMonth: Int?,
         contributorId: ContributorId,
         subjectId: ThingId,
+        extractionMethod: ExtractionMethod,
     ) {
         if (statements.isNotEmpty()) {
             statementService.deleteAllById(statements.ids)
         }
 
         if (newMonth != null) {
-            publicationInfoCreator.linkPublicationMonth(contributorId, subjectId, newMonth)
+            publicationInfoCreator.linkPublicationMonth(contributorId, subjectId, newMonth, extractionMethod)
         }
     }
 
@@ -89,13 +94,14 @@ class PaperPublicationInfoUpdater(
         newYear: Long?,
         contributorId: ContributorId,
         subjectId: ThingId,
+        extractionMethod: ExtractionMethod,
     ) {
         if (statements.isNotEmpty()) {
             statementService.deleteAllById(statements.ids)
         }
 
         if (newYear != null) {
-            publicationInfoCreator.linkPublicationYear(contributorId, subjectId, newYear)
+            publicationInfoCreator.linkPublicationYear(contributorId, subjectId, newYear, extractionMethod)
         }
     }
 
@@ -119,13 +125,14 @@ class PaperPublicationInfoUpdater(
         newUrl: ParsedIRI?,
         contributorId: ContributorId,
         subjectId: ThingId,
+        extractionMethod: ExtractionMethod,
     ) {
         if (statements.isNotEmpty()) {
             statementService.deleteAllById(statements.ids)
         }
 
         if (newUrl != null) {
-            publicationInfoCreator.linkPublicationUrl(contributorId, subjectId, newUrl)
+            publicationInfoCreator.linkPublicationUrl(contributorId, subjectId, newUrl, extractionMethod)
         }
     }
 }

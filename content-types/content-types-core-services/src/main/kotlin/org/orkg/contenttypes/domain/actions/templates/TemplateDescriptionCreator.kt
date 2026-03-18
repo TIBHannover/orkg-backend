@@ -3,6 +3,7 @@ package org.orkg.contenttypes.domain.actions.templates
 import org.orkg.contenttypes.domain.actions.CreateTemplateCommand
 import org.orkg.contenttypes.domain.actions.SingleStatementPropertyCreator
 import org.orkg.contenttypes.domain.actions.templates.CreateTemplateAction.State
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.UnsafeLiteralUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
@@ -24,6 +25,7 @@ class TemplateDescriptionCreator(
                 subjectId = state.templateId!!,
                 predicateId = Predicates.description,
                 label = it,
+                extractionMethod = command.extractionMethod,
             )
         }
         return state

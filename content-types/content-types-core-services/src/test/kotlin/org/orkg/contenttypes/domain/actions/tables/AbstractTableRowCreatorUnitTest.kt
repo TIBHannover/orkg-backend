@@ -9,6 +9,7 @@ import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.graph.domain.Classes
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.StatementId
@@ -40,6 +41,7 @@ internal class AbstractTableRowCreatorUnitTest : MockkBaseTest {
         val rowLabelLiteralId = ThingId("Label")
         val rowId = ThingId("Row")
         val rowNumberLiteralId = ThingId("RowNumberLiteral")
+        val extractionMethod = ExtractionMethod.MANUAL
 
         val createRowResourceCommand = CreateResourceUseCase.CreateCommand(
             contributorId = contributorId,
@@ -50,6 +52,7 @@ internal class AbstractTableRowCreatorUnitTest : MockkBaseTest {
             contributorId = contributorId,
             label = "${index + 1}",
             datatype = Literals.XSD.INT.prefixedUri,
+            extractionMethod = extractionMethod,
         )
         val createRowNumberStatementCommand = CreateStatementUseCase.CreateCommand(
             contributorId = contributorId,
@@ -60,6 +63,7 @@ internal class AbstractTableRowCreatorUnitTest : MockkBaseTest {
         val createRowLabelLiteralCommand = CreateLiteralUseCase.CreateCommand(
             contributorId = contributorId,
             label = label,
+            extractionMethod = extractionMethod,
         )
         val createRowTitleStatementCommand = CreateStatementUseCase.CreateCommand(
             contributorId = contributorId,
@@ -81,7 +85,7 @@ internal class AbstractTableRowCreatorUnitTest : MockkBaseTest {
         every { unsafeStatementUseCases.create(createRowTitleStatementCommand) } returns StatementId("S2")
         every { unsafeStatementUseCases.create(createRowStatementCommand) } returns StatementId("S3")
 
-        val result = abstractTableRowCreator.create(contributorId, tableId, index, label)
+        val result = abstractTableRowCreator.create(contributorId, tableId, index, label, extractionMethod)
 
         result shouldBe rowId
 
@@ -101,6 +105,7 @@ internal class AbstractTableRowCreatorUnitTest : MockkBaseTest {
         val label = null
         val rowId = ThingId("Row")
         val rowNumberLiteralId = ThingId("RowNumberLiteral")
+        val extractionMethod = ExtractionMethod.MANUAL
 
         val createRowResourceCommand = CreateResourceUseCase.CreateCommand(
             contributorId = contributorId,
@@ -111,6 +116,7 @@ internal class AbstractTableRowCreatorUnitTest : MockkBaseTest {
             contributorId = contributorId,
             label = "${index + 1}",
             datatype = Literals.XSD.INT.prefixedUri,
+            extractionMethod = extractionMethod,
         )
         val createRowNumberStatementCommand = CreateStatementUseCase.CreateCommand(
             contributorId = contributorId,
@@ -130,7 +136,7 @@ internal class AbstractTableRowCreatorUnitTest : MockkBaseTest {
         every { unsafeStatementUseCases.create(createRowNumberStatementCommand) } returns StatementId("S1")
         every { unsafeStatementUseCases.create(createRowStatementCommand) } returns StatementId("S3")
 
-        val result = abstractTableRowCreator.create(contributorId, tableId, index, label)
+        val result = abstractTableRowCreator.create(contributorId, tableId, index, label, extractionMethod)
 
         result shouldBe rowId
 

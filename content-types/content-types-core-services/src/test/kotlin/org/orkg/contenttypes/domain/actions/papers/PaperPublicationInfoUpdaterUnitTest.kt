@@ -142,6 +142,7 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
                 contributorId = command.contributorId,
                 subjectId = command.paperId,
                 publishedMonth = month,
+                extractionMethod = command.extractionMethod!!,
             )
         } just runs
 
@@ -157,6 +158,7 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
                 contributorId = command.contributorId,
                 subjectId = command.paperId,
                 publishedMonth = month,
+                extractionMethod = command.extractionMethod!!,
             )
         }
     }
@@ -200,6 +202,7 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
                 contributorId = command.contributorId,
                 subjectId = command.paperId,
                 publishedMonth = command.publicationInfo!!.publishedMonth!!,
+                extractionMethod = command.extractionMethod!!,
             )
         } just runs
 
@@ -216,6 +219,7 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
                 contributorId = command.contributorId,
                 subjectId = command.paperId,
                 publishedMonth = command.publicationInfo!!.publishedMonth!!,
+                extractionMethod = command.extractionMethod!!,
             )
         }
     }
@@ -312,6 +316,7 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
                 contributorId = command.contributorId,
                 subjectId = command.paperId,
                 publishedYear = year,
+                extractionMethod = command.extractionMethod!!,
             )
         } just runs
 
@@ -327,6 +332,7 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
                 contributorId = command.contributorId,
                 subjectId = command.paperId,
                 publishedYear = year,
+                extractionMethod = command.extractionMethod!!,
             )
         }
     }
@@ -370,6 +376,7 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
                 contributorId = command.contributorId,
                 subjectId = command.paperId,
                 publishedYear = command.publicationInfo!!.publishedYear!!,
+                extractionMethod = command.extractionMethod!!,
             )
         } just runs
 
@@ -386,6 +393,7 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
                 contributorId = command.contributorId,
                 subjectId = command.paperId,
                 publishedYear = command.publicationInfo!!.publishedYear!!,
+                extractionMethod = command.extractionMethod!!,
             )
         }
     }
@@ -596,6 +604,7 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
                 contributorId = command.contributorId,
                 subjectId = command.paperId,
                 url = url,
+                extractionMethod = command.extractionMethod!!,
             )
         } just runs
 
@@ -611,6 +620,7 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
                 contributorId = command.contributorId,
                 subjectId = command.paperId,
                 url = url,
+                extractionMethod = command.extractionMethod!!,
             )
         }
     }
@@ -654,6 +664,7 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
                 contributorId = command.contributorId,
                 subjectId = command.paperId,
                 url = command.publicationInfo!!.url!!,
+                extractionMethod = command.extractionMethod!!,
             )
         } just runs
 
@@ -670,6 +681,7 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
                 contributorId = command.contributorId,
                 subjectId = command.paperId,
                 url = command.publicationInfo!!.url!!,
+                extractionMethod = command.extractionMethod!!,
             )
         }
     }

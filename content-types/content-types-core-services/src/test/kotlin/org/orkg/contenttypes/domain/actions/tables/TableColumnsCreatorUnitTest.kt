@@ -39,7 +39,7 @@ internal class TableColumnsCreatorUnitTest : MockkBaseTest {
             ThingId("Column3"),
         )
 
-        every { abstractTableColumnCreator.create(any(), any(), any(), any()) } returnsMany columns
+        every { abstractTableColumnCreator.create(any(), any(), any(), any(), any()) } returnsMany columns
 
         val result = tableColumnsCreator(command, state)
 
@@ -57,6 +57,7 @@ internal class TableColumnsCreatorUnitTest : MockkBaseTest {
                 tableId = state.tableId!!,
                 index = 0,
                 titleLiteralId = ThingId("L1"),
+                extractionMethod = command.extractionMethod,
             )
         }
         verify(exactly = 1) {
@@ -65,6 +66,7 @@ internal class TableColumnsCreatorUnitTest : MockkBaseTest {
                 tableId = state.tableId!!,
                 index = 1,
                 titleLiteralId = ThingId("L2"),
+                extractionMethod = command.extractionMethod,
             )
         }
         verify(exactly = 1) {
@@ -73,6 +75,7 @@ internal class TableColumnsCreatorUnitTest : MockkBaseTest {
                 tableId = state.tableId!!,
                 index = 2,
                 titleLiteralId = ThingId("L3"),
+                extractionMethod = command.extractionMethod,
             )
         }
     }

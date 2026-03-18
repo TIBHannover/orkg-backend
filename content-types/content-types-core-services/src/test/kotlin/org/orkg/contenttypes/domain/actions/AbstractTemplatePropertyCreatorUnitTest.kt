@@ -12,6 +12,7 @@ import org.orkg.contenttypes.input.testing.fixtures.createResourceTemplateProper
 import org.orkg.contenttypes.input.testing.fixtures.createStringLiteralTemplatePropertyCommand
 import org.orkg.contenttypes.input.testing.fixtures.createUntypedTemplatePropertyCommand
 import org.orkg.graph.domain.Classes
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.StatementId
@@ -40,6 +41,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
         val minLiteralId = ThingId("L123")
         val maxLiteralId = ThingId("L124")
         val orderLiteralId = ThingId("L126")
+        val extractionMethod = ExtractionMethod.MANUAL
 
         mockCommonProperties(
             property,
@@ -50,9 +52,10 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
             minLiteralId,
             maxLiteralId,
             orderLiteralId,
+            extractionMethod,
         )
 
-        abstractTemplatePropertyCreator.create(property.contributorId, property.templateId, order, property)
+        abstractTemplatePropertyCreator.create(property.contributorId, property.templateId, order, property, extractionMethod)
 
         verifyMockCommonProperties(
             property,
@@ -63,6 +66,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
             minLiteralId,
             maxLiteralId,
             orderLiteralId,
+            extractionMethod,
         )
     }
 
@@ -77,6 +81,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
         val maxLiteralId = ThingId("L124")
         val patternLiteralId = ThingId("L125")
         val orderLiteralId = ThingId("L126")
+        val extractionMethod = ExtractionMethod.MANUAL
 
         mockCommonProperties(
             property,
@@ -87,6 +92,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
             minLiteralId,
             maxLiteralId,
             orderLiteralId,
+            extractionMethod,
         )
         every {
             unsafeStatementUseCases.create(
@@ -103,6 +109,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = property.contributorId,
                     label = property.pattern.toString(),
+                    extractionMethod = extractionMethod,
                 ),
             )
         } returns patternLiteralId
@@ -117,7 +124,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
             )
         } returns StatementId("S2")
 
-        abstractTemplatePropertyCreator.create(property.contributorId, property.templateId, order, property)
+        abstractTemplatePropertyCreator.create(property.contributorId, property.templateId, order, property, extractionMethod)
 
         verifyMockCommonProperties(
             property,
@@ -128,6 +135,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
             minLiteralId,
             maxLiteralId,
             orderLiteralId,
+            extractionMethod,
         )
         verify(exactly = 1) {
             unsafeStatementUseCases.create(
@@ -144,6 +152,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = property.contributorId,
                     label = property.pattern.toString(),
+                    extractionMethod = extractionMethod,
                 ),
             )
         }
@@ -169,6 +178,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
         val minLiteralId = ThingId("L123")
         val maxLiteralId = ThingId("L124")
         val orderLiteralId = ThingId("L126")
+        val extractionMethod = ExtractionMethod.MANUAL
 
         mockCommonProperties(
             property,
@@ -179,6 +189,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
             minLiteralId,
             maxLiteralId,
             orderLiteralId,
+            extractionMethod,
         )
         every {
             unsafeStatementUseCases.create(
@@ -191,7 +202,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
             )
         } returns StatementId("S1")
 
-        abstractTemplatePropertyCreator.create(property.contributorId, property.templateId, order, property)
+        abstractTemplatePropertyCreator.create(property.contributorId, property.templateId, order, property, extractionMethod)
 
         verifyMockCommonProperties(
             property,
@@ -202,6 +213,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
             minLiteralId,
             maxLiteralId,
             orderLiteralId,
+            extractionMethod,
         )
         verify(exactly = 1) {
             unsafeStatementUseCases.create(
@@ -225,6 +237,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
         val minLiteralId = ThingId("L123")
         val maxLiteralId = ThingId("L124")
         val orderLiteralId = ThingId("L126")
+        val extractionMethod = ExtractionMethod.MANUAL
 
         mockCommonProperties(
             property,
@@ -235,6 +248,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
             minLiteralId,
             maxLiteralId,
             orderLiteralId,
+            extractionMethod,
         )
         every {
             unsafeStatementUseCases.create(
@@ -247,7 +261,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
             )
         } returns StatementId("S1")
 
-        abstractTemplatePropertyCreator.create(property.contributorId, property.templateId, order, property)
+        abstractTemplatePropertyCreator.create(property.contributorId, property.templateId, order, property, extractionMethod)
 
         verifyMockCommonProperties(
             property,
@@ -258,6 +272,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
             minLiteralId,
             maxLiteralId,
             orderLiteralId,
+            extractionMethod,
         )
         verify(exactly = 1) {
             unsafeStatementUseCases.create(
@@ -283,6 +298,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
         val minInclusiveLiteralId = ThingId("L125")
         val maxInclusiveLiteralId = ThingId("L126")
         val orderLiteralId = ThingId("L127")
+        val extractionMethod = ExtractionMethod.MANUAL
 
         mockCommonProperties(
             property,
@@ -293,6 +309,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
             minLiteralId,
             maxLiteralId,
             orderLiteralId,
+            extractionMethod,
         )
         every {
             unsafeStatementUseCases.create(
@@ -310,6 +327,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
                     contributorId = property.contributorId,
                     label = property.minInclusive.toString(),
                     datatype = Literals.XSD.INT.prefixedUri,
+                    extractionMethod = extractionMethod,
                 ),
             )
         } returns minInclusiveLiteralId
@@ -329,6 +347,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
                     contributorId = property.contributorId,
                     label = property.maxInclusive.toString(),
                     datatype = Literals.XSD.INT.prefixedUri,
+                    extractionMethod = extractionMethod,
                 ),
             )
         } returns maxInclusiveLiteralId
@@ -343,7 +362,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
             )
         } returns StatementId("S3")
 
-        abstractTemplatePropertyCreator.create(property.contributorId, property.templateId, order, property)
+        abstractTemplatePropertyCreator.create(property.contributorId, property.templateId, order, property, extractionMethod)
 
         verifyMockCommonProperties(
             property,
@@ -354,6 +373,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
             minLiteralId,
             maxLiteralId,
             orderLiteralId,
+            extractionMethod,
         )
         verify(exactly = 1) {
             unsafeStatementUseCases.create(
@@ -371,6 +391,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
                     contributorId = property.contributorId,
                     label = property.minInclusive.toString(),
                     datatype = Literals.XSD.INT.prefixedUri,
+                    extractionMethod = extractionMethod,
                 ),
             )
         }
@@ -390,6 +411,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
                     contributorId = property.contributorId,
                     label = property.maxInclusive.toString(),
                     datatype = Literals.XSD.INT.prefixedUri,
+                    extractionMethod = extractionMethod,
                 ),
             )
         }
@@ -418,6 +440,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
         val minLiteralId = ThingId("L123")
         val maxLiteralId = ThingId("L124")
         val orderLiteralId = ThingId("L127")
+        val extractionMethod = ExtractionMethod.MANUAL
 
         mockCommonProperties(
             property,
@@ -428,6 +451,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
             minLiteralId,
             maxLiteralId,
             orderLiteralId,
+            extractionMethod,
         )
         every {
             unsafeStatementUseCases.create(
@@ -440,7 +464,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
             )
         } returns StatementId("S1")
 
-        abstractTemplatePropertyCreator.create(property.contributorId, property.templateId, order, property)
+        abstractTemplatePropertyCreator.create(property.contributorId, property.templateId, order, property, extractionMethod)
 
         verifyMockCommonProperties(
             property,
@@ -451,6 +475,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
             minLiteralId,
             maxLiteralId,
             orderLiteralId,
+            extractionMethod,
         )
         verify(exactly = 1) {
             unsafeStatementUseCases.create(
@@ -474,6 +499,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
         val minLiteralId = ThingId("L123")
         val maxLiteralId = ThingId("L124")
         val orderLiteralId = ThingId("L126")
+        val extractionMethod = ExtractionMethod.MANUAL
 
         mockCommonProperties(
             property,
@@ -484,6 +510,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
             minLiteralId,
             maxLiteralId,
             orderLiteralId,
+            extractionMethod,
         )
         every {
             unsafeStatementUseCases.create(
@@ -496,7 +523,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
             )
         } returns StatementId("S1")
 
-        abstractTemplatePropertyCreator.create(property.contributorId, property.templateId, order, property)
+        abstractTemplatePropertyCreator.create(property.contributorId, property.templateId, order, property, extractionMethod)
 
         verifyMockCommonProperties(
             property,
@@ -507,6 +534,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
             minLiteralId,
             maxLiteralId,
             orderLiteralId,
+            extractionMethod,
         )
         verify(exactly = 1) {
             unsafeStatementUseCases.create(
@@ -529,6 +557,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
         minLiteralId: ThingId,
         maxLiteralId: ThingId,
         orderLiteralId: ThingId,
+        extractionMethod: ExtractionMethod,
     ) {
         every {
             unsafeResourceUseCases.create(
@@ -545,6 +574,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
                     CreateLiteralUseCase.CreateCommand(
                         contributorId = property.contributorId,
                         label = placeholder,
+                        extractionMethod = extractionMethod,
                     ),
                 )
             } returns placeholderLiteralId
@@ -565,6 +595,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
                     CreateLiteralUseCase.CreateCommand(
                         contributorId = property.contributorId,
                         label = description,
+                        extractionMethod = extractionMethod,
                     ),
                 )
             } returns descriptionLiteralId
@@ -585,6 +616,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
                     contributorId = property.contributorId,
                     label = property.minCount.toString(),
                     datatype = Literals.XSD.INT.prefixedUri,
+                    extractionMethod = extractionMethod,
                 ),
             )
         } returns minLiteralId
@@ -604,6 +636,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
                     contributorId = property.contributorId,
                     label = property.maxCount.toString(),
                     datatype = Literals.XSD.INT.prefixedUri,
+                    extractionMethod = extractionMethod,
                 ),
             )
         } returns maxLiteralId
@@ -633,6 +666,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
                     contributorId = property.contributorId,
                     label = order.toString(),
                     datatype = Literals.XSD.INT.prefixedUri,
+                    extractionMethod = extractionMethod,
                 ),
             )
         } returns orderLiteralId
@@ -667,6 +701,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
         minLiteralId: ThingId,
         maxLiteralId: ThingId,
         orderLiteralId: ThingId,
+        extractionMethod: ExtractionMethod,
     ) {
         verify(exactly = 1) {
             unsafeResourceUseCases.create(
@@ -683,6 +718,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
                     CreateLiteralUseCase.CreateCommand(
                         contributorId = property.contributorId,
                         label = placeholder,
+                        extractionMethod = extractionMethod,
                     ),
                 )
             }
@@ -703,6 +739,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
                     CreateLiteralUseCase.CreateCommand(
                         contributorId = property.contributorId,
                         label = description,
+                        extractionMethod = extractionMethod,
                     ),
                 )
             }
@@ -724,6 +761,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
                     contributorId = property.contributorId,
                     label = property.minCount.toString(),
                     datatype = Literals.XSD.INT.prefixedUri,
+                    extractionMethod = extractionMethod,
                 ),
             )
         }
@@ -744,6 +782,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
                     contributorId = property.contributorId,
                     label = property.maxCount.toString(),
                     datatype = Literals.XSD.INT.prefixedUri,
+                    extractionMethod = extractionMethod,
                 ),
             )
         }
@@ -774,6 +813,7 @@ internal class AbstractTemplatePropertyCreatorUnitTest : MockkBaseTest {
                     contributorId = property.contributorId,
                     label = order.toString(),
                     datatype = Literals.XSD.INT.prefixedUri,
+                    extractionMethod = extractionMethod,
                 ),
             )
         }

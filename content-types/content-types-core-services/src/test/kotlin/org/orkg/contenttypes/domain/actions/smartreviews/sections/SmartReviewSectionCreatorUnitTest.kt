@@ -24,6 +24,7 @@ import org.orkg.contenttypes.input.testing.fixtures.createSmartReviewPredicateSe
 import org.orkg.contenttypes.input.testing.fixtures.createSmartReviewResourceSectionCommand
 import org.orkg.contenttypes.input.testing.fixtures.createSmartReviewTextSectionCommand
 import org.orkg.contenttypes.input.testing.fixtures.createSmartReviewVisualizationSectionCommand
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.StatementId
 import org.orkg.graph.input.CreateStatementUseCase
@@ -50,11 +51,13 @@ internal class SmartReviewSectionCreatorUnitTest : MockkBaseTest {
         val sectionId = ThingId("R456")
         val contributionId = ThingId("R789")
         val state = CreateSmartReviewSectionState(contributionId = contributionId)
+        val extractionMethod = ExtractionMethod.UNKNOWN
 
         every {
             abstractSmartReviewSectionCreator.create(
                 contributorId = command.contributorId,
                 section = command as AbstractSmartReviewSectionCommand,
+                extractionMethod = extractionMethod,
             )
         } returns sectionId
         every {
@@ -78,6 +81,7 @@ internal class SmartReviewSectionCreatorUnitTest : MockkBaseTest {
             abstractSmartReviewSectionCreator.create(
                 contributorId = command.contributorId,
                 section = command as AbstractSmartReviewSectionCommand,
+                extractionMethod = extractionMethod,
             )
         }
         verify(exactly = 1) {
@@ -113,11 +117,13 @@ internal class SmartReviewSectionCreatorUnitTest : MockkBaseTest {
             contributionId = contributionId,
             statements = statements.groupBy { it.subject.id },
         )
+        val extractionMethod = ExtractionMethod.UNKNOWN
 
         every {
             abstractSmartReviewSectionCreator.create(
                 contributorId = command.contributorId,
                 section = command as AbstractSmartReviewSectionCommand,
+                extractionMethod = extractionMethod,
             )
         } returns sectionId
         every {
@@ -140,6 +146,7 @@ internal class SmartReviewSectionCreatorUnitTest : MockkBaseTest {
             abstractSmartReviewSectionCreator.create(
                 contributorId = command.contributorId,
                 section = command as AbstractSmartReviewSectionCommand,
+                extractionMethod = extractionMethod,
             )
         }
         verify(exactly = 1) {
@@ -174,11 +181,13 @@ internal class SmartReviewSectionCreatorUnitTest : MockkBaseTest {
             contributionId = contributionId,
             statements = statements.groupBy { it.subject.id },
         )
+        val extractionMethod = ExtractionMethod.UNKNOWN
 
         every {
             abstractSmartReviewSectionCreator.create(
                 contributorId = command.contributorId,
                 section = command as AbstractSmartReviewSectionCommand,
+                extractionMethod = extractionMethod,
             )
         } returns sectionId
         every {
@@ -201,6 +210,7 @@ internal class SmartReviewSectionCreatorUnitTest : MockkBaseTest {
             abstractSmartReviewSectionCreator.create(
                 contributorId = command.contributorId,
                 section = command as AbstractSmartReviewSectionCommand,
+                extractionMethod = extractionMethod,
             )
         }
         verify(exactly = 1) {

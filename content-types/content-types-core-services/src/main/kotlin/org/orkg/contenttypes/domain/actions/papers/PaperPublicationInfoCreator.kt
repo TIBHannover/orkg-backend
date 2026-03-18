@@ -26,6 +26,7 @@ class PaperPublicationInfoCreator(
                 contributorId = command.contributorId,
                 publicationInfo = command.publicationInfo!!,
                 subjectId = state.paperId!!,
+                extractionMethod = command.extractionMethod,
             )
         }
         return state

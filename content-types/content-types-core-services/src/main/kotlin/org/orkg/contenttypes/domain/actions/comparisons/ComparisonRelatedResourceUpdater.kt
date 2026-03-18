@@ -10,6 +10,7 @@ import org.orkg.contenttypes.domain.actions.UpdateComparisonRelatedResourceComma
 import org.orkg.contenttypes.input.ComparisonRelatedResourceUseCases
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Description
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.InvalidDescription
 import org.orkg.graph.domain.InvalidLabel
 import org.orkg.graph.domain.Label
@@ -76,6 +77,7 @@ class ComparisonRelatedResourceUpdater(
                 subjectId = command.comparisonRelatedResourceId,
                 predicateId = Predicates.hasImage,
                 label = command.image,
+                extractionMethod = ExtractionMethod.UNKNOWN, // TODO: Get from command
             )
         }
         if (command.url != comparisonRelatedResource.url) {
@@ -85,6 +87,7 @@ class ComparisonRelatedResourceUpdater(
                 subjectId = command.comparisonRelatedResourceId,
                 predicateId = Predicates.hasURL,
                 label = command.url,
+                extractionMethod = ExtractionMethod.UNKNOWN, // TODO: Get from command
             )
         }
         if (command.description != comparisonRelatedResource.description) {
@@ -94,6 +97,7 @@ class ComparisonRelatedResourceUpdater(
                 subjectId = command.comparisonRelatedResourceId,
                 predicateId = Predicates.description,
                 label = command.description,
+                extractionMethod = ExtractionMethod.UNKNOWN, // TODO: Get from command
             )
         }
     }

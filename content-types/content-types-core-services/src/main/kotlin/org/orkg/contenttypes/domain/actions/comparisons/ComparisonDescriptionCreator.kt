@@ -22,6 +22,7 @@ class ComparisonDescriptionCreator(
                 subjectId = state.comparisonId!!,
                 predicateId = Predicates.description,
                 label = command.description,
+                extractionMethod = command.extractionMethod,
             )
         }
 }

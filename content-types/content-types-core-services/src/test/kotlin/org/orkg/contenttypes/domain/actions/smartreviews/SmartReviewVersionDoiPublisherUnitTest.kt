@@ -16,6 +16,7 @@ import org.orkg.contenttypes.domain.actions.SingleStatementPropertyCreator
 import org.orkg.contenttypes.domain.testing.fixtures.createSmartReview
 import org.orkg.contenttypes.input.testing.fixtures.publishSmartReviewCommand
 import org.orkg.contenttypes.output.DoiService
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Predicates
 import java.net.URI
 
@@ -41,7 +42,7 @@ internal class SmartReviewVersionDoiPublisherUnitTest : MockkBaseTest {
         val doi = "10.1000/182"
 
         every { doiService.register(any()) } returns DOI.of(doi)
-        every { singleStatementPropertyCreator.create(any(), any(), any(), any()) } just runs
+        every { singleStatementPropertyCreator.create(any(), any(), any(), any(), any(), any()) } just runs
 
         smartReviewVersionArchiver(command, state).asClue {
             it.smartReview shouldBe smartReview
@@ -69,6 +70,7 @@ internal class SmartReviewVersionDoiPublisherUnitTest : MockkBaseTest {
                 subjectId = smartReviewVersionId,
                 predicateId = Predicates.hasDOI,
                 label = doi,
+                extractionMethod = ExtractionMethod.UNKNOWN,
             )
         }
     }

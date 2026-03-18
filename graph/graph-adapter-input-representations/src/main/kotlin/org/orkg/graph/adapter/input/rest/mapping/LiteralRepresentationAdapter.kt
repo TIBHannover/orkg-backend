@@ -13,5 +13,5 @@ interface LiteralRepresentationAdapter {
         map { it.toLiteralRepresentation() }
 
     fun Literal.toLiteralRepresentation(): LiteralRepresentation =
-        LiteralRepresentation(id, label, datatype, createdAt, createdBy, modifiable)
+        LiteralRepresentation(id, label, datatype, createdAt, createdBy, extractionMethod, modifiable)
 }

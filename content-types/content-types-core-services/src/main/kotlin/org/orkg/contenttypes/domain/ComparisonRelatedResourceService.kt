@@ -11,6 +11,7 @@ import org.orkg.contenttypes.domain.actions.comparisons.ComparisonRelatedResourc
 import org.orkg.contenttypes.input.ComparisonRelatedResourceUseCases
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Description
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.InvalidDescription
 import org.orkg.graph.domain.InvalidLabel
 import org.orkg.graph.domain.Label
@@ -92,6 +93,7 @@ class ComparisonRelatedResourceService(
                         CreateLiteralUseCase.CreateCommand(
                             contributorId = command.contributorId,
                             label = command.image!!,
+                            extractionMethod = ExtractionMethod.UNKNOWN, // TODO: Get extraction method from command
                         ),
                     ),
                 ),
@@ -107,6 +109,7 @@ class ComparisonRelatedResourceService(
                         CreateLiteralUseCase.CreateCommand(
                             contributorId = command.contributorId,
                             label = command.url!!,
+                            extractionMethod = ExtractionMethod.UNKNOWN, // TODO: Get extraction method from command
                         ),
                     ),
                 ),
@@ -122,6 +125,7 @@ class ComparisonRelatedResourceService(
                         CreateLiteralUseCase.CreateCommand(
                             contributorId = command.contributorId,
                             label = command.description!!,
+                            extractionMethod = ExtractionMethod.UNKNOWN, // TODO: Get extraction method from command
                         ),
                     ),
                 ),

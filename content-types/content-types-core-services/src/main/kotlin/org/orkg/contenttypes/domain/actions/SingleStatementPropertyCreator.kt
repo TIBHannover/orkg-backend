@@ -2,6 +2,7 @@ package org.orkg.contenttypes.domain.actions
 
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.input.CreateLiteralUseCase
 import org.orkg.graph.input.CreateStatementUseCase
@@ -18,12 +19,14 @@ class SingleStatementPropertyCreator(
         predicateId: ThingId,
         label: String,
         datatype: String = Literals.XSD.STRING.prefixedUri,
+        extractionMethod: ExtractionMethod,
     ) {
         val literal = unsafeLiteralUseCases.create(
             CreateLiteralUseCase.CreateCommand(
                 contributorId = contributorId,
                 label = label,
                 datatype = datatype,
+                extractionMethod = extractionMethod,
             ),
         )
         unsafeStatementUseCases.create(

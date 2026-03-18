@@ -14,6 +14,7 @@ import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.input.PublicationInfoCommand
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ExactSearchString
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.StatementId
@@ -57,6 +58,7 @@ internal class PublicationInfoCreatorUnitTest : MockkBaseTest {
             paperId = paperId,
         )
         val monthLiteralId = ThingId("L1")
+        val extractionMethod = ExtractionMethod.MANUAL
 
         every {
             unsafeLiteralUseCases.create(
@@ -64,6 +66,7 @@ internal class PublicationInfoCreatorUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     label = month.toString(),
                     datatype = Literals.XSD.INT.prefixedUri,
+                    extractionMethod = extractionMethod,
                 ),
             )
         } returns monthLiteralId
@@ -78,7 +81,7 @@ internal class PublicationInfoCreatorUnitTest : MockkBaseTest {
             )
         } returns StatementId("S1")
 
-        publicationInfoCreator.create(contributorId, publicationInfo, paperId)
+        publicationInfoCreator.create(contributorId, publicationInfo, paperId, extractionMethod)
 
         verify(exactly = 1) {
             unsafeLiteralUseCases.create(
@@ -86,6 +89,7 @@ internal class PublicationInfoCreatorUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     label = month.toString(),
                     datatype = Literals.XSD.INT.prefixedUri,
+                    extractionMethod = extractionMethod,
                 ),
             )
         }
@@ -113,6 +117,7 @@ internal class PublicationInfoCreatorUnitTest : MockkBaseTest {
             url = null,
         )
         val yearLiteralId = ThingId("L1")
+        val extractionMethod = ExtractionMethod.MANUAL
 
         every {
             unsafeLiteralUseCases.create(
@@ -120,6 +125,7 @@ internal class PublicationInfoCreatorUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     label = year.toString(),
                     datatype = Literals.XSD.INT.prefixedUri,
+                    extractionMethod = extractionMethod,
                 ),
             )
         } returns yearLiteralId
@@ -134,7 +140,7 @@ internal class PublicationInfoCreatorUnitTest : MockkBaseTest {
             )
         } returns StatementId("S1")
 
-        publicationInfoCreator.create(contributorId, publicationInfo, paperId)
+        publicationInfoCreator.create(contributorId, publicationInfo, paperId, extractionMethod)
 
         verify(exactly = 1) {
             unsafeLiteralUseCases.create(
@@ -142,6 +148,7 @@ internal class PublicationInfoCreatorUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     label = year.toString(),
                     datatype = Literals.XSD.INT.prefixedUri,
+                    extractionMethod = extractionMethod,
                 ),
             )
         }
@@ -169,6 +176,7 @@ internal class PublicationInfoCreatorUnitTest : MockkBaseTest {
             url = null,
         )
         val venueResource = createResource(label = venue)
+        val extractionMethod = ExtractionMethod.MANUAL
 
         every {
             resourceRepository.findAll(
@@ -188,7 +196,7 @@ internal class PublicationInfoCreatorUnitTest : MockkBaseTest {
             )
         } returns StatementId("S1")
 
-        publicationInfoCreator.create(contributorId, publicationInfo, paperId)
+        publicationInfoCreator.create(contributorId, publicationInfo, paperId, extractionMethod)
 
         verify(exactly = 1) {
             resourceRepository.findAll(
@@ -229,6 +237,7 @@ internal class PublicationInfoCreatorUnitTest : MockkBaseTest {
             classes = setOf(Classes.venue),
         )
         val venueId = ThingId("R456")
+        val extractionMethod = ExtractionMethod.MANUAL
 
         every {
             resourceRepository.findAll(
@@ -249,7 +258,7 @@ internal class PublicationInfoCreatorUnitTest : MockkBaseTest {
             )
         } returns StatementId("S1")
 
-        publicationInfoCreator.create(contributorId, publicationInfo, paperId)
+        publicationInfoCreator.create(contributorId, publicationInfo, paperId, extractionMethod)
 
         verify(exactly = 1) {
             resourceRepository.findAll(
@@ -286,6 +295,7 @@ internal class PublicationInfoCreatorUnitTest : MockkBaseTest {
             url = url,
         )
         val urlLiteralId = ThingId("L1")
+        val extractionMethod = ExtractionMethod.MANUAL
 
         every {
             unsafeLiteralUseCases.create(
@@ -293,6 +303,7 @@ internal class PublicationInfoCreatorUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     label = url.toString(),
                     datatype = Literals.XSD.URI.prefixedUri,
+                    extractionMethod = extractionMethod,
                 ),
             )
         } returns urlLiteralId
@@ -307,7 +318,7 @@ internal class PublicationInfoCreatorUnitTest : MockkBaseTest {
             )
         } returns StatementId("S1")
 
-        publicationInfoCreator.create(contributorId, publicationInfo, paperId)
+        publicationInfoCreator.create(contributorId, publicationInfo, paperId, extractionMethod)
 
         verify(exactly = 1) {
             unsafeLiteralUseCases.create(
@@ -315,6 +326,7 @@ internal class PublicationInfoCreatorUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     label = url.toString(),
                     datatype = Literals.XSD.URI.prefixedUri,
+                    extractionMethod = extractionMethod,
                 ),
             )
         }

@@ -24,6 +24,7 @@ class ComparisonIsAnonymizedCreator(
                 predicateId = Predicates.description,
                 label = "true",
                 datatype = Literals.XSD.BOOLEAN.prefixedUri,
+                extractionMethod = command.extractionMethod,
             )
         }
         return state

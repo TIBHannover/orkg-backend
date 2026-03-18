@@ -21,5 +21,5 @@ class LiteratureListAuthorListCreator(
     )
 
     override fun invoke(command: CreateLiteratureListCommand, state: State): State =
-        state.apply { authorCreator.create(command.contributorId, authors, literatureListId!!) }
+        state.apply { authorCreator.create(command.contributorId, authors, literatureListId!!, command.extractionMethod) }
 }

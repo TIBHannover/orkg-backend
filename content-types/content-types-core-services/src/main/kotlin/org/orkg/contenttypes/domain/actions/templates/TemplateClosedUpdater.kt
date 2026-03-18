@@ -3,6 +3,7 @@ package org.orkg.contenttypes.domain.actions.templates
 import org.orkg.contenttypes.domain.actions.SingleStatementPropertyUpdater
 import org.orkg.contenttypes.domain.actions.UpdateTemplateCommand
 import org.orkg.contenttypes.domain.actions.templates.UpdateTemplateAction.State
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.StatementUseCases
@@ -29,6 +30,7 @@ class TemplateClosedUpdater(
                 predicateId = Predicates.shClosed,
                 label = command.isClosed?.toString(),
                 datatype = Literals.XSD.BOOLEAN.prefixedUri,
+                extractionMethod = command.extractionMethod ?: ExtractionMethod.UNKNOWN,
             )
         }
         return state

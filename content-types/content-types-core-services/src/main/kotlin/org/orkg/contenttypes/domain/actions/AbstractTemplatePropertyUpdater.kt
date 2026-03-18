@@ -14,6 +14,7 @@ import org.orkg.contenttypes.input.ResourceTemplatePropertyCommand
 import org.orkg.contenttypes.input.StringLiteralTemplatePropertyCommand
 import org.orkg.contenttypes.input.TemplatePropertyCommand
 import org.orkg.contenttypes.input.UntypedPropertyCommand
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.GeneralStatement
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
@@ -48,6 +49,7 @@ class AbstractTemplatePropertyUpdater(
         order: Int,
         newProperty: TemplatePropertyCommand,
         oldProperty: TemplateProperty,
+        extractionMethod: ExtractionMethod,
     ) {
         if (newProperty.label != oldProperty.label) {
             unsafeResourceUseCases.update(
@@ -66,6 +68,7 @@ class AbstractTemplatePropertyUpdater(
                 subjectId = oldProperty.id,
                 predicateId = Predicates.placeholder,
                 label = newProperty.placeholder,
+                extractionMethod = extractionMethod,
             )
         }
 
@@ -76,6 +79,7 @@ class AbstractTemplatePropertyUpdater(
                 subjectId = oldProperty.id,
                 predicateId = Predicates.description,
                 label = newProperty.description,
+                extractionMethod = extractionMethod,
             )
         }
 
@@ -87,6 +91,7 @@ class AbstractTemplatePropertyUpdater(
                 predicateId = Predicates.shMinCount,
                 label = newProperty.minCount.toString(),
                 datatype = Literals.XSD.INT.prefixedUri,
+                extractionMethod = extractionMethod,
             )
         }
 
@@ -98,6 +103,7 @@ class AbstractTemplatePropertyUpdater(
                 predicateId = Predicates.shMaxCount,
                 label = newProperty.maxCount.toString(),
                 datatype = Literals.XSD.INT.prefixedUri,
+                extractionMethod = extractionMethod,
             )
         }
 
@@ -110,6 +116,7 @@ class AbstractTemplatePropertyUpdater(
                     subjectId = oldProperty.id,
                     predicateId = Predicates.shPattern,
                     label = newProperty.pattern,
+                    extractionMethod = extractionMethod,
                 )
             }
         } else if (oldProperty is StringLiteralTemplateProperty) {
@@ -130,6 +137,7 @@ class AbstractTemplatePropertyUpdater(
                     label = newProperty.minInclusive.toString(),
                     datatype = Literals.XSD.fromClass(newProperty.datatype)?.prefixedUri
                         ?: Literals.XSD.DECIMAL.prefixedUri,
+                    extractionMethod = extractionMethod,
                 )
             }
             val oldMaxInclusive = if (oldProperty is NumberLiteralTemplateProperty) oldProperty.maxInclusive else null
@@ -142,6 +150,7 @@ class AbstractTemplatePropertyUpdater(
                     label = newProperty.maxInclusive.toString(),
                     datatype = Literals.XSD.fromClass(newProperty.datatype)?.prefixedUri
                         ?: Literals.XSD.DECIMAL.prefixedUri,
+                    extractionMethod = extractionMethod,
                 )
             }
         } else if (oldProperty is NumberLiteralTemplateProperty) {
@@ -206,6 +215,7 @@ class AbstractTemplatePropertyUpdater(
                 predicateId = Predicates.shOrder,
                 label = order.toString(),
                 datatype = Literals.XSD.INT.prefixedUri,
+                extractionMethod = extractionMethod,
             )
         }
     }

@@ -5,6 +5,7 @@ import org.orkg.contenttypes.domain.actions.StatementCollectionPropertyUpdater
 import org.orkg.contenttypes.domain.actions.smartreviews.AbstractSmartReviewSectionCreator
 import org.orkg.contenttypes.domain.actions.smartreviews.sections.CreateSmartReviewSectionAction.State
 import org.orkg.contenttypes.input.AbstractSmartReviewSectionCommand
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.StatementUseCases
@@ -32,6 +33,7 @@ class SmartReviewSectionCreator(
         val sectionId = abstractSmartReviewSectionCreator.create(
             contributorId = command.contributorId,
             section = command as AbstractSmartReviewSectionCommand,
+            extractionMethod = ExtractionMethod.UNKNOWN, // TODO: Get from command
         )
         if (command.index != null && command.index!! >= 0) {
             val sectionStatements = state.statements[state.contributionId!!].orEmpty()

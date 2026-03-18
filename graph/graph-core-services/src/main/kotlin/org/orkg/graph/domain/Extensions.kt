@@ -73,12 +73,13 @@ fun Predicate.apply(command: UpdatePredicateUseCase.UpdateCommand): Predicate =
     )
 
 fun UpdateLiteralUseCase.UpdateCommand.hasNoContents(): Boolean =
-    label == null && datatype == null && modifiable == null
+    label == null && datatype == null && modifiable == null && extractionMethod == null
 
 fun Literal.apply(command: UpdateLiteralUseCase.UpdateCommand): Literal =
     copy(
         label = command.label ?: label,
         datatype = command.datatype ?: datatype,
+        extractionMethod = command.extractionMethod ?: extractionMethod,
         modifiable = command.modifiable ?: modifiable,
     )
 

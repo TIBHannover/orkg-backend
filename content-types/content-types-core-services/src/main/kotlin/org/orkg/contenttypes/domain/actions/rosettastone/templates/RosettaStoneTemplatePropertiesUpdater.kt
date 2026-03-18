@@ -3,6 +3,7 @@ package org.orkg.contenttypes.domain.actions.rosettastone.templates
 import org.orkg.contenttypes.domain.actions.AbstractTemplatePropertiesUpdater
 import org.orkg.contenttypes.domain.actions.UpdateRosettaStoneTemplateCommand
 import org.orkg.contenttypes.domain.actions.rosettastone.templates.UpdateRosettaStoneTemplateAction.State
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UnsafeLiteralUseCases
@@ -36,6 +37,7 @@ class RosettaStoneTemplatePropertiesUpdater(
                 newProperties = properties,
                 oldProperties = state.rosettaStoneTemplate!!.properties,
                 statements = state.statements,
+                extractionMethod = ExtractionMethod.UNKNOWN,
             )
         }
         return state

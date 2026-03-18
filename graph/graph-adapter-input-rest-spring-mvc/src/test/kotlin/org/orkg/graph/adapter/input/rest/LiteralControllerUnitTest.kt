@@ -21,6 +21,7 @@ import org.orkg.graph.adapter.input.rest.LiteralController.UpdateLiteralRequest
 import org.orkg.graph.adapter.input.rest.testing.fixtures.configuration.GraphControllerUnitTestConfiguration
 import org.orkg.graph.adapter.input.rest.testing.fixtures.literalResponseFields
 import org.orkg.graph.domain.ExactSearchString
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.InvalidLiteralDatatype
 import org.orkg.graph.domain.InvalidLiteralLabel
 import org.orkg.graph.domain.Literal
@@ -32,6 +33,7 @@ import org.orkg.graph.domain.MAX_LABEL_LENGTH
 import org.orkg.graph.input.CreateLiteralUseCase.CreateCommand
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.UpdateLiteralUseCase
+import org.orkg.graph.testing.asciidoc.allowedExtractionMethodValues
 import org.orkg.graph.testing.fixtures.createLiteral
 import org.orkg.testing.MockUserId
 import org.orkg.testing.andExpectLiteral
@@ -42,7 +44,6 @@ import org.orkg.testing.spring.MockMvcBaseTest
 import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectErrorStatus
 import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectType
 import org.orkg.testing.spring.restdocs.format
-import org.orkg.testing.spring.restdocs.timestampFieldWithPath
 import org.orkg.testing.spring.restdocs.type
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest
@@ -76,6 +77,7 @@ internal class LiteralControllerUnitTest : MockMvcBaseTest("literals") {
         val literal = createLiteral(
             id = id,
             createdAt = OffsetDateTime.of(2023, 6, 1, 15, 19, 4, 778631092, ZoneOffset.ofHours(2)),
+            extractionMethod = ExtractionMethod.MANUAL,
         )
         every { literalService.findById(any()) } returns Optional.of(literal)
 
@@ -88,6 +90,7 @@ internal class LiteralControllerUnitTest : MockMvcBaseTest("literals") {
             .andExpect(jsonPath("$.datatype", `is`("xsd:string")))
             .andExpect(jsonPath("$.created_at", `is`("2023-06-01T15:19:04.778631092+02:00")))
             .andExpect(jsonPath("$.created_by", `is`("679ad2bd-ceb3-4f26-80ec-b6eab7a5e8c1")))
+            .andExpect(jsonPath("$.extraction_method", `is`("MANUAL")))
             .andExpect(jsonPath("$.modifiable", `is`(true)))
             .andExpect(jsonPath("$._class", `is`("literal")))
             // Document the representation for later reference.
@@ -101,17 +104,7 @@ internal class LiteralControllerUnitTest : MockMvcBaseTest("literals") {
                 pathParameters(
                     parameterWithName("id").description("The identifier of the literal."),
                 )
-                responseFields<LiteralRepresentation>(
-                    // The order here determines the order in the generated table. More relevant items should be up.
-                    fieldWithPath("id").description("The identifier of the literal."),
-                    fieldWithPath("label").description("The literal value."),
-                    fieldWithPath("datatype").description("The datatype of the literal. Can be a (prefixed) URI."),
-                    timestampFieldWithPath("created_at", "the literal was created"),
-                    // TODO: Add links to documentation of special user UUIDs.
-                    fieldWithPath("created_by").description("The UUID of the user or service who created this literal."),
-                    fieldWithPath("modifiable").description("Whether this literal can be modified."),
-                    fieldWithPath("_class").description("An indicator which type of entity was returned. Always has the value \"`literal`\"."),
-                )
+                responseFields<LiteralRepresentation>(literalResponseFields())
                 throws(LiteralNotFound::class)
             }
 
@@ -211,11 +204,13 @@ internal class LiteralControllerUnitTest : MockMvcBaseTest("literals") {
         val request = CreateLiteralRequest(
             label = literal.label,
             datatype = literal.datatype,
+            extractionMethod = literal.extractionMethod,
         )
         val command = CreateCommand(
             contributorId = ContributorId(MockUserId.USER),
             label = request.label,
             datatype = request.datatype,
+            extractionMethod = request.extractionMethod,
         )
         every { literalService.create(command) } returns literal.id
 
@@ -239,6 +234,7 @@ internal class LiteralControllerUnitTest : MockMvcBaseTest("literals") {
                 requestFields<CreateLiteralRequest>(
                     fieldWithPath("label").description("The value of the literal."),
                     fieldWithPath("datatype").description("The datatype of the literal value. (default: xsd:string)"),
+                    fieldWithPath("extraction_method").description("""The method used to extract the literal. Can be one of $allowedExtractionMethodValues. (optional)""").optional(),
                 )
                 throws(InvalidLiteralLabel::class, InvalidLiteralLabel::class, InvalidLiteralDatatype::class, LiteralAlreadyExists::class)
             }
@@ -249,7 +245,7 @@ internal class LiteralControllerUnitTest : MockMvcBaseTest("literals") {
     @Test
     @TestWithMockUser
     fun whenPOST_AndLabelIsEmptyString_ThenSucceed() {
-        val literal = createCreateRequestWithEmptyLabel()
+        val literal = CreateLiteralRequest(label = "")
         val mockResult = Literal(
             id = ThingId("L1"),
             label = literal.label,
@@ -344,19 +340,11 @@ internal class LiteralControllerUnitTest : MockMvcBaseTest("literals") {
                 requestFields<UpdateLiteralRequest>(
                     fieldWithPath("label").description("The updated value of the literal. (optional)").optional(),
                     fieldWithPath("datatype").description("The updated datatype of the literal value. (optional)").optional(),
+                    fieldWithPath("extraction_method").description("""The method used to extract the literal. Can be one of $allowedExtractionMethodValues. (optional)""").optional(),
                 )
                 throws(InvalidLiteralLabel::class, LiteralNotFound::class, LiteralNotModifiable::class, InvalidLiteralLabel::class, InvalidLiteralDatatype::class)
             }
 
         verify(exactly = 1) { literalService.update(command) }
     }
-
-    private fun createCreateRequestWithEmptyLabel() = CreateLiteralRequest(label = "")
-
-    private fun createLiteral(): Literal = Literal(
-        id = ThingId("L1"),
-        label = "irrelevant",
-        datatype = "irrelevant",
-        createdAt = OffsetDateTime.now(clock),
-    )
 }

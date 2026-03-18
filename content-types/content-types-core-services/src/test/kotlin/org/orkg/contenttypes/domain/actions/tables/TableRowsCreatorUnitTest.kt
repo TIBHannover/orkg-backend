@@ -27,7 +27,7 @@ internal class TableRowsCreatorUnitTest : MockkBaseTest {
             ThingId("Row2"),
         )
 
-        every { abstractTableRowCreator.create(any(), any(), any(), any()) } returnsMany rows
+        every { abstractTableRowCreator.create(any(), any(), any(), any(), any()) } returnsMany rows
 
         val result = tableRowsCreator(command, state)
 
@@ -45,6 +45,7 @@ internal class TableRowsCreatorUnitTest : MockkBaseTest {
                 tableId = state.tableId!!,
                 index = 0,
                 label = null,
+                extractionMethod = command.extractionMethod,
             )
         }
         verify(exactly = 1) {
@@ -53,6 +54,7 @@ internal class TableRowsCreatorUnitTest : MockkBaseTest {
                 tableId = state.tableId!!,
                 index = 1,
                 label = "row 2",
+                extractionMethod = command.extractionMethod,
             )
         }
     }

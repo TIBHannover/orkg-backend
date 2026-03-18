@@ -12,6 +12,7 @@ import org.orkg.contenttypes.domain.actions.AbstractTemplatePropertyCreator
 import org.orkg.contenttypes.domain.actions.CreateTemplatePropertyState
 import org.orkg.contenttypes.domain.testing.fixtures.createTemplate
 import org.orkg.contenttypes.input.testing.fixtures.createUntypedTemplatePropertyCommand
+import org.orkg.graph.domain.ExtractionMethod
 
 internal class TemplatePropertyCreatorUnitTest : MockkBaseTest {
     private val abstractTemplatePropertyCreator: AbstractTemplatePropertyCreator = mockk()
@@ -27,6 +28,7 @@ internal class TemplatePropertyCreatorUnitTest : MockkBaseTest {
             templatePropertyId = command.templateId,
         )
         val templatePropertyId = ThingId("R1568")
+        val extractionMethod = ExtractionMethod.UNKNOWN
 
         every {
             abstractTemplatePropertyCreator.create(
@@ -34,6 +36,7 @@ internal class TemplatePropertyCreatorUnitTest : MockkBaseTest {
                 templateId = command.templateId,
                 order = template.properties.size,
                 property = command,
+                extractionMethod = extractionMethod,
             )
         } returns templatePropertyId
 
@@ -50,6 +53,7 @@ internal class TemplatePropertyCreatorUnitTest : MockkBaseTest {
                 templateId = command.templateId,
                 order = template.properties.size,
                 property = command,
+                extractionMethod = extractionMethod,
             )
         }
     }

@@ -6,6 +6,7 @@ import org.orkg.contenttypes.domain.Author
 import org.orkg.contenttypes.domain.identifiers.Identifiers
 import org.orkg.contenttypes.domain.identifiers.parse
 import org.orkg.graph.domain.Classes
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.CreateListUseCase
@@ -23,23 +24,23 @@ class AbstractAuthorListCreator(
     private val unsafeLiteralUseCases: UnsafeLiteralUseCases,
     private val listService: ListUseCases,
 ) {
-    internal fun create(contributorId: ContributorId, authors: List<Author>, subjectId: ThingId) {
+    internal fun create(contributorId: ContributorId, authors: List<Author>, subjectId: ThingId, extractionMethod: ExtractionMethod) {
         val authorIds = authors.map { author ->
             when {
                 author.id != null -> {
                     // After validation, author identifiers only contain identifiers that need to be created
                     if (!author.identifiers.isNullOrEmpty()) {
-                        createIdentifiers(author.id!!, author.identifiers!!, contributorId)
+                        createIdentifiers(author.id!!, author.identifiers!!, contributorId, extractionMethod)
                     }
                     author.id!!
                 }
 
                 author.homepage == null && author.identifiers.isNullOrEmpty() -> {
-                    createLiteralAuthor(author, contributorId)
+                    createLiteralAuthor(author, contributorId, extractionMethod)
                 }
 
                 else -> {
-                    createResourceAuthor(author, contributorId)
+                    createResourceAuthor(author, contributorId, extractionMethod)
                 }
             }
         }
@@ -60,15 +61,16 @@ class AbstractAuthorListCreator(
         )
     }
 
-    private fun createLiteralAuthor(author: Author, contributorId: ContributorId): ThingId =
+    private fun createLiteralAuthor(author: Author, contributorId: ContributorId, extractionMethod: ExtractionMethod): ThingId =
         unsafeLiteralUseCases.create(
             CreateLiteralUseCase.CreateCommand(
                 contributorId = contributorId,
                 label = author.name,
+                extractionMethod = extractionMethod,
             ),
         )
 
-    private fun createResourceAuthor(author: Author, contributorId: ContributorId): ThingId {
+    private fun createResourceAuthor(author: Author, contributorId: ContributorId, extractionMethod: ExtractionMethod): ThingId {
         val authorId = unsafeResourceUseCases.create(
             CreateResourceUseCase.CreateCommand(
                 contributorId = contributorId,
@@ -78,7 +80,7 @@ class AbstractAuthorListCreator(
         )
 
         if (!author.identifiers.isNullOrEmpty()) {
-            createIdentifiers(authorId, author.identifiers!!, contributorId)
+            createIdentifiers(authorId, author.identifiers!!, contributorId, extractionMethod)
         }
 
         if (author.homepage != null) {
@@ -87,6 +89,7 @@ class AbstractAuthorListCreator(
                     contributorId = contributorId,
                     label = author.homepage.toString(),
                     datatype = Literals.XSD.URI.prefixedUri,
+                    extractionMethod = extractionMethod,
                 ),
             )
             unsafeStatementUseCases.create(
@@ -106,6 +109,7 @@ class AbstractAuthorListCreator(
         authorId: ThingId,
         missingIdentifiers: Map<String, List<String>>,
         contributorId: ContributorId,
+        extractionMethod: ExtractionMethod,
     ) {
         val identifiers = Identifiers.author.parse(missingIdentifiers, validate = false)
         identifiers.forEach { (identifier, values) ->
@@ -114,6 +118,7 @@ class AbstractAuthorListCreator(
                     CreateLiteralUseCase.CreateCommand(
                         contributorId = contributorId,
                         label = value,
+                        extractionMethod = extractionMethod,
                     ),
                 )
                 unsafeStatementUseCases.create(

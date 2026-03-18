@@ -12,6 +12,7 @@ import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.actions.CreateComparisonRelatedResourceCommand
 import org.orkg.graph.domain.Classes
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.InvalidDescription
 import org.orkg.graph.domain.InvalidLabel
 import org.orkg.graph.domain.MAX_LABEL_LENGTH
@@ -65,6 +66,21 @@ internal class ComparisonRelatedResourceServiceUnitTest : MockkBaseTest {
         val imageLiteralId = ThingId("L1")
         val urlLiteralId = ThingId("L2")
         val descriptionLiteralId = ThingId("L3")
+        val createImageLiteralCommand = CreateLiteralUseCase.CreateCommand(
+            contributorId = command.contributorId,
+            label = command.image!!,
+            extractionMethod = ExtractionMethod.UNKNOWN,
+        )
+        val createUrlLiteralCommand = CreateLiteralUseCase.CreateCommand(
+            contributorId = command.contributorId,
+            label = command.url!!,
+            extractionMethod = ExtractionMethod.UNKNOWN,
+        )
+        val createDescriptionLiteralCommand = CreateLiteralUseCase.CreateCommand(
+            contributorId = command.contributorId,
+            label = command.description!!,
+            extractionMethod = ExtractionMethod.UNKNOWN,
+        )
 
         every { resourceRepository.findById(command.comparisonId) } returns Optional.of(comparison)
         every {
@@ -86,30 +102,9 @@ internal class ComparisonRelatedResourceServiceUnitTest : MockkBaseTest {
                 ),
             )
         } returns StatementId("S123")
-        every {
-            unsafeLiteralUseCases.create(
-                CreateLiteralUseCase.CreateCommand(
-                    contributorId = command.contributorId,
-                    label = command.image!!,
-                ),
-            )
-        } returns imageLiteralId
-        every {
-            unsafeLiteralUseCases.create(
-                CreateLiteralUseCase.CreateCommand(
-                    contributorId = command.contributorId,
-                    label = command.url!!,
-                ),
-            )
-        } returns urlLiteralId
-        every {
-            unsafeLiteralUseCases.create(
-                CreateLiteralUseCase.CreateCommand(
-                    contributorId = command.contributorId,
-                    label = command.description!!,
-                ),
-            )
-        } returns descriptionLiteralId
+        every { unsafeLiteralUseCases.create(createImageLiteralCommand) } returns imageLiteralId
+        every { unsafeLiteralUseCases.create(createUrlLiteralCommand) } returns urlLiteralId
+        every { unsafeLiteralUseCases.create(createDescriptionLiteralCommand) } returns descriptionLiteralId
         every {
             unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
@@ -163,30 +158,9 @@ internal class ComparisonRelatedResourceServiceUnitTest : MockkBaseTest {
                 ),
             )
         }
-        verify(exactly = 1) {
-            unsafeLiteralUseCases.create(
-                CreateLiteralUseCase.CreateCommand(
-                    contributorId = command.contributorId,
-                    label = command.image!!,
-                ),
-            )
-        }
-        verify(exactly = 1) {
-            unsafeLiteralUseCases.create(
-                CreateLiteralUseCase.CreateCommand(
-                    contributorId = command.contributorId,
-                    label = command.url!!,
-                ),
-            )
-        }
-        verify(exactly = 1) {
-            unsafeLiteralUseCases.create(
-                CreateLiteralUseCase.CreateCommand(
-                    contributorId = command.contributorId,
-                    label = command.description!!,
-                ),
-            )
-        }
+        verify(exactly = 1) { unsafeLiteralUseCases.create(createImageLiteralCommand) }
+        verify(exactly = 1) { unsafeLiteralUseCases.create(createUrlLiteralCommand) }
+        verify(exactly = 1) { unsafeLiteralUseCases.create(createDescriptionLiteralCommand) }
         verify(exactly = 1) {
             unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(

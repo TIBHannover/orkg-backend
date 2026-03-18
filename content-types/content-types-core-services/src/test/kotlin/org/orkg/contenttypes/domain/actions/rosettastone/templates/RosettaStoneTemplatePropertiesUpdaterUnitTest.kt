@@ -11,6 +11,7 @@ import org.orkg.contenttypes.domain.actions.AbstractTemplatePropertiesUpdater
 import org.orkg.contenttypes.domain.actions.UpdateRosettaStoneTemplateState
 import org.orkg.contenttypes.domain.testing.fixtures.createRosettaStoneTemplate
 import org.orkg.contenttypes.input.testing.fixtures.updateRosettaStoneTemplateCommand
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.createStatement
 
@@ -46,6 +47,7 @@ internal class RosettaStoneTemplatePropertiesUpdaterUnitTest : MockkBaseTest {
                 newProperties = command.properties!!,
                 oldProperties = state.rosettaStoneTemplate!!.properties,
                 statements = state.statements,
+                extractionMethod = ExtractionMethod.UNKNOWN,
             )
         } just runs
 
@@ -58,6 +60,7 @@ internal class RosettaStoneTemplatePropertiesUpdaterUnitTest : MockkBaseTest {
                 newProperties = command.properties!!,
                 oldProperties = state.rosettaStoneTemplate!!.properties,
                 statements = state.statements,
+                extractionMethod = ExtractionMethod.UNKNOWN,
             )
         }
     }

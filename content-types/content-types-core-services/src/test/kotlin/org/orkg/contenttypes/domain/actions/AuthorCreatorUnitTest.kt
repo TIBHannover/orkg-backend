@@ -10,6 +10,7 @@ import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.Author
 import org.orkg.graph.domain.Classes
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.StatementId
@@ -50,12 +51,14 @@ internal class AuthorCreatorUnitTest : MockkBaseTest {
             id = ThingId(UUID.randomUUID().toString()),
             label = author.name,
         )
+        val extractionMethod = ExtractionMethod.MANUAL
 
         every {
             unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = contributorId,
                     label = orcid,
+                    extractionMethod = extractionMethod,
                 ),
             )
         } returns orcidLiteral.id
@@ -89,13 +92,14 @@ internal class AuthorCreatorUnitTest : MockkBaseTest {
             )
         } returns StatementId("S2")
 
-        authorCreator.create(contributorId, listOf(author), subjectId)
+        authorCreator.create(contributorId, listOf(author), subjectId, extractionMethod)
 
         verify(exactly = 1) {
             unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = contributorId,
                     label = orcid,
+                    extractionMethod = extractionMethod,
                 ),
             )
         }
@@ -140,12 +144,14 @@ internal class AuthorCreatorUnitTest : MockkBaseTest {
         val literal = createLiteral(id = authorId, label = author.name)
         val authorListId = ThingId("R1456")
         val contributorId = ContributorId(UUID.randomUUID())
+        val extractionMethod = ExtractionMethod.MANUAL
 
         every {
             unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = contributorId,
                     label = author.name,
+                    extractionMethod = extractionMethod,
                 ),
             )
         } returns literal.id
@@ -169,13 +175,14 @@ internal class AuthorCreatorUnitTest : MockkBaseTest {
             )
         } returns StatementId("S1")
 
-        authorCreator.create(contributorId, listOf(author), subjectId)
+        authorCreator.create(contributorId, listOf(author), subjectId, extractionMethod)
 
         verify(exactly = 1) {
             unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = contributorId,
                     label = author.name,
+                    extractionMethod = extractionMethod,
                 ),
             )
         }
@@ -221,6 +228,7 @@ internal class AuthorCreatorUnitTest : MockkBaseTest {
         val orcidLiteralId = ThingId("L65412")
         val homepageLiteralId = ThingId("L13254")
         val authorListId = ThingId("R1456")
+        val extractionMethod = ExtractionMethod.MANUAL
 
         every { unsafeResourceUseCases.create(resourceCreateCommand) } returns authorId
         every {
@@ -228,6 +236,7 @@ internal class AuthorCreatorUnitTest : MockkBaseTest {
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = contributorId,
                     label = orcid,
+                    extractionMethod = extractionMethod,
                 ),
             )
         } returns orcidLiteralId
@@ -247,6 +256,7 @@ internal class AuthorCreatorUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     label = author.homepage.toString(),
                     datatype = Literals.XSD.URI.prefixedUri,
+                    extractionMethod = extractionMethod,
                 ),
             )
         } returns homepageLiteralId
@@ -280,7 +290,7 @@ internal class AuthorCreatorUnitTest : MockkBaseTest {
             )
         } returns StatementId("S3")
 
-        authorCreator.create(contributorId, listOf(author), subjectId)
+        authorCreator.create(contributorId, listOf(author), subjectId, extractionMethod)
 
         verify(exactly = 1) { unsafeResourceUseCases.create(resourceCreateCommand) }
         verify(exactly = 1) {
@@ -288,6 +298,7 @@ internal class AuthorCreatorUnitTest : MockkBaseTest {
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = contributorId,
                     label = orcid,
+                    extractionMethod = extractionMethod,
                 ),
             )
         }
@@ -307,6 +318,7 @@ internal class AuthorCreatorUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     label = author.homepage.toString(),
                     datatype = Literals.XSD.URI.prefixedUri,
+                    extractionMethod = extractionMethod,
                 ),
             )
         }

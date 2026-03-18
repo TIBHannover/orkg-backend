@@ -3,6 +3,7 @@ package org.orkg.contenttypes.domain.actions.smartreviews
 import org.orkg.contenttypes.domain.actions.PublishSmartReviewCommand
 import org.orkg.contenttypes.domain.actions.SingleStatementPropertyCreator
 import org.orkg.contenttypes.domain.actions.smartreviews.PublishSmartReviewAction.State
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.UnsafeLiteralUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
@@ -23,6 +24,7 @@ class SmartReviewChangelogCreator(
             subjectId = state.smartReviewVersionId!!,
             predicateId = Predicates.description,
             label = command.changelog,
+            extractionMethod = ExtractionMethod.UNKNOWN,
         )
         return state
     }

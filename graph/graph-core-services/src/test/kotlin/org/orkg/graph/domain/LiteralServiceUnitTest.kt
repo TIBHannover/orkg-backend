@@ -247,6 +247,7 @@ internal class LiteralServiceUnitTest {
         val contributorId = ContributorId(MockUserId.USER)
         val label = "50.1"
         val datatype = Literals.XSD.DECIMAL.prefixedUri
+        val extractionMethod = ExtractionMethod.AUTOMATIC
         val modifiable = false
 
         every { literalRepository.findById(literal.id) } returns Optional.of(literal)
@@ -258,6 +259,7 @@ internal class LiteralServiceUnitTest {
                 contributorId = contributorId,
                 label = label,
                 datatype = datatype,
+                extractionMethod = extractionMethod,
                 modifiable = modifiable,
             ),
         )
@@ -271,6 +273,7 @@ internal class LiteralServiceUnitTest {
                     it.datatype shouldBe datatype
                     it.createdAt shouldBe literal.createdAt
                     it.createdBy shouldBe literal.createdBy
+                    it.extractionMethod shouldBe extractionMethod
                     it.modifiable shouldBe modifiable
                 },
             )

@@ -32,6 +32,7 @@ internal class UnsafeLiteralServiceUnitTest {
             contributorId = contributorId,
             label = "irrelevant",
             datatype = "%§&invalid$§/",
+            extractionMethod = ExtractionMethod.AUTOMATIC,
         )
 
         every { literalRepository.nextIdentity() } returns id
@@ -47,6 +48,7 @@ internal class UnsafeLiteralServiceUnitTest {
                     it.createdBy shouldBe contributorId
                     it.datatype shouldBe command.datatype
                     it.label shouldBe command.label
+                    it.extractionMethod shouldBe command.extractionMethod
                     it.modifiable shouldBe true
                 },
             )
@@ -61,6 +63,7 @@ internal class UnsafeLiteralServiceUnitTest {
             contributorId = contributorId,
             label = "irrelevant",
             datatype = "foo_bar:string",
+            extractionMethod = ExtractionMethod.AUTOMATIC,
         )
 
         every { literalRepository.nextIdentity() } returns id
@@ -76,6 +79,7 @@ internal class UnsafeLiteralServiceUnitTest {
                     it.createdBy shouldBe contributorId
                     it.datatype shouldBe command.datatype
                     it.label shouldBe command.label
+                    it.extractionMethod shouldBe command.extractionMethod
                     it.modifiable shouldBe true
                 },
             )
@@ -105,6 +109,7 @@ internal class UnsafeLiteralServiceUnitTest {
                     it.createdBy shouldBe contributorId
                     it.datatype shouldBe command.datatype
                     it.label shouldBe command.label
+                    it.extractionMethod shouldBe command.extractionMethod
                     it.modifiable shouldBe true
                 },
             )
@@ -135,6 +140,7 @@ internal class UnsafeLiteralServiceUnitTest {
                     it.createdBy shouldBe contributorId
                     it.datatype shouldBe command.datatype
                     it.label shouldBe command.label
+                    it.extractionMethod shouldBe command.extractionMethod
                     it.modifiable shouldBe true
                 },
             )
@@ -162,6 +168,7 @@ internal class UnsafeLiteralServiceUnitTest {
                     it.createdBy shouldBe contributorId
                     it.datatype shouldBe command.datatype
                     it.label shouldBe command.label
+                    it.extractionMethod shouldBe command.extractionMethod
                     it.modifiable shouldBe true
                 },
             )
@@ -180,6 +187,7 @@ internal class UnsafeLiteralServiceUnitTest {
                 contributorId = contributorId,
                 label = "3.141593",
                 datatype = "xsd:float",
+                extractionMethod = ExtractionMethod.AUTOMATIC,
                 modifiable = false,
             ),
         )
@@ -194,6 +202,7 @@ internal class UnsafeLiteralServiceUnitTest {
                     it.createdBy shouldBe contributorId
                     it.datatype shouldBe "xsd:float"
                     it.label shouldBe "3.141593"
+                    it.extractionMethod shouldBe ExtractionMethod.AUTOMATIC
                     it.modifiable shouldBe false
                 },
             )
@@ -223,6 +232,7 @@ internal class UnsafeLiteralServiceUnitTest {
                     it.createdBy shouldBe literal.createdBy
                     it.datatype shouldBe literal.datatype
                     it.label shouldBe command.label
+                    it.extractionMethod shouldBe literal.extractionMethod
                     it.modifiable shouldBe false
                 },
             )
@@ -260,6 +270,7 @@ internal class UnsafeLiteralServiceUnitTest {
                     it.createdBy shouldBe literal.createdBy
                     it.datatype shouldBe literal.datatype
                     it.label shouldBe command.label
+                    it.extractionMethod shouldBe literal.extractionMethod
                     it.modifiable shouldBe literal.modifiable
                 },
             )
@@ -304,6 +315,7 @@ internal class UnsafeLiteralServiceUnitTest {
                     it.createdBy shouldBe literal.createdBy
                     it.datatype shouldBe command.datatype
                     it.label shouldBe command.label
+                    it.extractionMethod shouldBe literal.extractionMethod
                     it.modifiable shouldBe literal.modifiable
                 },
             )
@@ -333,6 +345,7 @@ internal class UnsafeLiteralServiceUnitTest {
                     it.createdBy shouldBe literal.createdBy
                     it.datatype shouldBe command.datatype
                     it.label shouldBe command.label
+                    it.extractionMethod shouldBe literal.extractionMethod
                     it.modifiable shouldBe literal.modifiable
                 },
             )
@@ -363,6 +376,7 @@ internal class UnsafeLiteralServiceUnitTest {
                     it.createdBy shouldBe literal.createdBy
                     it.datatype shouldBe command.datatype
                     it.label shouldBe command.label
+                    it.extractionMethod shouldBe literal.extractionMethod
                     it.modifiable shouldBe literal.modifiable
                 },
             )
@@ -382,6 +396,7 @@ internal class UnsafeLiteralServiceUnitTest {
                 contributorId = contributorId,
                 label = literal.label,
                 datatype = literal.datatype,
+                extractionMethod = literal.extractionMethod,
                 modifiable = literal.modifiable,
             ),
         )
@@ -395,6 +410,7 @@ internal class UnsafeLiteralServiceUnitTest {
         val contributorId = ContributorId(MockUserId.USER)
         val label = "50.1"
         val datatype = Literals.XSD.DECIMAL.prefixedUri
+        val extractionMethod = ExtractionMethod.AUTOMATIC
         val modifiable = false
 
         every { literalRepository.findById(literal.id) } returns Optional.of(literal)
@@ -406,6 +422,7 @@ internal class UnsafeLiteralServiceUnitTest {
                 contributorId = contributorId,
                 label = label,
                 datatype = datatype,
+                extractionMethod = extractionMethod,
                 modifiable = modifiable,
             ),
         )
@@ -419,6 +436,7 @@ internal class UnsafeLiteralServiceUnitTest {
                     it.datatype shouldBe datatype
                     it.createdAt shouldBe literal.createdAt
                     it.createdBy shouldBe literal.createdBy
+                    it.extractionMethod shouldBe extractionMethod
                     it.modifiable shouldBe modifiable
                 },
             )

@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkBaseTest
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.StatementId
@@ -28,12 +29,14 @@ internal class SingleStatementPropertyCreatorUnitTest : MockkBaseTest {
         val contributorId = ContributorId(UUID.randomUUID())
         val description = "some description"
         val literal = ThingId("L1")
+        val extractionMethod = ExtractionMethod.MANUAL
 
         every {
             unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = contributorId,
                     label = description,
+                    extractionMethod = extractionMethod,
                 ),
             )
         } returns literal
@@ -48,13 +51,20 @@ internal class SingleStatementPropertyCreatorUnitTest : MockkBaseTest {
             )
         } returns StatementId("S1")
 
-        singleStatementPropertyCreator.create(contributorId, subjectId, Predicates.description, description)
+        singleStatementPropertyCreator.create(
+            contributorId = contributorId,
+            subjectId = subjectId,
+            predicateId = Predicates.description,
+            label = description,
+            extractionMethod = extractionMethod,
+        )
 
         verify(exactly = 1) {
             unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = contributorId,
                     label = description,
+                    extractionMethod = extractionMethod,
                 ),
             )
         }
@@ -76,10 +86,12 @@ internal class SingleStatementPropertyCreatorUnitTest : MockkBaseTest {
         val contributorId = ContributorId(UUID.randomUUID())
         val description = "true"
         val literal = ThingId("L1")
+        val extractionMethod = ExtractionMethod.MANUAL
         val literalCreateCommand = CreateLiteralUseCase.CreateCommand(
             contributorId = contributorId,
             label = description,
             datatype = Literals.XSD.BOOLEAN.prefixedUri,
+            extractionMethod = extractionMethod,
         )
 
         every { unsafeLiteralUseCases.create(literalCreateCommand) } returns literal
@@ -100,6 +112,7 @@ internal class SingleStatementPropertyCreatorUnitTest : MockkBaseTest {
             predicateId = Predicates.isAnonymized,
             label = description,
             datatype = Literals.XSD.BOOLEAN.prefixedUri,
+            extractionMethod = extractionMethod,
         )
 
         verify(exactly = 1) { unsafeLiteralUseCases.create(literalCreateCommand) }

@@ -2,6 +2,7 @@ package org.orkg.contenttypes.domain.actions
 
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.input.CreateLiteralUseCase
 import org.orkg.graph.input.CreateStatementUseCase
@@ -18,6 +19,7 @@ class StatementCollectionPropertyCreator(
         predicateId: ThingId,
         labels: Collection<String>,
         datatype: String = Literals.XSD.STRING.prefixedUri,
+        extractionMethod: ExtractionMethod,
     ) {
         labels.forEach { label ->
             val literal = unsafeLiteralUseCases.create(
@@ -25,6 +27,7 @@ class StatementCollectionPropertyCreator(
                     contributorId = contributorId,
                     label = label,
                     datatype = datatype,
+                    extractionMethod = extractionMethod,
                 ),
             )
             unsafeStatementUseCases.create(

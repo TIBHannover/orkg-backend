@@ -4,6 +4,7 @@ import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.Author
 import org.orkg.graph.domain.Classes
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.GeneralStatement
 import org.orkg.graph.domain.Resource
 import org.orkg.graph.input.ListUseCases
@@ -32,12 +33,13 @@ class AbstractAuthorListUpdater(
         contributorId: ContributorId,
         authors: List<Author>,
         subjectId: ThingId,
+        extractionMethod: ExtractionMethod,
     ) {
         // Remove current authors list, literal authors will be fully deleted in the process
         statements[subjectId].orEmpty()
             .singleOrNull { it.`object` is Resource && Classes.list in (it.`object` as Resource).classes }
             ?.let { listRepository.deleteById(it.`object`.id) }
         // Create new authors list
-        authorCreator.create(contributorId, authors, subjectId)
+        authorCreator.create(contributorId, authors, subjectId, extractionMethod)
     }
 }

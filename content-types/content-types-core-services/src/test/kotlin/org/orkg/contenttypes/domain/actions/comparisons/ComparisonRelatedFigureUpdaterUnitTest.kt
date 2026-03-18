@@ -23,6 +23,7 @@ import org.orkg.contenttypes.domain.actions.UpdateComparisonRelatedFigureCommand
 import org.orkg.contenttypes.domain.testing.fixtures.createComparisonRelatedFigure
 import org.orkg.contenttypes.input.ComparisonRelatedFigureUseCases
 import org.orkg.graph.domain.Classes
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.InvalidDescription
 import org.orkg.graph.domain.InvalidLabel
 import org.orkg.graph.domain.MAX_LABEL_LENGTH
@@ -191,6 +192,7 @@ internal class ComparisonRelatedFigureUpdaterUnitTest : MockkBaseTest {
             createStatement(StatementId("S456")),
         )
         val comparison = createResource(classes = setOf(Classes.comparison))
+        val extractionMethod = ExtractionMethod.UNKNOWN
 
         every { resourceService.findById(command.comparisonId) } returns Optional.of(comparison)
         every {
@@ -212,6 +214,7 @@ internal class ComparisonRelatedFigureUpdaterUnitTest : MockkBaseTest {
                 subjectId = command.comparisonRelatedFigureId,
                 predicateId = Predicates.hasImage,
                 label = command.image,
+                extractionMethod = extractionMethod,
             )
         } just runs
 
@@ -237,6 +240,7 @@ internal class ComparisonRelatedFigureUpdaterUnitTest : MockkBaseTest {
                 subjectId = command.comparisonRelatedFigureId,
                 predicateId = Predicates.hasImage,
                 label = command.image,
+                extractionMethod = extractionMethod,
             )
         }
     }
@@ -252,6 +256,7 @@ internal class ComparisonRelatedFigureUpdaterUnitTest : MockkBaseTest {
             createStatement(StatementId("S456")),
         )
         val comparison = createResource(classes = setOf(Classes.comparison))
+        val extractionMethod = ExtractionMethod.UNKNOWN
 
         every { resourceService.findById(command.comparisonId) } returns Optional.of(comparison)
         every {
@@ -273,6 +278,7 @@ internal class ComparisonRelatedFigureUpdaterUnitTest : MockkBaseTest {
                 subjectId = command.comparisonRelatedFigureId,
                 predicateId = Predicates.description,
                 label = command.description,
+                extractionMethod = extractionMethod,
             )
         } just runs
 
@@ -298,6 +304,7 @@ internal class ComparisonRelatedFigureUpdaterUnitTest : MockkBaseTest {
                 subjectId = command.comparisonRelatedFigureId,
                 predicateId = Predicates.description,
                 label = command.description,
+                extractionMethod = extractionMethod,
             )
         }
     }

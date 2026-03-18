@@ -18,6 +18,7 @@ class TemplateFormattedLabelCreator(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     label = label.value,
+                    extractionMethod = command.extractionMethod,
                 ),
             )
             unsafeStatementUseCases.create(

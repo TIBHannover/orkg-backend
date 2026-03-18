@@ -8,6 +8,7 @@ import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.identifiers.Identifiers
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.StatementId
 import org.orkg.graph.input.CreateLiteralUseCase
@@ -29,6 +30,7 @@ internal class IdentifierCreatorUnitTest : MockkBaseTest {
         val doi = "10.1234/56789"
         val identifiers = mapOf("doi" to listOf(doi))
         val doiLiteralId = ThingId("L1")
+        val extractionMethod = ExtractionMethod.MANUAL
         val command = CreateStatementUseCase.CreateCommand(
             contributorId = contributorId,
             subjectId = paperId,
@@ -41,18 +43,20 @@ internal class IdentifierCreatorUnitTest : MockkBaseTest {
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = contributorId,
                     label = doi,
+                    extractionMethod = extractionMethod,
                 ),
             )
         } returns doiLiteralId
         every { unsafeStatementUseCases.create(command) } returns StatementId("S435")
 
-        identifierCreator.create(contributorId, identifiers, Identifiers.paper, paperId)
+        identifierCreator.create(contributorId, identifiers, Identifiers.paper, paperId, extractionMethod)
 
         verify(exactly = 1) {
             unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = contributorId,
                     label = doi,
+                    extractionMethod = extractionMethod,
                 ),
             )
         }
@@ -64,8 +68,9 @@ internal class IdentifierCreatorUnitTest : MockkBaseTest {
         val paperId = ThingId("R123")
         val contributorId = ContributorId(UUID.randomUUID())
         val identifiers = mapOf("unknown" to listOf("value"))
+        val extractionMethod = ExtractionMethod.MANUAL
 
-        identifierCreator.create(contributorId, identifiers, Identifiers.paper, paperId)
+        identifierCreator.create(contributorId, identifiers, Identifiers.paper, paperId, extractionMethod)
 
         verify(exactly = 0) { unsafeLiteralUseCases.create(any()) }
         verify(exactly = 0) { unsafeStatementUseCases.create(any()) }

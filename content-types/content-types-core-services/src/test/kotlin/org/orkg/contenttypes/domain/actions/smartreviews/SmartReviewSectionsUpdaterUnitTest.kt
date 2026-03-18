@@ -141,7 +141,7 @@ internal class SmartReviewSectionsUpdaterUnitTest : MockkBaseTest {
         val newSectionId = ThingId("irrelevant")
 
         every {
-            abstractSmartReviewSectionCreator.create(command.contributorId, newSection)
+            abstractSmartReviewSectionCreator.create(command.contributorId, newSection, command.extractionMethod!!)
         } returns newSectionId
         every {
             statementCollectionPropertyUpdater.update(
@@ -155,7 +155,7 @@ internal class SmartReviewSectionsUpdaterUnitTest : MockkBaseTest {
 
         smartReviewSectionsUpdater(command, state)
 
-        verify(exactly = 1) { abstractSmartReviewSectionCreator.create(command.contributorId, newSection) }
+        verify(exactly = 1) { abstractSmartReviewSectionCreator.create(command.contributorId, newSection, command.extractionMethod!!) }
         verify(exactly = 1) {
             statementCollectionPropertyUpdater.update(
                 statements = state.statements[contributionId].orEmpty(),
@@ -191,7 +191,7 @@ internal class SmartReviewSectionsUpdaterUnitTest : MockkBaseTest {
         val newSectionId = ThingId("irrelevant")
 
         every {
-            abstractSmartReviewSectionCreator.create(command.contributorId, newSection)
+            abstractSmartReviewSectionCreator.create(command.contributorId, newSection, command.extractionMethod!!)
         } returns newSectionId
         every {
             statementCollectionPropertyUpdater.update(
@@ -213,7 +213,7 @@ internal class SmartReviewSectionsUpdaterUnitTest : MockkBaseTest {
 
         smartReviewSectionsUpdater(command, state)
 
-        verify(exactly = 1) { abstractSmartReviewSectionCreator.create(command.contributorId, newSection) }
+        verify(exactly = 1) { abstractSmartReviewSectionCreator.create(command.contributorId, newSection, command.extractionMethod!!) }
         verify(exactly = 1) {
             statementCollectionPropertyUpdater.update(
                 statements = state.statements[contributionId].orEmpty(),

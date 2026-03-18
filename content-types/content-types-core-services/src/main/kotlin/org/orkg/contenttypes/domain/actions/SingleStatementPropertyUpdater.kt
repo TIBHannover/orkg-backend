@@ -3,6 +3,7 @@ package org.orkg.contenttypes.domain.actions
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.wherePredicate
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.GeneralStatement
 import org.orkg.graph.domain.Literal
 import org.orkg.graph.domain.Literals
@@ -28,6 +29,7 @@ class SingleStatementPropertyUpdater(
         predicateId: ThingId,
         label: String?,
         datatype: String = Literals.XSD.STRING.prefixedUri,
+        extractionMethod: ExtractionMethod,
     ) {
         if (label != null) {
             val toRemove = statements.wherePredicate(predicateId)
@@ -35,7 +37,7 @@ class SingleStatementPropertyUpdater(
                 .toMutableSet()
 
             if (toRemove.isEmpty()) {
-                singleStatementPropertyCreator.create(contributorId, subjectId, predicateId, label, datatype)
+                singleStatementPropertyCreator.create(contributorId, subjectId, predicateId, label, datatype, extractionMethod)
             } else {
                 val statement = toRemove.first()
                 unsafeLiteralUseCases.update(
@@ -62,6 +64,7 @@ class SingleStatementPropertyUpdater(
         predicateId: ThingId,
         label: String?,
         datatype: String = Literals.XSD.STRING.prefixedUri,
+        extractionMethod: ExtractionMethod,
     ) {
         if (label == null) {
             val toRemove = statements.wherePredicate(predicateId)
@@ -73,7 +76,7 @@ class SingleStatementPropertyUpdater(
                 statementService.deleteAllById(toRemove)
             }
         } else {
-            updateRequiredProperty(statements, contributorId, subjectId, predicateId, label, datatype)
+            updateRequiredProperty(statements, contributorId, subjectId, predicateId, label, datatype, extractionMethod)
         }
     }
 

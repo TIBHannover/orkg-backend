@@ -20,6 +20,7 @@ import org.orkg.contenttypes.domain.actions.literaturelists.AbstractLiteratureLi
 import org.orkg.contenttypes.input.AbstractLiteratureListSectionCommand
 import org.orkg.contenttypes.input.testing.fixtures.createLiteratureListListSectionCommand
 import org.orkg.contenttypes.input.testing.fixtures.createLiteratureListTextSectionCommand
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.StatementId
 import org.orkg.graph.input.CreateStatementUseCase
@@ -45,11 +46,13 @@ internal class LiteratureListSectionCreatorUnitTest : MockkBaseTest {
     fun `Given a literature list section create command, when no index is specified, it creates a new section and appends it to the existing literature list`(command: CreateLiteratureListSectionCommand) {
         val sectionId = ThingId("R456")
         val state = CreateLiteratureListSectionState()
+        val extractionMethod = ExtractionMethod.UNKNOWN
 
         every {
             abstractLiteratureListSectionCreator.create(
                 contributorId = command.contributorId,
                 section = command as AbstractLiteratureListSectionCommand,
+                extractionMethod = extractionMethod,
             )
         } returns sectionId
         every {
@@ -73,6 +76,7 @@ internal class LiteratureListSectionCreatorUnitTest : MockkBaseTest {
             abstractLiteratureListSectionCreator.create(
                 contributorId = command.contributorId,
                 section = command as AbstractLiteratureListSectionCommand,
+                extractionMethod = extractionMethod,
             )
         }
         verify(exactly = 1) {
@@ -106,11 +110,13 @@ internal class LiteratureListSectionCreatorUnitTest : MockkBaseTest {
         val state = CreateLiteratureListSectionState().copy(
             statements = statements.groupBy { it.subject.id },
         )
+        val extractionMethod = ExtractionMethod.UNKNOWN
 
         every {
             abstractLiteratureListSectionCreator.create(
                 contributorId = command.contributorId,
                 section = command as AbstractLiteratureListSectionCommand,
+                extractionMethod = extractionMethod,
             )
         } returns sectionId
         every {
@@ -133,6 +139,7 @@ internal class LiteratureListSectionCreatorUnitTest : MockkBaseTest {
             abstractLiteratureListSectionCreator.create(
                 contributorId = command.contributorId,
                 section = command as AbstractLiteratureListSectionCommand,
+                extractionMethod = extractionMethod,
             )
         }
         verify(exactly = 1) {
@@ -165,11 +172,13 @@ internal class LiteratureListSectionCreatorUnitTest : MockkBaseTest {
         val state = CreateLiteratureListSectionState().copy(
             statements = statements.groupBy { it.subject.id },
         )
+        val extractionMethod = ExtractionMethod.UNKNOWN
 
         every {
             abstractLiteratureListSectionCreator.create(
                 contributorId = command.contributorId,
                 section = command as AbstractLiteratureListSectionCommand,
+                extractionMethod = extractionMethod,
             )
         } returns sectionId
         every {
@@ -192,6 +201,7 @@ internal class LiteratureListSectionCreatorUnitTest : MockkBaseTest {
             abstractLiteratureListSectionCreator.create(
                 contributorId = command.contributorId,
                 section = command as AbstractLiteratureListSectionCommand,
+                extractionMethod = extractionMethod,
             )
         }
         verify(exactly = 1) {

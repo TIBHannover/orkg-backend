@@ -14,6 +14,7 @@ import org.orkg.contenttypes.input.NumberLiteralPropertyCommand
 import org.orkg.contenttypes.input.OtherLiteralPropertyCommand
 import org.orkg.contenttypes.input.testing.fixtures.toNumberLiteralTemplatePropertyCommand
 import org.orkg.graph.domain.Classes
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.StatementId
@@ -30,8 +31,9 @@ internal class AbstractTemplatePropertyUpdaterRealNumberLiteralPropertyUnitTest 
         val contributorId = ContributorId(UUID.randomUUID())
         val oldProperty = createNumberLiteralTemplateProperty()
         val newProperty = oldProperty.toNumberLiteralTemplatePropertyCommand()
+        val extractionMethod = ExtractionMethod.MANUAL
 
-        abstractTemplatePropertyUpdater.update(emptyList(), contributorId, 2, newProperty, oldProperty)
+        abstractTemplatePropertyUpdater.update(emptyList(), contributorId, 2, newProperty, oldProperty, extractionMethod)
     }
 
     @Test
@@ -48,6 +50,7 @@ internal class AbstractTemplatePropertyUpdaterRealNumberLiteralPropertyUnitTest 
                 `object` = createLiteral(label = "1.0", datatype = Literals.XSD.DECIMAL.prefixedUri),
             ),
         )
+        val extractionMethod = ExtractionMethod.MANUAL
 
         every {
             singleStatementPropertyUpdater.updateOptionalProperty(
@@ -57,10 +60,11 @@ internal class AbstractTemplatePropertyUpdaterRealNumberLiteralPropertyUnitTest 
                 predicateId = Predicates.shMinInclusive,
                 label = newProperty.minInclusive!!.toString(),
                 datatype = Literals.XSD.INT.prefixedUri,
+                extractionMethod = extractionMethod,
             )
         } just runs
 
-        abstractTemplatePropertyUpdater.update(statements, contributorId, 2, newProperty, oldProperty)
+        abstractTemplatePropertyUpdater.update(statements, contributorId, 2, newProperty, oldProperty, extractionMethod)
 
         verify(exactly = 1) {
             singleStatementPropertyUpdater.updateOptionalProperty(
@@ -70,6 +74,7 @@ internal class AbstractTemplatePropertyUpdaterRealNumberLiteralPropertyUnitTest 
                 predicateId = Predicates.shMinInclusive,
                 label = newProperty.minInclusive!!.toString(),
                 datatype = Literals.XSD.INT.prefixedUri,
+                extractionMethod = extractionMethod,
             )
         }
     }
@@ -98,6 +103,7 @@ internal class AbstractTemplatePropertyUpdaterRealNumberLiteralPropertyUnitTest 
                 `object` = createLiteral(label = "1.0", datatype = Literals.XSD.DECIMAL.prefixedUri),
             ),
         )
+        val extractionMethod = ExtractionMethod.MANUAL
 
         every {
             singleStatementPropertyUpdater.updateOptionalProperty(
@@ -107,10 +113,11 @@ internal class AbstractTemplatePropertyUpdaterRealNumberLiteralPropertyUnitTest 
                 predicateId = Predicates.shMinInclusive,
                 label = newProperty.minInclusive!!.toString(),
                 datatype = Literals.XSD.DECIMAL.prefixedUri,
+                extractionMethod = extractionMethod,
             )
         } just runs
 
-        abstractTemplatePropertyUpdater.update(statements, contributorId, 3, newProperty, oldProperty)
+        abstractTemplatePropertyUpdater.update(statements, contributorId, 3, newProperty, oldProperty, extractionMethod)
 
         verify(exactly = 1) {
             singleStatementPropertyUpdater.updateOptionalProperty(
@@ -120,6 +127,7 @@ internal class AbstractTemplatePropertyUpdaterRealNumberLiteralPropertyUnitTest 
                 predicateId = Predicates.shMinInclusive,
                 label = newProperty.minInclusive!!.toString(),
                 datatype = Literals.XSD.DECIMAL.prefixedUri,
+                extractionMethod = extractionMethod,
             )
         }
     }
@@ -146,10 +154,11 @@ internal class AbstractTemplatePropertyUpdaterRealNumberLiteralPropertyUnitTest 
                 `object` = createLiteral(label = "1.0", datatype = Literals.XSD.DECIMAL.prefixedUri),
             ),
         )
+        val extractionMethod = ExtractionMethod.MANUAL
 
         every { statementService.deleteAllById(setOf(statementToRemove)) } just runs
 
-        abstractTemplatePropertyUpdater.update(statements, contributorId, 2, newProperty, oldProperty)
+        abstractTemplatePropertyUpdater.update(statements, contributorId, 2, newProperty, oldProperty, extractionMethod)
 
         verify(exactly = 1) { statementService.deleteAllById(setOf(statementToRemove)) }
     }
@@ -168,6 +177,7 @@ internal class AbstractTemplatePropertyUpdaterRealNumberLiteralPropertyUnitTest 
                 `object` = createLiteral(label = "1.0", datatype = Literals.XSD.DECIMAL.prefixedUri),
             ),
         )
+        val extractionMethod = ExtractionMethod.MANUAL
 
         every {
             singleStatementPropertyUpdater.updateOptionalProperty(
@@ -177,10 +187,11 @@ internal class AbstractTemplatePropertyUpdaterRealNumberLiteralPropertyUnitTest 
                 predicateId = Predicates.shMaxInclusive,
                 label = newProperty.maxInclusive!!.toString(),
                 datatype = Literals.XSD.INT.prefixedUri,
+                extractionMethod = extractionMethod,
             )
         } just runs
 
-        abstractTemplatePropertyUpdater.update(statements, contributorId, 2, newProperty, oldProperty)
+        abstractTemplatePropertyUpdater.update(statements, contributorId, 2, newProperty, oldProperty, extractionMethod)
 
         verify(exactly = 1) {
             singleStatementPropertyUpdater.updateOptionalProperty(
@@ -190,6 +201,7 @@ internal class AbstractTemplatePropertyUpdaterRealNumberLiteralPropertyUnitTest 
                 predicateId = Predicates.shMaxInclusive,
                 label = newProperty.maxInclusive!!.toString(),
                 datatype = Literals.XSD.INT.prefixedUri,
+                extractionMethod = extractionMethod,
             )
         }
     }
@@ -218,6 +230,7 @@ internal class AbstractTemplatePropertyUpdaterRealNumberLiteralPropertyUnitTest 
                 `object` = createLiteral(label = "1.0", datatype = Literals.XSD.DECIMAL.prefixedUri),
             ),
         )
+        val extractionMethod = ExtractionMethod.MANUAL
 
         every {
             singleStatementPropertyUpdater.updateOptionalProperty(
@@ -227,10 +240,11 @@ internal class AbstractTemplatePropertyUpdaterRealNumberLiteralPropertyUnitTest 
                 predicateId = Predicates.shMaxInclusive,
                 label = newProperty.maxInclusive!!.toString(),
                 datatype = Literals.XSD.DECIMAL.prefixedUri,
+                extractionMethod = extractionMethod,
             )
         } just runs
 
-        abstractTemplatePropertyUpdater.update(statements, contributorId, 3, newProperty, oldProperty)
+        abstractTemplatePropertyUpdater.update(statements, contributorId, 3, newProperty, oldProperty, extractionMethod)
 
         verify(exactly = 1) {
             singleStatementPropertyUpdater.updateOptionalProperty(
@@ -240,6 +254,7 @@ internal class AbstractTemplatePropertyUpdaterRealNumberLiteralPropertyUnitTest 
                 predicateId = Predicates.shMaxInclusive,
                 label = newProperty.maxInclusive!!.toString(),
                 datatype = Literals.XSD.DECIMAL.prefixedUri,
+                extractionMethod = extractionMethod,
             )
         }
     }
@@ -266,10 +281,11 @@ internal class AbstractTemplatePropertyUpdaterRealNumberLiteralPropertyUnitTest 
                 `object` = createLiteral(label = "1.0", datatype = Literals.XSD.DECIMAL.prefixedUri),
             ),
         )
+        val extractionMethod = ExtractionMethod.MANUAL
 
         every { statementService.deleteAllById(setOf(statementToRemove)) } just runs
 
-        abstractTemplatePropertyUpdater.update(statements, contributorId, 2, newProperty, oldProperty)
+        abstractTemplatePropertyUpdater.update(statements, contributorId, 2, newProperty, oldProperty, extractionMethod)
 
         verify(exactly = 1) { statementService.deleteAllById(setOf(statementToRemove)) }
     }
@@ -293,6 +309,7 @@ internal class AbstractTemplatePropertyUpdaterRealNumberLiteralPropertyUnitTest 
                 `object` = createLiteral(label = "1.0", datatype = Literals.XSD.INT.prefixedUri),
             ),
         )
+        val extractionMethod = ExtractionMethod.MANUAL
 
         every {
             unsafeStatementUseCases.create(
@@ -312,6 +329,7 @@ internal class AbstractTemplatePropertyUpdaterRealNumberLiteralPropertyUnitTest 
                 predicateId = Predicates.shMinInclusive,
                 label = newProperty.minInclusive!!.toString(),
                 datatype = Literals.XSD.DECIMAL.prefixedUri,
+                extractionMethod = extractionMethod,
             )
         } just runs
         every {
@@ -322,10 +340,11 @@ internal class AbstractTemplatePropertyUpdaterRealNumberLiteralPropertyUnitTest 
                 predicateId = Predicates.shMaxInclusive,
                 label = newProperty.maxInclusive!!.toString(),
                 datatype = Literals.XSD.DECIMAL.prefixedUri,
+                extractionMethod = extractionMethod,
             )
         } just runs
 
-        abstractTemplatePropertyUpdater.update(statements, contributorId, 2, newProperty, oldProperty)
+        abstractTemplatePropertyUpdater.update(statements, contributorId, 2, newProperty, oldProperty, extractionMethod)
 
         verify(exactly = 1) {
             unsafeStatementUseCases.create(
@@ -345,6 +364,7 @@ internal class AbstractTemplatePropertyUpdaterRealNumberLiteralPropertyUnitTest 
                 predicateId = Predicates.shMinInclusive,
                 label = newProperty.minInclusive!!.toString(),
                 datatype = Literals.XSD.DECIMAL.prefixedUri,
+                extractionMethod = extractionMethod,
             )
         }
         verify(exactly = 1) {
@@ -355,6 +375,7 @@ internal class AbstractTemplatePropertyUpdaterRealNumberLiteralPropertyUnitTest 
                 predicateId = Predicates.shMaxInclusive,
                 label = newProperty.maxInclusive!!.toString(),
                 datatype = Literals.XSD.DECIMAL.prefixedUri,
+                extractionMethod = extractionMethod,
             )
         }
     }

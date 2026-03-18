@@ -25,7 +25,15 @@ internal class LiteratureListAuthorUpdaterUnitTest : MockkBaseTest {
         val literatureList = createLiteratureList()
         val state = UpdateLiteratureListState(literatureList = literatureList)
 
-        every { authorUpdater.update(state.statements, command.contributorId, state.authors, command.literatureListId) } just runs
+        every {
+            authorUpdater.update(
+                state.statements,
+                command.contributorId,
+                state.authors,
+                command.literatureListId,
+                command.extractionMethod!!,
+            )
+        } just runs
 
         literatureListAuthorUpdater(command, state).asClue {
             it.literatureList shouldBe literatureList
@@ -33,7 +41,15 @@ internal class LiteratureListAuthorUpdaterUnitTest : MockkBaseTest {
             it.authors shouldBe state.authors
         }
 
-        verify(exactly = 1) { authorUpdater.update(state.statements, command.contributorId, state.authors, command.literatureListId) }
+        verify(exactly = 1) {
+            authorUpdater.update(
+                state.statements,
+                command.contributorId,
+                state.authors,
+                command.literatureListId,
+                command.extractionMethod!!,
+            )
+        }
     }
 
     @Test

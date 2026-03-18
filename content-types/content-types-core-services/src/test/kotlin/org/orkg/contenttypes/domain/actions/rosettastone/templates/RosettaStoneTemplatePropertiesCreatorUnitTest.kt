@@ -11,6 +11,7 @@ import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.actions.AbstractTemplatePropertyCreator
 import org.orkg.contenttypes.domain.actions.CreateRosettaStoneTemplateState
 import org.orkg.contenttypes.input.testing.fixtures.createRosettaStoneTemplateCommand
+import org.orkg.graph.domain.ExtractionMethod
 
 internal class RosettaStoneTemplatePropertiesCreatorUnitTest : MockkBaseTest {
     private val abstractTemplatePropertyCreator: AbstractTemplatePropertyCreator = mockk()
@@ -25,7 +26,7 @@ internal class RosettaStoneTemplatePropertiesCreatorUnitTest : MockkBaseTest {
         )
 
         every {
-            abstractTemplatePropertyCreator.create(command.contributorId, state.rosettaStoneTemplateId!!, any(), any())
+            abstractTemplatePropertyCreator.create(command.contributorId, state.rosettaStoneTemplateId!!, any(), any(), any())
         } returns ThingId("R456")
 
         val result = rosettaStoneTemplatePropertiesCreator(command, state)
@@ -36,7 +37,13 @@ internal class RosettaStoneTemplatePropertiesCreatorUnitTest : MockkBaseTest {
 
         command.properties.forEachIndexed { index, property ->
             verify(exactly = 1) {
-                abstractTemplatePropertyCreator.create(command.contributorId, state.rosettaStoneTemplateId!!, index, property)
+                abstractTemplatePropertyCreator.create(
+                    contributorId = command.contributorId,
+                    templateId = state.rosettaStoneTemplateId!!,
+                    order = index,
+                    property = property,
+                    extractionMethod = ExtractionMethod.UNKNOWN,
+                )
             }
         }
     }

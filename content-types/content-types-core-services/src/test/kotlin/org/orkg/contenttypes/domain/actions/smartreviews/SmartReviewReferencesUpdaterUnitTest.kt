@@ -96,6 +96,7 @@ internal class SmartReviewReferencesUpdaterUnitTest : MockkBaseTest {
                 subjectId = contributionId,
                 predicateId = Predicates.hasReference,
                 literals = command.references!!,
+                extractionMethod = command.extractionMethod!!,
             )
         } just runs
 
@@ -114,6 +115,7 @@ internal class SmartReviewReferencesUpdaterUnitTest : MockkBaseTest {
                 subjectId = contributionId,
                 predicateId = Predicates.hasReference,
                 literals = command.references!!,
+                extractionMethod = command.extractionMethod!!,
             )
         }
     }

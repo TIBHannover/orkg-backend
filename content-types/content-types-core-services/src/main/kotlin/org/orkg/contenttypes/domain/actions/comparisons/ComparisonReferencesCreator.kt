@@ -22,6 +22,7 @@ class ComparisonReferencesCreator(
                 subjectId = state.comparisonId!!,
                 predicateId = Predicates.reference,
                 labels = command.references,
+                extractionMethod = command.extractionMethod,
             )
         }
 }

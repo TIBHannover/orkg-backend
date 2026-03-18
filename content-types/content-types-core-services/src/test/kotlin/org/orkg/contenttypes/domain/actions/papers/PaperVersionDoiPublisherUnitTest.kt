@@ -17,6 +17,7 @@ import org.orkg.contenttypes.domain.testing.fixtures.createPaper
 import org.orkg.contenttypes.input.testing.fixtures.publishPaperCommand
 import org.orkg.contenttypes.output.DoiService
 import org.orkg.graph.domain.Classes
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Predicates
 import java.net.URI
 
@@ -42,7 +43,7 @@ internal class PaperVersionDoiPublisherUnitTest : MockkBaseTest {
         val doi = "10.1000/182"
 
         every { doiService.register(any()) } returns DOI.of(doi)
-        every { singleStatementPropertyCreator.create(any(), any(), any(), any()) } just runs
+        every { singleStatementPropertyCreator.create(any(), any(), any(), any(), any(), any()) } just runs
 
         paperVersionArchiver(command, state).asClue {
             it.paper shouldBe paper
@@ -70,6 +71,7 @@ internal class PaperVersionDoiPublisherUnitTest : MockkBaseTest {
                 subjectId = paperVersionId,
                 predicateId = Predicates.hasDOI,
                 label = doi,
+                extractionMethod = ExtractionMethod.UNKNOWN,
             )
         }
     }

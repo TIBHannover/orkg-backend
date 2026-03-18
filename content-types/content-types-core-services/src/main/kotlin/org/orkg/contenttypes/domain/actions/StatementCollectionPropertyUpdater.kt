@@ -3,6 +3,7 @@ package org.orkg.contenttypes.domain.actions
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.wherePredicate
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.GeneralStatement
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.StatementId
@@ -120,6 +121,7 @@ data class StatementCollectionPropertyUpdater(
         predicateId: ThingId,
         literals: Set<String>,
         datatype: String = Literals.XSD.STRING.prefixedUri,
+        extractionMethod: ExtractionMethod,
     ) {
         // Find out what already exists and what needs to be created or removed
         val objectIdToStatementId = statements.wherePredicate(predicateId)
@@ -139,6 +141,7 @@ data class StatementCollectionPropertyUpdater(
                     contributorId = contributorId,
                     label = literal,
                     datatype = datatype,
+                    extractionMethod = extractionMethod,
                 ),
             )
             unsafeStatementUseCases.create(
@@ -159,6 +162,7 @@ data class StatementCollectionPropertyUpdater(
         predicateId: ThingId,
         literals: List<String>,
         datatype: String = Literals.XSD.STRING.prefixedUri,
+        extractionMethod: ExtractionMethod,
     ) {
         val statementsIterator = statements.wherePredicate(predicateId)
             .sortedBy { it.createdAt }
@@ -183,6 +187,7 @@ data class StatementCollectionPropertyUpdater(
                         contributorId = contributorId,
                         label = literal,
                         datatype = datatype,
+                        extractionMethod = extractionMethod,
                     ),
                 )
                 unsafeStatementUseCases.create(

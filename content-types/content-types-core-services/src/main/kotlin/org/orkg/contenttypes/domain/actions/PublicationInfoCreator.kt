@@ -6,6 +6,7 @@ import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.input.PublicationInfoCommand
 import org.orkg.graph.domain.Classes
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.SearchString
@@ -23,18 +24,23 @@ class PublicationInfoCreator(
     private val unsafeStatementUseCases: UnsafeStatementUseCases,
     private val unsafeLiteralUseCases: UnsafeLiteralUseCases,
 ) {
-    internal fun create(contributorId: ContributorId, publicationInfo: PublicationInfoCommand, subjectId: ThingId) {
+    internal fun create(
+        contributorId: ContributorId,
+        publicationInfo: PublicationInfoCommand,
+        subjectId: ThingId,
+        extractionMethod: ExtractionMethod,
+    ) {
         if (publicationInfo.publishedMonth != null) {
-            linkPublicationMonth(contributorId, subjectId, publicationInfo.publishedMonth!!)
+            linkPublicationMonth(contributorId, subjectId, publicationInfo.publishedMonth!!, extractionMethod)
         }
         if (publicationInfo.publishedYear != null) {
-            linkPublicationYear(contributorId, subjectId, publicationInfo.publishedYear!!)
+            linkPublicationYear(contributorId, subjectId, publicationInfo.publishedYear!!, extractionMethod)
         }
         if (publicationInfo.publishedIn != null) {
             linkPublicationVenue(contributorId, subjectId, publicationInfo.publishedIn!!)
         }
         if (publicationInfo.url != null) {
-            linkPublicationUrl(contributorId, subjectId, publicationInfo.url!!)
+            linkPublicationUrl(contributorId, subjectId, publicationInfo.url!!, extractionMethod)
         }
     }
 
@@ -42,12 +48,14 @@ class PublicationInfoCreator(
         contributorId: ContributorId,
         subjectId: ThingId,
         publishedMonth: Int,
+        extractionMethod: ExtractionMethod,
     ) {
         val monthLiteralId = unsafeLiteralUseCases.create(
             CreateLiteralUseCase.CreateCommand(
                 contributorId = contributorId,
                 label = publishedMonth.toString(),
                 datatype = Literals.XSD.INT.prefixedUri,
+                extractionMethod = extractionMethod,
             ),
         )
         unsafeStatementUseCases.create(
@@ -64,12 +72,14 @@ class PublicationInfoCreator(
         contributorId: ContributorId,
         subjectId: ThingId,
         publishedYear: Long,
+        extractionMethod: ExtractionMethod,
     ) {
         val yearLiteralId = unsafeLiteralUseCases.create(
             CreateLiteralUseCase.CreateCommand(
                 contributorId = contributorId,
                 label = publishedYear.toString(),
                 datatype = Literals.XSD.INT.prefixedUri,
+                extractionMethod = extractionMethod,
             ),
         )
         unsafeStatementUseCases.create(
@@ -112,12 +122,14 @@ class PublicationInfoCreator(
         contributorId: ContributorId,
         subjectId: ThingId,
         url: ParsedIRI,
+        extractionMethod: ExtractionMethod,
     ) {
         val urlLiteralId = unsafeLiteralUseCases.create(
             CreateLiteralUseCase.CreateCommand(
                 contributorId = contributorId,
                 label = url.toString(),
                 datatype = Literals.XSD.URI.prefixedUri,
+                extractionMethod = extractionMethod,
             ),
         )
         unsafeStatementUseCases.create(

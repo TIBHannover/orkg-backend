@@ -9,6 +9,7 @@ import org.orkg.contenttypes.domain.actions.tryDelete
 import org.orkg.contenttypes.domain.wherePredicate
 import org.orkg.contenttypes.input.AbstractLiteratureListListSectionCommand
 import org.orkg.contenttypes.input.AbstractLiteratureListTextSectionCommand
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.GeneralStatement
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
@@ -109,6 +110,7 @@ class AbstractLiteratureListSectionUpdater(
                                 subjectId = connection.hasEntryStatement.`object`.id,
                                 predicateId = Predicates.description,
                                 label = newEntry.description,
+                                extractionMethod = ExtractionMethod.UNKNOWN,
                             )
                             break
                         }
@@ -125,7 +127,11 @@ class AbstractLiteratureListSectionUpdater(
             entryNodesToRemove.forEach { resourceService.tryDelete(it, contributorId) }
 
             while (newEntriesIterator.hasNext()) {
-                val entryId = abstractLiteratureListSectionCreator.createListSectionEntry(contributorId, newEntriesIterator.next())
+                val entryId = abstractLiteratureListSectionCreator.createListSectionEntry(
+                    contributorId = contributorId,
+                    entry = newEntriesIterator.next(),
+                    extractionMethod = ExtractionMethod.UNKNOWN,
+                )
                 unsafeStatementUseCases.create(
                     CreateCommand(
                         contributorId = contributorId,
@@ -161,6 +167,7 @@ class AbstractLiteratureListSectionUpdater(
                 predicateId = Predicates.hasHeadingLevel,
                 label = newSection.headingSize.toString(),
                 datatype = Literals.XSD.INT.prefixedUri,
+                extractionMethod = ExtractionMethod.UNKNOWN,
             )
         }
         if (newSection.text != oldSection.text) {
@@ -170,6 +177,7 @@ class AbstractLiteratureListSectionUpdater(
                 subjectId = oldSection.id,
                 predicateId = Predicates.hasContent,
                 label = newSection.text,
+                extractionMethod = ExtractionMethod.UNKNOWN,
             )
         }
     }

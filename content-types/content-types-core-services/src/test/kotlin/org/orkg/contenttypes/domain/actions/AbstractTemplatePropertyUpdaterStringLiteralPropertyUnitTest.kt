@@ -13,6 +13,7 @@ import org.orkg.contenttypes.input.NumberLiteralPropertyCommand
 import org.orkg.contenttypes.input.StringLiteralPropertyCommand
 import org.orkg.contenttypes.input.testing.fixtures.toStringLiteralTemplatePropertyCommand
 import org.orkg.graph.domain.Classes
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.StatementId
 import org.orkg.graph.testing.fixtures.createLiteral
@@ -27,8 +28,9 @@ internal class AbstractTemplatePropertyUpdaterStringLiteralPropertyUnitTest : Ab
         val contributorId = ContributorId(UUID.randomUUID())
         val oldProperty = createStringLiteralTemplateProperty()
         val newProperty = oldProperty.toStringLiteralTemplatePropertyCommand()
+        val extractionMethod = ExtractionMethod.MANUAL
 
-        abstractTemplatePropertyUpdater.update(emptyList(), contributorId, 1, newProperty, oldProperty)
+        abstractTemplatePropertyUpdater.update(emptyList(), contributorId, 1, newProperty, oldProperty, extractionMethod)
     }
 
     @Test
@@ -45,6 +47,7 @@ internal class AbstractTemplatePropertyUpdaterStringLiteralPropertyUnitTest : Ab
                 `object` = createLiteral(label = """\w+"""),
             ),
         )
+        val extractionMethod = ExtractionMethod.MANUAL
 
         every {
             singleStatementPropertyUpdater.updateOptionalProperty(
@@ -53,10 +56,11 @@ internal class AbstractTemplatePropertyUpdaterStringLiteralPropertyUnitTest : Ab
                 subjectId = oldProperty.id,
                 predicateId = Predicates.shPattern,
                 label = newProperty.pattern,
+                extractionMethod = extractionMethod,
             )
         } just runs
 
-        abstractTemplatePropertyUpdater.update(statements, contributorId, 1, newProperty, oldProperty)
+        abstractTemplatePropertyUpdater.update(statements, contributorId, 1, newProperty, oldProperty, extractionMethod)
 
         verify(exactly = 1) {
             singleStatementPropertyUpdater.updateOptionalProperty(
@@ -65,6 +69,7 @@ internal class AbstractTemplatePropertyUpdaterStringLiteralPropertyUnitTest : Ab
                 subjectId = oldProperty.id,
                 predicateId = Predicates.shPattern,
                 label = newProperty.pattern,
+                extractionMethod = extractionMethod,
             )
         }
     }
@@ -92,6 +97,7 @@ internal class AbstractTemplatePropertyUpdaterStringLiteralPropertyUnitTest : Ab
                 `object` = createLiteral(label = """\w+"""),
             ),
         )
+        val extractionMethod = ExtractionMethod.MANUAL
 
         every {
             singleStatementPropertyUpdater.updateOptionalProperty(
@@ -100,10 +106,11 @@ internal class AbstractTemplatePropertyUpdaterStringLiteralPropertyUnitTest : Ab
                 subjectId = oldProperty.id,
                 predicateId = Predicates.shPattern,
                 label = newProperty.pattern,
+                extractionMethod = extractionMethod,
             )
         } just runs
 
-        abstractTemplatePropertyUpdater.update(statements, contributorId, 3, newProperty, oldProperty)
+        abstractTemplatePropertyUpdater.update(statements, contributorId, 3, newProperty, oldProperty, extractionMethod)
 
         verify(exactly = 1) {
             singleStatementPropertyUpdater.updateOptionalProperty(
@@ -112,6 +119,7 @@ internal class AbstractTemplatePropertyUpdaterStringLiteralPropertyUnitTest : Ab
                 subjectId = oldProperty.id,
                 predicateId = Predicates.shPattern,
                 label = newProperty.pattern,
+                extractionMethod = extractionMethod,
             )
         }
     }
@@ -140,10 +148,11 @@ internal class AbstractTemplatePropertyUpdaterStringLiteralPropertyUnitTest : Ab
                 `object` = createLiteral(label = """\w+"""),
             ),
         )
+        val extractionMethod = ExtractionMethod.MANUAL
 
         every { statementService.deleteAllById(setOf(statementToRemove)) } just runs
 
-        abstractTemplatePropertyUpdater.update(statements, contributorId, 1, newProperty, oldProperty)
+        abstractTemplatePropertyUpdater.update(statements, contributorId, 1, newProperty, oldProperty, extractionMethod)
 
         verify(exactly = 1) { statementService.deleteAllById(setOf(statementToRemove)) }
     }

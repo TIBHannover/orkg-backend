@@ -34,6 +34,7 @@ internal class TemplateDescriptionCreatorUnitTest : MockkBaseTest {
                 subjectId = state.templateId!!,
                 predicateId = Predicates.description,
                 label = command.description!!,
+                extractionMethod = command.extractionMethod,
             )
         } just runs
 
@@ -49,6 +50,7 @@ internal class TemplateDescriptionCreatorUnitTest : MockkBaseTest {
                 subjectId = state.templateId!!,
                 predicateId = Predicates.description,
                 label = command.description!!,
+                extractionMethod = command.extractionMethod,
             )
         }
     }

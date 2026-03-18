@@ -12,6 +12,7 @@ import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.actions.CreateComparisonRelatedFigureCommand
 import org.orkg.graph.domain.Classes
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.InvalidDescription
 import org.orkg.graph.domain.InvalidLabel
 import org.orkg.graph.domain.MAX_LABEL_LENGTH
@@ -64,6 +65,17 @@ internal class ComparisonRelatedFigureServiceUnitTest : MockkBaseTest {
         val comparison = createResource(classes = setOf(Classes.comparison))
         val image = createLiteral(ThingId("L1"))
         val description = createLiteral(ThingId("L3"))
+        val extractionMethod = ExtractionMethod.UNKNOWN
+        val createImageLiteralCommand = CreateLiteralUseCase.CreateCommand(
+            contributorId = command.contributorId,
+            label = command.image!!,
+            extractionMethod = extractionMethod,
+        )
+        val createDescriptionCommand = CreateLiteralUseCase.CreateCommand(
+            contributorId = command.contributorId,
+            label = command.description!!,
+            extractionMethod = extractionMethod,
+        )
 
         every { resourceRepository.findById(command.comparisonId) } returns Optional.of(comparison)
         every {
@@ -85,22 +97,8 @@ internal class ComparisonRelatedFigureServiceUnitTest : MockkBaseTest {
                 ),
             )
         } returns StatementId("S1")
-        every {
-            unsafeLiteralUseCases.create(
-                CreateLiteralUseCase.CreateCommand(
-                    contributorId = command.contributorId,
-                    label = command.image!!,
-                ),
-            )
-        } returns image.id
-        every {
-            unsafeLiteralUseCases.create(
-                CreateLiteralUseCase.CreateCommand(
-                    contributorId = command.contributorId,
-                    label = command.description!!,
-                ),
-            )
-        } returns description.id
+        every { unsafeLiteralUseCases.create(createImageLiteralCommand) } returns image.id
+        every { unsafeLiteralUseCases.create(createDescriptionCommand) } returns description.id
         every {
             unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
@@ -144,22 +142,8 @@ internal class ComparisonRelatedFigureServiceUnitTest : MockkBaseTest {
                 ),
             )
         }
-        verify(exactly = 1) {
-            unsafeLiteralUseCases.create(
-                CreateLiteralUseCase.CreateCommand(
-                    contributorId = command.contributorId,
-                    label = command.image!!,
-                ),
-            )
-        }
-        verify(exactly = 1) {
-            unsafeLiteralUseCases.create(
-                CreateLiteralUseCase.CreateCommand(
-                    contributorId = command.contributorId,
-                    label = command.description!!,
-                ),
-            )
-        }
+        verify(exactly = 1) { unsafeLiteralUseCases.create(createImageLiteralCommand) }
+        verify(exactly = 1) { unsafeLiteralUseCases.create(createDescriptionCommand) }
         verify(exactly = 1) {
             unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(

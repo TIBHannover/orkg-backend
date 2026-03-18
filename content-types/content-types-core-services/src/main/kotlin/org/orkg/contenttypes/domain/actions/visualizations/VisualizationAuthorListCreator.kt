@@ -21,5 +21,5 @@ class VisualizationAuthorListCreator(
     )
 
     override fun invoke(command: CreateVisualizationCommand, state: State): State =
-        state.apply { authorCreator.create(command.contributorId, authors, visualizationId!!) }
+        state.apply { authorCreator.create(command.contributorId, authors, visualizationId!!, command.extractionMethod) }
 }

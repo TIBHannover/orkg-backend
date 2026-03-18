@@ -21,5 +21,5 @@ class SmartReviewAuthorListCreator(
     )
 
     override fun invoke(command: CreateSmartReviewCommand, state: State): State =
-        state.apply { authorCreator.create(command.contributorId, authors, smartReviewId!!) }
+        state.apply { authorCreator.create(command.contributorId, authors, smartReviewId!!, command.extractionMethod) }
 }

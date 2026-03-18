@@ -55,6 +55,7 @@ open class PaperCSVStatementObjectProcessor(
                             contributorId = contributorId,
                             label = value,
                             datatype = Literals.XSD.fromClass(type)!!.prefixedUri,
+                            extractionMethod = item.extractionMethod,
                         ),
                     )
                 }

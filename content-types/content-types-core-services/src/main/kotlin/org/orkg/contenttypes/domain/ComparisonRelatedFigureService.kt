@@ -11,6 +11,7 @@ import org.orkg.contenttypes.domain.actions.comparisons.ComparisonRelatedFigureU
 import org.orkg.contenttypes.input.ComparisonRelatedFigureUseCases
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Description
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.InvalidDescription
 import org.orkg.graph.domain.InvalidLabel
 import org.orkg.graph.domain.Label
@@ -91,6 +92,7 @@ class ComparisonRelatedFigureService(
                         CreateLiteralUseCase.CreateCommand(
                             contributorId = command.contributorId,
                             label = command.image!!,
+                            extractionMethod = ExtractionMethod.UNKNOWN, // TODO: Get extraction method from command
                         ),
                     ),
                 ),
@@ -106,6 +108,7 @@ class ComparisonRelatedFigureService(
                         CreateLiteralUseCase.CreateCommand(
                             contributorId = command.contributorId,
                             label = command.description!!,
+                            extractionMethod = ExtractionMethod.UNKNOWN, // TODO: Get extraction method from command
                         ),
                     ),
                 ),

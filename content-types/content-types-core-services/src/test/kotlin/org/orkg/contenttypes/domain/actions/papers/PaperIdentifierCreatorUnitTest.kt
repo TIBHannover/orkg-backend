@@ -26,7 +26,7 @@ internal class PaperIdentifierCreatorUnitTest : MockkBaseTest {
         val paperId = ThingId("R123")
         val state = CreatePaperState(paperId = paperId)
 
-        every { identifierCreator.create(command.contributorId, command.identifiers, Identifiers.paper, paperId) } just runs
+        every { identifierCreator.create(command.contributorId, command.identifiers, Identifiers.paper, paperId, command.extractionMethod) } just runs
 
         val result = paperIdentifierCreator(command, state)
 
@@ -37,6 +37,6 @@ internal class PaperIdentifierCreatorUnitTest : MockkBaseTest {
             it.paperId shouldBe state.paperId
         }
 
-        verify(exactly = 1) { identifierCreator.create(command.contributorId, command.identifiers, Identifiers.paper, paperId) }
+        verify(exactly = 1) { identifierCreator.create(command.contributorId, command.identifiers, Identifiers.paper, paperId, command.extractionMethod) }
     }
 }

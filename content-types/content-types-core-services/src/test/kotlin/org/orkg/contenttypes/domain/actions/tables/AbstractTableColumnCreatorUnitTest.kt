@@ -9,6 +9,7 @@ import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.graph.domain.Classes
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.StatementId
@@ -39,6 +40,7 @@ internal class AbstractTableColumnCreatorUnitTest : MockkBaseTest {
         val columnTitleLiteralId = ThingId("TitleLiteral")
         val columnId = ThingId("Column")
         val columnNumberLiteralId = ThingId("ColumnNumberLiteral")
+        val extractionMethod = ExtractionMethod.MANUAL
 
         val createColumnResourceCommand = CreateResourceUseCase.CreateCommand(
             contributorId = contributorId,
@@ -49,6 +51,7 @@ internal class AbstractTableColumnCreatorUnitTest : MockkBaseTest {
             contributorId = contributorId,
             label = "${index + 1}",
             datatype = Literals.XSD.INT.prefixedUri,
+            extractionMethod = extractionMethod,
         )
         val createColumnNumberStatementCommand = CreateStatementUseCase.CreateCommand(
             contributorId = contributorId,
@@ -80,6 +83,7 @@ internal class AbstractTableColumnCreatorUnitTest : MockkBaseTest {
             tableId = tableId,
             index = index,
             titleLiteralId = columnTitleLiteralId,
+            extractionMethod = extractionMethod,
         )
 
         result shouldBe columnId

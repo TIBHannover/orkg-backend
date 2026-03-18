@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkBaseTest
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.GeneralStatement
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
@@ -54,6 +55,7 @@ internal class SingleStatementPropertyUpdaterUnitTest : MockkBaseTest {
                 `object` = literal,
             ),
         )
+        val extractionMethod = ExtractionMethod.MANUAL
 
         every { unsafeLiteralUseCases.update(updateLiteralCommand) } just runs
 
@@ -64,6 +66,7 @@ internal class SingleStatementPropertyUpdaterUnitTest : MockkBaseTest {
             predicateId = Predicates.description,
             label = description,
             datatype = Literals.XSD.INT.prefixedUri,
+            extractionMethod = extractionMethod,
         )
 
         verify(exactly = 1) { unsafeLiteralUseCases.update(updateLiteralCommand) }
@@ -75,6 +78,7 @@ internal class SingleStatementPropertyUpdaterUnitTest : MockkBaseTest {
         val contributorId = ContributorId(UUID.randomUUID())
         val description = "some description"
         val statements = emptyList<GeneralStatement>()
+        val extractionMethod = ExtractionMethod.MANUAL
 
         every {
             singleStatementPropertyCreator.create(
@@ -83,6 +87,7 @@ internal class SingleStatementPropertyUpdaterUnitTest : MockkBaseTest {
                 predicateId = Predicates.description,
                 label = description,
                 datatype = Literals.XSD.INT.prefixedUri,
+                extractionMethod = extractionMethod,
             )
         } just runs
 
@@ -93,6 +98,7 @@ internal class SingleStatementPropertyUpdaterUnitTest : MockkBaseTest {
             predicateId = Predicates.description,
             label = description,
             datatype = Literals.XSD.INT.prefixedUri,
+            extractionMethod = extractionMethod,
         )
 
         verify(exactly = 1) {
@@ -102,6 +108,7 @@ internal class SingleStatementPropertyUpdaterUnitTest : MockkBaseTest {
                 predicateId = Predicates.description,
                 label = description,
                 datatype = Literals.XSD.INT.prefixedUri,
+                extractionMethod = extractionMethod,
             )
         }
     }
@@ -129,6 +136,7 @@ internal class SingleStatementPropertyUpdaterUnitTest : MockkBaseTest {
                 `object` = createLiteral(ThingId("L132"), label = "other"),
             ),
         )
+        val extractionMethod = ExtractionMethod.MANUAL
 
         every { unsafeLiteralUseCases.update(updateLiteralCommand) } just runs
         every { statementService.deleteAllById(setOf(StatementId("S456"))) } just runs
@@ -140,6 +148,7 @@ internal class SingleStatementPropertyUpdaterUnitTest : MockkBaseTest {
             predicateId = Predicates.description,
             label = description,
             datatype = Literals.XSD.INT.prefixedUri,
+            extractionMethod = extractionMethod,
         )
 
         verify(exactly = 1) { unsafeLiteralUseCases.update(updateLiteralCommand) }
@@ -164,10 +173,18 @@ internal class SingleStatementPropertyUpdaterUnitTest : MockkBaseTest {
                 `object` = literal,
             ),
         )
+        val extractionMethod = ExtractionMethod.MANUAL
 
         every { unsafeLiteralUseCases.update(updateLiteralCommand) } just runs
 
-        singleStatementPropertyUpdater.updateOptionalProperty(statements, contributorId, subjectId, Predicates.description, description)
+        singleStatementPropertyUpdater.updateOptionalProperty(
+            statements = statements,
+            contributorId = contributorId,
+            subjectId = subjectId,
+            predicateId = Predicates.description,
+            label = description,
+            extractionMethod = extractionMethod,
+        )
 
         verify(exactly = 1) { unsafeLiteralUseCases.update(updateLiteralCommand) }
     }
@@ -178,6 +195,7 @@ internal class SingleStatementPropertyUpdaterUnitTest : MockkBaseTest {
         val contributorId = ContributorId(UUID.randomUUID())
         val description = "some description"
         val statements = emptyList<GeneralStatement>()
+        val extractionMethod = ExtractionMethod.MANUAL
 
         every {
             singleStatementPropertyCreator.create(
@@ -185,10 +203,18 @@ internal class SingleStatementPropertyUpdaterUnitTest : MockkBaseTest {
                 subjectId = subjectId,
                 predicateId = Predicates.description,
                 label = description,
+                extractionMethod = extractionMethod,
             )
         } just runs
 
-        singleStatementPropertyUpdater.updateOptionalProperty(statements, contributorId, subjectId, Predicates.description, description)
+        singleStatementPropertyUpdater.updateOptionalProperty(
+            statements = statements,
+            contributorId = contributorId,
+            subjectId = subjectId,
+            predicateId = Predicates.description,
+            label = description,
+            extractionMethod = extractionMethod,
+        )
 
         verify(exactly = 1) {
             singleStatementPropertyCreator.create(
@@ -196,6 +222,7 @@ internal class SingleStatementPropertyUpdaterUnitTest : MockkBaseTest {
                 subjectId = subjectId,
                 predicateId = Predicates.description,
                 label = description,
+                extractionMethod = extractionMethod,
             )
         }
     }
@@ -223,11 +250,19 @@ internal class SingleStatementPropertyUpdaterUnitTest : MockkBaseTest {
                 `object` = createLiteral(ThingId("L132"), label = "other"),
             ),
         )
+        val extractionMethod = ExtractionMethod.MANUAL
 
         every { unsafeLiteralUseCases.update(updateLiteralCommand) } just runs
         every { statementService.deleteAllById(setOf(StatementId("S456"))) } just runs
 
-        singleStatementPropertyUpdater.updateOptionalProperty(statements, contributorId, subjectId, Predicates.description, description)
+        singleStatementPropertyUpdater.updateOptionalProperty(
+            statements = statements,
+            contributorId = contributorId,
+            subjectId = subjectId,
+            predicateId = Predicates.description,
+            label = description,
+            extractionMethod = extractionMethod,
+        )
 
         verify(exactly = 1) { unsafeLiteralUseCases.update(updateLiteralCommand) }
         verify(exactly = 1) { statementService.deleteAllById(setOf(StatementId("S456"))) }
@@ -245,10 +280,18 @@ internal class SingleStatementPropertyUpdaterUnitTest : MockkBaseTest {
                 `object` = createLiteral(ThingId("L132"), label = "other"),
             ),
         )
+        val extractionMethod = ExtractionMethod.MANUAL
 
         every { statementService.deleteAllById(setOf(StatementId("S456"))) } just runs
 
-        singleStatementPropertyUpdater.updateOptionalProperty(statements, contributorId, subjectId, Predicates.description, null as String?)
+        singleStatementPropertyUpdater.updateOptionalProperty(
+            statements = statements,
+            contributorId = contributorId,
+            subjectId = subjectId,
+            predicateId = Predicates.description,
+            label = null as String?,
+            extractionMethod = extractionMethod,
+        )
 
         verify(exactly = 1) { statementService.deleteAllById(setOf(StatementId("S456"))) }
     }
@@ -257,8 +300,16 @@ internal class SingleStatementPropertyUpdaterUnitTest : MockkBaseTest {
     fun `Given a new optional literal label and a list of statements, when label is null and statements are empty, it does nothing`() {
         val subjectId = ThingId("R123")
         val contributorId = ContributorId(UUID.randomUUID())
+        val extractionMethod = ExtractionMethod.MANUAL
 
-        singleStatementPropertyUpdater.updateOptionalProperty(emptyList(), contributorId, subjectId, Predicates.description, null as String?)
+        singleStatementPropertyUpdater.updateOptionalProperty(
+            statements = emptyList(),
+            contributorId = contributorId,
+            subjectId = subjectId,
+            predicateId = Predicates.description,
+            label = null as String?,
+            extractionMethod = extractionMethod,
+        )
     }
 
     @Test

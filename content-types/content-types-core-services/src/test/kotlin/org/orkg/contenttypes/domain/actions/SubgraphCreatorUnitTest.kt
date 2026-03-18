@@ -223,6 +223,7 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
             ),
             contributions = emptyList(),
         )
+        val extractionMethod = ExtractionMethod.MANUAL
 
         every {
             unsafeLiteralUseCases.create(
@@ -230,13 +231,14 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     label = literalCommand.label,
                     datatype = literalCommand.dataType,
+                    extractionMethod = extractionMethod,
                 ),
             )
         } returns ThingId("L1")
 
         subgraphCreator.createThingsAndStatements(
             contributorId = contributorId,
-            extractionMethod = ExtractionMethod.MANUAL,
+            extractionMethod = extractionMethod,
             thingsCommand = contents,
             validationCache = mapOf("#temp1" from contents),
             bakedStatements = emptySet(),
@@ -248,6 +250,7 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     label = literalCommand.label,
                     datatype = literalCommand.dataType,
+                    extractionMethod = extractionMethod,
                 ),
             )
         }
@@ -350,6 +353,7 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = contributorId,
                     label = predicateCommand.description!!,
+                    extractionMethod = extractionMethod,
                 ),
             )
         } returns literal
@@ -386,6 +390,7 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = contributorId,
                     label = predicateCommand.description!!,
+                    extractionMethod = extractionMethod,
                 ),
             )
         }
@@ -556,6 +561,7 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     label = literalCommand.label,
                     datatype = literalCommand.dataType,
+                    extractionMethod = extractionMethod,
                 ),
             )
         } returns literal
@@ -607,6 +613,7 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     label = literalCommand.label,
                     datatype = literalCommand.dataType,
+                    extractionMethod = extractionMethod,
                 ),
             )
         }

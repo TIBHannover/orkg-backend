@@ -58,6 +58,7 @@ fun literalResponseFields() = listOf(
     fieldWithPath("datatype").type("String").description("The data type of the literal value. Defaults to `xsd:string`."),
     timestampFieldWithPath("created_at", "the literal was created"),
     fieldWithPath("created_by").description("The UUID of the user or service who created the literal."),
+    fieldWithPath("extraction_method").description("Determines how the literal was created. Can be one of $allowedExtractionMethodValues."),
     fieldWithPath("modifiable").description("Whether the literal can be modified."),
     fieldWithPath("_class").description("An indicator which type of entity was returned. Always has the value `literal`."),
 )

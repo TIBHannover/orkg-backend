@@ -2,6 +2,7 @@ package org.orkg.contenttypes.domain.actions.templates
 
 import org.orkg.contenttypes.domain.actions.CreateTemplateCommand
 import org.orkg.contenttypes.domain.actions.templates.CreateTemplateAction.State
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.CreateLiteralUseCase
@@ -20,6 +21,7 @@ class TemplateClosedCreator(
                     contributorId = command.contributorId,
                     label = "true",
                     datatype = Literals.XSD.BOOLEAN.prefixedUri,
+                    extractionMethod = command.extractionMethod,
                 ),
             )
             unsafeStatementUseCases.create(

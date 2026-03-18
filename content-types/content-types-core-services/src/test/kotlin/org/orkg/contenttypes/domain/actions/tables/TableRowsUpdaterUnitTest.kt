@@ -14,6 +14,7 @@ import org.orkg.contenttypes.domain.actions.UpdateTableState
 import org.orkg.contenttypes.domain.testing.fixtures.createRowGraph
 import org.orkg.contenttypes.input.CreateRowCommand
 import org.orkg.contenttypes.input.testing.fixtures.updateTableCommand
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.StatementId
 import org.orkg.graph.input.CreateLiteralUseCase
@@ -181,6 +182,7 @@ internal class TableRowsUpdaterUnitTest : MockkBaseTest {
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     label = "New row title",
+                    extractionMethod = command.extractionMethod!!,
                 ),
             )
         }
@@ -250,6 +252,7 @@ internal class TableRowsUpdaterUnitTest : MockkBaseTest {
                     id = ThingId("Row_1_Title"),
                     contributorId = command.contributorId,
                     label = "New row title",
+                    extractionMethod = command.extractionMethod,
                 ),
             )
         }
@@ -295,6 +298,7 @@ internal class TableRowsUpdaterUnitTest : MockkBaseTest {
                 tableId = command.tableId,
                 index = 1,
                 label = "New row2 label",
+                extractionMethod = command.extractionMethod!!,
             )
         } returns ThingId("Row_2")
 
@@ -320,6 +324,7 @@ internal class TableRowsUpdaterUnitTest : MockkBaseTest {
                 tableId = command.tableId,
                 index = 1,
                 label = "New row2 label",
+                extractionMethod = command.extractionMethod!!,
             )
         }
     }

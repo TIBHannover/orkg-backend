@@ -61,6 +61,7 @@ internal class PaperPublicationInfoCreatorUnitTest : MockkBaseTest {
                 contributorId = command.contributorId,
                 subjectId = state.paperId!!,
                 publicationInfo = command.publicationInfo!!,
+                extractionMethod = command.extractionMethod,
             )
         } just runs
 
@@ -78,6 +79,7 @@ internal class PaperPublicationInfoCreatorUnitTest : MockkBaseTest {
                 contributorId = command.contributorId,
                 subjectId = state.paperId!!,
                 publicationInfo = command.publicationInfo!!,
+                extractionMethod = command.extractionMethod,
             )
         }
     }

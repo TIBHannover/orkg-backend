@@ -3,6 +3,7 @@ package org.orkg.contenttypes.domain.actions.templates.properties
 import org.orkg.contenttypes.domain.actions.AbstractTemplatePropertyUpdater
 import org.orkg.contenttypes.domain.actions.UpdateTemplatePropertyCommand
 import org.orkg.contenttypes.domain.actions.templates.properties.UpdateTemplatePropertyAction.State
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UnsafeLiteralUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
@@ -28,6 +29,7 @@ class TemplatePropertyUpdater(
                 order = state.templateProperty.order.toInt(),
                 newProperty = command,
                 oldProperty = state.templateProperty,
+                extractionMethod = ExtractionMethod.UNKNOWN, // TODO: Get from command
             )
         }
         return state

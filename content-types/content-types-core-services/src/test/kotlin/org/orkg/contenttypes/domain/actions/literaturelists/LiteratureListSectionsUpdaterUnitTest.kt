@@ -126,7 +126,7 @@ internal class LiteratureListSectionsUpdaterUnitTest : MockkBaseTest {
         val newSectionId = ThingId("irrelevant")
 
         every {
-            abstractLiteratureListSectionCreator.create(command.contributorId, newSection)
+            abstractLiteratureListSectionCreator.create(command.contributorId, newSection, command.extractionMethod!!)
         } returns newSectionId
         every {
             statementCollectionPropertyUpdater.update(
@@ -140,7 +140,7 @@ internal class LiteratureListSectionsUpdaterUnitTest : MockkBaseTest {
 
         literatureListSectionsUpdater(command, state)
 
-        verify(exactly = 1) { abstractLiteratureListSectionCreator.create(command.contributorId, newSection) }
+        verify(exactly = 1) { abstractLiteratureListSectionCreator.create(command.contributorId, newSection, command.extractionMethod!!) }
         verify(exactly = 1) {
             statementCollectionPropertyUpdater.update(
                 statements = state.statements[command.literatureListId].orEmpty(),
@@ -169,7 +169,7 @@ internal class LiteratureListSectionsUpdaterUnitTest : MockkBaseTest {
         val newSectionId = ThingId("irrelevant")
 
         every {
-            abstractLiteratureListSectionCreator.create(command.contributorId, newSection)
+            abstractLiteratureListSectionCreator.create(command.contributorId, newSection, command.extractionMethod!!)
         } returns newSectionId
         every {
             statementCollectionPropertyUpdater.update(
@@ -191,7 +191,7 @@ internal class LiteratureListSectionsUpdaterUnitTest : MockkBaseTest {
 
         literatureListSectionsUpdater(command, state)
 
-        verify(exactly = 1) { abstractLiteratureListSectionCreator.create(command.contributorId, newSection) }
+        verify(exactly = 1) { abstractLiteratureListSectionCreator.create(command.contributorId, newSection, command.extractionMethod!!) }
         verify(exactly = 1) {
             statementCollectionPropertyUpdater.update(
                 statements = state.statements[command.literatureListId].orEmpty(),

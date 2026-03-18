@@ -29,6 +29,7 @@ import org.orkg.contenttypes.input.UpdateTemplatePropertyUseCase.UpdateOtherLite
 import org.orkg.contenttypes.input.UpdateTemplatePropertyUseCase.UpdateResourcePropertyCommand
 import org.orkg.contenttypes.input.UpdateTemplatePropertyUseCase.UpdateStringLiteralPropertyCommand
 import org.orkg.contenttypes.input.UpdateTemplatePropertyUseCase.UpdateUntypedPropertyCommand
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.testing.fixtures.createStatement
 import java.util.UUID
 
@@ -73,8 +74,9 @@ internal class TemplatePropertyUpdaterUnitTest : MockkBaseTest {
             templateProperty = property,
             statements = mapOf(property.id to listOf(createStatement())),
         )
+        val extractionMethod = ExtractionMethod.UNKNOWN
 
-        every { abstractTemplatePropertyUpdater.update(any(), any(), any(), any(), any()) } just runs
+        every { abstractTemplatePropertyUpdater.update(any(), any(), any(), any(), any(), any()) } just runs
 
         val result = templatePropertyUpdater(command, state)
 
@@ -91,6 +93,7 @@ internal class TemplatePropertyUpdaterUnitTest : MockkBaseTest {
                 order = property.order.toInt(),
                 newProperty = command,
                 oldProperty = property,
+                extractionMethod = extractionMethod,
             )
         }
     }
@@ -132,8 +135,9 @@ internal class TemplatePropertyUpdaterUnitTest : MockkBaseTest {
             templateProperty = property,
             statements = mapOf(property.id to listOf(createStatement())),
         )
+        val extractionMethod = ExtractionMethod.UNKNOWN
 
-        every { abstractTemplatePropertyUpdater.update(any(), any(), any(), any(), any()) } just runs
+        every { abstractTemplatePropertyUpdater.update(any(), any(), any(), any(), any(), any()) } just runs
 
         val result = templatePropertyUpdater(command, state)
 
@@ -150,6 +154,7 @@ internal class TemplatePropertyUpdaterUnitTest : MockkBaseTest {
                 order = property.order.toInt(),
                 newProperty = command,
                 oldProperty = property,
+                extractionMethod = extractionMethod,
             )
         }
     }
@@ -191,8 +196,9 @@ internal class TemplatePropertyUpdaterUnitTest : MockkBaseTest {
             templateProperty = property,
             statements = mapOf(property.id to listOf(createStatement())),
         )
+        val extractionMethod = ExtractionMethod.UNKNOWN
 
-        every { abstractTemplatePropertyUpdater.update(any(), any(), any(), any(), any()) } just runs
+        every { abstractTemplatePropertyUpdater.update(any(), any(), any(), any(), any(), any()) } just runs
 
         val result = templatePropertyUpdater(command, state)
 
@@ -209,6 +215,7 @@ internal class TemplatePropertyUpdaterUnitTest : MockkBaseTest {
                 order = property.order.toInt(),
                 newProperty = command,
                 oldProperty = property,
+                extractionMethod = extractionMethod,
             )
         }
     }
@@ -250,8 +257,9 @@ internal class TemplatePropertyUpdaterUnitTest : MockkBaseTest {
             templateProperty = property,
             statements = mapOf(property.id to listOf(createStatement())),
         )
+        val extractionMethod = ExtractionMethod.UNKNOWN
 
-        every { abstractTemplatePropertyUpdater.update(any(), any(), any(), any(), any()) } just runs
+        every { abstractTemplatePropertyUpdater.update(any(), any(), any(), any(), any(), any()) } just runs
 
         val result = templatePropertyUpdater(command, state)
 
@@ -268,6 +276,7 @@ internal class TemplatePropertyUpdaterUnitTest : MockkBaseTest {
                 order = property.order.toInt(),
                 newProperty = command,
                 oldProperty = property,
+                extractionMethod = extractionMethod,
             )
         }
     }
@@ -309,8 +318,9 @@ internal class TemplatePropertyUpdaterUnitTest : MockkBaseTest {
             templateProperty = property,
             statements = mapOf(property.id to listOf(createStatement())),
         )
+        val extractionMethod = ExtractionMethod.UNKNOWN
 
-        every { abstractTemplatePropertyUpdater.update(any(), any(), any(), any(), any()) } just runs
+        every { abstractTemplatePropertyUpdater.update(any(), any(), any(), any(), any(), any()) } just runs
 
         val result = templatePropertyUpdater(command, state)
 
@@ -327,6 +337,7 @@ internal class TemplatePropertyUpdaterUnitTest : MockkBaseTest {
                 order = property.order.toInt(),
                 newProperty = command,
                 oldProperty = property,
+                extractionMethod = extractionMethod,
             )
         }
     }

@@ -10,6 +10,7 @@ import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.actions.CreateTemplateState
 import org.orkg.contenttypes.input.testing.fixtures.createTemplateCommand
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.StatementId
 import org.orkg.graph.input.CreateLiteralUseCase
@@ -31,12 +32,14 @@ internal class TemplateFormattedLabelCreatorUnitTest : MockkBaseTest {
             templateId = templateId,
         )
         val formattedLabelLiteralId = ThingId("R124")
+        val extractionMethod = ExtractionMethod.MANUAL
 
         every {
             unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     label = command.formattedLabel!!.value,
+                    extractionMethod = extractionMethod,
                 ),
             )
         } returns formattedLabelLiteralId
@@ -62,6 +65,7 @@ internal class TemplateFormattedLabelCreatorUnitTest : MockkBaseTest {
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = command.contributorId,
                     label = command.formattedLabel!!.value,
+                    extractionMethod = extractionMethod,
                 ),
             )
         }

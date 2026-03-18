@@ -18,6 +18,7 @@ import org.orkg.contenttypes.input.testing.fixtures.publishComparisonCommand
 import org.orkg.contenttypes.output.ComparisonRepository
 import org.orkg.contenttypes.output.DoiService
 import org.orkg.graph.domain.Classes
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Predicates
 import java.net.URI
 
@@ -43,7 +44,7 @@ internal class ComparisonVersionDoiPublisherUnitTest : MockkBaseTest {
         val relatedDOIs = listOf("10.1000/a", "10.1000/b")
 
         every { doiService.register(any()) } returns DOI.of(doi)
-        every { singleStatementPropertyCreator.create(any(), any(), any(), any()) } just runs
+        every { singleStatementPropertyCreator.create(any(), any(), any(), any(), any(), any()) } just runs
         every { comparisonRepository.findAllDOIsRelatedToComparison(comparison.id) } returns relatedDOIs
 
         comparisonVersionArchiver(command, state).asClue {
@@ -72,6 +73,7 @@ internal class ComparisonVersionDoiPublisherUnitTest : MockkBaseTest {
                 subjectId = comparisonVersionId,
                 predicateId = Predicates.hasDOI,
                 label = doi,
+                extractionMethod = ExtractionMethod.UNKNOWN,
             )
         }
         verify(exactly = 1) {

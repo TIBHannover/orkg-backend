@@ -3,6 +3,7 @@ package org.orkg.contenttypes.domain.actions.literaturelists
 import org.orkg.contenttypes.domain.actions.StatementCollectionPropertyUpdater
 import org.orkg.contenttypes.domain.actions.UpdateLiteratureListCommand
 import org.orkg.contenttypes.domain.actions.literaturelists.UpdateLiteratureListAction.State
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
@@ -34,7 +35,11 @@ class LiteratureListSectionsUpdater(
                 oldSections.firstOrNull { newSection.matchesLiteratureListSection(it) }?.also { oldSections.remove(it) }
             }
             val sectionIds = sections.map { newSection ->
-                newToOld[newSection]?.id ?: abstractLiteratureListSectionCreator.create(command.contributorId, newSection)
+                newToOld[newSection]?.id ?: abstractLiteratureListSectionCreator.create(
+                    contributorId = command.contributorId,
+                    section = newSection,
+                    extractionMethod = command.extractionMethod ?: ExtractionMethod.UNKNOWN,
+                )
             }
             if (sectionIds != state.literatureList.sections.map { it.id }) {
                 statementCollectionPropertyUpdater.update(

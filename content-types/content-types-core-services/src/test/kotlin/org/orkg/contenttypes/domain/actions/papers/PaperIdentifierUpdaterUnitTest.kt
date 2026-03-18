@@ -14,6 +14,7 @@ import org.orkg.contenttypes.domain.actions.UpdatePaperState
 import org.orkg.contenttypes.domain.identifiers.Identifiers
 import org.orkg.contenttypes.domain.testing.fixtures.createPaper
 import org.orkg.contenttypes.input.testing.fixtures.updatePaperCommand
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.testing.fixtures.createStatement
 
 internal class PaperIdentifierUpdaterUnitTest : MockkBaseTest {
@@ -39,6 +40,7 @@ internal class PaperIdentifierUpdaterUnitTest : MockkBaseTest {
                 newIdentifiers = command.identifiers!!,
                 identifierDefinitions = Identifiers.paper,
                 subjectId = state.paper!!.id,
+                extractionMethod = command.extractionMethod!!,
             )
         } just runs
 
@@ -57,6 +59,7 @@ internal class PaperIdentifierUpdaterUnitTest : MockkBaseTest {
                 newIdentifiers = command.identifiers!!,
                 identifierDefinitions = Identifiers.paper,
                 subjectId = state.paper!!.id,
+                extractionMethod = command.extractionMethod!!,
             )
         }
     }

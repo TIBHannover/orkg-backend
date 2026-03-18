@@ -6,6 +6,7 @@ import org.orkg.contenttypes.domain.actions.comparisons.PublishComparisonAction.
 import org.orkg.contenttypes.output.ComparisonRepository
 import org.orkg.contenttypes.output.DoiService
 import org.orkg.graph.domain.Classes
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.UnsafeLiteralUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
@@ -54,6 +55,7 @@ class ComparisonVersionDoiPublisher(
             subjectId = comparisonVersionId,
             predicateId = Predicates.hasDOI,
             label = doi.value,
+            extractionMethod = ExtractionMethod.UNKNOWN,
         )
         return state
     }

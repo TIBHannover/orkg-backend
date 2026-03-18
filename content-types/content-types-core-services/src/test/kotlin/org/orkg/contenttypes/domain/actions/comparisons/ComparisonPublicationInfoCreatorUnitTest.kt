@@ -53,6 +53,7 @@ internal class ComparisonPublicationInfoCreatorUnitTest : MockkBaseTest {
                     contributorId = command.contributorId,
                     label = now.year.toString(),
                     datatype = Literals.XSD.INT.prefixedUri,
+                    extractionMethod = command.extractionMethod,
                 ),
             )
         }
@@ -72,6 +73,7 @@ internal class ComparisonPublicationInfoCreatorUnitTest : MockkBaseTest {
                     contributorId = command.contributorId,
                     label = now.monthValue.toString(),
                     datatype = Literals.XSD.INT.prefixedUri,
+                    extractionMethod = command.extractionMethod,
                 ),
             )
         }

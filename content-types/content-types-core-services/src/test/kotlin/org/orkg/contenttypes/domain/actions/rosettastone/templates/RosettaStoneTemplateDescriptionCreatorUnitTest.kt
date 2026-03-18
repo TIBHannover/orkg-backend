@@ -13,6 +13,7 @@ import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.actions.CreateRosettaStoneTemplateState
 import org.orkg.contenttypes.domain.actions.SingleStatementPropertyCreator
 import org.orkg.contenttypes.input.testing.fixtures.createRosettaStoneTemplateCommand
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Predicates
 
 internal class RosettaStoneTemplateDescriptionCreatorUnitTest : MockkBaseTest {
@@ -34,6 +35,7 @@ internal class RosettaStoneTemplateDescriptionCreatorUnitTest : MockkBaseTest {
                 subjectId = state.rosettaStoneTemplateId!!,
                 predicateId = Predicates.description,
                 label = command.description,
+                extractionMethod = ExtractionMethod.UNKNOWN,
             )
         } just runs
 
@@ -49,6 +51,7 @@ internal class RosettaStoneTemplateDescriptionCreatorUnitTest : MockkBaseTest {
                 subjectId = state.rosettaStoneTemplateId!!,
                 predicateId = Predicates.description,
                 label = command.description,
+                extractionMethod = ExtractionMethod.UNKNOWN,
             )
         }
     }

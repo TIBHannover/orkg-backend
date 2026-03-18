@@ -2,6 +2,7 @@ package org.orkg.contenttypes.domain.actions.tables
 
 import org.orkg.contenttypes.domain.actions.CreateTableCommand
 import org.orkg.contenttypes.domain.actions.tables.CreateTableAction.State
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.input.UnsafeLiteralUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
@@ -25,6 +26,7 @@ class TableColumnsCreator(
                 tableId = state.tableId!!,
                 index = index,
                 titleLiteralId = state.resolve(value!!)!!,
+                extractionMethod = command.extractionMethod,
             )
         }
         return state.copy(columns = columns)

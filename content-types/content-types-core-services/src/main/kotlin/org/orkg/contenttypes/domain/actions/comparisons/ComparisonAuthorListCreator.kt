@@ -21,5 +21,5 @@ class ComparisonAuthorListCreator(
     )
 
     override fun invoke(command: CreateComparisonCommand, state: State): State =
-        state.apply { authorCreator.create(command.contributorId, authors, comparisonId!!) }
+        state.apply { authorCreator.create(command.contributorId, authors, comparisonId!!, command.extractionMethod) }
 }

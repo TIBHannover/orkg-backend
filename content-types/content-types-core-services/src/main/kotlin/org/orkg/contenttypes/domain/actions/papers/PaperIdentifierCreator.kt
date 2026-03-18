@@ -4,6 +4,7 @@ import org.orkg.contenttypes.domain.actions.CreatePaperCommand
 import org.orkg.contenttypes.domain.actions.IdentifierCreator
 import org.orkg.contenttypes.domain.actions.papers.CreatePaperAction.State
 import org.orkg.contenttypes.domain.identifiers.Identifiers
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.input.UnsafeLiteralUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
 
@@ -23,6 +24,7 @@ class PaperIdentifierCreator(
             identifiers = command.identifiers,
             identifierDefinitions = Identifiers.paper,
             subjectId = state.paperId!!,
+            extractionMethod = command.extractionMethod,
         )
         return state
     }

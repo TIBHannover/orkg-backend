@@ -6,6 +6,7 @@ import org.orkg.contenttypes.input.AbstractLiteratureListListSectionCommand
 import org.orkg.contenttypes.input.AbstractLiteratureListSectionCommand
 import org.orkg.contenttypes.input.AbstractLiteratureListTextSectionCommand
 import org.orkg.graph.domain.Classes
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.CreateLiteralUseCase
@@ -23,15 +24,17 @@ class AbstractLiteratureListSectionCreator(
     internal fun create(
         contributorId: ContributorId,
         section: AbstractLiteratureListSectionCommand,
+        extractionMethod: ExtractionMethod,
     ): ThingId =
         when (section) {
-            is AbstractLiteratureListListSectionCommand -> createListSection(contributorId, section)
-            is AbstractLiteratureListTextSectionCommand -> createTextSection(contributorId, section)
+            is AbstractLiteratureListListSectionCommand -> createListSection(contributorId, section, extractionMethod)
+            is AbstractLiteratureListTextSectionCommand -> createTextSection(contributorId, section, extractionMethod)
         }
 
     internal fun createListSectionEntry(
         contributorId: ContributorId,
         entry: AbstractLiteratureListListSectionCommand.Entry,
+        extractionMethod: ExtractionMethod,
     ): ThingId {
         val entryId = unsafeResourceUseCases.create(
             CreateResourceUseCase.CreateCommand(
@@ -53,6 +56,7 @@ class AbstractLiteratureListSectionCreator(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = contributorId,
                     label = description,
+                    extractionMethod = extractionMethod,
                 ),
             )
             unsafeStatementUseCases.create(
@@ -70,6 +74,7 @@ class AbstractLiteratureListSectionCreator(
     private fun createListSection(
         contributorId: ContributorId,
         section: AbstractLiteratureListListSectionCommand,
+        extractionMethod: ExtractionMethod,
     ): ThingId {
         val sectionId = unsafeResourceUseCases.create(
             CreateResourceUseCase.CreateCommand(
@@ -79,7 +84,7 @@ class AbstractLiteratureListSectionCreator(
             ),
         )
         section.entries.forEach {
-            val entryId = createListSectionEntry(contributorId, it)
+            val entryId = createListSectionEntry(contributorId, it, extractionMethod)
             unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = contributorId,
@@ -95,6 +100,7 @@ class AbstractLiteratureListSectionCreator(
     private fun createTextSection(
         contributorId: ContributorId,
         section: AbstractLiteratureListTextSectionCommand,
+        extractionMethod: ExtractionMethod,
     ): ThingId {
         val sectionId = unsafeResourceUseCases.create(
             CreateResourceUseCase.CreateCommand(
@@ -108,6 +114,7 @@ class AbstractLiteratureListSectionCreator(
                 contributorId = contributorId,
                 label = section.headingSize.toString(),
                 datatype = Literals.XSD.INT.prefixedUri,
+                extractionMethod = extractionMethod,
             ),
         )
         unsafeStatementUseCases.create(
@@ -122,6 +129,7 @@ class AbstractLiteratureListSectionCreator(
             CreateLiteralUseCase.CreateCommand(
                 contributorId = contributorId,
                 label = section.text,
+                extractionMethod = extractionMethod,
             ),
         )
         unsafeStatementUseCases.create(

@@ -10,6 +10,7 @@ import org.orkg.contenttypes.domain.actions.UpdateComparisonRelatedFigureCommand
 import org.orkg.contenttypes.input.ComparisonRelatedFigureUseCases
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Description
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.InvalidDescription
 import org.orkg.graph.domain.InvalidLabel
 import org.orkg.graph.domain.Label
@@ -75,6 +76,7 @@ class ComparisonRelatedFigureUpdater(
                 subjectId = command.comparisonRelatedFigureId,
                 predicateId = Predicates.hasImage,
                 label = command.image,
+                extractionMethod = ExtractionMethod.UNKNOWN, // TODO: Get from command
             )
         }
         if (command.description != comparisonRelatedFigure.description) {
@@ -84,6 +86,7 @@ class ComparisonRelatedFigureUpdater(
                 subjectId = command.comparisonRelatedFigureId,
                 predicateId = Predicates.description,
                 label = command.description,
+                extractionMethod = ExtractionMethod.UNKNOWN, // TODO: Get from command
             )
         }
     }

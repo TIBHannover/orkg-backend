@@ -4,6 +4,7 @@ import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.identifiers.Identifier
 import org.orkg.contenttypes.domain.identifiers.parse
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.input.CreateLiteralUseCase
 import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.UnsafeLiteralUseCases
@@ -18,6 +19,7 @@ class IdentifierCreator(
         identifiers: Map<String, List<String>>,
         identifierDefinitions: Set<Identifier>,
         subjectId: ThingId,
+        extractionMethod: ExtractionMethod,
     ) {
         val parsedIdentifiers = identifierDefinitions.parse(identifiers, validate = false)
         parsedIdentifiers.forEach { (identifier, values) ->
@@ -26,6 +28,7 @@ class IdentifierCreator(
                     CreateLiteralUseCase.CreateCommand(
                         contributorId = contributorId,
                         label = value,
+                        extractionMethod = extractionMethod,
                     ),
                 )
                 unsafeStatementUseCases.create(

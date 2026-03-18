@@ -3,6 +3,7 @@ package org.orkg.contenttypes.domain.actions.templates
 import org.orkg.contenttypes.domain.actions.SingleStatementPropertyUpdater
 import org.orkg.contenttypes.domain.actions.UpdateTemplateCommand
 import org.orkg.contenttypes.domain.actions.templates.UpdateTemplateAction.State
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UnsafeLiteralUseCases
@@ -27,6 +28,7 @@ class TemplateFormattedLabelUpdater(
                 subjectId = command.templateId,
                 predicateId = Predicates.templateLabelFormat,
                 label = command.formattedLabel?.value,
+                extractionMethod = command.extractionMethod ?: ExtractionMethod.UNKNOWN,
             )
         }
         return state

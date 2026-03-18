@@ -103,6 +103,7 @@ fun CreateLiteralUseCase.createLiteral(
     label: String = "label",
     datatype: String = Literals.XSD.STRING.prefixedUri,
     contributorId: ContributorId = ContributorId.UNKNOWN,
+    extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN,
     modifiable: Boolean = true,
 ): ThingId = create(
     CreateLiteralUseCase.CreateCommand(
@@ -110,6 +111,7 @@ fun CreateLiteralUseCase.createLiteral(
         contributorId = contributorId,
         label = label,
         datatype = datatype,
+        extractionMethod = extractionMethod,
         modifiable = modifiable,
     ),
 )

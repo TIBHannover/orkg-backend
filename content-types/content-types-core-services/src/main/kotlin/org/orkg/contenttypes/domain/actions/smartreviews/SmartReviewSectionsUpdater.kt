@@ -3,6 +3,7 @@ package org.orkg.contenttypes.domain.actions.smartreviews
 import org.orkg.contenttypes.domain.actions.StatementCollectionPropertyUpdater
 import org.orkg.contenttypes.domain.actions.UpdateSmartReviewCommand
 import org.orkg.contenttypes.domain.actions.smartreviews.UpdateSmartReviewAction.State
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
@@ -34,7 +35,11 @@ class SmartReviewSectionsUpdater(
                 oldSections.firstOrNull { newSection.matchesSmartReviewSection(it) }?.also { oldSections.remove(it) }
             }
             val sectionIds = sections.map { newSection ->
-                newToOld[newSection]?.id ?: abstractSmartReviewSectionCreator.create(command.contributorId, newSection)
+                newToOld[newSection]?.id ?: abstractSmartReviewSectionCreator.create(
+                    contributorId = command.contributorId,
+                    section = newSection,
+                    extractionMethod = command.extractionMethod ?: ExtractionMethod.UNKNOWN,
+                )
             }
             if (sectionIds != state.smartReview.sections.map { it.id }) {
                 val contributionId = state.statements.findContributionId(command.smartReviewId)!!

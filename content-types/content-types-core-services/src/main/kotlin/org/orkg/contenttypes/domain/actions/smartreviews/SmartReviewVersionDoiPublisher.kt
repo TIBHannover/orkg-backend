@@ -4,6 +4,7 @@ import org.orkg.contenttypes.domain.actions.PublishSmartReviewCommand
 import org.orkg.contenttypes.domain.actions.SingleStatementPropertyCreator
 import org.orkg.contenttypes.domain.actions.smartreviews.PublishSmartReviewAction.State
 import org.orkg.contenttypes.output.DoiService
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.UnsafeLiteralUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
@@ -49,6 +50,7 @@ class SmartReviewVersionDoiPublisher(
             subjectId = smartReviewVersionId,
             predicateId = Predicates.hasDOI,
             label = doi.value,
+            extractionMethod = ExtractionMethod.UNKNOWN,
         )
         return state
     }

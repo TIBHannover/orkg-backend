@@ -78,8 +78,9 @@ fun createLiteral(
     createdAt: OffsetDateTime = OffsetDateTime.parse("2023-10-03T14:31:17.365491+01:00"),
     createdBy: ContributorId = ContributorId("679ad2bd-ceb3-4f26-80ec-b6eab7a5e8c1"),
     datatype: String = "xsd:string",
+    extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN,
     modifiable: Boolean = true,
-) = Literal(id, label, datatype, createdAt, createdBy, modifiable)
+) = Literal(id, label, datatype, createdAt, createdBy, extractionMethod, modifiable)
 
 fun createStatement(
     id: StatementId = StatementId(1),

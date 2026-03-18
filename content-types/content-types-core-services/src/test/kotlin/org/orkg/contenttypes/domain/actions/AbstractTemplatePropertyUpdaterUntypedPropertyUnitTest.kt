@@ -11,6 +11,7 @@ import org.orkg.contenttypes.domain.testing.fixtures.createUntypedTemplateProper
 import org.orkg.contenttypes.input.UntypedPropertyCommand
 import org.orkg.contenttypes.input.testing.fixtures.toUntypedTemplatePropertyCommand
 import org.orkg.graph.domain.Classes
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.StatementId
@@ -28,8 +29,9 @@ internal class AbstractTemplatePropertyUpdaterUntypedPropertyUnitTest : Abstract
         val contributorId = ContributorId(UUID.randomUUID())
         val oldProperty = createUntypedTemplateProperty()
         val newProperty = oldProperty.toUntypedTemplatePropertyCommand()
+        val extractionMethod = ExtractionMethod.MANUAL
 
-        abstractTemplatePropertyUpdater.update(emptyList(), contributorId, 0, newProperty, oldProperty)
+        abstractTemplatePropertyUpdater.update(emptyList(), contributorId, 0, newProperty, oldProperty, extractionMethod)
     }
 
     @Test
@@ -39,6 +41,7 @@ internal class AbstractTemplatePropertyUpdaterUntypedPropertyUnitTest : Abstract
         val newProperty = oldProperty.toUntypedTemplatePropertyCommand().copy(
             label = "new label",
         )
+        val extractionMethod = ExtractionMethod.MANUAL
 
         every {
             unsafeResourceUseCases.update(
@@ -50,7 +53,7 @@ internal class AbstractTemplatePropertyUpdaterUntypedPropertyUnitTest : Abstract
             )
         } just runs
 
-        abstractTemplatePropertyUpdater.update(emptyList(), contributorId, 0, newProperty, oldProperty)
+        abstractTemplatePropertyUpdater.update(emptyList(), contributorId, 0, newProperty, oldProperty, extractionMethod)
 
         verify(exactly = 1) {
             unsafeResourceUseCases.update(
@@ -77,6 +80,7 @@ internal class AbstractTemplatePropertyUpdaterUntypedPropertyUnitTest : Abstract
                 `object` = createLiteral(label = "old placeholder"),
             ),
         )
+        val extractionMethod = ExtractionMethod.MANUAL
 
         every {
             singleStatementPropertyUpdater.updateOptionalProperty(
@@ -85,10 +89,11 @@ internal class AbstractTemplatePropertyUpdaterUntypedPropertyUnitTest : Abstract
                 subjectId = oldProperty.id,
                 predicateId = Predicates.placeholder,
                 label = newProperty.placeholder,
+                extractionMethod = extractionMethod,
             )
         } just runs
 
-        abstractTemplatePropertyUpdater.update(statements, contributorId, 0, newProperty, oldProperty)
+        abstractTemplatePropertyUpdater.update(statements, contributorId, 0, newProperty, oldProperty, extractionMethod)
 
         verify(exactly = 1) {
             singleStatementPropertyUpdater.updateOptionalProperty(
@@ -97,6 +102,7 @@ internal class AbstractTemplatePropertyUpdaterUntypedPropertyUnitTest : Abstract
                 subjectId = oldProperty.id,
                 predicateId = Predicates.placeholder,
                 label = newProperty.placeholder,
+                extractionMethod = extractionMethod,
             )
         }
     }
@@ -115,6 +121,7 @@ internal class AbstractTemplatePropertyUpdaterUntypedPropertyUnitTest : Abstract
                 `object` = createLiteral(label = "old description"),
             ),
         )
+        val extractionMethod = ExtractionMethod.MANUAL
 
         every {
             singleStatementPropertyUpdater.updateOptionalProperty(
@@ -123,10 +130,11 @@ internal class AbstractTemplatePropertyUpdaterUntypedPropertyUnitTest : Abstract
                 subjectId = oldProperty.id,
                 predicateId = Predicates.description,
                 label = newProperty.description,
+                extractionMethod = extractionMethod,
             )
         } just runs
 
-        abstractTemplatePropertyUpdater.update(statements, contributorId, 0, newProperty, oldProperty)
+        abstractTemplatePropertyUpdater.update(statements, contributorId, 0, newProperty, oldProperty, extractionMethod)
 
         verify(exactly = 1) {
             singleStatementPropertyUpdater.updateOptionalProperty(
@@ -135,6 +143,7 @@ internal class AbstractTemplatePropertyUpdaterUntypedPropertyUnitTest : Abstract
                 subjectId = oldProperty.id,
                 predicateId = Predicates.description,
                 label = newProperty.description,
+                extractionMethod = extractionMethod,
             )
         }
     }
@@ -153,6 +162,7 @@ internal class AbstractTemplatePropertyUpdaterUntypedPropertyUnitTest : Abstract
                 `object` = createLiteral(label = "4", datatype = Literals.XSD.INT.prefixedUri),
             ),
         )
+        val extractionMethod = ExtractionMethod.MANUAL
 
         every {
             singleStatementPropertyUpdater.updateOptionalProperty(
@@ -162,10 +172,11 @@ internal class AbstractTemplatePropertyUpdaterUntypedPropertyUnitTest : Abstract
                 predicateId = Predicates.shMinCount,
                 label = newProperty.minCount.toString(),
                 datatype = Literals.XSD.INT.prefixedUri,
+                extractionMethod = extractionMethod,
             )
         } just runs
 
-        abstractTemplatePropertyUpdater.update(statements, contributorId, 0, newProperty, oldProperty)
+        abstractTemplatePropertyUpdater.update(statements, contributorId, 0, newProperty, oldProperty, extractionMethod)
 
         verify(exactly = 1) {
             singleStatementPropertyUpdater.updateOptionalProperty(
@@ -175,6 +186,7 @@ internal class AbstractTemplatePropertyUpdaterUntypedPropertyUnitTest : Abstract
                 predicateId = Predicates.shMinCount,
                 label = newProperty.minCount.toString(),
                 datatype = Literals.XSD.INT.prefixedUri,
+                extractionMethod = extractionMethod,
             )
         }
     }
@@ -193,6 +205,7 @@ internal class AbstractTemplatePropertyUpdaterUntypedPropertyUnitTest : Abstract
                 `object` = createLiteral(label = "4", datatype = Literals.XSD.INT.prefixedUri),
             ),
         )
+        val extractionMethod = ExtractionMethod.MANUAL
 
         every {
             singleStatementPropertyUpdater.updateOptionalProperty(
@@ -202,10 +215,11 @@ internal class AbstractTemplatePropertyUpdaterUntypedPropertyUnitTest : Abstract
                 predicateId = Predicates.shMaxCount,
                 label = newProperty.maxCount.toString(),
                 datatype = Literals.XSD.INT.prefixedUri,
+                extractionMethod = extractionMethod,
             )
         } just runs
 
-        abstractTemplatePropertyUpdater.update(statements, contributorId, 0, newProperty, oldProperty)
+        abstractTemplatePropertyUpdater.update(statements, contributorId, 0, newProperty, oldProperty, extractionMethod)
 
         verify(exactly = 1) {
             singleStatementPropertyUpdater.updateOptionalProperty(
@@ -215,6 +229,7 @@ internal class AbstractTemplatePropertyUpdaterUntypedPropertyUnitTest : Abstract
                 predicateId = Predicates.shMaxCount,
                 label = newProperty.maxCount.toString(),
                 datatype = Literals.XSD.INT.prefixedUri,
+                extractionMethod = extractionMethod,
             )
         }
     }
@@ -246,10 +261,11 @@ internal class AbstractTemplatePropertyUpdaterUntypedPropertyUnitTest : Abstract
             ),
         )
         val statementsToRemove = statements.map { it.id }.toSet()
+        val extractionMethod = ExtractionMethod.MANUAL
 
         every { statementService.deleteAllById(statementsToRemove) } just runs
 
-        abstractTemplatePropertyUpdater.update(statements, contributorId, 3, newProperty, oldProperty)
+        abstractTemplatePropertyUpdater.update(statements, contributorId, 3, newProperty, oldProperty, extractionMethod)
 
         verify(exactly = 1) { statementService.deleteAllById(statementsToRemove) }
     }
@@ -268,6 +284,7 @@ internal class AbstractTemplatePropertyUpdaterUntypedPropertyUnitTest : Abstract
                 `object` = createPredicate(oldProperty.path.id),
             ),
         )
+        val extractionMethod = ExtractionMethod.MANUAL
 
         every {
             singleStatementPropertyUpdater.updateRequiredProperty(
@@ -279,7 +296,7 @@ internal class AbstractTemplatePropertyUpdaterUntypedPropertyUnitTest : Abstract
             )
         } just runs
 
-        abstractTemplatePropertyUpdater.update(statements, contributorId, 0, newProperty, oldProperty)
+        abstractTemplatePropertyUpdater.update(statements, contributorId, 0, newProperty, oldProperty, extractionMethod)
 
         verify(exactly = 1) {
             singleStatementPropertyUpdater.updateRequiredProperty(
@@ -305,6 +322,7 @@ internal class AbstractTemplatePropertyUpdaterUntypedPropertyUnitTest : Abstract
             ),
         )
         val newOrder = 2
+        val extractionMethod = ExtractionMethod.MANUAL
 
         every {
             singleStatementPropertyUpdater.updateRequiredProperty(
@@ -314,10 +332,11 @@ internal class AbstractTemplatePropertyUpdaterUntypedPropertyUnitTest : Abstract
                 predicateId = Predicates.shOrder,
                 label = newOrder.toString(),
                 datatype = Literals.XSD.INT.prefixedUri,
+                extractionMethod = extractionMethod,
             )
         } just runs
 
-        abstractTemplatePropertyUpdater.update(statements, contributorId, newOrder, newProperty, oldProperty)
+        abstractTemplatePropertyUpdater.update(statements, contributorId, newOrder, newProperty, oldProperty, extractionMethod)
 
         verify(exactly = 1) {
             singleStatementPropertyUpdater.updateRequiredProperty(
@@ -327,6 +346,7 @@ internal class AbstractTemplatePropertyUpdaterUntypedPropertyUnitTest : Abstract
                 predicateId = Predicates.shOrder,
                 label = newOrder.toString(),
                 datatype = Literals.XSD.INT.prefixedUri,
+                extractionMethod = extractionMethod,
             )
         }
     }

@@ -3,6 +3,7 @@ package org.orkg.contenttypes.domain.actions.tables
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
 import org.orkg.graph.domain.Classes
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.CreateLiteralUseCase
@@ -22,6 +23,7 @@ class AbstractTableRowCreator(
         tableId: ThingId,
         index: Int,
         label: String?,
+        extractionMethod: ExtractionMethod,
     ): ThingId {
         val rowId = unsafeResourceUseCases.create(
             CreateResourceUseCase.CreateCommand(
@@ -35,6 +37,7 @@ class AbstractTableRowCreator(
                 contributorId = contributorId,
                 label = "${index + 1}",
                 datatype = Literals.XSD.INT.prefixedUri,
+                extractionMethod = extractionMethod,
             ),
         )
         unsafeStatementUseCases.create(
@@ -50,6 +53,7 @@ class AbstractTableRowCreator(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = contributorId,
                     label = label,
+                    extractionMethod = extractionMethod,
                 ),
             )
             unsafeStatementUseCases.create(

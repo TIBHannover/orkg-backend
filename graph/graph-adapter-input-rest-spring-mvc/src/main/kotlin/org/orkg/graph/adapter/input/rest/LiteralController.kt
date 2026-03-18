@@ -1,5 +1,6 @@
 package org.orkg.graph.adapter.input.rest
 
+import com.fasterxml.jackson.annotation.JsonProperty
 import jakarta.validation.Valid
 import jakarta.validation.constraints.NotBlank
 import org.orkg.common.ContributorId
@@ -7,6 +8,7 @@ import org.orkg.common.ThingId
 import org.orkg.common.annotations.RequireLogin
 import org.orkg.common.contributorId
 import org.orkg.graph.adapter.input.rest.mapping.LiteralRepresentationAdapter
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.LiteralNotFound
 import org.orkg.graph.domain.SearchString
 import org.orkg.graph.input.CreateLiteralUseCase.CreateCommand
@@ -64,16 +66,17 @@ class LiteralController(
 
     @RequireLogin
     @PostMapping(consumes = [MediaType.APPLICATION_JSON_VALUE])
-    fun add(
-        @RequestBody @Valid literal: CreateLiteralRequest,
+    fun create(
+        @RequestBody @Valid request: CreateLiteralRequest,
         uriComponentsBuilder: UriComponentsBuilder,
         currentUser: Authentication?,
     ): ResponseEntity<LiteralRepresentation> {
         val id = service.create(
             CreateCommand(
                 contributorId = currentUser.contributorId(),
-                label = literal.label,
-                datatype = literal.datatype,
+                label = request.label,
+                datatype = request.datatype,
+                extractionMethod = request.extractionMethod,
             ),
         )
         val location = uriComponentsBuilder
@@ -97,6 +100,7 @@ class LiteralController(
                 contributorId = currentUser.contributorId(),
                 label = request.label,
                 datatype = request.datatype,
+                extractionMethod = request.extractionMethod,
             ),
         )
         val location = uriComponentsBuilder
@@ -111,10 +115,14 @@ class LiteralController(
         val label: String,
         @field:NotBlank
         val datatype: String = "xsd:string",
+        @field:JsonProperty("extraction_method")
+        val extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN,
     )
 
     data class UpdateLiteralRequest(
         val label: String?,
         val datatype: String?,
+        @field:JsonProperty("extraction_method")
+        val extractionMethod: ExtractionMethod?,
     )
 }

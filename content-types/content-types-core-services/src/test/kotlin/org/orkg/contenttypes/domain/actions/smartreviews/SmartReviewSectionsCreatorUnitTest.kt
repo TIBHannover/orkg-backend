@@ -41,7 +41,7 @@ internal class SmartReviewSectionsCreatorUnitTest : MockkBaseTest {
 
         command.sections.forEachIndexed { index, section ->
             val sectionId = ThingId("Section$index")
-            every { abstractSmartReviewSectionCreator.create(command.contributorId, section) } returns sectionId
+            every { abstractSmartReviewSectionCreator.create(command.contributorId, section, command.extractionMethod) } returns sectionId
             every {
                 unsafeStatementUseCases.create(
                     CreateCommand(
@@ -58,7 +58,7 @@ internal class SmartReviewSectionsCreatorUnitTest : MockkBaseTest {
 
         command.sections.forEachIndexed { index, section ->
             verify(exactly = 1) {
-                abstractSmartReviewSectionCreator.create(command.contributorId, section)
+                abstractSmartReviewSectionCreator.create(command.contributorId, section, command.extractionMethod)
             }
             verify(exactly = 1) {
                 unsafeStatementUseCases.create(

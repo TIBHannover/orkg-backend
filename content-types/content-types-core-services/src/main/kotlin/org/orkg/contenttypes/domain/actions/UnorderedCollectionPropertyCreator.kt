@@ -2,6 +2,7 @@ package org.orkg.contenttypes.domain.actions
 
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.input.CreateLiteralUseCase
 import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.UnsafeLiteralUseCases
@@ -16,12 +17,14 @@ class UnorderedCollectionPropertyCreator(
         subjectId: ThingId,
         predicateId: ThingId,
         labels: Collection<String>,
+        extractionMethod: ExtractionMethod,
     ) {
         labels.forEach { label ->
             val literal = unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = contributorId,
                     label = label,
+                    extractionMethod = extractionMethod,
                 ),
             )
             unsafeStatementUseCases.create(

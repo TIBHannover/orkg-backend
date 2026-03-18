@@ -2,6 +2,7 @@ package org.orkg.graph.input
 
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Literal
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.SearchString
@@ -45,6 +46,7 @@ interface CreateLiteralUseCase {
         val contributorId: ContributorId,
         val label: String,
         val datatype: String = Literals.XSD.STRING.prefixedUri,
+        val extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN,
         val modifiable: Boolean = true,
     )
 }
@@ -57,6 +59,7 @@ interface UpdateLiteralUseCase {
         val contributorId: ContributorId,
         val label: String? = null,
         val datatype: String? = null,
+        val extractionMethod: ExtractionMethod? = null,
         val modifiable: Boolean? = null,
     )
 }

@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkBaseTest
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.StatementId
 import org.orkg.graph.input.CreateLiteralUseCase
@@ -28,6 +29,7 @@ internal class StatementCollectionPropertyCreatorUnitTest : MockkBaseTest {
             subjectId = ThingId("R123"),
             predicateId = Predicates.description,
             labels = emptyList(),
+            extractionMethod = ExtractionMethod.MANUAL,
         )
     }
 
@@ -37,12 +39,14 @@ internal class StatementCollectionPropertyCreatorUnitTest : MockkBaseTest {
         val contributorId = ContributorId(UUID.randomUUID())
         val description = "some description"
         val literal = ThingId("L1")
+        val extractionMethod = ExtractionMethod.MANUAL
 
         every {
             unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = contributorId,
                     label = description,
+                    extractionMethod = extractionMethod,
                 ),
             )
         } returns literal
@@ -57,13 +61,20 @@ internal class StatementCollectionPropertyCreatorUnitTest : MockkBaseTest {
             )
         } returns StatementId("S1")
 
-        statementCollectionPropertyCreator.create(contributorId, subjectId, Predicates.description, listOf(description))
+        statementCollectionPropertyCreator.create(
+            contributorId = contributorId,
+            subjectId = subjectId,
+            predicateId = Predicates.description,
+            labels = listOf(description),
+            extractionMethod = extractionMethod,
+        )
 
         verify(exactly = 1) {
             unsafeLiteralUseCases.create(
                 CreateLiteralUseCase.CreateCommand(
                     contributorId = contributorId,
                     label = description,
+                    extractionMethod = extractionMethod,
                 ),
             )
         }

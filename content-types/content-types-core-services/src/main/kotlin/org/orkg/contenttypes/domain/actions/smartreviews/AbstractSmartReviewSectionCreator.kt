@@ -11,6 +11,7 @@ import org.orkg.contenttypes.input.AbstractSmartReviewSectionCommand
 import org.orkg.contenttypes.input.AbstractSmartReviewTextSectionCommand
 import org.orkg.contenttypes.input.AbstractSmartReviewVisualizationSectionCommand
 import org.orkg.graph.domain.Classes
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.CreateLiteralUseCase
 import org.orkg.graph.input.CreateResourceUseCase
@@ -31,6 +32,7 @@ class AbstractSmartReviewSectionCreator(
     internal fun create(
         contributorId: ContributorId,
         section: AbstractSmartReviewSectionCommand,
+        extractionMethod: ExtractionMethod,
     ): ThingId =
         when (section) {
             is AbstractSmartReviewComparisonSectionCommand -> createComparisonSection(contributorId, section)
@@ -38,7 +40,7 @@ class AbstractSmartReviewSectionCreator(
             is AbstractSmartReviewResourceSectionCommand -> createResourceSection(contributorId, section)
             is AbstractSmartReviewPredicateSectionCommand -> createPredicateSection(contributorId, section)
             is AbstractSmartReviewOntologySectionCommand -> createOntologySection(contributorId, section)
-            is AbstractSmartReviewTextSectionCommand -> createTextSection(contributorId, section)
+            is AbstractSmartReviewTextSectionCommand -> createTextSection(contributorId, section, extractionMethod)
         }
 
     private fun createComparisonSection(
@@ -166,6 +168,7 @@ class AbstractSmartReviewSectionCreator(
     private fun createTextSection(
         contributorId: ContributorId,
         section: AbstractSmartReviewTextSectionCommand,
+        extractionMethod: ExtractionMethod,
     ): ThingId {
         val sectionId = unsafeResourceUseCases.create(
             CreateResourceUseCase.CreateCommand(
@@ -178,6 +181,7 @@ class AbstractSmartReviewSectionCreator(
             CreateLiteralUseCase.CreateCommand(
                 contributorId = contributorId,
                 label = section.text,
+                extractionMethod = extractionMethod,
             ),
         )
         unsafeStatementUseCases.create(

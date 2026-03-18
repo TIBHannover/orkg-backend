@@ -25,7 +25,7 @@ internal class TemplatePropertiesCreatorUnitTest : MockkBaseTest {
         )
 
         every {
-            abstractTemplatePropertyCreator.create(command.contributorId, state.templateId!!, any(), any())
+            abstractTemplatePropertyCreator.create(command.contributorId, state.templateId!!, any(), any(), any())
         } returns ThingId("R456")
 
         val result = templatePropertiesCreator(command, state)
@@ -36,7 +36,13 @@ internal class TemplatePropertiesCreatorUnitTest : MockkBaseTest {
 
         command.properties.forEachIndexed { index, property ->
             verify(exactly = 1) {
-                abstractTemplatePropertyCreator.create(command.contributorId, state.templateId!!, index, property)
+                abstractTemplatePropertyCreator.create(
+                    contributorId = command.contributorId,
+                    templateId = state.templateId!!,
+                    order = index,
+                    property = property,
+                    extractionMethod = command.extractionMethod,
+                )
             }
         }
     }

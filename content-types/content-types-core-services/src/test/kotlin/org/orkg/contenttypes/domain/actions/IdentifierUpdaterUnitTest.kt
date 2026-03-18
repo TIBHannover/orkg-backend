@@ -10,6 +10,7 @@ import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.identifiers.Identifiers
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.testing.fixtures.createLiteral
 import org.orkg.graph.testing.fixtures.createPredicate
@@ -37,8 +38,9 @@ internal class IdentifierUpdaterUnitTest : MockkBaseTest {
                 ),
             ),
         )
+        val extractionMethod = ExtractionMethod.MANUAL
 
-        identifierUpdater.update(statements, contributorId, newIdentifiers, Identifiers.author, subjectId)
+        identifierUpdater.update(statements, contributorId, newIdentifiers, Identifiers.author, subjectId, extractionMethod)
     }
 
     @Test
@@ -57,6 +59,7 @@ internal class IdentifierUpdaterUnitTest : MockkBaseTest {
                 ),
             ),
         )
+        val extractionMethod = ExtractionMethod.MANUAL
 
         every {
             statementCollectionPropertyUpdater.update(
@@ -65,10 +68,11 @@ internal class IdentifierUpdaterUnitTest : MockkBaseTest {
                 subjectId = authorId,
                 predicateId = any(),
                 literals = any<Set<String>>(),
+                extractionMethod = extractionMethod,
             )
         } just runs
 
-        identifierUpdater.update(statements, contributorId, newIdentifiers, Identifiers.author, authorId)
+        identifierUpdater.update(statements, contributorId, newIdentifiers, Identifiers.author, authorId, extractionMethod)
 
         Identifiers.author.forEach {
             verify(exactly = 1) {
@@ -78,6 +82,7 @@ internal class IdentifierUpdaterUnitTest : MockkBaseTest {
                     subjectId = authorId,
                     predicateId = it.predicateId,
                     literals = newIdentifiers[it.id].orEmpty().toSet(),
+                    extractionMethod = extractionMethod,
                 )
             }
         }

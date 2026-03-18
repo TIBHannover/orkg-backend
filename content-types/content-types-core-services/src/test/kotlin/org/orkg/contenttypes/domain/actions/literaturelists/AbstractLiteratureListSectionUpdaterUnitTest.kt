@@ -19,6 +19,7 @@ import org.orkg.contenttypes.input.LiteratureListListSectionCommand
 import org.orkg.contenttypes.input.testing.fixtures.toCommandEntry
 import org.orkg.contenttypes.input.testing.fixtures.toLiteratureListListSectionCommand
 import org.orkg.contenttypes.input.testing.fixtures.toLiteratureListTextSectionCommand
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.GeneralStatement
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
@@ -100,9 +101,9 @@ internal class AbstractLiteratureListSectionUpdaterUnitTest : MockkBaseTest {
         val statements = oldSection.toGroupedStatements()
         val entryId = ThingId("R1564")
 
-        every { abstractLiteratureListSectionCreator.createListSectionEntry(contributorId, any()) } returns entryId
+        every { abstractLiteratureListSectionCreator.createListSectionEntry(contributorId, any(), any()) } returns entryId
         every { unsafeStatementUseCases.create(any()) } returns StatementId("S1")
-        every { singleStatementPropertyUpdater.updateOptionalProperty(any<List<GeneralStatement>>(), any(), any(), any(), any<String>()) } just runs
+        every { singleStatementPropertyUpdater.updateOptionalProperty(any<List<GeneralStatement>>(), any(), any(), any(), any<String>(), any(), any()) } just runs
         every { statementService.deleteAllById(any<Set<StatementId>>()) } just runs
 
         abstractLiteratureListSectionUpdater.updateListSection(contributorId, newSection, oldSection, statements)
@@ -124,6 +125,7 @@ internal class AbstractLiteratureListSectionUpdaterUnitTest : MockkBaseTest {
                 subjectId = ThingId("R0"),
                 predicateId = Predicates.description,
                 label = null,
+                extractionMethod = ExtractionMethod.UNKNOWN,
             )
         }
         verify(exactly = 1) {
@@ -143,6 +145,7 @@ internal class AbstractLiteratureListSectionUpdaterUnitTest : MockkBaseTest {
                 subjectId = ThingId("R1"),
                 predicateId = Predicates.description,
                 label = "paper entry description",
+                extractionMethod = ExtractionMethod.UNKNOWN,
             )
         }
         verify(exactly = 1) { statementService.deleteAllById(setOf(StatementId("S0_2"), StatementId("S1_2"))) }
@@ -150,6 +153,7 @@ internal class AbstractLiteratureListSectionUpdaterUnitTest : MockkBaseTest {
             abstractLiteratureListSectionCreator.createListSectionEntry(
                 contributorId = contributorId,
                 entry = oldSection.entries.last().toCommandEntry(),
+                extractionMethod = ExtractionMethod.UNKNOWN,
             )
         }
         verify(exactly = 1) {
@@ -175,13 +179,13 @@ internal class AbstractLiteratureListSectionUpdaterUnitTest : MockkBaseTest {
         val statements = oldSection.toGroupedStatements()
         val entryId = ThingId("R1564")
 
-        every { abstractLiteratureListSectionCreator.createListSectionEntry(contributorId, any()) } returns entryId
+        every { abstractLiteratureListSectionCreator.createListSectionEntry(contributorId, any(), any()) } returns entryId
         every { unsafeStatementUseCases.create(any()) } returns StatementId("S1")
 
         abstractLiteratureListSectionUpdater.updateListSection(contributorId, newSection, oldSection, statements)
 
         verify(exactly = 1) {
-            abstractLiteratureListSectionCreator.createListSectionEntry(contributorId, newEntry)
+            abstractLiteratureListSectionCreator.createListSectionEntry(contributorId, newEntry, ExtractionMethod.UNKNOWN)
         }
         verify(exactly = 1) {
             unsafeStatementUseCases.create(
@@ -210,9 +214,9 @@ internal class AbstractLiteratureListSectionUpdaterUnitTest : MockkBaseTest {
         val statements = oldSection.toGroupedStatements()
         val entryId = ThingId("R1564")
 
-        every { abstractLiteratureListSectionCreator.createListSectionEntry(contributorId, any()) } returns entryId
+        every { abstractLiteratureListSectionCreator.createListSectionEntry(contributorId, any(), any()) } returns entryId
         every { unsafeStatementUseCases.create(any()) } returns StatementId("S1")
-        every { singleStatementPropertyUpdater.updateOptionalProperty(any<List<GeneralStatement>>(), any(), any(), any(), any<String>()) } just runs
+        every { singleStatementPropertyUpdater.updateOptionalProperty(any<List<GeneralStatement>>(), any(), any(), any(), any<String>(), any(), any()) } just runs
         every { statementService.deleteAllById(any<Set<StatementId>>()) } just runs
 
         abstractLiteratureListSectionUpdater.updateListSection(contributorId, newSection, oldSection, statements)
@@ -229,7 +233,7 @@ internal class AbstractLiteratureListSectionUpdaterUnitTest : MockkBaseTest {
         }
         verify(exactly = 1) { statementService.deleteAllById(setOf(StatementId("S1_2"))) }
         verify(exactly = 1) {
-            abstractLiteratureListSectionCreator.createListSectionEntry(contributorId, entry)
+            abstractLiteratureListSectionCreator.createListSectionEntry(contributorId, entry, ExtractionMethod.UNKNOWN)
         }
         verify(exactly = 1) {
             unsafeStatementUseCases.create(
@@ -248,6 +252,7 @@ internal class AbstractLiteratureListSectionUpdaterUnitTest : MockkBaseTest {
                 subjectId = ThingId("R1"),
                 predicateId = Predicates.description,
                 label = null,
+                extractionMethod = ExtractionMethod.UNKNOWN,
             )
         }
     }
@@ -264,7 +269,7 @@ internal class AbstractLiteratureListSectionUpdaterUnitTest : MockkBaseTest {
         )
         val statements = oldSection.toGroupedStatements()
 
-        every { singleStatementPropertyUpdater.updateOptionalProperty(any<List<GeneralStatement>>(), any(), any(), any(), any<String>()) } just runs
+        every { singleStatementPropertyUpdater.updateOptionalProperty(any<List<GeneralStatement>>(), any(), any(), any(), any<String>(), any(), any()) } just runs
 
         abstractLiteratureListSectionUpdater.updateListSection(contributorId, newSection, oldSection, statements)
 
@@ -275,6 +280,7 @@ internal class AbstractLiteratureListSectionUpdaterUnitTest : MockkBaseTest {
                 subjectId = ThingId("R1"),
                 predicateId = Predicates.description,
                 label = "updated description",
+                extractionMethod = ExtractionMethod.UNKNOWN,
             )
         }
     }
@@ -326,6 +332,7 @@ internal class AbstractLiteratureListSectionUpdaterUnitTest : MockkBaseTest {
                 predicateId = Predicates.hasHeadingLevel,
                 label = newSection.headingSize.toString(),
                 datatype = Literals.XSD.INT.prefixedUri,
+                extractionMethod = ExtractionMethod.UNKNOWN,
             )
         } just runs
 
@@ -339,6 +346,7 @@ internal class AbstractLiteratureListSectionUpdaterUnitTest : MockkBaseTest {
                 predicateId = Predicates.hasHeadingLevel,
                 label = newSection.headingSize.toString(),
                 datatype = Literals.XSD.INT.prefixedUri,
+                extractionMethod = ExtractionMethod.UNKNOWN,
             )
         }
     }
@@ -357,6 +365,7 @@ internal class AbstractLiteratureListSectionUpdaterUnitTest : MockkBaseTest {
                 subjectId = oldSection.id,
                 predicateId = Predicates.hasContent,
                 label = newSection.text,
+                extractionMethod = ExtractionMethod.UNKNOWN,
             )
         } just runs
 
@@ -369,6 +378,7 @@ internal class AbstractLiteratureListSectionUpdaterUnitTest : MockkBaseTest {
                 subjectId = oldSection.id,
                 predicateId = Predicates.hasContent,
                 label = newSection.text,
+                extractionMethod = ExtractionMethod.UNKNOWN,
             )
         }
     }

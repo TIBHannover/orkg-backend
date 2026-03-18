@@ -8,6 +8,7 @@ import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.actions.CreateLiteratureListState
 import org.orkg.contenttypes.input.testing.fixtures.createLiteratureListCommand
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.StatementId
 import org.orkg.graph.input.CreateStatementUseCase
@@ -44,14 +45,15 @@ internal class LiteratureListSectionsCreatorUnitTest : MockkBaseTest {
         )
         val sectionId1 = ThingId("R456")
         val sectionId2 = ThingId("R789")
+        val extractionMethod = ExtractionMethod.MANUAL
 
-        every { abstractLiteratureListSectionCreator.create(command.contributorId, any()) } returns sectionId1 andThen sectionId2
+        every { abstractLiteratureListSectionCreator.create(command.contributorId, any(), extractionMethod) } returns sectionId1 andThen sectionId2
         every { unsafeStatementUseCases.create(any()) } returns StatementId("S1")
 
         literatureListSectionsCreator(command, state)
 
         verify(exactly = 1) {
-            abstractLiteratureListSectionCreator.create(command.contributorId, command.sections.first())
+            abstractLiteratureListSectionCreator.create(command.contributorId, command.sections.first(), extractionMethod)
         }
         verify(exactly = 1) {
             unsafeStatementUseCases.create(
@@ -64,7 +66,7 @@ internal class LiteratureListSectionsCreatorUnitTest : MockkBaseTest {
             )
         }
         verify(exactly = 1) {
-            abstractLiteratureListSectionCreator.create(command.contributorId, command.sections.last())
+            abstractLiteratureListSectionCreator.create(command.contributorId, command.sections.last(), extractionMethod)
         }
         verify(exactly = 1) {
             unsafeStatementUseCases.create(

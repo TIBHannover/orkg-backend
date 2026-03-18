@@ -20,7 +20,7 @@ class TemplatePropertiesCreator(
 
     override fun invoke(command: CreateTemplateCommand, state: State): State {
         command.properties.forEachIndexed { index, property ->
-            abstractTemplatePropertyCreator.create(command.contributorId, state.templateId!!, index, property)
+            abstractTemplatePropertyCreator.create(command.contributorId, state.templateId!!, index, property, command.extractionMethod)
         }
         return state
     }

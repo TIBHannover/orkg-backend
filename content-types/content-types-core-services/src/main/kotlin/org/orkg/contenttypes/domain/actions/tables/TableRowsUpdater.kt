@@ -2,6 +2,7 @@ package org.orkg.contenttypes.domain.actions.tables
 
 import org.orkg.contenttypes.domain.actions.UpdateTableCommand
 import org.orkg.contenttypes.domain.actions.tables.UpdateTableAction.State
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.CreateLiteralUseCase
 import org.orkg.graph.input.CreateStatementUseCase
@@ -43,6 +44,7 @@ class TableRowsUpdater(
                     CreateLiteralUseCase.CreateCommand(
                         contributorId = command.contributorId,
                         label = rowCommand.label!!,
+                        extractionMethod = command.extractionMethod ?: ExtractionMethod.UNKNOWN,
                     ),
                 )
                 unsafeStatementUseCases.create(
@@ -59,6 +61,7 @@ class TableRowsUpdater(
                         id = existingRowGraph.labelStatement!!.`object`.id,
                         contributorId = command.contributorId,
                         label = rowCommand.label!!,
+                        extractionMethod = command.extractionMethod,
                     ),
                 )
             }
@@ -73,6 +76,7 @@ class TableRowsUpdater(
                     tableId = command.tableId,
                     index = index,
                     label = row.label,
+                    extractionMethod = command.extractionMethod ?: ExtractionMethod.UNKNOWN,
                 )
             }
 

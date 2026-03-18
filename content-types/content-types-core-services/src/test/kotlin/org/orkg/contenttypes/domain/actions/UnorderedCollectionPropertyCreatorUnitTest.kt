@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkBaseTest
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.StatementId
 import org.orkg.graph.input.CreateLiteralUseCase
@@ -28,6 +29,7 @@ internal class UnorderedCollectionPropertyCreatorUnitTest : MockkBaseTest {
             subjectId = ThingId("R123"),
             predicateId = Predicates.description,
             labels = emptyList(),
+            extractionMethod = ExtractionMethod.MANUAL,
         )
     }
 
@@ -37,15 +39,14 @@ internal class UnorderedCollectionPropertyCreatorUnitTest : MockkBaseTest {
         val contributorId = ContributorId(UUID.randomUUID())
         val description = "some description"
         val literal = ThingId("L1")
+        val extractionMethod = ExtractionMethod.MANUAL
+        val createLiteralCommand = CreateLiteralUseCase.CreateCommand(
+            contributorId = contributorId,
+            label = description,
+            extractionMethod = extractionMethod,
+        )
 
-        every {
-            unsafeLiteralUseCases.create(
-                CreateLiteralUseCase.CreateCommand(
-                    contributorId = contributorId,
-                    label = description,
-                ),
-            )
-        } returns literal
+        every { unsafeLiteralUseCases.create(createLiteralCommand) } returns literal
         every {
             unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
@@ -57,16 +58,9 @@ internal class UnorderedCollectionPropertyCreatorUnitTest : MockkBaseTest {
             )
         } returns StatementId("S1")
 
-        unorderedCollectionPropertyCreator.create(contributorId, subjectId, Predicates.description, listOf(description))
+        unorderedCollectionPropertyCreator.create(contributorId, subjectId, Predicates.description, listOf(description), extractionMethod)
 
-        verify(exactly = 1) {
-            unsafeLiteralUseCases.create(
-                CreateLiteralUseCase.CreateCommand(
-                    contributorId = contributorId,
-                    label = description,
-                ),
-            )
-        }
+        verify(exactly = 1) { unsafeLiteralUseCases.create(createLiteralCommand) }
         verify(exactly = 1) {
             unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(

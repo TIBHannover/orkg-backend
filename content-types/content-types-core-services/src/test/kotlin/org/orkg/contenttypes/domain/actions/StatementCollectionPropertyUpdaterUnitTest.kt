@@ -11,6 +11,7 @@ import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.common.testing.fixtures.fixedClock
 import org.orkg.graph.domain.Classes
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.GeneralStatement
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
@@ -160,18 +161,30 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
         val literals = listOf("R3", "R4")
         val oldLiteralStatements = setOf("R1", "R2").toLiteralStatements(subjectId)
         val contributorId = ContributorId(UUID.randomUUID())
+        val extractionMethod = ExtractionMethod.MANUAL
 
         every { statementService.deleteAllById(any<Set<StatementId>>()) } just runs
         every { unsafeStatementUseCases.create(any()) } returns StatementId("S1")
         every { unsafeLiteralUseCases.create(any()) } returns ThingId("L1") andThen ThingId("L2")
 
-        statementCollectionPropertyUpdater.update(oldLiteralStatements, contributorId, subjectId, Predicates.reference, literals.toSet())
+        statementCollectionPropertyUpdater.update(
+            statements = oldLiteralStatements,
+            contributorId = contributorId,
+            subjectId = subjectId,
+            predicateId = Predicates.reference,
+            literals = literals.toSet(),
+            extractionMethod = extractionMethod,
+        )
 
         verify(exactly = 1) { statementService.deleteAllById(oldLiteralStatements.map { it.id }.toSet()) }
         literals.forEach { literal ->
             verify(exactly = 1) {
                 unsafeLiteralUseCases.create(
-                    CreateLiteralUseCase.CreateCommand(label = literal, contributorId = contributorId),
+                    CreateLiteralUseCase.CreateCommand(
+                        label = literal,
+                        contributorId = contributorId,
+                        extractionMethod = extractionMethod,
+                    ),
                 )
             }
         }
@@ -203,17 +216,29 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
         val literals = listOf("R2", "R3")
         val oldLiteralStatements = setOf("R1", "R2").toLiteralStatements(subjectId)
         val contributorId = ContributorId(UUID.randomUUID())
+        val extractionMethod = ExtractionMethod.MANUAL
 
         every { statementService.deleteAllById(any<Set<StatementId>>()) } just runs
         every { unsafeStatementUseCases.create(any()) } returns StatementId("S1")
         every { unsafeLiteralUseCases.create(any()) } returns ThingId("L1")
 
-        statementCollectionPropertyUpdater.update(oldLiteralStatements, contributorId, subjectId, Predicates.reference, literals.toSet())
+        statementCollectionPropertyUpdater.update(
+            statements = oldLiteralStatements,
+            contributorId = contributorId,
+            subjectId = subjectId,
+            predicateId = Predicates.reference,
+            literals = literals.toSet(),
+            extractionMethod = extractionMethod,
+        )
 
         verify(exactly = 1) { statementService.deleteAllById(setOf(oldLiteralStatements[0].id)) }
         verify(exactly = 1) {
             unsafeLiteralUseCases.create(
-                CreateLiteralUseCase.CreateCommand(label = literals[1], contributorId = contributorId),
+                CreateLiteralUseCase.CreateCommand(
+                    label = literals[1],
+                    contributorId = contributorId,
+                    extractionMethod = extractionMethod,
+                ),
             )
         }
         verify(exactly = 1) {
@@ -234,8 +259,16 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
         val literals = listOf("R1", "R2")
         val oldLiteralStatements = literals.toLiteralStatements(subjectId)
         val contributorId = ContributorId(UUID.randomUUID())
+        val extractionMethod = ExtractionMethod.MANUAL
 
-        statementCollectionPropertyUpdater.update(oldLiteralStatements, contributorId, subjectId, Predicates.reference, literals.toSet())
+        statementCollectionPropertyUpdater.update(
+            statements = oldLiteralStatements,
+            contributorId = contributorId,
+            subjectId = subjectId,
+            predicateId = Predicates.reference,
+            literals = literals.toSet(),
+            extractionMethod = extractionMethod,
+        )
     }
 
     @Test
@@ -244,10 +277,18 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
         val literals = emptySet<String>()
         val oldLiteralStatements = listOf("R1", "R2").toLiteralStatements(subjectId)
         val contributorId = ContributorId(UUID.randomUUID())
+        val extractionMethod = ExtractionMethod.MANUAL
 
         every { statementService.deleteAllById(any<Set<StatementId>>()) } just runs
 
-        statementCollectionPropertyUpdater.update(oldLiteralStatements, contributorId, subjectId, Predicates.reference, literals.toSet())
+        statementCollectionPropertyUpdater.update(
+            statements = oldLiteralStatements,
+            contributorId = contributorId,
+            subjectId = subjectId,
+            predicateId = Predicates.reference,
+            literals = literals.toSet(),
+            extractionMethod = extractionMethod,
+        )
 
         verify(exactly = 1) { statementService.deleteAllById(oldLiteralStatements.map { it.id }.toSet()) }
     }
@@ -257,16 +298,28 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
         val subjectId = ThingId("R123")
         val literals = listOf("R1", "R2")
         val contributorId = ContributorId(UUID.randomUUID())
+        val extractionMethod = ExtractionMethod.MANUAL
 
         every { unsafeStatementUseCases.create(any()) } returns StatementId("S1")
         every { unsafeLiteralUseCases.create(any()) } returns ThingId("L1") andThen ThingId("L2")
 
-        statementCollectionPropertyUpdater.update(emptyList(), contributorId, subjectId, Predicates.reference, literals.toSet())
+        statementCollectionPropertyUpdater.update(
+            statements = emptyList(),
+            contributorId = contributorId,
+            subjectId = subjectId,
+            predicateId = Predicates.reference,
+            literals = literals.toSet(),
+            extractionMethod = extractionMethod,
+        )
 
         literals.forEach { literal ->
             verify(exactly = 1) {
                 unsafeLiteralUseCases.create(
-                    CreateLiteralUseCase.CreateCommand(label = literal, contributorId = contributorId),
+                    CreateLiteralUseCase.CreateCommand(
+                        label = literal,
+                        contributorId = contributorId,
+                        extractionMethod = extractionMethod,
+                    ),
                 )
             }
         }
@@ -475,15 +528,18 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
         val contributorId = ContributorId(UUID.randomUUID())
         val literalId1 = ThingId("L1")
         val literalId2 = ThingId("L2")
+        val extractionMethod = ExtractionMethod.MANUAL
         val literalCreateCommand1 = CreateLiteralUseCase.CreateCommand(
             contributorId = contributorId,
             label = literals[0],
             datatype = Literals.XSD.STRING.prefixedUri,
+            extractionMethod = extractionMethod,
         )
         val literalCreateCommand2 = CreateLiteralUseCase.CreateCommand(
             contributorId = contributorId,
             label = literals[1],
             datatype = Literals.XSD.STRING.prefixedUri,
+            extractionMethod = extractionMethod,
         )
 
         every { statementService.deleteAllById(any<Set<StatementId>>()) } just runs
@@ -491,7 +547,14 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
         every { unsafeLiteralUseCases.create(literalCreateCommand1) } returns literalId1
         every { unsafeLiteralUseCases.create(literalCreateCommand2) } returns literalId2
 
-        statementCollectionPropertyUpdater.update(oldObjectStatements, contributorId, subjectId, Predicates.reference, literals)
+        statementCollectionPropertyUpdater.update(
+            statements = oldObjectStatements,
+            contributorId = contributorId,
+            subjectId = subjectId,
+            predicateId = Predicates.reference,
+            literals = literals,
+            extractionMethod = extractionMethod,
+        )
 
         verify(exactly = 1) { statementService.deleteAllById(oldObjectStatements.map { it.id }.toSet()) }
         verify(exactly = 1) { unsafeLiteralUseCases.create(literalCreateCommand1) }
@@ -525,17 +588,26 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
         val oldObjectStatements = setOf("R1", "R2").toLiteralStatements(subjectId)
         val contributorId = ContributorId(UUID.randomUUID())
         val literalId2 = ThingId("L2")
+        val extractionMethod = ExtractionMethod.MANUAL
         val literalCreateCommand2 = CreateLiteralUseCase.CreateCommand(
             contributorId = contributorId,
             label = literals[1],
             datatype = Literals.XSD.STRING.prefixedUri,
+            extractionMethod = extractionMethod,
         )
 
         every { statementService.deleteAllById(any<Set<StatementId>>()) } just runs
         every { unsafeStatementUseCases.create(any()) } returns StatementId("S1")
         every { unsafeLiteralUseCases.create(literalCreateCommand2) } returns literalId2
 
-        statementCollectionPropertyUpdater.update(oldObjectStatements, contributorId, subjectId, Predicates.reference, literals)
+        statementCollectionPropertyUpdater.update(
+            statements = oldObjectStatements,
+            contributorId = contributorId,
+            subjectId = subjectId,
+            predicateId = Predicates.reference,
+            literals = literals,
+            extractionMethod = extractionMethod,
+        )
 
         verify(exactly = 1) { statementService.deleteAllById(setOf(oldObjectStatements[0].id)) }
         verify(exactly = 1) { unsafeLiteralUseCases.create(literalCreateCommand2) }
@@ -557,8 +629,16 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
         val literals = listOf("R1", "R2")
         val oldObjectStatements = literals.toLiteralStatements(subjectId)
         val contributorId = ContributorId(UUID.randomUUID())
+        val extractionMethod = ExtractionMethod.MANUAL
 
-        statementCollectionPropertyUpdater.update(oldObjectStatements, contributorId, subjectId, Predicates.reference, literals)
+        statementCollectionPropertyUpdater.update(
+            statements = oldObjectStatements,
+            contributorId = contributorId,
+            subjectId = subjectId,
+            predicateId = Predicates.reference,
+            literals = literals,
+            extractionMethod = extractionMethod,
+        )
     }
 
     @Test
@@ -567,10 +647,18 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
         val literals = emptySet<String>()
         val oldObjectStatements = listOf("R1", "R2").toLiteralStatements(subjectId)
         val contributorId = ContributorId(UUID.randomUUID())
+        val extractionMethod = ExtractionMethod.MANUAL
 
         every { statementService.deleteAllById(any<Set<StatementId>>()) } just runs
 
-        statementCollectionPropertyUpdater.update(oldObjectStatements, contributorId, subjectId, Predicates.reference, literals)
+        statementCollectionPropertyUpdater.update(
+            statements = oldObjectStatements,
+            contributorId = contributorId,
+            subjectId = subjectId,
+            predicateId = Predicates.reference,
+            literals = literals,
+            extractionMethod = extractionMethod,
+        )
 
         verify(exactly = 1) { statementService.deleteAllById(oldObjectStatements.map { it.id }.toSet()) }
     }
@@ -582,22 +670,32 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
         val contributorId = ContributorId(UUID.randomUUID())
         val literalId1 = ThingId("L1")
         val literalId2 = ThingId("L2")
+        val extractionMethod = ExtractionMethod.MANUAL
         val literalCreateCommand1 = CreateLiteralUseCase.CreateCommand(
             contributorId = contributorId,
             label = literals[0],
             datatype = Literals.XSD.STRING.prefixedUri,
+            extractionMethod = extractionMethod,
         )
         val literalCreateCommand2 = CreateLiteralUseCase.CreateCommand(
             contributorId = contributorId,
             label = literals[1],
             datatype = Literals.XSD.STRING.prefixedUri,
+            extractionMethod = extractionMethod,
         )
 
         every { unsafeStatementUseCases.create(any()) } returns StatementId("S1")
         every { unsafeLiteralUseCases.create(literalCreateCommand1) } returns literalId1
         every { unsafeLiteralUseCases.create(literalCreateCommand2) } returns literalId2
 
-        statementCollectionPropertyUpdater.update(emptyList(), contributorId, subjectId, Predicates.reference, literals)
+        statementCollectionPropertyUpdater.update(
+            statements = emptyList(),
+            contributorId = contributorId,
+            subjectId = subjectId,
+            predicateId = Predicates.reference,
+            literals = literals,
+            extractionMethod = extractionMethod,
+        )
 
         verify(exactly = 1) { unsafeLiteralUseCases.create(literalCreateCommand1) }
         verify(exactly = 1) { unsafeLiteralUseCases.create(literalCreateCommand2) }
@@ -630,10 +728,18 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
         val excessiveObjectStatements = listOf("R3").toLiteralStatements(subjectId)
         val oldObjectStatements = literals.toLiteralStatements(subjectId) + excessiveObjectStatements
         val contributorId = ContributorId(UUID.randomUUID())
+        val extractionMethod = ExtractionMethod.MANUAL
 
         every { statementService.deleteAllById(any<Set<StatementId>>()) } just runs
 
-        statementCollectionPropertyUpdater.update(oldObjectStatements, contributorId, subjectId, Predicates.reference, literals)
+        statementCollectionPropertyUpdater.update(
+            statements = oldObjectStatements,
+            contributorId = contributorId,
+            subjectId = subjectId,
+            predicateId = Predicates.reference,
+            literals = literals,
+            extractionMethod = extractionMethod,
+        )
 
         verify(exactly = 1) { statementService.deleteAllById(excessiveObjectStatements.map { it.id }.toSet()) }
     }

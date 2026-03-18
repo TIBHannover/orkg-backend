@@ -2,6 +2,7 @@ package org.orkg.contenttypes.domain.actions.tables
 
 import org.orkg.contenttypes.domain.actions.UpdateTableCommand
 import org.orkg.contenttypes.domain.actions.tables.UpdateTableAction.State
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.UnsafeLiteralUseCases
@@ -57,6 +58,7 @@ class TableColumnsUpdater(
                     tableId = command.tableId,
                     index = index,
                     titleLiteralId = state.resolve(value!!)!!,
+                    extractionMethod = command.extractionMethod ?: ExtractionMethod.UNKNOWN,
                 )
             }
 

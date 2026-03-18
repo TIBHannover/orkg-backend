@@ -9,6 +9,7 @@ data class Predicate(
     override val label: String,
     override val createdAt: OffsetDateTime,
     override val createdBy: ContributorId = ContributorId.UNKNOWN,
+    val extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN,
     override val modifiable: Boolean = true,
 ) : Thing {
     fun isOwnedBy(contributorId: ContributorId): Boolean = createdBy == contributorId

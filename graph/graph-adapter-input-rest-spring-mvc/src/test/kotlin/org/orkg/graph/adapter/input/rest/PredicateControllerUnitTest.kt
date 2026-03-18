@@ -23,6 +23,7 @@ import org.orkg.graph.adapter.input.rest.testing.fixtures.configuration.GraphCon
 import org.orkg.graph.adapter.input.rest.testing.fixtures.predicateResponseFields
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ExactSearchString
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.InvalidLabel
 import org.orkg.graph.domain.NeitherOwnerNorCurator
 import org.orkg.graph.domain.PredicateAlreadyExists
@@ -33,6 +34,7 @@ import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.PredicateUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UpdatePredicateUseCase
+import org.orkg.graph.testing.asciidoc.allowedExtractionMethodValues
 import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.testing.MockUserId
 import org.orkg.testing.andExpectPage
@@ -145,6 +147,7 @@ internal class PredicateControllerUnitTest : MockMvcBaseTest("predicates") {
                 requestFields<CreatePredicateRequest>(
                     fieldWithPath("label").description("The label of the predicate."),
                     fieldWithPath("id").type("String").description("The id of the predicate. (optional)").optional(),
+                    fieldWithPath("extraction_method").description("""The method used to extract the predicate. Can be one of $allowedExtractionMethodValues. (optional)""").optional(),
                 )
                 responseHeaders(
                     headerWithName("Location").description("The uri path where the newly created predicate can be fetched from."),
@@ -289,9 +292,11 @@ internal class PredicateControllerUnitTest : MockMvcBaseTest("predicates") {
             id = predicate.id,
             contributorId = ContributorId(MockUserId.USER),
             label = predicate.label,
+            extractionMethod = ExtractionMethod.AUTOMATIC,
         )
         val request = mapOf(
-            "label" to predicate.label,
+            "label" to command.label,
+            "extraction_method" to command.extractionMethod,
         )
 
         every { predicateService.update(command) } just runs
@@ -318,6 +323,7 @@ internal class PredicateControllerUnitTest : MockMvcBaseTest("predicates") {
                 )
                 requestFields<UpdatePredicateRequest>(
                     fieldWithPath("label").description("The updated predicate label. (optional)").optional(),
+                    fieldWithPath("extraction_method").description("""The method used to extract the predicate. Can be one of $allowedExtractionMethodValues. (optional)""").optional(),
                 )
                 throws(PredicateNotFound::class, PredicateNotModifiable::class, InvalidLabel::class)
             }

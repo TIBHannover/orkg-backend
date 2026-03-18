@@ -71,6 +71,7 @@ internal class PaperCSVPredicateProcessorUnitTest : MockkBaseTest {
                 withArg {
                     it.label shouldBe "result"
                     it.contributorId shouldBe contributorId
+                    it.extractionMethod shouldBe record.extractionMethod
                 },
             )
         }

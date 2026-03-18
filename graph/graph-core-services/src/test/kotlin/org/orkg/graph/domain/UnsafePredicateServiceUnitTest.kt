@@ -31,6 +31,7 @@ internal class UnsafePredicateServiceUnitTest : MockkBaseTest {
             id = id,
             contributorId = ContributorId(MockUserId.USER),
             label = "label",
+            extractionMethod = ExtractionMethod.MANUAL,
             modifiable = false,
         )
 
@@ -45,6 +46,7 @@ internal class UnsafePredicateServiceUnitTest : MockkBaseTest {
                     it.label shouldBe command.label
                     it.createdAt shouldBe OffsetDateTime.now(fixedClock)
                     it.createdBy shouldBe command.contributorId
+                    it.extractionMethod shouldBe command.extractionMethod
                     it.modifiable shouldBe command.modifiable
                 },
             )
@@ -58,6 +60,7 @@ internal class UnsafePredicateServiceUnitTest : MockkBaseTest {
         val command = CreatePredicateUseCase.CreateCommand(
             contributorId = contributorId,
             label = "label",
+            extractionMethod = ExtractionMethod.MANUAL,
         )
 
         every { repository.nextIdentity() } returns id
@@ -73,6 +76,7 @@ internal class UnsafePredicateServiceUnitTest : MockkBaseTest {
                     it.label shouldBe command.label
                     it.createdAt shouldBe OffsetDateTime.now(fixedClock)
                     it.createdBy shouldBe contributorId
+                    it.extractionMethod shouldBe command.extractionMethod
                     it.modifiable shouldBe command.modifiable
                 },
             )
@@ -84,6 +88,7 @@ internal class UnsafePredicateServiceUnitTest : MockkBaseTest {
         val predicate = createPredicate()
         val contributorId = ContributorId(MockUserId.USER)
         val label = "updated label"
+        val extractionMethod = ExtractionMethod.AUTOMATIC
         val modifiable = false
 
         every { repository.findById(predicate.id) } returns Optional.of(predicate)
@@ -94,6 +99,7 @@ internal class UnsafePredicateServiceUnitTest : MockkBaseTest {
                 id = predicate.id,
                 contributorId = contributorId,
                 label = label,
+                extractionMethod = extractionMethod,
                 modifiable = modifiable,
             ),
         )
@@ -103,6 +109,7 @@ internal class UnsafePredicateServiceUnitTest : MockkBaseTest {
             repository.save(
                 withArg {
                     it.label shouldBe label
+                    it.extractionMethod shouldBe extractionMethod
                     it.modifiable shouldBe modifiable
                 },
             )

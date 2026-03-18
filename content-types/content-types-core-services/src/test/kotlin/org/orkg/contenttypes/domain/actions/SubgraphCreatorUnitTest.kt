@@ -279,6 +279,7 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
         val predicateCommand = CreatePredicateCommandPart(
             label = "MOTO",
         )
+        val extractionMethod = ExtractionMethod.MANUAL
         val contents = CreatePaperUseCase.CreateCommand.PaperContents(
             predicates = mapOf(
                 "#temp1" to predicateCommand,
@@ -291,13 +292,14 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
                 CreatePredicateUseCase.CreateCommand(
                     contributorId = contributorId,
                     label = predicateCommand.label,
+                    extractionMethod = extractionMethod,
                 ),
             )
         } returns ThingId("R456")
 
         subgraphCreator.createThingsAndStatements(
             contributorId = contributorId,
-            extractionMethod = ExtractionMethod.MANUAL,
+            extractionMethod = extractionMethod,
             thingsCommand = contents,
             validationCache = mapOf("#temp1" from contents),
             bakedStatements = emptySet(),
@@ -308,6 +310,7 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
                 CreatePredicateUseCase.CreateCommand(
                     contributorId = contributorId,
                     label = predicateCommand.label,
+                    extractionMethod = extractionMethod,
                 ),
             )
         }
@@ -328,12 +331,14 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
         )
         val predicateId = ThingId("R456")
         val literal = ThingId("L1")
+        val extractionMethod = ExtractionMethod.MANUAL
 
         every {
             unsafePredicateUseCases.create(
                 CreatePredicateUseCase.CreateCommand(
                     contributorId = contributorId,
                     label = predicateCommand.label,
+                    extractionMethod = extractionMethod,
                 ),
             )
         } returns predicateId
@@ -358,7 +363,7 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
 
         subgraphCreator.createThingsAndStatements(
             contributorId = contributorId,
-            extractionMethod = ExtractionMethod.MANUAL,
+            extractionMethod = extractionMethod,
             thingsCommand = contents,
             validationCache = mapOf("#temp1" from contents),
             bakedStatements = emptySet(),
@@ -369,6 +374,7 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
                 CreatePredicateUseCase.CreateCommand(
                     contributorId = contributorId,
                     label = predicateCommand.label,
+                    extractionMethod = extractionMethod,
                 ),
             )
         }
@@ -520,6 +526,7 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
         val resourceId = ThingId("R456")
         val predicateId = ThingId("R789")
         val literal = ThingId("L1")
+        val extractionMethod = ExtractionMethod.MANUAL
 
         every {
             unsafeResourceUseCases.create(
@@ -527,7 +534,7 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     label = resourceCommand.label,
                     classes = resourceCommand.classes,
-                    extractionMethod = ExtractionMethod.MANUAL,
+                    extractionMethod = extractionMethod,
                 ),
             )
         } returns resourceId
@@ -536,6 +543,7 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
                 CreatePredicateUseCase.CreateCommand(
                     contributorId = contributorId,
                     label = predicateCommand.label,
+                    extractionMethod = extractionMethod,
                 ),
             )
         } returns predicateId
@@ -561,7 +569,7 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
 
         subgraphCreator.createThingsAndStatements(
             contributorId = contributorId,
-            extractionMethod = ExtractionMethod.MANUAL,
+            extractionMethod = extractionMethod,
             thingsCommand = contents,
             validationCache = mapOf(
                 "#temp1" from contents,
@@ -577,7 +585,7 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     label = resourceCommand.label,
                     classes = resourceCommand.classes,
-                    extractionMethod = ExtractionMethod.MANUAL,
+                    extractionMethod = extractionMethod,
                 ),
             )
         }
@@ -586,6 +594,7 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
                 CreatePredicateUseCase.CreateCommand(
                     contributorId = contributorId,
                     label = predicateCommand.label,
+                    extractionMethod = extractionMethod,
                 ),
             )
         }

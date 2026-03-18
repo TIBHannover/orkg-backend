@@ -2,6 +2,7 @@ package org.orkg.graph.input
 
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Predicate
 import org.orkg.graph.domain.SearchString
 import org.springframework.data.domain.Page
@@ -41,6 +42,7 @@ interface CreatePredicateUseCase {
         val id: ThingId? = null,
         val contributorId: ContributorId,
         val label: String,
+        val extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN,
         val modifiable: Boolean = true,
     )
 }
@@ -52,6 +54,7 @@ interface UpdatePredicateUseCase {
         val id: ThingId,
         val contributorId: ContributorId,
         val label: String? = null,
+        val extractionMethod: ExtractionMethod? = null,
         val modifiable: Boolean? = null,
     )
 }

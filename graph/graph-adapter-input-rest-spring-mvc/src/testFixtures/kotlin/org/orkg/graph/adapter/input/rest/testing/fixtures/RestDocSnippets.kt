@@ -46,6 +46,7 @@ fun predicateResponseFields() = listOf(
     timestampFieldWithPath("created_at", "the predicate was created"),
     fieldWithPath("created_by").description("The UUID of the user or service who created the predicate."),
     fieldWithPath("description").type("String").description("The description of the predicate, if exists."),
+    fieldWithPath("extraction_method").description("Determines how the predicate was created. Can be one of $allowedExtractionMethodValues."),
     fieldWithPath("modifiable").description("Whether the predicate can be modified."),
     fieldWithPath("_class").description("An indicator which type of entity was returned. Always has the value `predicate`."),
 )

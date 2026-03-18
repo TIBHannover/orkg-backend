@@ -37,6 +37,7 @@ open class PaperCSVPredicateProcessor(
                         val command = CreatePredicateUseCase.CreateCommand(
                             label = label,
                             contributorId = contributorId,
+                            extractionMethod = item.extractionMethod,
                         )
                         unsafePredicateUseCases.create(command)
                     }

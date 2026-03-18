@@ -37,6 +37,7 @@ internal class PredicateServiceUnitTest : MockkBaseTest {
             id = id,
             contributorId = ContributorId(MockUserId.USER),
             label = "label",
+            extractionMethod = ExtractionMethod.MANUAL,
             modifiable = false,
         )
 
@@ -54,6 +55,7 @@ internal class PredicateServiceUnitTest : MockkBaseTest {
         val id = ThingId("R123")
         val command = CreatePredicateUseCase.CreateCommand(
             contributorId = ContributorId(MockUserId.USER),
+            extractionMethod = ExtractionMethod.MANUAL,
             label = "label",
         )
 
@@ -70,6 +72,7 @@ internal class PredicateServiceUnitTest : MockkBaseTest {
         val command = CreatePredicateUseCase.CreateCommand(
             id = id,
             contributorId = ContributorId(MockUserId.USER),
+            extractionMethod = ExtractionMethod.MANUAL,
             label = "some label",
         )
 
@@ -86,6 +89,7 @@ internal class PredicateServiceUnitTest : MockkBaseTest {
         val command = CreatePredicateUseCase.CreateCommand(
             id = id,
             contributorId = ContributorId(MockUserId.USER),
+            extractionMethod = ExtractionMethod.MANUAL,
             label = "\n",
         )
 

@@ -67,8 +67,9 @@ fun createPredicate(
     label: String = "some predicate label",
     createdAt: OffsetDateTime = OffsetDateTime.parse("2023-10-04T13:30:16.931457+01:00"),
     createdBy: ContributorId = ContributorId("a56cfd65-8d29-4eae-a252-1b806fe88d3c"),
+    extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN,
     modifiable: Boolean = true,
-) = Predicate(id, label, createdAt, createdBy, modifiable)
+) = Predicate(id, label, createdAt, createdBy, extractionMethod, modifiable)
 
 fun createLiteral(
     id: ThingId = ThingId("L1"),

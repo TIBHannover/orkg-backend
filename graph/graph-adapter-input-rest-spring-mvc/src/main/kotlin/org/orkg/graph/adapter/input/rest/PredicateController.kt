@@ -1,10 +1,12 @@
 package org.orkg.graph.adapter.input.rest
 
+import com.fasterxml.jackson.annotation.JsonProperty
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
 import org.orkg.common.annotations.RequireLogin
 import org.orkg.common.contributorId
 import org.orkg.graph.adapter.input.rest.mapping.PredicateRepresentationAdapter
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.PredicateNotFound
 import org.orkg.graph.domain.SearchString
 import org.orkg.graph.input.CreatePredicateUseCase
@@ -63,16 +65,17 @@ class PredicateController(
 
     @RequireLogin
     @PostMapping(consumes = [MediaType.APPLICATION_JSON_VALUE])
-    fun add(
-        @RequestBody predicate: CreatePredicateRequest,
+    fun create(
+        @RequestBody request: CreatePredicateRequest,
         uriComponentsBuilder: UriComponentsBuilder,
         currentUser: Authentication?,
     ): ResponseEntity<PredicateRepresentation> {
         val id = service.create(
             CreatePredicateUseCase.CreateCommand(
-                id = predicate.id,
+                id = request.id,
                 contributorId = currentUser.contributorId(),
-                label = predicate.label,
+                label = request.label,
+                extractionMethod = request.extractionMethod,
             ),
         )
         val location = uriComponentsBuilder
@@ -86,7 +89,7 @@ class PredicateController(
     @PutMapping("/{id}", consumes = [MediaType.APPLICATION_JSON_VALUE])
     fun update(
         @PathVariable id: ThingId,
-        @RequestBody predicate: UpdatePredicateRequest,
+        @RequestBody request: UpdatePredicateRequest,
         uriComponentsBuilder: UriComponentsBuilder,
         currentUser: Authentication?,
     ): ResponseEntity<PredicateRepresentation> {
@@ -94,7 +97,8 @@ class PredicateController(
             UpdatePredicateUseCase.UpdateCommand(
                 id = id,
                 contributorId = currentUser.contributorId(),
-                label = predicate.label,
+                label = request.label,
+                extractionMethod = request.extractionMethod,
             ),
         )
         val location = uriComponentsBuilder
@@ -117,9 +121,13 @@ class PredicateController(
     data class CreatePredicateRequest(
         val id: ThingId?,
         val label: String,
+        @field:JsonProperty("extraction_method")
+        val extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN,
     )
 
     data class UpdatePredicateRequest(
         val label: String?,
+        @field:JsonProperty("extraction_method")
+        val extractionMethod: ExtractionMethod?,
     )
 }

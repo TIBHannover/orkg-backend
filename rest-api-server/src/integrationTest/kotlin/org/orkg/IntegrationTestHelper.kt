@@ -58,12 +58,14 @@ fun CreatePredicateUseCase.createPredicate(
     id: ThingId? = null,
     label: String = "label",
     contributorId: ContributorId = ContributorId.UNKNOWN,
+    extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN,
     modifiable: Boolean = true,
 ): ThingId = create(
     CreatePredicateUseCase.CreateCommand(
         id = id,
         contributorId = contributorId,
         label = label,
+        extractionMethod = extractionMethod,
         modifiable = modifiable,
     ),
 )

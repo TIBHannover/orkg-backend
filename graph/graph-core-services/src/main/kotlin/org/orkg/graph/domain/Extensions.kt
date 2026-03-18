@@ -63,11 +63,12 @@ fun GeneralStatement.apply(
 )
 
 fun UpdatePredicateUseCase.UpdateCommand.hasNoContents(): Boolean =
-    label == null && modifiable == null
+    label == null && modifiable == null && extractionMethod == null
 
 fun Predicate.apply(command: UpdatePredicateUseCase.UpdateCommand): Predicate =
     copy(
         label = command.label ?: label,
+        extractionMethod = command.extractionMethod ?: extractionMethod,
         modifiable = command.modifiable ?: modifiable,
     )
 

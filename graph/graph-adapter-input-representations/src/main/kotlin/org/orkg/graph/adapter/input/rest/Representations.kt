@@ -71,6 +71,8 @@ data class ClassRepresentation(
     val description: String?,
     override val createdAt: OffsetDateTime,
     override val createdBy: ContributorId,
+    @field:JsonProperty("extraction_method")
+    val extractionMethod: ExtractionMethod,
     val modifiable: Boolean,
     // This is added to replace @JsonTypeInfo on the Thing data class
     @field:JsonProperty("_class")

@@ -52,7 +52,7 @@ class SubgraphCreator(
         extractionMethod: ExtractionMethod,
         lookup: MutableMap<String, ThingId> = mutableMapOf(),
     ) {
-        createClasses(thingsCommand, validationCache, lookup, contributorId)
+        createClasses(thingsCommand, validationCache, lookup, contributorId, extractionMethod)
         createResources(thingsCommand, validationCache, lookup, contributorId, extractionMethod)
         createLiterals(thingsCommand, validationCache, lookup, contributorId)
         createPredicates(thingsCommand, validationCache, contributorId, lookup, extractionMethod)
@@ -64,6 +64,7 @@ class SubgraphCreator(
         validationCache: Map<String, Either<CreateThingCommandPart, Thing>>,
         lookup: MutableMap<String, ThingId>,
         contributorId: ContributorId,
+        extractionMethod: ExtractionMethod,
     ) {
         thingsCommand.classes.forEach {
             if (it.key.isTempId && it.key in validationCache) {
@@ -72,6 +73,7 @@ class SubgraphCreator(
                         contributorId = contributorId,
                         label = it.value.label,
                         uri = it.value.uri,
+                        extractionMethod = extractionMethod,
                     ),
                 )
             }

@@ -140,6 +140,7 @@ fun Node.toClass() = Class(
     uri = this["uri"].toIRI(),
     createdAt = this["created_at"].toOffsetDateTime(),
     createdBy = this["created_by"].toContributorId(),
+    extractionMethod = this["extraction_method"].toExtractionMethod(),
     modifiable = this["modifiable"].asBoolean(),
 )
 

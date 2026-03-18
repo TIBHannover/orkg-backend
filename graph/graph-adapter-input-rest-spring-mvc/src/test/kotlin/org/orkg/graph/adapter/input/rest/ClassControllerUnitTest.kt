@@ -27,6 +27,7 @@ import org.orkg.graph.domain.ClassNotFound
 import org.orkg.graph.domain.ClassNotModifiable
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ExactSearchString
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.InvalidLabel
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.ReservedClassId
@@ -34,6 +35,7 @@ import org.orkg.graph.domain.URIAlreadyInUse
 import org.orkg.graph.domain.URINotAbsolute
 import org.orkg.graph.input.ClassUseCases
 import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.testing.asciidoc.allowedExtractionMethodValues
 import org.orkg.graph.testing.fixtures.createClass
 import org.orkg.testing.MockUserId
 import org.orkg.testing.andExpectClass
@@ -210,7 +212,13 @@ internal class ClassControllerUnitTest : MockMvcBaseTest("classes") {
         val id = ThingId("C123")
         val uri = ParsedIRI.create("https://example.org/bar")
         val label = "foo"
-        val request = mapOf("id" to id, "label" to label, "uri" to uri)
+        val extractionMethod = ExtractionMethod.AUTOMATIC
+        val request = mapOf(
+            "id" to id,
+            "label" to label,
+            "uri" to uri,
+            "extraction_method" to extractionMethod,
+        )
 
         every { classService.create(any()) } returns id
 
@@ -236,6 +244,7 @@ internal class ClassControllerUnitTest : MockMvcBaseTest("classes") {
                     fieldWithPath("id").description("The class id (optional)").optional(),
                     fieldWithPath("label").description("The class label"),
                     fieldWithPath("uri").description("The class URI (optional)").optional(),
+                    fieldWithPath("extraction_method").description("""The method used to extract the class. Can be one of $allowedExtractionMethodValues. (optional)""").optional(),
                 )
                 throws(InvalidLabel::class, URINotAbsolute::class, URIAlreadyInUse::class, ReservedClassId::class, ClassAlreadyExists::class)
             }
@@ -247,6 +256,7 @@ internal class ClassControllerUnitTest : MockMvcBaseTest("classes") {
                     it.label shouldBe label
                     it.uri shouldBe uri
                     it.contributorId.toString() shouldBe MockUserId.USER
+                    it.extractionMethod shouldBe extractionMethod
                 },
             )
         }
@@ -260,6 +270,7 @@ internal class ClassControllerUnitTest : MockMvcBaseTest("classes") {
         val body = mapOf(
             "label" to "new label",
             "uri" to "https://example.org/some/new#URI",
+            "extraction_method" to "MANUAL",
         )
         every { classService.replace(any()) } just runs
 
@@ -286,6 +297,7 @@ internal class ClassControllerUnitTest : MockMvcBaseTest("classes") {
                 requestFields<ReplaceClassRequest>(
                     fieldWithPath("label").description("The updated class label"),
                     fieldWithPath("uri").description("The updated class label"),
+                    fieldWithPath("extraction_method").description("""The method used to extract the class. Can be one of $allowedExtractionMethodValues. (optional)""").optional(),
                 )
                 throws(InvalidLabel::class, ClassNotFound::class, ClassNotModifiable::class, CannotResetURI::class, URIAlreadyInUse::class)
             }
@@ -296,6 +308,7 @@ internal class ClassControllerUnitTest : MockMvcBaseTest("classes") {
                     it.id shouldBe id
                     it.label shouldBe "new label"
                     it.uri shouldBe ParsedIRI.create("https://example.org/some/new#URI")
+                    it.extractionMethod shouldBe ExtractionMethod.MANUAL
                 },
             )
         }
@@ -306,7 +319,11 @@ internal class ClassControllerUnitTest : MockMvcBaseTest("classes") {
     @DisplayName("Given the a class label and URI is patched, when service succeeds, then status is 204 NO CONTENT")
     fun update() {
         val id = ThingId("EXISTS")
-        val body = mapOf("uri" to "https://example.org/some/new#URI", "label" to "some label")
+        val body = mapOf(
+            "uri" to "https://example.org/some/new#URI",
+            "label" to "some label",
+            "extraction_method" to "MANUAL",
+        )
         every { classService.update(any()) } just runs
 
         documentedPatchRequestTo("/api/classes/{id}", id)
@@ -332,6 +349,7 @@ internal class ClassControllerUnitTest : MockMvcBaseTest("classes") {
                 requestFields<UpdateClassRequest>(
                     fieldWithPath("label").description("The updated class label (optional)").optional(),
                     fieldWithPath("uri").description("The updated class label (optional)").optional(),
+                    fieldWithPath("extraction_method").description("""The method used to extract the class. Can be one of $allowedExtractionMethodValues. (optional)""").optional(),
                 )
                 throws(InvalidLabel::class, ClassNotFound::class, ClassNotModifiable::class, CannotResetURI::class, URIAlreadyInUse::class)
             }
@@ -342,6 +360,7 @@ internal class ClassControllerUnitTest : MockMvcBaseTest("classes") {
                     it.id shouldBe id
                     it.label shouldBe "some label"
                     it.uri shouldBe ParsedIRI.create("https://example.org/some/new#URI")
+                    it.extractionMethod shouldBe ExtractionMethod.MANUAL
                 },
             )
         }

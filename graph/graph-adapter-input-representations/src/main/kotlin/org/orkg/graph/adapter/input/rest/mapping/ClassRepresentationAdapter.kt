@@ -41,5 +41,5 @@ interface ClassRepresentationAdapter {
     fun Class.toClassRepresentation(
         description: String?,
     ): ClassRepresentation =
-        ClassRepresentation(id, label, uri, description, createdAt, createdBy, modifiable)
+        ClassRepresentation(id, label, uri, description, createdAt, createdBy, extractionMethod, modifiable)
 }

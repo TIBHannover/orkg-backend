@@ -83,12 +83,13 @@ fun Literal.apply(command: UpdateLiteralUseCase.UpdateCommand): Literal =
     )
 
 fun UpdateClassUseCase.UpdateCommand.hasNoContents(): Boolean =
-    label == null && uri == null && modifiable == null
+    label == null && uri == null && modifiable == null && extractionMethod == null
 
 fun Class.apply(command: UpdateClassUseCase.UpdateCommand): Class =
     copy(
         label = command.label ?: label,
         uri = command.uri ?: uri,
+        extractionMethod = command.extractionMethod ?: extractionMethod,
         modifiable = command.modifiable ?: modifiable,
     )
 
@@ -96,6 +97,7 @@ fun Class.apply(command: UpdateClassUseCase.ReplaceCommand): Class =
     copy(
         label = command.label,
         uri = command.uri,
+        extractionMethod = command.extractionMethod ?: extractionMethod,
         modifiable = command.modifiable ?: modifiable,
     )
 

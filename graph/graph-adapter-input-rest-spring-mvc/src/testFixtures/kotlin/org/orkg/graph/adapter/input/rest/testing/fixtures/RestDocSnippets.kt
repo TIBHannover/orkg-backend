@@ -17,6 +17,7 @@ fun classResponseFields(): List<FieldDescriptor> = listOf(
     fieldWithPath("created_at").description("The class creation datetime."),
     fieldWithPath("created_by").description("The UUID of the user or service who created the class."),
     fieldWithPath("description").type("String").description("The description of the class, if exists.").optional(),
+    fieldWithPath("extraction_method").description("Determines how the class was created. Can be one of $allowedExtractionMethodValues."),
     fieldWithPath("_class").description("An indicator which type of entity was returned. Always has the value `class`."),
     fieldWithPath("modifiable").description("Whether the class can be modified."),
 )

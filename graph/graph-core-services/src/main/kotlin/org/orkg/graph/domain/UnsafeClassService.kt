@@ -23,6 +23,7 @@ class UnsafeClassService(
             uri = command.uri,
             createdAt = OffsetDateTime.now(clock),
             createdBy = command.contributorId,
+            extractionMethod = command.extractionMethod,
             modifiable = command.modifiable,
         )
         repository.save(`class`)

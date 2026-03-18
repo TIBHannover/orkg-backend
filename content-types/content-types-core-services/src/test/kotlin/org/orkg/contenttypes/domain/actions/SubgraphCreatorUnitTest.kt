@@ -142,6 +142,7 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
             label = "Some class",
             uri = ParsedIRI.create("https://example.org"),
         )
+        val extractionMethod = ExtractionMethod.MANUAL
         val contents = createRosettaStoneStatementCommand().copy(
             resources = emptyMap(),
             literals = emptyMap(),
@@ -158,13 +159,14 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     label = classCommand.label,
                     uri = classCommand.uri,
+                    extractionMethod = extractionMethod,
                 ),
             )
         } returns ThingId("C123")
 
         subgraphCreator.createThingsAndStatements(
             contributorId = contributorId,
-            extractionMethod = ExtractionMethod.MANUAL,
+            extractionMethod = extractionMethod,
             thingsCommand = contents,
             validationCache = mapOf("#temp1" from contents),
             bakedStatements = emptySet(),
@@ -176,6 +178,7 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     label = classCommand.label,
                     uri = classCommand.uri,
+                    extractionMethod = extractionMethod,
                 ),
             )
         }

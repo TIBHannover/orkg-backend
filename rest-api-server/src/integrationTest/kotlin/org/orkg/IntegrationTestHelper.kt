@@ -38,6 +38,7 @@ fun CreateClassUseCase.createClass(
     id: ThingId? = null,
     contributorId: ContributorId = ContributorId.UNKNOWN,
     uri: ParsedIRI? = null,
+    extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN,
     modifiable: Boolean = true,
 ) = create(
     CreateClassUseCase.CreateCommand(
@@ -45,6 +46,7 @@ fun CreateClassUseCase.createClass(
         contributorId = contributorId,
         label = label,
         uri = uri,
+        extractionMethod = extractionMethod,
         modifiable = modifiable,
     ),
 )

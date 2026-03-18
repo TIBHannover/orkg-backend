@@ -4,6 +4,7 @@ import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
 import org.orkg.graph.domain.Class
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.SearchString
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -45,6 +46,7 @@ interface CreateClassUseCase {
         val contributorId: ContributorId,
         val label: String,
         val uri: ParsedIRI? = null,
+        val extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN,
         val modifiable: Boolean = true,
     )
 }
@@ -59,6 +61,7 @@ interface UpdateClassUseCase {
         val contributorId: ContributorId,
         val label: String? = null,
         val uri: ParsedIRI? = null,
+        val extractionMethod: ExtractionMethod? = null,
         val modifiable: Boolean? = null,
     )
 
@@ -67,6 +70,7 @@ interface UpdateClassUseCase {
         val contributorId: ContributorId,
         val label: String,
         val uri: ParsedIRI? = null,
+        val extractionMethod: ExtractionMethod? = null,
         val modifiable: Boolean? = null,
     )
 }

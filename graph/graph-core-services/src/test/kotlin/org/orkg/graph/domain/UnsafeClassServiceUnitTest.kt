@@ -186,6 +186,7 @@ internal class UnsafeClassServiceUnitTest : MockkBaseTest {
                     uri = null,
                     createdAt = OffsetDateTime.now(fixedClock),
                     createdBy = randomContributorId,
+                    extractionMethod = ExtractionMethod.UNKNOWN,
                 ),
             )
         }
@@ -215,6 +216,7 @@ internal class UnsafeClassServiceUnitTest : MockkBaseTest {
         val contributorId = ContributorId(MockUserId.USER)
         val label = "updated label"
         val uri = ParsedIRI.create("https://example.org/C1")
+        val extractionMethod = ExtractionMethod.MANUAL
         val modifiable = false
 
         every { repository.findById(`class`.id) } returns Optional.of(`class`)
@@ -226,6 +228,7 @@ internal class UnsafeClassServiceUnitTest : MockkBaseTest {
                 contributorId = contributorId,
                 label = label,
                 uri = uri,
+                extractionMethod = extractionMethod,
                 modifiable = modifiable,
             ),
         )
@@ -239,6 +242,7 @@ internal class UnsafeClassServiceUnitTest : MockkBaseTest {
                     it.uri shouldBe uri
                     it.createdAt shouldBe `class`.createdAt
                     it.createdBy shouldBe `class`.createdBy
+                    it.extractionMethod shouldBe extractionMethod
                     it.modifiable shouldBe modifiable
                 },
             )
@@ -325,6 +329,7 @@ internal class UnsafeClassServiceUnitTest : MockkBaseTest {
                     it.uri shouldBe originalClass.uri
                     it.createdAt shouldBe originalClass.createdAt
                     it.createdBy shouldBe originalClass.createdBy
+                    it.extractionMethod shouldBe originalClass.extractionMethod
                     it.modifiable shouldBe false
                 },
             )
@@ -444,6 +449,7 @@ internal class UnsafeClassServiceUnitTest : MockkBaseTest {
                     it.uri shouldBe command.uri
                     it.createdAt shouldBe originalClass.createdAt
                     it.createdBy shouldBe originalClass.createdBy
+                    it.extractionMethod shouldBe originalClass.extractionMethod
                     it.modifiable shouldBe false
                 },
             )
@@ -456,6 +462,7 @@ internal class UnsafeClassServiceUnitTest : MockkBaseTest {
         val contributorId = ContributorId(MockUserId.USER)
         val label = "updated label"
         val uri = ParsedIRI.create("https://example.org/C1")
+        val extractionMethod = ExtractionMethod.MANUAL
         val modifiable = false
 
         every { repository.findById(`class`.id) } returns Optional.of(`class`)
@@ -467,6 +474,7 @@ internal class UnsafeClassServiceUnitTest : MockkBaseTest {
                 contributorId = contributorId,
                 label = label,
                 uri = uri,
+                extractionMethod = extractionMethod,
                 modifiable = modifiable,
             ),
         )
@@ -480,6 +488,7 @@ internal class UnsafeClassServiceUnitTest : MockkBaseTest {
                     it.uri shouldBe uri
                     it.createdAt shouldBe `class`.createdAt
                     it.createdBy shouldBe `class`.createdBy
+                    it.extractionMethod shouldBe extractionMethod
                     it.modifiable shouldBe modifiable
                 },
             )
@@ -620,7 +629,7 @@ internal class UnsafeClassServiceUnitTest : MockkBaseTest {
     fun `Given a class is replaced, when class is unmodifiable, then it updates the class`() {
         val classToReplace = ThingId("ToReplace")
         val existingClass = createClass(id = classToReplace, modifiable = false)
-        val replacingClass = existingClass.copy(label = "other label")
+        val replacingClass = existingClass.copy(label = "other label", extractionMethod = ExtractionMethod.MANUAL)
         val contributorId = ContributorId(MockUserId.USER)
 
         every { repository.findById(replacingClass.id) } returns existingClass.toOptional()
@@ -637,6 +646,7 @@ internal class UnsafeClassServiceUnitTest : MockkBaseTest {
                     it.uri shouldBe replacingClass.uri
                     it.createdAt shouldBe existingClass.createdAt
                     it.createdBy shouldBe existingClass.createdBy
+                    it.extractionMethod shouldBe replacingClass.extractionMethod
                     it.modifiable shouldBe false
                 },
             )
@@ -644,5 +654,5 @@ internal class UnsafeClassServiceUnitTest : MockkBaseTest {
     }
 
     private fun Class.toReplaceCommand(contributorId: ContributorId): ReplaceCommand =
-        ReplaceCommand(id, contributorId, label, uri)
+        ReplaceCommand(id, contributorId, label, uri, extractionMethod)
 }

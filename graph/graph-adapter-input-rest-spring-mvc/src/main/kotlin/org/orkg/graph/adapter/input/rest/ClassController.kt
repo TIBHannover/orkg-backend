@@ -1,5 +1,6 @@
 package org.orkg.graph.adapter.input.rest
 
+import com.fasterxml.jackson.annotation.JsonProperty
 import jakarta.validation.Valid
 import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.orkg.common.ContributorId
@@ -8,6 +9,7 @@ import org.orkg.common.annotations.RequireLogin
 import org.orkg.common.contributorId
 import org.orkg.graph.adapter.input.rest.mapping.ClassRepresentationAdapter
 import org.orkg.graph.domain.ClassNotFound
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.SearchString
 import org.orkg.graph.input.ClassUseCases
 import org.orkg.graph.input.CreateClassUseCase
@@ -81,6 +83,7 @@ class ClassController(
                 contributorId = currentUser.contributorId(),
                 label = request.label,
                 uri = request.uri,
+                extractionMethod = request.extractionMethod,
             ),
         )
         val location = uriComponentsBuilder
@@ -104,6 +107,7 @@ class ClassController(
                 contributorId = currentUser.contributorId(),
                 label = request.label,
                 uri = request.uri,
+                extractionMethod = request.extractionMethod,
             ),
         )
         val location = uriComponentsBuilder
@@ -127,6 +131,7 @@ class ClassController(
                 contributorId = currentUser.contributorId(),
                 label = request.label,
                 uri = request.uri,
+                extractionMethod = request.extractionMethod,
             ),
         )
         val location = uriComponentsBuilder
@@ -140,15 +145,21 @@ class ClassController(
         val id: ThingId?,
         val label: String,
         val uri: ParsedIRI?,
+        @field:JsonProperty("extraction_method")
+        val extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN,
     )
 
     data class UpdateClassRequest(
         val label: String? = null,
         val uri: ParsedIRI? = null,
+        @field:JsonProperty("extraction_method")
+        val extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN,
     )
 
     data class ReplaceClassRequest(
         val label: String,
         val uri: ParsedIRI? = null,
+        @field:JsonProperty("extraction_method")
+        val extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN,
     )
 }

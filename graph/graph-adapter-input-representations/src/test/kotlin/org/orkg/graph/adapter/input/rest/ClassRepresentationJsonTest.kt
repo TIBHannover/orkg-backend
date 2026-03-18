@@ -8,6 +8,7 @@ import org.orkg.common.ThingId
 import org.orkg.common.json.CommonJacksonModule
 import org.orkg.graph.adapter.input.rest.mapping.ClassRepresentationAdapter
 import org.orkg.graph.domain.Class
+import org.orkg.graph.domain.ExtractionMethod
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.json.JsonTest
 import org.springframework.boot.test.json.JacksonTester
@@ -60,6 +61,7 @@ internal class ClassRepresentationJsonTest {
             uri = ParsedIRI.create("https://example.org/path/to/file#with-fragment"),
             createdAt = OffsetDateTime.of(2018, 12, 25, 5, 23, 42, 123456789, ZoneOffset.ofHours(3)),
             createdBy = ContributorId.UNKNOWN,
+            extractionMethod = ExtractionMethod.UNKNOWN,
             modifiable = true,
         )
 

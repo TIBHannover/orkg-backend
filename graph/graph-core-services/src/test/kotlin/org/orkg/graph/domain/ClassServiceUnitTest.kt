@@ -35,6 +35,7 @@ internal class ClassServiceUnitTest : MockkBaseTest {
             id = id,
             contributorId = ContributorId(MockUserId.USER),
             label = "label",
+            extractionMethod = ExtractionMethod.MANUAL,
             modifiable = false,
         )
 

@@ -1,0 +1,12 @@
+Properties,Title 1 - Contribution 1,Title 2,Default Label
+addresses,Some research problem,Some research problem,
+mentions,Some resource,Some Resource,
+mentions,Some predicate,Some Predicate,
+mentions - description,Predicate description,Predicate description,
+Dummy Rosetta Stone Template Label,,,Subject 1 and Subject 2 Object 1-1 and Object 1-2 Object 2-1 and Object 2-2
+Dummy Rosetta Stone Template Label - resource property placeholder,,,Subject 1
+Dummy Rosetta Stone Template Label - resource property placeholder,,,Subject 2
+Dummy Rosetta Stone Template Label - string property placeholder,,,Object 1-1
+Dummy Rosetta Stone Template Label - string property placeholder,,,Object 1-2
+Dummy Rosetta Stone Template Label - number literal property placeholder,,,Object 2-1
+Dummy Rosetta Stone Template Label - number literal property placeholder,,,Object 2-2

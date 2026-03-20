@@ -1,5 +1,6 @@
 package org.orkg.contenttypes.adapter.input.rest
 
+import com.epages.restdocs.apispec.SimpleType
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
 import io.mockk.just
@@ -9,6 +10,7 @@ import org.hamcrest.Matchers.endsWith
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
+import org.orkg.common.testing.fixtures.Assets.responseCsv
 import org.orkg.contenttypes.adapter.input.rest.ComparisonTableController.UpdateComparisonTableRequest
 import org.orkg.contenttypes.domain.ComparisonAlreadyPublished
 import org.orkg.contenttypes.domain.ComparisonNotFound
@@ -33,6 +35,7 @@ import org.springframework.restdocs.payload.PayloadDocumentation.applyPathPrefix
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import org.springframework.test.context.ContextConfiguration
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.util.Optional
@@ -44,7 +47,7 @@ internal class ComparisonTableControllerUnitTest : MockMvcBaseTest("comparison-t
     private lateinit var comparisonTableService: ComparisonTableUseCases
 
     @Test
-    @DisplayName("Given a comparison table, when it is fetched by id and service succeeds, then status is 200 OK and comparison is returned")
+    @DisplayName("Given a comparison table, when it is fetched by id and service succeeds, then status is 200 OK and comparison table is returned")
     fun findTableByComparisonId() {
         val id = ThingId("R123")
         val table = createComparisonTable()
@@ -64,9 +67,39 @@ internal class ComparisonTableControllerUnitTest : MockMvcBaseTest("comparison-t
                     """,
                 )
                 pathParameters(
-                    parameterWithName("id").description("The identifier of the comparison to fetch the table paths for."),
+                    parameterWithName("id").description("The identifier of the comparison to fetch the table for."),
                 )
                 responseFields<ComparisonTableRepresentation>(comparisonTableResponseFields())
+                throws(ComparisonNotFound::class, ComparisonTableNotFound::class)
+            }
+
+        verify(exactly = 1) { comparisonTableService.findByComparisonId(id) }
+    }
+
+    @Test
+    @DisplayName("Given a comparison table, when it is fetched by id as CSV and service succeeds, then status is 200 OK and comparison table is returned")
+    fun findTableByComparisonId_textCsv() {
+        val id = ThingId("R123")
+        val table = createComparisonTable()
+
+        every { comparisonTableService.findByComparisonId(id) } returns Optional.of(table)
+
+        documentedGetRequestTo("/api/comparisons/{id}/contents", id)
+            .accept("text/csv")
+            .perform()
+            .andExpect(status().isOk)
+            .andExpect(content().string(responseCsv("comparisonTableSuccess")))
+            .andDocument {
+                summary("Fetching comparison tables")
+                description(
+                    """
+                    A `GET` request provides information about a comparison table.
+                    """,
+                )
+                pathParameters(
+                    parameterWithName("id").description("The identifier of the comparison to fetch the table for."),
+                )
+                simpleResponse(SimpleType.STRING)
                 throws(ComparisonNotFound::class, ComparisonTableNotFound::class)
             }
 

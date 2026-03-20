@@ -6,6 +6,7 @@ import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
 import org.orkg.common.annotations.RequireLogin
 import org.orkg.common.contributorId
+import org.orkg.contenttypes.adapter.input.rest.mapping.ComparisonTableCsvAdapter
 import org.orkg.contenttypes.adapter.input.rest.mapping.ComparisonTableRepresentationAdapter
 import org.orkg.contenttypes.domain.ComparisonTableNotFound
 import org.orkg.contenttypes.domain.SimpleComparisonPath
@@ -26,7 +27,8 @@ import org.springframework.web.util.UriComponentsBuilder
 @RequestMapping("/api/comparisons", produces = [COMPARISON_JSON_V3])
 class ComparisonTableController(
     private val service: ComparisonTableUseCases,
-) : ComparisonTableRepresentationAdapter {
+) : ComparisonTableRepresentationAdapter,
+    ComparisonTableCsvAdapter {
     @GetMapping("/{id}/table-paths")
     fun findAllComparisonTablePredicatePathsByComparisonId(
         @PathVariable id: ThingId,
@@ -40,6 +42,14 @@ class ComparisonTableController(
     ): ComparisonTableRepresentation =
         service.findByComparisonId(id)
             .mapToComparisonTableRepresentation()
+            .orElseThrow { ComparisonTableNotFound(id) }
+
+    @GetMapping("/{id}/contents", produces = ["text/csv"])
+    fun findByComparisonIdAsCsv(
+        @PathVariable id: ThingId,
+    ): String =
+        service.findByComparisonId(id)
+            .mapToComparisonTableCsv()
             .orElseThrow { ComparisonTableNotFound(id) }
 
     @RequireLogin

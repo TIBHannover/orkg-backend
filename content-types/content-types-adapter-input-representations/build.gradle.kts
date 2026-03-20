@@ -18,6 +18,7 @@ dependencies {
     api(project(":graph:graph-adapter-input-representations"))
     api(project(":graph:graph-core-model"))
     api(project(":graph:graph-ports-input"))
+    implementation("org.apache.commons:commons-csv")
     implementation("org.commonmark:commonmark-ext-autolink")
     implementation("org.jbibtex:jbibtex")
     implementation("jakarta.validation:jakarta.validation-api")

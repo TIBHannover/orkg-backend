@@ -14,6 +14,17 @@ include::{snippets}/comparison-tables_find-table-by-comparison-id/description.ad
 
 operation::comparison-tables_find-table-by-comparison-id[snippets='path-parameters,curl-request,http-response,response-fields,errors']
 
+[[comparisons-tables-fetch-supported-media-types]]
+=== Supported media types
+[cols="m,"]
+.Supported Comparison Table media types
+[options="header"]
+|===
+| Media Type                              | Format
+| application/vnd.orkg.comparison.v3+json | JSON
+| text/csv                                | CSV
+|===
+
 [[comparisons-tables-edit]]
 == Updating Comparison Tables
 

@@ -12,6 +12,8 @@ object Assets {
 
     fun responseXml(name: String): String = fileContents("responses/$name.xml").decodeToString()
 
+    fun responseCsv(name: String): String = fileContents("responses/$name.csv").decodeToString()
+
     fun representationJson(name: String): String = fileContents("representations/$name.json").decodeToString()
 
     fun modelJson(name: String): String = fileContents("models/$name.json").decodeToString()

@@ -2,6 +2,7 @@ package org.orkg.graph.adapter.input.rest.json
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import org.orkg.common.ContributorId
+import org.orkg.graph.domain.ExtractionMethod
 import java.time.OffsetDateTime
 
 abstract class LiteralMixin(
@@ -9,4 +10,6 @@ abstract class LiteralMixin(
     val createdAt: OffsetDateTime,
     @field:JsonProperty("created_by")
     val createdBy: ContributorId,
+    @field:JsonProperty("extraction_method")
+    val extractionMethod: ExtractionMethod,
 )

@@ -3,7 +3,6 @@ package org.orkg.profiling.adapter.output.neo4j
 import org.orkg.contenttypes.output.AuthorRepository
 import org.orkg.contenttypes.output.ComparisonRepository
 import org.orkg.contenttypes.output.ContentTypeRepository
-import org.orkg.contenttypes.output.ContributionComparisonRepository
 import org.orkg.contenttypes.output.FindDatasetsQuery
 import org.orkg.contenttypes.output.LegacyResearchFieldRepository
 import org.orkg.contenttypes.output.LegacyResearchProblemRepository
@@ -61,7 +60,6 @@ class Neo4jRepositoryProfiler(
         ClassRepository::class,
         ComparisonRepository::class,
         ContentTypeRepository::class,
-        ContributionComparisonRepository::class,
         CurationRepository::class,
         FindDatasetsQuery::class,
         FormattedLabelRepository::class,

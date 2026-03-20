@@ -54,12 +54,10 @@ import org.orkg.contenttypes.domain.actions.comparisons.ComparisonVersionTableCr
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonVisualizationCreator
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonVisualizationUpdater
 import org.orkg.contenttypes.domain.actions.execute
-import org.orkg.contenttypes.input.ComparisonContributionsUseCases
 import org.orkg.contenttypes.input.ComparisonTableUseCases
 import org.orkg.contenttypes.input.ComparisonUseCases
 import org.orkg.contenttypes.output.ComparisonRepository
 import org.orkg.contenttypes.output.ComparisonTableRepository
-import org.orkg.contenttypes.output.ContributionComparisonRepository
 import org.orkg.contenttypes.output.DoiService
 import org.orkg.graph.domain.BundleConfiguration
 import org.orkg.graph.domain.Classes
@@ -89,7 +87,6 @@ import java.util.Optional
 @Service
 @TransactionalOnNeo4j
 class ComparisonService(
-    private val repository: ContributionComparisonRepository,
     private val resourceRepository: ResourceRepository,
     private val statementRepository: StatementRepository,
     private val observatoryRepository: ObservatoryRepository,
@@ -109,8 +106,7 @@ class ComparisonService(
     private val clock: Clock,
     @param:Value("\${orkg.publishing.base-url.comparison}")
     private val comparisonPublishBaseUri: String = "http://localhost/comparison/",
-) : ComparisonUseCases,
-    ComparisonContributionsUseCases {
+) : ComparisonUseCases {
     override fun findById(id: ThingId): Optional<Comparison> =
         resourceRepository.findById(id)
             .filter { Classes.comparison in it.classes || Classes.comparisonPublished in it.classes }
@@ -152,9 +148,6 @@ class ComparisonService(
     override fun findAllCurrentAndListedAndUnpublishedComparisons(pageable: Pageable): Page<Comparison> =
         comparisonRepository.findAllCurrentAndListedAndUnpublishedComparisons(pageable)
             .map { it.toComparison() }
-
-    override fun findAllContributionDetailsById(ids: List<ThingId>, pageable: Pageable): Page<ContributionInfo> =
-        repository.findAllContributionDetailsById(ids, pageable)
 
     override fun create(command: CreateComparisonCommand): ThingId {
         val steps = listOf(

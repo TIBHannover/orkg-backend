@@ -786,17 +786,6 @@ data class DatasetSummaryRepresentation(
     val codeURLs: List<String>,
 )
 
-data class ContributionInfoRepresentation(
-    val id: ThingId,
-    val label: String,
-    @field:JsonProperty("paper_title")
-    val paperTitle: String,
-    @field:JsonProperty("paper_year")
-    val paperYear: Int?,
-    @field:JsonProperty("paper_id")
-    val paperId: ThingId,
-)
-
 data class TemplateBasedResourceSnapshotRepresentation(
     val id: SnapshotId,
     @field:JsonProperty("created_by")

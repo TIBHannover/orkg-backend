@@ -20,7 +20,6 @@ import org.orkg.community.output.OrganizationRepository
 import org.orkg.contenttypes.input.ComparisonTableUseCases
 import org.orkg.contenttypes.output.ComparisonRepository
 import org.orkg.contenttypes.output.ComparisonTableRepository
-import org.orkg.contenttypes.output.ContributionComparisonRepository
 import org.orkg.contenttypes.output.DoiService
 import org.orkg.graph.domain.BundleConfiguration
 import org.orkg.graph.domain.Classes
@@ -47,7 +46,6 @@ import java.util.Optional
 import java.util.UUID
 
 internal class ComparisonServiceUnitTest : MockkBaseTest {
-    private val contributionComparisonRepository: ContributionComparisonRepository = mockk()
     private val resourceRepository: ResourceRepository = mockk()
     private val statementRepository: StatementRepository = mockk()
     private val observatoryRepository: ObservatoryRepository = mockk()
@@ -66,7 +64,6 @@ internal class ComparisonServiceUnitTest : MockkBaseTest {
     private val comparisonTableRepository: ComparisonTableRepository = mockk()
 
     private val service = ComparisonService(
-        repository = contributionComparisonRepository,
         resourceRepository = resourceRepository,
         statementRepository = statementRepository,
         observatoryRepository = observatoryRepository,

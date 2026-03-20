@@ -1186,13 +1186,6 @@ class ResearchProblemNotFound(id: ThingId) :
         properties = mapOf("research_problem_id" to id),
     )
 
-class TooFewContributions(ids: List<ThingId>) :
-    SimpleMessageException(
-        HttpStatus.BAD_REQUEST,
-        """Too few ids: At least two ids are required. Got only "${ids.size}".""",
-        properties = mapOf("contribution_ids" to ids),
-    )
-
 class MissingTableRows :
     SimpleMessageException(
         HttpStatus.BAD_REQUEST,

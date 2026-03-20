@@ -1,3 +1,5 @@
+@file:Suppress("serial")
+
 package org.orkg.common.exceptions
 
 import org.orkg.common.toSnakeCase
@@ -172,3 +174,17 @@ data class FieldError(
             )
     }
 }
+
+class TomcatException(cause: Throwable?) :
+    SimpleMessageException(
+        type = ABOUT_BLANK,
+        status = when (cause) {
+            is IllegalArgumentException -> HttpStatus.BAD_REQUEST
+            else -> HttpStatus.INTERNAL_SERVER_ERROR
+        },
+        message = when (cause) {
+            is IllegalArgumentException -> cause.message
+            else -> null
+        },
+        cause = cause,
+    )

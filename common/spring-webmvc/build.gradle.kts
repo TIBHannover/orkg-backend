@@ -12,6 +12,8 @@ dependencies {
     api("com.fasterxml.jackson.core:jackson-annotations")
     api("tools.jackson.core:jackson-databind")
     api("org.apache.tomcat.embed:tomcat-embed-core") // for HttpServletRequest
+    api("org.springframework.boot:spring-boot-tomcat")
+    api("org.springframework.boot:spring-boot-web-server")
     api("org.springframework.boot:spring-boot-webmvc")
     api("org.springframework.data:spring-data-commons")
     api("org.springframework.security:spring-security-config")

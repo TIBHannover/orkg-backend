@@ -1,0 +1,7 @@
+### Application error - HTTP nedia type not acceptable
+GET {{server_url}}/api
+Accept: application/pdf
+
+### Tomcat error - Request header too large
+GET {{server_url}}/api/version
+Header: {{$random.alphanumeric(8196)}}

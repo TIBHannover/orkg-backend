@@ -10,6 +10,7 @@ import org.orkg.testing.spring.restdocs.exceptionResponseFields
 import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.HttpStatus.FORBIDDEN
+import org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR
 import org.springframework.http.HttpStatus.SERVICE_UNAVAILABLE
 import org.springframework.http.HttpStatus.UNAUTHORIZED
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
@@ -186,5 +187,24 @@ internal class ExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Bad Request")
             .andExpectDetail("""Invalid URI: http://example.org:-80""")
             .andExpect(jsonPath("$.iri", `is`("http://example.org:-80")))
+    }
+
+    @Test
+    fun tomcatException_causedByIllegalArgumentException() {
+        val type = ABOUT_BLANK.toString()
+        get(TomcatException(IllegalArgumentException("Request header too large.")))
+            .andExpectErrorStatus(BAD_REQUEST)
+            .andExpectType(type)
+            .andExpectTitle("Bad Request")
+            .andExpectDetail("""Request header too large.""")
+    }
+
+    @Test
+    fun tomcatException_causedByIllegalStateException() {
+        val type = ABOUT_BLANK.toString()
+        get(TomcatException(IllegalStateException("This message should not be shown.")))
+            .andExpectErrorStatus(INTERNAL_SERVER_ERROR)
+            .andExpectType(type)
+            .andExpectTitle("Internal Server Error")
     }
 }

@@ -8,6 +8,8 @@ import org.orkg.contenttypes.domain.PaperAlreadyExists
 import org.orkg.contenttypes.domain.PaperInUse
 import org.orkg.contenttypes.domain.PaperNotFound
 import org.orkg.contenttypes.domain.PaperNotModifiable
+import org.orkg.contenttypes.domain.PaperNotPublished
+import org.orkg.contenttypes.domain.PublishedPaperContentsNotFound
 import org.orkg.contenttypes.input.testing.fixtures.configuration.ContentTypeControllerExceptionUnitTestConfiguration
 import org.orkg.testing.spring.MockMvcExceptionBaseTest
 import org.orkg.testing.spring.restdocs.exceptionResponseFields
@@ -77,6 +79,40 @@ internal class PaperExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpectTitle("Not Found")
             .andExpectDetail("""Paper with DOI "10.123/456" not found.""")
             .andExpect(jsonPath("$.paper_doi").value("10.123/456"))
+    }
+
+    @Test
+    fun publishedPaperContentsNotFound() {
+        val type = "orkg:problem:published_paper_contents_not_found"
+        documentedGetRequestTo(PublishedPaperContentsNotFound(ThingId("R123")))
+            .andExpectErrorStatus(NOT_FOUND)
+            .andExpectType(type)
+            .andExpectTitle("Not Found")
+            .andExpectDetail("""Published contents for paper "R123" not found.""")
+            .andExpect(jsonPath("$.paper_id").value("R123"))
+            .andDocument {
+                responseFields<PublishedPaperContentsNotFound>(
+                    fieldWithPath("paper_id").description("The id of the paper.").type<ThingId>(),
+                    *exceptionResponseFields(type).toTypedArray(),
+                )
+            }
+    }
+
+    @Test
+    fun paperNotPublished() {
+        val type = "orkg:problem:paper_not_published"
+        documentedGetRequestTo(PaperNotPublished(ThingId("R123")))
+            .andExpectErrorStatus(BAD_REQUEST)
+            .andExpectType(type)
+            .andExpectTitle("Bad Request")
+            .andExpectDetail("""Paper "R123" is not published.""")
+            .andExpect(jsonPath("$.paper_id").value("R123"))
+            .andDocument {
+                responseFields<PaperNotPublished>(
+                    fieldWithPath("paper_id").description("The id of the paper.").type<ThingId>(),
+                    *exceptionResponseFields(type).toTypedArray(),
+                )
+            }
     }
 
     @Test

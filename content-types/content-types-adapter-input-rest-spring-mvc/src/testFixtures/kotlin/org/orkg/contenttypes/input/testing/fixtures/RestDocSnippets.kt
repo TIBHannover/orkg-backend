@@ -517,6 +517,7 @@ fun visualizationResponseFields() = listOf(
 
 fun statementListResponseFields() = listOf(
     *applyPathPrefix("statements[].", statementResponseFields()).toTypedArray(),
+    fieldWithPath("statements[]").description("The list of statements."),
     fieldWithPath("_class").description("Indicates which type of entity was returned. Always has the value `statement_list`."),
 )
 

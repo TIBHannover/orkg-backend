@@ -20,6 +20,7 @@ dependencies {
     api(project(":graph:graph-adapter-input-representations"))
     implementation("com.fasterxml.jackson.core:jackson-annotations")
     implementation("tools.jackson.core:jackson-core")
+    implementation("tools.jackson.module:jackson-module-kotlin")
     implementation("org.springframework:spring-web")
     testFixturesApi(project(":common:core-identifiers"))
     testFixturesApi("tools.jackson.core:jackson-databind")

@@ -857,3 +857,9 @@ data class AuthorRecordRepresentation(
     @field:JsonProperty("total_count")
     val totalCount: Long,
 )
+
+data class PublishedPaperContentsRepresentation(
+    @field:JsonProperty("root_id")
+    val rootId: ThingId,
+    val subgraph: List<StatementRepresentation>,
+)

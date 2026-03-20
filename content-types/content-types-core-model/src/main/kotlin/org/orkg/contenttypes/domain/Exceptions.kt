@@ -163,6 +163,20 @@ class TemplateBasedResourceSnapshotNotFound(snapshotId: SnapshotId) :
         properties = mapOf("template_based_resource_snapshot_id" to snapshotId),
     )
 
+class PublishedPaperContentsNotFound(paperId: ThingId) :
+    SimpleMessageException(
+        HttpStatus.NOT_FOUND,
+        """Published contents for paper "$paperId" not found.""",
+        properties = mapOf("paper_id" to paperId),
+    )
+
+class PaperNotPublished(paperId: ThingId) :
+    SimpleMessageException(
+        HttpStatus.BAD_REQUEST,
+        """Paper "$paperId" is not published.""",
+        properties = mapOf("paper_id" to paperId),
+    )
+
 class PaperNotModifiable(id: ThingId) :
     SimpleMessageException(
         HttpStatus.FORBIDDEN,

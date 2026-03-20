@@ -522,3 +522,8 @@ fun ResultActions.andExpectContributionRecord(path: String = "$"): ResultActions
     .andExpect(jsonPath("$path.research_problem_count", `is`(notNullValue())))
     .andExpect(jsonPath("$path.visualization_count", `is`(notNullValue())))
     .andExpect(jsonPath("$path.total_count", `is`(notNullValue())))
+
+fun ResultActions.andExpectPublishedPaperContents(path: String = "$"): ResultActions = this
+    .andExpect(jsonPath("$path.root_id", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.subgraph").isArray)
+    .andExpectStatement("$path.subgraph[*]")

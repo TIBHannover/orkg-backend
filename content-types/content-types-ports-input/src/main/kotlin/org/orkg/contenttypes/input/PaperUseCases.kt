@@ -8,8 +8,10 @@ import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.Author
 import org.orkg.contenttypes.domain.Paper
 import org.orkg.contenttypes.domain.PaperWithStatementCount
+import org.orkg.contenttypes.domain.PublishedContentType
 import org.orkg.graph.domain.ExactSearchString
 import org.orkg.graph.domain.ExtractionMethod
+import org.orkg.graph.domain.GeneralStatement
 import org.orkg.graph.domain.SearchString
 import org.orkg.graph.domain.Visibility
 import org.orkg.graph.domain.VisibilityFilter
@@ -47,6 +49,8 @@ interface RetrievePaperUseCase {
         researchProblem: ThingId? = null,
         venue: ThingId? = null,
     ): Page<Paper>
+
+    fun findPublishedContentsById(id: ThingId): Optional<List<GeneralStatement>>
 
     fun findAllContributorsByPaperId(id: ThingId, pageable: Pageable): Page<ContributorId>
 

@@ -46,6 +46,8 @@ import org.orkg.contenttypes.domain.PaperAlreadyExists
 import org.orkg.contenttypes.domain.PaperInUse
 import org.orkg.contenttypes.domain.PaperNotFound
 import org.orkg.contenttypes.domain.PaperNotModifiable
+import org.orkg.contenttypes.domain.PaperNotPublished
+import org.orkg.contenttypes.domain.PublishedPaperContentsNotFound
 import org.orkg.contenttypes.domain.ResearchFieldNotFound
 import org.orkg.contenttypes.domain.SustainableDevelopmentGoalNotFound
 import org.orkg.contenttypes.domain.ThingIsNotAClass
@@ -64,6 +66,8 @@ import org.orkg.contenttypes.input.testing.fixtures.mapOfCreateResourceRequestPa
 import org.orkg.contenttypes.input.testing.fixtures.paperIdentifierFields
 import org.orkg.contenttypes.input.testing.fixtures.paperResponseFields
 import org.orkg.contenttypes.input.testing.fixtures.publicationInfoRequestFields
+import org.orkg.contenttypes.input.testing.fixtures.statementListResponseFields
+import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ExactSearchString
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.InvalidLabel
@@ -78,12 +82,17 @@ import org.orkg.graph.domain.URIAlreadyInUse
 import org.orkg.graph.domain.URINotAbsolute
 import org.orkg.graph.domain.Visibility
 import org.orkg.graph.domain.VisibilityFilter
+import org.orkg.graph.input.FormattedLabelUseCases
+import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.testing.asciidoc.allowedExtractionMethodValues
 import org.orkg.graph.testing.asciidoc.allowedVisibilityValues
 import org.orkg.graph.testing.asciidoc.visibilityFilterQueryParameter
+import org.orkg.graph.testing.fixtures.createResource
+import org.orkg.graph.testing.fixtures.createStatement
 import org.orkg.testing.MockUserId
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.andExpectPaper
+import org.orkg.testing.andExpectStatementList
 import org.orkg.testing.annotations.TestWithMockUser
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.MockMvcBaseTest
@@ -116,6 +125,12 @@ import java.util.UUID
 internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
     @MockkBean
     private lateinit var paperService: PaperUseCases
+
+    @MockkBean
+    private lateinit var statementUseCases: StatementUseCases
+
+    @MockkBean
+    private lateinit var formattedLabelUseCases: FormattedLabelUseCases
 
     @Test
     @DisplayName("Given a paper, when it is fetched by id and service succeeds, then status is 200 OK and paper is returned")
@@ -159,6 +174,52 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
             .andExpectType("orkg:problem:paper_not_found")
 
         verify(exactly = 1) { paperService.findById(id) }
+    }
+
+    @Test
+    @DisplayName("Given a paper, when its published contents are fetched by id and service succeeds, then status is 200 OK and published contents are returned")
+    fun findPublishedContentsById() {
+        val id = ThingId("R123")
+        val publishedContents = listOf(createStatement(subject = createResource(id = id, classes = setOf(Classes.paper))))
+
+        every { paperService.findPublishedContentsById(id) } returns Optional.of(publishedContents)
+        every { statementUseCases.countAllIncomingStatementsById(any<Set<ThingId>>()) } returns emptyMap()
+        every { statementUseCases.findAllDescriptionsById(any<Set<ThingId>>()) } returns emptyMap()
+
+        documentedGetRequestTo("/api/papers/{id}/published-contents", id)
+            .perform()
+            .andExpect(status().isOk)
+            .andExpectStatementList()
+            .andDocument {
+                summary("Fetching published paper contents")
+                description(
+                    """
+                    A `GET` request provides information about the published contents of a paper.
+                    """,
+                )
+                pathParameters(
+                    parameterWithName("id").description("The identifier of the paper to retrieve published contents for."),
+                )
+                responseFields<StatementListRepresentation>(statementListResponseFields())
+                throws(PaperNotPublished::class, PaperNotFound::class, PublishedPaperContentsNotFound::class)
+            }
+
+        verify(exactly = 1) { paperService.findPublishedContentsById(id) }
+        verify(exactly = 1) { statementUseCases.countAllIncomingStatementsById(any<Set<ThingId>>()) }
+        verify(exactly = 1) { statementUseCases.findAllDescriptionsById(any<Set<ThingId>>()) }
+    }
+
+    @Test
+    fun `Given a paper, when its published contents are fetched by id and service reports missing paper, then status is 404 NOT FOUND`() {
+        val id = ThingId("Missing")
+        every { paperService.findPublishedContentsById(id) } returns Optional.empty()
+
+        get("/api/papers/{id}/published-contents", id)
+            .perform()
+            .andExpectErrorStatus(NOT_FOUND)
+            .andExpectType("orkg:problem:published_paper_contents_not_found")
+
+        verify(exactly = 1) { paperService.findPublishedContentsById(id) }
     }
 
     @Test

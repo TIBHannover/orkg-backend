@@ -70,6 +70,7 @@ import org.orkg.contenttypes.output.PaperRepository
 import org.orkg.graph.domain.BundleConfiguration
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ExactSearchString
+import org.orkg.graph.domain.GeneralStatement
 import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.SearchString
 import org.orkg.graph.domain.VisibilityFilter
@@ -166,6 +167,17 @@ class PaperService(
             researchProblem = researchProblem,
             venue = venue,
         ).pmap { it.toPaper() }
+
+    override fun findPublishedContentsById(id: ThingId): Optional<List<GeneralStatement>> =
+        resourceRepository.findById(id)
+            .map {
+                when {
+                    Classes.paperVersion in it.classes -> paperPublishedRepository.findById(id)
+                    Classes.paper in it.classes -> throw PaperNotPublished(id)
+                    else -> throw PaperNotFound.withId(id)
+                }
+            }
+            .orElseThrow { PaperNotFound.withId(id) }
 
     override fun findAllContributorsByPaperId(id: ThingId, pageable: Pageable): Page<ContributorId> =
         resourceRepository.findPaperById(id)

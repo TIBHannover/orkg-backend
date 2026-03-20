@@ -1,6 +1,7 @@
 package org.orkg.contenttypes.domain
 
 import io.kotest.assertions.asClue
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.mockk.every
@@ -328,5 +329,53 @@ internal class PaperServiceUnitTest : MockkBaseTest {
 
         verify(exactly = 1) { resourceRepository.findPaperById(id) }
         verify(exactly = 0) { statementRepository.findAllContributorsByResourceId(id, any()) }
+    }
+
+    @Test
+    fun `Given the published contents of a paper, when fetching by id and published contents exist, it returns the published contents of a paper`() {
+        val paperResource = createResource(classes = setOf(Classes.paperVersion))
+        val publishedContents = listOf(createStatement(subject = paperResource))
+
+        every { resourceRepository.findById(paperResource.id) } returns Optional.of(paperResource)
+        every { paperPublishedRepository.findById(paperResource.id) } returns Optional.of(publishedContents)
+
+        val result = service.findPublishedContentsById(paperResource.id)
+        result.isPresent shouldBe true
+        result.get() shouldBe publishedContents
+
+        verify(exactly = 1) { resourceRepository.findById(paperResource.id) }
+        verify(exactly = 1) { paperPublishedRepository.findById(paperResource.id) }
+    }
+
+    @Test
+    fun `Given the published contents of a paper, when fetching by id and paper is not published, it throws an exception`() {
+        val paperResource = createResource(classes = setOf(Classes.paper))
+
+        every { resourceRepository.findById(paperResource.id) } returns Optional.of(paperResource)
+
+        shouldThrow<PaperNotPublished> { service.findPublishedContentsById(paperResource.id) }
+
+        verify(exactly = 1) { resourceRepository.findById(paperResource.id) }
+    }
+
+    @Test
+    fun `Given the published contents of a paper, when fetching by id and resource is not a paper, it throws an exception`() {
+        val paperResource = createResource()
+
+        every { resourceRepository.findById(paperResource.id) } returns Optional.of(paperResource)
+
+        shouldThrow<PaperNotFound> { service.findPublishedContentsById(paperResource.id) }
+
+        verify(exactly = 1) { resourceRepository.findById(paperResource.id) }
+    }
+
+    @Test
+    fun `Given the published contents of a paper, when fetching by id and resource does not exist, it throws an exception`() {
+        val id = ThingId("R123")
+        every { resourceRepository.findById(id) } returns Optional.empty()
+
+        shouldThrow<PaperNotFound> { service.findPublishedContentsById(id) }
+
+        verify(exactly = 1) { resourceRepository.findById(id) }
     }
 }

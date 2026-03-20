@@ -7,6 +7,7 @@ import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.Size
 import org.orkg.common.ContributorId
 import org.orkg.common.DOI
+import org.orkg.common.MediaTypeCapabilities
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
@@ -14,9 +15,11 @@ import org.orkg.common.annotations.RequireLogin
 import org.orkg.common.contributorId
 import org.orkg.contenttypes.adapter.input.rest.mapping.ContributionRepresentationAdapter
 import org.orkg.contenttypes.adapter.input.rest.mapping.PaperRepresentationAdapter
+import org.orkg.contenttypes.adapter.input.rest.mapping.StatementListRepresentationAdapter
 import org.orkg.contenttypes.domain.InvalidDOI
 import org.orkg.contenttypes.domain.PaperNotFound
 import org.orkg.contenttypes.domain.PaperWithStatementCount
+import org.orkg.contenttypes.domain.PublishedPaperContentsNotFound
 import org.orkg.contenttypes.input.CreateContributionCommandPart
 import org.orkg.contenttypes.input.CreatePaperUseCase
 import org.orkg.contenttypes.input.DeletePaperUseCase
@@ -28,6 +31,8 @@ import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.SearchString
 import org.orkg.graph.domain.Visibility
 import org.orkg.graph.domain.VisibilityFilter
+import org.orkg.graph.input.FormattedLabelUseCases
+import org.orkg.graph.input.StatementUseCases
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.format.annotation.DateTimeFormat
@@ -58,7 +63,10 @@ const val PAPER_JSON_V2 = "application/vnd.orkg.paper.v2+json"
 @RequestMapping("/api/papers", produces = [PAPER_JSON_V2])
 class PaperController(
     private val service: PaperUseCases,
+    override val statementService: StatementUseCases,
+    override val formattedLabelService: FormattedLabelUseCases,
 ) : PaperRepresentationAdapter,
+    StatementListRepresentationAdapter,
     ContributionRepresentationAdapter {
     @GetMapping("/{id}")
     fun findById(
@@ -72,6 +80,15 @@ class PaperController(
         @PathVariable id: ThingId,
         pageable: Pageable,
     ): Page<ContributorId> = service.findAllContributorsByPaperId(id, pageable)
+
+    @GetMapping("/{id}/published-contents", produces = [MediaType.APPLICATION_JSON_VALUE])
+    fun findPublishedContents(
+        @PathVariable id: ThingId,
+        mediaTypeCapabilities: MediaTypeCapabilities,
+    ): StatementListRepresentation =
+        service.findPublishedContentsById(id)
+            .mapToStatementListRepresentation(mediaTypeCapabilities)
+            .orElseThrow { PublishedPaperContentsNotFound(id) }
 
     @GetMapping("/statement-counts")
     fun countAllStatementsAboutPapers(

@@ -55,7 +55,7 @@ build:
   needs: []
   script:
     - apt update && apt install --assume-yes graphviz
-    - ./gradlew --build-cache spotlessCheck buildHealth build asciidoctor openapi3
+    - ./gradlew --build-cache clean spotlessCheck buildHealth build asciidoctor openapi3
   coverage: '/^Coverage:\s(\d+\.\d+%)/'
   artifacts:
     name: build

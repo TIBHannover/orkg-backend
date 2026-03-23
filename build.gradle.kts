@@ -52,6 +52,9 @@ dependencyAnalysis {
             }
         }
     }
+    reporting {
+        onlyOnFailure(true)
+    }
 }
 
 tasks.check {

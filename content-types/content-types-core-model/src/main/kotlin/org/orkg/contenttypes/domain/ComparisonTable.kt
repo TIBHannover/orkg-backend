@@ -2,7 +2,6 @@ package org.orkg.contenttypes.domain
 
 import org.orkg.common.ThingId
 import org.orkg.graph.domain.Thing
-import kotlin.collections.plus
 
 private typealias RowFactory = () -> Map<ThingId, MutableList<ComparisonTable.Companion.ProtoComparisonTableRow>>
 private typealias PredicatePath = List<ThingId>
@@ -14,6 +13,18 @@ data class ComparisonTable(
     val subtitles: List<Thing?> = emptyList(),
     val values: Map<ThingId, List<ComparisonTableRow>> = emptyMap(),
 ) {
+    fun sorted(): ComparisonTable = copy(values = values.sorted(selectedPaths))
+
+    private fun Map<ThingId, List<ComparisonTableRow>>.sorted(
+        selectedPaths: List<LabeledComparisonPath>,
+    ): Map<ThingId, List<ComparisonTableRow>> =
+        selectedPaths.mapNotNull { selectedPath -> get(selectedPath.id)?.let { selectedPath to it } }
+            .associate { (selectedPath, values) ->
+                selectedPath.id to values.map {
+                    it.copy(children = it.children.sorted(selectedPath.children))
+                }
+            }
+
     companion object {
         fun from(
             comparisonId: ThingId,

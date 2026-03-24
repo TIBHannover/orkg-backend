@@ -29,7 +29,7 @@ class ResourceDeserializer : ValueDeserializer<Resource>() {
             organizationId = OrganizationId(node["organization_id"].asString()),
             visibility = node["visibility"]?.asString()?.let(Visibility::valueOf)
                 ?: visibilityFromFlags(node["featured"]?.asBoolean(), node["unlisted"]?.asBoolean()),
-            verified = node["verified"]?.asBoolean(),
+            verified = node["verified"]?.let { if (it.isNull || it.isMissingNode) null else it.asBoolean() },
             unlistedBy = node["unlisted_by"]?.stringValue(null)?.let(::ContributorId),
             modifiable = node["modifiable"]?.asBoolean() ?: true,
         )

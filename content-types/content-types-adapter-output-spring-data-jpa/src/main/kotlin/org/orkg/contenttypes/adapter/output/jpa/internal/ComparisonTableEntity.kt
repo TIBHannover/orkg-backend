@@ -45,5 +45,5 @@ class ComparisonTableEntity {
             titles = objectMapper.treeToValue<List<Thing>>(titles!!),
             subtitles = objectMapper.treeToValue<List<Thing?>>(subtitles!!),
             values = objectMapper.treeToValue<Map<ThingId, List<ComparisonTableRow>>>(values!!),
-        )
+        ).sorted()
 }

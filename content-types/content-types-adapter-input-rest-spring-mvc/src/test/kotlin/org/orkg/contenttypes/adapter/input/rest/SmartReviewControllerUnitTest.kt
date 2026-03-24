@@ -202,7 +202,6 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
         documentedGetRequestTo("/api/smart-reviews/{id}", smartReview.id)
             .accept(MediaType.APPLICATION_XML_VALUE)
             .perform()
-            .andPrint()
             .andExpect(status().isOk)
             .andExpect(content().xml(responseXml("smartReviewSuccess")))
             .andDocument {

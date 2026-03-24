@@ -59,6 +59,13 @@ include::{snippets}/papers_publish/description.adoc[]
 
 operation::papers_publish[snippets='path-parameters,request-fields,curl-request,response-headers,http-response,errors']
 
+[[papers-published-contents]]
+== Fetching Published Paper Contents
+
+include::{snippets}/papers_find-published-contents-by-id/description.adoc[]
+
+operation::papers_find-published-contents-by-id[snippets='path-parameters,curl-request,response-fields,errors']
+
 [[papers-exist]]
 == Checking for Existing Papers
 

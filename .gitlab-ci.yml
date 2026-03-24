@@ -101,6 +101,7 @@ generate_api_clients:
 pages:
   stage: deploy
   resource_group: gitlab-pages
+  cache: []
   needs:
     - job: build
       artifacts: true

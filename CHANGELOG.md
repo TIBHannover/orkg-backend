@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [0.95.0] - 2026-03-24
 ### Added
 - Added extraction method field to predicates.
   (See [!1449](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1449))
@@ -1844,8 +1846,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - This CHANGELOG file. Finally!
 
-[unreleased]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/compare/0.94.1...master
-[0.94.1]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.91.0
+[unreleased]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/compare/0.95.0...master
+[0.95.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.95.0
+[0.94.1]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.94.1
 [0.94.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.94.0
 [0.93.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.93.0
 [0.92.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.92.0

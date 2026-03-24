@@ -6,6 +6,33 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Added extraction method field to predicates.
+  (See [!1449](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1449))
+- Added extraction method field to classes.
+  (See [!1450](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1450))
+- Added extraction method field to literals.
+  (See [!1451](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1451))
+- Added extraction method field to lists.
+  (See [!1452](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1452))
+- Added extraction method field to statements.
+  (See [!1453](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1453))
+- Added a new endpoint for fetching comparison tables as CSV.
+  (See [!1454](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1454))
+- Added a new endpoint for fetching published paper contents.
+  (See [!1454](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1454))
+### Changes
+- Updated all Gradle plugins to the latest version (except for build config plugin).
+  (See [!1442](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1442))
+### Fixed
+- Fixed some error responses not being a problem detail response.
+  (See [!1455](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1455))
+- Fixed published comparison tables not being sorted by selected paths.
+  (See [!1459](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1459))
+- Fixed casing of smart review ontology section values for JATS export.
+### Removed
+- Removed contribution comparison endpoint.
+  (See [!1455](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1455))
 
 ## [0.94.1] - 2026-03-17
 ### Fixed

@@ -8,7 +8,7 @@ class RegistrationAPI(
     private val systemDriver: SystemDriver,
     private val testContext: TestContext,
 ) {
-    fun createUser(name: String, password: String = "Pa$\$w0rd", displayName: String? = null) {
+    fun createUser(name: String, password: String = $$$"Pa$$w0rd", displayName: String? = null) {
         // Defaults values to into the message signature.
         // In the original DSL, the parameter definition is constructed inside this function.
         val uniqueUser = testContext.lookupOrCreateUsername(name)

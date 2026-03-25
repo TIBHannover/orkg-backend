@@ -5,7 +5,7 @@ import org.orkg.graph.domain.TemplatedResource
 import org.springframework.data.neo4j.repository.Neo4jRepository
 import org.springframework.data.neo4j.repository.query.Query
 
-private const val RESOURCE_ID_TO_TEMPLATE_TARGET_CLASS = "${'$'}resourceIdToTemplateTargetClass"
+private const val RESOURCE_ID_TO_TEMPLATE_TARGET_CLASS = $$"$resourceIdToTemplateTargetClass"
 
 interface Neo4jFormattedLabelRepository : Neo4jRepository<Neo4jResource, ThingId> {
     @Query(

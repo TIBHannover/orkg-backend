@@ -732,7 +732,7 @@ class SpringDataNeo4jStatementAdapter(
         val matchPaper = buildString {
             append("MATCH (paper:Paper:Resource")
             if (observatoryId != null) {
-                append(" {observatory_id: ${'$'}observatoryId}")
+                append($$" {observatory_id: $observatoryId}")
             }
             append(")")
         }
@@ -797,7 +797,7 @@ class SpringDataNeo4jStatementAdapter(
                         Operator.LE -> "<="
                         Operator.GE -> ">="
                     }
-                    "value$filterIndex $op ${'$'}values[$filterIndex][$valueIndex]"
+                    $$"value$$filterIndex $$op $values[$$filterIndex][$$valueIndex]"
                 }
             }.joinToString(prefix = " AND (", separator = " AND ", postfix = ")")
         }
@@ -817,7 +817,7 @@ class SpringDataNeo4jStatementAdapter(
         val withNodePropertiesAndValues = """WITH paper, paper.id AS id, paper.created_at AS created_at, paper.created_by AS created_by$filterValues"""
         val sort = pageable.sort.orElseGet { Sort.by(Sort.Direction.DESC, "created_at") }
         val commonQuery = "$matchPaper $matchFilters $withPaperAndValues $whereVisibilityAndValues $withNodePropertiesAndValues"
-        val query = "$commonQuery RETURN DISTINCT paper SKIP ${'$'}sdnSkip LIMIT ${'$'}sdnLimit".let {
+        val query = $$"$$commonQuery RETURN DISTINCT paper SKIP $sdnSkip LIMIT $sdnLimit".let {
             it.sortedWith(sort, it.lastIndexOf("RETURN"))
         }
         val countQuery = "$commonQuery RETURN COUNT(DISTINCT paper)"

@@ -43,7 +43,7 @@ class DataCiteDoiServiceAdapter(
     private val objectMapper: ObjectMapper,
     private val httpClient: HttpClient,
     private val bodyPublisherFactory: (String) -> HttpRequest.BodyPublisher = HttpRequest.BodyPublishers::ofString,
-    @param:Value("\${orkg.http.user-agent}")
+    @param:Value($$"${orkg.http.user-agent}")
     private val userAgent: String,
     private val clock: Clock,
 ) : DoiService {

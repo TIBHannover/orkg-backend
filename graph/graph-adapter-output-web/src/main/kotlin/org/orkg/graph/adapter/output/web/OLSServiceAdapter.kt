@@ -22,11 +22,11 @@ import java.util.regex.Pattern
 class OLSServiceAdapter(
     private val objectMapper: ObjectMapper,
     private val httpClient: HttpClient,
-    @param:Value("\${orkg.http.user-agent}")
+    @param:Value($$"${orkg.http.user-agent}")
     private val userAgent: String,
-    @param:Value("\${orkg.external-services.ols.host}")
+    @param:Value($$"${orkg.external-services.ols.host}")
     private val host: String,
-    @param:Value("\${orkg.external-services.ols.caller}")
+    @param:Value($$"${orkg.external-services.ols.caller}")
     private val caller: String?,
 ) : ExternalResourceService,
     ExternalClassService,

@@ -39,7 +39,7 @@ class TemplateBasedResourceSnapshotController(
     private val service: TemplateBasedResourceSnapshotUseCases,
     override val formattedLabelService: FormattedLabelUseCases,
     override val statementService: StatementUseCases,
-    @param:Value("\${orkg.snapshots.resources.url-templates.frontend}")
+    @param:Value($$"${orkg.snapshots.resources.url-templates.frontend}")
     private val frontendUrlTemplate: String,
 ) : TemplateBasedResourceSnapshotRepresentationAdapter {
     @GetMapping("/{snapshotId}", produces = [APPLICATION_JSON_VALUE])

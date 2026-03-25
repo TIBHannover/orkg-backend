@@ -20,7 +20,7 @@ import java.time.Clock
 import java.time.OffsetDateTime
 
 @Controller
-@RequestMapping("\${server.error.path:\${error.path:/error}}")
+@RequestMapping($$"${server.error.path:${error.path:/error}}")
 class ErrorController(
     private val errorAttributes: ErrorAttributes,
     private val problemResponseFactory: ProblemResponseFactory,

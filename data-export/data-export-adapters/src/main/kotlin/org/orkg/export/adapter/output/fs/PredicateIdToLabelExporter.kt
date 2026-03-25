@@ -14,10 +14,10 @@ class PredicateIdToLabelExporter(
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java.name)
 
-    @Value("\${orkg.export.predicate-id-to-label.file-name:#{null}}")
+    @Value($$"${orkg.export.predicate-id-to-label.file-name:#{null}}")
     private val path: String? = null
 
-    @Scheduled(cron = "\${orkg.export.predicate-id-to-label.schedule}")
+    @Scheduled(cron = $$"${orkg.export.predicate-id-to-label.schedule}")
     fun export() {
         logger.info("Starting predicate id to label export...")
         try {

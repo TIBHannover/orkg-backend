@@ -127,7 +127,7 @@ internal class CypherQueryBuilderUnitTest : MockkBaseTest {
             .fetchAs(String::class)
             .fetch(PageRequest.of(0, 5))
 
-        verify(exactly = 1) { neo4jClient.query("MATCH (node) RETURN node.label SKIP \$skip LIMIT \$limit") }
+        verify(exactly = 1) { neo4jClient.query($$"MATCH (node) RETURN node.label SKIP $skip LIMIT $limit") }
         verify(exactly = 1) { neo4jClient.query("MATCH (node) RETURN count(node)") }
         verify(exactly = 2) { unboundRunnableSpec.bindAll(any()) }
         verify(exactly = 1) { runnableSpec.fetchAs(String::class.java) }
@@ -162,7 +162,7 @@ internal class CypherQueryBuilderUnitTest : MockkBaseTest {
             .fetchAs(String::class)
             .fetch(PageRequest.of(0, 5, sort))
 
-        verify(exactly = 1) { neo4jClient.query("MATCH (node) RETURN node.label ORDER BY property1 ASC, property2 DESC SKIP \$skip LIMIT \$limit") }
+        verify(exactly = 1) { neo4jClient.query($$"MATCH (node) RETURN node.label ORDER BY property1 ASC, property2 DESC SKIP $skip LIMIT $limit") }
         verify(exactly = 1) { neo4jClient.query("MATCH (node) RETURN count(node)") }
         verify(exactly = 2) { unboundRunnableSpec.bindAll(any()) }
         verify(exactly = 1) { runnableSpec.fetchAs(String::class.java) }

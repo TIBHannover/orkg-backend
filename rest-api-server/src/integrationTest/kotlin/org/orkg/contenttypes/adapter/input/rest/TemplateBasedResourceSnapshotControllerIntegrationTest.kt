@@ -217,7 +217,7 @@ internal class TemplateBasedResourceSnapshotControllerIntegrationTest : MockMvcB
         ).single().id
 
         val id = post("/api/resources/{id}/snapshots", "R6458")
-            .content(requestJson("orkg/createTemplateBasedResourceSnapshot").replace("\${templateId}", templateId.value))
+            .content(requestJson("orkg/createTemplateBasedResourceSnapshot").replace($$"${templateId}", templateId.value))
             .perform()
             .andExpect(status().isCreated)
             .andReturn()

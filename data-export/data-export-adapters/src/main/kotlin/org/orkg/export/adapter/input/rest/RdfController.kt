@@ -20,7 +20,7 @@ import org.springframework.web.util.UriComponentsBuilder
 class RdfController(
     private val rdfService: ExportRDFUseCase,
     private val taskExecutor: TaskExecutor,
-    @param:Value("\${orkg.export.rdf.file-name:#{null}}")
+    @param:Value($$"${orkg.export.rdf.file-name:#{null}}")
     private val path: String?,
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java.name)

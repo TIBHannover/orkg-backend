@@ -51,7 +51,7 @@ class PostgresDummyDataSetup(
     private val dummyDataUseCases: DummyDataUseCases,
     private val contributorRepository: ContributorRepository,
     private val httpClient: HttpClient,
-    @param:Value("\${orkg.http.user-agent}")
+    @param:Value($$"${orkg.http.user-agent}")
     private val userAgent: String,
 ) : ApplicationRunner {
     @Autowired

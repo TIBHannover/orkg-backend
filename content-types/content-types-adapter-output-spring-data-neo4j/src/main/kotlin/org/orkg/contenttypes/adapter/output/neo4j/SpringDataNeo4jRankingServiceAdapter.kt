@@ -13,8 +13,8 @@ class SpringDataNeo4jRankingServiceAdapter(
 ) : RankingService {
     override fun findAllStatementsAboutPaper(id: ThingId): Set<Pair<ThingId, ThingId>> =
         neo4jClient.query(
-            """
-            MATCH (:Paper:Resource {id: ${'$'}id})-[r:RELATED]->(n:Thing)
+            $$"""
+            MATCH (:Paper:Resource {id: $id})-[r:RELATED]->(n:Thing)
             RETURN r.predicate_id AS predicate, n.id AS id
             """.trimIndent(),
         ).bindAll(mapOf("id" to id.value))
@@ -24,8 +24,8 @@ class SpringDataNeo4jRankingServiceAdapter(
 
     override fun countSumOfDistinctPredicatesForContributions(contributionIds: Set<ThingId>): Long =
         neo4jClient.query(
-            """
-            UNWIND ${'$'}ids AS id
+            $$"""
+            UNWIND $ids AS id
             MATCH (n:Contribution:Resource {id: id})-[r:RELATED]->()
             WITH COUNT(DISTINCT r.predicate_id) AS pid, n
             RETURN SUM(pid) AS count
@@ -36,8 +36,8 @@ class SpringDataNeo4jRankingServiceAdapter(
 
     override fun countComparisonsIncludingPaper(id: ThingId): Long =
         neo4jClient.query(
-            """
-            MATCH (n:ComparisonPublished:LatestVersion)-[:RELATED {predicate_id: "compareContribution"}]->(:Contribution)<-[:RELATED {predicate_id: "P31"}]-(:Paper:Resource {id: ${'$'}id})
+            $$"""
+            MATCH (n:ComparisonPublished:LatestVersion)-[:RELATED {predicate_id: "compareContribution"}]->(:Contribution)<-[:RELATED {predicate_id: "P31"}]-(:Paper:Resource {id: $id})
             RETURN COUNT(DISTINCT n.id) AS count
             """.trimIndent(),
         ).bindAll(mapOf("id" to id.value))
@@ -46,8 +46,8 @@ class SpringDataNeo4jRankingServiceAdapter(
 
     override fun countLiteratureListsIncludingPaper(id: ThingId): Long =
         neo4jClient.query(
-            """
-            MATCH (n:LiteratureList:Resource)-[:RELATED {predicate_id: "HasSection"}]->(:ListSection:Resource)-[:RELATED {predicate_id:"HasEntry"}]->(:Resource)-[:RELATED {predicate_id:"HasLink"}]->(:Paper:Resource {id: ${'$'}id})
+            $$"""
+            MATCH (n:LiteratureList:Resource)-[:RELATED {predicate_id: "HasSection"}]->(:ListSection:Resource)-[:RELATED {predicate_id:"HasEntry"}]->(:Resource)-[:RELATED {predicate_id:"HasLink"}]->(:Paper:Resource {id: $id})
             RETURN COUNT(n) AS count
             """.trimIndent(),
         ).bindAll(mapOf("id" to id.value))
@@ -56,8 +56,8 @@ class SpringDataNeo4jRankingServiceAdapter(
 
     override fun countRosettaStoneStatementsAssociatedToPaper(id: ThingId): Long =
         neo4jClient.query(
-            """
-            MATCH (:Resource {id: ${'$'}id})<-[:CONTEXT]-(n:RosettaStoneStatement:LatestVersion)
+            $$"""
+            MATCH (:Resource {id: $id})<-[:CONTEXT]-(n:RosettaStoneStatement:LatestVersion)
             RETURN COUNT(DISTINCT n.id) AS count
             """.trimIndent(),
         ).bindAll(mapOf("id" to id.value))

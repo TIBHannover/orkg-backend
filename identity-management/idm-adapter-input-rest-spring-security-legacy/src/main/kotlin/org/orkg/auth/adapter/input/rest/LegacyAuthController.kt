@@ -35,15 +35,15 @@ class LegacyAuthController(
     private val httpClient: HttpClient,
     private val objectMapper: ObjectMapper,
     private val bodyPublisherFactory: (String) -> HttpRequest.BodyPublisher = BodyPublishers::ofString,
-    @param:Value("\${orkg.http.user-agent}")
+    @param:Value($$"${orkg.http.user-agent}")
     private val userAgent: String,
-    @param:Value("\${orkg.oauth.legacy-client-id}")
+    @param:Value($$"${orkg.oauth.legacy-client-id}")
     private val legacyClientId: String,
-    @param:Value("\${orkg.oauth.legacy-client-secret}")
+    @param:Value($$"${orkg.oauth.legacy-client-secret}")
     private val legacyClientSecret: String,
-    @param:Value("\${orkg.oauth.token-endpoint}")
+    @param:Value($$"${orkg.oauth.token-endpoint}")
     private val tokenEndpoint: String,
-    @param:Value("\${orkg.oauth.registration-endpoint}")
+    @param:Value($$"${orkg.oauth.registration-endpoint}")
     private val registrationEndpoint: String,
 ) {
     @PostMapping("/api/auth/register", consumes = [MediaType.APPLICATION_JSON_VALUE])

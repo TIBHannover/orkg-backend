@@ -7,9 +7,9 @@ import org.springframework.data.domain.Pageable
 import org.springframework.data.neo4j.repository.Neo4jRepository
 import org.springframework.data.neo4j.repository.query.Query
 
-private const val PROBLEM_ID = "${'$'}problemId"
-private const val ID = "${'$'}id"
-private const val PAGE_PARAMS = ":#{orderBy(#pageable)} SKIP ${'$'}skip LIMIT ${'$'}limit"
+private const val PROBLEM_ID = $$"$problemId"
+private const val ID = $$"$id"
+private const val PAGE_PARAMS = $$":#{orderBy(#pageable)} SKIP $skip LIMIT $limit"
 
 interface Neo4jDatasetRepository : Neo4jRepository<Neo4jResource, ThingId> {
     @Query(

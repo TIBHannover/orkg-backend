@@ -27,14 +27,14 @@ class KeycloakEventProcessor(
     private val contributorRepository: ContributorRepository,
     private val keycloak: Keycloak,
     private val keycloakEventStateRepository: KeycloakEventStateRepository,
-    @param:Value("\${orkg.keycloak.realm}")
+    @param:Value($$"${orkg.keycloak.realm}")
     private val realm: String,
-    @param:Value("\${orkg.keycloak.event-poll-chunk-size}")
+    @param:Value($$"${orkg.keycloak.event-poll-chunk-size}")
     private val eventPollChunkSize: Int,
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java.name)
 
-    @Scheduled(cron = "\${orkg.keycloak.event-poll-schedule}")
+    @Scheduled(cron = $$"${orkg.keycloak.event-poll-schedule}")
     fun processEvents() {
         try {
             var offset = keycloakEventStateRepository.findById(EventType.USER_EVENT)
@@ -63,7 +63,7 @@ class KeycloakEventProcessor(
         }
     }
 
-    @Scheduled(cron = "\${orkg.keycloak.event-poll-schedule}")
+    @Scheduled(cron = $$"${orkg.keycloak.event-poll-schedule}")
     fun processAdminEvents() {
         try {
             var offset = keycloakEventStateRepository.findById(EventType.ADMIN_EVENT)

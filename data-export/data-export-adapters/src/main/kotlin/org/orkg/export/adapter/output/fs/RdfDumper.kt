@@ -14,10 +14,10 @@ class RdfDumper(
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java.name)
 
-    @Value("\${orkg.export.rdf.file-name:#{null}}")
+    @Value($$"${orkg.export.rdf.file-name:#{null}}")
     private val path: String? = null
 
-    @Scheduled(cron = "\${orkg.export.rdf.schedule}")
+    @Scheduled(cron = $$"${orkg.export.rdf.schedule}")
     fun dumpRdf() {
         logger.info("Starting rdf dump...")
         try {

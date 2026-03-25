@@ -12,7 +12,7 @@ import org.springframework.transaction.PlatformTransactionManager
 class SpringBatchConfiguration(
     @param:Qualifier("jpaTransactionManager")
     private val jpaTransactionManager: PlatformTransactionManager,
-    @param:Value("\${job-executor-thread-pool-size:#{2}}")
+    @param:Value($$"${job-executor-thread-pool-size:#{2}}")
     private val jobExecutorThreadPoolSize: Int,
 ) : DefaultBatchConfiguration() {
     override fun getTransactionManager(): PlatformTransactionManager = jpaTransactionManager

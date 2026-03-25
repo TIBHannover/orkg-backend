@@ -67,16 +67,16 @@ internal class LegacyAuthControllerUnitTest : MockMvcBaseTest("legacy-auth") {
     @Autowired
     private lateinit var httpClient: HttpClient
 
-    @Value("\${orkg.oauth.legacy-client-id}")
+    @Value($$"${orkg.oauth.legacy-client-id}")
     private lateinit var legacyClientId: String
 
-    @Value("\${orkg.oauth.legacy-client-secret}")
+    @Value($$"${orkg.oauth.legacy-client-secret}")
     private lateinit var legacyClientSecret: String
 
-    @Value("\${orkg.oauth.token-endpoint}")
+    @Value($$"${orkg.oauth.token-endpoint}")
     private lateinit var tokenEndpoint: String
 
-    @Value("\${orkg.oauth.registration-endpoint}")
+    @Value($$"${orkg.oauth.registration-endpoint}")
     private lateinit var registrationEndpoint: String
 
     @Test

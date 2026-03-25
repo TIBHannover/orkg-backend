@@ -38,7 +38,7 @@ class InitialDataSetup(
 ) : ApplicationRunner {
     private val logger = LoggerFactory.getLogger(this::class.java.name)
 
-    @Value("\${orkg.init.setup.directory}")
+    @Value($$"${orkg.init.setup.directory}")
     private var directory: String? = null
 
     /**

@@ -6,10 +6,10 @@ import org.springframework.data.domain.Pageable
 import org.springframework.data.neo4j.repository.Neo4jRepository
 import org.springframework.data.neo4j.repository.query.Query
 
-private const val ID = "${'$'}id"
-private const val IDS = "${'$'}ids"
+private const val ID = $$"$id"
+private const val IDS = $$"$ids"
 
-private const val ORDER_BY_PAGE_PARAMS = ":#{orderBy(#pageable)} SKIP ${'$'}skip LIMIT ${'$'}limit"
+private const val ORDER_BY_PAGE_PARAMS = $$":#{orderBy(#pageable)} SKIP $skip LIMIT $limit"
 
 interface Neo4jThingRepository : Neo4jRepository<Neo4jThing, ThingId> {
     @Query(

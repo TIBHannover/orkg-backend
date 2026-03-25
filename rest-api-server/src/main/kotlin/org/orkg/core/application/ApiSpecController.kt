@@ -21,7 +21,7 @@ import java.io.File
 @RestController
 @RequestMapping("/api")
 class ApiSpecController(
-    @param:Value("\${orkg.api-spec.path}")
+    @param:Value($$"${orkg.api-spec.path}")
     private val apiSpecPath: String?,
     private val objectMapper: ObjectMapper,
     private val yamlMapper: YAMLMapper = createYamlMapper(),

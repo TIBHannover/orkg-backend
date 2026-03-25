@@ -8,10 +8,10 @@ import org.springframework.data.neo4j.repository.Neo4jRepository
 import org.springframework.data.neo4j.repository.query.Query
 import java.util.Optional
 
-private const val LABEL = "${'$'}label"
-private const val ID = "${'$'}id"
+private const val LABEL = $$"$label"
+private const val ID = $$"$id"
 
-private const val PAGE_PARAMS = "SKIP ${'$'}skip LIMIT ${'$'}limit"
+private const val PAGE_PARAMS = $$"SKIP $skip LIMIT $limit"
 private const val ORDER_BY_PAGE_PARAMS = ":#{orderBy(#pageable)} $PAGE_PARAMS"
 
 /**

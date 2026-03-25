@@ -14,10 +14,10 @@ class UnpublishedComparisonExporter(
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java.name)
 
-    @Value("\${orkg.export.unpublished-comparisons.file-name:#{null}}")
+    @Value($$"${orkg.export.unpublished-comparisons.file-name:#{null}}")
     private val path: String? = null
 
-    @Scheduled(cron = "\${orkg.export.unpublished-comparisons.schedule}")
+    @Scheduled(cron = $$"${orkg.export.unpublished-comparisons.schedule}")
     fun export() {
         logger.info("Starting unpublished comparison export...")
         try {

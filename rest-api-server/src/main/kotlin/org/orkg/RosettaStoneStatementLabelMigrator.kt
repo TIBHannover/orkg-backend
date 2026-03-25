@@ -12,9 +12,9 @@ import org.springframework.data.neo4j.core.fetchAs
 import org.springframework.stereotype.Component
 import kotlin.time.measureTime
 
-private const val UPDATE_STATEMENT_LABEL_QUERY = """MATCH (n:RosettaStoneStatement {id: ${'$'}id}) SET n.label = ${'$'}label"""
+private const val UPDATE_STATEMENT_LABEL_QUERY = $$"""MATCH (n:RosettaStoneStatement {id: $id}) SET n.label = $label"""
 private const val FETCH_STATEMENTS_WITHOUT_LABEL_QUERY =
-    """
+    $$"""
     CALL () {
         MATCH (latest:RosettaStoneStatement:LatestVersion)
         WHERE latest.label = ""
@@ -25,7 +25,7 @@ private const val FETCH_STATEMENTS_WITHOUT_LABEL_QUERY =
         RETURN DISTINCT latest.id AS id
     }
     WITH id
-    WHERE NOT id IN ${'$'}ignored
+    WHERE NOT id IN $ignored
     RETURN id
     LIMIT 1000
     """

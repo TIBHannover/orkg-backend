@@ -5,7 +5,7 @@ import org.springframework.data.neo4j.repository.Neo4jRepository
 import org.springframework.data.neo4j.repository.query.Query
 import java.util.Optional
 
-private const val IDS = "${'$'}ids"
+private const val IDS = $$"$ids"
 
 interface Neo4jClassRepository : Neo4jRepository<Neo4jClass, ThingId> {
     // Set operations are a bit tricky in Cypher. It only knows lists, and order matters there. APOC to the rescue!

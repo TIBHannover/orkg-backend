@@ -205,7 +205,7 @@ internal class ResourceServiceIntegrationTest {
     @Test
     @DisplayName("should allow regex special chars in resource label")
     fun shouldAllowRegexSpecialCharsInLabel() {
-        val res = service.createResource(label = "C\$razy LAb(el. he*r?")
+        val res = service.createResource(label = $$"C$razy LAb(el. he*r?")
         val found = service.findAll(
             label = SearchString.of("LAb(el.", exactMatch = false),
             pageable = PageRequest.of(1, 10),

@@ -6,10 +6,10 @@ import org.orkg.graph.adapter.output.neo4j.internal.Neo4jResource
 import org.springframework.data.neo4j.repository.Neo4jRepository
 import org.springframework.data.neo4j.repository.query.Query
 
-private const val ID = "${'$'}id"
-private const val PREDICATE_IDS = "${'$'}predicateIds"
-private const val ROSETTA_STONE_TEMPLATE_IDS = "${'$'}rosettaStoneStatementIds"
-private const val MAX_DEPTH = "${'$'}maxDepth"
+private const val ID = $$"$id"
+private const val PREDICATE_IDS = $$"$predicateIds"
+private const val ROSETTA_STONE_TEMPLATE_IDS = $$"$rosettaStoneStatementIds"
+private const val MAX_DEPTH = $$"$maxDepth"
 
 interface Neo4jComparisonAuxiliaryRepository : Neo4jRepository<Neo4jResource, ThingId> {
     @Query(

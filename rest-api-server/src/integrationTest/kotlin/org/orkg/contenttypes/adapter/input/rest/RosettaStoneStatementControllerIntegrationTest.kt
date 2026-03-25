@@ -607,7 +607,7 @@ internal class RosettaStoneStatementControllerIntegrationTest : MockMvcBaseTest(
 
     private fun createRosettaStoneStatement(templateId: ThingId): ThingId =
         post("/api/rosetta-stone/statements")
-            .content(requestJson("orkg/createRosettaStoneStatement").replace("\$templateId", templateId.value))
+            .content(requestJson("orkg/createRosettaStoneStatement").replace($$"$templateId", templateId.value))
             .accept(ROSETTA_STONE_STATEMENT_JSON_V1)
             .contentType(ROSETTA_STONE_STATEMENT_JSON_V1)
             .perform()

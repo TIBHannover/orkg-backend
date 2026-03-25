@@ -188,7 +188,7 @@ class OrganizationController(
         val createdBy: ContributorId,
         val url: String,
         @field:Pattern(
-            regexp = "^[a-zA-Z0-9_]+\$",
+            regexp = $$"^[a-zA-Z0-9_]+$",
             message = "Only underscores ( _ ), numbers, and letters are allowed in the permalink field",
         )
         @field:NotBlank

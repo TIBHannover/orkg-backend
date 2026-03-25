@@ -32,7 +32,7 @@ class ExportComparisonService(
     private val comparisonRepository: ComparisonRepository,
     private val fileExportService: FileExportService,
     private val objectMapper: ObjectMapper,
-    @param:Value("\${orkg.publishing.base-url.comparison}")
+    @param:Value($$"${orkg.publishing.base-url.comparison}")
     private val comparisonPublishBaseUri: String = "http://localhost/comparison/",
 ) : ExportUnpublishedComparisonUseCase {
     override fun export(writer: Writer) {

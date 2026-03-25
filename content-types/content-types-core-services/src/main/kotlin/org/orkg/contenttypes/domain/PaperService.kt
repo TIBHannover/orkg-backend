@@ -116,7 +116,7 @@ class PaperService(
     private val classRepository: ClassRepository,
     private val contributorRepository: ContributorRepository,
     private val paperPublishedRepository: PaperPublishedRepository,
-    @param:Value("\${orkg.publishing.base-url.paper}")
+    @param:Value($$"${orkg.publishing.base-url.paper}")
     private val paperPublishBaseUri: String = "http://localhost/paper/",
 ) : PaperUseCases {
     override fun countAllStatementsAboutPapers(pageable: Pageable): Page<PaperWithStatementCount> =

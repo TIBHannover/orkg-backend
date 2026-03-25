@@ -16,11 +16,11 @@ import java.util.concurrent.TimeUnit
 class KeycloakConfiguration {
     @Bean
     fun keycloakAdminClient(
-        @Value("\${orkg.keycloak.host}") host: String,
-        @Value("\${orkg.keycloak.realm}") realm: String,
-        @Value("\${orkg.keycloak.client-id}") clientId: String,
-        @Value("\${orkg.keycloak.client-secret}") clientSecret: String,
-        @Value("\${orkg.http.user-agent}") userAgent: String,
+        @Value($$"${orkg.keycloak.host}") host: String,
+        @Value($$"${orkg.keycloak.realm}") realm: String,
+        @Value($$"${orkg.keycloak.client-id}") clientId: String,
+        @Value($$"${orkg.keycloak.client-secret}") clientSecret: String,
+        @Value($$"${orkg.http.user-agent}") userAgent: String,
     ): Keycloak =
         KeycloakBuilder.builder()
             .grantType(OAuth2Constants.CLIENT_CREDENTIALS)

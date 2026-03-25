@@ -31,13 +31,13 @@ class PaperRanker(
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java.name)
 
-    @Value("\${orkg.ranking.papers.workers:#{10}}")
+    @Value($$"${orkg.ranking.papers.workers:#{10}}")
     private val workers: Int? = null
 
-    @Value("\${orkg.ranking.papers.chunk-size:#{1000}}")
+    @Value($$"${orkg.ranking.papers.chunk-size:#{1000}}")
     private val chunkSize: Int? = null
 
-    @Scheduled(cron = "\${orkg.ranking.papers.schedule}")
+    @Scheduled(cron = $$"${orkg.ranking.papers.schedule}")
     fun run() {
         val startMillis = System.nanoTime()
         rankPapersAsync(workers!!) { paper, score ->

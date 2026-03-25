@@ -104,7 +104,7 @@ class ComparisonService(
     private val comparisonTableUseCases: ComparisonTableUseCases,
     private val comparisonTableRepository: ComparisonTableRepository,
     private val clock: Clock,
-    @param:Value("\${orkg.publishing.base-url.comparison}")
+    @param:Value($$"${orkg.publishing.base-url.comparison}")
     private val comparisonPublishBaseUri: String = "http://localhost/comparison/",
 ) : ComparisonUseCases {
     override fun findById(id: ThingId): Optional<Comparison> =

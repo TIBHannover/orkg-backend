@@ -28,9 +28,9 @@ import java.util.regex.Pattern
 class WikidataServiceAdapter(
     private val objectMapper: ObjectMapper,
     private val httpClient: HttpClient,
-    @param:Value("\${orkg.http.user-agent}")
+    @param:Value($$"${orkg.http.user-agent}")
     private val userAgent: String,
-    @param:Value("\${orkg.external-services.wikidata.host}")
+    @param:Value($$"${orkg.external-services.wikidata.host}")
     private val host: String,
 ) : ExternalResourceService,
     ExternalClassService,

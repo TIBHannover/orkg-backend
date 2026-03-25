@@ -17,7 +17,7 @@ class ContributorEmailHashUpdater(
     private val contributorRepository: ContributorRepository,
     private val keycloak: Keycloak,
     private val entityManager: EntityManager,
-    @param:Value("\${orkg.keycloak.realm}")
+    @param:Value($$"${orkg.keycloak.realm}")
     private val realm: String,
 ) : ApplicationRunner {
     private val logger = LoggerFactory.getLogger(this::class.java.name)

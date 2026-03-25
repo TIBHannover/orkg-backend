@@ -10,9 +10,9 @@ import org.springframework.data.neo4j.repository.Neo4jRepository
 import org.springframework.data.neo4j.repository.query.Query
 import java.util.Optional
 
-private const val ID = "${'$'}id"
+private const val ID = $$"$id"
 
-private const val PAGE_PARAMS = ":#{orderBy(#pageable)} SKIP ${'$'}skip LIMIT ${'$'}limit"
+private const val PAGE_PARAMS = $$":#{orderBy(#pageable)} SKIP $skip LIMIT $limit"
 
 interface LegacyNeo4jResearchFieldRepository : Neo4jRepository<Neo4jResource, ThingId> {
     @Query("""MATCH (field:ResearchField:Resource {id: $ID}) RETURN field""")

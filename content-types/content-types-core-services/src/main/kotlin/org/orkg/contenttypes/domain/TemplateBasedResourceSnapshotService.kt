@@ -29,7 +29,7 @@ class TemplateBasedResourceSnapshotService(
     private val templateBasedResourceSnapshotRepository: TemplateBasedResourceSnapshotRepository,
     private val handleService: HandleService,
     private val snapshotIdGenerator: SnapshotIdGenerator,
-    @param:Value("\${orkg.snapshots.resources.url-templates.backend}")
+    @param:Value($$"${orkg.snapshots.resources.url-templates.backend}")
     private val urlTemplate: String,
     private val clock: Clock,
 ) : TemplateBasedResourceSnapshotUseCases {

@@ -4,7 +4,7 @@ import org.orkg.common.ThingId
 import org.springframework.data.neo4j.repository.Neo4jRepository
 import org.springframework.data.neo4j.repository.query.Query
 
-private const val ID = "${'$'}id"
+private const val ID = $$"$id"
 
 interface Neo4jPredicateRepository : Neo4jRepository<Neo4jPredicate, ThingId> {
     override fun deleteById(id: ThingId)

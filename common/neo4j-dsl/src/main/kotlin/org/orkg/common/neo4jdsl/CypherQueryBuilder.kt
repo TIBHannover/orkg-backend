@@ -147,10 +147,16 @@ class SingleQueryBuilderImpl {
         override fun <T : Any> fetchAs(targetClass: KClass<T>): SingleQueryBuilder.ExposesMappedByAndFetch<T> =
             MappedByBuilderAndFetch(configuration, neo4jClient, queryCache, query, parameters, targetClass)
 
-        override fun run(): ResultSummary =
-            neo4jClient.query(queryCache.getOrPut(cacheKey()) { query().build(configuration) }.cypher)
-                .bindAll(parameters)
-                .run()
+        override fun run(): ResultSummary {
+            val cypher = queryCache.getOrPut(cacheKey()) { query().build(configuration) }.cypher
+            try {
+                return neo4jClient.query(cypher)
+                    .bindAll(parameters)
+                    .run()
+            } catch (e: Throwable) {
+                throw Neo4jQueryException(e, cypher, parameters)
+            }
+        }
 
         private fun cacheKey(): Pair<() -> BuildableStatement<T>, Configuration> = query to configuration
     }
@@ -179,11 +185,17 @@ class SingleQueryBuilderImpl {
         private val targetClass: KClass<R>,
         private val mappingFunction: ((TypeSystem, Record) -> R)? = null,
     ) : SingleQueryBuilder.ExposesFetch<R> {
-        override fun fetch(): Neo4jClient.RecordFetchSpec<R> =
-            neo4jClient.query(queryCache.getOrPut(cacheKey()) { query().build(configuration) }.cypher)
-                .bindAll(parameters)
-                .fetchAs(targetClass.java)
-                .let { if (mappingFunction != null) it.mappedBy(mappingFunction) else it }
+        override fun fetch(): Neo4jClient.RecordFetchSpec<R> {
+            val cypher = queryCache.getOrPut(cacheKey()) { query().build(configuration) }.cypher
+            try {
+                return neo4jClient.query(cypher)
+                    .bindAll(parameters)
+                    .fetchAs(targetClass.java)
+                    .let { if (mappingFunction != null) it.mappedBy(mappingFunction) else it }
+            } catch (e: Throwable) {
+                throw Neo4jQueryException(e, cypher, parameters)
+            }
+        }
 
         private fun cacheKey(): Pair<() -> BuildableStatement<T>, Configuration> = query to configuration
     }
@@ -349,13 +361,19 @@ class PagedQueryBuilderImpl {
                     .limit(parameter("limit"))
                     .build(configuration)
             }
-            val content = neo4jClient.query(contentQuery.cypher.let { if (appendSort) it.sortedWith(pageable.sort) else it })
-                .bindAll(parameters + ("skip" to pageable.offset) + ("limit" to pageable.pageSize) + contentQuery.catalog.parameters)
-                .fetchAs(targetClass.java)
-                .let { if (mappingFunction != null) it.mappedBy(mappingFunction) else it }
-                .all()
-                .toList()
-            return PageImpl(content, pageable, count())
+            val cypher = contentQuery.cypher.let { if (appendSort) it.sortedWith(pageable.sort) else it }
+            val allParameters = parameters + ("skip" to pageable.offset) + ("limit" to pageable.pageSize) + contentQuery.catalog.parameters
+            try {
+                val content = neo4jClient.query(cypher)
+                    .bindAll(allParameters)
+                    .fetchAs(targetClass.java)
+                    .let { if (mappingFunction != null) it.mappedBy(mappingFunction) else it }
+                    .all()
+                    .toList()
+                return PageImpl(content, pageable, count())
+            } catch (e: Throwable) {
+                throw Neo4jQueryException(e, cypher, allParameters)
+            }
         }
 
         override fun count(): Long {
@@ -363,12 +381,18 @@ class PagedQueryBuilderImpl {
                 countQuery(commonQuery())
                     .build(configuration)
             }
-            val count = neo4jClient.query(countQuery.cypher)
-                .bindAll(parameters + countQuery.catalog.parameters)
-                .fetchAs(Long::class.java)
-                .one()
-                .orElse(0)
-            return count
+            val cypher = countQuery.cypher
+            val allParameters = parameters + countQuery.catalog.parameters
+            try {
+                val count = neo4jClient.query(cypher)
+                    .bindAll(allParameters)
+                    .fetchAs(Long::class.java)
+                    .one()
+                    .orElse(0)!!
+                return count
+            } catch (e: Throwable) {
+                throw Neo4jQueryException(e, cypher, allParameters)
+            }
         }
 
         private fun cacheKey(query: Any) =

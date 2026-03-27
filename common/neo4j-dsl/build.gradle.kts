@@ -10,6 +10,7 @@ dependencies {
     api("org.springframework.data:spring-data-commons")
     api("org.springframework.data:spring-data-neo4j")
     api("org.springframework:spring-context")
+    api("org.springframework:spring-tx")
     api("org.apiguardian:apiguardian-api")
     compileOnly("org.jetbrains:annotations")
 }

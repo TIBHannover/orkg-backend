@@ -3,7 +3,7 @@ plugins {
 }
 
 dependencies.constraints {
-    val kotlinVersion = "2.2.10"
+    val kotlinVersion = "2.3.0"
     api("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
     api("org.jetbrains.kotlin:kotlin-allopen:$kotlinVersion")
     api("org.jetbrains.kotlin:kotlin-noarg:$kotlinVersion")

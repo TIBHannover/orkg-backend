@@ -72,11 +72,11 @@ fun createTableStatements(
     require(rowCount >= 1) { "Row count must be at least 1." }
     require(columnCount >= 1) { "Column count must be at least 1." }
     if (valueIds != null) {
-        if (valueIds.size != rowCount.toInt()) {
+        if (valueIds.size != rowCount) {
             throw IllegalStateException("""Size of valueIds must match size rowCount.""")
         }
         valueIds.forEach { row ->
-            if (row != null && row.size != columnCount.toInt()) {
+            if (row != null && row.size != columnCount) {
                 throw IllegalStateException("""Size of each entry in valueIds must match columnCount.""")
             }
         }
@@ -89,7 +89,7 @@ fun createTableStatements(
     val hasColumn = createPredicate(Predicates.csvwColumn)
     val hasColumns = createPredicate(Predicates.csvwColumns)
     val hasValue = createPredicate(Predicates.csvwValue)
-    val columns = (0 until columnCount.toInt()).map { columnIndex ->
+    val columns = (0 until columnCount).map { columnIndex ->
         createResource(ThingId("Column_${columnIndex + 1}"), classes = setOf(Classes.column))
     }
     val columnStatements = columns.flatMapIndexed { columnIndex, column ->
@@ -123,7 +123,7 @@ fun createTableStatements(
             ),
         )
     }
-    val rowStatements = (0 until rowCount.toInt()).flatMap { rowIndex ->
+    val rowStatements = (0 until rowCount).flatMap { rowIndex ->
         val row = createResource(ThingId("Row_${rowIndex + 1}"), classes = setOf(Classes.row))
         val number = createLiteral(
             id = ThingId("Row_${rowIndex + 1}_Number"),
@@ -153,7 +153,7 @@ fun createTableStatements(
                 predicate = hasTitle,
                 `object` = title,
             ),
-            *(0 until columnCount.toInt()).flatMap { columnIndex ->
+            *(0 until columnCount).flatMap { columnIndex ->
                 val cell = createResource(
                     id = ThingId("Cell_${rowIndex + 1}_${columnIndex + 1}"),
                     classes = setOf(Classes.cell),

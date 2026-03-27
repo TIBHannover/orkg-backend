@@ -1,4 +1,3 @@
-import org.gradle.kotlin.dsl.invoke
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 
 plugins {
@@ -7,7 +6,6 @@ plugins {
     id("jacoco")
     id("idea")
     id("org.orkg.gradle.base")
-    id("org.orkg.gradle.consistent-resolution")
     id("com.autonomousapps.dependency-analysis")
     id("com.github.gmazzo.buildconfig")
 }
@@ -69,7 +67,6 @@ configurations.all {
 // Configure common test runtime dependencies for *all* projects
 dependencies {
     api(platform("org.orkg:platform"))
-    testApi(platform("org.orkg:platform"))
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     testRuntimeOnly("ch.qos.logback:logback-classic") // Logger implementation. Should be same as in production.

@@ -5,7 +5,7 @@ plugins {
 dependencies {
     api(platform("org.springframework.boot:spring-boot-dependencies:4.0.2"))
     // Kotlin
-    api(platform(kotlin("bom", "2.2.20")))
+    api(platform(kotlin("bom", "2.3.0"))) // Align with version from Gradle, which is newer than the one in Spring
     // Platforms not included in Spring Boot
     api(platform("dev.forkhandles:forkhandles-bom:2.24.0.0"))
     api(platform("io.kotest:kotest-bom:6.0.7"))

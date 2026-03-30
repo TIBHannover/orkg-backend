@@ -48,6 +48,7 @@
     </sec>
     <sec>
       <title>comparison section heading</title>
+      <ext-link ext-link-type="uri" xlink:href="http://localhost:3000/comparisons/R6416"/>
       <table-wrap id="table-1">
         <table>
           <thead>

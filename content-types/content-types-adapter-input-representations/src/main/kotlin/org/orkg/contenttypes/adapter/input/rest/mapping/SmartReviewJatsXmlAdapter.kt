@@ -39,9 +39,11 @@ import org.orkg.contenttypes.adapter.input.rest.jats.dsl.`copyright-year`
 import org.orkg.contenttypes.adapter.input.rest.jats.dsl.day
 import org.orkg.contenttypes.adapter.input.rest.jats.dsl.edition
 import org.orkg.contenttypes.adapter.input.rest.jats.dsl.`element-citation`
+import org.orkg.contenttypes.adapter.input.rest.jats.dsl.`ext-link`
 import org.orkg.contenttypes.adapter.input.rest.jats.dsl.fpage
 import org.orkg.contenttypes.adapter.input.rest.jats.dsl.front
 import org.orkg.contenttypes.adapter.input.rest.jats.dsl.issue
+import org.orkg.contenttypes.adapter.input.rest.jats.dsl.italic
 import org.orkg.contenttypes.adapter.input.rest.jats.dsl.license
 import org.orkg.contenttypes.adapter.input.rest.jats.dsl.`license-p`
 import org.orkg.contenttypes.adapter.input.rest.jats.dsl.license_ref
@@ -200,9 +202,15 @@ interface SmartReviewJatsXmlAdapter : ComparisonJatsXmlAdapter {
 
     private fun HTMLTag.comparisonSection(section: SmartReviewComparisonSection, state: DocumentState) {
         section.comparison?.let {
-            comparisonTableUseCases.findByComparisonId(it.id)
-                .map { comparisonTable(it, state) }
-                .orElseGet { ComparisonTable(it.id) }
+            `ext-link` {
+                attributes["ext-link-type"] = "uri"
+                attributes["xlink:href"] = "$frontendUri/comparisons/${it.id}"
+            }
+            comparisonTable(
+                comparisonTableUseCases.findByComparisonId(it.id)
+                    .orElseGet { ComparisonTable(it.id) },
+                state,
+            )
         }
     }
 

@@ -233,8 +233,8 @@ class SpringDataNeo4jRosettaStoneStatementAdapter(
         templateIds: Set<ThingId>,
     ): Map<Thing, Set<RosettaStoneStatement>> = neo4jClient.query(
         $$"""
-        UNWIND $contextIds AS contextId
-        MATCH (context:Thing {id: contextId})
+        UNWIND $contextIds AS ctxId
+        MATCH (context:Thing {id: ctxId})
         CALL (context) {
             MATCH (context)<-[:CONTEXT]-(latest:RosettaStoneStatement:LatestVersion)-[:TEMPLATE]->(template:RosettaNodeShape)
             WHERE template.id IN $templateIds

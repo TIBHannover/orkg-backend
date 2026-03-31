@@ -33,6 +33,7 @@ testing {
                 implementation("io.kotest:kotest-common")
                 implementation("io.kotest:kotest-framework-engine")
                 implementation("io.kotest:kotest-runner-junit5")
+                implementation("io.mockk:mockk-core")
                 implementation("io.mockk:mockk-dsl")
                 implementation("io.mockk:mockk-jvm")
                 implementation("org.hamcrest:hamcrest")

@@ -16,6 +16,7 @@ testing {
                 implementation(testFixtures(project(":testing:spring")))
                 implementation("io.kotest:kotest-assertions-core")
                 implementation("io.kotest:kotest-assertions-shared")
+                implementation("io.mockk:mockk-core")
                 implementation("io.mockk:mockk-dsl")
                 implementation("io.mockk:mockk-jvm")
                 implementation("org.hamcrest:hamcrest")

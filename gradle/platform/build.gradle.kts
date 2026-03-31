@@ -18,7 +18,7 @@ dependencies {
     api("org.hibernate.orm:hibernate-core:7.3.0.CR1")
 
     // Third-party versions not provided by Spring, and without platform/BOM
-    api("io.mockk:mockk:1.14.7") // anchor for MockKVirtualPlatformAlignmentRule
+    api("io.mockk:mockk:1.14.9") // anchor for MockKVirtualPlatformAlignmentRule
     api("org.commonmark:commonmark:0.27.1") // anchor for CommonMarkVirtualPlatformAlignmentRule
     api("org.commonmark:commonmark-ext-autolink:0.27.1")
     api("org.commonmark:commonmark-ext-gfm-strikethrough:0.27.1")

@@ -40,6 +40,7 @@ testing {
                 implementation("io.kotest:kotest-assertions-shared")
                 implementation("io.kotest:kotest-common")
                 implementation("io.kotest:kotest-framework-engine")
+                implementation("io.mockk:mockk-core")
                 implementation("io.mockk:mockk-dsl")
                 implementation("io.mockk:mockk-jvm")
                 implementation("org.assertj:assertj-core")

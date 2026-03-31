@@ -37,6 +37,7 @@ testing {
                 implementation("dev.forkhandles:values4k")
                 implementation("io.kotest:kotest-assertions-core")
                 implementation("io.kotest:kotest-assertions-shared")
+                implementation("io.mockk:mockk-core")
                 implementation("io.mockk:mockk-dsl")
                 implementation("io.mockk:mockk-jvm")
                 implementation("org.eclipse.rdf4j:rdf4j-common-io")

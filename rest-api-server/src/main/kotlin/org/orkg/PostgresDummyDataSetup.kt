@@ -96,7 +96,7 @@ class PostgresDummyDataSetup(
         }
     }
 
-    private fun fetchOrganizations(url: String = "https://orkg.org/api/organizations/"): List<Organization> {
+    private fun fetchOrganizations(url: String = "https://orkg.org/api/organizations"): List<Organization> {
         val request = HttpRequest.newBuilder(URI.create(url))
             .header(USER_AGENT, userAgent)
             .build()
@@ -137,12 +137,12 @@ class PostgresDummyDataSetup(
 
     private fun fetchObservatories(action: (Observatory) -> Unit) =
         fetchPaged(Observatory::class.java, action) { page ->
-            "https://orkg.org/api/observatories/?page=$page&size=50"
+            "https://orkg.org/api/observatories?page=$page&size=50"
         }
 
     private fun fetchConferenceSeries(action: (ConferenceSeries) -> Unit) =
         fetchPaged(ConferenceSeries::class.java, action) { page ->
-            "https://orkg.org/api/conference-series/?page=$page&size=50"
+            "https://orkg.org/api/conference-series?page=$page&size=50"
         }
 
     private fun generateObservatories(observatories: List<Observatory>): List<Observatory> {

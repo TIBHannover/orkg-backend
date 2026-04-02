@@ -30,7 +30,7 @@ internal class LiteratureListVersionHistoryUpdaterUnitTest : MockkBaseTest {
     @Test
     fun `Given a literature list publish command, it crates a new previous version statement and updates the previous version literature list class labels`() {
         val literatureList = createLiteratureList()
-        val command = publishLiteratureListCommand().copy(id = literatureList.id)
+        val command = publishLiteratureListCommand().copy(literatureListId = literatureList.id)
         val literatureListVersionId = ThingId("R165")
         val state = PublishLiteratureListState(literatureList, literatureListVersionId)
 
@@ -77,7 +77,7 @@ internal class LiteratureListVersionHistoryUpdaterUnitTest : MockkBaseTest {
         val literatureList = createLiteratureList().let {
             it.copy(versions = it.versions.copy(it.versions.head, emptyList()))
         }
-        val command = publishLiteratureListCommand().copy(id = literatureList.id)
+        val command = publishLiteratureListCommand().copy(literatureListId = literatureList.id)
         val literatureListVersionId = ThingId("R165")
         val state = PublishLiteratureListState(literatureList, literatureListVersionId)
 

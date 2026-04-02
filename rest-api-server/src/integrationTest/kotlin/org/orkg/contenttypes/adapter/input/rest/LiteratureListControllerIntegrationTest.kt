@@ -211,6 +211,7 @@ internal class LiteratureListControllerIntegrationTest : MockMvcBaseTest("litera
             it.researchFields shouldBe listOf(
                 ObjectIdAndLabel(ThingId("R12"), "Computer Science"),
             )
+            it.identifiers shouldBe emptyMap()
             it.authors.size shouldBe 5
             it.authors[0] shouldBe AuthorRepresentation(
                 name = "Author with id",
@@ -299,6 +300,7 @@ internal class LiteratureListControllerIntegrationTest : MockMvcBaseTest("litera
             it.researchFields shouldBe listOf(
                 ObjectIdAndLabel(ThingId("R194"), "Engineering"),
             )
+            it.identifiers shouldBe emptyMap()
             it.authors.size shouldBe 5
             it.authors[0] shouldBe Author(
                 name = "Author with id",

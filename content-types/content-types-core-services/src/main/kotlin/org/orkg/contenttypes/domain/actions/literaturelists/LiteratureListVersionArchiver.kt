@@ -27,7 +27,7 @@ class LiteratureListVersionArchiver(
 ) : PublishLiteratureListAction {
     override fun invoke(command: PublishLiteratureListCommand, state: State): State {
         val statementsToPersist = statementService.fetchAsBundle(
-            thingId = command.id,
+            thingId = command.literatureListId,
             configuration = bundleConfiguration,
             includeFirst = true,
             sort = Sort.unsorted(),
@@ -38,7 +38,7 @@ class LiteratureListVersionArchiver(
                 createdBy = command.contributorId,
                 createdAt = OffsetDateTime.now(clock),
                 resourceId = state.literatureListVersionId!!,
-                rootId = command.id,
+                rootId = command.literatureListId,
                 subgraph = statementsToPersist,
             ),
         )

@@ -40,7 +40,7 @@ internal class LiteratureListVersionArchiverUnitTest : MockkBaseTest {
     @Test
     fun `Given a literature list publish command, it archives all statements about the literature list`() {
         val literatureList = createLiteratureList()
-        val command = publishLiteratureListCommand().copy(id = literatureList.id)
+        val command = publishLiteratureListCommand().copy(literatureListId = literatureList.id)
         val literatureListVersionId = ThingId("R321")
         val state = PublishLiteratureListState(
             literatureList = literatureList,
@@ -89,7 +89,7 @@ internal class LiteratureListVersionArchiverUnitTest : MockkBaseTest {
                     it.createdAt shouldBe OffsetDateTime.now(fixedClock)
                     it.createdBy shouldBe command.contributorId
                     it.resourceId shouldBe state.literatureListVersionId!!
-                    it.rootId shouldBe command.id
+                    it.rootId shouldBe command.literatureListId
                     it.subgraph shouldBe listOf(createStatement())
                 },
             )

@@ -172,7 +172,9 @@ fun LiteratureListListSection.Entry.toCommandEntry(): Entry =
     Entry(value.id, description)
 
 fun publishLiteratureListCommand() = PublishLiteratureListUseCase.PublishCommand(
-    id = ThingId("R123"),
+    literatureListId = ThingId("R123"),
     contributorId = ContributorId("dca4080c-e23f-489d-b900-af8bfc2b0620"),
     changelog = "new release",
+    assignDOI = true,
+    description = "list about important topic",
 )

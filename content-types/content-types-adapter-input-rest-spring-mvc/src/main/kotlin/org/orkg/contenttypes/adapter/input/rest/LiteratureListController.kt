@@ -396,12 +396,12 @@ class LiteratureListController(
     data class PublishLiteratureListRequest(
         @field:NotBlank
         val changelog: String,
+        @field:JsonProperty("assign_doi")
+        val assignDOI: Boolean = false,
+        @field:NullableNotBlank
+        val description: String?,
     ) {
         fun toPublishCommand(id: ThingId, contributorId: ContributorId): PublishLiteratureListUseCase.PublishCommand =
-            PublishLiteratureListUseCase.PublishCommand(
-                id = id,
-                contributorId = contributorId,
-                changelog = changelog,
-            )
+            PublishLiteratureListUseCase.PublishCommand(id, contributorId, changelog, assignDOI, description)
     }
 }

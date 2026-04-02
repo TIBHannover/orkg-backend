@@ -50,6 +50,7 @@ import org.orkg.contenttypes.domain.actions.literaturelists.LiteratureListSectio
 import org.orkg.contenttypes.domain.actions.literaturelists.LiteratureListSectionsUpdater
 import org.orkg.contenttypes.domain.actions.literaturelists.LiteratureListVersionArchiver
 import org.orkg.contenttypes.domain.actions.literaturelists.LiteratureListVersionCreator
+import org.orkg.contenttypes.domain.actions.literaturelists.LiteratureListVersionDoiPublisher
 import org.orkg.contenttypes.domain.actions.literaturelists.LiteratureListVersionHistoryUpdater
 import org.orkg.contenttypes.domain.actions.literaturelists.sections.LiteratureListSectionCreateValidator
 import org.orkg.contenttypes.domain.actions.literaturelists.sections.LiteratureListSectionCreator
@@ -61,6 +62,7 @@ import org.orkg.contenttypes.domain.actions.literaturelists.sections.LiteratureL
 import org.orkg.contenttypes.domain.actions.literaturelists.sections.LiteratureListSectionUpdateValidator
 import org.orkg.contenttypes.domain.actions.literaturelists.sections.LiteratureListSectionUpdater
 import org.orkg.contenttypes.input.LiteratureListUseCases
+import org.orkg.contenttypes.output.DoiService
 import org.orkg.contenttypes.output.LiteratureListRepository
 import org.orkg.contenttypes.output.LiteratureListSnapshotRepository
 import org.orkg.graph.domain.BundleConfiguration
@@ -78,6 +80,7 @@ import org.orkg.graph.input.UnsafeStatementUseCases
 import org.orkg.graph.output.ListRepository
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.StatementRepository
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
@@ -103,7 +106,10 @@ class LiteratureListService(
     private val listService: ListUseCases,
     private val listRepository: ListRepository,
     private val contributorRepository: ContributorRepository,
+    private val doiService: DoiService,
     private val clock: Clock,
+    @param:Value($$"${orkg.publishing.base-url.literature-list}")
+    private val literatureListPublishBaseUri: String = "http://localhost/list/",
 ) : LiteratureListUseCases {
     override fun findById(id: ThingId): Optional<LiteratureList> =
         resourceRepository.findById(id)
@@ -228,10 +234,12 @@ class LiteratureListService(
         val steps = listOf(
             LiteratureListPublishableValidator(this),
             DescriptionValidator("changelog") { it.changelog },
+            DescriptionValidator { it.description?.takeIf { _ -> it.assignDOI } },
             LiteratureListVersionCreator(resourceRepository, statementRepository, unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases, listService),
             LiteratureListChangelogCreator(unsafeLiteralUseCases, unsafeStatementUseCases),
             LiteratureListVersionArchiver(statementService, literatureListSnapshotRepository, snapshotIdGenerator, clock),
             LiteratureListVersionHistoryUpdater(unsafeStatementUseCases, unsafeResourceUseCases),
+            LiteratureListVersionDoiPublisher(unsafeStatementUseCases, unsafeLiteralUseCases, doiService, literatureListPublishBaseUri),
         )
         return steps.execute(command, PublishLiteratureListState()).literatureListVersionId!!
     }

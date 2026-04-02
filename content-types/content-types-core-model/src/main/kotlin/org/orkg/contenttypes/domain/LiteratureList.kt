@@ -4,6 +4,7 @@ import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
+import org.orkg.contenttypes.domain.identifiers.Identifiers
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.GeneralStatement
@@ -16,6 +17,7 @@ data class LiteratureList(
     override val id: ThingId,
     val title: String,
     val researchFields: List<ObjectIdAndLabel>,
+    val identifiers: Map<String, List<String>>,
     val authors: List<Author>,
     val versions: VersionInfo,
     val sustainableDevelopmentGoals: Set<ObjectIdAndLabel>,
@@ -55,6 +57,7 @@ data class LiteratureList(
                 researchFields = directStatements.wherePredicate(Predicates.hasResearchField)
                     .objectIdsAndLabel()
                     .sortedBy { it.id },
+                identifiers = directStatements.associateIdentifiers(Identifiers.literatureList),
                 authors = statements.authors(root).ifEmpty { statements.legacyAuthors(root) },
                 versions = versions,
                 sustainableDevelopmentGoals = directStatements.wherePredicate(Predicates.sustainableDevelopmentGoal)

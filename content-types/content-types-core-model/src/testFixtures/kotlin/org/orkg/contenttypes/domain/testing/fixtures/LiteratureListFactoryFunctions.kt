@@ -41,6 +41,7 @@ fun createLiteratureList() = LiteratureList(
             label = "Research Field 2",
         ),
     ),
+    identifiers = emptyMap(),
     authors = listOf(
         Author(
             id = ThingId("147"),

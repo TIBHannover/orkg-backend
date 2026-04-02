@@ -63,6 +63,11 @@ fun paperIdentifierFields(path: String = "identifiers") = listOf(
     fieldWithPath("$path.open_alex").type("Array").description("The list of OpenAlex IDs of the paper. (optional)").arrayItemsType("String").constraints(openAlexIdConstraint).optional(),
 )
 
+fun literatureListIdentifierResponseFields(path: String = "identifiers") = listOf(
+    fieldWithPath(path).description("The unique identifiers of the literature list."),
+    fieldWithPath("$path.doi").type("Array").description("The list of DOIs of the literature list. (optional)").arrayItemsType("String").constraints(doiConstraint).optional(),
+)
+
 fun smartReviewIdentifierResponseFields(path: String = "identifiers") = listOf(
     fieldWithPath(path).description("The unique identifiers of the smart review."),
     fieldWithPath("$path.doi").type("Array").description("The list of DOIs of the smart review. (optional)").arrayItemsType("String").constraints(doiConstraint).optional(),
@@ -257,6 +262,7 @@ fun literatureListResponseFields() = listOf(
     fieldWithPath("_class").description("Indicates which type of entity was returned. Always has the value `literature-list`."),
     *authorListFields("literature list").toTypedArray(),
     *sustainableDevelopmentGoalsResponseFields("literature list").toTypedArray(),
+    *literatureListIdentifierResponseFields().toTypedArray(),
 )
 
 fun literatureListListSectionResponseFields() = listOf(

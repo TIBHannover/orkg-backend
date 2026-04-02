@@ -463,6 +463,7 @@ data class LiteratureListRepresentation(
     val title: String,
     @field:JsonProperty("research_fields")
     val researchFields: List<ObjectIdAndLabel>,
+    val identifiers: Map<String, List<String>>,
     val authors: List<AuthorRepresentation>,
     val versions: VersionInfoRepresentation,
     @field:JsonProperty("sdgs")

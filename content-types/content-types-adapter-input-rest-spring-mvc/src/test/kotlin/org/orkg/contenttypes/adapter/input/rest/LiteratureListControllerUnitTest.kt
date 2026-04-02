@@ -17,6 +17,7 @@ import org.orkg.common.Either
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
+import org.orkg.common.exceptions.ServiceUnavailable
 import org.orkg.common.exceptions.UnknownSortingProperty
 import org.orkg.common.testing.fixtures.fixedClock
 import org.orkg.common.thingIdConstraint
@@ -842,8 +843,12 @@ internal class LiteratureListControllerUnitTest : MockMvcBaseTest("literature-li
     fun publish() {
         val id = ThingId("R123")
         val changelog = "new papers added"
+        val assignDOI = true
+        val description = "list description"
         val request = mapOf(
             "changelog" to changelog,
+            "assign_doi" to assignDOI,
+            "description" to description,
         )
         val literatureListVersionId = ThingId("R456")
 
@@ -863,6 +868,7 @@ internal class LiteratureListControllerUnitTest : MockMvcBaseTest("literature-li
                     A `POST` request publishes an existing literature list with the given parameters.
                     In the process, a new literature list published resource is created and linked to the original literature list resource.
                     All statements containing the sections of the original literature list are archived in a separate database.
+                    Optionally, a DOI can be assigned to the published smart review resource.
                     The response will be `201 Created` when successful.
                     The published literature list (object) can be retrieved by following the URI in the `Location` header field.
                     """,
@@ -875,20 +881,28 @@ internal class LiteratureListControllerUnitTest : MockMvcBaseTest("literature-li
                 )
                 requestFields<PublishLiteratureListRequest>(
                     fieldWithPath("changelog").description("The description of changes that have been made since the previous version."),
+                    fieldWithPath("assign_doi").description("Whether to assign a new DOI for the literature list when publishing. (default: false)"),
+                    fieldWithPath("description").description("The description of the contents of the literature list. This description is used for the DOI metadata. It will be ignored when `assign_doi` is set to `false`. (optional)").optional(),
                 )
                 throws(
                     LiteratureListNotFound::class,
                     LiteratureListAlreadyPublished::class,
                     InvalidDescription::class,
+                    AuthorNotFound::class,
+                    AmbiguousAuthor::class,
+                    InvalidLabel::class,
+                    ServiceUnavailable::class,
                 )
             }
 
         verify(exactly = 1) {
             literatureListService.publish(
                 withArg {
-                    it.id shouldBe id
+                    it.literatureListId shouldBe id
                     it.contributorId shouldBe ContributorId(MockUserId.USER)
                     it.changelog shouldBe changelog
+                    it.assignDOI shouldBe assignDOI
+                    it.description shouldBe description
                 },
             )
         }

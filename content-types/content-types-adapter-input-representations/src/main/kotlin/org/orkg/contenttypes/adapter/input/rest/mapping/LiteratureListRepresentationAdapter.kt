@@ -27,6 +27,7 @@ interface LiteratureListRepresentationAdapter :
             id = id,
             title = title,
             researchFields = researchFields,
+            identifiers = identifiers,
             authors = authors.mapToAuthorRepresentation(),
             versions = versions.toVersionInfoRepresentation(),
             sustainableDevelopmentGoals = sustainableDevelopmentGoals.mapToLabeledObjectRepresentation(),

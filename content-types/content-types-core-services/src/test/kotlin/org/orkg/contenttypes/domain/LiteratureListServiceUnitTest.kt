@@ -20,6 +20,7 @@ import org.orkg.common.testing.fixtures.fixedClock
 import org.orkg.community.output.ContributorRepository
 import org.orkg.community.output.ObservatoryRepository
 import org.orkg.community.output.OrganizationRepository
+import org.orkg.contenttypes.output.DoiService
 import org.orkg.contenttypes.output.LiteratureListRepository
 import org.orkg.contenttypes.output.LiteratureListSnapshotRepository
 import org.orkg.graph.domain.BundleConfiguration
@@ -62,24 +63,27 @@ internal class LiteratureListServiceUnitTest : MockkBaseTest {
     private val listService: ListUseCases = mockk()
     private val listRepository: ListRepository = mockk()
     private val contributorRepository: ContributorRepository = mockk()
+    private val doiService: DoiService = mockk()
 
     private val service = LiteratureListService(
-        resourceRepository,
-        literatureListRepository,
-        literatureListSnapshotRepository,
-        snapshotIdGenerator,
-        statementRepository,
-        observatoryRepository,
-        organizationRepository,
-        resourceService,
-        unsafeResourceUseCases,
-        unsafeLiteralUseCases,
-        statementService,
-        unsafeStatementUseCases,
-        listService,
-        listRepository,
-        contributorRepository,
-        fixedClock,
+        resourceRepository = resourceRepository,
+        literatureListRepository = literatureListRepository,
+        literatureListSnapshotRepository = literatureListSnapshotRepository,
+        snapshotIdGenerator = snapshotIdGenerator,
+        statementRepository = statementRepository,
+        observatoryRepository = observatoryRepository,
+        organizationRepository = organizationRepository,
+        resourceService = resourceService,
+        unsafeResourceUseCases = unsafeResourceUseCases,
+        unsafeLiteralUseCases = unsafeLiteralUseCases,
+        statementService = statementService,
+        unsafeStatementUseCases = unsafeStatementUseCases,
+        listService = listService,
+        listRepository = listRepository,
+        contributorRepository = contributorRepository,
+        doiService = doiService,
+        clock = fixedClock,
+        literatureListPublishBaseUri = "https://orkg.org/list/",
     )
 
     @Test
@@ -257,6 +261,7 @@ internal class LiteratureListServiceUnitTest : MockkBaseTest {
             it.researchFields shouldBe listOf(
                 ObjectIdAndLabel(id = researchFieldId, label = "Research Field 1"),
             )
+            it.identifiers shouldBe emptyMap()
             it.authors shouldNotBe null
             it.authors shouldBe listOf(
                 Author(
@@ -502,6 +507,7 @@ internal class LiteratureListServiceUnitTest : MockkBaseTest {
         actual.get().asClue {
             it.id shouldBe expected.id
             it.title shouldBe expected.label
+            it.identifiers shouldBe emptyMap()
             it.researchFields shouldBe listOf(
                 ObjectIdAndLabel(id = researchFieldId, label = "Research Field 1"),
             )

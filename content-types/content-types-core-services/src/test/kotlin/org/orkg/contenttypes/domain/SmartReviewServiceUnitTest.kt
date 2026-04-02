@@ -336,6 +336,7 @@ internal class SmartReviewServiceUnitTest : MockkBaseTest {
             it.researchFields shouldBe listOf(
                 ObjectIdAndLabel(id = researchFieldId, label = "Research Field 1"),
             )
+            it.identifiers shouldBe emptyMap()
             it.authors shouldNotBe null
             it.authors shouldBe listOf(
                 Author(
@@ -656,6 +657,7 @@ internal class SmartReviewServiceUnitTest : MockkBaseTest {
             it.researchFields shouldBe listOf(
                 ObjectIdAndLabel(id = researchFieldId, label = "Research Field 1"),
             )
+            it.identifiers shouldBe emptyMap()
             it.authors shouldNotBe null
             it.authors shouldBe listOf(
                 Author(

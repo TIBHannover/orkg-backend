@@ -24,7 +24,7 @@ internal class LiteratureListPublishableValidatorUnitTest : MockkBaseTest {
     @Test
     fun `Given a literature list publish command, when literature list is unpublished, it returns success`() {
         val literatureList = createLiteratureList()
-        val command = publishLiteratureListCommand().copy(id = literatureList.id)
+        val command = publishLiteratureListCommand().copy(literatureListId = literatureList.id)
         val state = PublishLiteratureListState()
 
         every { literatureListService.findById(literatureList.id) } returns Optional.of(literatureList)
@@ -40,7 +40,7 @@ internal class LiteratureListPublishableValidatorUnitTest : MockkBaseTest {
     @Test
     fun `Given a literature list publish command, when literature list is published, it throws an exception`() {
         val literatureList = createLiteratureList().copy(published = true)
-        val command = publishLiteratureListCommand().copy(id = literatureList.id)
+        val command = publishLiteratureListCommand().copy(literatureListId = literatureList.id)
         val state = PublishLiteratureListState()
 
         every { literatureListService.findById(literatureList.id) } returns Optional.of(literatureList)
@@ -55,10 +55,10 @@ internal class LiteratureListPublishableValidatorUnitTest : MockkBaseTest {
         val command = publishLiteratureListCommand()
         val state = PublishLiteratureListState()
 
-        every { literatureListService.findById(command.id) } returns Optional.empty()
+        every { literatureListService.findById(command.literatureListId) } returns Optional.empty()
 
         assertThrows<LiteratureListNotFound> { literatureListPublishableValidator(command, state) }
 
-        verify(exactly = 1) { literatureListService.findById(command.id) }
+        verify(exactly = 1) { literatureListService.findById(command.literatureListId) }
     }
 }

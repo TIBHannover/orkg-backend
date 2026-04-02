@@ -22,6 +22,9 @@ object Identifiers {
     val comparison = setOf(
         Identifier("doi", Predicates.hasDOI, DOI::of),
     )
+    val literatureList = setOf(
+        Identifier("doi", Predicates.hasDOI, DOI::of),
+    )
     val smartReview = setOf(
         Identifier("doi", Predicates.hasDOI, DOI::of),
     )

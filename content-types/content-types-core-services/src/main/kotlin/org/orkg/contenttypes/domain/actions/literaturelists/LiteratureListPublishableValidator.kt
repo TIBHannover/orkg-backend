@@ -10,10 +10,10 @@ class LiteratureListPublishableValidator(
     private val literatureListService: LiteratureListUseCases,
 ) : PublishLiteratureListAction {
     override fun invoke(command: PublishLiteratureListCommand, state: State): State {
-        val literatureList = literatureListService.findById(command.id)
-            .orElseThrow { LiteratureListNotFound(command.id) }
+        val literatureList = literatureListService.findById(command.literatureListId)
+            .orElseThrow { LiteratureListNotFound(command.literatureListId) }
         if (literatureList.published) {
-            throw LiteratureListAlreadyPublished(command.id)
+            throw LiteratureListAlreadyPublished(command.literatureListId)
         }
         return state.copy(literatureList = literatureList)
     }

@@ -158,10 +158,16 @@ interface PublishLiteratureListUseCase {
     fun publish(command: PublishCommand): ThingId
 
     data class PublishCommand(
-        val id: ThingId,
+        val literatureListId: ThingId,
         val contributorId: ContributorId,
         val changelog: String,
-    )
+        val assignDOI: Boolean,
+        val description: String?,
+    ) {
+        init {
+            require(!assignDOI || (assignDOI && !description.isNullOrBlank())) { "Description must not be blank when assigning a DOI." }
+        }
+    }
 }
 
 sealed interface AbstractLiteratureListSectionCommand {

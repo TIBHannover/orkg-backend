@@ -13,6 +13,7 @@ dependencies {
     api(project(":common:datatypes"))
     api(project(":common:core-identifiers"))
     api(project(":common:spring-webmvc"))
+    api(project(":community:community-ports-output"))
     api(project(":content-types:content-types-core-model"))
     api(project(":content-types:content-types-ports-input"))
     api(project(":graph:graph-adapter-input-representations"))
@@ -26,6 +27,7 @@ dependencies {
     implementation(project(":common:external-identifiers"))
     implementation(project(":common:functional"))
     implementation(project(":common:pagination"))
+    implementation(project(":community:community-core-model"))
     implementation(project(":graph:graph-core-constants"))
 }
 

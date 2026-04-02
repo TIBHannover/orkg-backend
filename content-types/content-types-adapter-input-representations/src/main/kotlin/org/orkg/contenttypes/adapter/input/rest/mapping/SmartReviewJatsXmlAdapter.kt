@@ -22,8 +22,10 @@ import org.jbibtex.BibTeXParser
 import org.jbibtex.Key
 import org.jbibtex.LaTeXParser
 import org.jbibtex.LaTeXPrinter
+import org.orkg.common.ContributorId
 import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
+import org.orkg.community.output.ContributorRepository
 import org.orkg.contenttypes.adapter.input.rest.jats.DocumentState
 import org.orkg.contenttypes.adapter.input.rest.jats.dsl.`article-categories`
 import org.orkg.contenttypes.adapter.input.rest.jats.dsl.`article-id`
@@ -43,10 +45,11 @@ import org.orkg.contenttypes.adapter.input.rest.jats.dsl.`ext-link`
 import org.orkg.contenttypes.adapter.input.rest.jats.dsl.fpage
 import org.orkg.contenttypes.adapter.input.rest.jats.dsl.front
 import org.orkg.contenttypes.adapter.input.rest.jats.dsl.issue
-import org.orkg.contenttypes.adapter.input.rest.jats.dsl.italic
 import org.orkg.contenttypes.adapter.input.rest.jats.dsl.license
 import org.orkg.contenttypes.adapter.input.rest.jats.dsl.`license-p`
 import org.orkg.contenttypes.adapter.input.rest.jats.dsl.license_ref
+import org.orkg.contenttypes.adapter.input.rest.jats.dsl.list
+import org.orkg.contenttypes.adapter.input.rest.jats.dsl.`list-item`
 import org.orkg.contenttypes.adapter.input.rest.jats.dsl.month
 import org.orkg.contenttypes.adapter.input.rest.jats.dsl.`page-range`
 import org.orkg.contenttypes.adapter.input.rest.jats.dsl.permissions
@@ -103,6 +106,7 @@ private val latexPrinter = LaTeXPrinter()
 interface SmartReviewJatsXmlAdapter : ComparisonJatsXmlAdapter {
     val smartReviewUseCases: SmartReviewUseCases
     val statementUseCases: StatementUseCases
+    val contributorRepository: ContributorRepository
 
     fun Optional<SmartReview>.mapToSmartReviewJatsXml() =
         map { it.toJatsXml() }
@@ -183,6 +187,7 @@ interface SmartReviewJatsXmlAdapter : ComparisonJatsXmlAdapter {
                             }
                         }
                     }
+                    acknowledgements(this@toJatsXml)
                 }
                 if (references.isNotEmpty()) {
                     back {
@@ -199,6 +204,41 @@ interface SmartReviewJatsXmlAdapter : ComparisonJatsXmlAdapter {
                 }
             }
         }.toXml()
+
+    private fun HTMLTag.acknowledgements(review: SmartReview) {
+        sec {
+            title { +"Acknowledgements" }
+            list {
+                review.acknowledgements.map { it.key to (it.value * 100).toInt() }
+                    .sortedByDescending { (_, pct) -> pct }
+                    .forEach { (contributorId, pct) ->
+                        `list-item` {
+                            when (contributorId) {
+                                ContributorId.UNKNOWN -> {
+                                    +"Unknown users"
+                                }
+
+                                ContributorId.SYSTEM -> {
+                                    +"The Open Research Knowledge Graph"
+                                }
+
+                                else -> {
+                                    `ext-link` {
+                                        attributes["ext-link-type"] = "uri"
+                                        attributes["xlink:href"] = "$frontendUri/u/$contributorId"
+                                        contributorRepository.findById(contributorId).ifPresentOrElse(
+                                            { +it.name },
+                                            { +"Unknown users" },
+                                        )
+                                    }
+                                }
+                            }
+                            +" (contributed ~$pct% to the content)"
+                        }
+                    }
+            }
+        }
+    }
 
     private fun HTMLTag.comparisonSection(section: SmartReviewComparisonSection, state: DocumentState) {
         section.comparison?.let {

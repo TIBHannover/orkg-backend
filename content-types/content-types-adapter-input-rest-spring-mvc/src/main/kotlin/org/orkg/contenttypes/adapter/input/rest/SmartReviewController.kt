@@ -15,6 +15,7 @@ import org.orkg.common.ThingId
 import org.orkg.common.annotations.RequireLogin
 import org.orkg.common.contributorId
 import org.orkg.common.validation.NullableNotBlank
+import org.orkg.community.output.ContributorRepository
 import org.orkg.contenttypes.adapter.input.rest.mapping.ContentTypeRepresentationAdapter
 import org.orkg.contenttypes.adapter.input.rest.mapping.SmartReviewJatsXmlAdapter
 import org.orkg.contenttypes.adapter.input.rest.mapping.SmartReviewRepresentationAdapter
@@ -75,6 +76,7 @@ class SmartReviewController(
     override val comparisonTableUseCases: ComparisonTableUseCases,
     override val smartReviewUseCases: SmartReviewUseCases,
     override val statementUseCases: StatementUseCases,
+    override val contributorRepository: ContributorRepository,
     @param:Value($$"${spring.rdf.frontend-uri}")
     override val frontendUri: String,
     override val clock: Clock,

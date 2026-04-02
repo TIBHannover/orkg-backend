@@ -27,6 +27,8 @@ import org.orkg.common.thingIdConstraint
 import org.orkg.community.domain.ContributorNotFound
 import org.orkg.community.domain.ObservatoryNotFound
 import org.orkg.community.domain.OrganizationNotFound
+import org.orkg.community.output.ContributorRepository
+import org.orkg.community.testing.fixtures.createContributor
 import org.orkg.contenttypes.adapter.input.rest.SmartReviewController.CreateSmartReviewRequest
 import org.orkg.contenttypes.adapter.input.rest.SmartReviewController.PublishSmartReviewRequest
 import org.orkg.contenttypes.adapter.input.rest.SmartReviewController.SmartReviewComparisonSectionRequest
@@ -136,6 +138,9 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
     @MockkBean
     private lateinit var comparisonTableUseCases: ComparisonTableUseCases
 
+    @MockkBean
+    private lateinit var contributorRepository: ContributorRepository
+
     @Test
     @DisplayName("Given a smart review, when it is fetched by id and service succeeds, then status is 200 OK and smart review is returned")
     fun findById() {
@@ -191,6 +196,8 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
                 """.trimIndent(),
             ),
         )
+        val mainContributorId = ContributorId("dca4080c-e23f-489d-b900-af8bfc2b0620")
+
         every { smartReviewService.findById(smartReview.id) } returns Optional.of(smartReview)
         every { comparisonTableUseCases.findByComparisonId(ThingId("R6416")) } returns Optional.of(createComparisonTable())
         every { statementService.findAll(subjectId = ThingId("R1"), pageable = PageRequests.ALL) } returns pageOf(
@@ -198,6 +205,9 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
             createStatement(subject = createResource(ThingId("R1")), `object` = createResource(ThingId("R2"))),
         )
         every { statementService.findAll(subjectId = ThingId("P1"), pageable = PageRequests.ALL) } returns pageOf()
+        every { contributorRepository.findById(mainContributorId) } returns Optional.of(
+            createContributor(id = mainContributorId, name = "Main Contributor"),
+        )
 
         documentedGetRequestTo("/api/smart-reviews/{id}", smartReview.id)
             .accept(MediaType.APPLICATION_XML_VALUE)
@@ -222,6 +232,7 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
         verify(exactly = 1) { comparisonTableUseCases.findByComparisonId(ThingId("R6416")) }
         verify(exactly = 2) { statementService.findAll(subjectId = ThingId("R1"), pageable = PageRequests.ALL) }
         verify(exactly = 2) { statementService.findAll(subjectId = ThingId("P1"), pageable = PageRequests.ALL) }
+        verify(exactly = 1) { contributorRepository.findById(mainContributorId) }
     }
 
     @Test

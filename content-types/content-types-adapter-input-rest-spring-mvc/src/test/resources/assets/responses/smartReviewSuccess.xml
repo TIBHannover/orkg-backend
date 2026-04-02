@@ -193,6 +193,20 @@
         </table>
       </table-wrap>
     </sec>
+    <sec>
+      <title>Acknowledgements</title>
+      <list>
+        <list-item>
+          <ext-link ext-link-type="uri" xlink:href="http://localhost:3000/u/dca4080c-e23f-489d-b900-af8bfc2b0620">
+            Main Contributor
+          </ext-link>
+          (contributed ~75% to the content)
+        </list-item>
+        <list-item>
+          Unknown users (contributed ~25% to the content)
+        </list-item>
+      </list>
+    </sec>
   </body>
   <back>
     <ref-list>

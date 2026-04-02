@@ -1,9 +1,14 @@
 package org.orkg.profiling.adapter.output.neo4j
 
 import org.orkg.contenttypes.output.AuthorRepository
+import org.orkg.contenttypes.output.AuthorStatisticsRepository
+import org.orkg.contenttypes.output.ComparisonAuxiliaryRepository
 import org.orkg.contenttypes.output.ComparisonRepository
 import org.orkg.contenttypes.output.ContentTypeRepository
+import org.orkg.contenttypes.output.ContributorStatisticsRepository
 import org.orkg.contenttypes.output.FindDatasetsQuery
+import org.orkg.contenttypes.output.LegacyFindResearchFieldsQuery
+import org.orkg.contenttypes.output.LegacyFindResearchProblemQuery
 import org.orkg.contenttypes.output.LegacyResearchFieldRepository
 import org.orkg.contenttypes.output.LegacyResearchProblemRepository
 import org.orkg.contenttypes.output.LiteratureListRepository
@@ -11,10 +16,12 @@ import org.orkg.contenttypes.output.PaperRepository
 import org.orkg.contenttypes.output.ResearchFieldHierarchyRepository
 import org.orkg.contenttypes.output.ResearchFieldRepository
 import org.orkg.contenttypes.output.ResearchProblemRepository
+import org.orkg.contenttypes.output.RosettaStoneStatementRepository
 import org.orkg.contenttypes.output.SmartReviewRepository
 import org.orkg.contenttypes.output.SummarizeBenchmarkQuery
 import org.orkg.contenttypes.output.SummarizeDatasetQuery
 import org.orkg.contenttypes.output.TemplateRepository
+import org.orkg.contenttypes.output.VisualizationRepository
 import org.orkg.curation.output.CurationRepository
 import org.orkg.graph.output.ClassHierarchyRepository
 import org.orkg.graph.output.ClassRelationRepository
@@ -55,14 +62,19 @@ class Neo4jRepositoryProfiler(
 
     override val repositories = listOf(
         AuthorRepository::class,
+        AuthorStatisticsRepository::class,
         ClassHierarchyRepository::class,
         ClassRelationRepository::class,
         ClassRepository::class,
         ComparisonRepository::class,
+        ComparisonAuxiliaryRepository::class,
         ContentTypeRepository::class,
+        ContributorStatisticsRepository::class,
         CurationRepository::class,
         FindDatasetsQuery::class,
         FormattedLabelRepository::class,
+        LegacyFindResearchFieldsQuery::class,
+        LegacyFindResearchProblemQuery::class,
         LegacyResearchFieldRepository::class,
         LegacyResearchProblemRepository::class,
         ListRepository::class,
@@ -73,6 +85,7 @@ class Neo4jRepositoryProfiler(
         ResearchFieldHierarchyRepository::class,
         ResearchFieldRepository::class,
         ResearchProblemRepository::class,
+        RosettaStoneStatementRepository::class,
         ResourceRepository::class,
         SmartReviewRepository::class,
         StatementRepository::class,
@@ -81,6 +94,7 @@ class Neo4jRepositoryProfiler(
         SummarizeDatasetQuery::class,
         TemplateRepository::class,
         ThingRepository::class,
+        VisualizationRepository::class,
     )
 
     private val ignoredFunctions = listOf(

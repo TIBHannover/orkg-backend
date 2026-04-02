@@ -1,5 +1,6 @@
 package org.orkg.profiling.adapter.output.facade
 
+import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
@@ -7,7 +8,9 @@ import org.orkg.common.ThingId
 import org.orkg.community.adapter.output.jpa.internal.PostgresOrganizationRepository
 import org.orkg.community.output.ContributorRepository
 import org.orkg.community.output.ObservatoryRepository
+import org.orkg.contenttypes.domain.ComparisonPath
 import org.orkg.contenttypes.domain.ContentTypeClass
+import org.orkg.contenttypes.domain.SimpleComparisonPath
 import org.orkg.graph.domain.BundleConfiguration
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ExactSearchString
@@ -24,12 +27,12 @@ import org.orkg.graph.output.PredicateRepository
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.StatementRepository
 import org.orkg.profiling.output.ValueGenerator
+import org.orkg.spring.data.annotations.TransactionalOnJPA
 import org.springframework.context.annotation.Profile
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Component
-import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDate
 import java.time.OffsetDateTime
 import kotlin.random.Random
@@ -160,7 +163,7 @@ class SetValueGenerator : ValueGenerator<Set<*>> {
 }
 
 @Component
-@Transactional
+@TransactionalOnJPA
 @Profile("profileRepositories")
 class ObservatoryIdValueGenerator(
     private val observatoryRepository: ObservatoryRepository,
@@ -176,7 +179,7 @@ class ObservatoryIdValueGenerator(
 }
 
 @Component
-@Transactional
+@TransactionalOnJPA
 @Profile("profileRepositories")
 class OrganizationIdValueGenerator(
     private val organizationRepository: PostgresOrganizationRepository,
@@ -350,6 +353,7 @@ class StatementIdValueGenerator(
 }
 
 @Component
+@TransactionalOnJPA
 @Profile("profileRepositories")
 class ContributorIdValueGenerator(
     private val contributorRepository: ContributorRepository,
@@ -442,4 +446,66 @@ class SortValueGenerator : ValueGenerator<Sort> {
         type: KType,
         randomInstances: (Random, String, KType) -> List<Any>,
     ): List<Sort> = listOf(Sort.by("created_by"))
+}
+
+@Component
+@Profile("profileRepositories")
+class SimpleComparisonPathGenerator : ValueGenerator<SimpleComparisonPath> {
+    override operator fun invoke(
+        random: Random,
+        name: String,
+        type: KType,
+        randomInstances: (Random, String, KType) -> List<Any>,
+    ): List<SimpleComparisonPath> = listOf(
+        SimpleComparisonPath(
+            id = Predicates.addresses,
+            type = ComparisonPath.Type.PREDICATE,
+            children = emptyList(),
+        ),
+        SimpleComparisonPath(
+            id = ThingId("R21325"),
+            type = ComparisonPath.Type.ROSETTA_STONE_STATEMENT,
+            children = listOf(
+                SimpleComparisonPath(
+                    id = Predicates.hasSubjectPosition,
+                    type = ComparisonPath.Type.ROSETTA_STONE_STATEMENT_VALUE,
+                    children = emptyList(),
+                ),
+                SimpleComparisonPath(
+                    id = ThingId("hasObjectPosition1"),
+                    type = ComparisonPath.Type.ROSETTA_STONE_STATEMENT_VALUE,
+                    children = emptyList(),
+                ),
+                SimpleComparisonPath(
+                    id = ThingId("hasObjectPosition2"),
+                    type = ComparisonPath.Type.ROSETTA_STONE_STATEMENT_VALUE,
+                    children = emptyList(),
+                ),
+            ),
+        ),
+    )
+}
+
+@Component
+@Profile("profileRepositories")
+class ComparisonPathGenerator(
+    private val simpleComparisonPathGenerator: SimpleComparisonPathGenerator,
+) : ValueGenerator<ComparisonPath<*>> {
+    override operator fun invoke(
+        random: Random,
+        name: String,
+        type: KType,
+        randomInstances: (Random, String, KType) -> List<Any>,
+    ): List<SimpleComparisonPath> = simpleComparisonPathGenerator(random, name, type, randomInstances)
+}
+
+@Component
+@Profile("profileRepositories")
+class ParsedIRIGenerator : ValueGenerator<ParsedIRI> {
+    override operator fun invoke(
+        random: Random,
+        name: String,
+        type: KType,
+        randomInstances: (Random, String, KType) -> List<Any>,
+    ): List<ParsedIRI> = listOf(ParsedIRI("http://purl.org/linked-data/cube#Concept"))
 }

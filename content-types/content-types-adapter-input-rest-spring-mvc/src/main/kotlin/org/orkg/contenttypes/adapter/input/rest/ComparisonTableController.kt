@@ -3,6 +3,7 @@ package org.orkg.contenttypes.adapter.input.rest
 import com.fasterxml.jackson.annotation.JsonProperty
 import jakarta.validation.Valid
 import org.orkg.common.ContributorId
+import org.orkg.common.MediaTypeCapabilities
 import org.orkg.common.ThingId
 import org.orkg.common.annotations.RequireLogin
 import org.orkg.common.contributorId
@@ -47,9 +48,10 @@ class ComparisonTableController(
     @GetMapping("/{id}/contents", produces = ["text/csv"])
     fun findByComparisonIdAsCsv(
         @PathVariable id: ThingId,
+        capabilities: MediaTypeCapabilities,
     ): String =
         service.findByComparisonId(id)
-            .mapToComparisonTableCsv()
+            .mapToComparisonTableCsv(capabilities)
             .orElseThrow { ComparisonTableNotFound(id) }
 
     @RequireLogin

@@ -3,6 +3,7 @@ package org.orkg.contenttypes.input.testing.fixtures.configuration
 import org.orkg.common.CommonDocumentationContextProvider
 import org.orkg.common.configuration.WebMvcConfiguration
 import org.orkg.common.json.CommonJacksonModule
+import org.orkg.contenttypes.adapter.input.rest.configuration.ContentTypeMediaTypeCapabilityConfiguration
 import org.orkg.contenttypes.adapter.input.rest.json.ContentTypeJacksonModule
 import org.orkg.contenttypes.input.testing.fixtures.ContentTypeDocumentationContextProvider
 import org.orkg.graph.adapter.input.rest.json.GraphJacksonModule
@@ -22,6 +23,7 @@ import org.springframework.context.annotation.Import
     CommonDocumentationContextProvider::class,
     GraphDocumentationContextProvider::class,
     ContentTypeDocumentationContextProvider::class,
+    ContentTypeMediaTypeCapabilityConfiguration::class,
 )
 @TestConfiguration
 class ContentTypeControllerUnitTestConfiguration

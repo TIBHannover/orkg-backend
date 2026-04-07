@@ -107,6 +107,37 @@ internal class ComparisonTableControllerUnitTest : MockMvcBaseTest("comparison-t
     }
 
     @Test
+    @DisplayName("Given a comparison table, when it is fetched by id as CSV and service succeeds, then status is 200 OK and comparison table is returned")
+    fun findTableByComparisonId_textCsv_transposed() {
+        val id = ThingId("R123")
+        val table = createComparisonTable()
+
+        every { comparisonTableService.findByComparisonId(id) } returns Optional.of(table)
+
+        documentedGetRequestTo("/api/comparisons/{id}/contents", id)
+            .accept("text/csv;transposed=true")
+            .perform()
+            .andPrint()
+            .andExpect(status().isOk)
+            .andExpect(content().string(responseCsv("comparisonTableTransposedSuccess")))
+            .andDocument {
+                summary("Fetching comparison tables")
+                description(
+                    """
+                    A `GET` request provides information about a comparison table.
+                    """,
+                )
+                pathParameters(
+                    parameterWithName("id").description("The identifier of the comparison to fetch the table for."),
+                )
+                simpleResponse(SimpleType.STRING)
+                throws(ComparisonNotFound::class, ComparisonTableNotFound::class)
+            }
+
+        verify(exactly = 1) { comparisonTableService.findByComparisonId(id) }
+    }
+
+    @Test
     @DisplayName("Given a comparison, when finding all comparison paths by comparison id, then status is 200 OK and comparison paths are returned")
     fun findAllPathsByComparisonId() {
         val id = ThingId("R123")

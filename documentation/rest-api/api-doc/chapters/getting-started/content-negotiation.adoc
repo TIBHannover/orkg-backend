@@ -10,4 +10,5 @@ The following list of media type parameters are supported:
 |==================================================================================================================================================================
 | Parameter Name   | Acceptable Values | Supported Media Types | Description
 | formatted-labels | `V1`              | application/json      | When specified, enables serialization of the `formatted_label` field for resource representations.
+| transposed       | `true`, `false`   | text/csv              | When set to `true`, respective endpoints return a transposed CSV table.
 |==================================================================================================================================================================

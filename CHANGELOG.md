@@ -6,6 +6,23 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Added comparison links for Comparison sections to Smart Review JATS export.
+- Added "Acknowledgement" section to Smart Review JATS export.
+  (See [!1468](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1468))
+- Added support for publishing Literature Lists with DOI.
+  (See [!1464](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1464))
+- Added media type capability for fetching Comparison tables as transposed CSV.
+  (See [!1463](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1463))
+### Changed
+- Updated to Gradle 9.4.1.
+  (See [!1460](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1460))
+- Updated to Kotlin 2.3.0.
+  (See [!1462](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1462))
+### Fixed
+- Fixed dummy data setup using API endpoint URLs with trailing slashes.
+- Fixed Neo4j query profiler not covering all repositories.
+  (See [!1466](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1466))
 
 ## [0.95.0] - 2026-03-24
 ### Added

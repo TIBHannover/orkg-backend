@@ -10,7 +10,7 @@ testing {
     suites {
         val test by getting(JvmTestSuite::class) {
             dependencies {
-                implementation(testFixtures(project(":testing:spring")))
+                implementation(testFixtures(project(":common:testing-spring")))
                 implementation(testFixtures(project(":graph:graph-core-model")))
                 implementation(testFixtures(project(":common:datatypes")))
                 implementation(testFixtures(project(":community:community-core-model")))
@@ -72,6 +72,6 @@ dependencies {
     testFixturesApi(project(":common:serialization"))
     testFixturesApi(project(":common:spring-webmvc"))
     testFixturesApi(testFixtures(project(":common:core-identifiers")))
-    testFixturesApi(testFixtures(project(":testing:spring")))
+    testFixturesApi(testFixtures(project(":common:testing-spring")))
     testFixturesImplementation(testFixtures(project(":community:community-core-model")))
 }

@@ -14,8 +14,7 @@ class PostgresContainerInitializer : ApplicationContextInitializer<ConfigurableA
     // TODO: might be nice to aggregate values for debugging, if possible
 
     companion object {
-        val postgresContainer: PostgreSQLContainer =
-            PostgreSQLContainer(DockerImageName.parse(BuildConfig.CONTAINER_IMAGE_POSTGRES))
+        val postgresContainer: PostgreSQLContainer = PostgreSQLContainer(DockerImageName.parse(BuildConfig.CONTAINER_IMAGE_POSTGRES))
     }
 
     override fun initialize(applicationContext: ConfigurableApplicationContext) {

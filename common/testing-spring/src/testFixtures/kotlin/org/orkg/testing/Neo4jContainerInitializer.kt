@@ -23,12 +23,12 @@ class Neo4jContainerInitializer : ApplicationContextInitializer<ConfigurableAppl
 
     override fun initialize(applicationContext: ConfigurableApplicationContext) {
         neo4jContainer.start()
-        TestPropertyValues.of(settingsForSDN(neo4jContainer)).applyTo(applicationContext)
+        TestPropertyValues.of(neo4jContainer.settings()).applyTo(applicationContext)
     }
 
-    private fun settingsForSDN(neo4j: Neo4jContainer) = listOf(
-        "spring.neo4j.uri=${neo4j.boltUrl}",
+    private fun Neo4jContainer.settings() = listOf(
+        "spring.neo4j.uri=$boltUrl",
         "spring.neo4j.authentication.username=neo4j",
-        "spring.neo4j.authentication.password=${neo4j.adminPassword}",
+        "spring.neo4j.authentication.password=$adminPassword",
     )
 }

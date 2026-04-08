@@ -44,8 +44,8 @@ testing {
                 implementation("org.springframework:spring-orm")
                 implementation("org.springframework:spring-test")
                 implementation(testFixtures(project(":common:testing")))
+                implementation(testFixtures(project(":common:testing-spring")))
                 implementation(testFixtures(project(":community:community-ports-output")))
-                implementation(testFixtures(project(":testing:spring")))
             }
         }
     }

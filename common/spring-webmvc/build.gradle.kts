@@ -40,7 +40,7 @@ testing {
                 implementation(project(":common:serialization"))
                 implementation(testFixtures(project(":common:core-identifiers")))
                 implementation(testFixtures(project(":common:testing")))
-                implementation(testFixtures(project(":testing:spring")))
+                implementation(testFixtures(project(":common:testing-spring")))
                 implementation("io.kotest:kotest-assertions-core")
                 implementation("io.kotest:kotest-assertions-shared")
                 implementation("io.kotest:kotest-common")

@@ -24,7 +24,7 @@ private fun KeycloakContainer.wellKnownUrl(realm: String): String =
 internal class KeyCloakIntegrationTest : KeycloakTestContainersBaseTest() {
     @Test
     fun `obtains the account service information and successfully connects to it`() {
-        val accountService = given().`when`().get("${container.authServerUrl}/realms/$KEYCLOAK_REALM")
+        val accountService = given().`when`().get("${keycloakContainer.authServerUrl}/realms/$KEYCLOAK_REALM")
             .then().statusCode(200).body("realm", equalTo(KEYCLOAK_REALM))
             .extract().path<String>("account-service")
 
@@ -33,7 +33,7 @@ internal class KeyCloakIntegrationTest : KeycloakTestContainersBaseTest() {
 
     @Test
     fun `use OIDC discovery to verify that the password grant is supported`() {
-        val supportedGrantTypes = given().`when`().get(container.wellKnownUrl(KEYCLOAK_REALM))
+        val supportedGrantTypes = given().`when`().get(keycloakContainer.wellKnownUrl(KEYCLOAK_REALM))
             .then().statusCode(200)
             .extract().body().jsonPath().getList<String>("grant_types_supported")
 
@@ -42,9 +42,9 @@ internal class KeyCloakIntegrationTest : KeycloakTestContainersBaseTest() {
 
     @Test
     fun `obtain access token for regular user`() {
-        assert(container.isRunning)
+        assert(keycloakContainer.isRunning)
 
-        val masterRealmTokenEndpoint = given().`when`().get(container.wellKnownUrl("master"))
+        val masterRealmTokenEndpoint = given().`when`().get(keycloakContainer.wellKnownUrl("master"))
             .then().statusCode(200)
             .extract().path<String>("token_endpoint")
 
@@ -53,8 +53,8 @@ internal class KeyCloakIntegrationTest : KeycloakTestContainersBaseTest() {
             .contentType(ContentType.URLENC.withCharset(Charsets.UTF_8))
             .formParam(CLIENT_ID, "admin-cli")
             .formParam(GRANT_TYPE, PASSWORD)
-            .formParam(USERNAME, container.adminUsername)
-            .formParam(PASSWORD, container.adminPassword)
+            .formParam(USERNAME, keycloakContainer.adminUsername)
+            .formParam(PASSWORD, keycloakContainer.adminPassword)
             .`when`().post(masterRealmTokenEndpoint)
             .then().statusCode(200)
             .extract().path<String>("access_token")
@@ -75,7 +75,7 @@ internal class KeyCloakIntegrationTest : KeycloakTestContainersBaseTest() {
             .contentType(ContentType.JSON.withCharset(Charsets.UTF_8))
             .body(user)
             .auth().oauth2(adminAccessToken)
-            .`when`().post("${container.authServerUrl}/admin/realms/$KEYCLOAK_REALM/users")
+            .`when`().post("${keycloakContainer.authServerUrl}/admin/realms/$KEYCLOAK_REALM/users")
             .then().statusCode(201)
             .extract().header("Location")
 
@@ -101,7 +101,7 @@ internal class KeyCloakIntegrationTest : KeycloakTestContainersBaseTest() {
             .`when`().put(userId)
             .then().statusCode(204)
 
-        val orkgRealmTokenEndpoint = given().`when`().get(container.wellKnownUrl("orkg"))
+        val orkgRealmTokenEndpoint = given().`when`().get(keycloakContainer.wellKnownUrl("orkg"))
             .then().statusCode(200)
             .extract().path<String>("token_endpoint")
 
@@ -130,6 +130,6 @@ internal class KeyCloakIntegrationTest : KeycloakTestContainersBaseTest() {
         assertThat(payload.path("preferred_username").stringValue(null)).isEqualTo("test")
         assertThat(payload.path("email").stringValue(null)).isEqualTo("test@example.org")
         assertThat(payload.path("display_name").stringValue(null)).isEqualTo("John Doe")
-        assertThat(payload.path("iss").stringValue(null)).isEqualTo("${container.authServerUrl}/realms/orkg")
+        assertThat(payload.path("iss").stringValue(null)).isEqualTo("${keycloakContainer.authServerUrl}/realms/orkg")
     }
 }

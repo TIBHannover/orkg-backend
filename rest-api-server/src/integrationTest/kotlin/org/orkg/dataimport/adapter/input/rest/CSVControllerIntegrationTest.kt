@@ -32,7 +32,6 @@ import org.orkg.graph.input.PredicateUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.testing.annotations.IntegrationTest
 import org.orkg.testing.annotations.TestWithMockUser
-import org.orkg.testing.configuration.JpaTransactionManagerConfiguration
 import org.orkg.testing.configuration.SpringBatchTestConfiguration
 import org.orkg.testing.spring.MockMvcBaseTest
 import org.springframework.beans.factory.annotation.Autowired
@@ -52,7 +51,6 @@ import tools.jackson.module.kotlin.readValue
         PaperCSVStepConfiguration::class,
         ValidatePaperCSVStepConfiguration::class,
         SpringBatchTestConfiguration::class,
-        JpaTransactionManagerConfiguration::class,
     ],
 )
 internal class CSVControllerIntegrationTest : MockMvcBaseTest("csvs") {

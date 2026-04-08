@@ -21,10 +21,10 @@ class MailpitContainerInitializer : ApplicationContextInitializer<ConfigurableAp
             .waitingFor(Wait.forHttp("/").forPort(HTTP_PORT))
 
         val GenericContainer<*>.httpPort: Int
-            get() = mailpitContainer.getMappedPort(HTTP_PORT)
+            get() = getMappedPort(HTTP_PORT)
 
         val GenericContainer<*>.smtpPort: Int
-            get() = mailpitContainer.getMappedPort(SMTP_PORT)
+            get() = getMappedPort(SMTP_PORT)
     }
 
     override fun initialize(applicationContext: ConfigurableApplicationContext) {
@@ -33,7 +33,7 @@ class MailpitContainerInitializer : ApplicationContextInitializer<ConfigurableAp
     }
 
     private fun GenericContainer<*>.settings() = listOf(
-        "spring.mail.host=${mailpitContainer.host}",
-        "spring.mail.port=${mailpitContainer.smtpPort}",
+        "spring.mail.host=$host",
+        "spring.mail.port=$smtpPort",
     )
 }

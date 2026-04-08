@@ -18,7 +18,7 @@ dependencies {
     testFixturesApi("org.springframework.restdocs:spring-restdocs-core")
     testFixturesApi("dev.forkhandles:fabrikate4k")
     testFixturesApi(project(":common:core-identifiers"))
-    testFixturesImplementation(testFixtures(project(":testing:spring")))
+    testFixturesImplementation(testFixtures(project(":common:testing-spring")))
     testFixturesRuntimeOnly("org.springframework:spring-core")
 }
 

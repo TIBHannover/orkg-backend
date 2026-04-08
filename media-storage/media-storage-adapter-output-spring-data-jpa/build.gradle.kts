@@ -27,7 +27,7 @@ testing {
                 implementation("org.springframework:spring-orm")
                 implementation("org.springframework:spring-test")
                 implementation(testFixtures(project(":media-storage:media-storage-ports-output")))
-                implementation(testFixtures(project(":testing:spring")))
+                implementation(testFixtures(project(":common:testing-spring")))
                 runtimeOnly("io.kotest:kotest-extensions-spring")
                 runtimeOnly("org.liquibase:liquibase-core")
                 runtimeOnly("org.postgresql:postgresql")

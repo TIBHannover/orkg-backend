@@ -20,7 +20,7 @@ testing {
             dependencies {
                 implementation(testFixtures(project(":common:spring-webmvc")))
                 implementation(testFixtures(project(":common:testing")))
-                implementation(testFixtures(project(":testing:spring")))
+                implementation(testFixtures(project(":common:testing-spring")))
                 implementation("io.kotest:kotest-assertions-core")
                 implementation("io.kotest:kotest-assertions-shared")
                 implementation("org.hamcrest:hamcrest")
@@ -287,8 +287,8 @@ dependencies {
     "integrationTestImplementation"(project(":data-import:data-import-core-model"))
     "integrationTestImplementation"(project(":data-import:data-import-core-services")) // for job configurations
     "integrationTestImplementation"(testFixtures(project(":common:spring-webmvc")))
+    "integrationTestImplementation"(testFixtures(project(":common:testing-spring")))
     "integrationTestImplementation"(testFixtures(project(":content-types:content-types-adapter-output-simcomp")))
-    "integrationTestImplementation"(testFixtures(project(":testing:spring")))
     "kaptIntegrationTest"("org.springframework.boot:spring-boot-configuration-processor")
 }
 

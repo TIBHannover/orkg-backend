@@ -48,8 +48,8 @@ testing {
                 implementation("org.springframework.boot:spring-boot-test")
                 implementation(project(":common:serialization"))
                 implementation(project(":graph:graph-adapter-input-rest-spring-mvc"))
+                implementation(testFixtures(project(":common:testing-spring")))
                 implementation(testFixtures(project(":content-types:content-types-ports-output")))
-                implementation(testFixtures(project(":testing:spring")))
             }
         }
     }

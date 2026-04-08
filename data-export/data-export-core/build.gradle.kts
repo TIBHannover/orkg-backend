@@ -48,10 +48,10 @@ testing {
                 implementation("org.junit.jupiter:junit-jupiter-api")
                 implementation("org.junit.jupiter:junit-jupiter-params")
                 implementation(testFixtures(project(":common:testing")))
+                implementation(testFixtures(project(":common:testing-spring")))
                 implementation(testFixtures(project(":content-types:content-types-core-model")))
                 implementation(testFixtures(project(":data-export:data-export-core")))
                 implementation(testFixtures(project(":graph:graph-core-model")))
-                implementation(testFixtures(project(":testing:spring")))
             }
         }
     }

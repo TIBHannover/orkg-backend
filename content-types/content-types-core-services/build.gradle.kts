@@ -55,11 +55,11 @@ testing {
                 implementation(project(":content-types:content-types-core-services"))
                 implementation(project(":media-storage:media-storage-core-model"))
                 implementation(testFixtures(project(":common:testing")))
+                implementation(testFixtures(project(":common:testing-spring")))
                 implementation(testFixtures(project(":community:community-core-model")))
                 implementation(testFixtures(project(":content-types:content-types-core-model")))
                 implementation(testFixtures(project(":content-types:content-types-ports-input")))
                 implementation(testFixtures(project(":graph:graph-core-model")))
-                implementation(testFixtures(project(":testing:spring")))
             }
         }
     }

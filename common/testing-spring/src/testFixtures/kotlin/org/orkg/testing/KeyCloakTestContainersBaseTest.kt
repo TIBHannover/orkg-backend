@@ -15,7 +15,7 @@ abstract class KeycloakTestContainersBaseTest {
         // It is important to not use @Containers here, so we can manage the life-cycle.
         // We instantiate only one container per test class.
         @JvmStatic
-        protected val container: KeycloakContainer = KeycloakContainer(BuildConfig.CONTAINER_IMAGE_KEYCLOAK)
+        protected val keycloakContainer: KeycloakContainer = KeycloakContainer(BuildConfig.CONTAINER_IMAGE_KEYCLOAK)
             .withRealmImportFile("import/realm_orkg.json")
             .withExposedPorts(8080, 8443, 8787, 9000)
 
@@ -24,6 +24,6 @@ abstract class KeycloakTestContainersBaseTest {
         // Ryuk will manage the shut-down, so shutdown method is required.
         @JvmStatic
         @BeforeAll
-        fun startContainer() = container.start()
+        fun startContainer() = keycloakContainer.start()
     }
 }

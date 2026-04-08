@@ -46,7 +46,6 @@ dependencies {
     testFixturesImplementation("org.springframework.restdocs:spring-restdocs-mockmvc")
     testFixturesImplementation("org.springframework.security:spring-security-oauth2-core")
     testFixturesImplementation("org.springframework.security:spring-security-oauth2-resource-server")
-    testFixturesImplementation("org.springframework:spring-orm")
     testFixturesImplementation("io.jsonwebtoken:jjwt-api")
     testFixturesImplementation("jakarta.validation:jakarta.validation-api")
     testFixturesImplementation(project(":common:string-utils"))

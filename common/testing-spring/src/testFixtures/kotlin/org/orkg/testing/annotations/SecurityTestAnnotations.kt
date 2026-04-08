@@ -14,6 +14,34 @@ import org.springframework.security.test.context.support.TestExecutionEvent
 import org.springframework.security.test.context.support.WithSecurityContext
 import org.springframework.security.test.context.support.WithSecurityContextFactory
 import java.lang.annotation.Inherited
+import kotlin.annotation.AnnotationRetention.RUNTIME
+
+@Retention(RUNTIME)
+@WithMockAuthentication(
+    authorities = [],
+    userId = MockUserId.USER,
+    username = "Test User",
+    email = "user@example.org",
+)
+annotation class TestWithMockUser
+
+@Retention(RUNTIME)
+@WithMockAuthentication(
+    authorities = ["ROLE_CURATOR"],
+    userId = MockUserId.CURATOR,
+    username = "Test Curator",
+    email = "curator@example.org",
+)
+annotation class TestWithMockCurator
+
+@Retention(RUNTIME)
+@WithMockAuthentication(
+    authorities = ["ROLE_ADMIN"],
+    userId = MockUserId.ADMIN,
+    username = "Test Admin",
+    email = "admin@example.org",
+)
+annotation class TestWithMockAdmin
 
 @Target(
     AnnotationTarget.FUNCTION,

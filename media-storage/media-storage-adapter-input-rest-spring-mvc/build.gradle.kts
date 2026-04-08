@@ -21,7 +21,7 @@ testing {
                 implementation("org.springframework:spring-test")
                 implementation("org.springframework:spring-web")
                 implementation(testFixtures(project(":common:core-identifiers")))
-                implementation(testFixtures(project(":testing:spring")))
+                implementation(testFixtures(project(":common:testing-spring")))
                 runtimeOnly("com.jayway.jsonpath:json-path")
             }
         }

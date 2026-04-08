@@ -24,8 +24,8 @@ dependencies {
     testFixturesApi(project(":media-storage:media-storage-core-model"))
     testFixturesImplementation("dev.forkhandles:values4k")
     testFixturesImplementation(project(":graph:graph-core-model"))
-    testFixturesImplementation(testFixtures(project(":testing:spring")))
     testFixturesImplementation(project(":graph:graph-core-constants"))
+    testFixturesImplementation(testFixtures(project(":common:testing-spring")))
 }
 
 testing {

@@ -23,7 +23,7 @@ testing {
                 implementation("org.springframework:spring-test")
                 implementation("org.testcontainers:testcontainers")
                 runtimeOnly("org.springframework.boot:spring-boot-starter-test")
-                implementation(testFixtures(project(":testing:spring")))
+                implementation(testFixtures(project(":common:testing-spring")))
                 implementation(testFixtures(project(":notifications:notifications-core-model")))
             }
         }

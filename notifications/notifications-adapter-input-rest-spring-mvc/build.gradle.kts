@@ -18,8 +18,8 @@ dependencies {
 
     testFixturesApi("org.springframework:spring-context")
     testFixturesApi("org.springframework.boot:spring-boot-test")
-    testFixturesApi(testFixtures(project(":testing:spring")))
     testFixturesApi(testFixtures(project(":common:core-identifiers")))
+    testFixturesApi(testFixtures(project(":common:testing-spring")))
 }
 
 testing {
@@ -35,7 +35,7 @@ testing {
                 implementation("org.springframework:spring-test")
                 implementation("org.springframework.boot:spring-boot-webmvc-test")
                 implementation("org.springframework.restdocs:spring-restdocs-core")
-                implementation(testFixtures(project(":testing:spring")))
+                implementation(testFixtures(project(":common:testing-spring")))
             }
         }
     }

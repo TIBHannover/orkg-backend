@@ -18,8 +18,8 @@ testing {
                 implementation("org.springframework.restdocs:spring-restdocs-core")
                 implementation("org.springframework:spring-test")
                 implementation("com.ninja-squad:springmockk")
+                implementation(testFixtures(project(":common:testing-spring")))
                 implementation(testFixtures(project(":statistics:statistics-core-model")))
-                implementation(testFixtures(project(":testing:spring")))
                 runtimeOnly("com.jayway.jsonpath:json-path")
             }
         }
@@ -38,6 +38,6 @@ dependencies {
     testFixturesApi("org.springframework:spring-context")
     testFixturesApi("org.springframework.boot:spring-boot-test")
     testFixturesApi(project(":common:serialization"))
-    testFixturesApi(testFixtures(project(":testing:spring")))
     testFixturesApi(testFixtures(project(":common:core-identifiers")))
+    testFixturesApi(testFixtures(project(":common:testing-spring")))
 }

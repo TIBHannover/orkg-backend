@@ -16,8 +16,8 @@ testing {
                 implementation(project(":graph:graph-adapter-output-spring-data-neo4j")) // for SDN adapters, TODO: refactor?
                 implementation(project(":graph:graph-ports-output"))
                 runtimeOnly(project(":migrations:neo4j-migrations"))
+                implementation(testFixtures(project(":common:testing-spring")))
                 implementation(testFixtures(project(":statistics:statistics-ports-output")))
-                implementation(testFixtures(project(":testing:spring")))
                 runtimeOnly("io.kotest:kotest-extensions-spring")
                 runtimeOnly("io.kotest:kotest-runner-junit5")
             }

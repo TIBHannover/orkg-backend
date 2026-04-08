@@ -19,8 +19,8 @@ testing {
                 implementation(project(":graph:graph-core-services"))
                 implementation(project(":graph:graph-ports-output"))
                 runtimeOnly(project(":migrations:neo4j-migrations"))
+                implementation(testFixtures(project(":common:testing-spring")))
                 implementation(testFixtures(project(":content-types:content-types-ports-output")))
-                implementation(testFixtures(project(":testing:spring")))
                 runtimeOnly("org.springframework.data:spring-data-neo4j")
                 runtimeOnly("io.kotest:kotest-extensions-spring")
             }

@@ -5,7 +5,7 @@ plugins {
 dependencies {
     testFixturesApi("org.springframework.restdocs:spring-restdocs-core")
     testFixturesApi("org.springframework.boot:spring-boot-test")
-    testFixturesApi(testFixtures(project(":testing:spring")))
+    testFixturesApi(testFixtures(project(":common:testing-spring")))
     testFixturesImplementation("jakarta.validation:jakarta.validation-api")
     testFixturesImplementation("org.eclipse.rdf4j:rdf4j-common-io")
     testFixturesImplementation(project(":common:serialization"))

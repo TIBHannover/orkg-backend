@@ -13,6 +13,7 @@ includeBuild("include/restdocs-api-spec")
 include("documentation")
 include(
     "common:testing",
+    "common:testing-spring",
     "common:serialization",
     "common:neo4j-dsl",
     "common:spring-data",
@@ -29,8 +30,6 @@ include(
     "migrations:neo4j-migrations",
 )
 include("keycloak")
-include("testing:kotest")
-include("testing:spring")
 include(
     // The module containing the domain code will be called "application", because it will also contain application
     // services. This name might also reflect better that we may be able to split it out as a separate application (or

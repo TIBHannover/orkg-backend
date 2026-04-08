@@ -19,8 +19,8 @@ dependencies {
     testFixturesApi("org.springframework:spring-context")
     testFixturesApi("org.springframework.boot:spring-boot-test")
     testFixturesApi(project(":common:serialization"))
-    testFixturesApi(testFixtures(project(":testing:spring")))
     testFixturesApi(testFixtures(project(":common:core-identifiers")))
+    testFixturesApi(testFixtures(project(":common:testing-spring")))
 }
 
 testing {
@@ -43,8 +43,8 @@ testing {
                 implementation("org.springframework.restdocs:spring-restdocs-core")
                 implementation("org.springframework:spring-test")
                 implementation(testFixtures(project(":common:testing")))
+                implementation(testFixtures(project(":common:testing-spring")))
                 implementation(testFixtures(project(":graph:graph-core-model")))
-                implementation(testFixtures(project(":testing:spring")))
                 runtimeOnly("org.springframework.boot:spring-boot-starter-test")
                 runtimeOnly("tools.jackson.module:jackson-module-kotlin") // to (de)serialize data classes
             }

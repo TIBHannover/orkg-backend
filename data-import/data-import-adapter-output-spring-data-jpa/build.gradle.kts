@@ -37,7 +37,7 @@ testing {
                 implementation("org.springframework.boot:spring-boot-jdbc-test")
                 implementation("org.springframework.boot:spring-boot-test")
                 implementation(testFixtures(project(":data-import:data-import-ports-output")))
-                implementation(testFixtures(project(":testing:spring")))
+                implementation(testFixtures(project(":common:testing-spring")))
                 runtimeOnly("org.liquibase:liquibase-core")
                 runtimeOnly("org.postgresql:postgresql")
                 runtimeOnly("org.springframework.boot:spring-boot-data-jpa-test")

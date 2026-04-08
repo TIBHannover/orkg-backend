@@ -18,9 +18,9 @@ testing {
                 implementation("org.springframework:spring-test")
                 implementation("com.ninja-squad:springmockk")
                 implementation(project(":common:core-identifiers"))
+                implementation(testFixtures(project(":common:testing-spring")))
                 implementation(testFixtures(project(":graph:graph-adapter-input-rest-spring-mvc")))
                 implementation(testFixtures(project(":graph:graph-core-model")))
-                implementation(testFixtures(project(":testing:spring")))
                 runtimeOnly("com.jayway.jsonpath:json-path")
             }
         }
@@ -40,5 +40,5 @@ dependencies {
     testFixturesApi(project(":common:serialization"))
     testFixturesApi(project(":common:spring-webmvc"))
     testFixturesApi(testFixtures(project(":common:core-identifiers")))
-    testFixturesApi(testFixtures(project(":testing:spring")))
+    testFixturesApi(testFixtures(project(":common:testing-spring")))
 }

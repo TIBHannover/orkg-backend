@@ -44,8 +44,8 @@ dependencies {
     testFixturesApi(project(":content-types:content-types-adapter-input-representations"))
     testFixturesApi(project(":graph:graph-adapter-input-rest-spring-mvc"))
     testFixturesApi(testFixtures(project(":common:core-identifiers")))
+    testFixturesApi(testFixtures(project(":common:testing-spring")))
     testFixturesApi(testFixtures(project(":graph:graph-adapter-input-rest-spring-mvc")))
-    testFixturesApi(testFixtures(project(":testing:spring")))
     testFixturesImplementation("org.eclipse.rdf4j:rdf4j-common-io")
     testFixturesImplementation(project(":common:datatypes"))
     testFixturesImplementation(project(":common:core-identifiers"))
@@ -85,11 +85,11 @@ testing {
                 implementation(project(":community:community-ports-input"))
                 implementation(project(":content-types:content-types-adapter-input-rest-spring-mvc"))
                 implementation(testFixtures(project(":common:testing")))
+                implementation(testFixtures(project(":common:testing-spring")))
                 implementation(testFixtures(project(":community:community-core-model")))
                 implementation(testFixtures(project(":content-types:content-types-core-model")))
                 implementation(testFixtures(project(":graph:graph-adapter-input-rest-spring-mvc")))
                 implementation(testFixtures(project(":graph:graph-core-model")))
-                implementation(testFixtures(project(":testing:spring")))
             }
         }
     }

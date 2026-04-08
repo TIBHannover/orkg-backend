@@ -52,9 +52,9 @@ testing {
                 implementation(testFixtures(project(":data-import:data-import-core-model")))
                 implementation(testFixtures(project(":data-import:data-import-ports-input")))
                 implementation(testFixtures(project(":common:testing")))
+                implementation(testFixtures(project(":common:testing-spring")))
                 implementation(testFixtures(project(":community:community-core-model")))
                 implementation(testFixtures(project(":graph:graph-core-model")))
-                implementation(testFixtures(project(":testing:spring")))
                 compileOnly("org.jspecify:jspecify")
                 runtimeOnly(testFixtures(project(":content-types:content-types-adapter-output-web"))) // for doiLookupSuccess.json
             }

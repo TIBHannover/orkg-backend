@@ -7,7 +7,7 @@ testing {
     suites {
         val test by getting(JvmTestSuite::class) {
             dependencies {
-                implementation(testFixtures(project(":testing:spring")))
+                implementation(testFixtures(project(":common:testing-spring")))
                 implementation(testFixtures(project(":graph:graph-core-model")))
                 runtimeOnly("org.springframework.boot:spring-boot-starter-test")
                 implementation("com.epages:restdocs-api-spec")
@@ -51,6 +51,6 @@ dependencies {
     testFixturesApi("org.springframework:spring-context")
     testFixturesApi("org.springframework.boot:spring-boot-test")
     testFixturesApi(project(":common:spring-webmvc"))
-    testFixturesApi(testFixtures(project(":testing:spring")))
     testFixturesApi(testFixtures(project(":common:core-identifiers")))
+    testFixturesApi(testFixtures(project(":common:testing-spring")))
 }

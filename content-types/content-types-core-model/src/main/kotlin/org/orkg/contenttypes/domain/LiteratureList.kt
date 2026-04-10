@@ -57,7 +57,8 @@ data class LiteratureList(
                 researchFields = directStatements.wherePredicate(Predicates.hasResearchField)
                     .objectIdsAndLabel()
                     .sortedBy { it.id },
-                identifiers = directStatements.associateIdentifiers(Identifiers.literatureList),
+                // Parse identifier data from current graph data and not potential snapshot data.
+                identifiers = statements[resource.id].orEmpty().associateIdentifiers(Identifiers.literatureList),
                 authors = statements.authors(root).ifEmpty { statements.legacyAuthors(root) },
                 versions = versions,
                 sustainableDevelopmentGoals = directStatements.wherePredicate(Predicates.sustainableDevelopmentGoal)

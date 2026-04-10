@@ -68,7 +68,8 @@ data class SmartReview(
                 researchFields = directStatements.wherePredicate(Predicates.hasResearchField)
                     .objectIdsAndLabel()
                     .sortedBy { it.id },
-                identifiers = directStatements.associateIdentifiers(Identifiers.smartReview),
+                // Parse identifier data from current graph data and not potential snapshot data.
+                identifiers = statements[resource.id].orEmpty().associateIdentifiers(Identifiers.smartReview),
                 authors = statements.authors(root).ifEmpty { statements.legacyAuthors(root) },
                 versions = versions,
                 sustainableDevelopmentGoals = directStatements.wherePredicate(Predicates.sustainableDevelopmentGoal)

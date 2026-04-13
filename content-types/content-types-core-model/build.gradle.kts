@@ -8,7 +8,6 @@ plugins {
 
 dependencies {
     api("tools.jackson.core:jackson-databind")
-    api("org.eclipse.rdf4j:rdf4j-common-io")
     api("org.springframework.boot:spring-boot")
     api("org.springframework:spring-context")
     api("org.springframework:spring-web")
@@ -25,7 +24,6 @@ dependencies {
     testFixturesApi(project(":common:core-identifiers"))
     testFixturesApi(project(":common:external-identifiers"))
     testFixturesApi(project(":graph:graph-core-model"))
-    testFixturesImplementation("org.eclipse.rdf4j:rdf4j-common-io")
     testFixturesImplementation("dev.forkhandles:values4k")
     testFixturesImplementation(testFixtures(project(":graph:graph-core-model")))
     testFixturesImplementation(project(":graph:graph-core-constants"))

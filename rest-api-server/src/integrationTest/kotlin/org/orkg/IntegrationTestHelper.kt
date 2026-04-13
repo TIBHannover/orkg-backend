@@ -1,8 +1,8 @@
 package org.orkg
 
 import io.ipfs.multihash.Multihash
-import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.orkg.common.ContributorId
+import org.orkg.common.IRI
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
@@ -37,7 +37,7 @@ fun CreateClassUseCase.createClass(
     label: String = "label",
     id: ThingId? = null,
     contributorId: ContributorId = ContributorId.UNKNOWN,
-    uri: ParsedIRI? = null,
+    uri: IRI? = null,
     extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN,
     modifiable: Boolean = true,
 ) = create(

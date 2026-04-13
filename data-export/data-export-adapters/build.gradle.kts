@@ -13,7 +13,6 @@ testing {
                 implementation("com.epages:restdocs-api-spec")
                 implementation("io.mockk:mockk-dsl")
                 implementation("io.mockk:mockk-jvm")
-                implementation("org.eclipse.rdf4j:rdf4j-common-io")
                 implementation("org.hamcrest:hamcrest")
                 implementation("org.junit.jupiter:junit-jupiter-api")
                 implementation("org.springframework.data:spring-data-commons")

@@ -1,6 +1,6 @@
 package org.orkg.contenttypes.input.testing.fixtures
 
-import org.eclipse.rdf4j.common.net.ParsedIRI
+import org.orkg.common.IRI
 import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.doiConstraint
 import org.orkg.common.testing.fixtures.googleScholarIdConstraint
@@ -619,7 +619,7 @@ fun createPredicateRequestPartRequestFields() = listOf(
 
 fun createClassRequestPartRequestFields() = listOf(
     fieldWithPath("label").description("The label of the class.").type("string"),
-    fieldWithPath("uri").description("The uri of the class.").type<ParsedIRI>().optional(),
+    fieldWithPath("uri").description("The uri of the class.").type<IRI>().optional(),
 )
 
 fun createListRequestPartRequestFields() = listOf(

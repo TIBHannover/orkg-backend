@@ -1,6 +1,6 @@
 package org.orkg.contenttypes.domain
 
-import org.eclipse.rdf4j.common.net.ParsedIRI
+import org.orkg.common.IRI
 import org.orkg.common.ThingId
 import org.orkg.graph.domain.Class
 import org.orkg.graph.domain.Literal
@@ -41,7 +41,7 @@ data class PredicateReference(
 data class ClassReference(
     override val id: ThingId,
     override val label: String,
-    val uri: ParsedIRI?,
+    val uri: IRI?,
 ) : ThingReference {
     constructor(`class`: Class) : this(`class`.id, `class`.label, `class`.uri)
 }

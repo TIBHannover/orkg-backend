@@ -5,14 +5,10 @@ plugins {
 dependencies {
     api(project(":common:core-identifiers"))
     api(project(":graph:graph-core-model"))
-
-    api("org.eclipse.rdf4j:rdf4j-common-io")
     api("org.springframework.data:spring-data-commons")
-
     testFixturesApi("io.kotest:kotest-framework-engine")
     testFixturesImplementation("io.kotest:kotest-assertions-core")
     testFixturesImplementation("io.kotest:kotest-assertions-shared")
-    testFixturesImplementation("org.eclipse.rdf4j:rdf4j-common-io")
     testFixturesImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
     testFixturesImplementation("org.springframework.data:spring-data-commons")
     testFixturesImplementation("dev.forkhandles:fabrikate4k")

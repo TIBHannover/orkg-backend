@@ -1,6 +1,5 @@
 package org.orkg.graph.adapter.output.neo4j
 
-import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.neo4j.cypherdsl.core.Cypher
 import org.neo4j.cypherdsl.core.Cypher.anonParameter
 import org.neo4j.cypherdsl.core.Cypher.call
@@ -8,6 +7,7 @@ import org.neo4j.cypherdsl.core.Cypher.name
 import org.neo4j.cypherdsl.core.Cypher.size
 import org.neo4j.cypherdsl.core.Cypher.toLower
 import org.orkg.common.ContributorId
+import org.orkg.common.IRI
 import org.orkg.common.ThingId
 import org.orkg.common.neo4jdsl.CypherQueryBuilderFactory
 import org.orkg.common.neo4jdsl.PagedQueryBuilder.countOver
@@ -72,7 +72,7 @@ class SpringDataNeo4jClassAdapter(
         createdBy: ContributorId?,
         createdAtStart: OffsetDateTime?,
         createdAtEnd: OffsetDateTime?,
-        uri: ParsedIRI?,
+        uri: IRI?,
     ): Page<Class> = cypherQueryBuilderFactory.newBuilder(Uncached)
         .withCommonQuery {
             val node = Cypher.node("Class").named("node")

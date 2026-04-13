@@ -1,7 +1,7 @@
 package org.orkg.contenttypes.domain
 
-import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.junit.jupiter.api.Test
+import org.orkg.common.IRI
 import org.orkg.common.ThingId
 import org.orkg.common.testSerialization
 
@@ -14,7 +14,7 @@ internal class AuthorSerializableTest {
             identifiers = mapOf(
                 "orcid" to listOf("0000-0002-1825-0097"),
             ),
-            homepage = ParsedIRI.create("https://example.org"),
+            homepage = IRI.create("https://example.org"),
         )
         testSerialization(author)
     }

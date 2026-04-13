@@ -9,11 +9,11 @@ import io.mockk.every
 import io.mockk.just
 import io.mockk.runs
 import io.mockk.verify
-import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.hamcrest.Matchers.endsWith
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
+import org.orkg.common.IRI
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
@@ -853,7 +853,7 @@ internal class ComparisonControllerUnitTest : MockMvcBaseTest("comparisons") {
                     id = null,
                     name = "Author with homepage",
                     identifiers = null,
-                    homepage = ParsedIRI.create("https://example.org/author"),
+                    homepage = IRI.create("https://example.org/author"),
                 ),
                 AuthorRequest(
                     id = null,
@@ -908,7 +908,7 @@ internal class ComparisonControllerUnitTest : MockMvcBaseTest("comparisons") {
                     id = null,
                     name = "Author with homepage",
                     identifiers = null,
-                    homepage = ParsedIRI.create("https://example.org/author"),
+                    homepage = IRI.create("https://example.org/author"),
                 ),
                 AuthorRequest(
                     id = null,

@@ -1,6 +1,6 @@
 package org.orkg.contenttypes.domain
 
-import org.eclipse.rdf4j.common.net.ParsedIRI
+import org.orkg.common.IRI
 import org.orkg.common.toIRIOrNull
 import org.orkg.graph.domain.GeneralStatement
 import org.orkg.graph.domain.Predicates
@@ -9,7 +9,7 @@ data class PublicationInfo(
     val publishedMonth: Int?,
     val publishedYear: Long?,
     val publishedIn: ObjectIdAndLabel?,
-    val url: ParsedIRI?,
+    val url: IRI?,
 ) {
     companion object {
         fun from(statements: Iterable<GeneralStatement>): PublicationInfo = PublicationInfo(

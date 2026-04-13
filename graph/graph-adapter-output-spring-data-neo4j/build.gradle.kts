@@ -8,7 +8,6 @@ plugins {
 }
 
 dependencies {
-    api("org.eclipse.rdf4j:rdf4j-common-io")
     api("org.neo4j.driver:neo4j-java-driver")
     api("org.neo4j:neo4j-cypher-dsl")
     api("org.springframework.boot:spring-boot-persistence")

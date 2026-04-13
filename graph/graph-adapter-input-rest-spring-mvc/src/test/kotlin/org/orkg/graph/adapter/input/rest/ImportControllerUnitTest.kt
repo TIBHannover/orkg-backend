@@ -3,11 +3,11 @@ package org.orkg.graph.adapter.input.rest
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
 import io.mockk.verify
-import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.hamcrest.CoreMatchers.endsWith
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
+import org.orkg.common.IRI
 import org.orkg.common.ThingId
 import org.orkg.common.exceptions.ServiceUnavailable
 import org.orkg.graph.adapter.input.rest.ImportController.ImportByShortFormRequest
@@ -41,7 +41,7 @@ internal class ImportControllerUnitTest : MockMvcBaseTest("import") {
     fun importResourceByURI() {
         val id = ThingId("R123")
         val request = ImportByURIRequest(
-            uri = ParsedIRI.create("https://www.wikidata.org/entity/Q42"),
+            uri = IRI.create("https://www.wikidata.org/entity/Q42"),
             ontology = "wikidata",
         )
 
@@ -131,7 +131,7 @@ internal class ImportControllerUnitTest : MockMvcBaseTest("import") {
     fun importPredicateByURI() {
         val id = ThingId("P123")
         val request = ImportByURIRequest(
-            uri = ParsedIRI.create("https://www.wikidata.org/entity/P30"),
+            uri = IRI.create("https://www.wikidata.org/entity/P30"),
             ontology = "wikidata",
         )
 
@@ -221,7 +221,7 @@ internal class ImportControllerUnitTest : MockMvcBaseTest("import") {
     fun importClassByURI() {
         val id = ThingId("C123")
         val request = ImportByURIRequest(
-            uri = ParsedIRI.create("https://www.wikidata.org/entity/Q42"),
+            uri = IRI.create("https://www.wikidata.org/entity/Q42"),
             ontology = "wikidata",
         )
 

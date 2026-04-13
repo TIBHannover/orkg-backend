@@ -5,7 +5,7 @@ import dev.forkhandles.fabrikate.FabricatorConfig
 import dev.forkhandles.fabrikate.Fabrikate
 import dev.forkhandles.fabrikate.StringFabricator
 import dev.forkhandles.fabrikate.register
-import org.eclipse.rdf4j.common.net.ParsedIRI
+import org.orkg.common.IRI
 import org.orkg.common.ThingId
 import org.orkg.graph.domain.Class
 import org.orkg.graph.domain.Literal
@@ -23,10 +23,10 @@ class ThingIdFabricator : Fabricator<ThingId> {
     override fun invoke(fabrikate: Fabrikate): ThingId = ThingId(fabrikate.random<Long>().absoluteValue.toString())
 }
 
-class ParsedIRIFabricator : Fabricator<ParsedIRI> {
+class IRIFabricator : Fabricator<IRI> {
     private val stringFabricator = StringFabricator(length = IntRange(10, 20))
 
-    override fun invoke(fabrikate: Fabrikate): ParsedIRI = ParsedIRI.create("https://example.com/${stringFabricator(fabrikate)}")
+    override fun invoke(fabrikate: Fabrikate): IRI = IRI.create("https://example.com/${stringFabricator(fabrikate)}")
 }
 
 class ThingFabricator : Fabricator<Thing> {
@@ -100,7 +100,7 @@ class ResourceFabricator : Fabricator<Resource> {
 fun FabricatorConfig.withGraphMappings(): FabricatorConfig = withMappings {
     register(StatementIdFabricator())
     register(ThingIdFabricator())
-    register(ParsedIRIFabricator())
+    register(IRIFabricator())
     register(ThingFabricator())
     register(ClassFabricator())
     register(PredicateFabricator())

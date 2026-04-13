@@ -3,9 +3,9 @@ package org.orkg.dataimport.adapter.input.rest
 import io.kotest.assertions.asClue
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
-import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.orkg.common.IRI
 import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.Assets.csv
 import org.orkg.common.testing.fixtures.PageRepresentation
@@ -177,7 +177,7 @@ internal class CSVControllerIntegrationTest : MockMvcBaseTest("csvs") {
                     it.publishedMonth shouldBe 4
                     it.publishedYear shouldBe 2023
                     it.publishedIn shouldBe "Fancy Conference"
-                    it.url shouldBe ParsedIRI("https://example.org")
+                    it.url shouldBe IRI("https://example.org")
                     it.doi shouldBe null
                     it.researchFieldId shouldBe ThingId("R456")
                     it.extractionMethod shouldBe ExtractionMethod.MANUAL

@@ -2,8 +2,8 @@
 
 package org.orkg.graph.domain
 
-import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.orkg.common.ContributorId
+import org.orkg.common.IRI
 import org.orkg.common.ThingId
 import org.orkg.common.exceptions.ForbiddenOperationException
 import org.orkg.common.exceptions.PropertyValidationException
@@ -39,7 +39,7 @@ class ClassNotFound private constructor(
 
         fun withId(id: String) = ClassNotFound("""Class "$id" not found.""", mapOf("class_id" to id))
 
-        fun withURI(uri: ParsedIRI) = ClassNotFound("""Class with URI "$uri" not found.""", mapOf("class_uri" to uri.toString()))
+        fun withURI(uri: IRI) = ClassNotFound("""Class with URI "$uri" not found.""", mapOf("class_uri" to uri.toString()))
     }
 }
 
@@ -80,7 +80,7 @@ class ExternalResourceNotFound : SimpleMessageException {
                 "ontology_id" to ontologyId,
             ),
         )
-    constructor(ontologyId: String, uri: ParsedIRI) :
+    constructor(ontologyId: String, uri: IRI) :
         super(
             HttpStatus.NOT_FOUND,
             """External resource "$uri" for ontology "$ontologyId" not found.""",
@@ -101,7 +101,7 @@ class ExternalPredicateNotFound : SimpleMessageException {
                 "ontology_id" to ontologyId,
             ),
         )
-    constructor(ontologyId: String, uri: ParsedIRI) :
+    constructor(ontologyId: String, uri: IRI) :
         super(
             HttpStatus.NOT_FOUND,
             """External predicate "$uri" for ontology "$ontologyId" not found.""",
@@ -122,7 +122,7 @@ class ExternalClassNotFound : SimpleMessageException {
                 "ontology_id" to ontologyId,
             ),
         )
-    constructor(ontologyId: String, uri: ParsedIRI) :
+    constructor(ontologyId: String, uri: IRI) :
         super(
             HttpStatus.NOT_FOUND,
             """External class "$uri" for ontology "$ontologyId" not found.""",
@@ -144,7 +144,7 @@ class ExternalEntityIsNotAResource : SimpleMessageException {
                 "ontology_id" to ontologyId,
             ),
         )
-    constructor(ontologyId: String, uri: ParsedIRI) :
+    constructor(ontologyId: String, uri: IRI) :
         super(
             HttpStatus.FORBIDDEN,
             """Entity "$uri" for ontology "$ontologyId" is not a resource.""",
@@ -167,7 +167,7 @@ class ExternalEntityIsNotAClass : SimpleMessageException {
                 "ontology_id" to ontologyId,
             ),
         )
-    constructor(ontologyId: String, uri: ParsedIRI) :
+    constructor(ontologyId: String, uri: IRI) :
         super(
             HttpStatus.FORBIDDEN,
             """Entity "$uri" for ontology "$ontologyId" is not a class.""",
@@ -306,7 +306,7 @@ class InvalidClassCollection(ids: Iterable<ThingId>) :
     )
 
 class URIAlreadyInUse(
-    uri: ParsedIRI,
+    uri: IRI,
     id: ThingId,
 ) : PropertyValidationException(
         jsonFieldPathToJsonPointerReference("uri"),
@@ -314,7 +314,7 @@ class URIAlreadyInUse(
         type = createProblemURI("uri_already_in_use"),
     )
 
-class URINotAbsolute(uri: ParsedIRI) :
+class URINotAbsolute(uri: IRI) :
     PropertyValidationException(
         jsonFieldPathToJsonPointerReference("uri"),
         """The URI <$uri> is not absolute.""",

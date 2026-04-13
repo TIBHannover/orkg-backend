@@ -1,8 +1,8 @@
 package org.orkg.graph.adapter.input.rest.exceptions
 
-import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.hamcrest.Matchers.`is`
 import org.junit.jupiter.api.Test
+import org.orkg.common.IRI
 import org.orkg.common.ThingId
 import org.orkg.graph.adapter.input.rest.testing.fixtures.configuration.GraphControllerExceptionUnitTestConfiguration
 import org.orkg.graph.domain.CannotResetURI
@@ -49,7 +49,7 @@ internal class ClassExceptionUnitTest : MockMvcExceptionBaseTest() {
     @Test
     fun uriAlreadyInUse() {
         val type = "orkg:problem:uri_already_in_use"
-        documentedGetRequestTo(URIAlreadyInUse(ParsedIRI.create("https://example.org/C123"), ThingId("C123")))
+        documentedGetRequestTo(URIAlreadyInUse(IRI.create("https://example.org/C123"), ThingId("C123")))
             .andExpectErrorStatus(BAD_REQUEST)
             .andExpectType(type)
             .andExpectTitle("Bad Request")
@@ -61,7 +61,7 @@ internal class ClassExceptionUnitTest : MockMvcExceptionBaseTest() {
     @Test
     fun uriNotAbsolute() {
         val type = "orkg:problem:uri_not_absolute"
-        documentedGetRequestTo(URINotAbsolute(ParsedIRI.create("invalid")))
+        documentedGetRequestTo(URINotAbsolute(IRI.create("invalid")))
             .andExpectErrorStatus(BAD_REQUEST)
             .andExpectType(type)
             .andExpectTitle("Bad Request")
@@ -128,7 +128,7 @@ internal class ClassExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andDocument {
                 responseFields<ClassNotFound>(
                     fieldWithPath("class_id").description("The id of the class. (optional, either `class_id` or `class_uri` is present)").type<ThingId>().optional(),
-                    fieldWithPath("class_uri").type("String").description("The uri of the class. (optional, either `class_id` or `class_uri` is present)").type<ParsedIRI>().optional(),
+                    fieldWithPath("class_uri").type("String").description("The uri of the class. (optional, either `class_id` or `class_uri` is present)").type<IRI>().optional(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }
@@ -136,7 +136,7 @@ internal class ClassExceptionUnitTest : MockMvcExceptionBaseTest() {
 
     @Test
     fun classNotFound_withURI() {
-        get(ClassNotFound.withURI(ParsedIRI.create("https://example.org/C123")))
+        get(ClassNotFound.withURI(IRI.create("https://example.org/C123")))
             .andExpectErrorStatus(NOT_FOUND)
             .andExpectType("orkg:problem:class_not_found")
             .andExpectTitle("Not Found")
@@ -157,7 +157,7 @@ internal class ClassExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andDocument {
                 responseFields<ExternalClassNotFound>(
                     fieldWithPath("class_id").description("The id of the class. (optional, either `class_id` or `class_uri` is present)").optional(),
-                    fieldWithPath("class_uri").type("String").description("The uri of the class. (optional, either `class_id` or `class_uri` is present)").type<ParsedIRI>().optional(),
+                    fieldWithPath("class_uri").type("String").description("The uri of the class. (optional, either `class_id` or `class_uri` is present)").type<IRI>().optional(),
                     fieldWithPath("ontology_id").description("The id of the class ontology."),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
@@ -177,7 +177,7 @@ internal class ClassExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andDocument {
                 responseFields<ExternalEntityIsNotAClass>(
                     fieldWithPath("entity_id").description("The id of the entity. (optional, either `entity_id` or `entity_uri` is present)").optional(),
-                    fieldWithPath("entity_uri").type("String").description("The uri of the entity. (optional, either `entity_id` or `entity_uri` is present)").type<ParsedIRI>().optional(),
+                    fieldWithPath("entity_uri").type("String").description("The uri of the entity. (optional, either `entity_id` or `entity_uri` is present)").type<IRI>().optional(),
                     fieldWithPath("ontology_id").description("The id of the entity ontology."),
                     *exceptionResponseFields(type).toTypedArray(),
                 )

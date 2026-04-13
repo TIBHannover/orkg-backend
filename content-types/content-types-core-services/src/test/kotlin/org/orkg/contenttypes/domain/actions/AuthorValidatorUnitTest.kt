@@ -5,9 +5,9 @@ import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import org.orkg.common.IRI
 import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkBaseTest
@@ -87,7 +87,7 @@ internal class AuthorValidatorUnitTest : MockkBaseTest {
             ),
             Author(
                 name = "Author with homepage",
-                homepage = ParsedIRI.create("https://example.org/author"),
+                homepage = IRI.create("https://example.org/author"),
             ),
             Author(
                 name = "Author that just has a name",

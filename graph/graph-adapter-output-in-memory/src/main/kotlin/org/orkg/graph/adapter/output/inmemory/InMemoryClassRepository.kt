@@ -1,7 +1,7 @@
 package org.orkg.graph.adapter.output.inmemory
 
-import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.orkg.common.ContributorId
+import org.orkg.common.IRI
 import org.orkg.common.ThingId
 import org.orkg.common.withDefaultSort
 import org.orkg.graph.domain.Class
@@ -54,7 +54,7 @@ class InMemoryClassRepository(inMemoryGraph: InMemoryGraph) :
         createdBy: ContributorId?,
         createdAtStart: OffsetDateTime?,
         createdAtEnd: OffsetDateTime?,
-        uri: ParsedIRI?,
+        uri: IRI?,
     ): Page<Class> =
         findAllFilteredAndPaged(
             pageable = pageable,

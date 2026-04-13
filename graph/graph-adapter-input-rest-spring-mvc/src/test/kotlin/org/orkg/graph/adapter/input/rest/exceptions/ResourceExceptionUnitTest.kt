@@ -1,8 +1,8 @@
 package org.orkg.graph.adapter.input.rest.exceptions
 
-import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.hamcrest.Matchers.`is`
 import org.junit.jupiter.api.Test
+import org.orkg.common.IRI
 import org.orkg.common.ThingId
 import org.orkg.common.thingIdConstraint
 import org.orkg.graph.adapter.input.rest.testing.fixtures.configuration.GraphControllerExceptionUnitTestConfiguration
@@ -77,7 +77,7 @@ internal class ResourceExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andDocument {
                 responseFields<ExternalResourceNotFound>(
                     fieldWithPath("resource_id").description("The id of the resource. (optional, either `resource_id` or `resource_uri` is present)").optional(),
-                    fieldWithPath("resource_uri").type("String").description("The uri of the resource. (optional, either `resource_id` or `resource_uri` is present)").type<ParsedIRI>().optional(),
+                    fieldWithPath("resource_uri").type("String").description("The uri of the resource. (optional, either `resource_id` or `resource_uri` is present)").type<IRI>().optional(),
                     fieldWithPath("ontology_id").description("The id of the resource ontology."),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
@@ -97,7 +97,7 @@ internal class ResourceExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andDocument {
                 responseFields<ExternalEntityIsNotAResource>(
                     fieldWithPath("entity_id").description("The id of the entity. (optional, either `entity_id` or `entity_uri` is present)").optional(),
-                    fieldWithPath("entity_uri").type("String").description("The uri of the entity. (optional, either `entity_id` or `entity_uri` is present)").type<ParsedIRI>().optional(),
+                    fieldWithPath("entity_uri").type("String").description("The uri of the entity. (optional, either `entity_id` or `entity_uri` is present)").type<IRI>().optional(),
                     fieldWithPath("ontology_id").description("The id of the entity ontology."),
                     *exceptionResponseFields(type).toTypedArray(),
                 )

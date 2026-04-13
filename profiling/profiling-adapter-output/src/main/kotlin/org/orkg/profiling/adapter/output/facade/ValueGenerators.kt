@@ -1,7 +1,7 @@
 package org.orkg.profiling.adapter.output.facade
 
-import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.orkg.common.ContributorId
+import org.orkg.common.IRI
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
@@ -501,11 +501,11 @@ class ComparisonPathGenerator(
 
 @Component
 @Profile("profileRepositories")
-class ParsedIRIGenerator : ValueGenerator<ParsedIRI> {
+class IRIGenerator : ValueGenerator<IRI> {
     override operator fun invoke(
         random: Random,
         name: String,
         type: KType,
         randomInstances: (Random, String, KType) -> List<Any>,
-    ): List<ParsedIRI> = listOf(ParsedIRI("http://purl.org/linked-data/cube#Concept"))
+    ): List<IRI> = listOf(IRI("http://purl.org/linked-data/cube#Concept"))
 }

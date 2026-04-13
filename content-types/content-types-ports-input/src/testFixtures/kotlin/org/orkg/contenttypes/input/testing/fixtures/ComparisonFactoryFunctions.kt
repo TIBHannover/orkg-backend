@@ -1,7 +1,7 @@
 package org.orkg.contenttypes.input.testing.fixtures
 
-import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.orkg.common.ContributorId
+import org.orkg.common.IRI
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
@@ -37,7 +37,7 @@ fun createComparisonCommand() = CreateComparisonUseCase.CreateCommand(
         ),
         Author(
             name = "Author with homepage",
-            homepage = ParsedIRI.create("https://example.org/author"),
+            homepage = IRI.create("https://example.org/author"),
         ),
         Author(
             name = "Author that just has a name",
@@ -80,7 +80,7 @@ fun updateComparisonCommand() = UpdateComparisonUseCase.UpdateCommand(
         ),
         Author(
             name = "Author with homepage",
-            homepage = ParsedIRI.create("https://example.org/author"),
+            homepage = IRI.create("https://example.org/author"),
         ),
         Author(
             name = "Author that just has a name",
@@ -120,7 +120,7 @@ fun publishComparisonCommand() = PublishComparisonUseCase.PublishCommand(
             identifiers = mapOf(
                 "orcid" to listOf("0000-1111-2222-3333"),
             ),
-            homepage = ParsedIRI.create("https://example.org"),
+            homepage = IRI.create("https://example.org"),
         ),
     ),
     assignDOI = true,

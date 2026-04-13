@@ -2,8 +2,8 @@ package org.orkg.graph.adapter.input.rest
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import jakarta.validation.Valid
-import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.orkg.common.ContributorId
+import org.orkg.common.IRI
 import org.orkg.common.ThingId
 import org.orkg.common.annotations.RequireLogin
 import org.orkg.common.contributorId
@@ -57,7 +57,7 @@ class ClassController(
         @RequestParam("created_by", required = false) createdBy: ContributorId?,
         @RequestParam("created_at_start", required = false) @DateTimeFormat(iso = ISO.DATE_TIME) createdAtStart: OffsetDateTime?,
         @RequestParam("created_at_end", required = false) @DateTimeFormat(iso = ISO.DATE_TIME) createdAtEnd: OffsetDateTime?,
-        @RequestParam("uri", required = false) uri: ParsedIRI?,
+        @RequestParam("uri", required = false) uri: IRI?,
         pageable: Pageable,
     ): Page<ClassRepresentation> =
         service.findAll(
@@ -144,21 +144,21 @@ class ClassController(
     data class CreateClassRequest(
         val id: ThingId?,
         val label: String,
-        val uri: ParsedIRI?,
+        val uri: IRI?,
         @field:JsonProperty("extraction_method")
         val extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN,
     )
 
     data class UpdateClassRequest(
         val label: String? = null,
-        val uri: ParsedIRI? = null,
+        val uri: IRI? = null,
         @field:JsonProperty("extraction_method")
         val extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN,
     )
 
     data class ReplaceClassRequest(
         val label: String,
-        val uri: ParsedIRI? = null,
+        val uri: IRI? = null,
         @field:JsonProperty("extraction_method")
         val extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN,
     )

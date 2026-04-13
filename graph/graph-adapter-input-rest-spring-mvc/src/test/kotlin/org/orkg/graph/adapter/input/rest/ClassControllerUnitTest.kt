@@ -8,11 +8,11 @@ import io.mockk.every
 import io.mockk.just
 import io.mockk.runs
 import io.mockk.verify
-import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.hamcrest.Matchers.endsWith
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
+import org.orkg.common.IRI
 import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
 import org.orkg.common.exceptions.UnknownSortingProperty
@@ -143,7 +143,7 @@ internal class ClassControllerUnitTest : MockMvcBaseTest("classes") {
         val createdBy = ContributorId(MockUserId.USER)
         val createdAtStart = OffsetDateTime.now(clock).minusHours(1)
         val createdAtEnd = OffsetDateTime.now(clock).plusHours(1)
-        val uri = ParsedIRI.create("https://example.org/OK")
+        val uri = IRI.create("https://example.org/OK")
 
         documentedGetRequestTo("/api/classes")
             .param("q", label)
@@ -210,7 +210,7 @@ internal class ClassControllerUnitTest : MockMvcBaseTest("classes") {
     @DisplayName("Given a class is created, when service succeeds, then status is 201 CREATED")
     fun create() {
         val id = ThingId("C123")
-        val uri = ParsedIRI.create("https://example.org/bar")
+        val uri = IRI.create("https://example.org/bar")
         val label = "foo"
         val extractionMethod = ExtractionMethod.AUTOMATIC
         val request = mapOf(
@@ -307,7 +307,7 @@ internal class ClassControllerUnitTest : MockMvcBaseTest("classes") {
                 withArg {
                     it.id shouldBe id
                     it.label shouldBe "new label"
-                    it.uri shouldBe ParsedIRI.create("https://example.org/some/new#URI")
+                    it.uri shouldBe IRI.create("https://example.org/some/new#URI")
                     it.extractionMethod shouldBe ExtractionMethod.MANUAL
                 },
             )
@@ -359,7 +359,7 @@ internal class ClassControllerUnitTest : MockMvcBaseTest("classes") {
                 withArg {
                     it.id shouldBe id
                     it.label shouldBe "some label"
-                    it.uri shouldBe ParsedIRI.create("https://example.org/some/new#URI")
+                    it.uri shouldBe IRI.create("https://example.org/some/new#URI")
                     it.extractionMethod shouldBe ExtractionMethod.MANUAL
                 },
             )
@@ -405,7 +405,7 @@ internal class ClassControllerUnitTest : MockMvcBaseTest("classes") {
                 withArg {
                     it.id shouldBe id
                     it.label shouldBe null
-                    it.uri shouldBe ParsedIRI.create("https://example.org/some/new#URI")
+                    it.uri shouldBe IRI.create("https://example.org/some/new#URI")
                 },
             )
         }

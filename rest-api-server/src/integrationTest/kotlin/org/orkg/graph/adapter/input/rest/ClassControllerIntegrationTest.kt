@@ -1,9 +1,9 @@
 package org.orkg.graph.adapter.input.rest
 
 import org.assertj.core.api.Assertions.assertThat
-import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.orkg.common.IRI
 import org.orkg.common.ThingId
 import org.orkg.createClass
 import org.orkg.graph.input.ClassUseCases
@@ -52,7 +52,7 @@ internal class ClassControllerIntegrationTest : MockMvcBaseTest("classes") {
         // Arrange
         val id = ThingId("dummy")
         val label = "dummy label"
-        val uri = ParsedIRI.create("https://example.org/exists")
+        val uri = IRI.create("https://example.org/exists")
         service.createClass(label = label, id = id, uri = uri)
 
         // Act and Assert

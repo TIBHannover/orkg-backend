@@ -40,7 +40,6 @@ testing {
                 implementation("io.mockk:mockk-core")
                 implementation("io.mockk:mockk-dsl")
                 implementation("io.mockk:mockk-jvm")
-                implementation("org.eclipse.rdf4j:rdf4j-common-io")
                 implementation("org.junit.jupiter:junit-jupiter-api")
             }
         }

@@ -1,7 +1,7 @@
 package org.orkg.contenttypes.domain.actions
 
-import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.orkg.common.ContributorId
+import org.orkg.common.IRI
 import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.input.PublicationInfoCommand
@@ -125,7 +125,7 @@ class PublicationInfoCreator(
     internal fun linkPublicationUrl(
         contributorId: ContributorId,
         subjectId: ThingId,
-        url: ParsedIRI,
+        url: IRI,
         extractionMethod: ExtractionMethod,
     ) {
         val urlLiteralId = unsafeLiteralUseCases.create(

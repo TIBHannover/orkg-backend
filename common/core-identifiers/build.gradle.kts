@@ -3,11 +3,11 @@ plugins {
 }
 
 dependencies {
+    api("org.eclipse.rdf4j:rdf4j-common-io") // for RFC 3987 compliant IRIs
     testFixturesApi("org.springframework.restdocs:spring-restdocs-core")
     testFixturesApi("org.springframework.boot:spring-boot-test")
     testFixturesApi(testFixtures(project(":common:testing-spring")))
     testFixturesImplementation("jakarta.validation:jakarta.validation-api")
-    testFixturesImplementation("org.eclipse.rdf4j:rdf4j-common-io")
     testFixturesImplementation(project(":common:serialization"))
 }
 
@@ -15,6 +15,7 @@ testing {
     suites {
         val test by getting(JvmTestSuite::class) {
             dependencies {
+                implementation("nl.jqno.equalsverifier:equalsverifier")
                 implementation("io.kotest:kotest-assertions-core")
                 implementation("io.kotest:kotest-runner-junit5")
                 implementation("org.junit.jupiter:junit-jupiter-api")

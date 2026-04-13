@@ -1,7 +1,7 @@
 package org.orkg.contenttypes.input.testing.fixtures
 
-import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.orkg.common.ContributorId
+import org.orkg.common.IRI
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.input.CreateClassCommandPart
 import org.orkg.contenttypes.input.CreateListCommandPart
@@ -57,7 +57,7 @@ fun updateTemplateInstanceCommand() = UpdateTemplateInstanceUseCase.UpdateComman
     classes = mapOf(
         "#temp6" to CreateClassCommandPart(
             label = "some class",
-            uri = ParsedIRI.create("https://orkg.org/C1"),
+            uri = IRI.create("https://orkg.org/C1"),
         ),
     ),
     extractionMethod = ExtractionMethod.MANUAL,

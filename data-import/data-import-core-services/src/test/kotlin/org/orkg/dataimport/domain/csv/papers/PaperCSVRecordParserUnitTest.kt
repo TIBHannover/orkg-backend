@@ -8,13 +8,13 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.verify
-import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.NullSource
 import org.junit.jupiter.params.provider.ValueSource
 import org.orkg.common.DOI
 import org.orkg.common.Either
+import org.orkg.common.IRI
 import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.Assets.responseJson
 import org.orkg.common.testing.fixtures.MockkBaseTest
@@ -97,7 +97,7 @@ internal class PaperCSVRecordParserUnitTest : MockkBaseTest {
                     publicationMonth = 4,
                     publicationYear = 2023,
                     publishedIn = "Fancy Conference",
-                    url = ParsedIRI("https://example.org"),
+                    url = IRI("https://example.org"),
                     doi = doi.value,
                     researchFieldId = researchFieldId,
                     extractionMethod = ExtractionMethod.MANUAL,
@@ -166,7 +166,7 @@ internal class PaperCSVRecordParserUnitTest : MockkBaseTest {
                     publicationMonth = 5,
                     publicationYear = 2021,
                     publishedIn = "Research Ideas and Outcomes",
-                    url = ParsedIRI("http://dx.doi.org/10.3897/rio.7.e68513"),
+                    url = IRI("http://dx.doi.org/10.3897/rio.7.e68513"),
                     doi = doi.value,
                     researchFieldId = researchFieldId,
                     extractionMethod = ExtractionMethod.MANUAL,

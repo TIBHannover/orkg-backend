@@ -1,6 +1,6 @@
 package org.orkg.common
 
-import org.eclipse.rdf4j.common.net.ParsedIRI
+import org.orkg.common.IRI
 import java.time.MonthDay
 import java.time.YearMonth
 import java.time.chrono.IsoChronology
@@ -17,7 +17,7 @@ import java.util.regex.Pattern
  */
 fun String.isValidIRI(): Boolean {
     try {
-        ParsedIRI.create(this)
+        IRI.create(this)
     } catch (_: Exception) {
         return false
     }
@@ -26,7 +26,7 @@ fun String.isValidIRI(): Boolean {
 
 fun String.isValidAbsoluteIRI(): Boolean {
     try {
-        return ParsedIRI(this).isAbsolute
+        return IRI(this).isAbsolute
     } catch (_: Exception) {
         return false
     }
@@ -273,9 +273,9 @@ fun <T : Any> mutableSetOfNotNull(vararg elements: T?): MutableSet<T> {
     return result
 }
 
-fun String.toIRIOrNull(): ParsedIRI? =
+fun String.toIRIOrNull(): IRI? =
     try {
-        ParsedIRI.create(this)
+        IRI.create(this)
     } catch (_: Exception) {
         null
     }

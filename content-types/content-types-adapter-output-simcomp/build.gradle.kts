@@ -39,7 +39,6 @@ testing {
                 implementation("io.mockk:mockk-dsl")
                 implementation("io.mockk:mockk-jvm")
                 implementation("org.assertj:assertj-core")
-                implementation("org.eclipse.rdf4j:rdf4j-common-io")
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
                 implementation("org.junit.jupiter:junit-jupiter-api")
                 implementation("org.springframework:spring-test")

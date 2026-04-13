@@ -17,7 +17,6 @@ dependencies {
     api(project(":graph:graph-core-model"))
     api(project(":graph:graph-ports-output"))
     implementation("tools.jackson.core:jackson-core")
-    implementation("org.eclipse.rdf4j:rdf4j-common-io")
     implementation("org.eclipse.rdf4j:rdf4j-model")
     implementation("org.eclipse.rdf4j:rdf4j-model-vocabulary")
     implementation("org.slf4j:slf4j-api")

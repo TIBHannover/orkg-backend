@@ -22,7 +22,6 @@ dependencies {
     api(project(":graph:graph-ports-output"))
     api(project(":statistics:statistics-core-model"))
     implementation("dev.forkhandles:values4k")
-    implementation("org.eclipse.rdf4j:rdf4j-common-io")
     implementation("org.springframework:spring-web")
     implementation(project(":common:datatypes"))
     implementation(project(":common:external-identifiers"))

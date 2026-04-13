@@ -1,7 +1,7 @@
 package org.orkg.contenttypes.input.testing.fixtures
 
-import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.orkg.common.ContributorId
+import org.orkg.common.IRI
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
@@ -51,7 +51,7 @@ fun createRosettaStoneStatementCommand() = CreateRosettaStoneStatementUseCase.Cr
     classes = mapOf(
         "#temp5" to CreateClassCommandPart(
             label = "class",
-            uri = ParsedIRI.create("https://orkg.org/class/C1"),
+            uri = IRI.create("https://orkg.org/class/C1"),
         ),
     ),
     observatories = listOf(
@@ -97,7 +97,7 @@ fun updateRosettaStoneStatementCommand() = UpdateRosettaStoneStatementUseCase.Up
     classes = mapOf(
         "#temp5" to CreateClassCommandPart(
             label = "class",
-            uri = ParsedIRI.create("https://orkg.org/class/C1"),
+            uri = IRI.create("https://orkg.org/class/C1"),
         ),
     ),
     observatories = listOf(

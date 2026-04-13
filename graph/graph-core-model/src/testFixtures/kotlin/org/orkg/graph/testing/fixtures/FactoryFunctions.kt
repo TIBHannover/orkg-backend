@@ -1,7 +1,7 @@
 package org.orkg.graph.testing.fixtures
 
-import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.orkg.common.ContributorId
+import org.orkg.common.IRI
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
@@ -54,7 +54,7 @@ fun createClass(
     id: ThingId = ThingId("OK"),
     label: String = "some label",
     createdAt: OffsetDateTime = OffsetDateTime.parse("2023-10-05T12:29:15.3155145+01:00"),
-    uri: ParsedIRI? = ParsedIRI.create("https://example.org/OK"),
+    uri: IRI? = IRI.create("https://example.org/OK"),
     createdBy: ContributorId = ContributorId("dc8b2055-c14a-4e9f-9fcd-e0b79cf1f834"),
     extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN,
     modifiable: Boolean = true,

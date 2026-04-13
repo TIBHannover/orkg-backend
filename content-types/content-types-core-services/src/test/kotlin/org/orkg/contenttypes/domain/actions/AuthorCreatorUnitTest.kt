@@ -3,9 +3,9 @@ package org.orkg.contenttypes.domain.actions
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
+import org.orkg.common.IRI
 import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.Author
@@ -202,7 +202,7 @@ internal class AuthorCreatorUnitTest : MockkBaseTest {
             identifiers = mapOf(
                 "orcid" to listOf(orcid),
             ),
-            homepage = ParsedIRI.create("https://orkg.org"),
+            homepage = IRI.create("https://orkg.org"),
         )
         val authorId = ThingId("R456")
         val contributorId = ContributorId(UUID.randomUUID())

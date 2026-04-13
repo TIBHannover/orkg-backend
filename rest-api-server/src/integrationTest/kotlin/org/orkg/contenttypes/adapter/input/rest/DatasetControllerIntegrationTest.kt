@@ -1,11 +1,11 @@
 package org.orkg.contenttypes.adapter.input.rest
 
 import org.assertj.core.api.Assertions.assertThat
-import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.hasSize
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.orkg.common.IRI
 import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.output.LabelAndClassService
@@ -85,17 +85,17 @@ internal class DatasetControllerIntegrationTest : MockMvcBaseTest("datasets") {
         classService.createClass(
             label = "Quantity",
             id = ThingId(labelsAndClasses.quantityClass),
-            uri = ParsedIRI.create("http://qudt.org/2.1/schema/qudt/Quantity"),
+            uri = IRI.create("http://qudt.org/2.1/schema/qudt/Quantity"),
         )
         classService.createClass(
             label = "Quantity",
             id = ThingId(labelsAndClasses.quantityValueClass),
-            uri = ParsedIRI.create("http://qudt.org/2.1/schema/qudt/QuantityValue"),
+            uri = IRI.create("http://qudt.org/2.1/schema/qudt/QuantityValue"),
         )
         classService.createClass(
             label = "Quantity Kind",
             id = ThingId(labelsAndClasses.metricClass),
-            uri = ParsedIRI.create("http://qudt.org/2.1/schema/qudt/QuantityKind"),
+            uri = IRI.create("http://qudt.org/2.1/schema/qudt/QuantityKind"),
         )
         classService.createClass("Dataset", ThingId(labelsAndClasses.datasetClass))
         classService.createClass("Benchmark", ThingId(labelsAndClasses.benchmarkClass))

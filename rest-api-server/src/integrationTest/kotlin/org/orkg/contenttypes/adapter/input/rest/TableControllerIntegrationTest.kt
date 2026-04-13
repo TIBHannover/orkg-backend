@@ -5,11 +5,11 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.kotest.matchers.types.shouldBeInstanceOf
 import org.assertj.core.api.Assertions.assertThat
-import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
+import org.orkg.common.IRI
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
@@ -238,7 +238,7 @@ internal class TableControllerIntegrationTest : MockMvcBaseTest("tables") {
                 row.data[0].shouldBeInstanceOf<ClassReferenceRepresentation> { thing ->
                     thing.id shouldNotBe null
                     thing.label shouldBe "test class"
-                    thing.uri shouldBe ParsedIRI.create("https://orkg.org/class/C123")
+                    thing.uri shouldBe IRI.create("https://orkg.org/class/C123")
                 }
                 row.data[1] shouldBe null
             }
@@ -345,7 +345,7 @@ internal class TableControllerIntegrationTest : MockMvcBaseTest("tables") {
                 row.data[2].shouldBeInstanceOf<Class> { thing ->
                     thing.id shouldNotBe null
                     thing.label shouldBe "some other test class"
-                    thing.uri shouldBe ParsedIRI.create("https://orkg.org/class/C1234")
+                    thing.uri shouldBe IRI.create("https://orkg.org/class/C1234")
                 }
                 row.data[3] shouldBe null
             }
@@ -471,7 +471,7 @@ internal class TableControllerIntegrationTest : MockMvcBaseTest("tables") {
                 row.data[0].shouldBeInstanceOf<Class> { thing ->
                     thing.id shouldNotBe null
                     thing.label shouldBe "some other test class"
-                    thing.uri shouldBe ParsedIRI.create("https://orkg.org/class/C12345")
+                    thing.uri shouldBe IRI.create("https://orkg.org/class/C12345")
                 }
                 row.data[1] shouldBe null
                 row.data[2] shouldBe null
@@ -554,7 +554,7 @@ internal class TableControllerIntegrationTest : MockMvcBaseTest("tables") {
                 row.data[0].shouldBeInstanceOf<Class> { thing ->
                     thing.id shouldNotBe null
                     thing.label shouldBe "updated test class"
-                    thing.uri shouldBe ParsedIRI.create("https://orkg.org/class/C123456")
+                    thing.uri shouldBe IRI.create("https://orkg.org/class/C123456")
                 }
                 row.data[1].shouldBeInstanceOf<Resource> { thing ->
                     thing.id shouldBe ThingId("R123")
@@ -586,7 +586,7 @@ internal class TableControllerIntegrationTest : MockMvcBaseTest("tables") {
                 row.data[0].shouldBeInstanceOf<Class> { thing ->
                     thing.id shouldNotBe null
                     thing.label shouldBe "some other test class"
-                    thing.uri shouldBe ParsedIRI.create("https://orkg.org/class/C12345")
+                    thing.uri shouldBe IRI.create("https://orkg.org/class/C12345")
                 }
                 row.data[1] shouldBe null
                 row.data[2] shouldBe null
@@ -711,7 +711,7 @@ internal class TableControllerIntegrationTest : MockMvcBaseTest("tables") {
                 row.data[0].shouldBeInstanceOf<Class> { thing ->
                     thing.id shouldNotBe null
                     thing.label shouldBe "some other test class"
-                    thing.uri shouldBe ParsedIRI.create("https://orkg.org/class/C12345")
+                    thing.uri shouldBe IRI.create("https://orkg.org/class/C12345")
                 }
                 row.data[1] shouldBe null
                 row.data[2] shouldBe null
@@ -828,7 +828,7 @@ internal class TableControllerIntegrationTest : MockMvcBaseTest("tables") {
                 row.data[0].shouldBeInstanceOf<Class> { thing ->
                     thing.id shouldNotBe null
                     thing.label shouldBe "some other test class"
-                    thing.uri shouldBe ParsedIRI.create("https://orkg.org/class/C12345")
+                    thing.uri shouldBe IRI.create("https://orkg.org/class/C12345")
                 }
                 row.data[1] shouldBe null
                 row.data[2].shouldBeInstanceOf<Literal> { thing ->
@@ -948,7 +948,7 @@ internal class TableControllerIntegrationTest : MockMvcBaseTest("tables") {
                 row.data[0].shouldBeInstanceOf<Class> { thing ->
                     thing.id shouldNotBe null
                     thing.label shouldBe "some other test class"
-                    thing.uri shouldBe ParsedIRI.create("https://orkg.org/class/C12345")
+                    thing.uri shouldBe IRI.create("https://orkg.org/class/C12345")
                 }
                 row.data[1] shouldBe null
                 row.data[2].shouldBeInstanceOf<Resource> { thing ->
@@ -1045,7 +1045,7 @@ internal class TableControllerIntegrationTest : MockMvcBaseTest("tables") {
                 row.data[0].shouldBeInstanceOf<Class> { thing ->
                     thing.id shouldNotBe null
                     thing.label shouldBe "some other test class"
-                    thing.uri shouldBe ParsedIRI.create("https://orkg.org/class/C12345")
+                    thing.uri shouldBe IRI.create("https://orkg.org/class/C12345")
                 }
                 row.data[1] shouldBe null
                 row.data[2] shouldBe null

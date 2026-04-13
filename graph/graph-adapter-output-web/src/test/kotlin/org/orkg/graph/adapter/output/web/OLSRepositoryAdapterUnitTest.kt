@@ -9,11 +9,11 @@ import io.kotest.matchers.shouldNotBe
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
+import org.orkg.common.IRI
 import org.orkg.common.exceptions.ServiceUnavailable
 import org.orkg.common.json.CommonJacksonModule
 import org.orkg.common.testing.fixtures.Assets.responseJson
@@ -148,7 +148,7 @@ internal class OLSRepositoryAdapterUnitTest : MockkBaseTest {
     }
 
     private fun <T : Any> T.toUri(ontologyId: String, entityType: String): URI =
-        if (this is ParsedIRI) {
+        if (this is IRI) {
             UriComponentsBuilder.fromUriString(olsHostUrl)
                 .path("/ontologies/$ontologyId/$entityType")
                 .queryParam("iri", toString())
@@ -191,19 +191,19 @@ internal class OLSRepositoryAdapterUnitTest : MockkBaseTest {
                 methodInvoker = OLSServiceAdapter::findResourceByShortForm,
                 successResponse = responseJson("ols/individualSuccess"),
                 expectedResult = ExternalThing(
-                    uri = ParsedIRI.create("http://rs.tdwg.org/abcd/terms/AbsenceObservation"),
+                    uri = IRI.create("http://rs.tdwg.org/abcd/terms/AbsenceObservation"),
                     label = "AbsenceObservation",
                     description = "A record describing an output of an observation process with indication of the absence of an observation",
                 ),
             ),
             TestParameters(
                 entityType = "individuals",
-                userInput = ParsedIRI.create("http://rs.tdwg.org/abcd/terms/AbsenceObservation"),
+                userInput = IRI.create("http://rs.tdwg.org/abcd/terms/AbsenceObservation"),
                 ontologyId = "abcd",
                 methodInvoker = OLSServiceAdapter::findResourceByURI,
                 successResponse = responseJson("ols/individualSuccess"),
                 expectedResult = ExternalThing(
-                    uri = ParsedIRI.create("http://rs.tdwg.org/abcd/terms/AbsenceObservation"),
+                    uri = IRI.create("http://rs.tdwg.org/abcd/terms/AbsenceObservation"),
                     label = "AbsenceObservation",
                     description = "A record describing an output of an observation process with indication of the absence of an observation",
                 ),
@@ -215,19 +215,19 @@ internal class OLSRepositoryAdapterUnitTest : MockkBaseTest {
                 methodInvoker = OLSServiceAdapter::findClassByShortForm,
                 successResponse = responseJson("ols/termSuccess"),
                 expectedResult = ExternalThing(
-                    uri = ParsedIRI.create("http://www.w3.org/2004/02/skos/core#Collection"),
+                    uri = IRI.create("http://www.w3.org/2004/02/skos/core#Collection"),
                     label = "Collection",
                     description = "A meaningful collection of concepts.",
                 ),
             ),
             TestParameters(
                 entityType = "classes",
-                userInput = ParsedIRI.create("https://sws.geonames.org/2950159"),
+                userInput = IRI.create("https://sws.geonames.org/2950159"),
                 ontologyId = "skos",
                 methodInvoker = OLSServiceAdapter::findClassByURI,
                 successResponse = responseJson("ols/termSuccess"),
                 expectedResult = ExternalThing(
-                    uri = ParsedIRI.create("http://www.w3.org/2004/02/skos/core#Collection"),
+                    uri = IRI.create("http://www.w3.org/2004/02/skos/core#Collection"),
                     label = "Collection",
                     description = "A meaningful collection of concepts.",
                 ),
@@ -239,19 +239,19 @@ internal class OLSRepositoryAdapterUnitTest : MockkBaseTest {
                 methodInvoker = OLSServiceAdapter::findPredicateByShortForm,
                 successResponse = responseJson("ols/propertySuccess"),
                 expectedResult = ExternalThing(
-                    uri = ParsedIRI.create("http://rs.tdwg.org/abcd/terms/hasCountry"),
+                    uri = IRI.create("http://rs.tdwg.org/abcd/terms/hasCountry"),
                     label = "has Country",
                     description = "Property to connect an instance of a class to a Country.",
                 ),
             ),
             TestParameters(
                 entityType = "properties",
-                userInput = ParsedIRI.create("http://rs.tdwg.org/abcd/terms/hasCountry"),
+                userInput = IRI.create("http://rs.tdwg.org/abcd/terms/hasCountry"),
                 ontologyId = "abcd",
                 methodInvoker = OLSServiceAdapter::findPredicateByURI,
                 successResponse = responseJson("ols/propertySuccess"),
                 expectedResult = ExternalThing(
-                    uri = ParsedIRI.create("http://rs.tdwg.org/abcd/terms/hasCountry"),
+                    uri = IRI.create("http://rs.tdwg.org/abcd/terms/hasCountry"),
                     label = "has Country",
                     description = "Property to connect an instance of a class to a Country.",
                 ),
@@ -263,9 +263,9 @@ internal class OLSRepositoryAdapterUnitTest : MockkBaseTest {
             Arguments.of("abc", "!invalid", OLSServiceAdapter::findResourceByShortForm),
             Arguments.of("abc", "!invalid", OLSServiceAdapter::findClassByShortForm),
             Arguments.of("abc", "!invalid", OLSServiceAdapter::findPredicateByShortForm),
-            Arguments.of(ParsedIRI.create("https://www.geonames.org/abc"), "!invalid", OLSServiceAdapter::findResourceByURI),
-            Arguments.of(ParsedIRI.create("https://www.geonames.org/abc"), "!invalid", OLSServiceAdapter::findClassByURI),
-            Arguments.of(ParsedIRI.create("https://www.geonames.org/abc"), "!invalid", OLSServiceAdapter::findPredicateByURI),
+            Arguments.of(IRI.create("https://www.geonames.org/abc"), "!invalid", OLSServiceAdapter::findResourceByURI),
+            Arguments.of(IRI.create("https://www.geonames.org/abc"), "!invalid", OLSServiceAdapter::findClassByURI),
+            Arguments.of(IRI.create("https://www.geonames.org/abc"), "!invalid", OLSServiceAdapter::findPredicateByURI),
         )
     }
 }

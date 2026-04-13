@@ -1,9 +1,9 @@
 package org.orkg.dataimport.domain.csv.papers
 
 import dev.forkhandles.values.ofOrNull
-import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.orkg.common.DOI
 import org.orkg.common.Either
+import org.orkg.common.IRI
 import org.orkg.common.ORCID
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.Author
@@ -80,7 +80,7 @@ open class PaperCSVRecordParser(
         var publicationMonth: Int? = null
         var publicationYear: Long? = null
         var publishedIn: String? = null
-        var url: ParsedIRI? = null
+        var url: IRI? = null
         val doi = item.getOrNull(paperDoiIndex!!)?.value
         if (!doi.isNullOrBlank()) {
             val metadata = findPaperMetadataByDoi(DOI.of(doi))
@@ -104,7 +104,7 @@ open class PaperCSVRecordParser(
             publishedIn = item.getOrNull(paperPublishedInIndex)?.value
         }
         if (url == null) {
-            url = item.getOrNull(paperUrlIndex)?.value?.let(::ParsedIRI)
+            url = item.getOrNull(paperUrlIndex)?.value?.let(::IRI)
         }
         if (title.isNullOrBlank()) {
             title = item.getOrNull(paperTitleIndex)?.value
@@ -187,7 +187,7 @@ open class PaperCSVRecordParser(
         var publicationMonth: Int? = null
         var publicationYear: Long? = null
         var publishedIn: String? = null
-        var url: ParsedIRI? = null
+        var url: IRI? = null
         doiService.findMetadataByDoi(doi).ifPresent { metadata ->
             title = metadata.path("title").stringValue(null)
             val subtitle = metadata.path("subtitle")
@@ -219,7 +219,7 @@ open class PaperCSVRecordParser(
                 publicationMonth = issued.get(1)?.asString(null)?.toIntOrNull()
             }
             try {
-                url = metadata.path("URL").stringValue(null)?.let(::ParsedIRI)
+                url = metadata.path("URL").stringValue(null)?.let(::IRI)
             } catch (_: Throwable) {
                 // ignore
             }
@@ -234,7 +234,7 @@ open class PaperCSVRecordParser(
         val publicationMonth: Int?,
         val publicationYear: Long?,
         val publishedIn: String?,
-        val url: ParsedIRI?,
+        val url: IRI?,
     )
 
     private fun List<CSVHeader>.findIndex(namepsace: String, name: String): Int =

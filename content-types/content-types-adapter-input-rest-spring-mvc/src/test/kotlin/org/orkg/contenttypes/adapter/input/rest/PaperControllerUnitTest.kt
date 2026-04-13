@@ -8,12 +8,12 @@ import io.mockk.every
 import io.mockk.just
 import io.mockk.runs
 import io.mockk.verify
-import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.hamcrest.Matchers.endsWith
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
 import org.orkg.common.DOI
+import org.orkg.common.IRI
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
@@ -1327,7 +1327,7 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
                 publishedMonth = 5,
                 publishedYear = 2015,
                 publishedIn = "conference",
-                url = ParsedIRI.create("https://www.example.org"),
+                url = IRI.create("https://www.example.org"),
             ),
             authors = listOf(
                 AuthorRequest(
@@ -1352,7 +1352,7 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
                     id = null,
                     name = "Author with homepage",
                     identifiers = null,
-                    homepage = ParsedIRI.create("https://example.org/author"),
+                    homepage = IRI.create("https://example.org/author"),
                 ),
                 AuthorRequest(
                     id = null,
@@ -1452,7 +1452,7 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
                 publishedMonth = 5,
                 publishedYear = 2015,
                 publishedIn = "conference",
-                url = ParsedIRI.create("https://www.example.org"),
+                url = IRI.create("https://www.example.org"),
             ),
             authors = listOf(
                 AuthorRequest(
@@ -1477,7 +1477,7 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
                     id = null,
                     name = "Author with homepage",
                     identifiers = null,
-                    homepage = ParsedIRI.create("https://example.org/author"),
+                    homepage = IRI.create("https://example.org/author"),
                 ),
                 AuthorRequest(
                     id = null,

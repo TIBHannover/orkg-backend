@@ -3,8 +3,8 @@ package org.orkg.dataimport.adapter.input.rest
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
-import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.orkg.common.ContributorId
+import org.orkg.common.IRI
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.adapter.input.rest.AuthorRepresentation
 import org.orkg.dataimport.domain.csv.CSV
@@ -53,7 +53,7 @@ data class PaperCSVRecordRepresentation(
     val publishedYear: Long?,
     @field:JsonProperty("published_in")
     val publishedIn: String?,
-    val url: ParsedIRI?,
+    val url: IRI?,
     val doi: String?,
     @field:JsonProperty("research_field_id")
     val researchFieldId: ThingId,

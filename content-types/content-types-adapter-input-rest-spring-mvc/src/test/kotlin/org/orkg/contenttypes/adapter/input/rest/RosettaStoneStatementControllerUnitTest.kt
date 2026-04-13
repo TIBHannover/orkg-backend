@@ -5,11 +5,11 @@ import io.mockk.every
 import io.mockk.just
 import io.mockk.runs
 import io.mockk.verify
-import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.hamcrest.Matchers.endsWith
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
+import org.orkg.common.IRI
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
@@ -543,7 +543,7 @@ internal class RosettaStoneStatementControllerUnitTest : MockMvcBaseTest("rosett
             classes = mapOf(
                 "#temp5" to CreateClassRequestPart(
                     label = "class",
-                    uri = ParsedIRI.create("https://orkg.org/class/C1"),
+                    uri = IRI.create("https://orkg.org/class/C1"),
                 ),
             ),
             observatories = listOf(
@@ -588,7 +588,7 @@ internal class RosettaStoneStatementControllerUnitTest : MockMvcBaseTest("rosett
             classes = mapOf(
                 "#temp5" to CreateClassRequestPart(
                     label = "class",
-                    uri = ParsedIRI.create("https://orkg.org/class/C1"),
+                    uri = IRI.create("https://orkg.org/class/C1"),
                 ),
             ),
             observatories = listOf(

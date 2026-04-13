@@ -1,6 +1,6 @@
 package org.orkg.dataimport.domain.csv.papers
 
-import org.eclipse.rdf4j.common.net.ParsedIRI
+import org.orkg.common.IRI
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.Author
 import org.orkg.dataimport.domain.csv.CSVID
@@ -19,7 +19,7 @@ data class PaperCSVRecord(
     val publicationMonth: Int?,
     val publicationYear: Long?,
     val publishedIn: String?,
-    val url: ParsedIRI?,
+    val url: IRI?,
     val doi: String?,
     val researchFieldId: ThingId,
     val extractionMethod: ExtractionMethod,

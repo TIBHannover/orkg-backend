@@ -1,6 +1,6 @@
 package org.orkg.common
 
-import org.eclipse.rdf4j.common.net.ParsedIRI
+import org.orkg.common.IRI
 import org.orkg.common.validation.NullableNotBlank
 import org.orkg.testing.spring.restdocs.DocumentationContextProvider
 import org.springframework.boot.test.context.TestComponent
@@ -18,7 +18,7 @@ class CommonDocumentationContextProvider : DocumentationContextProvider {
         Integer::class to "integer",
         Long::class to "integer",
         URI::class to "string",
-        ParsedIRI::class to "string",
+        IRI::class to "string",
         OffsetDateTime::class to "string",
         ContributorId::class to "string",
         ObservatoryId::class to "string",
@@ -42,7 +42,7 @@ class CommonDocumentationContextProvider : DocumentationContextProvider {
         when (type) {
             UUID::class, ContributorId::class, ObservatoryId::class, OrganizationId::class -> "uuid"
             URI::class -> "uri"
-            ParsedIRI::class -> "iri"
+            IRI::class -> "iri"
             Byte::class -> "byte"
             Integer::class -> "int32"
             Long::class -> "int64"

@@ -1,6 +1,6 @@
 package org.orkg.contenttypes.input
 
-import org.eclipse.rdf4j.common.net.ParsedIRI
+import org.orkg.common.IRI
 import org.orkg.common.ThingId
 import org.orkg.graph.domain.Literals
 
@@ -8,7 +8,7 @@ data class PublicationInfoCommand(
     val publishedMonth: Int?,
     val publishedYear: Long?,
     val publishedIn: String?,
-    val url: ParsedIRI?,
+    val url: IRI?,
 )
 
 sealed interface CreateThingsCommand {
@@ -36,7 +36,7 @@ data class CreateResourceCommandPart(
 
 data class CreateClassCommandPart(
     override val label: String,
-    val uri: ParsedIRI? = null,
+    val uri: IRI? = null,
 ) : CreateThingCommandPart
 
 data class CreateListCommandPart(

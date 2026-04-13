@@ -17,7 +17,6 @@ dependencies {
     api(project(":data-import:data-import-core-model"))
     api(project(":data-import:data-import-ports-output"))
     api(project(":graph:graph-core-model"))
-    implementation("org.eclipse.rdf4j:rdf4j-common-io")
     implementation(project(":common:pagination"))
     implementation(project(":common:serialization"))
     implementation(project(":common:string-utils"))

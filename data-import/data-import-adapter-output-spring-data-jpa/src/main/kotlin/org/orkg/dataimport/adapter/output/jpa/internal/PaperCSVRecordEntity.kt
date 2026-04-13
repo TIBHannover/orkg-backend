@@ -6,7 +6,7 @@ import jakarta.persistence.EnumType
 import jakarta.persistence.Enumerated
 import jakarta.persistence.Id
 import jakarta.persistence.Table
-import org.eclipse.rdf4j.common.net.ParsedIRI
+import org.orkg.common.IRI
 import org.orkg.common.ThingId
 import org.orkg.common.deserializeToObject
 import org.orkg.contenttypes.domain.Author
@@ -72,7 +72,7 @@ class PaperCSVRecordEntity {
             publicationMonth = publicationMonth,
             publicationYear = publicationYear,
             publishedIn = publishedIn,
-            url = url?.let(::ParsedIRI),
+            url = url?.let(::IRI),
             doi = doi,
             researchFieldId = ThingId(researchFieldId!!),
             extractionMethod = extractionMethod!!,

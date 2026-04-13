@@ -1,9 +1,9 @@
 package org.orkg.graph.adapter.input.rest
 
 import org.assertj.core.api.Assertions.assertThat
-import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
+import org.orkg.common.IRI
 import org.orkg.common.ThingId
 import org.orkg.common.json.CommonJacksonModule
 import org.orkg.graph.adapter.input.rest.mapping.ClassRepresentationAdapter
@@ -58,7 +58,7 @@ internal class ClassRepresentationJsonTest {
             id = ThingId("C100"),
             label = "label",
             description = "class description",
-            uri = ParsedIRI.create("https://example.org/path/to/file#with-fragment"),
+            uri = IRI.create("https://example.org/path/to/file#with-fragment"),
             createdAt = OffsetDateTime.of(2018, 12, 25, 5, 23, 42, 123456789, ZoneOffset.ofHours(3)),
             createdBy = ContributorId.UNKNOWN,
             extractionMethod = ExtractionMethod.UNKNOWN,

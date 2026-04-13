@@ -1,6 +1,6 @@
 package org.orkg.graph.adapter.output.web
 
-import org.eclipse.rdf4j.common.net.ParsedIRI
+import org.orkg.common.IRI
 import org.orkg.common.send
 import org.orkg.graph.domain.ExternalThing
 import org.orkg.graph.output.ExternalClassService
@@ -36,22 +36,22 @@ class OLSServiceAdapter(
     override fun findClassByShortForm(ontologyId: String, shortForm: String): ExternalThing? =
         fetchByShortForm(ontologyId, Type.CLASS, shortForm)
 
-    override fun findClassByURI(ontologyId: String, uri: ParsedIRI): ExternalThing? =
+    override fun findClassByURI(ontologyId: String, uri: IRI): ExternalThing? =
         fetchByURI(ontologyId, Type.CLASS, uri)
 
     override fun findResourceByShortForm(ontologyId: String, shortForm: String): ExternalThing? =
         fetchByShortForm(ontologyId, Type.RESOURCE, shortForm)
 
-    override fun findResourceByURI(ontologyId: String, uri: ParsedIRI): ExternalThing? =
+    override fun findResourceByURI(ontologyId: String, uri: IRI): ExternalThing? =
         fetchByURI(ontologyId, Type.RESOURCE, uri)
 
     override fun findPredicateByShortForm(ontologyId: String, shortForm: String): ExternalThing? =
         fetchByShortForm(ontologyId, Type.PREDICATE, shortForm)
 
-    override fun findPredicateByURI(ontologyId: String, uri: ParsedIRI): ExternalThing? =
+    override fun findPredicateByURI(ontologyId: String, uri: IRI): ExternalThing? =
         fetchByURI(ontologyId, Type.PREDICATE, uri)
 
-    private fun fetchByURI(ontologyId: String, type: Type, uri: ParsedIRI): ExternalThing? {
+    private fun fetchByURI(ontologyId: String, type: Type, uri: IRI): ExternalThing? {
         if (!supportsOntology(ontologyId)) return null
         return fetch(
             UriComponentsBuilder.fromUriString(host)
@@ -95,7 +95,7 @@ class OLSServiceAdapter(
             val item = tree.path("elements").toList().singleOrNull()
                 ?: return@send null
             ExternalThing(
-                uri = ParsedIRI.create(item.path("iri").asString()),
+                uri = IRI.create(item.path("iri").asString()),
                 label = item.path("label").toList()
                     .firstOrNull()?.asString(null)
                     ?: return@send null,

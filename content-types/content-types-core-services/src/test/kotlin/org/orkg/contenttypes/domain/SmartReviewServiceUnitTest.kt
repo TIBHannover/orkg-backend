@@ -7,10 +7,10 @@ import io.kotest.matchers.types.shouldBeInstanceOf
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.orkg.common.ContributorId
+import org.orkg.common.IRI
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.PageRequests
@@ -351,7 +351,7 @@ internal class SmartReviewServiceUnitTest : MockkBaseTest {
                     identifiers = mapOf(
                         "orcid" to listOf("0000-1111-2222-3333"),
                     ),
-                    homepage = ParsedIRI.create("https://example.org"),
+                    homepage = IRI.create("https://example.org"),
                 ),
             )
             it.versions shouldBe VersionInfo(
@@ -672,7 +672,7 @@ internal class SmartReviewServiceUnitTest : MockkBaseTest {
                     identifiers = mapOf(
                         "orcid" to listOf("0000-1111-2222-3333"),
                     ),
-                    homepage = ParsedIRI.create("https://example.org"),
+                    homepage = IRI.create("https://example.org"),
                 ),
             )
             it.versions shouldBe VersionInfo(

@@ -1,8 +1,8 @@
 package org.orkg.dataimport.domain.testing.fixtures
 
-import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.orkg.common.ContributorId
 import org.orkg.common.Either
+import org.orkg.common.IRI
 import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.Assets.csv
 import org.orkg.contenttypes.domain.Author
@@ -49,7 +49,7 @@ fun createPaperCSVRecord() = PaperCSVRecord(
     publicationMonth = 4,
     publicationYear = 2023,
     publishedIn = "Fancy Conference",
-    url = ParsedIRI("https://example.org"),
+    url = IRI("https://example.org"),
     doi = "10.1000/182",
     researchFieldId = ThingId("R456"),
     extractionMethod = ExtractionMethod.MANUAL,

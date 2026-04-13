@@ -1,9 +1,9 @@
 package org.orkg.graph.domain
 
-import org.eclipse.rdf4j.common.net.ParsedIRI
+import org.orkg.common.IRI
 
 data class ExternalThing(
-    val uri: ParsedIRI,
+    val uri: IRI,
     val label: String,
     val description: String?,
 )

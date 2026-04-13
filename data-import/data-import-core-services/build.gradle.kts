@@ -26,7 +26,6 @@ dependencies {
     implementation("dev.forkhandles:values4k")
     implementation("io.kotest:kotest-assertions-core")
     implementation("io.kotest:kotest-assertions-shared")
-    implementation("org.eclipse.rdf4j:rdf4j-common-io")
     implementation("org.springframework:spring-web")
     implementation("org.slf4j:slf4j-api")
     implementation(project(":common:functional"))

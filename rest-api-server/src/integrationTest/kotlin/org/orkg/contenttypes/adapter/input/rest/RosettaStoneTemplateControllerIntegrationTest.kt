@@ -5,11 +5,11 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.kotest.matchers.types.shouldBeInstanceOf
 import org.assertj.core.api.Assertions.assertThat
-import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
+import org.orkg.common.IRI
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.RealNumber
@@ -131,7 +131,7 @@ internal class RosettaStoneTemplateControllerIntegrationTest : MockMvcBaseTest("
             classService.createClass(
                 label = xsd.`class`.value,
                 id = xsd.`class`,
-                uri = ParsedIRI.create(xsd.uri),
+                uri = IRI.create(xsd.uri),
             )
         }
 
@@ -243,7 +243,7 @@ internal class RosettaStoneTemplateControllerIntegrationTest : MockMvcBaseTest("
                 property.maxCount shouldBe 2
                 property.pattern shouldBe "\\d+"
                 property.path shouldBe ObjectIdAndLabel(Predicates.hasObjectPosition, "hasObjectPosition")
-                property.datatype shouldBe ClassReferenceRepresentation(Classes.string, "String", ParsedIRI.create(Literals.XSD.STRING.uri))
+                property.datatype shouldBe ClassReferenceRepresentation(Classes.string, "String", IRI.create(Literals.XSD.STRING.uri))
                 property.createdAt shouldNotBe null
                 property.createdBy shouldBe ContributorId(MockUserId.USER)
             }
@@ -258,7 +258,7 @@ internal class RosettaStoneTemplateControllerIntegrationTest : MockMvcBaseTest("
                 property.minInclusive shouldBe RealNumber(-1)
                 property.maxInclusive shouldBe RealNumber(10)
                 property.path shouldBe ObjectIdAndLabel(Predicates.hasObjectPosition, "hasObjectPosition")
-                property.datatype shouldBe ClassReferenceRepresentation(Classes.integer, "Integer", ParsedIRI.create(Literals.XSD.INT.uri))
+                property.datatype shouldBe ClassReferenceRepresentation(Classes.integer, "Integer", IRI.create(Literals.XSD.INT.uri))
                 property.createdAt shouldNotBe null
                 property.createdBy shouldBe ContributorId(MockUserId.USER)
             }
@@ -350,7 +350,7 @@ internal class RosettaStoneTemplateControllerIntegrationTest : MockMvcBaseTest("
                 property.maxCount shouldBe 3
                 property.pattern shouldBe "\\w+"
                 property.path shouldBe ObjectIdAndLabel(Predicates.hasObjectPosition, "hasObjectPosition")
-                property.datatype shouldBe ClassReference(Classes.string, "String", ParsedIRI.create(Literals.XSD.STRING.uri))
+                property.datatype shouldBe ClassReference(Classes.string, "String", IRI.create(Literals.XSD.STRING.uri))
                 property.createdAt shouldNotBe null
                 property.createdBy shouldBe ContributorId(MockUserId.USER)
             }
@@ -365,7 +365,7 @@ internal class RosettaStoneTemplateControllerIntegrationTest : MockMvcBaseTest("
                 property.minInclusive shouldBe RealNumber(0)
                 property.maxInclusive shouldBe RealNumber(11)
                 property.path shouldBe ObjectIdAndLabel(Predicates.hasObjectPosition, "hasObjectPosition")
-                property.datatype shouldBe ClassReference(Classes.integer, "Integer", ParsedIRI.create(Literals.XSD.INT.uri))
+                property.datatype shouldBe ClassReference(Classes.integer, "Integer", IRI.create(Literals.XSD.INT.uri))
                 property.createdAt shouldNotBe null
                 property.createdBy shouldBe ContributorId(MockUserId.USER)
             }

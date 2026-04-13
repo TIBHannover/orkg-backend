@@ -5,9 +5,9 @@ import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.verify
-import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
+import org.orkg.common.IRI
 import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.common.testing.fixtures.fixedClock
@@ -141,7 +141,7 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
         val contributorId = ContributorId(UUID.randomUUID())
         val classCommand = CreateClassCommandPart(
             label = "Some class",
-            uri = ParsedIRI.create("https://example.org"),
+            uri = IRI.create("https://example.org"),
         )
         val extractionMethod = ExtractionMethod.MANUAL
         val contents = createRosettaStoneStatementCommand().copy(
@@ -190,7 +190,7 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
         val contributorId = ContributorId(UUID.randomUUID())
         val classCommand = CreateClassCommandPart(
             label = "Some class",
-            uri = ParsedIRI.create("https://example.org"),
+            uri = IRI.create("https://example.org"),
         )
         val contents = createRosettaStoneStatementCommand().copy(
             resources = emptyMap(),

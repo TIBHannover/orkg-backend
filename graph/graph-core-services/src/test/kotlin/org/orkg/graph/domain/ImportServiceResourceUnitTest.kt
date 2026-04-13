@@ -3,10 +3,10 @@ package org.orkg.graph.domain
 import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.verify
-import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.orkg.common.ContributorId
+import org.orkg.common.IRI
 import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
 import org.orkg.graph.input.CreateResourceUseCase
@@ -48,7 +48,7 @@ internal class ImportServiceResourceUnitTest : AbstractImportServiceUnitTest() {
         val ontologyId = "ontology"
         val shortForm = "resourceId"
         val externalThing = ExternalThing(
-            uri = ParsedIRI.create("https://example.org/resources/$ontologyId/$shortForm"),
+            uri = IRI.create("https://example.org/resources/$ontologyId/$shortForm"),
             label = "resource label",
             description = "resource description",
         )
@@ -89,7 +89,7 @@ internal class ImportServiceResourceUnitTest : AbstractImportServiceUnitTest() {
         val ontologyId = "ontology"
         val shortForm = "resourceId"
         val externalThing = ExternalThing(
-            uri = ParsedIRI.create("https://example.org/resources/$ontologyId/$shortForm"),
+            uri = IRI.create("https://example.org/resources/$ontologyId/$shortForm"),
             label = "resource label",
             description = "resource description",
         )
@@ -129,7 +129,7 @@ internal class ImportServiceResourceUnitTest : AbstractImportServiceUnitTest() {
     @Test
     fun `Given an import service, when importing a resource by uri and ontology id, and external resource already exists in orkg, then it returns the id of the existing resource`() {
         val ontologyId = "ontology"
-        val uri = ParsedIRI.create("https://example.org/resources/$ontologyId/resourceId")
+        val uri = IRI.create("https://example.org/resources/$ontologyId/resourceId")
         val existingId = ThingId("existing")
 
         every {
@@ -161,7 +161,7 @@ internal class ImportServiceResourceUnitTest : AbstractImportServiceUnitTest() {
     @Test
     fun `Given an import service, when importing a resource by uri and ontology id, and external resource does not exist in orkg and ontology is not supported, then it throws an exception`() {
         val ontologyId = "ontology"
-        val uri = ParsedIRI.create("https://example.org/resources/$ontologyId/resourceId")
+        val uri = IRI.create("https://example.org/resources/$ontologyId/resourceId")
 
         every {
             statementService.findAll(
@@ -193,7 +193,7 @@ internal class ImportServiceResourceUnitTest : AbstractImportServiceUnitTest() {
     @Test
     fun `Given an import service, when importing a resource by uri and ontology id, and external resource does not exist in orkg and external resource could not be found, then it throws an exception`() {
         val ontologyId = "ontology"
-        val uri = ParsedIRI.create("https://example.org/resources/$ontologyId/resourceId")
+        val uri = IRI.create("https://example.org/resources/$ontologyId/resourceId")
 
         every {
             statementService.findAll(
@@ -227,7 +227,7 @@ internal class ImportServiceResourceUnitTest : AbstractImportServiceUnitTest() {
     @Test
     fun `Given an import service, when importing a resource by uri and ontology id, and external resource is found, and does not exist in orkg, then it creates a new resource and returns its id`() {
         val ontologyId = "ontology"
-        val uri = ParsedIRI.create("https://example.org/resources/$ontologyId/resourceId")
+        val uri = IRI.create("https://example.org/resources/$ontologyId/resourceId")
         val externalThing = ExternalThing(
             uri = uri,
             label = "resource label",

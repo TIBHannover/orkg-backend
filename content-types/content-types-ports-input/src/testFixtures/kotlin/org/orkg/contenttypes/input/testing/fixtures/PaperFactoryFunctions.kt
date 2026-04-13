@@ -1,7 +1,7 @@
 package org.orkg.contenttypes.input.testing.fixtures
 
-import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.orkg.common.ContributorId
+import org.orkg.common.IRI
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
@@ -29,7 +29,7 @@ fun createPaperCommand() = CreatePaperUseCase.CreateCommand(
         publishedYear = 2015,
         publishedMonth = 5,
         publishedIn = "conference",
-        url = ParsedIRI.create("https://example.org"),
+        url = IRI.create("https://example.org"),
     ),
     authors = listOf(
         Author(
@@ -47,7 +47,7 @@ fun createPaperCommand() = CreatePaperUseCase.CreateCommand(
         ),
         Author(
             name = "Author with homepage",
-            homepage = ParsedIRI.create("https://example.org/author"),
+            homepage = IRI.create("https://example.org/author"),
         ),
         Author(
             name = "Author that just has a name",
@@ -130,7 +130,7 @@ fun updatePaperCommand() = UpdatePaperUseCase.UpdateCommand(
         publishedYear = 2015,
         publishedMonth = 5,
         publishedIn = "conference",
-        url = ParsedIRI.create("https://example.org"),
+        url = IRI.create("https://example.org"),
     ),
     authors = listOf(
         Author(
@@ -148,7 +148,7 @@ fun updatePaperCommand() = UpdatePaperUseCase.UpdateCommand(
         ),
         Author(
             name = "Author with homepage",
-            homepage = ParsedIRI.create("https://example.org/author"),
+            homepage = IRI.create("https://example.org/author"),
         ),
         Author(
             name = "Author that just has a name",
@@ -195,7 +195,7 @@ fun publishPaperCommand() = PublishPaperUseCase.PublishCommand(
         ),
         Author(
             name = "Author with homepage",
-            homepage = ParsedIRI.create("https://example.org/author"),
+            homepage = IRI.create("https://example.org/author"),
         ),
         Author(
             name = "Author that just has a name",

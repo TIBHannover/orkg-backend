@@ -4,10 +4,10 @@ import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.orkg.common.Either
+import org.orkg.common.IRI
 import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.ThingIsNotAClass
@@ -276,7 +276,7 @@ internal class ThingsCommandValidatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a things command, when specified class uri is not absolute, it throws an exception`() {
-        val uri = ParsedIRI.create("invalid")
+        val uri = IRI.create("invalid")
         val contents = updateTemplateInstanceCommand().copy(
             resources = emptyMap(),
             literals = emptyMap(),
@@ -295,7 +295,7 @@ internal class ThingsCommandValidatorUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a things command, when specified class uri already exists, it throws an exception`() {
-        val uri = ParsedIRI.create("https://orkg.org/class/C1")
+        val uri = IRI.create("https://orkg.org/class/C1")
         val contents = updateTemplateInstanceCommand().copy(
             resources = emptyMap(),
             literals = emptyMap(),

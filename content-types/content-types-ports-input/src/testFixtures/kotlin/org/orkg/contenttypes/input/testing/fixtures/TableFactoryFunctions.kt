@@ -1,7 +1,7 @@
 package org.orkg.contenttypes.input.testing.fixtures
 
-import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.orkg.common.ContributorId
+import org.orkg.common.IRI
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
@@ -54,7 +54,7 @@ fun createTableCommand() = CreateTableUseCase.CreateCommand(
     classes = mapOf(
         "#temp7" to CreateClassCommandPart(
             label = "class",
-            uri = ParsedIRI.create("https://orkg.org/class/C1"),
+            uri = IRI.create("https://orkg.org/class/C1"),
         ),
     ),
     rows = listOf(
@@ -110,7 +110,7 @@ fun updateTableCommand() = UpdateTableUseCase.UpdateCommand(
     classes = mapOf(
         "#temp7" to CreateClassCommandPart(
             label = "class",
-            uri = ParsedIRI.create("https://orkg.org/class/C1"),
+            uri = IRI.create("https://orkg.org/class/C1"),
         ),
     ),
     rows = listOf(

@@ -1,6 +1,6 @@
 package org.orkg.graph.adapter.output.web
 
-import org.eclipse.rdf4j.common.net.ParsedIRI
+import org.orkg.common.IRI
 import org.orkg.common.exceptions.ServiceUnavailable
 import org.orkg.common.send
 import org.orkg.graph.domain.ExternalEntityIsNotAClass
@@ -43,19 +43,19 @@ class WikidataServiceAdapter(
     override fun findResourceByShortForm(ontologyId: String, shortForm: String): ExternalThing? =
         fetch(ontologyId, shortForm, itemIdPattern, ::isResource) { ExternalEntityIsNotAResource(ontologyId, shortForm) }
 
-    override fun findResourceByURI(ontologyId: String, uri: ParsedIRI): ExternalThing? =
+    override fun findResourceByURI(ontologyId: String, uri: IRI): ExternalThing? =
         fetch(ontologyId, uri.toString(), itemPattern, ::isResource) { ExternalEntityIsNotAResource(ontologyId, uri) }
 
     override fun findClassByShortForm(ontologyId: String, shortForm: String): ExternalThing? =
         fetch(ontologyId, shortForm, itemIdPattern, ::isClass) { ExternalEntityIsNotAClass(ontologyId, shortForm) }
 
-    override fun findClassByURI(ontologyId: String, uri: ParsedIRI): ExternalThing? =
+    override fun findClassByURI(ontologyId: String, uri: IRI): ExternalThing? =
         fetch(ontologyId, uri.toString(), itemPattern, ::isClass) { ExternalEntityIsNotAClass(ontologyId, uri) }
 
     override fun findPredicateByShortForm(ontologyId: String, shortForm: String): ExternalThing? =
         fetch(ontologyId, shortForm, propertyIdPattern)
 
-    override fun findPredicateByURI(ontologyId: String, uri: ParsedIRI): ExternalThing? =
+    override fun findPredicateByURI(ontologyId: String, uri: IRI): ExternalThing? =
         fetch(ontologyId, uri.toString(), propertyPattern)
 
     private fun isResource(claims: JsonNode): Boolean = claims.size() == 0 || claims.has("P31") || !claims.has("P279")
@@ -103,7 +103,7 @@ class WikidataServiceAdapter(
                 return@send null
             }
             ExternalThing(
-                uri = ParsedIRI.create("https://www.wikidata.org/entity/$id"),
+                uri = IRI.create("https://www.wikidata.org/entity/$id"),
                 label = entity.path("labels").path("en").path("value").asString(null)
                     ?: return@send null,
                 description = entity.path("descriptions").path("en").path("value").asString(null),

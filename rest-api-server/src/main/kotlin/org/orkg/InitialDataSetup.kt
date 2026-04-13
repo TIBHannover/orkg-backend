@@ -1,7 +1,7 @@
 package org.orkg
 
-import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.orkg.common.ContributorId
+import org.orkg.common.IRI
 import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
 import org.orkg.graph.domain.Class
@@ -129,7 +129,7 @@ class InitialDataSetup(
     data class RequiredClassCommand(
         val id: ThingId,
         val label: String,
-        val uri: ParsedIRI?,
+        val uri: IRI?,
     )
 
     data class RequiredPredicateCommand(

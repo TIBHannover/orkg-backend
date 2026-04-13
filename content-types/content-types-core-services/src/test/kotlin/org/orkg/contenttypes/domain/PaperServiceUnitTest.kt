@@ -7,9 +7,9 @@ import io.kotest.matchers.shouldNotBe
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import org.orkg.common.IRI
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.PageRequests
@@ -246,7 +246,7 @@ internal class PaperServiceUnitTest : MockkBaseTest {
                 publicationInfo.publishedMonth shouldBe publishedMonth
                 publicationInfo.publishedYear shouldBe publishedYear
                 publicationInfo.publishedIn shouldBe ObjectIdAndLabel(publishedInId, publishedIn)
-                publicationInfo.url shouldBe ParsedIRI.create(publishedUrl)
+                publicationInfo.url shouldBe IRI.create(publishedUrl)
             }
             paper.authors shouldNotBe null
             paper.authors shouldBe listOf(
@@ -262,7 +262,7 @@ internal class PaperServiceUnitTest : MockkBaseTest {
                     identifiers = mapOf(
                         "orcid" to listOf("0000-1111-2222-3333"),
                     ),
-                    homepage = ParsedIRI.create("https://example.org"),
+                    homepage = IRI.create("https://example.org"),
                 ),
             )
             paper.contributions shouldNotBe null

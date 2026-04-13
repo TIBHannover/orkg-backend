@@ -6,7 +6,7 @@ plugins {
 }
 
 dependencies {
-    api("org.eclipse.rdf4j:rdf4j-common-io") // for RFC 3987 compliant IRIs
+    api(project(":common:core-identifiers"))
     implementation(project(":common:string-utils"))
     testFixturesApi("org.hamcrest:hamcrest")
 }

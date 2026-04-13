@@ -1,8 +1,8 @@
 package org.orkg.contenttypes.adapter.input.rest
 
-import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
+import org.orkg.common.IRI
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.RealNumber
@@ -585,7 +585,7 @@ internal class OpenApiDocTest : MockMvcOpenApiBaseTest() {
     private fun createClassReferenceRepresentation() = ClassReferenceRepresentation(
         id = ThingId("C123"),
         label = "Default label",
-        uri = ParsedIRI("http://example.org"),
+        uri = IRI("http://example.org"),
     )
 
     private fun createLiteralReferenceRepresentation() = LiteralReferenceRepresentation(

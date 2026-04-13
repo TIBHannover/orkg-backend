@@ -1,8 +1,8 @@
 package org.orkg.graph.domain
 
 import dev.forkhandles.values.ofOrNull
-import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.orkg.common.ContributorId
+import org.orkg.common.IRI
 import org.orkg.common.ThingId
 import org.orkg.graph.input.ClassUseCases
 import org.orkg.graph.input.CreateClassUseCase
@@ -52,7 +52,7 @@ class ClassService(
         createdBy: ContributorId?,
         createdAtStart: OffsetDateTime?,
         createdAtEnd: OffsetDateTime?,
-        uri: ParsedIRI?,
+        uri: IRI?,
     ): Page<Class> =
         repository.findAll(pageable, label, createdBy, createdAtStart, createdAtEnd, uri)
 
@@ -108,6 +108,6 @@ class ClassService(
 
     override fun deleteAll() = repository.deleteAll()
 
-    override fun findByURI(uri: ParsedIRI): Optional<Class> =
+    override fun findByURI(uri: IRI): Optional<Class> =
         repository.findByUri(uri.toString())
 }

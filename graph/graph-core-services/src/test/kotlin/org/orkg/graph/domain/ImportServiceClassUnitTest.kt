@@ -3,10 +3,10 @@ package org.orkg.graph.domain
 import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.verify
-import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.orkg.common.ContributorId
+import org.orkg.common.IRI
 import org.orkg.common.ThingId
 import org.orkg.graph.input.CreateClassUseCase
 import org.orkg.graph.testing.fixtures.createClass
@@ -46,7 +46,7 @@ internal class ImportServiceClassUnitTest : AbstractImportServiceUnitTest() {
         val ontologyId = "ontology"
         val shortForm = "classId"
         val externalThing = ExternalThing(
-            uri = ParsedIRI.create("https://example.org/classs/$ontologyId/$shortForm"),
+            uri = IRI.create("https://example.org/classs/$ontologyId/$shortForm"),
             label = "class label",
             description = "class description",
         )
@@ -69,7 +69,7 @@ internal class ImportServiceClassUnitTest : AbstractImportServiceUnitTest() {
         val ontologyId = "ontology"
         val shortForm = "classId"
         val externalThing = ExternalThing(
-            uri = ParsedIRI.create("https://example.org/classs/$ontologyId/$shortForm"),
+            uri = IRI.create("https://example.org/classs/$ontologyId/$shortForm"),
             label = "class label",
             description = "class description",
         )
@@ -93,7 +93,7 @@ internal class ImportServiceClassUnitTest : AbstractImportServiceUnitTest() {
     @Test
     fun `Given an import service, when importing a class by uri and ontology id, and external class already exists in orkg, then it returns the id of the existing class`() {
         val ontologyId = "ontology"
-        val uri = ParsedIRI.create("https://example.org/classs/$ontologyId/classId")
+        val uri = IRI.create("https://example.org/classs/$ontologyId/classId")
         val existingId = ThingId("existing")
 
         every { classService.findByURI(uri) } returns Optional.of(createClass(existingId))
@@ -107,7 +107,7 @@ internal class ImportServiceClassUnitTest : AbstractImportServiceUnitTest() {
     @Test
     fun `Given an import service, when importing a class by uri and ontology id, and external class does not exist in orkg and ontology is not supported, then it throws an exception`() {
         val ontologyId = "ontology"
-        val uri = ParsedIRI.create("https://example.org/classs/$ontologyId/classId")
+        val uri = IRI.create("https://example.org/classs/$ontologyId/classId")
 
         every { classService.findByURI(uri) } returns Optional.empty()
         every { externalClassService.supportsOntology(any()) } returns false
@@ -123,7 +123,7 @@ internal class ImportServiceClassUnitTest : AbstractImportServiceUnitTest() {
     @Test
     fun `Given an import service, when importing a class by uri and ontology id, and external class does not exist in orkg and external class could not be found, then it throws an exception`() {
         val ontologyId = "ontology"
-        val uri = ParsedIRI.create("https://example.org/classs/$ontologyId/classId")
+        val uri = IRI.create("https://example.org/classs/$ontologyId/classId")
 
         every { classService.findByURI(uri) } returns Optional.empty()
         every { externalClassService.supportsOntology(any()) } returns true
@@ -141,7 +141,7 @@ internal class ImportServiceClassUnitTest : AbstractImportServiceUnitTest() {
     @Test
     fun `Given an import service, when importing a class by uri and ontology id, and external class is found, and does not exist in orkg, then it creates a new class and returns its id`() {
         val ontologyId = "ontology"
-        val uri = ParsedIRI.create("https://example.org/classs/$ontologyId/classId")
+        val uri = IRI.create("https://example.org/classs/$ontologyId/classId")
         val externalThing = ExternalThing(
             uri = uri,
             label = "class label",

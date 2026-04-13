@@ -1,7 +1,6 @@
 package org.orkg.graph.adapter.output.neo4j
 
 import org.apache.lucene.queryparser.classic.QueryParser
-import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.jetbrains.annotations.Contract
 import org.neo4j.cypherdsl.core.Condition
 import org.neo4j.cypherdsl.core.Cypher.call
@@ -22,6 +21,7 @@ import org.neo4j.driver.Value
 import org.neo4j.driver.types.Node
 import org.neo4j.driver.types.TypeSystem
 import org.orkg.common.ContributorId
+import org.orkg.common.IRI
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.StringReader
@@ -174,7 +174,7 @@ internal fun Value.asNullableBoolean(): Boolean? = if (isNull) null else isTrue
 
 internal fun Value.toOffsetDateTime() = OffsetDateTime.parse(asString(), DateTimeFormatter.ISO_OFFSET_DATE_TIME)
 
-internal fun Value.toIRI() = if (isNull) null else ParsedIRI.create(asString())
+internal fun Value.toIRI() = if (isNull) null else IRI.create(asString())
 
 internal fun Value.toStatementId() = StatementId(asString())
 

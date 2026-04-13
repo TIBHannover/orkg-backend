@@ -196,7 +196,6 @@ dependencies {
     // Direct transitive dependencies
     implementation("com.github.multiformats:java-multihash")
     implementation("io.micrometer:micrometer-core")
-    implementation("org.eclipse.rdf4j:rdf4j-common-io")
     implementation("org.neo4j.driver:neo4j-java-driver")
     implementation("org.slf4j:slf4j-api")
     implementation("org.springframework.batch:spring-batch-core")
@@ -265,7 +264,6 @@ dependencies {
     "integrationTestApi"(project(":media-storage:media-storage-core-model"))
     "integrationTestApi"("com.fasterxml.jackson.core:jackson-annotations")
     "integrationTestApi"("com.github.multiformats:java-multihash")
-    "integrationTestApi"("org.eclipse.rdf4j:rdf4j-common-io")
     "integrationTestApi"("org.springframework:spring-context")
     "integrationTestApi"("tools.jackson.core:jackson-databind")
     "integrationTestImplementation"(project(":common:datatypes"))

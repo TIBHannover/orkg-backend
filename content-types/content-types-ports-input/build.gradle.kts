@@ -3,7 +3,6 @@ plugins {
 }
 
 dependencies {
-    api("org.eclipse.rdf4j:rdf4j-common-io")
     api("org.springframework.data:spring-data-commons")
     api(project(":common:functional"))
     api(project(":common:core-identifiers"))
@@ -18,6 +17,5 @@ dependencies {
     testFixturesApi(project(":graph:graph-core-model"))
     testFixturesImplementation("dev.forkhandles:values4k")
     testFixturesImplementation(project(":graph:graph-core-constants"))
-    testFixturesImplementation("org.eclipse.rdf4j:rdf4j-common-io")
     testFixturesImplementation(testFixtures(project(":content-types:content-types-core-model")))
 }

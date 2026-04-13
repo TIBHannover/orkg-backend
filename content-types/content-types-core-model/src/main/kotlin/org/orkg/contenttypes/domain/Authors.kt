@@ -1,6 +1,6 @@
 package org.orkg.contenttypes.domain
 
-import org.eclipse.rdf4j.common.net.ParsedIRI
+import org.orkg.common.IRI
 import org.orkg.common.ThingId
 import org.orkg.graph.domain.Resource
 import java.io.Serial
@@ -12,7 +12,7 @@ data class Author(
     val name: String,
     val id: ThingId? = null,
     val identifiers: Map<String, List<String>>? = null,
-    val homepage: ParsedIRI? = null,
+    val homepage: IRI? = null,
 ) : Serializable {
     companion object {
         @Serial

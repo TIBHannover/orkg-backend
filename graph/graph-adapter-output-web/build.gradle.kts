@@ -7,10 +7,10 @@ plugins {
 }
 
 dependencies {
-    api("org.eclipse.rdf4j:rdf4j-common-io")
     api("org.springframework:spring-beans")
     api("org.springframework:spring-context")
     api("tools.jackson.core:jackson-databind")
+    api(project(":common:core-identifiers"))
     api(project(":graph:graph-ports-output"))
     api(project(":graph:graph-core-model"))
     implementation("org.springframework:spring-web")

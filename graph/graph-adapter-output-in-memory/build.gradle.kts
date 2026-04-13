@@ -6,7 +6,6 @@ plugins {
 }
 
 dependencies {
-    api("org.eclipse.rdf4j:rdf4j-common-io")
     api("org.springframework.data:spring-data-commons")
     api(project(":common:core-identifiers"))
     api(project(":graph:graph-core-model"))

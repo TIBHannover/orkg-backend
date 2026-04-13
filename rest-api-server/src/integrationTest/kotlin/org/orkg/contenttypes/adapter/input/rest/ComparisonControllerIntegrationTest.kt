@@ -8,11 +8,11 @@ import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import org.assertj.core.api.Assertions.assertThat
-import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
+import org.orkg.common.IRI
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
@@ -267,7 +267,7 @@ internal class ComparisonControllerIntegrationTest : MockMvcBaseTest("comparison
                 author.name shouldBe "Author with homepage"
                 author.id shouldNotBe null
                 author.identifiers shouldBe emptyMap()
-                author.homepage shouldBe ParsedIRI.create("https://example.org/author")
+                author.homepage shouldBe IRI.create("https://example.org/author")
             }
             it.authors[4] shouldBe AuthorRepresentation(
                 name = "Author that just has a name",
@@ -344,7 +344,7 @@ internal class ComparisonControllerIntegrationTest : MockMvcBaseTest("comparison
                 author.name shouldBe "Author with homepage"
                 author.id shouldNotBe null
                 author.identifiers shouldBe emptyMap()
-                author.homepage shouldBe ParsedIRI.create("https://example.org/author")
+                author.homepage shouldBe IRI.create("https://example.org/author")
             }
             it.authors[4] shouldBe Author(
                 name = "Author that just has a name",

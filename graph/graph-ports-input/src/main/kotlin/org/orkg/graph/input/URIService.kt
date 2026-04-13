@@ -1,10 +1,10 @@
 package org.orkg.graph.input
 
-import org.eclipse.rdf4j.common.net.ParsedIRI
+import org.orkg.common.IRI
 import java.util.Optional
 
 /**
- * A service that provides functionality for entities addressable by a [ParsedIRI].
+ * A service that provides functionality for entities addressable by a [IRI].
  */
 interface URIService<T> {
     /**
@@ -13,8 +13,8 @@ interface URIService<T> {
      * URIs need to be unique, so that at most one element is returned.
      * The provided URI must match exactly.
      *
-     * @param uri The [ParsedIRI] to be searched.
+     * @param uri The [IRI] to be searched.
      * @return An [Optional] containing the found entity, or [Optional.EMPTY] otherwise.
      */
-    fun findByURI(uri: ParsedIRI): Optional<T>
+    fun findByURI(uri: IRI): Optional<T>
 }

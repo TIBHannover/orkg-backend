@@ -3,7 +3,7 @@ package org.orkg.contenttypes.adapter.input.rest
 import com.fasterxml.jackson.annotation.JsonProperty
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.PositiveOrZero
-import org.eclipse.rdf4j.common.net.ParsedIRI
+import org.orkg.common.IRI
 import org.orkg.common.RealNumber
 import org.orkg.common.ThingId
 import org.orkg.common.validation.NullableNotBlank
@@ -75,7 +75,7 @@ data class CreateResourceRequestPart(
 data class CreateClassRequestPart(
     @field:NotBlank
     val label: String,
-    val uri: ParsedIRI? = null,
+    val uri: IRI? = null,
 ) {
     fun toCreateCommand(): CreateClassCommandPart =
         CreateClassCommandPart(

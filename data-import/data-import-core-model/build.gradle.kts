@@ -4,7 +4,6 @@ plugins {
 }
 
 dependencies {
-    api("org.eclipse.rdf4j:rdf4j-common-io")
     api("org.springframework.batch:spring-batch-core")
     api("org.springframework:spring-web")
     api(project(":common:core-identifiers"))

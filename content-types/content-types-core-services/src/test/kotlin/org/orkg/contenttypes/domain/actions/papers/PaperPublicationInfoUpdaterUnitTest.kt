@@ -7,8 +7,8 @@ import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.verify
-import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.junit.jupiter.api.Test
+import org.orkg.common.IRI
 import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.ObjectIdAndLabel
@@ -520,7 +520,7 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
             publishedMonth = null,
             publishedYear = null,
             publishedIn = null,
-            url = ParsedIRI.create("https://orkg.org/"),
+            url = IRI.create("https://orkg.org/"),
         )
         val paper = createPaper().copy(
             publicationInfo = publicationInfo,
@@ -545,7 +545,7 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
                 publishedMonth = null,
                 publishedYear = null,
                 publishedIn = null,
-                url = ParsedIRI.create("https://orkg.org/"),
+                url = IRI.create("https://orkg.org/"),
             ),
         )
         val command = updatePaperCommand().copy(
@@ -590,7 +590,7 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
                 url = null,
             ),
         )
-        val url = ParsedIRI.create("https://orkg.org/")
+        val url = IRI.create("https://orkg.org/")
         val command = updatePaperCommand().copy(
             publicationInfo = PublicationInfoCommand(
                 publishedMonth = null,
@@ -634,7 +634,7 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
                 publishedMonth = null,
                 publishedYear = null,
                 publishedIn = null,
-                url = ParsedIRI.create("https://example.org"),
+                url = IRI.create("https://example.org"),
             ),
         )
         val command = updatePaperCommand().copy(
@@ -642,7 +642,7 @@ internal class PaperPublicationInfoUpdaterUnitTest : MockkBaseTest {
                 publishedMonth = null,
                 publishedYear = null,
                 publishedIn = null,
-                url = ParsedIRI.create("https://orkg.org"),
+                url = IRI.create("https://orkg.org"),
             ),
         )
         val oldUrlLiteral = createLiteral(

@@ -7,9 +7,9 @@ import io.kotest.matchers.types.shouldBeInstanceOf
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
+import org.orkg.common.IRI
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
@@ -105,7 +105,7 @@ internal class SimCompThingRepositoryAdapterUnitTest : MockkBaseTest {
                     `object` = Class(
                         id = ThingId("C12457"),
                         label = "Some class",
-                        uri = ParsedIRI.create("https://orkg.org/class/C12457"),
+                        uri = IRI.create("https://orkg.org/class/C12457"),
                         createdAt = OffsetDateTime.parse("2022-02-22T08:01:13.261082+01:00"),
                         createdBy = ContributorId("d5416c16-1a45-4aee-8069-be1b6097478b"),
                     ),

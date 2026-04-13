@@ -23,6 +23,7 @@ dependencies {
     api("org.commonmark:commonmark-ext-autolink:0.27.1")
     api("org.commonmark:commonmark-ext-gfm-strikethrough:0.27.1")
     api("org.commonmark:commonmark-ext-gfm-tables:0.27.1")
+    api("nl.jqno.equalsverifier:equalsverifier:4.4.2")
 
     // The Lucene Query Parser version should match the one used by the currently used Neo4j database.
     // Although newer versions should not be a problem, differences in the syntax can be a problem.

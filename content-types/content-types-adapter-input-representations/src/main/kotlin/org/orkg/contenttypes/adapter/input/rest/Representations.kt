@@ -12,9 +12,9 @@ import jakarta.validation.constraints.Max
 import jakarta.validation.constraints.Min
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.Size
-import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.orkg.common.ContributorId
 import org.orkg.common.Handle
+import org.orkg.common.IRI
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.RealNumber
@@ -90,14 +90,14 @@ data class PublicationInfoRepresentation(
     val publishedYear: Long?,
     @field:JsonProperty("published_in")
     val publishedIn: ObjectIdAndLabel?,
-    val url: ParsedIRI?,
+    val url: IRI?,
 )
 
 data class AuthorRepresentation(
     val id: ThingId?,
     val name: String,
     val identifiers: Map<String, List<String>>,
-    val homepage: ParsedIRI?,
+    val homepage: IRI?,
 )
 
 data class LabeledObjectRepresentation(
@@ -234,7 +234,7 @@ data class AuthorRequest(
     val name: String,
     @field:Valid
     val identifiers: IdentifierMapRequest?,
-    val homepage: ParsedIRI?,
+    val homepage: IRI?,
 ) {
     fun toAuthor(): Author =
         Author(
@@ -255,7 +255,7 @@ data class PublicationInfoRequest(
     @field:Size(min = 1)
     @field:JsonProperty("published_in")
     val publishedIn: String?,
-    val url: ParsedIRI?,
+    val url: IRI?,
 ) {
     fun toPublicationInfoCommand(): PublicationInfoCommand =
         PublicationInfoCommand(
@@ -689,7 +689,7 @@ data class PredicateReferenceRepresentation(
 data class ClassReferenceRepresentation(
     override val id: ThingId,
     override val label: String,
-    val uri: ParsedIRI?,
+    val uri: IRI?,
 ) : ThingReferenceRepresentation
 
 @JsonTypeName("literal_ref")

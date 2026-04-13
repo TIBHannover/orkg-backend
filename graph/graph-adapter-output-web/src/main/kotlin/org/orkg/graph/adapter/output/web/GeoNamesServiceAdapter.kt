@@ -1,6 +1,6 @@
 package org.orkg.graph.adapter.output.web
 
-import org.eclipse.rdf4j.common.net.ParsedIRI
+import org.orkg.common.IRI
 import org.orkg.common.send
 import org.orkg.graph.domain.ExternalThing
 import org.orkg.graph.output.ExternalResourceService
@@ -44,7 +44,7 @@ class GeoNamesServiceAdapter(
             .build()
         return httpClient.send(request, "GeoNames") { response ->
             ExternalThing(
-                uri = ParsedIRI.create("https://sws.geonames.org/$shortForm"),
+                uri = IRI.create("https://sws.geonames.org/$shortForm"),
                 label = objectMapper.readTree(response).path("name").asString(null)
                     ?: return@send null,
                 description = null,
@@ -52,7 +52,7 @@ class GeoNamesServiceAdapter(
         }
     }
 
-    override fun findResourceByURI(ontologyId: String, uri: ParsedIRI): ExternalThing? {
+    override fun findResourceByURI(ontologyId: String, uri: IRI): ExternalThing? {
         val id = pattern.matchSingleGroupOrNull(uri.toString()) ?: return null
         return findResourceByShortForm(ontologyId, id)
     }

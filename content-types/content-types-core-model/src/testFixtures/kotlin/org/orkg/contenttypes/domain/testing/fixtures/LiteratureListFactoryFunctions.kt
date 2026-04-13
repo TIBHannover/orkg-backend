@@ -1,7 +1,7 @@
 package org.orkg.contenttypes.domain.testing.fixtures
 
-import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.orkg.common.ContributorId
+import org.orkg.common.IRI
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
@@ -49,7 +49,7 @@ fun createLiteratureList() = LiteratureList(
             identifiers = mapOf(
                 "orcid" to listOf("0000-0002-1825-0097"),
             ),
-            homepage = ParsedIRI.create("https://example.org"),
+            homepage = IRI.create("https://example.org"),
         ),
         Author(
             id = null,

@@ -1,7 +1,7 @@
 package org.orkg.graph.input
 
-import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.orkg.common.ContributorId
+import org.orkg.common.IRI
 import org.orkg.common.ThingId
 import org.orkg.graph.domain.Class
 import org.orkg.graph.domain.ExtractionMethod
@@ -32,7 +32,7 @@ interface RetrieveClassUseCase {
         createdBy: ContributorId? = null,
         createdAtStart: OffsetDateTime? = null,
         createdAtEnd: OffsetDateTime? = null,
-        uri: ParsedIRI? = null,
+        uri: IRI? = null,
     ): Page<Class>
 
     fun findById(id: ThingId): Optional<Class>
@@ -45,7 +45,7 @@ interface CreateClassUseCase {
         val id: ThingId? = null,
         val contributorId: ContributorId,
         val label: String,
-        val uri: ParsedIRI? = null,
+        val uri: IRI? = null,
         val extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN,
         val modifiable: Boolean = true,
     )
@@ -60,7 +60,7 @@ interface UpdateClassUseCase {
         val id: ThingId,
         val contributorId: ContributorId,
         val label: String? = null,
-        val uri: ParsedIRI? = null,
+        val uri: IRI? = null,
         val extractionMethod: ExtractionMethod? = null,
         val modifiable: Boolean? = null,
     )
@@ -69,7 +69,7 @@ interface UpdateClassUseCase {
         val id: ThingId,
         val contributorId: ContributorId,
         val label: String,
-        val uri: ParsedIRI? = null,
+        val uri: IRI? = null,
         val extractionMethod: ExtractionMethod? = null,
         val modifiable: Boolean? = null,
     )

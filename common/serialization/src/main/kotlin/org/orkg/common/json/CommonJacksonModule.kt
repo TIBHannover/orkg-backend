@@ -1,7 +1,7 @@
 package org.orkg.common.json
 
-import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.orkg.common.ContributorId
+import org.orkg.common.IRI
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
@@ -17,7 +17,7 @@ class CommonJacksonModule : SimpleModule() {
                 addSerializer(ObservatoryId::class.java, ObservatoryIdSerializer())
                 addSerializer(OrganizationId::class.java, OrganizationIdSerializer())
                 addSerializer(ThingId::class.java, ThingIdSerializer())
-                addSerializer(ParsedIRI::class.java, ParsedIRISerializer())
+                addSerializer(IRI::class.java, IRISerializer())
             },
         )
         context?.addDeserializers(
@@ -26,7 +26,7 @@ class CommonJacksonModule : SimpleModule() {
                 addDeserializer(ObservatoryId::class.java, ObservatoryIdDeserializer())
                 addDeserializer(OrganizationId::class.java, OrganizationIdDeserializer())
                 addDeserializer(ThingId::class.java, ThingIdDeserializer())
-                addDeserializer(ParsedIRI::class.java, ParsedIRIDeserializer())
+                addDeserializer(IRI::class.java, IRIDeserializer())
             },
         )
     }

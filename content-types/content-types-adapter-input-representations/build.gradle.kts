@@ -7,7 +7,6 @@ dependencies {
     api("org.commonmark:commonmark")
     api("org.commonmark:commonmark-ext-gfm-strikethrough")
     api("org.commonmark:commonmark-ext-gfm-tables")
-    api("org.eclipse.rdf4j:rdf4j-common-io")
     api("org.jetbrains.kotlinx:kotlinx-html-jvm")
     api("org.springframework.data:spring-data-commons")
     api(project(":common:datatypes"))

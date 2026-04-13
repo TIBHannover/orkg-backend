@@ -3,9 +3,9 @@ package org.orkg.graph.adapter.input.rest.json
 import io.kotest.assertions.asClue
 import io.kotest.matchers.shouldBe
 import org.assertj.core.api.Assertions.assertThat
-import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
+import org.orkg.common.IRI
 import org.orkg.common.ThingId
 import org.orkg.common.configuration.CommonSpringConfig
 import org.orkg.common.testing.fixtures.Assets.modelJson
@@ -46,7 +46,7 @@ internal class ClassSerializationJsonTest {
         objectMapper.readValue(classRepresentationV1, Class::class.java).asClue {
             it.id shouldBe ThingId("C0")
             it.label shouldBe "qb:Observation"
-            it.uri shouldBe ParsedIRI.create("http://purl.org/linked-data/cube#Observation")
+            it.uri shouldBe IRI.create("http://purl.org/linked-data/cube#Observation")
             it.createdAt shouldBe OffsetDateTime.parse("2019-01-06T15:04:07.692Z")
             it.createdBy shouldBe ContributorId("29ed99d5-9135-41e2-8626-2bbd4e6797bf")
             it.modifiable shouldBe true
@@ -67,7 +67,7 @@ internal class ClassSerializationJsonTest {
         objectMapper.readValue(classRepresentationV2, Class::class.java).asClue {
             it.id shouldBe ThingId("C0")
             it.label shouldBe "qb:Observation"
-            it.uri shouldBe ParsedIRI.create("http://purl.org/linked-data/cube#Observation")
+            it.uri shouldBe IRI.create("http://purl.org/linked-data/cube#Observation")
             it.createdAt shouldBe OffsetDateTime.parse("2019-01-06T15:04:07.692Z")
             it.createdBy shouldBe ContributorId("29ed99d5-9135-41e2-8626-2bbd4e6797bf")
             it.modifiable shouldBe true
@@ -81,7 +81,7 @@ internal class ClassSerializationJsonTest {
         objectMapper.readValue(`class`, Class::class.java).asClue {
             it.id shouldBe ThingId("C0")
             it.label shouldBe "qb:Observation"
-            it.uri shouldBe ParsedIRI.create("http://purl.org/linked-data/cube#Observation")
+            it.uri shouldBe IRI.create("http://purl.org/linked-data/cube#Observation")
             it.createdAt shouldBe OffsetDateTime.parse("2019-01-06T15:04:07.692Z")
             it.createdBy shouldBe ContributorId("29ed99d5-9135-41e2-8626-2bbd4e6797bf")
             it.modifiable shouldBe true
@@ -93,7 +93,7 @@ internal class ClassSerializationJsonTest {
         val `class` = createClass(
             id = ThingId("C0"),
             label = "qb:Observation",
-            uri = ParsedIRI.create("http://purl.org/linked-data/cube#Observation"),
+            uri = IRI.create("http://purl.org/linked-data/cube#Observation"),
             createdAt = OffsetDateTime.parse("2019-01-06T15:04:07.692Z"),
             createdBy = ContributorId("29ed99d5-9135-41e2-8626-2bbd4e6797bf"),
             modifiable = true,

@@ -1,8 +1,8 @@
 package org.orkg.graph.adapter.input.rest.exceptions
 
-import org.eclipse.rdf4j.common.net.ParsedIRI
 import org.hamcrest.Matchers.`is`
 import org.junit.jupiter.api.Test
+import org.orkg.common.IRI
 import org.orkg.common.ThingId
 import org.orkg.graph.adapter.input.rest.testing.fixtures.configuration.GraphControllerExceptionUnitTestConfiguration
 import org.orkg.graph.domain.ExternalPredicateNotFound
@@ -71,7 +71,7 @@ internal class PredicateExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andDocument {
                 responseFields<ExternalPredicateNotFound>(
                     fieldWithPath("predicate_id").description("The id of the predicate. (optional, either `predicate_id` or `predicate_uri` is present)").optional(),
-                    fieldWithPath("predicate_uri").type("String").description("The uri of the predicate. (optional, either `predicate_id` or `predicate_uri` is present)").type<ParsedIRI>().optional(),
+                    fieldWithPath("predicate_uri").type("String").description("The uri of the predicate. (optional, either `predicate_id` or `predicate_uri` is present)").type<IRI>().optional(),
                     fieldWithPath("ontology_id").description("The id of the predicate ontology."),
                     *exceptionResponseFields(type).toTypedArray(),
                 )

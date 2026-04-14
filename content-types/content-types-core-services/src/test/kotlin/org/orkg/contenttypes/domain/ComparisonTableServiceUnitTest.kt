@@ -22,6 +22,7 @@ import org.orkg.contenttypes.output.RosettaStoneStatementRepository
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Thing
+import org.orkg.graph.input.FormattedLabelUseCases
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.StatementRepository
 import org.orkg.graph.testing.fixtures.createPredicate
@@ -36,6 +37,7 @@ internal class ComparisonTableServiceUnitTest : MockkBaseTest {
     private val comparisonTableRepository: ComparisonTableRepository = mockk()
     private val resourceRepository: ResourceRepository = mockk()
     private val statementRepsitory: StatementRepository = mockk()
+    private val formattedLabelUseCases: FormattedLabelUseCases = mockk()
 
     private val service = ComparisonTableService(
         comparisonAuxiliaryRepository,
@@ -43,6 +45,7 @@ internal class ComparisonTableServiceUnitTest : MockkBaseTest {
         comparisonTableRepository,
         resourceRepository,
         statementRepsitory,
+        formattedLabelUseCases,
     )
 
     @Test
@@ -142,6 +145,7 @@ internal class ComparisonTableServiceUnitTest : MockkBaseTest {
         every { statementRepsitory.findAll(subjectId = comparisonId, pageable = PageRequests.ALL) } returns sourceStatements
         every { comparisonAuxiliaryRepository.findComparisonColumnDataByRootIdsAndPaths(any(), any()) } returns thingColumnData
         every { rosettaStoneStatementRepository.findAllByContextIdsAndTemplateIds(any(), any()) } returns statementColumnData
+        every { formattedLabelUseCases.findFormattedLabels(any()) } returns emptyMap()
 
         service.findByComparisonId(comparisonId) shouldBe Optional.of(expected)
 
@@ -160,6 +164,7 @@ internal class ComparisonTableServiceUnitTest : MockkBaseTest {
                 templateIds = emptySet(),
             )
         }
+        verify(exactly = 1) { formattedLabelUseCases.findFormattedLabels(any()) }
     }
 
     @Test
@@ -203,6 +208,7 @@ internal class ComparisonTableServiceUnitTest : MockkBaseTest {
         every { statementRepsitory.findAll(subjectId = comparisonId, pageable = PageRequests.ALL) } returns sourceStatements
         every { comparisonAuxiliaryRepository.findComparisonColumnDataByRootIdsAndPaths(any(), any()) } returns thingColumnData
         every { rosettaStoneStatementRepository.findAllByContextIdsAndTemplateIds(any(), any()) } returns statementColumnData
+        every { formattedLabelUseCases.findFormattedLabels(any()) } returns emptyMap()
 
         service.findByComparisonId(comparisonId) shouldBe Optional.of(comparisonTable)
 
@@ -221,6 +227,7 @@ internal class ComparisonTableServiceUnitTest : MockkBaseTest {
                 templateIds = setOf(ThingId("R21325")),
             )
         }
+        verify(exactly = 1) { formattedLabelUseCases.findFormattedLabels(any()) }
     }
 
     @Test

@@ -10,8 +10,10 @@ import org.orkg.contenttypes.output.ComparisonAuxiliaryRepository
 import org.orkg.contenttypes.output.ComparisonTableRepository
 import org.orkg.contenttypes.output.RosettaStoneStatementRepository
 import org.orkg.graph.domain.Classes
+import org.orkg.graph.domain.FormattedLabels
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Resource
+import org.orkg.graph.input.FormattedLabelUseCases
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.StatementRepository
 import org.orkg.spring.data.annotations.TransactionalOnJPA
@@ -29,6 +31,7 @@ class ComparisonTableService(
     private val comparisonTableRepository: ComparisonTableRepository,
     private val resourceRepository: ResourceRepository,
     private val statementRepsitory: StatementRepository,
+    private val formattedLabelUseCases: FormattedLabelUseCases,
 ) : ComparisonTableUseCases {
     override fun findAllPathsByComparisonId(comparisonId: ThingId): List<LabeledComparisonPath> =
         comparisonAuxiliaryRepository.findAllLabeledComparisonPathsByComparisonId(comparisonId, MAX_PATH_DEPTH)
@@ -45,7 +48,10 @@ class ComparisonTableService(
         val statements = statementRepsitory.findAll(subjectId = comparisonId, pageable = PageRequests.ALL)
         val sources = parseComparisonDataSources(statements.content)
         val columnData = findComparisonColumnDataByDataSourcesAndPaths(sources, table.selectedPaths)
-        return Optional.of(ComparisonTable.from(comparisonId, table.selectedPaths, columnData))
+        val resources = columnData.flatMap { it.values.values.flatMap { it.resources() } }.distinct()
+        val formattedLabels = formattedLabelUseCases.findFormattedLabels(resources)
+        val formattedColumnData = columnData.map { it.withFormattedLabels(formattedLabels) }
+        return Optional.of(ComparisonTable.from(comparisonId, table.selectedPaths, formattedColumnData))
     }
 
     override fun update(command: UpdateComparisonTableUseCase.UpdateCommand) {
@@ -178,4 +184,28 @@ class ComparisonTableService(
             modifiable = modifiable,
         )
     }
+
+    private fun List<ComparisonTableValue>.resources(): List<Resource> =
+        flatMap { it.children.values.flatMap { it.resources() } + listOfNotNull(it.value as? Resource) }
+
+    private fun ComparisonColumnData.withFormattedLabels(formattedLabels: FormattedLabels): ComparisonColumnData =
+        copy(
+            title = title,
+            subtitle = subtitle,
+            values = values.mapValues { (_, values) -> values.map { it.withFormattedLabels(formattedLabels) } },
+        )
+
+    private fun ComparisonTableValue.withFormattedLabels(formattedLabels: FormattedLabels): ComparisonTableValue =
+        copy(
+            value = value.let { value ->
+                if (value is Resource) {
+                    val formattedLabel = formattedLabels[value.id]
+                    if (formattedLabel != null) {
+                        return@let value.copy(label = formattedLabel.value)
+                    }
+                }
+                return@let value
+            },
+            children = children.mapValues { (_, values) -> values.map { it.withFormattedLabels(formattedLabels) } },
+        )
 }

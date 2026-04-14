@@ -64,6 +64,9 @@ internal class ComparisonTableControllerUnitTest : MockMvcBaseTest("comparison-t
                 description(
                     """
                     A `GET` request provides information about a comparison table.
+                    
+                    [NOTE]
+                    If present, formatted labels will be returned for resource labels instead of the original resource label.
                     """,
                 )
                 pathParameters(
@@ -94,6 +97,9 @@ internal class ComparisonTableControllerUnitTest : MockMvcBaseTest("comparison-t
                 description(
                     """
                     A `GET` request provides information about a comparison table.
+                    
+                    [NOTE]
+                    If present, formatted labels will be returned for resource labels instead of the original resource label.
                     """,
                 )
                 pathParameters(
@@ -125,6 +131,9 @@ internal class ComparisonTableControllerUnitTest : MockMvcBaseTest("comparison-t
                 description(
                     """
                     A `GET` request provides information about a comparison table.
+                    
+                    [NOTE]
+                    If present, formatted labels will be returned for resource labels instead of the original resource label.
                     """,
                 )
                 pathParameters(

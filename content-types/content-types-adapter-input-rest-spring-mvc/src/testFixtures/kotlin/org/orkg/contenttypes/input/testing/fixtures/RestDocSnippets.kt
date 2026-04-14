@@ -697,6 +697,7 @@ fun labeledComparisonPathResponseFields() = listOf(
     fieldWithPath("label").description("The label of the path."),
     fieldWithPath("description").description("The description of the predicate or rosetta stone statement template.").optional(),
     fieldWithPath("type").description("The type of the path. Either of $allowedComparisonPathTypeValues"),
+    fieldWithPath("sources").description("The count of distinct sources that hold a value for the path described by this object. Only present when fetching available comparison table paths, otherwise `null`. (optional)").type<Int>().optional(),
     subsectionWithPath("children[]").description("A list of nested predicate paths originating from this predicate path or the list of nested rosetta stone statement input positions."),
 )
 

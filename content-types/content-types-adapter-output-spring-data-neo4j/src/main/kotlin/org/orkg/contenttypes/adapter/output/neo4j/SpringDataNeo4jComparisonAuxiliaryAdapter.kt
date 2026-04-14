@@ -42,7 +42,7 @@ class SpringDataNeo4jComparisonAuxiliaryAdapter(
     override fun findAllLabeledComparisonPathsByComparisonId(id: ThingId, maxDepth: Int): List<LabeledComparisonPath> {
         val entries = neo4jRepository.findAllComparisonTablePredicatePathsByComparisonId(id, maxDepth)
         val rootIds = entries.filter { entry -> entries.none { entry.subjectId in it.objectIds } }.map { it.subjectId }.toSet()
-        return buildTree(entries, rootIds, maxDepth)
+        return buildTree(entries, rootIds, maxDepth).map { it.toLabeledComparisonPath() }
     }
 
     private fun buildTree(
@@ -50,25 +50,28 @@ class SpringDataNeo4jComparisonAuxiliaryAdapter(
         rootIds: Set<ThingId>,
         depth: Int,
         parents: Set<ThingId> = emptySet(),
-    ): List<LabeledComparisonPath> =
+        source: ThingId? = null,
+    ): List<ProtoLabeledComparisonPath> =
         entries.filter { entry -> entry.subjectId in rootIds }
             .map { entry ->
-                LabeledComparisonPath(
+                val sourceId = source ?: entry.subjectId
+                ProtoLabeledComparisonPath(
                     id = entry.predicateId,
                     label = entry.predicateLabel,
                     description = entry.description,
                     type = entry.type,
                     children = when {
                         // filter object ids if present in parent tree?
-                        depth > 1 -> buildTree(entries, entry.objectIds.toSet() - parents, depth - 1, parents + rootIds)
+                        depth > 1 -> buildTree(entries, entry.objectIds.toSet() - parents, depth - 1, parents + rootIds, sourceId)
 
                         else -> emptyList()
                     },
+                    sourceIds = setOf(sourceId),
                 )
             }
             .merge()
 
-    private fun List<LabeledComparisonPath>.merge(): List<LabeledComparisonPath> =
+    private fun List<ProtoLabeledComparisonPath>.merge(): List<ProtoLabeledComparisonPath> =
         when {
             isEmpty() || (size == 1 && first().children.isEmpty()) -> this
 
@@ -100,16 +103,36 @@ class SpringDataNeo4jComparisonAuxiliaryAdapter(
             }
         }
 
-    private fun LabeledComparisonPath.merge(other: LabeledComparisonPath): LabeledComparisonPath {
+    private fun ProtoLabeledComparisonPath.merge(other: ProtoLabeledComparisonPath): ProtoLabeledComparisonPath {
         assert(type == other.type)
         assert(description == other.description)
-        return LabeledComparisonPath(
+        return ProtoLabeledComparisonPath(
             id = id,
             label = label,
             type = type,
             description = description,
             children = (children + other.children).merge(),
+            sourceIds = sourceIds + other.sourceIds,
         )
+    }
+
+    data class ProtoLabeledComparisonPath(
+        val id: ThingId,
+        val label: String,
+        val description: String?,
+        val type: ComparisonPath.Type,
+        val children: List<ProtoLabeledComparisonPath>,
+        val sourceIds: Set<ThingId>,
+    ) {
+        fun toLabeledComparisonPath(): LabeledComparisonPath =
+            LabeledComparisonPath(
+                id = id,
+                label = label,
+                description = description,
+                sources = sourceIds.size,
+                type = type,
+                children = children.map { it.toLabeledComparisonPath() },
+            )
     }
 
     override fun findAllLabeledComparisonPathsBySimpleComparionPaths(paths: List<SimpleComparisonPath>): List<LabeledComparisonPath> {

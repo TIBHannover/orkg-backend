@@ -20,6 +20,7 @@ interface LabeledComparisonPathRepresentationAdapter {
             id = id,
             label = label,
             description = description,
+            sources = sources,
             type = type,
             children = children.map { it.toLabeledComparisonPathRepresentation() },
         )

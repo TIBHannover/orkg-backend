@@ -550,6 +550,7 @@ internal class OpenApiDocTest : MockMvcOpenApiBaseTest() {
             label = "addresses",
             description = "addresses",
             type = ComparisonPath.Type.PREDICATE,
+            sources = 4,
             children = emptyList(),
         )
 

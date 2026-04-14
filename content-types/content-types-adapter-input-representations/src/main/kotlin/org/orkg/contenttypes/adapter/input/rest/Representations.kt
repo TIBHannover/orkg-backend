@@ -813,6 +813,8 @@ data class LabeledComparisonPathRepresentation(
     val id: ThingId,
     val label: String,
     val description: String?,
+    @field:JsonInclude(JsonInclude.Include.NON_NULL)
+    val sources: Int?,
     val type: ComparisonPath.Type,
     val children: List<LabeledComparisonPathRepresentation>,
 )

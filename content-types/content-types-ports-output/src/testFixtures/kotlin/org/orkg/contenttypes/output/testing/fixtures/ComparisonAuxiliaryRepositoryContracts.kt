@@ -86,6 +86,9 @@ fun <
     fun List<LabeledComparisonPath>.toSimpleComparisonPaths(): List<SimpleComparisonPath> =
         map { SimpleComparisonPath(it.id, it.type, it.children.toSimpleComparisonPaths()) }
 
+    fun List<LabeledComparisonPath>.withoutSources(): List<LabeledComparisonPath> =
+        map { LabeledComparisonPath(it.id, it.label, it.description, it.type, it.children.withoutSources()) }
+
     describe("finding all labeled comparison paths") {
         val comparison = fabricator.random<Resource>().copy(classes = setOf(Classes.comparison))
         val contribution1 = fabricator.random<Resource>().copy(classes = setOf(Classes.contribution))
@@ -223,12 +226,13 @@ fun <
         //  subject
         //  object1
         //  object2
-        val expected = listOf(
+        val labeledComparisonPaths = listOf(
             LabeledComparisonPath(
                 id = hasLabel.id,
                 label = hasLabel.label,
                 description = null,
                 type = ComparisonPath.Type.PREDICATE,
+                sources = 1,
                 children = emptyList(),
             ),
             LabeledComparisonPath(
@@ -236,6 +240,7 @@ fun <
                 label = hasOtherResult.label,
                 description = hasOtherResultDescription.label,
                 type = ComparisonPath.Type.PREDICATE,
+                sources = 2,
                 children = emptyList(),
             ),
             LabeledComparisonPath(
@@ -243,18 +248,21 @@ fun <
                 label = hasResult.label,
                 description = null,
                 type = ComparisonPath.Type.PREDICATE,
+                sources = 1,
                 children = listOf(
                     LabeledComparisonPath(
                         id = hasOtherResult.id,
                         label = hasOtherResult.label,
                         description = hasOtherResultDescription.label,
                         type = ComparisonPath.Type.PREDICATE,
+                        sources = 1,
                         children = listOf(
                             LabeledComparisonPath(
                                 id = hasResult.id,
                                 label = hasResult.label,
                                 description = null,
                                 type = ComparisonPath.Type.PREDICATE,
+                                sources = 1,
                                 children = emptyList(),
                             ),
                         ),
@@ -264,12 +272,14 @@ fun <
                         label = hasResult.label,
                         description = null,
                         type = ComparisonPath.Type.PREDICATE,
+                        sources = 1,
                         children = listOf(
                             LabeledComparisonPath(
                                 id = hasOtherResult.id,
                                 label = hasOtherResult.label,
                                 description = hasOtherResultDescription.label,
                                 type = ComparisonPath.Type.PREDICATE,
+                                sources = 1,
                                 children = emptyList(),
                             ),
                         ),
@@ -281,12 +291,14 @@ fun <
                 label = rosettaStoneTemplate1.label,
                 description = rosettaStoneTemplate1Description.label,
                 type = ComparisonPath.Type.ROSETTA_STONE_STATEMENT,
+                sources = 1,
                 children = listOf(
                     LabeledComparisonPath(
                         id = ThingId("hasSubjectPosition"),
                         label = templateProperty1Placeholder.label,
                         description = null,
                         type = ComparisonPath.Type.ROSETTA_STONE_STATEMENT_VALUE,
+                        sources = 1,
                         children = emptyList(),
                     ),
                     LabeledComparisonPath(
@@ -294,6 +306,7 @@ fun <
                         label = templateProperty2Placeholder.label,
                         description = templateProperty2Description.label,
                         type = ComparisonPath.Type.ROSETTA_STONE_STATEMENT_VALUE,
+                        sources = 1,
                         children = emptyList(),
                     ),
                     LabeledComparisonPath(
@@ -301,6 +314,7 @@ fun <
                         label = templateProperty3Placeholder.label,
                         description = null,
                         type = ComparisonPath.Type.ROSETTA_STONE_STATEMENT_VALUE,
+                        sources = 1,
                         children = emptyList(),
                     ),
                 ),
@@ -310,6 +324,7 @@ fun <
         context("by comparison id") {
             createGraph()
 
+            val expected = labeledComparisonPaths
             val result = comparisonAuxiliaryRepository.findAllLabeledComparisonPathsByComparisonId(comparison.id, 4)
 
             it("returns the correct result") {
@@ -320,7 +335,8 @@ fun <
             context("when all paths exists in the graph") {
                 createGraph()
 
-                val simplePaths = expected.toSimpleComparisonPaths()
+                val simplePaths = labeledComparisonPaths.toSimpleComparisonPaths()
+                val expected = labeledComparisonPaths.withoutSources()
                 val result = comparisonAuxiliaryRepository.findAllLabeledComparisonPathsBySimpleComparionPaths(simplePaths)
 
                 it("returns the correct result") {
@@ -330,7 +346,7 @@ fun <
             context("when some path do not exist in the graph") {
                 createGraph()
 
-                val simplePaths = expected.toSimpleComparisonPaths() + listOf(
+                val simplePaths = labeledComparisonPaths.toSimpleComparisonPaths() + listOf(
                     SimpleComparisonPath(
                         id = ThingId("Missing"),
                         type = ComparisonPath.Type.PREDICATE,
@@ -342,7 +358,7 @@ fun <
                         children = emptyList(),
                     ),
                 )
-
+                val expected = labeledComparisonPaths.withoutSources()
                 val result = comparisonAuxiliaryRepository.findAllLabeledComparisonPathsBySimpleComparionPaths(simplePaths)
 
                 it("returns the correct result") {

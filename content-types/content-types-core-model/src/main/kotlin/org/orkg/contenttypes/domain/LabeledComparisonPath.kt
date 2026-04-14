@@ -8,4 +8,5 @@ data class LabeledComparisonPath(
     val description: String?,
     override val type: ComparisonPath.Type,
     override val children: List<LabeledComparisonPath>,
+    val sources: Int? = null,
 ) : ComparisonPath<LabeledComparisonPath>

@@ -214,34 +214,6 @@ class ReservedClassId(id: ThingId) :
         properties = mapOf("class_id" to id),
     )
 
-class ClassAlreadyExists(id: ThingId) :
-    SimpleMessageException(
-        HttpStatus.BAD_REQUEST,
-        """Class "$id" already exists.""",
-        properties = mapOf("class_id" to id),
-    )
-
-class ResourceAlreadyExists(id: ThingId) :
-    SimpleMessageException(
-        HttpStatus.BAD_REQUEST,
-        """Resource "$id" already exists.""",
-        properties = mapOf("resource_id" to id),
-    )
-
-class PredicateAlreadyExists(id: ThingId) :
-    SimpleMessageException(
-        HttpStatus.BAD_REQUEST,
-        """Predicate "$id" already exists.""",
-        properties = mapOf("predicate_id" to id),
-    )
-
-class LiteralAlreadyExists(id: ThingId) :
-    SimpleMessageException(
-        HttpStatus.BAD_REQUEST,
-        """Literal "$id" already exists.""",
-        properties = mapOf("literal_id" to id),
-    )
-
 class ThingAlreadyExists(id: ThingId) :
     SimpleMessageException(
         HttpStatus.BAD_REQUEST,

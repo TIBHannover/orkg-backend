@@ -19,16 +19,18 @@ import org.orkg.graph.input.CreatePredicateUseCase
 import org.orkg.graph.input.UnsafePredicateUseCases
 import org.orkg.graph.input.UpdatePredicateUseCase
 import org.orkg.graph.output.PredicateRepository
+import org.orkg.graph.output.ThingRepository
 import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.testing.MockUserId
 import java.util.Optional
 
 internal class PredicateServiceUnitTest : MockkBaseTest {
     private val repository: PredicateRepository = mockk()
+    private val thingRepository: ThingRepository = mockk()
     private val contributorRepository: ContributorRepository = mockk()
     private val unsafePredicateUseCases: UnsafePredicateUseCases = mockk()
 
-    private val service = PredicateService(repository, contributorRepository, unsafePredicateUseCases)
+    private val service = PredicateService(repository, thingRepository, contributorRepository, unsafePredicateUseCases)
 
     @Test
     fun `Given a predicate create command, when inputs are valid, it creates a new predicate`() {
@@ -41,12 +43,12 @@ internal class PredicateServiceUnitTest : MockkBaseTest {
             modifiable = false,
         )
 
-        every { repository.findById(id) } returns Optional.empty()
+        every { thingRepository.findById(id) } returns Optional.empty()
         every { unsafePredicateUseCases.create(command) } returns id
 
         service.create(command) shouldBe id
 
-        verify(exactly = 1) { repository.findById(id) }
+        verify(exactly = 1) { thingRepository.findById(id) }
         verify(exactly = 1) { unsafePredicateUseCases.create(command) }
     }
 
@@ -76,11 +78,11 @@ internal class PredicateServiceUnitTest : MockkBaseTest {
             label = "some label",
         )
 
-        every { repository.findById(id) } returns Optional.of(createPredicate(id))
+        every { thingRepository.findById(id) } returns Optional.of(createPredicate(id))
 
-        assertThrows<PredicateAlreadyExists> { service.create(command) }
+        assertThrows<ThingAlreadyExists> { service.create(command) }
 
-        verify(exactly = 1) { repository.findById(id) }
+        verify(exactly = 1) { thingRepository.findById(id) }
     }
 
     @Test

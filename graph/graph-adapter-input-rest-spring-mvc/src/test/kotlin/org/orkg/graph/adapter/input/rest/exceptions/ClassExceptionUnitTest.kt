@@ -6,7 +6,6 @@ import org.orkg.common.IRI
 import org.orkg.common.ThingId
 import org.orkg.graph.adapter.input.rest.testing.fixtures.configuration.GraphControllerExceptionUnitTestConfiguration
 import org.orkg.graph.domain.CannotResetURI
-import org.orkg.graph.domain.ClassAlreadyExists
 import org.orkg.graph.domain.ClassNotFound
 import org.orkg.graph.domain.ClassNotModifiable
 import org.orkg.graph.domain.Classes
@@ -81,23 +80,6 @@ internal class ClassExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.class_id").value(Classes.list.value))
             .andDocument {
                 responseFields<ReservedClassId>(
-                    fieldWithPath("class_id").description("The id of the class.").type<ThingId>(),
-                    *exceptionResponseFields(type).toTypedArray(),
-                )
-            }
-    }
-
-    @Test
-    fun classAlreadyExists() {
-        val type = "orkg:problem:class_already_exists"
-        documentedGetRequestTo(ClassAlreadyExists(Classes.list))
-            .andExpectErrorStatus(BAD_REQUEST)
-            .andExpectType(type)
-            .andExpectTitle("Bad Request")
-            .andExpectDetail("""Class "${Classes.list}" already exists.""")
-            .andExpect(jsonPath("$.class_id").value(Classes.list.value))
-            .andDocument {
-                responseFields<ClassAlreadyExists>(
                     fieldWithPath("class_id").description("The id of the class.").type<ThingId>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )

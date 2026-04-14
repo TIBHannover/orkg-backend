@@ -34,12 +34,12 @@ import org.orkg.graph.domain.InvalidLabel
 import org.orkg.graph.domain.NeitherOwnerNorCurator
 import org.orkg.graph.domain.NotACurator
 import org.orkg.graph.domain.ReservedClassId
-import org.orkg.graph.domain.ResourceAlreadyExists
 import org.orkg.graph.domain.ResourceContributor
 import org.orkg.graph.domain.ResourceInUse
 import org.orkg.graph.domain.ResourceNotFound
 import org.orkg.graph.domain.ResourceNotModifiable
 import org.orkg.graph.domain.RosettaStoneStatementResourceNotModifiable
+import org.orkg.graph.domain.ThingAlreadyExists
 import org.orkg.graph.domain.VisibilityFilter
 import org.orkg.graph.input.CreateResourceUseCase.CreateCommand
 import org.orkg.graph.input.FormattedLabelUseCases
@@ -440,7 +440,7 @@ internal class ResourceControllerUnitTest : MockMvcBaseTest("resources") {
                     fieldWithPath("classes[]").type("Array").description("The classes of the resource. (optional)").optional(),
                     fieldWithPath("extraction_method").type("Enum").description("""The method used to extract the resource. Can be one of $allowedExtractionMethodValues. (optional, default: `UNKNOWN`)""").optional(),
                 )
-                throws(InvalidLabel::class, ReservedClassId::class, InvalidClassCollection::class, ResourceAlreadyExists::class)
+                throws(InvalidLabel::class, ReservedClassId::class, InvalidClassCollection::class, ThingAlreadyExists::class)
             }
 
         verify(exactly = 1) {

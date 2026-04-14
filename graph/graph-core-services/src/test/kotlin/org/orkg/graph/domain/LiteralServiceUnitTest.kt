@@ -17,6 +17,7 @@ import org.orkg.graph.input.UnsafeLiteralUseCases
 import org.orkg.graph.input.UpdateLiteralUseCase
 import org.orkg.graph.output.LiteralRepository
 import org.orkg.graph.output.StatementRepository
+import org.orkg.graph.output.ThingRepository
 import org.orkg.graph.testing.fixtures.createLiteral
 import org.orkg.testing.MockUserId
 import java.util.Optional
@@ -24,10 +25,11 @@ import java.util.UUID
 
 internal class LiteralServiceUnitTest {
     private val literalRepository: LiteralRepository = mockk()
+    private val thingRepository: ThingRepository = mockk()
     private val statementRepository: StatementRepository = mockk()
     private val unsafeLiteralUseCases: UnsafeLiteralUseCases = mockk()
 
-    private val service = LiteralService(literalRepository, statementRepository, unsafeLiteralUseCases)
+    private val service = LiteralService(literalRepository, thingRepository, statementRepository, unsafeLiteralUseCases)
 
     @Test
     fun `Given a literal create command, when datatype is an invalid URI, it throws an exception`() {
@@ -86,9 +88,9 @@ internal class LiteralServiceUnitTest {
     fun `Given a literal create command, when literal id is already taken, it throws an exception`() {
         val id = ThingId("taken")
 
-        every { literalRepository.findById(id) } returns Optional.of(createLiteral(id))
+        every { thingRepository.findById(id) } returns Optional.of(createLiteral(id))
 
-        shouldThrowExactly<LiteralAlreadyExists> {
+        shouldThrowExactly<ThingAlreadyExists> {
             service.create(
                 CreateCommand(
                     id = id,
@@ -98,7 +100,7 @@ internal class LiteralServiceUnitTest {
             )
         }
 
-        verify(exactly = 1) { literalRepository.findById(id) }
+        verify(exactly = 1) { thingRepository.findById(id) }
     }
 
     @Test

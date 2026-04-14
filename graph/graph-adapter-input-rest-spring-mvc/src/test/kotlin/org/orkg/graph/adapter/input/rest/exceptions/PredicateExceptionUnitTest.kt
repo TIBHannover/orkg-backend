@@ -6,7 +6,6 @@ import org.orkg.common.IRI
 import org.orkg.common.ThingId
 import org.orkg.graph.adapter.input.rest.testing.fixtures.configuration.GraphControllerExceptionUnitTestConfiguration
 import org.orkg.graph.domain.ExternalPredicateNotFound
-import org.orkg.graph.domain.PredicateAlreadyExists
 import org.orkg.graph.domain.PredicateInUse
 import org.orkg.graph.domain.PredicateNotFound
 import org.orkg.graph.domain.PredicateNotModifiable
@@ -14,7 +13,6 @@ import org.orkg.testing.spring.MockMvcExceptionBaseTest
 import org.orkg.testing.spring.restdocs.exceptionResponseFields
 import org.orkg.testing.spring.restdocs.type
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest
-import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.HttpStatus.FORBIDDEN
 import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
@@ -89,23 +87,6 @@ internal class PredicateExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.predicate_id", `is`("P123")))
             .andDocument {
                 responseFields<PredicateInUse>(
-                    fieldWithPath("predicate_id").description("The id of the predicate.").type<ThingId>(),
-                    *exceptionResponseFields(type).toTypedArray(),
-                )
-            }
-    }
-
-    @Test
-    fun predicateAlreadyExists() {
-        val type = "orkg:problem:predicate_already_exists"
-        documentedGetRequestTo(PredicateAlreadyExists(ThingId("P123")))
-            .andExpectErrorStatus(BAD_REQUEST)
-            .andExpectType(type)
-            .andExpectTitle("Bad Request")
-            .andExpectDetail("""Predicate "P123" already exists.""")
-            .andExpect(jsonPath("$.predicate_id", `is`("P123")))
-            .andDocument {
-                responseFields<PredicateAlreadyExists>(
                     fieldWithPath("predicate_id").description("The id of the predicate.").type<ThingId>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )

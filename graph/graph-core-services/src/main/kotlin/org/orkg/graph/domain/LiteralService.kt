@@ -9,6 +9,7 @@ import org.orkg.graph.input.UnsafeLiteralUseCases
 import org.orkg.graph.input.UpdateLiteralUseCase
 import org.orkg.graph.output.LiteralRepository
 import org.orkg.graph.output.StatementRepository
+import org.orkg.graph.output.ThingRepository
 import org.orkg.spring.data.annotations.TransactionalOnNeo4j
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -20,6 +21,7 @@ import java.util.Optional
 @TransactionalOnNeo4j
 class LiteralService(
     private val repository: LiteralRepository,
+    private val thingRepository: ThingRepository,
     private val statementRepository: StatementRepository,
     private val unsafeLiteralUseCases: UnsafeLiteralUseCases,
 ) : LiteralUseCases {
@@ -28,7 +30,7 @@ class LiteralService(
             throw InvalidLiteralLabel()
         }
         validateLabel(command.label, command.datatype)
-        command.id?.also { id -> repository.findById(id).ifPresent { throw LiteralAlreadyExists(id) } }
+        command.id?.also { id -> thingRepository.findById(id).ifPresent { throw ThingAlreadyExists(id) } }
         return unsafeLiteralUseCases.create(command)
     }
 

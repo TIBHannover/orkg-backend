@@ -6,7 +6,6 @@ import org.orkg.common.ThingId
 import org.orkg.graph.adapter.input.rest.testing.fixtures.configuration.GraphControllerExceptionUnitTestConfiguration
 import org.orkg.graph.domain.InvalidLiteralDatatype
 import org.orkg.graph.domain.InvalidLiteralLabel
-import org.orkg.graph.domain.LiteralAlreadyExists
 import org.orkg.graph.domain.LiteralNotFound
 import org.orkg.graph.domain.LiteralNotModifiable
 import org.orkg.graph.domain.MAX_LABEL_LENGTH
@@ -91,22 +90,5 @@ internal class LiteralExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.errors[0].detail", `is`("""A literal datatype must be a URI or a "xsd:"-prefixed type.""")))
             .andExpect(jsonPath("$.errors[0].pointer", `is`("""#/datatype""")))
             .andDocumentWithValidationExceptionResponseFields<InvalidLiteralDatatype>(type)
-    }
-
-    @Test
-    fun literalAlreadyExists() {
-        val type = "orkg:problem:literal_already_exists"
-        documentedGetRequestTo(LiteralAlreadyExists(ThingId("L123")))
-            .andExpectErrorStatus(BAD_REQUEST)
-            .andExpectType(type)
-            .andExpectTitle("Bad Request")
-            .andExpectDetail("""Literal "L123" already exists.""")
-            .andExpect(jsonPath("$.literal_id", `is`("L123")))
-            .andDocument {
-                responseFields<LiteralAlreadyExists>(
-                    fieldWithPath("literal_id").description("The id of the literal.").type<ThingId>(),
-                    *exceptionResponseFields(type).toTypedArray(),
-                )
-            }
     }
 }

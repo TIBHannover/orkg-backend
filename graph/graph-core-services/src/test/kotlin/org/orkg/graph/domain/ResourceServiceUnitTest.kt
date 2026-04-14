@@ -72,13 +72,13 @@ internal class ResourceServiceUnitTest : MockkBaseTest {
             modifiable = false,
         )
 
-        every { repository.findById(id) } returns Optional.empty()
+        every { thingRepository.findById(id) } returns Optional.empty()
         every { classRepository.existsAllById(command.classes) } returns true
         every { unsafeResourceUseCases.create(command) } returns id
 
         service.create(command) shouldBe id
 
-        verify(exactly = 1) { repository.findById(id) }
+        verify(exactly = 1) { thingRepository.findById(id) }
         verify(exactly = 1) { classRepository.existsAllById(command.classes) }
         verify(exactly = 1) { unsafeResourceUseCases.create(command) }
     }
@@ -146,11 +146,11 @@ internal class ResourceServiceUnitTest : MockkBaseTest {
             label = "label",
         )
 
-        every { repository.findById(id) } returns Optional.of(createResource(id))
+        every { thingRepository.findById(id) } returns Optional.of(createResource(id))
 
-        assertThrows<ResourceAlreadyExists> { service.create(command) }
+        assertThrows<ThingAlreadyExists> { service.create(command) }
 
-        verify(exactly = 1) { repository.findById(id) }
+        verify(exactly = 1) { thingRepository.findById(id) }
     }
 
     @Test

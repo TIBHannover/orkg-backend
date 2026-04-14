@@ -9,6 +9,7 @@ import org.orkg.graph.input.CreateClassUseCase
 import org.orkg.graph.input.UnsafeClassUseCases
 import org.orkg.graph.input.UpdateClassUseCase
 import org.orkg.graph.output.ClassRepository
+import org.orkg.graph.output.ThingRepository
 import org.orkg.spring.data.annotations.TransactionalOnNeo4j
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -20,6 +21,7 @@ import java.util.Optional
 @TransactionalOnNeo4j
 class ClassService(
     private val repository: ClassRepository,
+    private val thingRepository: ThingRepository,
     private val unsafeClassUseCases: UnsafeClassUseCases,
 ) : ClassUseCases {
     override fun create(command: CreateClassUseCase.CreateCommand): ThingId {
@@ -36,8 +38,8 @@ class ClassService(
             if (id in reservedClassIds) {
                 throw ReservedClassId(id)
             }
-            repository.findById(id).ifPresent {
-                throw ClassAlreadyExists(id)
+            thingRepository.findById(id).ifPresent {
+                throw ThingAlreadyExists(id)
             }
         }
         return unsafeClassUseCases.create(command)

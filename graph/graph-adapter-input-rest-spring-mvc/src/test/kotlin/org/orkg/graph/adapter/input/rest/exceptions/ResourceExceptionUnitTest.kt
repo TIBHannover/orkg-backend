@@ -9,7 +9,6 @@ import org.orkg.graph.adapter.input.rest.testing.fixtures.configuration.GraphCon
 import org.orkg.graph.domain.ExternalEntityIsNotAResource
 import org.orkg.graph.domain.ExternalResourceNotFound
 import org.orkg.graph.domain.InvalidClassCollection
-import org.orkg.graph.domain.ResourceAlreadyExists
 import org.orkg.graph.domain.ResourceInUse
 import org.orkg.graph.domain.ResourceNotFound
 import org.orkg.graph.domain.ResourceNotModifiable
@@ -115,23 +114,6 @@ internal class ResourceExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.resource_id", `is`("R123")))
             .andDocument {
                 responseFields<ResourceInUse>(
-                    fieldWithPath("resource_id").description("The id of the resource.").type<ThingId>(),
-                    *exceptionResponseFields(type).toTypedArray(),
-                )
-            }
-    }
-
-    @Test
-    fun resourceAlreadyExists() {
-        val type = "orkg:problem:resource_already_exists"
-        documentedGetRequestTo(ResourceAlreadyExists(ThingId("R123")))
-            .andExpectErrorStatus(BAD_REQUEST)
-            .andExpectType(type)
-            .andExpectTitle("Bad Request")
-            .andExpectDetail("""Resource "R123" already exists.""")
-            .andExpect(jsonPath("$.resource_id", `is`("R123")))
-            .andDocument {
-                responseFields<ResourceAlreadyExists>(
                     fieldWithPath("resource_id").description("The id of the resource.").type<ThingId>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )

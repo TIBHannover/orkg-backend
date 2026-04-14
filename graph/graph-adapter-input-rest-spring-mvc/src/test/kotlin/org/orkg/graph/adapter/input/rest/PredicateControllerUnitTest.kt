@@ -26,11 +26,11 @@ import org.orkg.graph.domain.ExactSearchString
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.InvalidLabel
 import org.orkg.graph.domain.NeitherOwnerNorCurator
-import org.orkg.graph.domain.PredicateAlreadyExists
 import org.orkg.graph.domain.PredicateInUse
 import org.orkg.graph.domain.PredicateNotFound
 import org.orkg.graph.domain.PredicateNotModifiable
 import org.orkg.graph.domain.Predicates
+import org.orkg.graph.domain.ThingAlreadyExists
 import org.orkg.graph.input.PredicateUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UpdatePredicateUseCase
@@ -152,7 +152,7 @@ internal class PredicateControllerUnitTest : MockMvcBaseTest("predicates") {
                 responseHeaders(
                     headerWithName("Location").description("The uri path where the newly created predicate can be fetched from."),
                 )
-                throws(InvalidLabel::class, PredicateAlreadyExists::class)
+                throws(InvalidLabel::class, ThingAlreadyExists::class)
             }
 
         verify(exactly = 1) {

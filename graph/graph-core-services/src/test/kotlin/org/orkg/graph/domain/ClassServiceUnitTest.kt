@@ -17,6 +17,7 @@ import org.orkg.graph.input.UnsafeClassUseCases
 import org.orkg.graph.input.UpdateClassUseCase
 import org.orkg.graph.input.UpdateClassUseCase.ReplaceCommand
 import org.orkg.graph.output.ClassRepository
+import org.orkg.graph.output.ThingRepository
 import org.orkg.graph.testing.fixtures.createClass
 import org.orkg.graph.testing.fixtures.createClassWithoutURI
 import org.orkg.testing.MockUserId
@@ -24,9 +25,10 @@ import java.util.Optional
 
 internal class ClassServiceUnitTest : MockkBaseTest {
     private val repository: ClassRepository = mockk()
+    private val thingRepository: ThingRepository = mockk()
     private val unsafeClassUseCases: UnsafeClassUseCases = mockk()
 
-    private val service = ClassService(repository, unsafeClassUseCases)
+    private val service = ClassService(repository, thingRepository, unsafeClassUseCases)
 
     @Test
     fun `Given a class create command, when inputs are valid, it creates a new class`() {
@@ -39,12 +41,12 @@ internal class ClassServiceUnitTest : MockkBaseTest {
             modifiable = false,
         )
 
-        every { repository.findById(id) } returns Optional.empty()
+        every { thingRepository.findById(id) } returns Optional.empty()
         every { unsafeClassUseCases.create(command) } returns id
 
         service.create(command) shouldBe id
 
-        verify(exactly = 1) { repository.findById(id) }
+        verify(exactly = 1) { thingRepository.findById(id) }
         verify(exactly = 1) { unsafeClassUseCases.create(command) }
     }
 
@@ -72,11 +74,11 @@ internal class ClassServiceUnitTest : MockkBaseTest {
             label = "irrelevant",
         )
 
-        every { repository.findById(mockClassId) } returns createClass(id = mockClassId).toOptional()
+        every { thingRepository.findById(mockClassId) } returns Optional.of(createClass(id = mockClassId))
 
-        assertThrows<ClassAlreadyExists> { service.create(command) }
+        assertThrows<ThingAlreadyExists> { service.create(command) }
 
-        verify(exactly = 1) { repository.findById(mockClassId) }
+        verify(exactly = 1) { thingRepository.findById(mockClassId) }
     }
 
     @Test

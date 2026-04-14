@@ -10,6 +10,7 @@ import org.orkg.graph.input.PredicateUseCases
 import org.orkg.graph.input.UnsafePredicateUseCases
 import org.orkg.graph.input.UpdatePredicateUseCase
 import org.orkg.graph.output.PredicateRepository
+import org.orkg.graph.output.ThingRepository
 import org.orkg.spring.data.annotations.TransactionalOnNeo4j
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -21,6 +22,7 @@ import java.util.Optional
 @TransactionalOnNeo4j
 class PredicateService(
     private val repository: PredicateRepository,
+    private val thingRepository: ThingRepository,
     private val contributorRepository: ContributorRepository,
     private val unsafePredicateUseCases: UnsafePredicateUseCases,
 ) : PredicateUseCases {
@@ -29,7 +31,7 @@ class PredicateService(
 
     override fun create(command: CreatePredicateUseCase.CreateCommand): ThingId {
         Label.ofOrNull(command.label) ?: throw InvalidLabel()
-        command.id?.also { id -> repository.findById(id).ifPresent { throw PredicateAlreadyExists(id) } }
+        command.id?.also { id -> thingRepository.findById(id).ifPresent { throw ThingAlreadyExists(id) } }
         return unsafePredicateUseCases.create(command)
     }
 

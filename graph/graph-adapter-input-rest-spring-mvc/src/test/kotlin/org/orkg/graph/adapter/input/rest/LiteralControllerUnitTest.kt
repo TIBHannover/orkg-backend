@@ -25,11 +25,11 @@ import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.InvalidLiteralDatatype
 import org.orkg.graph.domain.InvalidLiteralLabel
 import org.orkg.graph.domain.Literal
-import org.orkg.graph.domain.LiteralAlreadyExists
 import org.orkg.graph.domain.LiteralNotFound
 import org.orkg.graph.domain.LiteralNotModifiable
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.MAX_LABEL_LENGTH
+import org.orkg.graph.domain.ThingAlreadyExists
 import org.orkg.graph.input.CreateLiteralUseCase.CreateCommand
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.UpdateLiteralUseCase
@@ -236,7 +236,7 @@ internal class LiteralControllerUnitTest : MockMvcBaseTest("literals") {
                     fieldWithPath("datatype").description("The datatype of the literal value. (default: xsd:string)"),
                     fieldWithPath("extraction_method").description("""The method used to extract the literal. Can be one of $allowedExtractionMethodValues. (optional)""").optional(),
                 )
-                throws(InvalidLiteralLabel::class, InvalidLiteralLabel::class, InvalidLiteralDatatype::class, LiteralAlreadyExists::class)
+                throws(InvalidLiteralLabel::class, InvalidLiteralLabel::class, InvalidLiteralDatatype::class, ThingAlreadyExists::class)
             }
 
         verify(exactly = 1) { literalService.create(command) }

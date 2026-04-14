@@ -22,7 +22,6 @@ import org.orkg.graph.adapter.input.rest.ClassController.UpdateClassRequest
 import org.orkg.graph.adapter.input.rest.testing.fixtures.classResponseFields
 import org.orkg.graph.adapter.input.rest.testing.fixtures.configuration.GraphControllerUnitTestConfiguration
 import org.orkg.graph.domain.CannotResetURI
-import org.orkg.graph.domain.ClassAlreadyExists
 import org.orkg.graph.domain.ClassNotFound
 import org.orkg.graph.domain.ClassNotModifiable
 import org.orkg.graph.domain.Classes
@@ -31,6 +30,7 @@ import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.InvalidLabel
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.ReservedClassId
+import org.orkg.graph.domain.ThingAlreadyExists
 import org.orkg.graph.domain.URIAlreadyInUse
 import org.orkg.graph.domain.URINotAbsolute
 import org.orkg.graph.input.ClassUseCases
@@ -246,7 +246,7 @@ internal class ClassControllerUnitTest : MockMvcBaseTest("classes") {
                     fieldWithPath("uri").description("The class URI (optional)").optional(),
                     fieldWithPath("extraction_method").description("""The method used to extract the class. Can be one of $allowedExtractionMethodValues. (optional)""").optional(),
                 )
-                throws(InvalidLabel::class, URINotAbsolute::class, URIAlreadyInUse::class, ReservedClassId::class, ClassAlreadyExists::class)
+                throws(InvalidLabel::class, URINotAbsolute::class, URIAlreadyInUse::class, ReservedClassId::class, ThingAlreadyExists::class)
             }
 
         verify(exactly = 1) {

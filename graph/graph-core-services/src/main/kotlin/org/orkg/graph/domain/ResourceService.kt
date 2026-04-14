@@ -45,7 +45,7 @@ class ResourceService(
     override fun create(command: CreateResourceUseCase.CreateCommand): ThingId {
         Label.ofOrNull(command.label) ?: throw InvalidLabel()
         validateClasses(command.classes)
-        command.id?.also { id -> repository.findById(id).ifPresent { throw ResourceAlreadyExists(id) } }
+        command.id?.also { id -> thingRepository.findById(id).ifPresent { throw ThingAlreadyExists(id) } }
         return unsafeResourceUseCases.create(command)
     }
 

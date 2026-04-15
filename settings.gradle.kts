@@ -1,5 +1,5 @@
 pluginManagement {
-    includeBuild("gradle/meta-plugins")
+    includeBuild("build-logic/meta-plugins")
 }
 plugins {
     id("org.orkg.gradle.settings")

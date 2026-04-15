@@ -13,4 +13,5 @@ dependencyResolutionManagement {
 
 include("testing-dsl")
 
+includeBuild("../build-logic/platform")
 includeBuild("../world")

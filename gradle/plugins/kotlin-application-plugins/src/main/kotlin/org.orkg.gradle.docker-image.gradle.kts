@@ -7,7 +7,7 @@ plugins {
 }
 
 extensions.configure<JibExtension> {
-    val baseImageName = "gcr.io/distroless/java21"
+    val baseImageName = "gcr.io/distroless/java25"
     from.image = baseImageName
     to.image = "registry.gitlab.com/tibhannover/orkg/orkg-backend"
     container {

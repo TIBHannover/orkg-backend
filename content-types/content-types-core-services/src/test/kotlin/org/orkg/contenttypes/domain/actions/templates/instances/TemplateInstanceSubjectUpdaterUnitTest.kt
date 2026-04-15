@@ -38,7 +38,7 @@ internal class TemplateInstanceSubjectUpdaterUnitTest : MockkBaseTest {
 
         result.asClue {
             it.template shouldBe state.template
-            it.templateInstance shouldBe state.templateInstance!!.copy(
+            it.templateInstance shouldBe state.templateInstance.copy(
                 root = targetResource,
             )
             it.validationCache shouldBe state.validationCache

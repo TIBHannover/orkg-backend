@@ -1,4 +1,4 @@
-image: azul/zulu-openjdk-debian:21
+image: azul/zulu-openjdk-debian:25
 
 variables:
   DOCKER_HOST: "tcp://docker:2375"

@@ -52,7 +52,6 @@ testing {
                 implementation(testFixtures(project(":community:community-core-model")))
                 implementation(project(":content-types:content-types-adapter-input-representations"))
                 runtimeOnly("org.springframework.boot:spring-boot-starter-test")
-                implementation("com.ninja-squad:springmockk")
                 runtimeOnly("org.postgresql:postgresql")
                 implementation("io.kotest:kotest-assertions-core")
                 implementation("io.kotest:kotest-assertions-shared")
@@ -287,7 +286,6 @@ dependencies {
     "integrationTestImplementation"(testFixtures(project(":common:spring-webmvc")))
     "integrationTestImplementation"(testFixtures(project(":common:testing-spring")))
     "integrationTestImplementation"(testFixtures(project(":content-types:content-types-adapter-output-simcomp")))
-    "kaptIntegrationTest"("org.springframework.boot:spring-boot-configuration-processor")
 }
 
 tasks.named("check") {

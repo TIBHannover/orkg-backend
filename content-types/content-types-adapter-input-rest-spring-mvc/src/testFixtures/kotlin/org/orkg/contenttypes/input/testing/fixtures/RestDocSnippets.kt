@@ -599,7 +599,7 @@ fun versionInfoResponseFields(path: String = "versions") = listOf(
     fieldWithPath("$path.published[].label").description("The label of the published version."),
     timestampFieldWithPath("$path.published[].created_at", "the published version was created"),
     fieldWithPath("$path.published[].created_by").type("String").description("The UUID of the user or service who created the version."),
-    fieldWithPath("$path.published[].changelog").description("The changelog of the published version."),
+    fieldWithPath("$path.published[].changelog").type("String").description("The changelog of the published version."),
 )
 
 fun createResourceRequestPartRequestFields() = listOf(

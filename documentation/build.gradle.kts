@@ -1,13 +1,10 @@
 import com.epages.restdocs.apispec.gradle.OpenApi3Task
 import com.epages.restdocs.apispec.gradle.PluginOauth2Configuration
 import com.fasterxml.jackson.databind.JsonNode
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.databind.node.ObjectNode
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
-import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import groovy.lang.Closure
 import io.swagger.v3.oas.models.servers.Server
 import org.asciidoctor.gradle.jvm.AsciidoctorTask
@@ -16,6 +13,7 @@ import org.openapitools.generator.gradle.plugin.tasks.ValidateTask
 
 plugins {
     id("org.orkg.gradle.openapi")
+    id("org.orkg.gradle.asciidoctor")
 }
 
 fun withSnippets(path: String): Map<String, String> = mapOf("path" to path, "configuration" to "restdocs")
@@ -253,50 +251,6 @@ abstract class GenerateErrorSnippetsTask : DefaultTask() {
     }
 }
 
-abstract class GenerateOpenApiSpecPythonTask : DefaultTask() {
-    @get:InputFile
-    abstract val inputFile: RegularFileProperty
-
-    @get:OutputFile
-    abstract val outputFile: RegularFileProperty
-
-    init {
-        group = "documentation"
-        outputFile.convention(project.layout.buildDirectory.file("api-spec-python/openapi3.yaml"))
-    }
-
-    @TaskAction
-    fun action() {
-        val objectMapper = ObjectMapper(YAMLFactory())
-            .registerKotlinModule()
-            .enable(SerializationFeature.INDENT_OUTPUT)
-        val openApiSpec = objectMapper.readTree(inputFile.get().asFile)
-        val statusCodesWithoutResponseBody = listOf("201", "204")
-        val emptySchema = objectMapper.nodeFactory.objectNode().apply {
-            val response = objectMapper.nodeFactory.objectNode().apply {
-                set<ObjectNode>("schema", objectMapper.nodeFactory.objectNode())
-            }
-            set<ObjectNode>("application/json", response)
-        }
-        openApiSpec.path("paths").forEach { path ->
-            path.forEach { method ->
-                val responses = method.path("responses")
-                statusCodesWithoutResponseBody.forEach { statusCodeWithoutResponseBody ->
-                    val status = responses.path(statusCodeWithoutResponseBody)
-                    if (responses.size() > 1 && !status.isMissingNode) {
-                        status as ObjectNode
-                        val content = status.path("content")
-                        if (content.isMissingNode) {
-                            status.set<ObjectNode>("content", emptySchema)
-                        }
-                    }
-                }
-            }
-        }
-        objectMapper.writeValue(outputFile.asFile.get(), openApiSpec)
-    }
-}
-
 val generateErrorListing by tasks.registering(GenerateErrorListingTask::class) {
     inputs.files(aggregateRestDocsSnippets.get().outputs)
 }
@@ -307,11 +261,6 @@ val generateErrorSnippets by tasks.registering(GenerateErrorSnippetsTask::class)
 
 val generateOpenApiErrorSnippets by tasks.registering(GenerateOpenApiErrorSnippetsTask::class) {
     inputs.files(aggregateRestDocsSnippets.get().outputs)
-}
-
-val generateOpenApiSpecPython by tasks.registering(GenerateOpenApiSpecPythonTask::class) {
-    inputFile.set(File(openapi3.outputDirectory, "openapi3.${openapi3.format}"))
-    dependsOn("openapi3")
 }
 
 val aggregatedOpenApiSnippetsDir = layout.buildDirectory.dir("generated-openapi-snippets")
@@ -446,7 +395,7 @@ openapi3 {
     version = "${project.version}"
     format = "yaml"
     hiddenEndpointPaths = listOf(
-        "/open-api-doc-test"
+        "/open-api-doc-test",
     )
     setServers(
         openApiServerUrls.map { (url, description) ->
@@ -454,7 +403,7 @@ openapi3 {
                 this.url = url
                 this.description = description
             }
-        }
+        },
     )
     oauth2SecuritySchemeDefinition = PluginOauth2Configuration().apply {
         flows = arrayOf(
@@ -482,18 +431,8 @@ tasks {
         inputSpec.set(layout.buildDirectory.file("api-spec/openapi3.yaml").get().asFile.path)
     }
 
-    withType<GenerateTask>().configureEach {
-        setGroup("openapi client generation")
-        inputSpec.set(layout.buildDirectory.file("api-spec/openapi3.yaml").get().asFile.path)
-        cleanupOutput = true
-        removeOperationIdPrefix = true
-        gitHost = "gitlab.com"
-        gitUserId = "TIBHannover/orkg"
-        gitRepoId = "orkg-backend"
-        dependsOn("openapi3")
-    }
-
     register<GenerateTask>("generateTypescriptClient") {
+        dependsOn("openapi3")
         generatorName.set("typescript-fetch")
         outputDir.set(layout.buildDirectory.dir("generated-clients/typescript-client").get().asFile.path)
         httpUserAgent = "ORKG-TypeScript-Client/${project.version}"
@@ -506,21 +445,8 @@ tasks {
         )
     }
 
-    register<GenerateTask>("generatePythonClient") {
-        generatorName.set("python")
-        inputSpec.set(layout.buildDirectory.file("api-spec-python/openapi3.yaml").get().asFile.path)
-        outputDir.set(layout.buildDirectory.dir("generated-clients/python-client").get().asFile.path)
-        httpUserAgent = "ORKG-Python-Client/${project.version}"
-        // See https://github.com/OpenAPITools/openapi-generator/blob/master/docs/generators/python.md
-        configOptions = mapOf(
-            "packageName" to "orkg_client",
-            "packageVersion" to project.version.toString(),
-            "useOneOfDiscriminatorLookup" to "true",
-        )
-        dependsOn(generateOpenApiSpecPython)
-    }
-
     register<GenerateTask>("generateRClient") {
+        dependsOn("openapi3")
         generatorName.set("r")
         outputDir.set(layout.buildDirectory.dir("generated-clients/r-client").get().asFile.path)
         httpUserAgent = "ORKG-R-Client/${project.version}"
@@ -534,8 +460,8 @@ tasks {
     register("generateAllClients") {
         setGroup("openapi client generation")
         dependsOn(
+            ":api-clients:python-client:generatePythonClient",
             "generateTypescriptClient",
-            "generatePythonClient",
             "generateRClient",
         )
     }

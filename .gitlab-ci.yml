@@ -90,6 +90,7 @@ generate_api_clients:
     expose_as: api-clients
     expire_in: 1 mos
     paths:
+      - api-clients/python-client/build/python-client
       - documentation/build/generated-clients
   rules:
     - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH || $CI_COMMIT_TAG
@@ -218,7 +219,7 @@ publish_python_client:
     - if: $CI_COMMIT_TAG
   script:
     - pip install build twine
-    - cd ./documentation/build/generated-clients/python-client
+    - cd ./api-clients/python-client/build/python-client
     - python -m build
     - python -m twine upload --repository-url ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/pypi dist/*
 

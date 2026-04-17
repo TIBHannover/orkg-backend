@@ -1,5 +1,11 @@
 package org.orkg.contenttypes.adapter.input.rest
 
+import io.kotest.assertions.asClue
+import io.kotest.matchers.maps.shouldContainKey
+import io.kotest.matchers.nulls.shouldNotBeNull
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
+import io.kotest.matchers.types.shouldBeInstanceOf
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
@@ -19,21 +25,23 @@ import org.orkg.contenttypes.input.TemplateRelationsCommand
 import org.orkg.contenttypes.input.TemplateUseCases
 import org.orkg.createClasses
 import org.orkg.createContributor
-import org.orkg.createLiteral
 import org.orkg.createObservatory
 import org.orkg.createOrganization
 import org.orkg.createPredicates
 import org.orkg.createResource
-import org.orkg.createStatement
+import org.orkg.graph.adapter.input.rest.LiteralRepresentation
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.FormattedLabel
+import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
+import org.orkg.graph.domain.Visibility
 import org.orkg.graph.input.ClassUseCases
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.PredicateUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
+import org.orkg.testing.MockUserId
 import org.orkg.testing.annotations.IntegrationTest
 import org.orkg.testing.annotations.TestWithMockUser
 import org.orkg.testing.spring.MockMvcBaseTest
@@ -125,6 +133,7 @@ internal class TemplateInstanceControllerIntegrationTest : MockMvcBaseTest("temp
         classService.createClasses(
             Classes.string,
             ThingId("Test"),
+            ThingId("Additional"),
         )
 
         val contributorId = contributorService.createContributor()
@@ -176,14 +185,6 @@ internal class TemplateInstanceControllerIntegrationTest : MockMvcBaseTest("temp
                 extractionMethod = ExtractionMethod.UNKNOWN,
             ),
         )
-        statementService.createStatement(
-            subject = resourceService.createResource(
-                id = ThingId("R6458"),
-                classes = setOf(targetClass),
-            ),
-            predicate = Predicates.hasURL,
-            `object` = literalService.createLiteral(),
-        )
     }
 
     @AfterEach
@@ -198,17 +199,154 @@ internal class TemplateInstanceControllerIntegrationTest : MockMvcBaseTest("temp
 
     @Test
     @TestWithMockUser
-    fun update() {
-        val id = resourceService.findAll(
+    fun createAndUpdate() {
+        val templateId = resourceService.findAll(
             includeClasses = setOf(Classes.nodeShape),
             pageable = PageRequests.SINGLE,
         ).single().id
 
-        put("/api/templates/{id}/instances/{instanceId}", id, "R6458")
+        val templateInstanceId = post("/api/templates/{id}/instances", templateId)
+            .content(requestJson("orkg/createTemplateInstance"))
+            .accept(TEMPLATE_INSTANCE_JSON_V1)
+            .contentType(TEMPLATE_INSTANCE_JSON_V1)
+            .perform()
+            .andExpect(status().isCreated)
+            .andReturn()
+            .response
+            .getHeaderValue("Location")!!
+            .toString()
+            .substringAfterLast("/")
+            .let(::ThingId)
+
+        val templateInstance = get("/api/templates/{id}/instances/{instanceId}", templateId, templateInstanceId)
+            .accept(TEMPLATE_INSTANCE_JSON_V1)
+            .perform()
+            .andExpect(status().isOk)
+            .andReturn()
+            .response
+            .contentAsString
+            .let { objectMapper.readValue(it, TemplateInstanceRepresentation::class.java) }
+
+        templateInstance.asClue {
+            it.root.asClue { root ->
+                root.id shouldBe templateInstanceId
+                root.label shouldBe "test instance"
+                root.classes shouldBe setOf(ThingId("Test"), ThingId("Additional"))
+                root.shared shouldBe 0
+                root.observatoryId shouldBe ObservatoryId.UNKNOWN
+                root.organizationId shouldBe OrganizationId.UNKNOWN
+                root.createdAt shouldNotBe null
+                root.createdBy shouldBe ContributorId(MockUserId.USER)
+                root.verified shouldBe false
+                root.visibility shouldBe Visibility.DEFAULT
+                root.modifiable shouldBe true
+                root.unlistedBy shouldBe null
+                root.extractionMethod shouldBe ExtractionMethod.UNKNOWN
+            }
+            it.predicates.asClue { predicates ->
+                predicates.size shouldBe 1
+                predicates shouldContainKey Predicates.hasURL
+                predicates[Predicates.hasURL].shouldNotBeNull().asClue { hasURL ->
+                    hasURL.id shouldBe Predicates.hasURL
+                    hasURL.label shouldBe "url"
+                    hasURL.description shouldBe null
+                    hasURL.createdAt shouldNotBe null
+                    hasURL.createdBy shouldBe ContributorId(MockUserId.UNKNOWN)
+                    hasURL.modifiable shouldBe true
+                    hasURL.extractionMethod shouldBe ExtractionMethod.UNKNOWN
+                }
+            }
+            it.statements.asClue { statements ->
+                statements.size shouldBe 1
+                statements shouldContainKey Predicates.hasURL
+                statements[Predicates.hasURL].shouldNotBeNull().asClue { hasUrlStatements ->
+                    hasUrlStatements.size shouldBe 1
+                    hasUrlStatements.single().asClue { `object` ->
+                        `object`.shouldNotBeNull()
+                        `object`.thing.shouldBeInstanceOf<LiteralRepresentation>().asClue { thing ->
+                            thing.id shouldNotBe null
+                            thing.label shouldBe "https://sandbox.orkg.org/"
+                            thing.datatype shouldBe Literals.XSD.STRING.prefixedUri
+                            thing.createdAt shouldNotBe null
+                            thing.createdBy shouldBe ContributorId(MockUserId.USER)
+                            thing.modifiable shouldBe true
+                            thing.extractionMethod shouldBe ExtractionMethod.UNKNOWN
+                        }
+                        `object`.createdAt shouldNotBe null
+                        `object`.createdBy shouldBe ContributorId(MockUserId.USER)
+                        `object`.statements shouldBe emptyMap()
+                    }
+                }
+            }
+        }
+
+        put("/api/templates/{id}/instances/{instanceId}", templateId, templateInstanceId)
             .content(requestJson("orkg/updateTemplateInstance"))
             .accept(TEMPLATE_INSTANCE_JSON_V1)
             .contentType(TEMPLATE_INSTANCE_JSON_V1)
             .perform()
             .andExpect(status().isNoContent)
+
+        val updatedTemplateInstance = get("/api/templates/{id}/instances/{instanceId}", templateId, templateInstanceId)
+            .accept(TEMPLATE_INSTANCE_JSON_V1)
+            .perform()
+            .andExpect(status().isOk)
+            .andReturn()
+            .response
+            .contentAsString
+            .let { objectMapper.readValue(it, TemplateInstanceRepresentation::class.java) }
+
+        updatedTemplateInstance.asClue {
+            it.root.asClue { root ->
+                root.id shouldBe templateInstanceId
+                root.label shouldBe "test instance"
+                root.classes shouldBe setOf(ThingId("Test"), ThingId("Additional"))
+                root.shared shouldBe 0
+                root.observatoryId shouldBe ObservatoryId.UNKNOWN
+                root.organizationId shouldBe OrganizationId.UNKNOWN
+                root.createdAt shouldNotBe null
+                root.createdBy shouldBe ContributorId(MockUserId.USER)
+                root.verified shouldBe false
+                root.visibility shouldBe Visibility.DEFAULT
+                root.modifiable shouldBe true
+                root.unlistedBy shouldBe null
+                root.extractionMethod shouldBe ExtractionMethod.UNKNOWN
+            }
+            it.predicates.asClue { predicates ->
+                predicates.size shouldBe 1
+                predicates shouldContainKey Predicates.hasURL
+                predicates[Predicates.hasURL].shouldNotBeNull().asClue { hasURL ->
+                    hasURL.id shouldBe Predicates.hasURL
+                    hasURL.label shouldBe "url"
+                    hasURL.description shouldBe null
+                    hasURL.createdAt shouldNotBe null
+                    hasURL.createdBy shouldBe ContributorId(MockUserId.UNKNOWN)
+                    hasURL.modifiable shouldBe true
+                    hasURL.extractionMethod shouldBe ExtractionMethod.UNKNOWN
+                }
+            }
+            it.statements.asClue { statements ->
+                statements.size shouldBe 1
+                statements shouldContainKey Predicates.hasURL
+                statements[Predicates.hasURL].shouldNotBeNull().asClue { hasUrlStatements ->
+                    hasUrlStatements.size shouldBe 1
+                    hasUrlStatements.single().asClue { `object` ->
+                        `object`.shouldNotBeNull()
+                        `object`.thing.shouldBeInstanceOf<LiteralRepresentation>().asClue { thing ->
+                            thing.id shouldNotBe null
+                            thing.label shouldBe "https://orkg.org/"
+                            thing.datatype shouldBe Literals.XSD.STRING.prefixedUri
+                            thing.createdAt shouldNotBe null
+                            thing.createdBy shouldBe ContributorId(MockUserId.USER)
+                            thing.modifiable shouldBe true
+                            thing.extractionMethod shouldBe ExtractionMethod.UNKNOWN
+                        }
+                        `object`.createdAt shouldNotBe null
+                        `object`.createdBy shouldBe ContributorId(MockUserId.USER)
+                        `object`.statements shouldBe emptyMap()
+                    }
+                }
+            }
+        }
     }
 }

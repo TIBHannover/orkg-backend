@@ -3,6 +3,8 @@ package org.orkg.graph.adapter.input.rest
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonInclude.Include
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.fasterxml.jackson.annotation.JsonSubTypes
+import com.fasterxml.jackson.annotation.JsonTypeInfo
 import org.orkg.common.ContributorId
 import org.orkg.common.IRI
 import org.orkg.common.ObservatoryId
@@ -16,6 +18,19 @@ import java.time.OffsetDateTime
 
 typealias PathRepresentation = List<List<ThingRepresentation>>
 
+@JsonTypeInfo(
+    use = JsonTypeInfo.Id.NAME,
+    include = JsonTypeInfo.As.EXISTING_PROPERTY,
+    property = "_class",
+)
+@JsonSubTypes(
+    value = [
+        JsonSubTypes.Type(name = "predicate", value = PredicateRepresentation::class),
+        JsonSubTypes.Type(name = "class", value = ClassRepresentation::class),
+        JsonSubTypes.Type(name = "literal", value = LiteralRepresentation::class),
+        JsonSubTypes.Type(name = "resource", value = ResourceRepresentation::class),
+    ],
+)
 sealed interface ThingRepresentation {
     val id: ThingId
 }

@@ -16,6 +16,7 @@ import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
 import org.orkg.common.exceptions.UnknownSortingProperty
 import org.orkg.common.testing.fixtures.fixedClock
+import org.orkg.contenttypes.adapter.input.rest.TemplateInstanceController.CreateTemplateInstanceRequest
 import org.orkg.contenttypes.adapter.input.rest.TemplateInstanceController.UpdateTemplateInstanceRequest
 import org.orkg.contenttypes.domain.DuplicateTempIds
 import org.orkg.contenttypes.domain.InvalidLiteral
@@ -45,12 +46,16 @@ import org.orkg.contenttypes.input.testing.fixtures.mapOfCreateListRequestPartRe
 import org.orkg.contenttypes.input.testing.fixtures.mapOfCreatePredicateRequestPartRequestFields
 import org.orkg.contenttypes.input.testing.fixtures.mapOfCreateResourceRequestPartRequestFields
 import org.orkg.contenttypes.input.testing.fixtures.templateInstanceResponseFields
+import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ExtractionMethod
+import org.orkg.graph.domain.InvalidClassCollection
+import org.orkg.graph.domain.InvalidLabel
 import org.orkg.graph.domain.InvalidLiteralDatatype
 import org.orkg.graph.domain.InvalidLiteralLabel
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.ReservedClassId
 import org.orkg.graph.domain.ResourceNotFound
+import org.orkg.graph.domain.ThingAlreadyExists
 import org.orkg.graph.domain.ThingNotFound
 import org.orkg.graph.domain.URIAlreadyInUse
 import org.orkg.graph.domain.URINotAbsolute
@@ -239,6 +244,87 @@ internal class TemplateInstanceControllerUnitTest : MockMvcBaseTest("template-in
 
     @Test
     @TestWithMockUser
+    @DisplayName("Given a template instance create request, when service succeeds, it creates the template instance")
+    fun create() {
+        val id = ThingId("R123")
+        val instanceId = ThingId("R456")
+
+        every { service.create(any()) } returns instanceId
+
+        documentedPostRequestTo("/api/templates/{id}/instances", id)
+            .content(createTemplateInstanceRequest())
+            .accept(TEMPLATE_INSTANCE_JSON_V1)
+            .contentType(TEMPLATE_INSTANCE_JSON_V1)
+            .perform()
+            .andExpect(status().isCreated)
+            .andExpect(header().string("Location", endsWith("/api/templates/$id/instances/$instanceId")))
+            .andDocument {
+                summary("Creating template instances")
+                description(
+                    """
+                    A `POST` request creates a new template instance with all the given parameters.
+                    The response will be `201 Created` when successful.
+                    The created template instance (object) can be retrieved by following the URI in the `Location` header field.
+                    """,
+                )
+                pathParameters(
+                    parameterWithName("id").description("The identifier of the template."),
+                )
+                responseHeaders(
+                    headerWithName("Location").description("The uri path where the created template instance can be fetched from."),
+                )
+                requestFields<CreateTemplateInstanceRequest>(
+                    fieldWithPath("id").description("The id for the root resource. (optional)").optional(),
+                    fieldWithPath("label").description("The root resource label."),
+                    fieldWithPath("additional_classes[]").type("Array").description("The additional classes of the root resource. (optional)").optional(),
+                    fieldWithPath("statements").description("Map of predicate ids to list of object ids that represent the statements of the template instance."),
+                    fieldWithPath("statements.*").description("A predicate id"),
+                    fieldWithPath("statements.*[]").description("A list of thing ids or temp ids representing the objects of a statement."),
+                    *mapOfCreateResourceRequestPartRequestFields().toTypedArray(),
+                    fieldWithPath("literals").description("A key-value map of temporary ids to literal definitions for literals that need to be created. (optional)").optional(),
+                    fieldWithPath("literals.*").description("The value of the literal. The type will be automatically assigned based on the template."),
+                    *mapOfCreatePredicateRequestPartRequestFields().toTypedArray(),
+                    *mapOfCreateListRequestPartRequestFields().toTypedArray(),
+                    *mapOfCreateClassRequestPartRequestFields().toTypedArray(),
+                    fieldWithPath("extraction_method").description("""The method used to extract the template instance. Can be one of $allowedExtractionMethodValues. (optional)""").optional(),
+                )
+                throws(
+                    InvalidLabel::class,
+                    InvalidTempId::class,
+                    DuplicateTempIds::class,
+                    TemplateNotFound::class,
+                    ThingAlreadyExists::class,
+                    ReservedClassId::class,
+                    InvalidClassCollection::class,
+                    ThingNotDefined::class,
+                    ThingNotFound::class,
+                    ThingIsNotAClass::class,
+                    InvalidLiteralLabel::class,
+                    InvalidLiteralDatatype::class,
+                    URINotAbsolute::class,
+                    URIAlreadyInUse::class,
+                    UnknownTemplateProperties::class,
+                    MissingPropertyValues::class,
+                    TooManyPropertyValues::class,
+                    ObjectIsNotAClass::class,
+                    ObjectIsNotAPredicate::class,
+                    ObjectIsNotAList::class,
+                    ObjectMustNotBeALiteral::class,
+                    ResourceIsNotAnInstanceOfTargetClass::class,
+                    ObjectIsNotALiteral::class,
+                    InvalidLiteral::class,
+                    MismatchedDataType::class,
+                    LabelDoesNotMatchPattern::class,
+                    NumberTooLow::class,
+                    NumberTooHigh::class,
+                )
+            }
+
+        verify(exactly = 1) { service.create(any()) }
+    }
+
+    @Test
+    @TestWithMockUser
     @DisplayName("Given a template instance update request, when service succeeds, it updates the template instance")
     fun update() {
         val id = ThingId("R123")
@@ -313,6 +399,45 @@ internal class TemplateInstanceControllerUnitTest : MockMvcBaseTest("template-in
 
         verify(exactly = 1) { service.update(any()) }
     }
+
+    private fun createTemplateInstanceRequest() =
+        CreateTemplateInstanceRequest(
+            id = ThingId("R456"),
+            label = "Template instance",
+            additionalClasses = setOf(Classes.conclusion),
+            statements = mapOf(
+                Predicates.hasAuthor to listOf("#temp1", "#temp2", "#temp3"),
+                Predicates.field to listOf("#temp4", "#temp5", "R123"),
+            ),
+            resources = mapOf(
+                "#temp1" to CreateResourceRequestPart(
+                    label = "MOTO",
+                    classes = setOf(ThingId("Result")),
+                ),
+            ),
+            literals = mapOf(
+                "#temp2" to "0.1",
+            ),
+            predicates = mapOf(
+                "#temp3" to CreatePredicateRequestPart(
+                    label = "hasResult",
+                    description = "has result",
+                ),
+            ),
+            lists = mapOf(
+                "#temp4" to CreateListRequestPart(
+                    label = "list",
+                    elements = listOf("#temp1", "C123"),
+                ),
+            ),
+            classes = mapOf(
+                "#temp5" to CreateClassRequestPart(
+                    label = "class",
+                    uri = IRI.create("https://orkg.org/class/C1"),
+                ),
+            ),
+            extractionMethod = ExtractionMethod.MANUAL,
+        )
 
     private fun updateTemplateInstanceRequest() =
         UpdateTemplateInstanceRequest(

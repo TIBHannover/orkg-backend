@@ -1,0 +1,16 @@
+{
+    "label": "test instance",
+    "additional_classes": ["Additional"],
+    "resources": null,
+    "literals": {
+        "#temp1": "https://sandbox.orkg.org/"
+    },
+    "predicates": null,
+    "lists": null,
+    "classes": null,
+    "statements": {
+        "url": [
+            "#temp1"
+        ]
+    }
+}

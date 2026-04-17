@@ -14,15 +14,13 @@ import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.UnknownTemplateProperties
 import org.orkg.contenttypes.domain.actions.AbstractTemplatePropertyValueValidator
-import org.orkg.contenttypes.domain.actions.BakedStatement
+import org.orkg.contenttypes.domain.actions.CreateTemplateInstanceState
 import org.orkg.contenttypes.domain.actions.ThingIdValidator
-import org.orkg.contenttypes.domain.actions.UpdateTemplateInstanceState
 import org.orkg.contenttypes.domain.testing.fixtures.createTemplate
-import org.orkg.contenttypes.domain.testing.fixtures.createTemplateInstance
 import org.orkg.contenttypes.input.CreateLiteralCommandPart
 import org.orkg.contenttypes.input.CreateResourceCommandPart
+import org.orkg.contenttypes.input.testing.fixtures.createTemplateInstanceCommand
 import org.orkg.contenttypes.input.testing.fixtures.from
-import org.orkg.contenttypes.input.testing.fixtures.updateTemplateInstanceCommand
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.output.ClassRepository
@@ -31,13 +29,13 @@ import org.orkg.graph.output.ThingRepository
 import org.orkg.graph.testing.fixtures.createLiteral
 import org.orkg.graph.testing.fixtures.createResource
 
-internal class TemplateInstancePropertyValueValidatorUnitTest : MockkBaseTest {
+internal class TemplateInstancePropertyValueCreateValidatorUnitTest : MockkBaseTest {
     private val thingRepository: ThingRepository = mockk()
     private val classRepository: ClassRepository = mockk()
     private val statementRepository: StatementRepository = mockk()
     private val abstractTemplatePropertyValueValidator: AbstractTemplatePropertyValueValidator = mockk()
 
-    private val templateInstancePropertyValueValidator = TemplateInstancePropertyValueValidator(
+    private val templateInstancePropertyValueCreateValidator = TemplateInstancePropertyValueCreateValidator(
         ThingIdValidator(thingRepository), // it is easier to mock thingRepository calls than thingIdValidator calls
         classRepository,
         statementRepository,
@@ -45,13 +43,13 @@ internal class TemplateInstancePropertyValueValidatorUnitTest : MockkBaseTest {
     )
 
     @Test
-    fun `Given a template instance update command, when validating its properties, it returns success`() {
+    fun `Given a template instance create command, when validating its properties, it returns success`() {
         val temp1 = CreateLiteralCommandPart("1") // datatype is irrelevant, as it will be re-assigned by the service
         val temp2 = CreateResourceCommandPart(
             label = "MOTO",
             classes = setOf(ThingId("C28")),
         )
-        val command = updateTemplateInstanceCommand().copy(
+        val command = createTemplateInstanceCommand().copy(
             statements = mapOf(
                 Predicates.field to listOf("#temp1", "R1"),
                 Predicates.description to listOf("L123"),
@@ -69,9 +67,8 @@ internal class TemplateInstancePropertyValueValidatorUnitTest : MockkBaseTest {
             lists = emptyMap(),
             classes = emptyMap(),
         )
-        val state = UpdateTemplateInstanceState(
+        val state = CreateTemplateInstanceState(
             template = createTemplate(),
-            templateInstance = createTemplateInstance(),
             validationCache = mapOf(
                 "R123" to Either.right(
                     createResource(
@@ -99,29 +96,24 @@ internal class TemplateInstancePropertyValueValidatorUnitTest : MockkBaseTest {
         every { abstractTemplatePropertyValueValidator.validateCardinality(any(), any()) } just runs
         every { abstractTemplatePropertyValueValidator.validateObject(any(), any(), any()) } just runs
 
-        val result = templateInstancePropertyValueValidator(command, state)
+        val result = templateInstancePropertyValueCreateValidator(command, state)
 
         result.asClue {
             it.template shouldBe state.template
-            it.templateInstance shouldBe state.templateInstance
+            it.templateInstanceId shouldBe state.templateInstanceId
             it.validationCache shouldBe state.validationCache + mapOf(
                 "#temp2" from command,
                 "#temp1" from command,
             )
-            it.statementsToAdd shouldBe setOf(
-                BakedStatement("R54631", Predicates.field.value, "#temp1"),
-                BakedStatement("R54631", Predicates.field.value, "R1"),
-                BakedStatement("R54631", Predicates.description.value, "L123"),
-                BakedStatement("R54631", Predicates.hasHeadingLevel.value, "#temp1"),
-                BakedStatement("R54631", Predicates.hasWikidataId.value, "L123"),
-                BakedStatement("R54631", Predicates.hasAuthor.value, "#temp2"),
-                BakedStatement("R54631", Predicates.hasAuthor.value, "R123"),
-            )
-            it.statementsToRemove shouldBe setOf(
-                BakedStatement("R54631", Predicates.field.value, "L1"),
-                BakedStatement("R54631", Predicates.description.value, "L1"),
-                BakedStatement("R54631", Predicates.hasHeadingLevel.value, "L1"),
-                BakedStatement("R54631", Predicates.hasWikidataId.value, "L1"),
+            it.statementsToAdd shouldBe setOf<Pair<String, String>>(
+                Pair(Predicates.field.value, "#temp1"),
+                Pair(Predicates.field.value, "R1"),
+                Pair(Predicates.description.value, "L123"),
+                Pair(Predicates.hasHeadingLevel.value, "#temp1"),
+                Pair(Predicates.hasWikidataId.value, "L123"),
+                Pair(Predicates.hasAuthor.value, "#temp2"),
+                Pair(Predicates.hasAuthor.value, "R1"),
+                Pair(Predicates.hasAuthor.value, "R123"),
             )
             it.literals shouldBe mapOf(
                 "#temp1" to CreateLiteralCommandPart(
@@ -136,8 +128,8 @@ internal class TemplateInstancePropertyValueValidatorUnitTest : MockkBaseTest {
     }
 
     @Test
-    fun `Given a template instance update command, when provided property is not defined by template, it throws an exception`() {
-        val command = updateTemplateInstanceCommand().copy(
+    fun `Given a template instance create command, when provided property is not defined by template, it throws an exception`() {
+        val command = createTemplateInstanceCommand().copy(
             statements = mapOf(
                 ThingId("Unknown") to listOf("L123"),
             ),
@@ -147,12 +139,11 @@ internal class TemplateInstancePropertyValueValidatorUnitTest : MockkBaseTest {
             lists = emptyMap(),
             classes = emptyMap(),
         )
-        val state = UpdateTemplateInstanceState(
+        val state = CreateTemplateInstanceState(
             template = createTemplate(),
-            templateInstance = createTemplateInstance(),
         )
 
-        shouldThrow<UnknownTemplateProperties> { templateInstancePropertyValueValidator(command, state) }.asClue {
+        shouldThrow<UnknownTemplateProperties> { templateInstancePropertyValueCreateValidator(command, state) }.asClue {
             it.message shouldBe """Unknown properties for template "R54631": "Unknown"."""
         }
     }

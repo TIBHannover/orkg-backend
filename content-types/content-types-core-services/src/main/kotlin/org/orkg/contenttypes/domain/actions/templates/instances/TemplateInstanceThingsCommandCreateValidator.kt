@@ -1,14 +1,14 @@
 package org.orkg.contenttypes.domain.actions.templates.instances
 
+import org.orkg.contenttypes.domain.actions.CreateTemplateInstanceCommand
 import org.orkg.contenttypes.domain.actions.ThingsCommandValidator
-import org.orkg.contenttypes.domain.actions.UpdateTemplateInstanceCommand
-import org.orkg.contenttypes.domain.actions.templates.instances.UpdateTemplateInstanceAction.State
+import org.orkg.contenttypes.domain.actions.templates.instances.CreateTemplateInstanceAction.State
 import org.orkg.graph.output.ClassRepository
 import org.orkg.graph.output.ThingRepository
 
-class TemplateInstanceThingsCommandValidator(
+class TemplateInstanceThingsCommandCreateValidator(
     private val thingsCommandValidator: ThingsCommandValidator,
-) : UpdateTemplateInstanceAction {
+) : CreateTemplateInstanceAction {
     constructor(
         thingRepository: ThingRepository,
         classRepository: ClassRepository,
@@ -16,7 +16,7 @@ class TemplateInstanceThingsCommandValidator(
         ThingsCommandValidator(thingRepository, classRepository),
     )
 
-    override fun invoke(command: UpdateTemplateInstanceCommand, state: State): State =
+    override fun invoke(command: CreateTemplateInstanceCommand, state: State): State =
         state.copy(
             validationCache = thingsCommandValidator.validate(
                 thingsCommand = command,

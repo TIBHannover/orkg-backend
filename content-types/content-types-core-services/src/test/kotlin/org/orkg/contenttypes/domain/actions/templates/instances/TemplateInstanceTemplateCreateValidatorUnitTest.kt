@@ -9,33 +9,32 @@ import io.mockk.verify
 import org.junit.jupiter.api.Test
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.TemplateNotFound
-import org.orkg.contenttypes.domain.actions.UpdateTemplateInstanceState
+import org.orkg.contenttypes.domain.actions.CreateTemplateInstanceState
 import org.orkg.contenttypes.domain.testing.fixtures.createTemplate
 import org.orkg.contenttypes.input.TemplateUseCases
-import org.orkg.contenttypes.input.testing.fixtures.updateTemplateInstanceCommand
+import org.orkg.contenttypes.input.testing.fixtures.createTemplateInstanceCommand
 import java.util.Optional
 
-internal class TemplateInstanceTemplateValidatorUnitTest : MockkBaseTest {
+internal class TemplateInstanceTemplateCreateValidatorUnitTest : MockkBaseTest {
     private val templateService: TemplateUseCases = mockk()
 
-    private val templateInstanceTemplateValidator = TemplateInstanceTemplateValidator(templateService)
+    private val templateInstanceTemplateCreateValidator = TemplateInstanceTemplateCreateValidator(templateService)
 
     @Test
-    fun `Given a template instance update command, when validating its template, it returns success`() {
-        val command = updateTemplateInstanceCommand()
-        val state = UpdateTemplateInstanceState()
+    fun `Given a template instance create command, when validating its template, it returns success`() {
+        val command = createTemplateInstanceCommand()
+        val state = CreateTemplateInstanceState()
         val template = createTemplate()
 
         every { templateService.findById(command.templateId) } returns Optional.of(template)
 
-        val result = templateInstanceTemplateValidator(command, state)
+        val result = templateInstanceTemplateCreateValidator(command, state)
 
         result.asClue {
             it.template shouldBe template
-            it.templateInstance shouldBe state.templateInstance
+            it.templateInstanceId shouldBe state.templateInstanceId
             it.validationCache shouldBe state.validationCache
             it.statementsToAdd shouldBe state.statementsToAdd
-            it.statementsToRemove shouldBe state.statementsToRemove
             it.literals shouldBe state.literals
         }
 
@@ -43,16 +42,16 @@ internal class TemplateInstanceTemplateValidatorUnitTest : MockkBaseTest {
     }
 
     @Test
-    fun `Given a template instance update command, when template is not found, it throws an exception`() {
-        val command = updateTemplateInstanceCommand()
-        val state = UpdateTemplateInstanceState(
+    fun `Given a template instance create command, when template is not found, it throws an exception`() {
+        val command = createTemplateInstanceCommand()
+        val state = CreateTemplateInstanceState(
             template = createTemplate(),
         )
 
         every { templateService.findById(command.templateId) } returns Optional.empty()
 
         shouldThrow<TemplateNotFound> {
-            templateInstanceTemplateValidator(command, state)
+            templateInstanceTemplateCreateValidator(command, state)
         }
 
         verify(exactly = 1) { templateService.findById(command.templateId) }

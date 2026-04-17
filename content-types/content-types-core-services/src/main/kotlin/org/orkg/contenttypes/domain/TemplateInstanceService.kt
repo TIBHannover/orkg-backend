@@ -6,15 +6,24 @@ import org.orkg.common.OrganizationId
 import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
 import org.orkg.common.pmap
+import org.orkg.contenttypes.domain.actions.CreateTemplateInstanceState
+import org.orkg.contenttypes.domain.actions.LabelValidator
 import org.orkg.contenttypes.domain.actions.TempIdValidator
 import org.orkg.contenttypes.domain.actions.UpdateTemplateInstanceState
 import org.orkg.contenttypes.domain.actions.execute
+import org.orkg.contenttypes.domain.actions.templates.instances.TemplateInstancePropertyValueCreateValidator
+import org.orkg.contenttypes.domain.actions.templates.instances.TemplateInstancePropertyValueCreator
+import org.orkg.contenttypes.domain.actions.templates.instances.TemplateInstancePropertyValueUpdateValidator
 import org.orkg.contenttypes.domain.actions.templates.instances.TemplateInstancePropertyValueUpdater
-import org.orkg.contenttypes.domain.actions.templates.instances.TemplateInstancePropertyValueValidator
+import org.orkg.contenttypes.domain.actions.templates.instances.TemplateInstanceSubjectCreateValidator
+import org.orkg.contenttypes.domain.actions.templates.instances.TemplateInstanceSubjectCreator
 import org.orkg.contenttypes.domain.actions.templates.instances.TemplateInstanceSubjectUpdater
 import org.orkg.contenttypes.domain.actions.templates.instances.TemplateInstanceSubjectValidator
-import org.orkg.contenttypes.domain.actions.templates.instances.TemplateInstanceTemplateValidator
-import org.orkg.contenttypes.domain.actions.templates.instances.TemplateInstanceThingsCommandValidator
+import org.orkg.contenttypes.domain.actions.templates.instances.TemplateInstanceTemplateCreateValidator
+import org.orkg.contenttypes.domain.actions.templates.instances.TemplateInstanceTemplateUpdateValidator
+import org.orkg.contenttypes.domain.actions.templates.instances.TemplateInstanceThingsCommandCreateValidator
+import org.orkg.contenttypes.domain.actions.templates.instances.TemplateInstanceThingsCommandUpdateValidator
+import org.orkg.contenttypes.input.CreateTemplateInstanceUseCase
 import org.orkg.contenttypes.input.TemplateInstanceUseCases
 import org.orkg.contenttypes.input.TemplateUseCases
 import org.orkg.contenttypes.input.UpdateTemplateInstanceUseCase
@@ -96,13 +105,27 @@ class TemplateInstanceService(
         ).pmap { it.toTemplateInstance(template) }
     }
 
+    override fun create(command: CreateTemplateInstanceUseCase.CreateCommand): ThingId {
+        val steps = listOf(
+            LabelValidator { command.label },
+            TempIdValidator { it.tempIds() },
+            TemplateInstanceTemplateCreateValidator(templateService),
+            TemplateInstanceSubjectCreateValidator(thingRepository, classRepository),
+            TemplateInstanceThingsCommandCreateValidator(thingRepository, classRepository),
+            TemplateInstancePropertyValueCreateValidator(thingRepository, classRepository, statementRepository, classHierarchyRepository),
+            TemplateInstanceSubjectCreator(unsafeResourceUseCases),
+            TemplateInstancePropertyValueCreator(unsafeClassUseCases, unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases, unsafePredicateUseCases, statementRepository, listService),
+        )
+        return steps.execute(command, CreateTemplateInstanceState()).templateInstanceId!!
+    }
+
     override fun update(command: UpdateTemplateInstanceUseCase.UpdateCommand) {
         val steps = listOf(
             TempIdValidator { it.tempIds() },
-            TemplateInstanceTemplateValidator(templateService),
+            TemplateInstanceTemplateUpdateValidator(templateService),
             TemplateInstanceSubjectValidator(resourceRepository, this),
-            TemplateInstanceThingsCommandValidator(thingRepository, classRepository),
-            TemplateInstancePropertyValueValidator(thingRepository, classRepository, statementRepository, classHierarchyRepository),
+            TemplateInstanceThingsCommandUpdateValidator(thingRepository, classRepository),
+            TemplateInstancePropertyValueUpdateValidator(thingRepository, classRepository, statementRepository, classHierarchyRepository),
             TemplateInstanceSubjectUpdater(resourceRepository),
             TemplateInstancePropertyValueUpdater(unsafeClassUseCases, unsafeResourceUseCases, statementService, unsafeStatementUseCases, unsafeLiteralUseCases, unsafePredicateUseCases, statementRepository, listService),
         )

@@ -15,6 +15,7 @@ import java.util.Optional
 
 interface TemplateInstanceUseCases :
     RetrieveTemplateInstanceUseCase,
+    CreateTemplateInstanceUseCase,
     UpdateTemplateInstanceUseCase
 
 interface RetrieveTemplateInstanceUseCase {
@@ -36,6 +37,25 @@ interface RetrieveTemplateInstanceUseCase {
         observatoryId: ObservatoryId? = null,
         organizationId: OrganizationId? = null,
     ): Page<TemplateInstance>
+}
+
+interface CreateTemplateInstanceUseCase {
+    fun create(command: CreateCommand): ThingId
+
+    data class CreateCommand(
+        val id: ThingId?,
+        val label: String,
+        val additionalClasses: Set<ThingId>,
+        val templateId: ThingId,
+        val contributorId: ContributorId,
+        val statements: Map<ThingId, List<String>>,
+        override val resources: Map<String, CreateResourceCommandPart> = emptyMap(),
+        override val literals: Map<String, CreateLiteralCommandPart> = emptyMap(),
+        override val predicates: Map<String, CreatePredicateCommandPart> = emptyMap(),
+        override val classes: Map<String, CreateClassCommandPart> = emptyMap(),
+        override val lists: Map<String, CreateListCommandPart> = emptyMap(),
+        val extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN,
+    ) : CreateThingsCommand
 }
 
 interface UpdateTemplateInstanceUseCase {

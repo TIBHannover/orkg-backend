@@ -5,10 +5,9 @@ import org.orkg.contenttypes.domain.LiteralTemplateProperty
 import org.orkg.contenttypes.domain.Template
 import org.orkg.contenttypes.domain.UnknownTemplateProperties
 import org.orkg.contenttypes.domain.actions.AbstractTemplatePropertyValueValidator
-import org.orkg.contenttypes.domain.actions.BakedStatement
+import org.orkg.contenttypes.domain.actions.CreateTemplateInstanceCommand
 import org.orkg.contenttypes.domain.actions.ThingIdValidator
-import org.orkg.contenttypes.domain.actions.UpdateTemplateInstanceCommand
-import org.orkg.contenttypes.domain.actions.templates.instances.UpdateTemplateInstanceAction.State
+import org.orkg.contenttypes.domain.actions.templates.instances.CreateTemplateInstanceAction.State
 import org.orkg.contenttypes.domain.actions.toThingCommandPart
 import org.orkg.contenttypes.input.CreateLiteralCommandPart
 import org.orkg.graph.domain.Literals
@@ -17,12 +16,12 @@ import org.orkg.graph.output.ClassRepository
 import org.orkg.graph.output.StatementRepository
 import org.orkg.graph.output.ThingRepository
 
-class TemplateInstancePropertyValueValidator(
+class TemplateInstancePropertyValueCreateValidator(
     private val thingIdValidator: ThingIdValidator,
     private val classRepository: ClassRepository,
     private val statementRepository: StatementRepository,
     private val abstractTemplatePropertyValueValidator: AbstractTemplatePropertyValueValidator,
-) : UpdateTemplateInstanceAction {
+) : CreateTemplateInstanceAction {
     constructor(
         thingRepository: ThingRepository,
         classRepository: ClassRepository,
@@ -35,10 +34,8 @@ class TemplateInstancePropertyValueValidator(
         AbstractTemplatePropertyValueValidator(classHierarchyRepository),
     )
 
-    override fun invoke(command: UpdateTemplateInstanceCommand, state: State): State {
-        val toRemove = mutableSetOf<BakedStatement>()
-        val toAdd = mutableSetOf<BakedStatement>()
-        val templateInstance = state.templateInstance!!
+    override fun invoke(command: CreateTemplateInstanceCommand, state: State): State {
+        val toAdd = mutableSetOf<Pair<String, String>>()
         val validationCache = state.validationCache.toMutableMap()
         val thingCommands = command.all()
         val literalCommands = mutableMapOf<String, CreateLiteralCommandPart>()
@@ -48,9 +45,6 @@ class TemplateInstancePropertyValueValidator(
         state.template.properties.forEach { property ->
             val propertyInstances = command.statements[property.path.id].orEmpty()
             abstractTemplatePropertyValueValidator.validateCardinality(property, propertyInstances)
-            toRemove += templateInstance.statements[property.path.id]!!.map {
-                BakedStatement(templateInstance.root.id.value, property.path.id.value, it.thing.id.value)
-            }
             propertyInstances.forEach { objectId ->
                 val `object` = thingIdValidator.validate(objectId, thingCommands, validationCache)
 
@@ -63,17 +57,12 @@ class TemplateInstancePropertyValueValidator(
                                 ?: Literals.XSD.STRING.prefixedUri,
                         )
                     }
-                    toAdd += BakedStatement(templateInstance.root.id.value, property.path.id.value, objectId)
+                    toAdd += Pair(property.path.id.value, objectId)
                 }
 
                 `object`.onRight { thing ->
                     abstractTemplatePropertyValueValidator.validateObject(property, thing.id.value, thing.toThingCommandPart(statementRepository))
-                    val statement = BakedStatement(templateInstance.root.id.value, property.path.id.value, thing.id.value)
-                    if (statement in toRemove) {
-                        toRemove -= statement
-                    } else {
-                        toAdd += statement
-                    }
+                    toAdd += Pair(property.path.id.value, thing.id.value)
                 }
             }
         }
@@ -81,7 +70,6 @@ class TemplateInstancePropertyValueValidator(
         return state.copy(
             validationCache = validationCache,
             statementsToAdd = toAdd,
-            statementsToRemove = toRemove,
             literals = literalCommands,
         )
     }

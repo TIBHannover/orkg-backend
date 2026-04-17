@@ -11,6 +11,7 @@ import org.orkg.common.annotations.RequireLogin
 import org.orkg.common.contributorId
 import org.orkg.contenttypes.adapter.input.rest.mapping.TemplateInstanceRepresentationAdapter
 import org.orkg.contenttypes.input.CreateLiteralCommandPart
+import org.orkg.contenttypes.input.CreateTemplateInstanceUseCase
 import org.orkg.contenttypes.input.TemplateInstanceUseCases
 import org.orkg.contenttypes.input.UpdateTemplateInstanceUseCase
 import org.orkg.graph.domain.ExtractionMethod
@@ -23,10 +24,12 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.http.ResponseEntity
+import org.springframework.http.ResponseEntity.created
 import org.springframework.http.ResponseEntity.noContent
 import org.springframework.security.core.Authentication
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -81,8 +84,25 @@ class TemplateInstanceController(
         ).mapToTemplateInstanceRepresentation(capabilities)
 
     @RequireLogin
+    @PostMapping(consumes = [TEMPLATE_INSTANCE_JSON_V1], produces = [TEMPLATE_INSTANCE_JSON_V1])
+    fun create(
+        @PathVariable id: ThingId,
+        @RequestBody @Valid request: CreateTemplateInstanceRequest,
+        uriComponentsBuilder: UriComponentsBuilder,
+        currentUser: Authentication?,
+    ): ResponseEntity<Any> {
+        val userId = currentUser.contributorId()
+        val instanceId = service.create(request.toCreateCommand(userId, id))
+        val location = uriComponentsBuilder
+            .path("/api/templates/{id}/instances/{instanceId}")
+            .buildAndExpand(id, instanceId)
+            .toUri()
+        return created(location).build()
+    }
+
+    @RequireLogin
     @PutMapping("/{instanceId}", consumes = [TEMPLATE_INSTANCE_JSON_V1], produces = [TEMPLATE_INSTANCE_JSON_V1])
-    fun updateTemplateInstance(
+    fun update(
         @PathVariable id: ThingId,
         @PathVariable instanceId: ThingId,
         @RequestBody @Valid request: UpdateTemplateInstanceRequest,
@@ -96,6 +116,43 @@ class TemplateInstanceController(
             .buildAndExpand(id, instanceId)
             .toUri()
         return noContent().location(location).build()
+    }
+
+    data class CreateTemplateInstanceRequest(
+        val id: ThingId?,
+        val label: String,
+        @field:JsonProperty("additional_classes")
+        val additionalClasses: Set<ThingId> = emptySet(),
+        @field:Valid
+        val statements: Map<ThingId, List<String>>,
+        @field:Valid
+        val resources: Map<String, CreateResourceRequestPart>?,
+        @field:Valid
+        val literals: Map<String, String>?,
+        @field:Valid
+        val predicates: Map<String, CreatePredicateRequestPart>?,
+        @field:Valid
+        val classes: Map<String, CreateClassRequestPart>?,
+        @field:Valid
+        val lists: Map<String, CreateListRequestPart>?,
+        @field:JsonProperty("extraction_method")
+        val extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN,
+    ) {
+        fun toCreateCommand(contributorId: ContributorId, templateId: ThingId): CreateTemplateInstanceUseCase.CreateCommand =
+            CreateTemplateInstanceUseCase.CreateCommand(
+                id = id,
+                label = label,
+                additionalClasses = additionalClasses,
+                templateId = templateId,
+                contributorId = contributorId,
+                statements = statements,
+                resources = resources?.mapValues { it.value.toCreateCommand() }.orEmpty(),
+                literals = literals?.mapValues { CreateLiteralCommandPart(it.value) }.orEmpty(),
+                predicates = predicates?.mapValues { it.value.toCreateCommand() }.orEmpty(),
+                classes = classes?.mapValues { it.value.toCreateCommand() }.orEmpty(),
+                lists = lists?.mapValues { it.value.toCreateCommand() }.orEmpty(),
+                extractionMethod = extractionMethod,
+            )
     }
 
     data class UpdateTemplateInstanceRequest(

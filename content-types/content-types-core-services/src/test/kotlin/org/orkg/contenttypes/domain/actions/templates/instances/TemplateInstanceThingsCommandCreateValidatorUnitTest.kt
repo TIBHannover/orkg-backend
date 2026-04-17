@@ -8,22 +8,22 @@ import io.mockk.verify
 import org.junit.jupiter.api.Test
 import org.orkg.common.Either
 import org.orkg.common.testing.fixtures.MockkBaseTest
+import org.orkg.contenttypes.domain.actions.CreateTemplateInstanceState
 import org.orkg.contenttypes.domain.actions.ThingsCommandValidator
-import org.orkg.contenttypes.domain.actions.UpdateTemplateInstanceState
 import org.orkg.contenttypes.input.CreateThingCommandPart
-import org.orkg.contenttypes.input.testing.fixtures.updateTemplateInstanceCommand
+import org.orkg.contenttypes.input.testing.fixtures.createTemplateInstanceCommand
 import org.orkg.graph.domain.Thing
 import org.orkg.graph.testing.fixtures.createResource
 
-internal class TemplateInstanceThingsCommandValidatorUnitTest : MockkBaseTest {
+internal class TemplateInstanceThingsCommandCreateValidatorUnitTest : MockkBaseTest {
     private val thingsCommandValidator: ThingsCommandValidator = mockk()
 
-    private val templateInstanceThingsCommandValidator = TemplateInstanceThingsCommandValidator(thingsCommandValidator)
+    private val templateInstanceThingsCommandCreateValidator = TemplateInstanceThingsCommandCreateValidator(thingsCommandValidator)
 
     @Test
-    fun `Given a template instance update command, when validating its thing commands, it returns success`() {
-        val command = updateTemplateInstanceCommand()
-        val state = UpdateTemplateInstanceState()
+    fun `Given a template instance create command, when validating its thing commands, it returns success`() {
+        val command = createTemplateInstanceCommand()
+        val state = CreateTemplateInstanceState()
 
         val validationCache = mapOf<String, Either<CreateThingCommandPart, Thing>>(
             "R100" to Either.right(createResource()),
@@ -31,14 +31,13 @@ internal class TemplateInstanceThingsCommandValidatorUnitTest : MockkBaseTest {
 
         every { thingsCommandValidator.validate(command, state.validationCache) } returns validationCache
 
-        val result = templateInstanceThingsCommandValidator(command, state)
+        val result = templateInstanceThingsCommandCreateValidator(command, state)
 
         result.asClue {
             it.template shouldBe state.template
-            it.templateInstance shouldBe state.templateInstance
+            it.templateInstanceId shouldBe state.templateInstanceId
             it.validationCache shouldBe validationCache
             it.statementsToAdd shouldBe state.statementsToAdd
-            it.statementsToRemove shouldBe state.statementsToRemove
             it.literals shouldBe state.literals
         }
 

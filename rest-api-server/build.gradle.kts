@@ -42,6 +42,7 @@ testing {
                 implementation(project())
                 implementation(project(":common:pagination"))
                 implementation(testFixtures(project(":common:testing")))
+                implementation(project(":graph:graph-adapter-input-representations"))
                 implementation(project(":graph:graph-core-services"))
                 implementation(project(":graph:graph-core-constants"))
                 implementation(project(":graph:graph-ports-output"))

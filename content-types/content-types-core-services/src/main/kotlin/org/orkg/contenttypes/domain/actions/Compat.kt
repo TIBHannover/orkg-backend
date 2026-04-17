@@ -35,6 +35,7 @@ import org.orkg.contenttypes.domain.actions.tables.rows.DeleteTableRowAction
 import org.orkg.contenttypes.domain.actions.tables.rows.UpdateTableRowAction
 import org.orkg.contenttypes.domain.actions.templates.CreateTemplateAction
 import org.orkg.contenttypes.domain.actions.templates.UpdateTemplateAction
+import org.orkg.contenttypes.domain.actions.templates.instances.CreateTemplateInstanceAction
 import org.orkg.contenttypes.domain.actions.templates.instances.UpdateTemplateInstanceAction
 import org.orkg.contenttypes.domain.actions.templates.properties.CreateTemplatePropertyAction
 import org.orkg.contenttypes.domain.actions.templates.properties.UpdateTemplatePropertyAction
@@ -53,6 +54,7 @@ import org.orkg.contenttypes.input.CreateSmartReviewUseCase
 import org.orkg.contenttypes.input.CreateTableColumnUseCase
 import org.orkg.contenttypes.input.CreateTableRowUseCase
 import org.orkg.contenttypes.input.CreateTableUseCase
+import org.orkg.contenttypes.input.CreateTemplateInstanceUseCase
 import org.orkg.contenttypes.input.CreateTemplatePropertyUseCase
 import org.orkg.contenttypes.input.CreateTemplateUseCase
 import org.orkg.contenttypes.input.CreateVisualizationUseCase
@@ -100,6 +102,7 @@ internal typealias CreateTableCommand = CreateTableUseCase.CreateCommand
 internal typealias CreateTableColumnCommand = CreateTableColumnUseCase.CreateCommand
 internal typealias CreateTableRowCommand = CreateTableRowUseCase.CreateCommand
 internal typealias CreateTemplateCommand = CreateTemplateUseCase.CreateCommand
+internal typealias CreateTemplateInstanceCommand = CreateTemplateInstanceUseCase.CreateCommand
 internal typealias CreateTemplatePropertyCommand = CreateTemplatePropertyUseCase.CreateCommand
 internal typealias CreateVisualizationCommand = CreateVisualizationUseCase.CreateCommand
 
@@ -145,6 +148,7 @@ internal typealias CreateTableColumnState = CreateTableColumnAction.State
 internal typealias CreateTableRowState = CreateTableRowAction.State
 internal typealias CreateTemplatePropertyState = CreateTemplatePropertyAction.State
 internal typealias CreateTemplateState = CreateTemplateAction.State
+internal typealias CreateTemplateInstanceState = CreateTemplateInstanceAction.State
 
 internal typealias UpdateComparisonState = UpdateComparisonAction.State
 internal typealias UpdateLiteratureListSectionState = UpdateLiteratureListSectionAction.State

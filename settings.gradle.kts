@@ -131,7 +131,10 @@ include("widget")
 include("rest-api-server")
 include(":integrations:datacite-serialization")
 
-include("api-clients:python-client")
+include(
+    "api-clients:python-client",
+    "api-clients:typescript-client",
+)
 
 includeBuild("acceptance-tests")
 includeBuild("world")

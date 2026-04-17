@@ -431,20 +431,6 @@ tasks {
         inputSpec.set(layout.buildDirectory.file("api-spec/openapi3.yaml").get().asFile.path)
     }
 
-    register<GenerateTask>("generateTypescriptClient") {
-        dependsOn("openapi3")
-        generatorName.set("typescript-fetch")
-        outputDir.set(layout.buildDirectory.dir("generated-clients/typescript-client").get().asFile.path)
-        httpUserAgent = "ORKG-TypeScript-Client/${project.version}"
-        // See https://github.com/OpenAPITools/openapi-generator/blob/master/docs/generators/typescript-fetch.md
-        configOptions = mapOf(
-            "npmName" to "@orkg/orkg-client",
-            "npmVersion" to project.version.toString(),
-            "licenseName" to "MIT",
-            "prefixParameterInterfaces" to "true",
-        )
-    }
-
     register<GenerateTask>("generateRClient") {
         dependsOn("openapi3")
         generatorName.set("r")
@@ -461,7 +447,7 @@ tasks {
         setGroup("openapi client generation")
         dependsOn(
             ":api-clients:python-client:generatePythonClient",
-            "generateTypescriptClient",
+            ":api-clients:typescript-client:generateTypescriptClient",
             "generateRClient",
         )
     }

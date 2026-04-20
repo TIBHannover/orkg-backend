@@ -47,6 +47,7 @@ import org.orkg.contenttypes.domain.actions.comparisons.ComparisonResourceCreato
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonResourceUpdater
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonSDGCreator
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonSDGUpdater
+import org.orkg.contenttypes.domain.actions.comparisons.ComparisonTableInitializer
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonVersionCreator
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonVersionDoiPublisher
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonVersionHistoryUpdater
@@ -170,6 +171,7 @@ class ComparisonService(
             ComparisonReferencesCreator(unsafeLiteralUseCases, unsafeStatementUseCases),
             ComparisonIsAnonymizedCreator(unsafeLiteralUseCases, unsafeStatementUseCases),
             ComparisonContributionCreator(unsafeStatementUseCases),
+            ComparisonTableInitializer(comparisonTableUseCases, comparisonTableRepository),
             ComparisonVisualizationCreator(unsafeStatementUseCases),
         )
         return steps.execute(command, CreateComparisonState()).comparisonId!!

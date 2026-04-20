@@ -27,9 +27,9 @@ dependencies {
 
     // The Lucene Query Parser version should match the one used by the currently used Neo4j database.
     // Although newer versions should not be a problem, differences in the syntax can be a problem.
-    // Check https://mvnrepository.com/artifact/org.neo4j/neo4j-lucene-index/{NEO4J_VERSION}, section "Compile Dependencies",
-    // for the version that is used in the respective version, and check the compatibility.
-    api("org.apache.lucene:lucene-queryparser:10.1.0")
+    // Check https://mvnrepository.com/artifact/org.neo4j/neo4j-lucene-index/{NEO4J_VERSION}/dependencies
+    // for the respective version, and check the compatibility.
+    api("org.apache.lucene:lucene-queryparser:10.3.2")
 
     val keycloakAdminClientVersion = "26.0.7"
     api("org.keycloak:keycloak-admin-client:$keycloakAdminClientVersion")

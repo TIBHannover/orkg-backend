@@ -1,0 +1,39 @@
+= API Documentation
+:page-toclevels: 5
+:icons: font
+:docinfo: shared,private
+
+:pagination_note: This is a paginated, and sortable call, check the table below for allowed keys for sorting <<sorting-and-pagination>>.
+
+[[overview]]
+include::chapters/overview.adoc[leveloffset=+1]
+
+[[getting-started]]
+include::chapters/getting-started.adoc[leveloffset=+1]
+
+[[community]]
+include::chapters/community.adoc[leveloffset=+1]
+
+[[graph]]
+include::chapters/graph.adoc[leveloffset=+1]
+
+[[content-types]]
+include::chapters/content-types.adoc[leveloffset=+1]
+
+[[rosetta-stone]]
+include::chapters/rosetta-stone.adoc[leveloffset=+1]
+
+[[research-fields-and-research-problems]]
+include::chapters/research-fields-and-research-problems.adoc[leveloffset=+1]
+
+[[curation-and-statistics]]
+include::chapters/curation-and-statistics.adoc[leveloffset=+1]
+
+[[administration]]
+include::chapters/administration.adoc[leveloffset=+1]
+
+[[integrations]]
+include::chapters/integrations.adoc[leveloffset=+1]
+
+[[appendix]]
+include::chapters/appendix.adoc[leveloffset=+1]

@@ -186,9 +186,6 @@ dependencies {
 
     runtimeOnly(project(":widget"))
 
-    // TODO: uncomment once test issues are resolved (docs in unit tests only, and idempotent)
-    // runtimeOnly(project(mapOf("path" to ":documentation", "configuration" to "staticFiles")))
-
     // Migrations
     runtimeOnly(project(":migrations:liquibase"))
     runtimeOnly(project(":migrations:neo4j-migrations"))

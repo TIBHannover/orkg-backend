@@ -8,9 +8,10 @@ dependencies {
     implementation(project(":dependency-rules-plugins"))
     implementation(project(":dependency-analysis-plugins"))
 
-    implementation("org.asciidoctor:asciidoctor-gradle-jvm")
-    implementation("org.asciidoctor:asciidoctor-gradle-jvm-gems")
     implementation("com.epages:restdocs-api-spec-gradle-plugin")
+    implementation("com.github.node-gradle:gradle-node-plugin")
+    implementation("io.spring.gradle.antora:spring-antora-plugin")
+    implementation("org.antora:gradle-antora-plugin")
     implementation("org.openapitools:openapi-generator-gradle-plugin")
 
     implementation("com.diffplug.spotless-changelog:spotless-changelog-plugin-gradle")

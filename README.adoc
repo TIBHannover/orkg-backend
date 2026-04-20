@@ -2,7 +2,7 @@
 Manuel Prinz <manuel.prinz@tib.eu>
 
 :icons: font
-:apidoc_url: https://tibhannover.gitlab.io/orkg/orkg-backend/api-doc/index.html
+:apidoc_url: https://tibhannover.gitlab.io/orkg/orkg-backend/index.html
 :openapi_url: https://orkg.org/api
 
 This repository contains a backend API for the Open Research Knowledge Graph (ORKG) written in https://kotlinlang.org/[Kotlin].

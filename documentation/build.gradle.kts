@@ -6,14 +6,15 @@ import com.fasterxml.jackson.databind.node.ObjectNode
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import groovy.lang.Closure
+import io.spring.gradle.antora.GenerateAntoraYmlTask
 import io.swagger.v3.oas.models.servers.Server
-import org.asciidoctor.gradle.jvm.AsciidoctorTask
+import org.antora.gradle.AntoraTask
 import org.openapitools.generator.gradle.plugin.tasks.GenerateTask
 import org.openapitools.generator.gradle.plugin.tasks.ValidateTask
 
 plugins {
     id("org.orkg.gradle.openapi")
-    id("org.orkg.gradle.asciidoctor")
+    id("org.orkg.gradle.documentation")
 }
 
 fun withSnippets(path: String): Map<String, String> = mapOf("path" to path, "configuration" to "restdocs")
@@ -24,7 +25,6 @@ val restdocs: Configuration by configurations.creating {
 }
 
 dependencies {
-    asciidoctor("org.springframework.restdocs:spring-restdocs-asciidoctor:2.0.7.RELEASE")
     restdocs(project(withSnippets(":common:pagination")))
     restdocs(project(withSnippets(":common:spring-webmvc")))
     restdocs(project(withSnippets(":rest-api-server")))
@@ -39,7 +39,6 @@ dependencies {
     restdocs(project(withSnippets(":media-storage:media-storage-adapter-input-rest-spring-mvc")))
     restdocs(project(withSnippets(":identity-management:idm-adapter-input-rest-spring-security-legacy")))
     restdocs(project(withSnippets(":widget")))
-    asciidoctor("io.spring.asciidoctor.backends:spring-asciidoctor-backends:0.0.7")
 }
 
 val aggregatedSnippetsDir = layout.buildDirectory.dir("aggregated-snippets")
@@ -74,6 +73,45 @@ val generateRestDocsSnippets by tasks.registering(Sync::class) {
     from(generateErrorListing)
 
     into(generatedSnippetsDir)
+}
+
+antora {
+    setOptions(
+        mapOf(
+            "clean" to true,
+            "fetch" to true,
+            "stacktrace" to true,
+            "attributes" to mapOf(
+                "snippets" to "example$",
+            ),
+        ),
+    )
+    environment.value(
+        mapOf(
+            "BUILD_REFNAME" to "HEAD",
+            "BUILD_VERSION" to project.version.toString(),
+        ),
+    )
+}
+
+tasks.named<AntoraTask>("antora") {
+    group = "documentation"
+    dependsOn(aggregateAntoraContent)
+}
+
+val generateAntoraYml = tasks.named<GenerateAntoraYmlTask>("generateAntoraYml") {
+    group = "documentation"
+    setProperty("outputFile", layout.buildDirectory.file("generated-antora-yml/antora.yml"))
+    setProperty("baseAntoraYmlFile", File("src/antora/antora.yml"))
+}
+
+val aggregateAntoraContent = tasks.register<Sync>("aggregateAntoraContent") {
+    group = "documentation"
+    from(generateRestDocsSnippets.get().outputs) {
+        into("modules/ROOT/examples")
+    }
+    from(generateAntoraYml.get().outputs)
+    into(layout.buildDirectory.dir("aggregated-antora-content"))
 }
 
 object AsciiDocHelper {
@@ -123,7 +161,7 @@ abstract class GenerateErrorListingTask : DefaultTask() {
                     |[discrete]
                     |== $type
                     |[cols="1,1,3"]
-                    |include::{snippets}/${file.toRelativeString(snippetsDir)}[]
+                    |include::{snippets}/${file.toRelativeString(snippetsDir).replace('\\', '/')}[]
                     |
                     |
                     """.trimMargin()
@@ -280,103 +318,6 @@ val aggregateOpenApiSnippets by tasks.registering(Sync::class) {
         )
     }
     into(aggregatedOpenApiSnippetsDir)
-}
-
-val subfolders = listOf("api-doc", "architecture", "references")
-
-val asciidoctor by tasks.existing(AsciidoctorTask::class) {
-    setSourceDir(file("rest-api"))
-
-    // Declare all generated Asciidoc snippets as inputs. This connects the tasks, so dependsOn() is not required.
-    // Other outputs are filtered, because they do not affect the output of this task.
-    val docSources = files(sourceDir).asFileTree.matching { include("**/*.adoc", "**/*.css", "**/*.svg", "**/*.html") }
-    inputs.files(docSources, generateRestDocsSnippets)
-        .withPathSensitivity(PathSensitivity.RELATIVE)
-        .ignoreEmptyDirectories()
-        .withPropertyName("asciidocFiles")
-
-    configurations("asciidoctor")
-    // TODO: Use {includedir} in documentation, change strategy afterwards
-    baseDirFollowsSourceFile()
-
-    asciidoctorj {
-        modules {
-            diagram.use()
-        }
-        fatalWarnings(missingIncludes())
-
-        // Work-around for JRE 16+, because Java's internal APIs are no longer available due to JPMS.
-        // This should be fixed in the Asciidoctor plugin, but never was.
-        jvm {
-            jvmArgs(
-                "--add-opens",
-                "java.base/sun.nio.ch=ALL-UNNAMED",
-                "--add-opens",
-                "java.base/java.io=ALL-UNNAMED",
-                "--add-opens",
-                "java.base/java.security=ALL-UNNAMED",
-            )
-        }
-    }
-
-    // outputs.upToDateWhen { false }
-    outputOptions {
-        backends("spring-html")
-    }
-
-    options(mapOf("doctype" to "book"))
-
-    attributes(
-        mapOf(
-            "author" to "The Open Research Knowledge Graph (ORKG) project",
-            "revnumber" to project(":rest-api-server").version,
-            "source-highlighter" to "rouge",
-            "coderay-linenums-mode" to "table",
-            "toc" to "left",
-            "icons" to "font",
-            "linkattrs" to "true",
-            "encoding" to "utf-8",
-            "snippets" to generatedSnippetsDir.get(),
-            "docinfo" to "shared,private"
-        )
-    )
-
-    sources(
-        delegateClosureOf<PatternSet> {
-            exclude("parts/**")
-            include("*.adoc")
-            subfolders.forEach { include("$it/*.adoc") }
-        }
-    )
-
-    resources {
-        from(sourceDir) {
-            include("css/**", "img/**")
-            subfolders.forEach { subfolder ->
-                include("$subfolder/css/**", "$subfolder/img/**")
-            }
-        }
-        subfolders.forEach { subfolder ->
-            into(subfolder) {
-                from(sourceDir) {
-                    include("css/**", "img/**")
-                }
-            }
-        }
-    }
-}
-
-val packageHTML by tasks.registering(Jar::class) {
-    from(asciidoctor)
-}
-
-val staticFiles by configurations.creating {
-    isCanBeConsumed = true
-    isCanBeResolved = false
-}
-
-artifacts {
-    add("staticFiles", packageHTML)
 }
 
 val openApiServerUrls = mapOf(

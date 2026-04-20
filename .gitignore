@@ -33,5 +33,7 @@ dumps/
 
 modules.*
 
+**/node_modules/
+
 # Mise-en-place
 mise.local.toml

@@ -1,4 +1,0 @@
-//* xref:tutorials.adoc[]
-* xref:how-to-guides.adoc[]
-* xref:reference.adoc[]
-//* xref:explanation.adoc[]

@@ -1,18 +1,4 @@
-import com.epages.restdocs.apispec.gradle.OpenApi3Task
-import com.epages.restdocs.apispec.gradle.PluginOauth2Configuration
-import com.fasterxml.jackson.databind.JsonNode
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.SerializationFeature
-import com.fasterxml.jackson.databind.node.ObjectNode
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import com.fasterxml.jackson.module.kotlin.readValue
-import com.fasterxml.jackson.module.kotlin.registerKotlinModule
-import groovy.lang.Closure
-import io.swagger.v3.oas.models.servers.Server
-import org.asciidoctor.gradle.jvm.AsciidoctorTask
 import org.openapitools.generator.gradle.plugin.tasks.GenerateTask
-import org.openapitools.generator.gradle.plugin.tasks.ValidateTask
 
 plugins {
     id("org.orkg.gradle.openapi")

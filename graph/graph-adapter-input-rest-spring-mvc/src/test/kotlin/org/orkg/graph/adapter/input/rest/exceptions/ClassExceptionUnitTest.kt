@@ -11,7 +11,6 @@ import org.orkg.graph.domain.ClassNotModifiable
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ExternalClassNotFound
 import org.orkg.graph.domain.ExternalEntityIsNotAClass
-import org.orkg.graph.domain.ReservedClassId
 import org.orkg.graph.domain.URIAlreadyInUse
 import org.orkg.graph.domain.URINotAbsolute
 import org.orkg.testing.spring.MockMvcExceptionBaseTest
@@ -67,23 +66,6 @@ internal class ClassExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.errors[0].detail", `is`("""The URI <invalid> is not absolute.""")))
             .andExpect(jsonPath("$.errors[0].pointer", `is`("#/uri")))
             .andDocumentWithValidationExceptionResponseFields<URINotAbsolute>(type)
-    }
-
-    @Test
-    fun classNotAllowed() {
-        val type = "orkg:problem:reserved_class_id"
-        documentedGetRequestTo(ReservedClassId(Classes.list))
-            .andExpectErrorStatus(BAD_REQUEST)
-            .andExpectType(type)
-            .andExpectTitle("Bad Request")
-            .andExpectDetail("""Class id "${Classes.list}" is reserved.""")
-            .andExpect(jsonPath("$.class_id").value(Classes.list.value))
-            .andDocument {
-                responseFields<ReservedClassId>(
-                    fieldWithPath("class_id").description("The id of the class.").type<ThingId>(),
-                    *exceptionResponseFields(type).toTypedArray(),
-                )
-            }
     }
 
     @Test

@@ -1,0 +1,47 @@
+site:
+  title: Open Research Knowledge Graph (ORKG) - REST-API Documentation
+  url: https://tibhannover.gitlab.io/orkg/orkg-backend
+git:
+  ensure_git_suffix: false
+content:
+  sources:
+    - url: ../
+      branches:
+        - HEAD
+      start_path: documentation/src/antora
+      edit_url: '{web_url}/-/edit/master/{path}'
+ui:
+  bundle:
+    url: https://gitlab.com/TIBHannover/orkg/orkg-docs-theme/-/releases/0.5.5/downloads/ui-bundle.zip
+    snapshot: true
+antora:
+  extensions:
+    - require: '@sntke/antora-mermaid-extension'
+      script_stem: header-scripts
+      mermaid_initialize_options:
+        start_on_load: true
+    - require: '@springio/antora-extensions/override-navigation-builder-extension'
+    - require: '@antora/atlas-extension'
+    - require: '@antora/collector-extension'
+    - require: '@springio/antora-extensions/root-component-extension'
+      root_component_name: 'orkg-backend'
+    - require: '@springio/antora-extensions/root-attachments-extension'
+asciidoc:
+  attributes:
+    page-related-doc-categories: core
+    page-related-doc-projects: rest-api
+    hide-uri-scheme: '@'
+    tabs-sync-option: '@'
+  extensions:
+    - '@springio/asciidoctor-extensions'
+    - './src/asciidoctor/extensions/operation_block_macro.js'
+urls:
+  latest_version_segment_strategy: redirect:to
+  latest_version_segment: ''
+  redirect_facility: httpd
+output:
+  clean: true
+runtime:
+  log:
+    level: warn
+    failure_level: warn

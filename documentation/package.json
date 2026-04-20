@@ -1,0 +1,14 @@
+{
+  "devDependencies": {
+    "@sntke/antora-mermaid-extension": "^0.0.8"
+  },
+  "dependencies": {
+    "@antora/asciidoc-loader": "^3.2.0-alpha.11",
+    "@antora/atlas-extension": "^1.0.0-alpha.5",
+    "@antora/collector-extension": "^1.0.2",
+    "@springio/antora-extensions": "^1.14.7",
+    "@springio/asciidoctor-extensions": "^1.0.0-alpha.17",
+    "antora": "^3.2.0-alpha.11",
+    "asciidoctor": "^2.2.8"
+  }
+}

@@ -1,0 +1,3 @@
+= CSV Import Flow Model
+
+image::reference/models/flowcharts/csv-import-flow-model.svg[opts=interactive]

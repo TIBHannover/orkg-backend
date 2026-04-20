@@ -1,0 +1,4 @@
+= ORKG Projects
+:page-article: orkg-projects
+
+List all ORKG Projects

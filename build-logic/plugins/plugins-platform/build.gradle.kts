@@ -11,11 +11,10 @@ dependencies.constraints {
     // FIXME: This version should be the same as the one used in the platform.
     api("org.springframework.boot:spring-boot-gradle-plugin:4.0.3")
 
-    val asciidoctorVersion = "4.0.5"
-    // FIXME: Workaround for dependency issue, see https://github.com/asciidoctor/asciidoctor-gradle-plugin/issues/731
-    // Not fixed in 4.0.5 yet, possibly in later versions.
-    api("org.asciidoctor:asciidoctor-gradle-jvm:$asciidoctorVersion")
-    api("org.asciidoctor:asciidoctor-gradle-jvm-gems:$asciidoctorVersion")
+    api("io.spring.gradle.antora:spring-antora-plugin:0.0.1")
+    api("org.antora:gradle-antora-plugin:1.0.0")
+    // NOTE: This version should be the same as the one used in the antora plugin.
+    api("com.github.node-gradle:gradle-node-plugin:3.5.1")
     api("org.openapitools:openapi-generator-gradle-plugin:7.20.0")
 
     api("org.gradlex:jvm-dependency-conflict-resolution:2.5")

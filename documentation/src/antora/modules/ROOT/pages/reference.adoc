@@ -1,0 +1,33 @@
+= Reference guides
+
+== Architecture
+
+* xref:reference/hexagonal-architecture/hexagonal-architecture.adoc[]
+
+== Development
+
+* xref:reference/development/setup.adoc[]
+* xref:reference/development/code-organization.adoc[]
+* xref:reference/development/testing.adoc[]
+* xref:reference/development/test-dsl.adoc[]
+* xref:reference/development/monitoring.adoc[]
+* xref:reference/development/pitfalls.adoc[]
+
+== Graph Models
+
+* xref:reference/models/graph/paper-model.adoc[Paper]
+* xref:reference/models/graph/comparison-model.adoc[Comparison]
+* xref:reference/models/graph/visualization-model.adoc[Visualization]
+* xref:reference/models/graph/literature-list-model.adoc[Literature-List]
+* xref:reference/models/graph/smart-review-model.adoc[Smart Review]
+* xref:reference/models/graph/template-model.adoc[Template]
+* xref:reference/models/graph/rosetta-stone-template-model.adoc[Rosetta Stone Template]
+* xref:reference/models/graph/csvw-table-model.adoc[Table]
+
+Internal:
+
+* xref:reference/models/graph-internal/rosetta-stone-statement-model.adoc[Rosetta Stone Statement]
+
+== Flowchart Models
+
+* xref:reference/models/flowcharts/csv-import-flow-model.adoc[CSV Import]

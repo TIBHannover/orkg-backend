@@ -75,9 +75,9 @@ abstract class GeneratePythonClientTask : GenerateTask {
     private fun customizePythonClient() {
         val outputDir = File(outputDir.get())
         additionalFilesDirectory.get().asFile.copyRecursively(File(outputDir, "orkg_client"))
-        addDependenciesToFile(File(outputDir, "pyproject.toml"), "dependencies = [") { name, version -> "\n  \"$name (>= $version)\"" }
+        addDependenciesToFile(File(outputDir, "pyproject.toml"), "dependencies = [\n") { name, version -> "  \"$name (>= $version)\"," }
         addDependenciesToFile(File(outputDir, "requirements.txt")) { name, version -> "$name >= $version" }
-        addDependenciesToFile(File(outputDir, "setup.py"), "REQUIRES = [") { name, version -> "    \"$name >= $version\"" }
+        addDependenciesToFile(File(outputDir, "setup.py"), "REQUIRES = [\n") { name, version -> "    \"$name >= $version\"," }
         removeMetaFiles(outputDir)
     }
 

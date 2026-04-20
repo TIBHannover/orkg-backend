@@ -25,12 +25,13 @@ services:
       retries: 60
 
   neo4j:
-    image: neo4j:5-community
+    image: neo4j:2026.03-community
     environment:
       NEO4J_PLUGINS: '["apoc", "apoc-extended"]'
       NEO4J_initial_dbms_default__database: orkg
       NEO4J_server_memory_heap_max__size: 4G
       NEO4J_db_transaction_timeout: 30s
+      NEO4J_db_query_default__language: CYPHER_5
     healthcheck:
       test: [ "CMD-SHELL", "/var/lib/neo4j/bin/cypher-shell -u $$(echo $$NEO4J_AUTH | cut -d/ -f1) -p $$(echo $$NEO4J_AUTH | cut -d/ -f2) 'RETURN \"OK\"'" ]
       interval: 5s

@@ -5,7 +5,7 @@
 set -e
 shopt -s expand_aliases
 
-neo4j_version=5-community
+neo4j_version=2026.03-community
 
 dump_volume=orkg-dumps
 source_dir=orkg-backend

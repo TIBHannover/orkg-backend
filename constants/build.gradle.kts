@@ -9,7 +9,7 @@ buildConfig {
     className("BuildConfig")
 
     val neo4jImageName = "neo4j"
-    val neo4jImageTag = "5-community"
+    val neo4jImageTag = "2026.03-community"
 
     val postgresImageName = "postgres"
     val postgresImageTag = "17"

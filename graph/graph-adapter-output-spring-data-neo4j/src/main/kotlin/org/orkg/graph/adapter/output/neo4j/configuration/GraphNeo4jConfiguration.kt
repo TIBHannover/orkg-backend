@@ -56,6 +56,7 @@ class GraphNeo4jConfiguration {
     @Bean
     fun cypherDslConfiguration(): CypherConfiguration =
         CypherConfiguration.newConfig()
+            // FIXME: We cannot use any higher Cypher dialect because of https://github.com/spring-projects/spring-data-neo4j/issues/3092
             .withDialect(Dialect.NEO4J_5_23)
             .build()
 }

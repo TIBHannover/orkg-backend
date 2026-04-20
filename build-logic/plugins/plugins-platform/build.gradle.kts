@@ -22,7 +22,7 @@ dependencies.constraints {
     api("com.osacky.doctor:doctor-plugin:0.12.0")
     api("com.github.ben-manes:gradle-versions-plugin:0.53.0")
     api("dev.iurysouza:modulegraph:0.13.0")
-    api("com.github.gmazzo.buildconfig:com.github.gmazzo.buildconfig.gradle.plugin:5.5.4")
+    api("com.github.gmazzo.buildconfig:com.github.gmazzo.buildconfig.gradle.plugin:6.0.9")
 
     api("com.google.cloud.tools:jib-gradle-plugin:3.5.3")
     api("com.diffplug.spotless:spotless-plugin-gradle:8.3.0")

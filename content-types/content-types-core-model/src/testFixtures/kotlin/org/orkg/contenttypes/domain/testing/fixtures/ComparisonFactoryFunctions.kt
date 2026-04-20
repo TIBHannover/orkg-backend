@@ -235,6 +235,7 @@ fun createLabeledComparisonPaths(): List<LabeledComparisonPath> =
             label = "addresses",
             description = "addresses",
             type = ComparisonPath.Type.PREDICATE,
+            sources = 2,
             children = emptyList(),
         ),
         LabeledComparisonPath(
@@ -242,12 +243,14 @@ fun createLabeledComparisonPaths(): List<LabeledComparisonPath> =
             label = "mentions",
             description = null,
             type = ComparisonPath.Type.PREDICATE,
+            sources = 2,
             children = listOf(
                 LabeledComparisonPath(
                     id = Predicates.description,
                     label = "description",
                     description = "description",
                     type = ComparisonPath.Type.PREDICATE,
+                    sources = 0,
                     children = emptyList(),
                 ),
             ),
@@ -257,12 +260,14 @@ fun createLabeledComparisonPaths(): List<LabeledComparisonPath> =
             label = "Dummy Rosetta Stone Template Label",
             description = "Some description about the rosetta stone template",
             type = ComparisonPath.Type.ROSETTA_STONE_STATEMENT,
+            sources = 1,
             children = listOf(
                 LabeledComparisonPath(
                     id = Predicates.hasSubjectPosition,
                     label = "resource property placeholder",
                     description = "resource property description",
                     type = ComparisonPath.Type.ROSETTA_STONE_STATEMENT_VALUE,
+                    sources = 2,
                     children = emptyList(),
                 ),
                 LabeledComparisonPath(
@@ -270,6 +275,7 @@ fun createLabeledComparisonPaths(): List<LabeledComparisonPath> =
                     label = "string property placeholder",
                     description = "string literal property description",
                     type = ComparisonPath.Type.ROSETTA_STONE_STATEMENT_VALUE,
+                    sources = 0,
                     children = emptyList(),
                 ),
                 LabeledComparisonPath(
@@ -277,6 +283,7 @@ fun createLabeledComparisonPaths(): List<LabeledComparisonPath> =
                     label = "number literal property placeholder",
                     description = "number literal property description",
                     type = ComparisonPath.Type.ROSETTA_STONE_STATEMENT_VALUE,
+                    sources = 0,
                     children = emptyList(),
                 ),
             ),

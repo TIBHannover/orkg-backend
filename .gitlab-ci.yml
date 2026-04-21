@@ -37,7 +37,7 @@ default:
       fallback_keys:
         - antora-$CI_DEFAULT_BRANCH
       paths:
-        - /.cache/antora
+        - .antora-cache
         - "**/node_modules/"
 
 .gradle_build_job:
@@ -46,6 +46,8 @@ default:
     - export GRADLE_USER_HOME=`pwd`/.gradle-user-home
     # Remove files that might be problematic (recommended by Travis CI)
     - rm -f  ${GRADLE_USER_HOME}/caches/modules-2/modules-2.lock
+    # Tell Antora to write its files to a separate directory within the build directory, so files do not conflict.
+    - export ANTORA_CACHE_DIR=`pwd`/.antora-cache
   tags:
     - saas-linux-medium-amd64
 

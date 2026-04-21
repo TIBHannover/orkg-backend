@@ -29,6 +29,12 @@ default:
         - .gradle-user-home/caches/
         # Prevent the welcome message to be shown every time
         - .gradle-user-home/notifications/
+    # Dedicated Gradle build cache for project artifacts, in oder to reduce individual cache size.
+    - &gradle_build_cache
+      key: gradle-build-$CI_COMMIT_REF_SLUG
+      fallback_keys:
+        - gradle-build-$CI_DEFAULT_BRANCH
+      paths:
         # Save build artifacts to cache; follows official Gradle.gitlab-ci.yml template
         - "**/build/"
     # Cache Antora related files
@@ -86,6 +92,8 @@ generate_api_clients:
   cache:
     - <<: *gradle_cache
       policy: pull
+    - <<: *gradle_build_cache
+      policy: pull
     - <<: *gradle_wrapper_cache
       policy: pull
     - <<: *antora_cache
@@ -133,6 +141,8 @@ pages:
   extends: .gradle_build_job
   cache:
     - <<: *gradle_cache
+      policy: pull
+    - <<: *gradle_build_cache
       policy: pull
     - <<: *gradle_wrapper_cache
       policy: pull

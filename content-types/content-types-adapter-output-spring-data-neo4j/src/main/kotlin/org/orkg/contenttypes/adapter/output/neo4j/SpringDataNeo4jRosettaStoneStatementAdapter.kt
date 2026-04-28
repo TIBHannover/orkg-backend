@@ -180,6 +180,7 @@ class SpringDataNeo4jRosettaStoneStatementAdapter(
                 .with(latest, contextId, templateIdVar, versions)
                 .orderBy(
                     sort.toSortItems(
+                        uniqueKey = latest.property("id"),
                         propertyMappings = mapOf(
                             "id" to latest.property("id"),
                             "created_at" to latest.property("created_at"),

@@ -177,6 +177,7 @@ class SpringDataNeo4jContentTypeAdapter(
             val node = name("node")
             commonQuery.orderBy(
                 sort.toSortItems(
+                    uniqueKey = "id",
                     node = node,
                     knownProperties = arrayOf("id", "label", "created_at", "created_by", "visibility"),
                 ),

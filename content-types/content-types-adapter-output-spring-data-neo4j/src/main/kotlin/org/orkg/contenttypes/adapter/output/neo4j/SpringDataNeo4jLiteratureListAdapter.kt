@@ -199,9 +199,11 @@ class SpringDataNeo4jLiteratureListAdapter(
                             size(node.property("label")).ascending(),
                             score.descending(),
                             node.property("created_at").ascending(),
+                            node.property("id").ascending(),
                         )
                     } else {
                         sort.toSortItems(
+                            uniqueKey = "id",
                             node = node,
                             knownProperties = arrayOf("id", "label", "created_at", "created_by", "visibility"),
                         )

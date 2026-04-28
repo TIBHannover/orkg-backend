@@ -13,6 +13,7 @@ import org.neo4j.cypherdsl.core.ExposesWith
 import org.neo4j.cypherdsl.core.Expression
 import org.neo4j.cypherdsl.core.FunctionInvocation
 import org.neo4j.cypherdsl.core.PatternElement
+import org.neo4j.cypherdsl.core.Property
 import org.neo4j.cypherdsl.core.SortItem
 import org.neo4j.cypherdsl.core.StatementBuilder
 import org.neo4j.cypherdsl.core.SymbolicName
@@ -223,14 +224,17 @@ fun ExposesWith.withSortableFields(node: SymbolicName) =
     )
 
 fun Sort.toSortItems(
+    uniqueKey: String,
     node: Expression,
     vararg knownProperties: String,
 ): List<SortItem> = toSortItems(
+    uniqueKey = node.property(uniqueKey),
     propertyMappings = knownProperties.associateWith { node.property(it) },
     knownProperties = knownProperties,
 )
 
 fun Sort.toSortItems(
+    uniqueKey: Property,
     propertyMappings: Map<String, Expression>? = null,
     vararg knownProperties: String,
 ): List<SortItem> =
@@ -246,7 +250,7 @@ fun Sort.toSortItems(
             Sort.Direction.DESC -> expression.descending()
             else -> expression.ascending()
         }
-    }.toList()
+    }.toList() + uniqueKey.ascending()
 
 inline fun <T> T?.toCondition(mapper: (T) -> Condition): Condition =
     this?.let(mapper) ?: noCondition()

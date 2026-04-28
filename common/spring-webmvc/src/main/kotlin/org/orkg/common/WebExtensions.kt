@@ -22,6 +22,9 @@ fun <T : Any> T.withCacheControl(duration: Duration): ResponseEntity<T> =
 fun Pageable.withSort(sort: Sort): Pageable =
     PageRequest.of(pageNumber, pageSize, sort)
 
+fun Pageable.withFallbackSort(fallback: Sort): Pageable =
+    PageRequest.of(pageNumber, pageSize, sort.and(fallback))
+
 fun Pageable.remapSort(mapping: Map<String, String>) =
     if (sort.isUnsorted) this else withSort(sort.remap(mapping))
 

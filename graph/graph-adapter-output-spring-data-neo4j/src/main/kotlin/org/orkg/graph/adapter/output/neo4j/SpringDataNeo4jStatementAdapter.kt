@@ -34,6 +34,7 @@ import org.orkg.common.neo4jdsl.QueryCache.Uncached
 import org.orkg.common.neo4jdsl.SingleQueryBuilder.fetchAs
 import org.orkg.common.neo4jdsl.SingleQueryBuilder.mappedBy
 import org.orkg.common.neo4jdsl.sortedWith
+import org.orkg.common.withFallbackSort
 import org.orkg.graph.adapter.output.neo4j.internal.Neo4jStatementIdGenerator
 import org.orkg.graph.domain.BundleConfiguration
 import org.orkg.graph.domain.Classes
@@ -454,6 +455,7 @@ class SpringDataNeo4jStatementAdapter(
                 .with(r, subject, `object`)
                 .orderBy(
                     sort.toSortItems(
+                        uniqueKey = r.property("id"),
                         propertyMappings = propertyMappings,
                         knownProperties = arrayOf(
                             "id",
@@ -497,7 +499,7 @@ class SpringDataNeo4jStatementAdapter(
             .countOver("r")
             .withParameters("ids" to ids.map { it.value })
             .mappedBy(StatementMapper(predicateRepository))
-            .fetch(pageable)
+            .fetch(pageable.withFallbackSort(Sort.by("id").ascending()))
 
     override fun countStatementsInPaperSubgraph(id: ThingId): Long = cypherQueryBuilderFactory.newBuilder()
         .withQuery {
@@ -544,7 +546,7 @@ class SpringDataNeo4jStatementAdapter(
                     .with(startNode(rel).`as`("sub"), rel.`as`("rel"), endNode(rel).`as`("obj"))
                     .orderBy(rel.property("created_at").descending())
                     .returningWithSortableFields("rel", "sub", "obj")
-                    .orderBy(sort.toSortItems())
+                    .orderBy(sort.toSortItems(rel.property("id")))
             }
             .withParameters(
                 "id" to id.value,
@@ -619,7 +621,7 @@ class SpringDataNeo4jStatementAdapter(
             .countDistinctOver("n")
             .withParameters("doi" to doi)
             .mappedBy(ResourceMapper("n"))
-            .fetch(pageable)
+            .fetch(pageable.withFallbackSort(Sort.by("n.id").ascending()))
 
     override fun findAllContributorsByResourceId(id: ThingId, pageable: Pageable): Page<ContributorId> =
         cypherQueryBuilderFactory.newBuilder()
@@ -716,7 +718,7 @@ class SpringDataNeo4jStatementAdapter(
                 val createdBy = name("createdBy")
                 val createdAt = name("createdAt")
                 commonQuery.with(valueAt(edit, 0).`as`(createdBy), valueAt(edit, 1).`as`(createdAt))
-                    .orderBy(createdAt.descending())
+                    .orderBy(createdAt.descending(), createdBy.ascending())
                     .returning(createdBy, createdAt)
             }
             .countOver("edit")
@@ -895,6 +897,7 @@ class SpringDataNeo4jStatementAdapter(
             relation.`as`(rel),
             subject.`as`(sub),
             `object`.`as`(obj),
+            relation.property("id").`as`("id"),
             relation.property("created_at").`as`("created_at"),
             relation.property("created_by").`as`("created_by"),
             relation.property("index").`as`("index"),

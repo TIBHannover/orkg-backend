@@ -16,6 +16,8 @@ dependencies {
 
     // Upgrade to Hibernate 7.3 for Jackson 3 support. Can be removed once Spring includes Hibernate 7.3+.
     api("org.hibernate.orm:hibernate-core:7.3.0.CR1")
+    // Upgrade SDN for Cypher 25 support
+    api("org.springframework.data:spring-data-neo4j:8.0.5")
 
     // Third-party versions not provided by Spring, and without platform/BOM
     api("io.mockk:mockk:1.14.9") // anchor for MockKVirtualPlatformAlignmentRule

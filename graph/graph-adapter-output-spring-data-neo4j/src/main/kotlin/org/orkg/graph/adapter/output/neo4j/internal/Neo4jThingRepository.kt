@@ -20,9 +20,11 @@ interface Neo4jThingRepository : Neo4jRepository<Neo4jThing, ThingId> {
 
     @Query(
         """
-UNWIND $IDS AS id
-MATCH (node:Thing {id: id})
-RETURN apoc.coll.containsAll(collect(node.id), $IDS) AS result""",
+        UNWIND $IDS AS id
+        MATCH (n:Thing {id: id})
+        WITH collect(n.id) AS ids
+        RETURN SIZE($IDS) > 0 AND all(id IN $IDS WHERE id IN ids) AS result
+        """,
     )
     fun existsAll(ids: Set<ThingId>): Boolean
 

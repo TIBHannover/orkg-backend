@@ -17,7 +17,7 @@ class Neo4jContainerInitializer : ApplicationContextInitializer<ConfigurableAppl
         val neo4jContainer: Neo4jContainer = Neo4jContainer(DockerImageName.parse(BuildConfig.CONTAINER_IMAGE_NEO4J))
             .withNeo4jConfig("initial.dbms.default_database", "orkg")
             .withNeo4jConfig("apoc.custom.procedures.refresh", "100")
-            .withNeo4jConfig("db.query.default_language", "CYPHER_5")
+            .withNeo4jConfig("db.query.default_language", "CYPHER_25")
             .withoutAuthentication()
             .withPlugins("apoc", "apoc-extended")
     }

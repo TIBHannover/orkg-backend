@@ -673,13 +673,14 @@ class SpringDataNeo4jStatementAdapter(
                 val nodes = name("nodes")
                 val node = name("node")
                 val createdBy = name("createdBy")
-                val ms = name("ms")
+                val timestamp = name("timestamp")
                 val edit = listOf(
                     createdBy,
-                    call("apoc.date.format")
+                    call("format")
                         .withArgs(
-                            ms,
-                            literalOf<String>("ms"),
+                            call("datetime.fromEpochMillis")
+                                .withArgs(timestamp.property("epochMillis"))
+                                .asFunction(),
                             literalOf<String>("yyyy-MM-dd'T'HH:mm:'00'XXX"),
                         )
                         .asFunction(),
@@ -705,8 +706,8 @@ class SpringDataNeo4jStatementAdapter(
                     .with(
                         node.property("created_by").`as`(createdBy),
                         call("custom.parseIsoOffsetDateTime")
-                            .withArgs(node.property("created_at"), literalOf<String>("ms"))
-                            .asFunction().`as`(ms),
+                            .withArgs(node.property("created_at"))
+                            .asFunction().`as`(timestamp),
                     )
                     .withDistinct(edit)
             }

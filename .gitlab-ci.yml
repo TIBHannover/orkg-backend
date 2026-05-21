@@ -71,6 +71,8 @@ build:
   needs: []
   script:
     - ./gradlew --build-cache clean spotlessCheck buildHealth build antora openapi3
+  after_script:
+    - find . -wholename '*/build/reports/dependency-analysis/*' -prune ! -name 'build-health-report.txt' -print0 | xargs -0 rm -r
   coverage: '/^Coverage:\s(\d+\.\d+%)/'
   artifacts:
     name: build

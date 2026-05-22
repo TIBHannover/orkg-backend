@@ -7,6 +7,7 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import groovy.lang.Closure
 import io.spring.gradle.antora.GenerateAntoraYmlTask
+import io.swagger.v3.oas.models.SpecVersion
 import io.swagger.v3.oas.models.servers.Server
 import org.antora.gradle.AntoraTask
 import org.openapitools.generator.gradle.plugin.tasks.GenerateTask
@@ -356,6 +357,7 @@ openapi3 {
         tokenUrl = "$openApiAuthServerUrl/protocol/openid-connect/token"
         authorizationUrl = "$openApiAuthServerUrl/protocol/openid-connect/auth"
     }
+    specVersion = SpecVersion.V31
 }
 
 tasks {

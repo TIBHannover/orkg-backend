@@ -582,7 +582,7 @@ fun classReferenceResponseFields() = listOf(
 )
 
 fun literalReferenceResponseFields() = listOf(
-    fieldWithPath("id").description("The id of the literal."),
+    fieldWithPath("id").description("The id of the literal.").optional(),
     fieldWithPath("label").description("The label of the literal."),
     fieldWithPath("datatype").type("string").description("The data type of the literal."),
     fieldWithPath("_class").description("Indicates which type of entity was returned. Always has the value `literal_ref`."),

@@ -1,4 +1,4 @@
-= Paper Model Diagram
+= Papers
 
 [mermaid,width=100%]
 ----

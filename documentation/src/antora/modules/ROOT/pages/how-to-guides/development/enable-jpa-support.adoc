@@ -1,4 +1,4 @@
-= How to enable JPA support in IntelliJ IDEA
+= JPA support in IntelliJ IDEA
 
 JPA support is enabled by default but might not be configured correctly.
 This leads to red lines in code sections that use JPA, namely the database entities, and IDEA complaining about these errors on every commit although there is no problem.

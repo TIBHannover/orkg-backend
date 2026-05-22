@@ -1,4 +1,4 @@
-= Smart Review Model Diagram
+= Smart Reviews
 
 [mermaid,width=100%]
 ----

@@ -1,4 +1,4 @@
-= Comparison Model Diagram
+= Comparisons
 
 [mermaid,width=100%]
 ----

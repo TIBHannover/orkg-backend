@@ -1,4 +1,4 @@
-= CSVW Table Model Diagram
+= CSVW Tables
 
 [mermaid,width=100%]
 ----

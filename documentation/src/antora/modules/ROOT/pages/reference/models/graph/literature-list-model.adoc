@@ -1,4 +1,4 @@
-= Literature List Model Diagram
+= Literature Lists
 
 [mermaid,width=100%]
 ----

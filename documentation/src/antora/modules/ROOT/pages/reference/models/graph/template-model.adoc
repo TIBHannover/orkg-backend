@@ -1,4 +1,4 @@
-= Template Model Diagram
+= Templates
 
 [mermaid,width=100%]
 ----

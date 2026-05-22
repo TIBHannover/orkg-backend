@@ -1,4 +1,4 @@
-= How to debug remotely
+= Remote debugging
 
 When using the Docker container to run the API locally, it is possible to debug the code by attaching a debugger via the Java Debug Interface (JDI), which is part of the https://docs.oracle.com/javase/8/docs/technotes/guides/jpda/[Java Platform Debugger Architecture (JPDA)].
 

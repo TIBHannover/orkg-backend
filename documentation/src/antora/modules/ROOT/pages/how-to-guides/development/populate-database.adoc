@@ -1,4 +1,4 @@
-= How to populate the Postgres database with dummy data
+= Populating PostgreSQL database with dummy data
 
 Sometimes a Neo4j database dump does not contain all information needed for debugging, e.g. user accounts, organizations and observatories.
 They are stored in a separate Postgres database that cannot be shared for security reasons.

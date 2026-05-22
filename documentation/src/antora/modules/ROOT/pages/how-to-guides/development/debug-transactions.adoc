@@ -1,4 +1,4 @@
-= How to debug transaction issues
+= Debugging transactions
 
 Transaction issues can be tricky.
 We rely on correct nesting and TX reuse.
@@ -22,13 +22,13 @@ It needs to be a test that uses the relevant infrastructure (to create transacti
         "logging.level.org.springframework.transaction=TRACE",
         "logging.level.org.springframework.orm.jpa=TRACE",
         "logging.level.org.springframework.data.neo4j.core.transaction=TRACE",
-    ]
+    ],
 )
 ----
 +
 Alternatively, these can be set via `application.yaml` or some other mean.
 +
-NOTE: The settings above are set minimal, recommended set which the script expects.
+NOTE: The settings above are the recommended set which the script expects.
 
 . Inject a `CapturedOutput` instance into the test, and save the output to a file after the test is finished, e.g.
 +

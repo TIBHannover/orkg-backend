@@ -1,6 +1,6 @@
-= How to import a Neo4j database dump
+= Importing Neo4j database dumps
 
-NOTE: Dumps are provided to TIB members only. This may change in the future. Or not.
+NOTE: Dumps are provided to TIB members only. This may change in the future, or not.
 
 NOTE: You can re-load/setup a database dump with the `reload-dump` script in the `scripts` directory.
 The following section is still relevant if you want to understand what is happening there.

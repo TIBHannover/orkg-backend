@@ -1,4 +1,4 @@
-= Rosetta Stone Template Model Diagram
+= Rosetta Stone Templates
 
 [mermaid,width=100%]
 ----

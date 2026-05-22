@@ -1,4 +1,4 @@
-= Pitfalls
+= Development pitfalls
 
 This section covers pitfalls that developers might fall into when starting to work on the codebase.
 

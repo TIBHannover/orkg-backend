@@ -1,11 +1,11 @@
-= How to debug Neo4j queries and results in (failed) tests
+= Debugging Neo4j tests
 
 Sometimes one needs to debug the state of the database during a test run, or try a modified query.
-Our integration tests use a real Neo4j database while testing, which you can connect to.
+Our tests use a real Neo4j database while testing, which you can connect to.
 One way to achieve that is to hold the test during runtime and connect to the database while it runs.
 You can use the following sequence to achieve this:
 
-. Add breakpoints in the IDE on interesting points, as normally.
+. Add breakpoints in the IDE on interesting points, as usual.
 . Run the specific test you chose with a debug configuration.
 (Click on the "play" icon next to the test name and select "Debug" (bug symbol) from the menu.)
 . Let the test run until the first breakpoint is reached.

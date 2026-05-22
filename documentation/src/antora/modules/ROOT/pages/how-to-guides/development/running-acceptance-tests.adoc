@@ -1,11 +1,11 @@
-= How to run acceptance tests
+= Running acceptance tests
 
 == Introduction
 
 Acceptance tests are tests that simulate users interacting with the real system, as realistically as possible, to verify that features meet their acceptance criteria.
 (Hence, the name "acceptance test".)
 These tests directly relate to user stories and therefore should be expressed in terms of the domain.
-This is achieved by using a special xref:reference/development/test-dsl.adoc[testing DLS].
+This is achieved by using a special xref:reference/development/test-dsl.adoc[testing DSL].
 All of these tests are independent and can be run in parallel without causing conflicts, as it should be the case on the real system.
 Containers are used for all system components.
 

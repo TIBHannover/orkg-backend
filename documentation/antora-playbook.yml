@@ -20,6 +20,7 @@ antora:
       script_stem: header-scripts
       mermaid_initialize_options:
         start_on_load: true
+        theme: dark
     - require: '@springio/antora-extensions/override-navigation-builder-extension'
     - require: '@antora/atlas-extension'
     - require: '@antora/collector-extension'

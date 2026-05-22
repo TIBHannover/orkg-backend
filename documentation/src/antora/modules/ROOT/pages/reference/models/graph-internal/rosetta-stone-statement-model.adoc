@@ -1,4 +1,4 @@
-= Rosetta Stone Statement Model Diagram
+= Rosetta Stone Statements
 
 [mermaid,width=100%]
 ----

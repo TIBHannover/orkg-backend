@@ -1,5 +1,5 @@
 [.text-justify]
-= Hexagonal Architecture
+= Architechture
 :toc:
 :docinfo: shared,private
 
@@ -36,34 +36,34 @@ It also allows to test the domain logic in isolation, making tests fast and reli
 
 === Code Organization
 
-TBD: domain object, contained core
+// TBD: domain object, contained core
 
-==== Application Package
+==== Core Modules
 
 Code is organized by contexts.
 A context holds everything that belongs to the application, i.e. ports, use cases, domain objects and services.
 
-The most important package is the `identifiers` package.
+The most important package is the `$\{context}-core-model` module.
 It contains all domain objects.
 
-Alongside the `identifiers` package lives the `identifiers` package.
+Alongside the `$\{context}-core-model` package lives the `$\{context}-core-services` module.
 It contains everything that is relevant to organize the domain.
 Application Services encapsulate business logic across domain objects.
 They implement the input ports of the application so that an external system can interact with the domain.
 They also access the output ports to save and load domain information.
 
-The sub-packages `application.port.in` and `application.port.out` contain the input and output ports, respectively.
+The modules `$\{context}-ports-input` and `$\{context}-ports-output` contain the input and output ports, respectively.
 Input ports are interfaces ending in the name `UseCase` that provide methods for a specific use case.
-Output ports are interfaces ending in `Port`.
+Output ports are interfaces ending in `Repository`.
 
-All classes and interfaces in the `identifiers` package and its sub-packages form the API and therefore need to be public.
+All classes and interfaces in the `$\{context}-core-model` module form the API and therefore need to be public.
 
-==== Adapters Package
+==== Adapter Modules
 
-The input and output adapters are not part of the application logic, so they are contained in their own package.
+The input and output adapters are not part of the application logic, so they are contained in their own module.
 They are further split into separate concerns.
-For example, all Spring Controllers live in `adapters.in.rest` as they are adapters to the input ports of the application.
-The JPA and OGM entities as well as Spring repositories live in the `adapters.out.persistence` package.
+For example, all Spring Controllers live in the `$\{context}-adpater-input-rest-spring-mvc` module as they are adapters to the input ports of the application.
+The JPA and OGM entities as well as Spring repositories live in the `$\{context}-adpater-output-spring-data-jpa` and `$\{context}-adpater-output-spring-data-neo4j` respectively.
 They provide implementations for persistence by providing an adapter to the output port of the application.
 
 ==== A Graphical Example
@@ -71,49 +71,51 @@ They provide implementations for persistence by providing an adapter to the outp
 The example below shows the interfaces and classes involved a hypothetical domain object ``Foo``footnote:[This is (almost) a reproduction from the book "Get Your Hands Dirty on Clean Architecture" which covers the topic in greater detail.]:
 
 .Schematic overview of all the components in a context.
-[plantuml,organization,png]
+[mermaid,width=100%]
 ----
-package "Input Adapters" <<Rectangle>> {
-  package adapters.in.rest {
-    class "FooController" as Controller
-  }
-}
-package "Domain with Ports" <<Rectangle>> {
-  package application.port.in {
-    interface "FooUseCase" as UseCase
-  }
-  package application {
-    class "FooService" as Service
-  }
-  package domain {
-    class "Foo" as DomainClass
-  }
-  package application.port.out {
-    interface "LoadFooPort" as LoadOutPort
-  }
-}
-package "Output Adapters" <<Rectangle>> {
-  package adapters.out.persistence {
-    class "FooPersistenceAdapter" as PersistenceAdapter
-  }
-}
+flowchart TD
+    subgraph Output
+        subgraph ports-output
+            FooRepository
+        end
+        subgraph adapter-output
+            FooRepositoryAdapter
+        end
+    end
+    subgraph Domain
+        subgraph core-services
+            FooService
+        end
+        subgraph core-model
+            Foo
+        end
+    end
+    subgraph Input
+        subgraph adapter-input-rest-spring-mvc
+            FooController
+        end
+        subgraph ports-input
+            FooUseCase
+        end
+    end
 
-Controller -> UseCase : accesses
-UseCase <|.. Service : implements
-Service --> LoadOutPort : accesses
-LoadOutPort <|. PersistenceAdapter : implements
+    FooRepositoryAdapter -.->|implements| FooRepository
 
-Service -> DomainClass : accesses
+    FooService --> |accesses| Foo
+    FooService -.-> |implements| FooUseCase
+    FooService --> |accesses| FooRepository
+
+    FooController --> |accesses| FooUseCase
 ----
 
-It is located in the `identifiers` package.
+It is located in the `core-model` module.
 The use cases for `Foo` are defined in the `FooUseCase` interface that represents the input port of the application and is implemented in the `FooService`.
-The service accesses the `LoadFooPort` to locate and load `Foo`s from an "external" system.
+The service accesses the `FooRepository` to retrieve `Foo`s from an "external" system.
 
 Users interact with the system via a REST API, implemented in `FooController`.
 The controller accesses `Foo`s via the `FooUseCase` input port and only concerns itself with the things required for a REST API, such as serialization of the data.
 
-The `FooPersistenceAdapter` provides an implementation of the `LoadFooPort` to find and load `Foo`s in a database (or other system).
+The `FooRepositoryAdapter` provides an implementation of the `FooRepository` to find and load `Foo`s in a database (or other system).
 It is also responsible to converting the `Foo` into a form that can be stored properly.
 On loading, it needs to convert this representation back to a `Foo`.
 

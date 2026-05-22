@@ -10,6 +10,25 @@ variables:
   GIT_SUBMODULE_FORCE_HTTPS: true
   GIT_SUBMODULE_DEPTH: 1
 
+include:
+  - component: $CI_SERVER_FQDN/TIBHannover/gitlab-ci-components/pipeline-trigger-orkg@0.0.7
+    inputs:
+      stage: deploy
+      component_name: orkg-rest-api
+      needs:
+        - job: docker_build
+          optional: true
+        - job: docker_build_master
+          optional: true
+        - job: secret_detection
+        - job: container_scanning
+
+stages:
+  - build
+  - package
+  - verify
+  - deploy
+
 default:
   cache:
     # Dedicated cache the Gradle wrapper
@@ -56,12 +75,6 @@ default:
     - export ANTORA_CACHE_DIR=`pwd`/.antora-cache
   tags:
     - saas-linux-medium-amd64
-
-stages:
-  - build
-  - package
-  - verify
-  - deploy
 
 build:
   stage: build
@@ -253,39 +266,3 @@ publish_python_client:
     - cd ./api-clients/python-client/build/python-client
     - python -m build
     - python -m twine upload --repository-url ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/pypi dist/*
-
-deployment_trigger:incubating:
-  stage: deploy
-  image: buildpack-deps:buster-curl
-  script:
-    - echo "Triggering deployment for branch $CI_COMMIT_REF_NAME"
-    - curl --fail -X POST -F "token=$PIPELINE_TRIGGER_TOKEN" -F "ref=master" -F "variables[ORKG_COMPONENT_NAME]=orkg-rest-api" -F "variables[ORKG_COMPONENT_REF_NAME]=$CI_COMMIT_REF_NAME" https://git.tib.eu/api/v4/projects/1317/trigger/pipeline
-  rules:
-    - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
-  # Disable cloning, downloading artifacts and caching
-  cache: []
-  dependencies: []
-  variables:
-    GIT_STRATEGY: none
-  needs:
-    - docker_build_master
-    - secret_detection
-    - container_scanning
-
-deployment_trigger:release:
-  stage: deploy
-  image: buildpack-deps:buster-curl
-  script:
-    - echo "Triggering deployment for release version $CI_COMMIT_TAG"
-    - curl --fail -X POST -F "token=$PIPELINE_TRIGGER_TOKEN" -F "ref=master" -F "variables[ORKG_COMPONENT_NAME]=orkg-rest-api" -F "variables[ORKG_COMPONENT_REF_NAME]=$CI_COMMIT_REF_NAME" -F "variables[ORKG_COMPONENT_RELEASE_VERSION]=$CI_COMMIT_TAG" https://git.tib.eu/api/v4/projects/1317/trigger/pipeline
-  rules:
-    - if: $CI_COMMIT_TAG
-  # Disable cloning, downloading artifacts and caching
-  cache: []
-  dependencies: []
-  variables:
-    GIT_STRATEGY: none
-  needs:
-    - docker_build
-    - secret_detection
-    - container_scanning

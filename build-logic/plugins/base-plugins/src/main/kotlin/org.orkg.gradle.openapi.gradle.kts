@@ -10,8 +10,15 @@ plugins {
 }
 
 tasks {
+    // Disable default open api client generator task
+    named("openApiGenerate") {
+        enabled = false
+    }
+
     withType<GenerateTask>().configureEach {
-        setGroup("openapi client generation")
+        if (name != "openApiGenerate") {
+            setGroup("openapi client generation")
+        }
         inputSpec.set(layout.buildDirectory.file("api-spec/openapi3.yaml").get().asFile.path)
         cleanupOutput = true
         removeOperationIdPrefix = true

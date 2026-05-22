@@ -5,7 +5,7 @@ plugins {
 }
 
 tasks {
-    register<GenerateTask>("generateTypescriptClient") {
+    register<GenerateTask>("generateOpenApiClient") {
         dependsOn(":documentation:openapi3")
         generatorName.set("typescript-fetch")
         inputSpec.set(project(":documentation").layout.buildDirectory.file("api-spec/openapi3.yaml").get().asFile.path)

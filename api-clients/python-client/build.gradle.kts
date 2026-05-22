@@ -110,7 +110,7 @@ tasks {
         dependsOn(":documentation:openapi3")
     }
 
-    register<GeneratePythonClientTask>("generatePythonClient") {
+    register<GeneratePythonClientTask>("generateOpenApiClient") {
         generatorName.set("python")
         inputSpec.set(layout.buildDirectory.file("api-spec-python/openapi3.yaml").get().asFile.path)
         outputDir.set(layout.buildDirectory.dir("python-client").get().asFile.path)

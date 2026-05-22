@@ -10,11 +10,9 @@ import io.spring.gradle.antora.GenerateAntoraYmlTask
 import io.swagger.v3.oas.models.SpecVersion
 import io.swagger.v3.oas.models.servers.Server
 import org.antora.gradle.AntoraTask
-import org.openapitools.generator.gradle.plugin.tasks.GenerateTask
 import org.openapitools.generator.gradle.plugin.tasks.ValidateTask
 
 plugins {
-    id("org.orkg.gradle.openapi")
     id("org.orkg.gradle.documentation")
 }
 
@@ -372,27 +370,6 @@ tasks {
         // TODO: Refactor to only depend on outputs of openapi3 task
         dependsOn("openapi3")
         inputSpec.set(layout.buildDirectory.file("api-spec/openapi3.yaml").get().asFile.path)
-    }
-
-    register<GenerateTask>("generateRClient") {
-        dependsOn("openapi3")
-        generatorName.set("r")
-        outputDir.set(layout.buildDirectory.dir("generated-clients/r-client").get().asFile.path)
-        httpUserAgent = "ORKG-R-Client/${project.version}"
-        // See https://github.com/OpenAPITools/openapi-generator/blob/master/docs/generators/r.md
-        configOptions = mapOf(
-            "packageName" to "orkg_client",
-            "packageVersion" to project.version.toString(),
-        )
-    }
-
-    register("generateAllClients") {
-        setGroup("openapi client generation")
-        dependsOn(
-            ":api-clients:python-client:generatePythonClient",
-            ":api-clients:typescript-client:generateTypescriptClient",
-            "generateRClient",
-        )
     }
 }
 

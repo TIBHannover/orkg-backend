@@ -15,6 +15,7 @@ import org.orkg.contenttypes.domain.actions.CreatePaperCommand
 import org.orkg.contenttypes.domain.actions.CreatePaperState
 import org.orkg.contenttypes.domain.actions.DeletePaperCommand
 import org.orkg.contenttypes.domain.actions.DeletePaperState
+import org.orkg.contenttypes.domain.actions.ExtractionMethodValidator
 import org.orkg.contenttypes.domain.actions.ObservatoryValidator
 import org.orkg.contenttypes.domain.actions.OrganizationValidator
 import org.orkg.contenttypes.domain.actions.PublicationInfoValidator
@@ -217,6 +218,7 @@ class PaperService(
         val steps = listOf(
             PaperExistenceUpdateValidator(this, resourceRepository),
             PaperModifiableValidator({ it.paper?.modifiable }, { it.paperId }),
+            ExtractionMethodValidator({ it.extractionMethod }, { it.paper!!.extractionMethod }),
             PublicationInfoValidator { it.publicationInfo },
             VisibilityValidator(contributorRepository, { it.contributorId }, { it.paper!! }, { it.visibility }),
             VerifiedValidator(contributorRepository, { it.contributorId }, { it.paper!!.verified }, { it.verified }),

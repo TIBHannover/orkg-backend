@@ -54,6 +54,9 @@ class PredicateService(
         if (!predicate.modifiable) {
             throw PredicateNotModifiable(predicate.id)
         }
+        if (command.extractionMethod != null && !predicate.extractionMethod.canBeChangedTo(command.extractionMethod!!)) {
+            throw InvalidExtractionMethodChange(predicate.extractionMethod, command.extractionMethod!!)
+        }
         command.label?.also { Label.ofOrNull(it) ?: throw InvalidLabel() }
         val updated = predicate.apply(command)
         if (updated != predicate) {

@@ -278,6 +278,24 @@ internal class UnsafeLiteralServiceUnitTest {
     }
 
     @Test
+    fun `Given a literal update command, when updating the extraction method with an invalid transition, it updates the literal`() {
+        val literal = createLiteral(extractionMethod = ExtractionMethod.AI_GENERATED)
+        val command = UpdateLiteralUseCase.UpdateCommand(
+            id = literal.id,
+            contributorId = ContributorId(MockUserId.USER),
+            extractionMethod = ExtractionMethod.UNKNOWN,
+        )
+
+        every { literalRepository.findById(literal.id) } returns Optional.of(literal)
+        every { literalRepository.save(any()) } just runs
+
+        service.update(command)
+
+        verify(exactly = 1) { literalRepository.findById(literal.id) }
+        verify(exactly = 1) { literalRepository.save(withArg { it.extractionMethod shouldBe ExtractionMethod.UNKNOWN }) }
+    }
+
+    @Test
     fun `Given a literal update command, when literal does not exist, it throws an exception`() {
         val command = UpdateLiteralUseCase.UpdateCommand(
             id = ThingId("L123"),

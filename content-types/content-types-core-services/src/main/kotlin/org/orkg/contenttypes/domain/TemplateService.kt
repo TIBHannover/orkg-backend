@@ -14,6 +14,7 @@ import org.orkg.contenttypes.domain.actions.CreateTemplatePropertyCommand
 import org.orkg.contenttypes.domain.actions.CreateTemplatePropertyState
 import org.orkg.contenttypes.domain.actions.CreateTemplateState
 import org.orkg.contenttypes.domain.actions.DescriptionValidator
+import org.orkg.contenttypes.domain.actions.ExtractionMethodValidator
 import org.orkg.contenttypes.domain.actions.LabelValidator
 import org.orkg.contenttypes.domain.actions.ObservatoryValidator
 import org.orkg.contenttypes.domain.actions.OrganizationValidator
@@ -167,6 +168,7 @@ class TemplateService(
             LabelValidator { it.label },
             DescriptionValidator { it.description },
             LabelValidator("formatted_label") { it.formattedLabel?.value },
+            ExtractionMethodValidator({ it.extractionMethod }, { it.template!!.extractionMethod }),
             VisibilityValidator(contributorRepository, { it.contributorId }, { it.template!! }, { it.visibility }),
             TemplateTargetClassValidator(classRepository, statementRepository, { it.targetClass }, { it.template!!.targetClass.id }),
             TemplateRelationsUpdateValidator(resourceRepository, predicateRepository),

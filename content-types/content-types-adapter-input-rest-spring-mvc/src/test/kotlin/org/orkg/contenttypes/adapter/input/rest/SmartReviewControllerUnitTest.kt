@@ -77,6 +77,7 @@ import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ExactSearchString
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.InvalidDescription
+import org.orkg.graph.domain.InvalidExtractionMethodChange
 import org.orkg.graph.domain.InvalidLabel
 import org.orkg.graph.domain.NeitherOwnerNorCurator
 import org.orkg.graph.domain.PredicateNotFound
@@ -1143,6 +1144,7 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
                     SmartReviewNotModifiable::class,
                     SmartReviewNotFound::class,
                     InvalidLabel::class,
+                    InvalidExtractionMethodChange::class,
                     InvalidBibTeXReference::class,
                     ContributorNotFound::class,
                     NeitherOwnerNorCurator::class,

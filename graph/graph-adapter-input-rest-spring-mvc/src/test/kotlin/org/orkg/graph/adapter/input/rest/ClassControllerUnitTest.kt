@@ -27,6 +27,7 @@ import org.orkg.graph.domain.ClassNotModifiable
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ExactSearchString
 import org.orkg.graph.domain.ExtractionMethod
+import org.orkg.graph.domain.InvalidExtractionMethodChange
 import org.orkg.graph.domain.InvalidLabel
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.ReservedClassId
@@ -299,7 +300,14 @@ internal class ClassControllerUnitTest : MockMvcBaseTest("classes") {
                     fieldWithPath("uri").description("The updated class label"),
                     fieldWithPath("extraction_method").description("""The method used to extract the class. Can be one of $allowedExtractionMethodValues. (optional)""").optional(),
                 )
-                throws(InvalidLabel::class, ClassNotFound::class, ClassNotModifiable::class, CannotResetURI::class, URIAlreadyInUse::class)
+                throws(
+                    InvalidLabel::class,
+                    ClassNotFound::class,
+                    ClassNotModifiable::class,
+                    InvalidExtractionMethodChange::class,
+                    CannotResetURI::class,
+                    URIAlreadyInUse::class,
+                )
             }
 
         verify(exactly = 1) {
@@ -351,7 +359,14 @@ internal class ClassControllerUnitTest : MockMvcBaseTest("classes") {
                     fieldWithPath("uri").description("The updated class label (optional)").optional(),
                     fieldWithPath("extraction_method").description("""The method used to extract the class. Can be one of $allowedExtractionMethodValues. (optional)""").optional(),
                 )
-                throws(InvalidLabel::class, ClassNotFound::class, ClassNotModifiable::class, CannotResetURI::class, URIAlreadyInUse::class)
+                throws(
+                    InvalidLabel::class,
+                    ClassNotFound::class,
+                    ClassNotModifiable::class,
+                    InvalidExtractionMethodChange::class,
+                    CannotResetURI::class,
+                    URIAlreadyInUse::class,
+                )
             }
 
         verify(exactly = 1) {

@@ -22,6 +22,7 @@ import org.orkg.graph.domain.Bundle
 import org.orkg.graph.domain.BundleConfiguration
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ExtractionMethod
+import org.orkg.graph.domain.InvalidExtractionMethodChange
 import org.orkg.graph.domain.InvalidStatement
 import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.StatementAlreadyExists
@@ -424,6 +425,7 @@ internal class StatementControllerUnitTest : MockMvcBaseTest("statements") {
                     StatementNotFound::class,
                     StatementNotModifiable::class,
                     InvalidStatement::class,
+                    InvalidExtractionMethodChange::class,
                     StatementSubjectNotFound::class,
                     StatementPredicateNotFound::class,
                     StatementObjectNotFound::class,

@@ -1,5 +1,6 @@
 package org.orkg.graph.domain
 
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.just
@@ -176,6 +177,22 @@ internal class ListServiceUnitTest : MockkBaseTest {
         assertThrows<InvalidLabel> { service.update(command) }
 
         verify(exactly = 1) { repository.findById(id) }
+    }
+
+    @Test
+    fun `Given a list update command, when updating the extraction method with an invalid transition, it throws an exception`() {
+        val list = createList(extractionMethod = ExtractionMethod.AI_GENERATED)
+        val command = UpdateListUseCase.UpdateCommand(
+            id = list.id,
+            contributorId = ContributorId(MockUserId.USER),
+            extractionMethod = ExtractionMethod.UNKNOWN,
+        )
+
+        every { repository.findById(list.id) } returns Optional.of(list)
+
+        shouldThrow<InvalidExtractionMethodChange> { service.update(command) }
+
+        verify(exactly = 1) { repository.findById(list.id) }
     }
 
     @Test

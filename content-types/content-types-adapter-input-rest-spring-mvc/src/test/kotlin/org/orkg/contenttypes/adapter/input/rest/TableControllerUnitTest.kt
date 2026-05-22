@@ -62,6 +62,7 @@ import org.orkg.contenttypes.input.testing.fixtures.tableResponseFields
 import org.orkg.contenttypes.input.testing.fixtures.updateRowRequestFields
 import org.orkg.graph.domain.ExactSearchString
 import org.orkg.graph.domain.ExtractionMethod
+import org.orkg.graph.domain.InvalidExtractionMethodChange
 import org.orkg.graph.domain.InvalidLabel
 import org.orkg.graph.domain.InvalidLiteralDatatype
 import org.orkg.graph.domain.InvalidLiteralLabel
@@ -381,6 +382,7 @@ internal class TableControllerUnitTest : MockMvcBaseTest("tables") {
                     MissingTableHeaderValue::class,
                     TooManyTableRowValues::class,
                     MissingTableRowValues::class,
+                    InvalidExtractionMethodChange::class,
                     OnlyOneObservatoryAllowed::class,
                     ObservatoryNotFound::class,
                     OnlyOneOrganizationAllowed::class,

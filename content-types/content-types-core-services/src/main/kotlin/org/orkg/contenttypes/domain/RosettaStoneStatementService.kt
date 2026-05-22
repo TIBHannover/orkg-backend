@@ -10,6 +10,7 @@ import org.orkg.community.output.ObservatoryRepository
 import org.orkg.community.output.OrganizationRepository
 import org.orkg.contenttypes.domain.actions.CreateRosettaStoneStatementCommand
 import org.orkg.contenttypes.domain.actions.CreateRosettaStoneStatementState
+import org.orkg.contenttypes.domain.actions.ExtractionMethodValidator
 import org.orkg.contenttypes.domain.actions.ObservatoryValidator
 import org.orkg.contenttypes.domain.actions.OrganizationValidator
 import org.orkg.contenttypes.domain.actions.TempIdValidator
@@ -121,6 +122,7 @@ class RosettaStoneStatementService(
             TempIdValidator { it.tempIds() },
             RosettaStoneStatementExistenceValidator(this),
             RosettaStoneStatementModifiableValidator(),
+            ExtractionMethodValidator({ it.extractionMethod }, { it.rosettaStoneStatement!!.extractionMethod }),
             RosettaStoneStatementTemplateUpdateValidator(rosettaStoneTemplateService),
             ObservatoryValidator(observatoryRepository, { it.observatories }, { it.observatories }),
             OrganizationValidator(organizationRepository, { it.organizations }, { it.organizations }),

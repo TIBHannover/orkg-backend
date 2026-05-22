@@ -125,6 +125,24 @@ internal class UnsafePredicateServiceUnitTest : MockkBaseTest {
     }
 
     @Test
+    fun `Given a predicate update command, when updating the extraction method with an invalid transition, it updates the predicate`() {
+        val predicate = createPredicate(extractionMethod = ExtractionMethod.AI_GENERATED)
+        val command = UpdatePredicateUseCase.UpdateCommand(
+            id = predicate.id,
+            contributorId = ContributorId(MockUserId.USER),
+            extractionMethod = ExtractionMethod.UNKNOWN,
+        )
+
+        every { repository.findById(predicate.id) } returns Optional.of(predicate)
+        every { repository.save(any()) } just runs
+
+        service.update(command)
+
+        verify(exactly = 1) { repository.findById(predicate.id) }
+        verify(exactly = 1) { repository.save(withArg { it.extractionMethod shouldBe ExtractionMethod.UNKNOWN }) }
+    }
+
+    @Test
     fun `Given a predicate update command, when updating with an invalid label, it updates the predicate`() {
         val predicate = createPredicate()
         val label = "a".repeat(MAX_LABEL_LENGTH + 1)

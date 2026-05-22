@@ -17,6 +17,7 @@ import org.orkg.contenttypes.domain.actions.CreateLiteratureListState
 import org.orkg.contenttypes.domain.actions.DeleteLiteratureListSectionCommand
 import org.orkg.contenttypes.domain.actions.DeleteLiteratureListSectionState
 import org.orkg.contenttypes.domain.actions.DescriptionValidator
+import org.orkg.contenttypes.domain.actions.ExtractionMethodValidator
 import org.orkg.contenttypes.domain.actions.LabelValidator
 import org.orkg.contenttypes.domain.actions.ObservatoryValidator
 import org.orkg.contenttypes.domain.actions.OrganizationValidator
@@ -214,6 +215,7 @@ class LiteratureListService(
             LiteratureListExistenceValidator(this, resourceRepository),
             LiteratureListModifiableValidator(),
             LabelValidator("title") { it.title },
+            ExtractionMethodValidator({ it.extractionMethod }, { it.literatureList!!.extractionMethod }),
             VisibilityValidator(contributorRepository, { it.contributorId }, { it.literatureList!! }, { it.visibility }),
             ResearchFieldValidator(resourceRepository, { it.researchFields }, { it.literatureList!!.researchFields.ids }),
             LiteratureListAuthorListUpdateValidator(resourceRepository, statementRepository),

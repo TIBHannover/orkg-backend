@@ -111,6 +111,9 @@ class ResourceService(
         if (Classes.rosettaStoneStatement in resource.classes) {
             throw RosettaStoneStatementResourceNotModifiable(command.id)
         }
+        if (command.extractionMethod != null && !resource.extractionMethod.canBeChangedTo(command.extractionMethod!!)) {
+            throw InvalidExtractionMethodChange(resource.extractionMethod, command.extractionMethod!!)
+        }
         command.label?.also { Label.ofOrNull(it) ?: throw InvalidLabel() }
         command.classes?.also { validateClasses(it) }
         command.observatoryId?.also { observatoryId ->

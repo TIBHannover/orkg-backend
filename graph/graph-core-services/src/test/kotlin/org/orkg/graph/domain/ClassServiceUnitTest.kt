@@ -1,5 +1,7 @@
 package org.orkg.graph.domain
 
+import io.kotest.assertions.asClue
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.just
@@ -16,10 +18,12 @@ import org.orkg.graph.input.CreateClassUseCase
 import org.orkg.graph.input.UnsafeClassUseCases
 import org.orkg.graph.input.UpdateClassUseCase
 import org.orkg.graph.input.UpdateClassUseCase.ReplaceCommand
+import org.orkg.graph.input.UpdateResourceUseCase
 import org.orkg.graph.output.ClassRepository
 import org.orkg.graph.output.ThingRepository
 import org.orkg.graph.testing.fixtures.createClass
 import org.orkg.graph.testing.fixtures.createClassWithoutURI
+import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.testing.MockUserId
 import java.util.Optional
 
@@ -231,6 +235,23 @@ internal class ClassServiceUnitTest : MockkBaseTest {
     }
 
     @Test
+    fun `Given a class, when extraction method transition is invalid, it throws an exception`() {
+        val originalClass = createClass(extractionMethod = ExtractionMethod.AI_GENERATED)
+        val contributorId = ContributorId(MockUserId.USER)
+        val command = UpdateClassUseCase.UpdateCommand(
+            id = originalClass.id,
+            contributorId = contributorId,
+            extractionMethod = ExtractionMethod.UNKNOWN,
+        )
+
+        every { repository.findById(originalClass.id) } returns Optional.of(originalClass)
+
+        assertThrows<InvalidExtractionMethodChange> { service.update(command) }
+
+        verify(exactly = 1) { repository.findById(originalClass.id) }
+    }
+
+    @Test
     fun `Given a class is unmodifiable, when updating the label, it returns an appropriate error`() {
         val originalClass = createClass(modifiable = false)
         val contributorId = ContributorId(MockUserId.USER)
@@ -413,6 +434,20 @@ internal class ClassServiceUnitTest : MockkBaseTest {
     }
 
     @Test
+    fun `Given a class is replaced, when extraction method transition is invalid, it throws an exception`() {
+        val classToReplace = ThingId("ToReplace")
+        val replacingClass = createClassWithoutURI().copy(id = classToReplace, extractionMethod = ExtractionMethod.UNKNOWN)
+        val existingClass = createClassWithoutURI().copy(id = classToReplace, extractionMethod = ExtractionMethod.AI_GENERATED)
+        val contributorId = ContributorId(MockUserId.USER)
+
+        every { repository.findById(classToReplace) } returns existingClass.toOptional()
+
+        assertThrows<InvalidExtractionMethodChange> { service.replace(replacingClass.toReplaceCommand(contributorId)) }
+
+        verify(exactly = 1) { repository.findById(classToReplace) }
+    }
+
+    @Test
     fun `Given a class is replaced, when no URI is provided and the class has a URI, then returns an error`() {
         val classToReplace = ThingId("ToReplace")
         val replacingClass = createClassWithoutURI().copy(id = classToReplace, label = "other label")
@@ -528,5 +563,5 @@ internal class ClassServiceUnitTest : MockkBaseTest {
     }
 
     private fun Class.toReplaceCommand(contributorId: ContributorId): ReplaceCommand =
-        ReplaceCommand(id, contributorId, label, uri)
+        ReplaceCommand(id, contributorId, label, uri, extractionMethod, modifiable)
 }

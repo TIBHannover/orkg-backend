@@ -143,6 +143,22 @@ internal class LiteralServiceUnitTest {
     }
 
     @Test
+    fun `Given a literal update command, when updating the extraction method with an invalid transition, it throws an exception`() {
+        val literal = createLiteral(extractionMethod = ExtractionMethod.AI_GENERATED)
+        val command = UpdateLiteralUseCase.UpdateCommand(
+            id = literal.id,
+            contributorId = ContributorId(MockUserId.USER),
+            extractionMethod = ExtractionMethod.UNKNOWN,
+        )
+
+        every { literalRepository.findById(literal.id) } returns Optional.of(literal)
+
+        shouldThrow<InvalidExtractionMethodChange> { service.update(command) }
+
+        verify(exactly = 1) { literalRepository.findById(literal.id) }
+    }
+
+    @Test
     fun `Given a literal update command, when literal does not exist, it throws an exception`() {
         val command = UpdateLiteralUseCase.UpdateCommand(
             id = ThingId("L123"),

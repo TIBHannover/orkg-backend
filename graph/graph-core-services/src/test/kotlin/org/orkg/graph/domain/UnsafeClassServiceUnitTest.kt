@@ -337,6 +337,24 @@ internal class UnsafeClassServiceUnitTest : MockkBaseTest {
     }
 
     @Test
+    fun `Given a class update command, when updating the extraction method with an invalid transition, it updates the class`() {
+        val `class` = createClass(extractionMethod = ExtractionMethod.AI_GENERATED)
+        val command = UpdateClassUseCase.UpdateCommand(
+            id = `class`.id,
+            contributorId = ContributorId(MockUserId.USER),
+            extractionMethod = ExtractionMethod.UNKNOWN,
+        )
+
+        every { repository.findById(`class`.id) } returns Optional.of(`class`)
+        every { repository.save(any()) } just runs
+
+        service.update(command)
+
+        verify(exactly = 1) { repository.findById(`class`.id) }
+        verify(exactly = 1) { repository.save(withArg { it.extractionMethod shouldBe ExtractionMethod.UNKNOWN }) }
+    }
+
+    @Test
     fun `Given a class does not exist, when updating the URI, then it returns an appropriate error`() {
         val id = ThingId("non-existent")
         val contributorId = ContributorId(MockUserId.USER)
@@ -524,6 +542,21 @@ internal class UnsafeClassServiceUnitTest : MockkBaseTest {
 
         verify(exactly = 1) { repository.findById(replacingClass.id) }
         verify(exactly = 1) { repository.save(withArg { it.label shouldBe replacingClass.label }) }
+    }
+
+    @Test
+    fun `Given a class is replaced, when replacing the extraction method with an invalid transition, it updates the class`() {
+        val `class` = createClass(extractionMethod = ExtractionMethod.AI_GENERATED)
+        val replacingClass = createClass(extractionMethod = ExtractionMethod.UNKNOWN)
+        val contributorId = ContributorId(MockUserId.USER)
+
+        every { repository.findById(`class`.id) } returns Optional.of(`class`)
+        every { repository.save(any()) } just runs
+
+        service.replace(replacingClass.toReplaceCommand(contributorId))
+
+        verify(exactly = 1) { repository.findById(`class`.id) }
+        verify(exactly = 1) { repository.save(withArg { it.extractionMethod shouldBe ExtractionMethod.UNKNOWN }) }
     }
 
     @Test

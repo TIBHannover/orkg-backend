@@ -19,6 +19,7 @@ import org.orkg.contenttypes.domain.actions.CreateSmartReviewState
 import org.orkg.contenttypes.domain.actions.DeleteSmartReviewSectionCommand
 import org.orkg.contenttypes.domain.actions.DeleteSmartReviewSectionState
 import org.orkg.contenttypes.domain.actions.DescriptionValidator
+import org.orkg.contenttypes.domain.actions.ExtractionMethodValidator
 import org.orkg.contenttypes.domain.actions.LabelValidator
 import org.orkg.contenttypes.domain.actions.ObservatoryValidator
 import org.orkg.contenttypes.domain.actions.OrganizationValidator
@@ -230,6 +231,7 @@ class SmartReviewService(
             SmartReviewExistenceValidator(this, resourceRepository),
             SmartReviewModifiableValidator(),
             LabelValidator("title") { it.title },
+            ExtractionMethodValidator({ it.extractionMethod }, { it.smartReview!!.extractionMethod }),
             BibTeXReferencesValidator({ it.references }),
             VisibilityValidator(contributorRepository, { it.contributorId }, { it.smartReview!! }, { it.visibility }),
             ResearchFieldValidator(resourceRepository, { it.researchFields }, { it.smartReview!!.researchFields.ids }),

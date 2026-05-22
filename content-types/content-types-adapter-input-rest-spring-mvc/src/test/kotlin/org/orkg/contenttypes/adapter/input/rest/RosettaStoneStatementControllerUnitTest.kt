@@ -57,6 +57,7 @@ import org.orkg.contenttypes.input.testing.fixtures.mapOfCreatePredicateRequestP
 import org.orkg.contenttypes.input.testing.fixtures.mapOfCreateResourceRequestPartRequestFields
 import org.orkg.contenttypes.input.testing.fixtures.rosettaStoneStatementResponseFields
 import org.orkg.graph.domain.ExtractionMethod
+import org.orkg.graph.domain.InvalidExtractionMethodChange
 import org.orkg.graph.domain.InvalidLabel
 import org.orkg.graph.domain.InvalidLiteralDatatype
 import org.orkg.graph.domain.InvalidLiteralLabel
@@ -406,6 +407,7 @@ internal class RosettaStoneStatementControllerUnitTest : MockMvcBaseTest("rosett
                     InvalidTempId::class,
                     DuplicateTempIds::class,
                     RosettaStoneStatementNotModifiable::class,
+                    InvalidExtractionMethodChange::class,
                     RosettaStoneTemplateNotFound::class,
                     OnlyOneObservatoryAllowed::class,
                     ObservatoryNotFound::class,

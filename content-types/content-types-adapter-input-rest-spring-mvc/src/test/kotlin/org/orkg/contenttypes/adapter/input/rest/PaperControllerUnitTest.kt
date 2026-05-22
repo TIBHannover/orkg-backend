@@ -70,6 +70,7 @@ import org.orkg.contenttypes.input.testing.fixtures.statementListResponseFields
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ExactSearchString
 import org.orkg.graph.domain.ExtractionMethod
+import org.orkg.graph.domain.InvalidExtractionMethodChange
 import org.orkg.graph.domain.InvalidLabel
 import org.orkg.graph.domain.InvalidLiteralDatatype
 import org.orkg.graph.domain.InvalidLiteralLabel
@@ -992,6 +993,7 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
                 throws(
                     PaperNotFound::class,
                     PaperNotModifiable::class,
+                    InvalidExtractionMethodChange::class,
                     InvalidMonth::class,
                     InvalidLabel::class,
                     ContributorNotFound::class,

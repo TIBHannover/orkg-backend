@@ -720,6 +720,26 @@ internal class StatementServiceUnitTest :
                     verify(exactly = 1) { thingRepository.findById(command.objectId!!) }
                 }
             }
+            context("with a an invalid extraction method transition") {
+                it("throws an error") {
+                    val id = StatementId("S1")
+                    val statement = createStatement(extractionMethod = ExtractionMethod.AI_GENERATED)
+                    val command = UpdateStatementUseCase.UpdateCommand(
+                        statementId = id,
+                        contributorId = contributorId,
+                        extractionMethod = ExtractionMethod.UNKNOWN,
+                    )
+                    every { statementRepository.findByStatementId(id) } returns Optional.of(statement)
+
+                    withContext(Dispatchers.IO) {
+                        shouldThrow<InvalidExtractionMethodChange> {
+                            service.update(command)
+                        }
+                    }
+
+                    verify(exactly = 1) { statementRepository.findByStatementId(id) }
+                }
+            }
         }
 
         describe("deleting a single statement") {

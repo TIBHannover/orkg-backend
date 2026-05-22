@@ -277,6 +277,18 @@ class InvalidClassCollection(ids: Iterable<ThingId>) :
         properties = mapOf("class_ids" to ids),
     )
 
+class InvalidExtractionMethodChange(
+    source: ExtractionMethod,
+    target: ExtractionMethod,
+) : SimpleMessageException(
+        HttpStatus.FORBIDDEN,
+        """Extraction method "$source" cannot be changed to "$target".""",
+        properties = mapOf(
+            "source_extraction_method" to source,
+            "target_extraction_method" to target,
+        ),
+    )
+
 class URIAlreadyInUse(
     uri: IRI,
     id: ThingId,

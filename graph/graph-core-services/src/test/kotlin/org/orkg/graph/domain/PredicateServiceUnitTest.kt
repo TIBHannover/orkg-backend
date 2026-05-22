@@ -123,6 +123,24 @@ internal class PredicateServiceUnitTest : MockkBaseTest {
     }
 
     @Test
+    fun `Given a predicate update command, when updating the extraction method with an invalid transition, it throws an exception`() {
+        val predicate = createPredicate(extractionMethod = ExtractionMethod.AI_GENERATED)
+        val command = UpdatePredicateUseCase.UpdateCommand(
+            id = predicate.id,
+            contributorId = ContributorId(MockUserId.USER),
+            extractionMethod = ExtractionMethod.UNKNOWN,
+        )
+
+        every { repository.findById(predicate.id) } returns Optional.of(predicate)
+
+        shouldThrow<InvalidExtractionMethodChange> { service.update(command) }.asClue {
+            it.message shouldBe """Extraction method "${ExtractionMethod.AI_GENERATED}" cannot be changed to "${ExtractionMethod.UNKNOWN}"."""
+        }
+
+        verify(exactly = 1) { repository.findById(predicate.id) }
+    }
+
+    @Test
     fun `Given a predicate update command, when predicate does not exist, it throws an exception`() {
         val command = UpdatePredicateUseCase.UpdateCommand(
             id = ThingId("P123"),

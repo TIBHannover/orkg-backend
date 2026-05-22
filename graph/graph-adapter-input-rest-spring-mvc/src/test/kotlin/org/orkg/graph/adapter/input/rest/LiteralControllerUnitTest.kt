@@ -22,6 +22,7 @@ import org.orkg.graph.adapter.input.rest.testing.fixtures.configuration.GraphCon
 import org.orkg.graph.adapter.input.rest.testing.fixtures.literalResponseFields
 import org.orkg.graph.domain.ExactSearchString
 import org.orkg.graph.domain.ExtractionMethod
+import org.orkg.graph.domain.InvalidExtractionMethodChange
 import org.orkg.graph.domain.InvalidLiteralDatatype
 import org.orkg.graph.domain.InvalidLiteralLabel
 import org.orkg.graph.domain.Literal
@@ -342,7 +343,14 @@ internal class LiteralControllerUnitTest : MockMvcBaseTest("literals") {
                     fieldWithPath("datatype").description("The updated datatype of the literal value. (optional)").optional(),
                     fieldWithPath("extraction_method").description("""The method used to extract the literal. Can be one of $allowedExtractionMethodValues. (optional)""").optional(),
                 )
-                throws(InvalidLiteralLabel::class, LiteralNotFound::class, LiteralNotModifiable::class, InvalidLiteralLabel::class, InvalidLiteralDatatype::class)
+                throws(
+                    InvalidLiteralLabel::class,
+                    LiteralNotFound::class,
+                    LiteralNotModifiable::class,
+                    InvalidExtractionMethodChange::class,
+                    InvalidLiteralLabel::class,
+                    InvalidLiteralDatatype::class,
+                )
             }
 
         verify(exactly = 1) { literalService.update(command) }

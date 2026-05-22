@@ -24,6 +24,7 @@ import org.orkg.graph.adapter.input.rest.testing.fixtures.predicateResponseField
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ExactSearchString
 import org.orkg.graph.domain.ExtractionMethod
+import org.orkg.graph.domain.InvalidExtractionMethodChange
 import org.orkg.graph.domain.InvalidLabel
 import org.orkg.graph.domain.NeitherOwnerNorCurator
 import org.orkg.graph.domain.PredicateInUse
@@ -325,7 +326,7 @@ internal class PredicateControllerUnitTest : MockMvcBaseTest("predicates") {
                     fieldWithPath("label").description("The updated predicate label. (optional)").optional(),
                     fieldWithPath("extraction_method").description("""The method used to extract the predicate. Can be one of $allowedExtractionMethodValues. (optional)""").optional(),
                 )
-                throws(PredicateNotFound::class, PredicateNotModifiable::class, InvalidLabel::class)
+                throws(PredicateNotFound::class, PredicateNotModifiable::class, InvalidExtractionMethodChange::class, InvalidLabel::class)
             }
 
         verify(exactly = 1) { predicateService.update(command) }

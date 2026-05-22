@@ -60,6 +60,9 @@ class ListService(
         if (!list.modifiable) {
             throw ListNotModifiable(command.id)
         }
+        if (command.extractionMethod != null && !list.extractionMethod.canBeChangedTo(command.extractionMethod!!)) {
+            throw InvalidExtractionMethodChange(list.extractionMethod, command.extractionMethod!!)
+        }
         command.label?.also { Label.ofOrNull(it) ?: throw InvalidLabel() }
         command.elements?.also {
             if (it.isNotEmpty() && !thingRepository.existsAllById(it.toSet())) {

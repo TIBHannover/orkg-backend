@@ -308,6 +308,24 @@ internal class ResourceServiceUnitTest : MockkBaseTest {
     }
 
     @Test
+    fun `Given a resource update command, when updating the extraction method with an invalid transition, it throws an exception`() {
+        val resource = createResource(extractionMethod = ExtractionMethod.AI_GENERATED)
+        val command = UpdateResourceUseCase.UpdateCommand(
+            id = resource.id,
+            contributorId = ContributorId(MockUserId.USER),
+            extractionMethod = ExtractionMethod.UNKNOWN,
+        )
+
+        every { repository.findById(resource.id) } returns Optional.of(resource)
+
+        shouldThrow<InvalidExtractionMethodChange> { service.update(command) }.asClue {
+            it.message shouldBe """Extraction method "${ExtractionMethod.AI_GENERATED}" cannot be changed to "${ExtractionMethod.UNKNOWN}"."""
+        }
+
+        verify(exactly = 1) { repository.findById(resource.id) }
+    }
+
+    @Test
     fun `Given a resource update command, when it contains a reserved class, it throws an exception`() {
         val resource = createResource()
         val command = UpdateResourceUseCase.UpdateCommand(

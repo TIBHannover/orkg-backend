@@ -30,6 +30,7 @@ import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ExactSearchString
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.InvalidClassCollection
+import org.orkg.graph.domain.InvalidExtractionMethodChange
 import org.orkg.graph.domain.InvalidLabel
 import org.orkg.graph.domain.NeitherOwnerNorCurator
 import org.orkg.graph.domain.NotACurator
@@ -364,6 +365,7 @@ internal class ResourceControllerUnitTest : MockMvcBaseTest("resources") {
                     ResourceNotFound::class,
                     ResourceNotModifiable::class,
                     RosettaStoneStatementResourceNotModifiable::class,
+                    InvalidExtractionMethodChange::class,
                     InvalidLabel::class,
                     ReservedClassId::class,
                     InvalidClassCollection::class,

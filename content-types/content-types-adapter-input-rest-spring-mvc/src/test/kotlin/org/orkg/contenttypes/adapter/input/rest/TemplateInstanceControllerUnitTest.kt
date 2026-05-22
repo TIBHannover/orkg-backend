@@ -49,6 +49,7 @@ import org.orkg.contenttypes.input.testing.fixtures.templateInstanceResponseFiel
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.InvalidClassCollection
+import org.orkg.graph.domain.InvalidExtractionMethodChange
 import org.orkg.graph.domain.InvalidLabel
 import org.orkg.graph.domain.InvalidLiteralDatatype
 import org.orkg.graph.domain.InvalidLiteralLabel
@@ -372,6 +373,7 @@ internal class TemplateInstanceControllerUnitTest : MockMvcBaseTest("template-in
                     DuplicateTempIds::class,
                     TemplateNotFound::class,
                     ResourceNotFound::class,
+                    InvalidExtractionMethodChange::class,
                     ThingNotDefined::class,
                     ThingNotFound::class,
                     ReservedClassId::class,

@@ -157,6 +157,24 @@ internal class UnsafeResourceServiceUnitTest : MockkBaseTest {
     }
 
     @Test
+    fun `Given a resource update command, when updating the extraction method with an invalid transition, it updates the resource`() {
+        val resource = createResource(extractionMethod = ExtractionMethod.AI_GENERATED)
+        val command = UpdateResourceUseCase.UpdateCommand(
+            id = resource.id,
+            contributorId = ContributorId(MockUserId.USER),
+            extractionMethod = ExtractionMethod.UNKNOWN,
+        )
+
+        every { repository.findById(resource.id) } returns Optional.of(resource)
+        every { repository.save(any()) } just runs
+
+        service.update(command)
+
+        verify(exactly = 1) { repository.findById(resource.id) }
+        verify(exactly = 1) { repository.save(withArg { it.extractionMethod shouldBe ExtractionMethod.UNKNOWN }) }
+    }
+
+    @Test
     fun `Given a resource update command, when updating with a reserved class, it updates the resource`() {
         val resource = createResource()
         val command = UpdateResourceUseCase.UpdateCommand(

@@ -21,6 +21,7 @@ import org.orkg.common.exceptions.ServiceUnavailable
 import org.orkg.common.exceptions.UnknownSortingProperty
 import org.orkg.common.testing.fixtures.fixedClock
 import org.orkg.common.thingIdConstraint
+import org.orkg.community.domain.ContributorNotFound
 import org.orkg.community.domain.ObservatoryNotFound
 import org.orkg.community.domain.OrganizationNotFound
 import org.orkg.contenttypes.adapter.input.rest.LiteratureListController.CreateLiteratureListRequest
@@ -61,7 +62,9 @@ import org.orkg.graph.adapter.input.rest.testing.fixtures.resourceResponseFields
 import org.orkg.graph.domain.ExactSearchString
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.InvalidDescription
+import org.orkg.graph.domain.InvalidExtractionMethodChange
 import org.orkg.graph.domain.InvalidLabel
+import org.orkg.graph.domain.NeitherOwnerNorCurator
 import org.orkg.graph.domain.ResourceNotFound
 import org.orkg.graph.domain.Visibility
 import org.orkg.graph.domain.VisibilityFilter
@@ -615,6 +618,9 @@ internal class LiteratureListControllerUnitTest : MockMvcBaseTest("literature-li
                 throws(
                     LiteratureListNotModifiable::class,
                     LiteratureListNotFound::class,
+                    InvalidExtractionMethodChange::class,
+                    ContributorNotFound::class,
+                    NeitherOwnerNorCurator::class,
                     LiteratureListSectionTypeMismatch::class,
                     InvalidDescription::class,
                     ResourceNotFound::class,

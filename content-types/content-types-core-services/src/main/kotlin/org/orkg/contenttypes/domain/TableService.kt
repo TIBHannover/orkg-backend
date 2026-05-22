@@ -17,6 +17,7 @@ import org.orkg.contenttypes.domain.actions.DeleteTableColumnCommand
 import org.orkg.contenttypes.domain.actions.DeleteTableColumnState
 import org.orkg.contenttypes.domain.actions.DeleteTableRowCommand
 import org.orkg.contenttypes.domain.actions.DeleteTableRowState
+import org.orkg.contenttypes.domain.actions.ExtractionMethodValidator
 import org.orkg.contenttypes.domain.actions.LabelValidator
 import org.orkg.contenttypes.domain.actions.ObservatoryValidator
 import org.orkg.contenttypes.domain.actions.OrganizationValidator
@@ -162,6 +163,7 @@ class TableService(
             TempIdValidator { it.tempIds() },
             TableDimensionsValidator { it.rows },
             TableRowsValidator { it.rows },
+            ExtractionMethodValidator({ it.extractionMethod }, { it.table!!.extractionMethod }),
             ObservatoryValidator(observatoryRepository, { it.observatories }),
             OrganizationValidator(organizationRepository, { it.organizations }),
             TableThingsCommandUpdateValidator(thingRepository, classRepository),

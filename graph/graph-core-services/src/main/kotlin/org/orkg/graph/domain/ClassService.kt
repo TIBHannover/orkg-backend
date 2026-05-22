@@ -69,6 +69,9 @@ class ClassService(
         if (!`class`.modifiable) {
             throw ClassNotModifiable(command.id)
         }
+        if (command.extractionMethod != null && !`class`.extractionMethod.canBeChangedTo(command.extractionMethod!!)) {
+            throw InvalidExtractionMethodChange(`class`.extractionMethod, command.extractionMethod!!)
+        }
         command.uri?.also { newUri ->
             if (`class`.uri != null && command.uri != `class`.uri) {
                 throw CannotResetURI(command.id)
@@ -94,6 +97,9 @@ class ClassService(
         }
         if (`class`.uri != null && command.uri != `class`.uri) {
             throw CannotResetURI(command.id)
+        }
+        if (command.extractionMethod != null && !`class`.extractionMethod.canBeChangedTo(command.extractionMethod!!)) {
+            throw InvalidExtractionMethodChange(`class`.extractionMethod, command.extractionMethod!!)
         }
         command.uri?.also { newUri ->
             findByURI(newUri).ifPresent {

@@ -13,6 +13,7 @@ import org.orkg.contenttypes.domain.actions.Action
 import org.orkg.contenttypes.domain.actions.CreateComparisonCommand
 import org.orkg.contenttypes.domain.actions.CreateComparisonState
 import org.orkg.contenttypes.domain.actions.DescriptionValidator
+import org.orkg.contenttypes.domain.actions.ExtractionMethodValidator
 import org.orkg.contenttypes.domain.actions.LabelCollectionValidator
 import org.orkg.contenttypes.domain.actions.LabelValidator
 import org.orkg.contenttypes.domain.actions.ObservatoryValidator
@@ -184,6 +185,7 @@ class ComparisonService(
             LabelCollectionValidator("references") { it.references },
             ComparisonDataSourcesValidator { it.sources },
             ComparisonExistenceValidator(this, resourceRepository),
+            ExtractionMethodValidator({ it.extractionMethod }, { it.comparison!!.extractionMethod }),
             VisibilityValidator(contributorRepository, { it.contributorId }, { it.comparison!! }, { it.visibility }),
             ResourceValidator(resourceRepository, { it.sources?.map { it.id }?.toSet() }),
             VisualizationIdsValidator(resourceRepository) { it.visualizations },

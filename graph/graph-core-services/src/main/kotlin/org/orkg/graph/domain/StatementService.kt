@@ -138,6 +138,9 @@ class StatementService(
         if (statement.predicate.id == Predicates.hasListElement && statement.subject is Resource && Classes.list in (statement.subject as Resource).classes) {
             throw InvalidStatement.isListElementStatement()
         }
+        if (command.extractionMethod != null && !statement.extractionMethod.canBeChangedTo(command.extractionMethod!!)) {
+            throw InvalidExtractionMethodChange(statement.extractionMethod, command.extractionMethod!!)
+        }
         val updated = statement.apply(command, thingRepository, predicateService, { subject ->
             if (subject is Resource) {
                 if (Classes.rosettaStoneStatement in subject.classes) {

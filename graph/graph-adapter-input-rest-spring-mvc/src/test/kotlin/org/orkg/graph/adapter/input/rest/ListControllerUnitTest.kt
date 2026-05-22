@@ -14,6 +14,7 @@ import org.orkg.graph.adapter.input.rest.ListController.CreateListRequest
 import org.orkg.graph.adapter.input.rest.ListController.UpdateListRequest
 import org.orkg.graph.adapter.input.rest.testing.fixtures.configuration.GraphControllerUnitTestConfiguration
 import org.orkg.graph.adapter.input.rest.testing.fixtures.thingResponseFields
+import org.orkg.graph.domain.InvalidExtractionMethodChange
 import org.orkg.graph.domain.InvalidLabel
 import org.orkg.graph.domain.ListElementNotFound
 import org.orkg.graph.domain.ListInUse
@@ -243,7 +244,13 @@ internal class ListControllerUnitTest : MockMvcBaseTest("lists") {
                     fieldWithPath("elements[]").description("The new ids of the elements of the list. (optional)").optional(),
                     fieldWithPath("extraction_method").description("""The method used to extract the list. Can be one of $allowedExtractionMethodValues. (optional)""").optional(),
                 )
-                throws(ListNotFound::class, ListNotModifiable::class, InvalidLabel::class, ListElementNotFound::class)
+                throws(
+                    ListNotFound::class,
+                    ListNotModifiable::class,
+                    InvalidExtractionMethodChange::class,
+                    InvalidLabel::class,
+                    ListElementNotFound::class,
+                )
             }
 
         verify(exactly = 1) { listService.update(any()) }

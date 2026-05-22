@@ -5,7 +5,9 @@ import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
 import org.orkg.graph.adapter.input.rest.testing.fixtures.configuration.GraphControllerExceptionUnitTestConfiguration
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.InvalidDescription
+import org.orkg.graph.domain.InvalidExtractionMethodChange
 import org.orkg.graph.domain.InvalidLabel
 import org.orkg.graph.domain.MAX_LABEL_LENGTH
 import org.orkg.graph.domain.NeitherOwnerNorCurator
@@ -141,6 +143,25 @@ internal class CommonExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andDocument {
                 responseFields<ReservedClassId>(
                     fieldWithPath("class_id").description("The id of the class.").type<ThingId>(),
+                    *exceptionResponseFields(type).toTypedArray(),
+                )
+            }
+    }
+
+    @Test
+    fun invalidExtractionMethodChange() {
+        val type = "orkg:problem:invalid_extraction_method_change"
+        documentedGetRequestTo(InvalidExtractionMethodChange(ExtractionMethod.AI_GENERATED, ExtractionMethod.UNKNOWN))
+            .andExpectErrorStatus(FORBIDDEN)
+            .andExpectType(type)
+            .andExpectTitle("Forbidden")
+            .andExpectDetail("""Extraction method "AI_GENERATED" cannot be changed to "UNKNOWN".""")
+            .andExpect(jsonPath("$.source_extraction_method", `is`("AI_GENERATED")))
+            .andExpect(jsonPath("$.target_extraction_method", `is`("UNKNOWN")))
+            .andDocument {
+                responseFields<InvalidExtractionMethodChange>(
+                    fieldWithPath("source_extraction_method").description("The extraction method of the source object.").type<ExtractionMethod>(),
+                    fieldWithPath("target_extraction_method").description("The target extraction method.").type<ExtractionMethod>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }

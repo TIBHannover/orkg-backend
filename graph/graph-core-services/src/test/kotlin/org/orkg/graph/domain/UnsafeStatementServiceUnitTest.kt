@@ -328,6 +328,26 @@ internal class UnsafeStatementServiceUnitTest : MockkBaseTest {
     }
 
     @Test
+    fun `Given a statement update command, when updating the extraction method with an invalid transition, it updates the statement`() {
+        val statement = createStatement(extractionMethod = ExtractionMethod.AI_GENERATED)
+        val command = UpdateStatementUseCase.UpdateCommand(
+            statementId = statement.id,
+            contributorId = ContributorId(MockUserId.USER),
+            extractionMethod = ExtractionMethod.UNKNOWN,
+        )
+
+        every { statementRepository.findByStatementId(statement.id) } returns Optional.of(statement)
+        every { statementRepository.deleteByStatementId(command.statementId) } just runs
+        every { statementRepository.save(any()) } just runs
+
+        service.update(command)
+
+        verify(exactly = 1) { statementRepository.findByStatementId(statement.id) }
+        verify(exactly = 1) { statementRepository.deleteByStatementId(statement.id) }
+        verify(exactly = 1) { statementRepository.save(withArg { it.extractionMethod shouldBe ExtractionMethod.UNKNOWN }) }
+    }
+
+    @Test
     fun `Given a statement, when deleting, it deletes the statement from the repository`() {
         val id = StatementId("S123")
 

@@ -200,7 +200,7 @@ data class CreateRowRequest(
 data class UpdateRowRequest(
     @field:NullableNotBlank
     val label: String?,
-    val data: List<String?>,
+    val data: List<String?>?,
 ) {
     fun toUpdateRowCommand(): UpdateRowCommand =
         UpdateRowCommand(label, data)

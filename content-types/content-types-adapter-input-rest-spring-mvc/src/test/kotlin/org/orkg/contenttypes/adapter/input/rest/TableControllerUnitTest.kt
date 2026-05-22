@@ -51,12 +51,15 @@ import org.orkg.contenttypes.domain.TooManyTableRowValues
 import org.orkg.contenttypes.domain.testing.fixtures.createTable
 import org.orkg.contenttypes.input.TableUseCases
 import org.orkg.contenttypes.input.testing.fixtures.configuration.ContentTypeControllerUnitTestConfiguration
+import org.orkg.contenttypes.input.testing.fixtures.createRowRequestFields
 import org.orkg.contenttypes.input.testing.fixtures.mapOfCreateClassRequestPartRequestFields
 import org.orkg.contenttypes.input.testing.fixtures.mapOfCreateListRequestPartRequestFields
 import org.orkg.contenttypes.input.testing.fixtures.mapOfCreateLiteralRequestPartRequestFields
 import org.orkg.contenttypes.input.testing.fixtures.mapOfCreatePredicateRequestPartRequestFields
 import org.orkg.contenttypes.input.testing.fixtures.mapOfCreateResourceRequestPartRequestFields
+import org.orkg.contenttypes.input.testing.fixtures.tableColumnRequestFields
 import org.orkg.contenttypes.input.testing.fixtures.tableResponseFields
+import org.orkg.contenttypes.input.testing.fixtures.updateRowRequestFields
 import org.orkg.graph.domain.ExactSearchString
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.InvalidLabel
@@ -85,6 +88,7 @@ import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest
 import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.restdocs.headers.HeaderDocumentation.headerWithName
+import org.springframework.restdocs.payload.PayloadDocumentation.applyPathPrefix
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import org.springframework.test.context.ContextConfiguration
@@ -286,8 +290,7 @@ internal class TableControllerUnitTest : MockMvcBaseTest("tables") {
                     *mapOfCreateListRequestPartRequestFields().toTypedArray(),
                     *mapOfCreateClassRequestPartRequestFields().toTypedArray(),
                     fieldWithPath("rows[]").description("The ordered list of rows of the table. The first row always represents the header of the table and must only consist of string literals. Additionally, one data row is required. Every row must have the same length."),
-                    fieldWithPath("rows[].label").description("The label of the row. (optional)").optional(),
-                    fieldWithPath("rows[].data[]").description("The ordered list of values (thing ids, temporary ids or `null`) of the row."),
+                    *applyPathPrefix("rows[].", createRowRequestFields()).toTypedArray(),
                     fieldWithPath("organizations[]").description("The list of IDs of the organizations or conference series the table belongs to."),
                     fieldWithPath("observatories[]").description("The list of IDs of the observatories the table belongs to."),
                     fieldWithPath("extraction_method").description("""The method used to extract the table resource. Can be one of $allowedExtractionMethodValues."""),
@@ -362,8 +365,7 @@ internal class TableControllerUnitTest : MockMvcBaseTest("tables") {
                     *mapOfCreateListRequestPartRequestFields().toTypedArray(),
                     *mapOfCreateClassRequestPartRequestFields().toTypedArray(),
                     fieldWithPath("rows[]").description("The ordered list of rows of the table. The first row always represents the header of the table and must only consist of string literals. Additionally, one data row is required. Every row must have the same length. (optional)").optional(),
-                    fieldWithPath("rows[].label").description("The label of the row. (optional)").optional(),
-                    fieldWithPath("rows[].data[]").description("The ordered list of values (thing ids, temporary ids or `null`) of the row."),
+                    *applyPathPrefix("rows[].", createRowRequestFields()).toTypedArray(),
                     fieldWithPath("organizations[]").description("The list of IDs of the organizations or conference series the table belongs to. (optional)").optional(),
                     fieldWithPath("observatories[]").description("The list of IDs of the observatories the table belongs to. (optional)").optional(),
                     fieldWithPath("extraction_method").description("""The method used to extract the table resource. Can be one of $allowedExtractionMethodValues. (optional)""").optional(),
@@ -454,8 +456,7 @@ internal class TableControllerUnitTest : MockMvcBaseTest("tables") {
                     *mapOfCreateListRequestPartRequestFields().toTypedArray(),
                     *mapOfCreateClassRequestPartRequestFields().toTypedArray(),
                     fieldWithPath("row").description("The table row. It must have the same length as the table header"),
-                    fieldWithPath("row.label").description("The label of the row. (optional)").optional(),
-                    fieldWithPath("row.data[]").description("The ordered list of values (thing ids, temporary ids or `null`) of the row."),
+                    *applyPathPrefix("row.", createRowRequestFields()).toTypedArray(),
                 )
                 throws(
                     TableNotFound::class,
@@ -521,8 +522,7 @@ internal class TableControllerUnitTest : MockMvcBaseTest("tables") {
                     *mapOfCreateListRequestPartRequestFields().toTypedArray(),
                     *mapOfCreateClassRequestPartRequestFields().toTypedArray(),
                     fieldWithPath("row").description("The table row. It must have the same length as the table header"),
-                    fieldWithPath("row.label").description("The label of the row. (optional)").optional(),
-                    fieldWithPath("row.data[]").description("The ordered list of values (thing ids, temporary ids or `null`) of the row. (optional)").optional(),
+                    *applyPathPrefix("row.", updateRowRequestFields()).toTypedArray(),
                 )
                 throws(
                     TableNotFound::class,
@@ -647,14 +647,7 @@ internal class TableControllerUnitTest : MockMvcBaseTest("tables") {
                 responseHeaders(
                     headerWithName("Location").description("The uri path where the updated table can be fetched from."),
                 )
-                requestFields<TableColumnRequest>(
-                    *mapOfCreateResourceRequestPartRequestFields().toTypedArray(),
-                    *mapOfCreateLiteralRequestPartRequestFields().toTypedArray(),
-                    *mapOfCreatePredicateRequestPartRequestFields().toTypedArray(),
-                    *mapOfCreateListRequestPartRequestFields().toTypedArray(),
-                    *mapOfCreateClassRequestPartRequestFields().toTypedArray(),
-                    fieldWithPath("column[]").description("The ordered list of column values (thing ids, temporary ids or `null`). The first value always represents the header of the table and must be a string literal."),
-                )
+                requestFields<TableColumnRequest>(tableColumnRequestFields())
                 throws(
                     TableNotFound::class,
                     TableNotModifiable::class,
@@ -714,14 +707,7 @@ internal class TableControllerUnitTest : MockMvcBaseTest("tables") {
                 responseHeaders(
                     headerWithName("Location").description("The uri path where the updated table can be fetched from."),
                 )
-                requestFields<TableColumnRequest>(
-                    *mapOfCreateResourceRequestPartRequestFields().toTypedArray(),
-                    *mapOfCreateLiteralRequestPartRequestFields().toTypedArray(),
-                    *mapOfCreatePredicateRequestPartRequestFields().toTypedArray(),
-                    *mapOfCreateListRequestPartRequestFields().toTypedArray(),
-                    *mapOfCreateClassRequestPartRequestFields().toTypedArray(),
-                    fieldWithPath("column[]").description("The ordered list of column values (thing ids, temporary ids or `null`). The first value always represents the header of the table and must be a string literal."),
-                )
+                requestFields<TableColumnRequest>(tableColumnRequestFields())
                 throws(
                     TableNotFound::class,
                     TableNotModifiable::class,

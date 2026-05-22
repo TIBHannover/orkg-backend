@@ -27,6 +27,7 @@ import org.orkg.graph.testing.asciidoc.allowedExtractionMethodValues
 import org.orkg.graph.testing.asciidoc.allowedVisibilityValues
 import org.orkg.testing.spring.restdocs.arrayItemsType
 import org.orkg.testing.spring.restdocs.constraints
+import org.orkg.testing.spring.restdocs.nullableItems
 import org.orkg.testing.spring.restdocs.polymorphicResponseFields
 import org.orkg.testing.spring.restdocs.references
 import org.orkg.testing.spring.restdocs.timestampFieldWithPath
@@ -432,7 +433,7 @@ fun tableResponseFields() = listOf(
     fieldWithPath("label").description("The label of the table."),
     fieldWithPath("rows[]").description("The ordered list of rows of the table. The first row always represents the header of the table."),
     fieldWithPath("rows[].label").description("The label of the row. (optional)").optional(),
-    subsectionWithPath("rows[].data[]").description("The ordered list of values (thing representations) of the row."),
+    subsectionWithPath("rows[].data[]").description("The ordered list of values (thing representations or `null`) of the row.").nullableItems(),
     fieldWithPath("organizations[]").description("The list of IDs of the organizations or conference series the table belongs to."),
     fieldWithPath("observatories[]").description("The list of IDs of the observatories the table belongs to."),
     fieldWithPath("extraction_method").description("""The method used to extract the table resource. Can be one of $allowedExtractionMethodValues."""),
@@ -442,6 +443,25 @@ fun tableResponseFields() = listOf(
     fieldWithPath("visibility").description("""Visibility of the table. Can be one of $allowedVisibilityValues."""),
     fieldWithPath("modifiable").description("Whether the table can be modified."),
     fieldWithPath("unlisted_by").type("String").description("The UUID of the user or service who unlisted this table.").optional(),
+)
+
+fun createRowRequestFields() = listOf(
+    fieldWithPath("label").description("The label of the row. (optional)").optional(),
+    fieldWithPath("data[]").description("The ordered list of values (thing ids, temporary ids or `null`) of the row.").nullableItems(),
+)
+
+fun updateRowRequestFields() = listOf(
+    fieldWithPath("label").description("The label of the row. (optional)").optional(),
+    fieldWithPath("data[]").description("The ordered list of values (thing ids, temporary ids or `null`) of the row. (optional)").optional().nullableItems(),
+)
+
+fun tableColumnRequestFields() = listOf(
+    *mapOfCreateResourceRequestPartRequestFields().toTypedArray(),
+    *mapOfCreateLiteralRequestPartRequestFields().toTypedArray(),
+    *mapOfCreatePredicateRequestPartRequestFields().toTypedArray(),
+    *mapOfCreateListRequestPartRequestFields().toTypedArray(),
+    *mapOfCreateClassRequestPartRequestFields().toTypedArray(),
+    fieldWithPath("column[]").description("The ordered list of column values (thing ids, temporary ids or `null`). The first value always represents the header of the table and must be a string literal.").nullableItems(),
 )
 
 fun templateBasedResourceSnapshotResponseFields() = listOf(
@@ -679,14 +699,15 @@ fun comparisonTableResponseFields() = listOf(
     fieldWithPath("selected_paths[]").description("The selected table paths of the comparison table."),
     *applyPathPrefix("selected_paths[].", labeledComparisonPathResponseFields()).toTypedArray(),
     subsectionWithPath("titles[]").description("The titles (thing reference representations) of each column. The list is guaranteed to have same count of elements as sources are defined for the comparison."),
-    subsectionWithPath("subtitles[]").description("The subtitles (thing reference representations) of each column. Elements might be null. The list is guaranteed to have same count of elements as sources are defined for the comparison."),
+    subsectionWithPath("subtitles[]").description("The subtitles (thing reference representations) of each column. Elements might be null. The list is guaranteed to have same count of elements as sources are defined for the comparison.").nullableItems(),
     fieldWithPath("values").description("A key-value map of predicate/rosetta stone template ids to comparison table row representations."),
     fieldWithPath("values.*").description("The predicate or rosetta stone template id."),
+    fieldWithPath("values.*[]").description("The list of comparison table row representations.").nullableItems(),
     *applyPathPrefix("values.*[].", comparisonTableRowResponseFields()).toTypedArray(),
 )
 
 fun comparisonTableRowResponseFields() = listOf(
-    subsectionWithPath("values[]").description("The values (thing reference representations) of the row. Elements might be null. The list is guaranteed to have same count of elements as sources are defined for the comparison."),
+    subsectionWithPath("values[]").description("The values (thing reference representations) of the row. Elements might be null. The list is guaranteed to have same count of elements as sources are defined for the comparison.").nullableItems(),
     fieldWithPath("children").description("A key-value map of predicate/rosetta stone template ids to comparison table row representations."),
     fieldWithPath("children.*").description("The predicate or rosetta stone template id."),
     subsectionWithPath("children.*[]").description("A list of nested comparison table row representations."),

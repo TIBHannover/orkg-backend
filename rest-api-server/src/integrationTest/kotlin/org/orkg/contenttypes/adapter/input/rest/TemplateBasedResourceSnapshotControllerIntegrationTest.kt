@@ -85,9 +85,6 @@ internal class TemplateBasedResourceSnapshotControllerIntegrationTest : MockMvcB
     @BeforeEach
     fun setup() {
         val tempPageable = PageRequest.of(0, 10)
-
-        cleanup()
-
         assertThat(predicateService.findAll(tempPageable)).hasSize(0)
         assertThat(resourceService.findAll(tempPageable)).hasSize(0)
         assertThat(classService.findAll(tempPageable)).hasSize(0)
@@ -200,6 +197,9 @@ internal class TemplateBasedResourceSnapshotControllerIntegrationTest : MockMvcB
 
     @AfterEach
     fun cleanup() {
+        templateBasedResourceSnapshotUseCases.deleteAll()
+        statementService.deleteAll()
+        literalService.deleteAll()
         predicateService.deleteAll()
         resourceService.deleteAll()
         classService.deleteAll()

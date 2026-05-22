@@ -39,10 +39,4 @@ internal class SpringDataNeo4jResearchFieldHierarchyAdapterContractTest(
                 springDataNeo4jPredicateAdapter,
             ),
         )
-
-        afterSpec {
-            springDataNeo4jStatementAdapter.deleteAll()
-            springDataNeo4jResourceAdapter.deleteAll()
-            springDataNeo4jPredicateAdapter.deleteAll()
-        }
     })

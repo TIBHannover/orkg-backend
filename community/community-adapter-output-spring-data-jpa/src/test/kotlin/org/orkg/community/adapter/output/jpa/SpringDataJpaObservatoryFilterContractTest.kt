@@ -51,10 +51,4 @@ internal class SpringDataJpaObservatoryFilterContractTest : ObservatoryFilterRep
 
     override val eventBus: EventBus
         get() = reallySimpleEventBus
-
-    override fun cleanUpAfterEach() {
-        adapter.deleteAll()
-        observatoryAdapter.deleteAll()
-        organizationAdapter.deleteAll()
-    }
 }

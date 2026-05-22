@@ -25,6 +25,11 @@ private val fabricator = Fabrikate(
 interface PaperSnapshotRepositoryContracts {
     val repository: PaperSnapshotRepository
 
+    @AfterEach
+    fun cleanup() {
+        repository.deleteAll()
+    }
+
     @Test
     fun `Saving a paper snapshot, it saves and loads all properties correctly`() {
         val expected: PaperSnapshotV1 = fabricator.random()
@@ -70,12 +75,5 @@ interface PaperSnapshotRepositoryContracts {
         }
 
         repository.count() shouldBe 3
-    }
-
-    fun cleanUpAfterEach()
-
-    @AfterEach
-    fun cleanUp() {
-        cleanUpAfterEach()
     }
 }

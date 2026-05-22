@@ -30,8 +30,4 @@ internal class SpringDataJpaContributorContractTest : ContributorRepositoryContr
 
     override val repository: ContributorRepository
         get() = adapter
-
-    override fun cleanUpAfterEach() {
-        adapter.deleteAll()
-    }
 }

@@ -43,7 +43,7 @@ fun <
     literalRepository: L,
     resourceRepository: R,
 ) = describeSpec {
-    beforeTest {
+    afterTest {
         statementRepository.deleteAll()
         classRepository.deleteAll()
         literalRepository.deleteAll()

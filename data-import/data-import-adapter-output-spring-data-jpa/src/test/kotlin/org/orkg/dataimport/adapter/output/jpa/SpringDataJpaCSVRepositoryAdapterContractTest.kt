@@ -28,8 +28,4 @@ internal class SpringDataJpaCSVRepositoryAdapterContractTest : CSVRepositoryCont
 
     override val repository: CSVRepository
         get() = adapter
-
-    override fun cleanUpAfterEach() {
-        adapter.deleteAll()
-    }
 }

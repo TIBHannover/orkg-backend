@@ -28,8 +28,11 @@ class SpringDataJpaImageAdapter(
         return ImageId(uuid)
     }
 
+    override fun deleteAll() =
+        repository.deleteAll()
+
     private fun Image.toImageEntity(): ImageEntity =
-        repository.findById(id.value).orElse(ImageEntity()).apply {
+        repository.findById(id.value).orElseGet(::ImageEntity).apply {
             id = this@toImageEntity.id.value
             data = this@toImageEntity.data.bytes
             mimeType = this@toImageEntity.mimeType.toString()

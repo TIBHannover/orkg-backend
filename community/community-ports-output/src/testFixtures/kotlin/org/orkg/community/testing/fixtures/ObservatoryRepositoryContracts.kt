@@ -19,6 +19,12 @@ interface ObservatoryRepositoryContracts {
     val repository: ObservatoryRepository
     val organizationRepository: OrganizationRepository
 
+    @AfterEach
+    fun cleanup() {
+        repository.deleteAll()
+        organizationRepository.deleteAll()
+    }
+
     @Test
     fun `successfully restores all properties after saving`() {
         val expected = createObservatory(
@@ -221,12 +227,5 @@ interface ObservatoryRepositoryContracts {
             val organization = createOrganization(id = it, displayId = it.value.toString())
             organizationRepository.save(organization)
         }
-    }
-
-    fun cleanUpAfterEach()
-
-    @AfterEach
-    fun cleanUp() {
-        cleanUpAfterEach()
     }
 }

@@ -3,6 +3,7 @@ package org.orkg.graph.adapter.input.rest
 import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.Matchers.endsWith
 import org.hamcrest.Matchers.hasSize
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.createLiteral
@@ -23,9 +24,12 @@ internal class LiteralControllerIntegrationTest : MockMvcBaseTest("literals") {
 
     @BeforeEach
     fun setup() {
-        service.deleteAll()
-
         assertThat(service.findAll(PageRequest.of(0, 10))).hasSize(0)
+    }
+
+    @AfterEach
+    fun cleanup() {
+        service.deleteAll()
     }
 
     @Test

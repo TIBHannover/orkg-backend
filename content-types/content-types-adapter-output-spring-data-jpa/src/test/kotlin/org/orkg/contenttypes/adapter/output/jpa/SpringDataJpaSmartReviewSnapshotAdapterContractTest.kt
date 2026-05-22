@@ -34,8 +34,4 @@ internal class SpringDataJpaSmartReviewSnapshotAdapterContractTest : SmartReview
 
     override val repository: SmartReviewSnapshotRepository
         get() = adapter
-
-    override fun cleanUpAfterEach() {
-        repository.deleteAll()
-    }
 }

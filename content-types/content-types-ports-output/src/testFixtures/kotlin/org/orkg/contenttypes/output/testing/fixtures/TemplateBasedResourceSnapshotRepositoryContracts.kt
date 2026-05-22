@@ -29,6 +29,11 @@ private val fabricator = Fabrikate(
 interface TemplateBasedResourceSnapshotRepositoryContracts {
     val repository: TemplateBasedResourceSnapshotRepository
 
+    @AfterEach
+    fun cleanup() {
+        repository.deleteAll()
+    }
+
     @Test
     fun `Saving a template based resource snapshot, saves and loads all properties correctly`() {
         val expected: TemplateBasedResourceSnapshotV1 = fabricator.random()
@@ -125,12 +130,5 @@ interface TemplateBasedResourceSnapshotRepositoryContracts {
         }
 
         repository.count() shouldBe 3
-    }
-
-    fun cleanUpAfterEach()
-
-    @AfterEach
-    fun cleanUp() {
-        cleanUpAfterEach()
     }
 }

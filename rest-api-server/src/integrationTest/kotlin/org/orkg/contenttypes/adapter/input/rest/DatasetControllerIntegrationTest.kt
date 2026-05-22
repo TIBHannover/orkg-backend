@@ -3,6 +3,7 @@ package org.orkg.contenttypes.adapter.input.rest
 import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.hasSize
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.common.IRI
@@ -51,11 +52,6 @@ internal class DatasetControllerIntegrationTest : MockMvcBaseTest("datasets") {
 
     @BeforeEach
     fun setup() {
-        resourceService.deleteAll()
-        predicateService.deleteAll()
-        literalService.deleteAll()
-        classService.deleteAll()
-
         assertThat(resourceService.findAll(PageRequests.SINGLE)).hasSize(0)
         assertThat(predicateService.findAll(PageRequests.SINGLE)).hasSize(0)
         assertThat(statementService.findAll(PageRequests.SINGLE)).hasSize(0)
@@ -100,6 +96,15 @@ internal class DatasetControllerIntegrationTest : MockMvcBaseTest("datasets") {
         classService.createClass("Dataset", ThingId(labelsAndClasses.datasetClass))
         classService.createClass("Benchmark", ThingId(labelsAndClasses.benchmarkClass))
         classService.createClass("Model", ThingId(labelsAndClasses.modelClass))
+    }
+
+    @AfterEach
+    fun cleanup() {
+        statementService.deleteAll()
+        resourceService.deleteAll()
+        predicateService.deleteAll()
+        literalService.deleteAll()
+        classService.deleteAll()
     }
 
     @Test

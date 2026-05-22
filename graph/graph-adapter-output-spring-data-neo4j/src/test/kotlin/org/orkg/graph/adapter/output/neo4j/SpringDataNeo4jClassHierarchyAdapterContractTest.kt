@@ -41,10 +41,4 @@ internal class SpringDataNeo4jClassHierarchyAdapterContractTest(
                 springDataNeo4jClassHierarchyAdapter,
             ),
         )
-
-        afterSpec {
-            springDataNeo4jClassRelationAdapter.deleteAll()
-            springDataNeo4jResourceAdapter.deleteAll()
-            springDataNeo4jClassAdapter.deleteAll()
-        }
     })

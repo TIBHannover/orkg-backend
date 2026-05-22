@@ -24,7 +24,7 @@ import java.util.UUID
 fun <R : LiteralRepository> literalRepositoryContract(
     repository: R,
 ) = describeSpec {
-    beforeTest {
+    afterTest {
         repository.deleteAll()
     }
 

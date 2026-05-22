@@ -28,8 +28,4 @@ internal class SpringDataJpaPaperCSVRecordImportResultRepositoryAdapterContractT
 
     override val repository: PaperCSVRecordImportResultRepository
         get() = adapter
-
-    override fun cleanUpAfterEach() {
-        adapter.deleteAll()
-    }
 }

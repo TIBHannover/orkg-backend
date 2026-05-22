@@ -55,9 +55,6 @@ internal class ContributionControllerIntegrationTest : MockMvcBaseTest("contribu
     @BeforeEach
     fun setup() {
         val tempPageable = PageRequest.of(0, 10)
-
-        cleanup()
-
         assertThat(predicateService.findAll(tempPageable)).hasSize(0)
         assertThat(resourceService.findAll(tempPageable)).hasSize(0)
         assertThat(classService.findAll(tempPageable)).hasSize(0)

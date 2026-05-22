@@ -17,6 +17,12 @@ interface ContributorIdentifierRepositoryContracts {
     val repository: ContributorIdentifierRepository
     val contributorRepository: ContributorRepository
 
+    @AfterEach
+    fun cleanup() {
+        repository.deleteAll()
+        contributorRepository.deleteAll()
+    }
+
     @Test
     fun `Saving a contributor identifier, saves and loads all properties correctly`() {
         val expected = createContributorIdentifier()
@@ -91,11 +97,5 @@ interface ContributorIdentifierRepositoryContracts {
         repository.count() shouldBe 3
         repository.deleteAll()
         repository.count() shouldBe 0
-    }
-
-    @AfterEach
-    fun cleanUp() {
-        repository.deleteAll()
-        contributorRepository.deleteAll()
     }
 }

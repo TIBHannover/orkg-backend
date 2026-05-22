@@ -25,6 +25,11 @@ private val fabricator = Fabrikate(
 interface LiteratureListSnapshotRepositoryContracts {
     val repository: LiteratureListSnapshotRepository
 
+    @AfterEach
+    fun cleanup() {
+        repository.deleteAll()
+    }
+
     @Test
     fun `Saving a literature list snapshot, it saves and loads all properties correctly`() {
         val expected: LiteratureListSnapshotV1 = fabricator.random()
@@ -72,12 +77,5 @@ interface LiteratureListSnapshotRepositoryContracts {
         }
 
         repository.count() shouldBe 3
-    }
-
-    fun cleanUpAfterEach()
-
-    @AfterEach
-    fun cleanUp() {
-        cleanUpAfterEach()
     }
 }

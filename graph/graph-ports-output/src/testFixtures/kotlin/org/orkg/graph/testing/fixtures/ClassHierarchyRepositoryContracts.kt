@@ -29,14 +29,6 @@ fun <
     resourceRepository: S,
 ) = describeSpec {
     beforeTest {
-        relationRepository.deleteAll()
-
-        resourceRepository.deleteAll()
-        resourceRepository.findAll(PageRequest.of(0, 5)).totalElements shouldBe 0
-
-        classRepository.deleteAll()
-        classRepository.findAll(PageRequest.of(0, 5)).totalElements shouldBe 0
-
         repeat(6) {
             classRepository.save(
                 createClass(
@@ -46,6 +38,12 @@ fun <
                 ),
             )
         }
+    }
+
+    afterTest {
+        relationRepository.deleteAll()
+        resourceRepository.deleteAll()
+        classRepository.deleteAll()
     }
 
     fun createRelation(parentId: ThingId, childId: ThingId) =

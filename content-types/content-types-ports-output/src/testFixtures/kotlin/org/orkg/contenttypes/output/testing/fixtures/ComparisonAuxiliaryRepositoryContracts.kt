@@ -48,7 +48,7 @@ fun <
     rosettaStoneStatementRepository: U,
     comparisonAuxiliaryRepository: T,
 ) = describeSpec {
-    beforeTest {
+    afterTest {
         statementRepository.deleteAll()
         classRepository.deleteAll()
         literalRepository.deleteAll()

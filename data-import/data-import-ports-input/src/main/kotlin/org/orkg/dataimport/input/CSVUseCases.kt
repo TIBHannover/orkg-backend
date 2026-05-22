@@ -67,4 +67,6 @@ interface ImportCSVUseCase {
 
 interface DeleteCSVUseCase {
     fun deleteById(id: CSVID, contributorId: ContributorId)
+
+    fun deleteAll()
 }

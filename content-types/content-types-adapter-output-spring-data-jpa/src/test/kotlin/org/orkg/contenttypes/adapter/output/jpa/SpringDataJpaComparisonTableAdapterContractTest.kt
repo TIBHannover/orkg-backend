@@ -34,8 +34,4 @@ internal class SpringDataJpaComparisonTableAdapterContractTest : ComparisonTable
 
     override val repository: ComparisonTableRepository
         get() = adapter
-
-    override fun cleanUpAfterEach() {
-        repository.deleteAll()
-    }
 }

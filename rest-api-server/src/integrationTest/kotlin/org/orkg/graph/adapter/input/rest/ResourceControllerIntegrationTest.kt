@@ -2,6 +2,7 @@ package org.orkg.graph.adapter.input.rest
 
 import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.Matchers.hasSize
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
@@ -61,18 +62,20 @@ internal class ResourceControllerIntegrationTest : MockMvcBaseTest("resources") 
     @BeforeEach
     fun setup() {
         val tempPageable = PageRequest.of(0, 10)
-
-        service.deleteAll()
-        classService.deleteAll()
-        predicateService.deleteAll()
-        statementService.deleteAll()
-        literalService.deleteAll()
-
         assertThat(service.findAll(tempPageable)).hasSize(0)
         assertThat(classService.findAll(tempPageable)).hasSize(0)
         assertThat(predicateService.findAll(tempPageable)).hasSize(0)
         assertThat(statementService.findAll(tempPageable)).hasSize(0)
         assertThat(literalService.findAll(tempPageable)).hasSize(0)
+    }
+
+    @AfterEach
+    fun cleanup() {
+        statementService.deleteAll()
+        service.deleteAll()
+        classService.deleteAll()
+        predicateService.deleteAll()
+        literalService.deleteAll()
     }
 
     @Test

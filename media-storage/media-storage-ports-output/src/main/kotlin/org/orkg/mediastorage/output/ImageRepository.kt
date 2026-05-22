@@ -10,4 +10,6 @@ interface ImageRepository {
     fun findById(id: ImageId): Optional<Image>
 
     fun nextIdentity(): ImageId
+
+    fun deleteAll()
 }

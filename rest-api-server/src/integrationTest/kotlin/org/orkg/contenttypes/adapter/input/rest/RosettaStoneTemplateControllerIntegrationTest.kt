@@ -42,6 +42,7 @@ import org.orkg.graph.domain.Visibility
 import org.orkg.graph.input.ClassUseCases
 import org.orkg.graph.input.PredicateUseCases
 import org.orkg.graph.input.ResourceUseCases
+import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UnsafeClassUseCases
 import org.orkg.testing.MockUserId
 import org.orkg.testing.andExpectRosettaStoneTemplate
@@ -76,14 +77,14 @@ internal class RosettaStoneTemplateControllerIntegrationTest : MockMvcBaseTest("
     private lateinit var observatoryService: ObservatoryUseCases
 
     @Autowired
+    private lateinit var statementService: StatementUseCases
+
+    @Autowired
     private lateinit var rosettaStoneTemplateService: RosettaStoneTemplateUseCases
 
     @BeforeEach
     fun setup() {
         val tempPageable = PageRequest.of(0, 10)
-
-        cleanup()
-
         assertThat(predicateService.findAll(tempPageable)).hasSize(0)
         assertThat(resourceService.findAll(tempPageable)).hasSize(0)
         assertThat(classService.findAll(tempPageable)).hasSize(0)
@@ -176,6 +177,7 @@ internal class RosettaStoneTemplateControllerIntegrationTest : MockMvcBaseTest("
 
     @AfterEach
     fun cleanup() {
+        statementService.deleteAll()
         predicateService.deleteAll()
         resourceService.deleteAll()
         classService.deleteAll()

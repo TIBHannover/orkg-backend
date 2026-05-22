@@ -1,6 +1,7 @@
 package org.orkg.graph.adapter.input.rest
 
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.common.IRI
@@ -22,10 +23,12 @@ internal class ClassControllerIntegrationTest : MockMvcBaseTest("classes") {
     @BeforeEach
     fun setup() {
         val tempPageable = PageRequest.of(0, 10)
-
-        service.deleteAll()
-
         assertThat(service.findAll(tempPageable)).hasSize(0)
+    }
+
+    @AfterEach
+    fun cleanup() {
+        service.deleteAll()
     }
 
     @Test

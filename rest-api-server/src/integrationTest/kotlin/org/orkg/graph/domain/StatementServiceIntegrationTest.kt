@@ -1,6 +1,7 @@
 package org.orkg.graph.domain
 
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -27,14 +28,16 @@ internal class StatementServiceIntegrationTest {
     @BeforeEach
     fun setup() {
         val tempPageable = PageRequest.of(0, 10)
-
-        resourceService.deleteAll()
-        predicateService.deleteAll()
-        service.deleteAll()
-
         assertThat(resourceService.findAll(tempPageable)).hasSize(0)
         assertThat(predicateService.findAll(tempPageable)).hasSize(0)
         assertThat(service.findAll(tempPageable)).hasSize(0)
+    }
+
+    @AfterEach
+    fun cleanup() {
+        service.deleteAll()
+        resourceService.deleteAll()
+        predicateService.deleteAll()
     }
 
     @Test

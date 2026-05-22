@@ -5,8 +5,4 @@ import org.orkg.dataimport.output.testing.fixtures.TypedCSVRecordRepositoryContr
 
 internal class InMemoryTypedCSVRecordRepositoryAdapterContractTest : TypedCSVRecordRepositoryContracts {
     override val repository: TypedCSVRecordRepository = InMemoryTypedCSVRecordRepositoryAdapter()
-
-    override fun cleanUpAfterEach() {
-        repository.deleteAll()
-    }
 }

@@ -1,6 +1,7 @@
 package org.orkg.graph.domain
 
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -26,11 +27,14 @@ internal class ResourceServiceIntegrationTest {
 
     @BeforeEach
     fun setup() {
+        assertThat(service.findAll(PageRequest.of(0, 10))).hasSize(0)
+        assertThat(service.findAll(PageRequest.of(0, 10))).hasSize(0)
+    }
+
+    @AfterEach
+    fun cleanup() {
         service.deleteAll()
         classService.deleteAll()
-
-        assertThat(service.findAll(PageRequest.of(0, 10))).hasSize(0)
-        assertThat(service.findAll(PageRequest.of(0, 10))).hasSize(0)
     }
 
     @Test

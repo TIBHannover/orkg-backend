@@ -57,7 +57,7 @@ fun <
     resourceRepository: R,
     predicateRepository: P,
 ) = describeSpec {
-    beforeTest {
+    afterTest {
         repository.deleteAll()
         classRepository.deleteAll()
         literalRepository.deleteAll()

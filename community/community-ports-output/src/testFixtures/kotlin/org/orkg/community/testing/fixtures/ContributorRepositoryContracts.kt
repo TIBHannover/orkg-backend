@@ -14,6 +14,11 @@ import org.springframework.data.domain.PageRequest
 interface ContributorRepositoryContracts {
     val repository: ContributorRepository
 
+    @AfterEach
+    fun cleanup() {
+        repository.deleteAll()
+    }
+
     @Test
     fun `saving a contributor, saves and loads all properties correctly`() {
         val expected = createContributor()
@@ -157,12 +162,5 @@ interface ContributorRepositoryContracts {
         repository.count() shouldBe 3
         repository.deleteAll()
         repository.count() shouldBe 0
-    }
-
-    fun cleanUpAfterEach()
-
-    @AfterEach
-    fun cleanUp() {
-        cleanUpAfterEach()
     }
 }

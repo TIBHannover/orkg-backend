@@ -33,15 +33,6 @@ fun <
     predicateRepository: P,
 ) = describeSpec {
     beforeTest {
-        statementRepository.deleteAll()
-        statementRepository.count() shouldBe 0
-
-        resourceRepository.deleteAll()
-        resourceRepository.findAll(PageRequest.of(0, 5)).totalElements shouldBe 0
-
-        predicateRepository.deleteAll()
-        predicateRepository.findAll(PageRequest.of(0, 5)).totalElements shouldBe 0
-
         repeat(6) {
             resourceRepository.save(
                 createResource(
@@ -53,6 +44,12 @@ fun <
         }
 
         predicateRepository.save(createPredicate(id = Predicates.hasSubfield))
+    }
+
+    afterTest {
+        statementRepository.deleteAll()
+        resourceRepository.deleteAll()
+        predicateRepository.deleteAll()
     }
 
     fun createRelation(parentId: ThingId, childId: ThingId) =

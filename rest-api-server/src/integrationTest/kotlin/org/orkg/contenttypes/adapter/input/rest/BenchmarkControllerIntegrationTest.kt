@@ -4,6 +4,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.Matchers.containsInAnyOrder
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.hasSize
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.common.PageRequests
@@ -50,11 +51,6 @@ internal class BenchmarkControllerIntegrationTest : MockMvcBaseTest("benchmarks"
 
     @BeforeEach
     fun setup() {
-        resourceService.deleteAll()
-        predicateService.deleteAll()
-        literalService.deleteAll()
-        classService.deleteAll()
-
         assertThat(resourceService.findAll(PageRequests.SINGLE)).hasSize(0)
         assertThat(predicateService.findAll(PageRequests.SINGLE)).hasSize(0)
         assertThat(statementService.findAll(PageRequests.SINGLE)).hasSize(0)
@@ -79,6 +75,15 @@ internal class BenchmarkControllerIntegrationTest : MockMvcBaseTest("benchmarks"
 
         classService.createClass("Dataset", ThingId(labelsAndClasses.datasetClass))
         classService.createClass("Benchmark", ThingId(labelsAndClasses.benchmarkClass))
+    }
+
+    @AfterEach
+    fun cleanup() {
+        statementService.deleteAll()
+        resourceService.deleteAll()
+        predicateService.deleteAll()
+        literalService.deleteAll()
+        classService.deleteAll()
     }
 
     @Test

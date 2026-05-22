@@ -27,6 +27,11 @@ private val fabricator = Fabrikate(
 interface PaperCSVRecordImportResultRepositoryContracts {
     val repository: PaperCSVRecordImportResultRepository
 
+    @AfterEach
+    fun cleanup() {
+        repository.deleteAll()
+    }
+
     @Test
     fun `Saving a paper csv record import result, saves and loads all properties correctly`() {
         val expected: PaperCSVRecordImportResult = fabricator.random()
@@ -110,12 +115,5 @@ interface PaperCSVRecordImportResultRepositoryContracts {
         }
 
         repository.count() shouldBe 3
-    }
-
-    fun cleanUpAfterEach()
-
-    @AfterEach
-    fun cleanUp() {
-        cleanUpAfterEach()
     }
 }

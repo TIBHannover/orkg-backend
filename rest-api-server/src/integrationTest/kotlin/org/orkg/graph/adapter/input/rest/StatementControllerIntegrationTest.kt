@@ -37,8 +37,6 @@ internal class StatementControllerIntegrationTest : MockMvcBaseTest("statements"
 
     @BeforeEach
     fun setup() {
-        cleanup()
-
         assertThat(statementService.findAll(PageRequests.SINGLE)).hasSize(0)
         assertThat(resourceService.findAll(PageRequests.SINGLE)).hasSize(0)
         assertThat(predicateService.findAll(PageRequests.SINGLE)).hasSize(0)

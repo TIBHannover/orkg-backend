@@ -23,10 +23,9 @@ fun <
     classRepository: C,
     hierarchyRepository: H,
 ) = describeSpec {
-    beforeTest {
+    afterTest {
         classRepository.deleteAll()
         repository.deleteAll()
-        classRepository.findAll(PageRequest.of(0, 10)).totalElements shouldBe 0
     }
 
     describe("saving a class-subclass relation") {

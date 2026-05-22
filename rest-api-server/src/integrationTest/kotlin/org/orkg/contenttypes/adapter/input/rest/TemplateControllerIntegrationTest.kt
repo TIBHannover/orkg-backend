@@ -42,8 +42,10 @@ import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Visibility
 import org.orkg.graph.input.ClassUseCases
+import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.PredicateUseCases
 import org.orkg.graph.input.ResourceUseCases
+import org.orkg.graph.input.StatementUseCases
 import org.orkg.testing.MockUserId
 import org.orkg.testing.andExpectTemplate
 import org.orkg.testing.annotations.IntegrationTest
@@ -68,6 +70,12 @@ internal class TemplateControllerIntegrationTest : MockMvcBaseTest("templates") 
     private lateinit var classService: ClassUseCases
 
     @Autowired
+    private lateinit var statementService: StatementUseCases
+
+    @Autowired
+    private lateinit var literalService: LiteralUseCases
+
+    @Autowired
     private lateinit var organizationService: OrganizationUseCases
 
     @Autowired
@@ -79,9 +87,6 @@ internal class TemplateControllerIntegrationTest : MockMvcBaseTest("templates") 
     @BeforeEach
     fun setup() {
         val tempPageable = PageRequest.of(0, 10)
-
-        cleanup()
-
         assertThat(predicateService.findAll(tempPageable)).hasSize(0)
         assertThat(resourceService.findAll(tempPageable)).hasSize(0)
         assertThat(classService.findAll(tempPageable)).hasSize(0)
@@ -179,6 +184,8 @@ internal class TemplateControllerIntegrationTest : MockMvcBaseTest("templates") 
 
     @AfterEach
     fun cleanup() {
+        statementService.deleteAll()
+        literalService.deleteAll()
         predicateService.deleteAll()
         resourceService.deleteAll()
         classService.deleteAll()

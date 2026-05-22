@@ -72,6 +72,7 @@ internal class OrganizationControllerIntegrationTest : MockMvcBaseTest("organiza
         contributorService.deleteAll()
         resourceService.deleteAll()
         classService.deleteAll()
+        imageService.deleteAll()
     }
 
     @Test

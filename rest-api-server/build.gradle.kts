@@ -69,6 +69,7 @@ testing {
                 runtimeOnly(project(":keycloak"))
                 implementation("org.springframework:spring-core")
                 implementation(project(":community:community-adapter-input-representations"))
+                implementation(project(":data-import:data-import-ports-input"))
                 implementation(project(":media-storage:media-storage-ports-input"))
             }
             targets {

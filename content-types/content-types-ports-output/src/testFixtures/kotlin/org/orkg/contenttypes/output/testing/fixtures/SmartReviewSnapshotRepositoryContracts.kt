@@ -25,6 +25,11 @@ private val fabricator = Fabrikate(
 interface SmartReviewSnapshotRepositoryContracts {
     val repository: SmartReviewSnapshotRepository
 
+    @AfterEach
+    fun cleanup() {
+        repository.deleteAll()
+    }
+
     @Test
     fun `Saving a smart review snapshot, it saves and loads all properties correctly`() {
         val expected: SmartReviewSnapshotV1 = fabricator.random()
@@ -72,12 +77,5 @@ interface SmartReviewSnapshotRepositoryContracts {
         }
 
         repository.count() shouldBe 3
-    }
-
-    fun cleanUpAfterEach()
-
-    @AfterEach
-    fun cleanUp() {
-        cleanUpAfterEach()
     }
 }

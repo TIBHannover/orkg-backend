@@ -37,9 +37,4 @@ internal class SpringDataJpaObservatoryContractTest : ObservatoryRepositoryContr
 
     override val organizationRepository: OrganizationRepository
         get() = organizationAdapter
-
-    override fun cleanUpAfterEach() {
-        repository.deleteAll()
-        organizationAdapter.deleteAll()
-    }
 }

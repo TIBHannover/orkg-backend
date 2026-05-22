@@ -28,7 +28,7 @@ fun <
 > classRepositoryContract(
     repository: C,
 ) = describeSpec {
-    beforeTest {
+    afterTest {
         repository.deleteAll()
     }
 

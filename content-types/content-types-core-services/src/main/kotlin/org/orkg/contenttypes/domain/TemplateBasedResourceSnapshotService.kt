@@ -76,4 +76,7 @@ class TemplateBasedResourceSnapshotService(
         templateBasedResourceSnapshotRepository.save(templateSnapshot)
         return id
     }
+
+    override fun deleteAll() =
+        templateBasedResourceSnapshotRepository.deleteAll()
 }

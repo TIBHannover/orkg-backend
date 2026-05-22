@@ -34,8 +34,4 @@ internal class SpringDataJpaPaperSnapshotAdapterContractTest : PaperSnapshotRepo
 
     override val repository: PaperSnapshotRepository
         get() = adapter
-
-    override fun cleanUpAfterEach() {
-        repository.deleteAll()
-    }
 }

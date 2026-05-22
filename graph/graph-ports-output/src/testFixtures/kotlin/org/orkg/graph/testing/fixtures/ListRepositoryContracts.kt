@@ -33,10 +33,13 @@ fun <
     statementRepository: S,
 ) = describeSpec {
     beforeTest {
+        predicateRepository.save(createPredicate(id = Predicates.hasListElement, label = "has list element"))
+    }
+
+    afterTest {
         resourceRepository.deleteAll()
         statementRepository.deleteAll()
         predicateRepository.deleteAll()
-        predicateRepository.save(createPredicate(id = Predicates.hasListElement, label = "has list element"))
     }
 
     val fabricator = Fabrikate(

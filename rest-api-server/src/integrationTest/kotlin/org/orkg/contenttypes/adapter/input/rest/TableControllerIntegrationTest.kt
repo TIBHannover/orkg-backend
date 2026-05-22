@@ -41,6 +41,7 @@ import org.orkg.graph.input.ClassUseCases
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.PredicateUseCases
 import org.orkg.graph.input.ResourceUseCases
+import org.orkg.graph.input.StatementUseCases
 import org.orkg.testing.MockUserId
 import org.orkg.testing.annotations.IntegrationTest
 import org.orkg.testing.annotations.TestWithMockUser
@@ -73,14 +74,14 @@ internal class TableControllerIntegrationTest : MockMvcBaseTest("tables") {
     private lateinit var observatoryService: ObservatoryUseCases
 
     @Autowired
+    private lateinit var statementService: StatementUseCases
+
+    @Autowired
     private lateinit var tableService: TableUseCases
 
     @BeforeEach
     fun setup() {
         val tempPageable = PageRequest.of(0, 10)
-
-        cleanup()
-
         assertThat(predicateService.findAll(tempPageable)).hasSize(0)
         assertThat(resourceService.findAll(tempPageable)).hasSize(0)
         assertThat(classService.findAll(tempPageable)).hasSize(0)
@@ -139,6 +140,7 @@ internal class TableControllerIntegrationTest : MockMvcBaseTest("tables") {
 
     @AfterEach
     fun cleanup() {
+        statementService.deleteAll()
         literalService.deleteAll()
         predicateService.deleteAll()
         resourceService.deleteAll()

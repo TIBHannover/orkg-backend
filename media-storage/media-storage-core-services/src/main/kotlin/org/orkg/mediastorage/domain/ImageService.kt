@@ -26,4 +26,7 @@ class ImageService(
 
     override fun findById(id: ImageId) =
         repository.findById(id)
+
+    override fun deleteAll() =
+        repository.deleteAll()
 }

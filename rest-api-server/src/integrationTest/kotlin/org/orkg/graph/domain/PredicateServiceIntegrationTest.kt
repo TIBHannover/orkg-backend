@@ -1,6 +1,7 @@
 package org.orkg.graph.domain
 
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -16,9 +17,12 @@ internal class PredicateServiceIntegrationTest {
 
     @BeforeEach
     fun setup() {
-        service.deleteAll()
-
         assertThat(service.findAll(PageRequest.of(0, 10))).hasSize(0)
+    }
+
+    @AfterEach
+    fun cleanup() {
+        service.deleteAll()
     }
 
     @Test

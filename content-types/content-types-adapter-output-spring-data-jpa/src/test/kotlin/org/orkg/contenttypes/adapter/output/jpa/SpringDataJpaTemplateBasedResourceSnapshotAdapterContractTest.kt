@@ -34,8 +34,4 @@ internal class SpringDataJpaTemplateBasedResourceSnapshotAdapterContractTest : T
 
     override val repository: TemplateBasedResourceSnapshotRepository
         get() = adapter
-
-    override fun cleanUpAfterEach() {
-        repository.deleteAll()
-    }
 }

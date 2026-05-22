@@ -183,4 +183,11 @@ class CSVService(
         paperCSVRecordRepository.deleteAllByCSVID(csv.id)
         paperCSVRecordImportResultRepository.deleteAllByCSVID(csv.id)
     }
+
+    override fun deleteAll() {
+        repository.deleteAll()
+        typedCSVRecordRepository.deleteAll()
+        paperCSVRecordRepository.deleteAll()
+        paperCSVRecordImportResultRepository.deleteAll()
+    }
 }

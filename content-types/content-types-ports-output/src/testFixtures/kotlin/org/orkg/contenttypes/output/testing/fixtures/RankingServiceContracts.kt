@@ -48,13 +48,16 @@ fun <
     service: U,
 ) = describeSpec {
     beforeTest {
+        predicateRepository.save(createPredicate(id = Predicates.hasListElement, label = "has list element"))
+    }
+
+    afterTest {
         rosettaStoneStatementRepository.deleteAll()
         statementRepository.deleteAll()
         classRepository.deleteAll()
         literalRepository.deleteAll()
         resourceRepository.deleteAll()
         predicateRepository.deleteAll()
-        predicateRepository.save(createPredicate(id = Predicates.hasListElement, label = "has list element"))
     }
 
     val fabricator = Fabrikate(

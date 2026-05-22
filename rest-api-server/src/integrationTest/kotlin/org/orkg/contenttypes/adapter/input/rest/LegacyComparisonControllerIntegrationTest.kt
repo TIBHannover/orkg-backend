@@ -4,6 +4,7 @@ import org.hamcrest.Matchers.anyOf
 import org.hamcrest.Matchers.hasSize
 import org.hamcrest.Matchers.`is`
 import org.hamcrest.Matchers.nullValue
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.createClasses
@@ -48,12 +49,6 @@ internal class LegacyComparisonControllerIntegrationTest : MockMvcBaseTest("comp
 
     @BeforeEach
     fun setup() {
-        statementService.deleteAll()
-        predicateService.deleteAll()
-        resourceService.deleteAll()
-        classService.deleteAll()
-        literalService.deleteAll()
-
         // Init classes
         classService.createClasses(
             Classes.author,
@@ -70,6 +65,15 @@ internal class LegacyComparisonControllerIntegrationTest : MockMvcBaseTest("comp
             Predicates.yearPublished,
             Predicates.hasListElement,
         )
+    }
+
+    @AfterEach
+    fun cleanup() {
+        statementService.deleteAll()
+        predicateService.deleteAll()
+        resourceService.deleteAll()
+        classService.deleteAll()
+        literalService.deleteAll()
     }
 
     @Test

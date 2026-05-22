@@ -87,9 +87,6 @@ internal class ComparisonControllerIntegrationTest : MockMvcBaseTest("comparison
     @BeforeEach
     fun setup() {
         val tempPageable = PageRequest.of(0, 10)
-
-        cleanup()
-
         assertThat(statementService.findAll(tempPageable)).hasSize(0)
         assertThat(predicateService.findAll(tempPageable)).hasSize(0)
         assertThat(resourceService.findAll(tempPageable)).hasSize(0)
@@ -204,6 +201,7 @@ internal class ComparisonControllerIntegrationTest : MockMvcBaseTest("comparison
     @AfterEach
     fun cleanup() {
         statementService.deleteAll()
+        literalService.deleteAll()
         predicateService.deleteAll()
         resourceService.deleteAll()
         classService.deleteAll()

@@ -38,12 +38,4 @@ internal class SpringDataNeo4jStatementAdapterContractTest(
                 springDataNeo4jPredicateAdapter,
             ),
         )
-
-        afterSpec {
-            springDataNeo4jStatementAdapter.deleteAll()
-            springDataNeo4jClassAdapter.deleteAll()
-            springDataNeo4jLiteralAdapter.deleteAll()
-            springDataNeo4jResourceAdapter.deleteAll()
-            springDataNeo4jPredicateAdapter.deleteAll()
-        }
     })

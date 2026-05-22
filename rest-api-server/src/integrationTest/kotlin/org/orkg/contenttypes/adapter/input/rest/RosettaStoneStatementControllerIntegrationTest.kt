@@ -54,6 +54,7 @@ import org.orkg.graph.input.ClassUseCases
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.PredicateUseCases
 import org.orkg.graph.input.ResourceUseCases
+import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UnsafeClassUseCases
 import org.orkg.testing.MockUserId
 import org.orkg.testing.andExpectRosettaStoneStatement
@@ -92,6 +93,9 @@ internal class RosettaStoneStatementControllerIntegrationTest : MockMvcBaseTest(
     private lateinit var observatoryService: ObservatoryUseCases
 
     @Autowired
+    private lateinit var statementService: StatementUseCases
+
+    @Autowired
     private lateinit var rosettaStoneTemplateService: RosettaStoneTemplateUseCases
 
     @Autowired
@@ -99,8 +103,6 @@ internal class RosettaStoneStatementControllerIntegrationTest : MockMvcBaseTest(
 
     @BeforeEach
     fun setup() {
-        cleanup()
-
         assertThat(predicateService.findAll(PageRequests.SINGLE)).hasSize(0)
         assertThat(resourceService.findAll(PageRequests.SINGLE)).hasSize(0)
         assertThat(classService.findAll(PageRequests.SINGLE)).hasSize(0)
@@ -188,6 +190,7 @@ internal class RosettaStoneStatementControllerIntegrationTest : MockMvcBaseTest(
 
     @AfterEach
     fun cleanup() {
+        statementService.deleteAll()
         predicateService.deleteAll()
         resourceService.deleteAll()
         classService.deleteAll()

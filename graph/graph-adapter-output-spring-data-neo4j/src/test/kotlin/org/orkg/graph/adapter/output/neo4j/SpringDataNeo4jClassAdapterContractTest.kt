@@ -36,17 +36,13 @@ internal class SpringDataNeo4jClassAdapterContractTests(
             ),
         )
         include(neo4jClassRepositoryContract(springDataNeo4jClassAdapter, neo4jClient))
-
-        afterSpec {
-            springDataNeo4jClassAdapter.deleteAll()
-        }
     })
 
 fun <R : ClassRepository, C : Neo4jClient> neo4jClassRepositoryContract(
     repository: R,
     neo4jClient: C,
 ) = describeSpec {
-    beforeTest {
+    afterTest {
         repository.deleteAll()
     }
 

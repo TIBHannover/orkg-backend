@@ -26,6 +26,13 @@ interface ObservatoryFilterRepositoryContracts {
     val organizationRepository: OrganizationRepository
     val eventBus: EventBus
 
+    @AfterEach
+    fun cleanUp() {
+        repository.deleteAll()
+        observatoryRepository.deleteAll()
+        organizationRepository.deleteAll()
+    }
+
     @Test
     fun `successfully restores all properties after saving`() {
         postUserRegisteredEventToEventBus()
@@ -100,13 +107,6 @@ interface ObservatoryFilterRepositoryContracts {
         observatoryRepository.save(observatory)
         // Save the filter
         repository.save(observatoryFilter)
-    }
-
-    fun cleanUpAfterEach()
-
-    @AfterEach
-    fun cleanUp() {
-        cleanUpAfterEach()
     }
 
     fun postUserRegisteredEventToEventBus() {

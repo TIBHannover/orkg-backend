@@ -5,8 +5,4 @@ import org.orkg.dataimport.output.testing.fixtures.CSVRepositoryContracts
 
 internal class InMemoryCSVRepositoryAdapterContractTest : CSVRepositoryContracts {
     override val repository: CSVRepository = InMemoryCSVRepositoryAdapter()
-
-    override fun cleanUpAfterEach() {
-        repository.deleteAll()
-    }
 }

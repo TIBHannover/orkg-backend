@@ -39,7 +39,7 @@ fun <
     classRepository: C,
     classRelationRepository: CR,
 ) = describeSpec {
-    beforeTest {
+    afterTest {
         repository.deleteAll()
         classRelationRepository.deleteAll()
         classRepository.deleteAll()

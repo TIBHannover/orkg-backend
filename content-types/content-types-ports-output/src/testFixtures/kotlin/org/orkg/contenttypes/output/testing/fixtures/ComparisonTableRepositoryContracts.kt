@@ -12,6 +12,11 @@ import org.orkg.contenttypes.output.ComparisonTableRepository
 interface ComparisonTableRepositoryContracts {
     val repository: ComparisonTableRepository
 
+    @AfterEach
+    fun cleanup() {
+        repository.deleteAll()
+    }
+
     @Test
     fun `Saving a comparison table, saves and loads all properties correctly`() {
         val expected = createComparisonTable()
@@ -36,12 +41,5 @@ interface ComparisonTableRepositoryContracts {
         }
 
         repository.count() shouldBe 3
-    }
-
-    fun cleanUpAfterEach()
-
-    @AfterEach
-    fun cleanUp() {
-        cleanUpAfterEach()
     }
 }

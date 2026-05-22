@@ -5,8 +5,4 @@ import org.orkg.dataimport.output.testing.fixtures.PaperCSVRecordImportResultRep
 
 internal class InMemoryPaperCSVRecordImportResultRepositoryAdapterContractTest : PaperCSVRecordImportResultRepositoryContracts {
     override val repository: PaperCSVRecordImportResultRepository = InMemoryPaperCSVRecordImportResultRepositoryAdapter()
-
-    override fun cleanUpAfterEach() {
-        repository.deleteAll()
-    }
 }

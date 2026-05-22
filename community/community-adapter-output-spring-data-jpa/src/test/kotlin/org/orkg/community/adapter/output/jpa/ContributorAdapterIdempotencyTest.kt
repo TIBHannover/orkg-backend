@@ -1,6 +1,7 @@
 package org.orkg.community.adapter.output.jpa
 
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import org.orkg.common.testing.fixtures.fixedClock
 import org.orkg.community.adapter.output.jpa.configuration.CommunityJpaConfiguration
@@ -31,6 +32,11 @@ import java.time.OffsetDateTime
 internal class ContributorAdapterIdempotencyTest {
     @Autowired
     private lateinit var adapter: SpringDataJpaContributorFromUserAdapter
+
+    @AfterEach
+    fun cleanup() {
+        adapter.deleteAll()
+    }
 
     @Test
     fun `duplicate registration messages create a single entry`() {

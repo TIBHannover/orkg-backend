@@ -9,7 +9,8 @@ import java.util.Optional
 
 interface ImageUseCases :
     CreateImageUseCase,
-    RetrieveImageUseCase
+    RetrieveImageUseCase,
+    DeleteImageUseCase
 
 interface RetrieveImageUseCase {
     fun findById(id: ImageId): Optional<Image>
@@ -23,4 +24,8 @@ interface CreateImageUseCase {
         val mimeType: MimeType,
         val createdBy: ContributorId?,
     )
+}
+
+interface DeleteImageUseCase {
+    fun deleteAll()
 }

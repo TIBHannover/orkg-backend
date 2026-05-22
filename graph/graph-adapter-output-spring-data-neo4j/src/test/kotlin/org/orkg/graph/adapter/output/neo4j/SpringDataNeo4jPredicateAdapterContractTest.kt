@@ -51,21 +51,13 @@ internal class SpringDataNeo4jPredicateAdapterContractTests(
             ),
         )
         include(neo4jPredicateRepositoryContract(springDataNeo4jPredicateAdapter, neo4jClient))
-
-        afterSpec {
-            springDataNeo4jStatementAdapter.deleteAll()
-            springDataNeo4jClassAdapter.deleteAll()
-            springDataNeo4jLiteralAdapter.deleteAll()
-            springDataNeo4jResourceAdapter.deleteAll()
-            springDataNeo4jPredicateAdapter.deleteAll()
-        }
     })
 
 fun <R : PredicateRepository, C : Neo4jClient> neo4jPredicateRepositoryContract(
     repository: R,
     neo4jClient: C,
 ) = describeSpec {
-    beforeTest {
+    afterTest {
         repository.deleteAll()
     }
 

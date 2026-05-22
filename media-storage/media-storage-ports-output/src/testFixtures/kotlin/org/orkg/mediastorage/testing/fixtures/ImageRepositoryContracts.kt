@@ -3,6 +3,7 @@ package org.orkg.mediastorage.testing.fixtures
 import io.kotest.assertions.asClue
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import org.orkg.mediastorage.domain.ImageId
 import org.orkg.mediastorage.output.ImageRepository
@@ -10,6 +11,11 @@ import java.util.UUID
 
 interface ImageRepositoryContracts {
     val repository: ImageRepository
+
+    @AfterEach
+    fun cleanup() {
+        repository.deleteAll()
+    }
 
     @Test
     fun `successfully save and load an image`() {

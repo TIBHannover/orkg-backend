@@ -10,7 +10,8 @@ import java.util.Optional
 
 interface TemplateBasedResourceSnapshotUseCases :
     RetrieveTemplateBasedResourceSnapshotUseCase,
-    CreateTemplateBasedResourceSnapshotUseCase
+    CreateTemplateBasedResourceSnapshotUseCase,
+    DeleteTemplateBasedResourceSnapshotUseCase
 
 interface RetrieveTemplateBasedResourceSnapshotUseCase {
     fun findById(snapshotId: SnapshotId): Optional<TemplateBasedResourceSnapshot<*>>
@@ -33,4 +34,8 @@ interface CreateTemplateBasedResourceSnapshotUseCase {
         val contributorId: ContributorId,
         val registerHandle: Boolean = true,
     )
+}
+
+interface DeleteTemplateBasedResourceSnapshotUseCase {
+    fun deleteAll()
 }

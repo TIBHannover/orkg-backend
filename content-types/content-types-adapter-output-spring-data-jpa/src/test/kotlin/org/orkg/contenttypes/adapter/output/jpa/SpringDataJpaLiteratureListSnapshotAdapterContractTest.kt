@@ -34,8 +34,4 @@ internal class SpringDataJpaLiteratureListSnapshotAdapterContractTest : Literatu
 
     override val repository: LiteratureListSnapshotRepository
         get() = adapter
-
-    override fun cleanUpAfterEach() {
-        repository.deleteAll()
-    }
 }

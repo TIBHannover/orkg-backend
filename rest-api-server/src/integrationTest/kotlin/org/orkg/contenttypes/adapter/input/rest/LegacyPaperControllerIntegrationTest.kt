@@ -1,6 +1,7 @@
 package org.orkg.contenttypes.adapter.input.rest
 
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.contenttypes.input.LegacyPaperUseCases
@@ -10,6 +11,7 @@ import org.orkg.createResource
 import org.orkg.createStatement
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.input.ClassUseCases
+import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.PredicateUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
@@ -34,21 +36,28 @@ internal class LegacyPaperControllerIntegrationTest : MockMvcBaseTest("papers") 
     private lateinit var statementService: StatementUseCases
 
     @Autowired
+    private lateinit var literalService: LiteralUseCases
+
+    @Autowired
     private lateinit var legacyPaperService: LegacyPaperUseCases
 
     @BeforeEach
     fun setup() {
         val tempPageable = PageRequest.of(0, 10)
-
-        predicateService.deleteAll()
-        resourceService.deleteAll()
-        classService.deleteAll()
-
         assertThat(predicateService.findAll(tempPageable)).hasSize(0)
         assertThat(resourceService.findAll(tempPageable)).hasSize(0)
         assertThat(classService.findAll(tempPageable)).hasSize(0)
 
         classService.createClasses(Classes.paper)
+    }
+
+    @AfterEach
+    fun cleanup() {
+        statementService.deleteAll()
+        literalService.deleteAll()
+        predicateService.deleteAll()
+        resourceService.deleteAll()
+        classService.deleteAll()
     }
 
     @Test

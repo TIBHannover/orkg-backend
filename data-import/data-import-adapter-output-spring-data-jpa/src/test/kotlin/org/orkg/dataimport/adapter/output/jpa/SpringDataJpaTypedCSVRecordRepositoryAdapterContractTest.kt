@@ -28,8 +28,4 @@ internal class SpringDataJpaTypedCSVRecordRepositoryAdapterContractTest : TypedC
 
     override val repository: TypedCSVRecordRepository
         get() = adapter
-
-    override fun cleanUpAfterEach() {
-        adapter.deleteAll()
-    }
 }

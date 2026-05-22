@@ -3,6 +3,7 @@ package org.orkg.dataimport.adapter.input.rest
 import io.kotest.assertions.asClue
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.common.IRI
@@ -24,12 +25,15 @@ import org.orkg.dataimport.domain.csv.CSV
 import org.orkg.dataimport.domain.csv.CSVID
 import org.orkg.dataimport.domain.csv.papers.PaperCSVRecordImportResult
 import org.orkg.dataimport.domain.jobs.JobStatus
+import org.orkg.dataimport.input.CSVUseCases
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.ClassUseCases
+import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.PredicateUseCases
 import org.orkg.graph.input.ResourceUseCases
+import org.orkg.graph.input.StatementUseCases
 import org.orkg.testing.annotations.IntegrationTest
 import org.orkg.testing.annotations.TestWithMockUser
 import org.orkg.testing.configuration.SpringBatchTestConfiguration
@@ -55,6 +59,9 @@ import tools.jackson.module.kotlin.readValue
 )
 internal class CSVControllerIntegrationTest : MockMvcBaseTest("csvs") {
     @Autowired
+    private lateinit var csvService: CSVUseCases
+
+    @Autowired
     private lateinit var predicateUseCases: PredicateUseCases
 
     @Autowired
@@ -62,6 +69,12 @@ internal class CSVControllerIntegrationTest : MockMvcBaseTest("csvs") {
 
     @Autowired
     private lateinit var resourceUseCases: ResourceUseCases
+
+    @Autowired
+    private lateinit var statementService: StatementUseCases
+
+    @Autowired
+    private lateinit var literalService: LiteralUseCases
 
     @BeforeEach
     fun setup() {
@@ -101,6 +114,16 @@ internal class CSVControllerIntegrationTest : MockMvcBaseTest("csvs") {
         predicateUseCases.createPredicate(ThingId("P2"))
         resourceUseCases.createResource(id = ThingId("R456"), classes = setOf(Classes.researchField))
         resourceUseCases.createResource(id = ThingId("R146"), classes = setOf(Classes.researchField))
+    }
+
+    @AfterEach
+    fun cleanup() {
+        csvService.deleteAll()
+        statementService.deleteAll()
+        literalService.deleteAll()
+        predicateUseCases.deleteAll()
+        classUseCases.deleteAll()
+        resourceUseCases.deleteAll()
     }
 
     @Test

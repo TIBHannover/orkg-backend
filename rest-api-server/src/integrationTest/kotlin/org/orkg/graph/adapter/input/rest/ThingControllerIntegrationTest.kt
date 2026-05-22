@@ -1,6 +1,7 @@
 package org.orkg.graph.adapter.input.rest
 
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.createClass
@@ -51,18 +52,20 @@ internal class ThingControllerIntegrationTest : MockMvcBaseTest("things") {
     @BeforeEach
     fun setup() {
         val tempPageable = PageRequest.of(0, 10)
-
-        resourceUseCases.deleteAll()
-        classUseCases.deleteAll()
-        predicateUseCases.deleteAll()
-        statementUseCases.deleteAll()
-        literalUseCases.deleteAll()
-
         assertThat(resourceUseCases.findAll(tempPageable)).hasSize(0)
         assertThat(classUseCases.findAll(tempPageable)).hasSize(0)
         assertThat(predicateUseCases.findAll(tempPageable)).hasSize(0)
         assertThat(statementUseCases.findAll(tempPageable)).hasSize(0)
         assertThat(literalUseCases.findAll(tempPageable)).hasSize(0)
+    }
+
+    @AfterEach
+    fun cleanup() {
+        resourceUseCases.deleteAll()
+        classUseCases.deleteAll()
+        predicateUseCases.deleteAll()
+        statementUseCases.deleteAll()
+        literalUseCases.deleteAll()
     }
 
     @Test

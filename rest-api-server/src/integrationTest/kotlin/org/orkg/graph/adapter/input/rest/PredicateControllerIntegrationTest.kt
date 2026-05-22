@@ -2,6 +2,7 @@ package org.orkg.graph.adapter.input.rest
 
 import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.Matchers.endsWith
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
@@ -33,9 +34,14 @@ internal class PredicateControllerIntegrationTest : MockMvcBaseTest("predicates"
 
     @BeforeEach
     fun setup() {
-        service.deleteAll()
-
         assertThat(service.findAll(PageRequest.of(0, 10))).hasSize(0)
+    }
+
+    @AfterEach
+    fun cleanup() {
+        statementService.deleteAll()
+        service.deleteAll()
+        resourceService.deleteAll()
     }
 
     @Test

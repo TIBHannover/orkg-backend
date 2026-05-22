@@ -42,97 +42,7 @@ class SpringDataNeo4jComparisonAuxiliaryAdapter(
     override fun findAllLabeledComparisonPathsByComparisonId(id: ThingId, maxDepth: Int): List<LabeledComparisonPath> {
         val entries = neo4jRepository.findAllComparisonTablePredicatePathsByComparisonId(id, maxDepth)
         val rootIds = entries.filter { entry -> entries.none { entry.subjectId in it.objectIds } }.map { it.subjectId }.toSet()
-        return buildTree(entries, rootIds, maxDepth).map { it.toLabeledComparisonPath() }
-    }
-
-    private fun buildTree(
-        entries: Set<Neo4jComparisonPathEntry>,
-        rootIds: Set<ThingId>,
-        depth: Int,
-        parents: Set<ThingId> = emptySet(),
-        source: ThingId? = null,
-    ): List<ProtoLabeledComparisonPath> =
-        entries.filter { entry -> entry.subjectId in rootIds }
-            .map { entry ->
-                val sourceId = source ?: entry.subjectId
-                ProtoLabeledComparisonPath(
-                    id = entry.predicateId,
-                    label = entry.predicateLabel,
-                    description = entry.description,
-                    type = entry.type,
-                    children = when {
-                        // filter object ids if present in parent tree?
-                        depth > 1 -> buildTree(entries, entry.objectIds.toSet() - parents, depth - 1, parents + rootIds, sourceId)
-
-                        else -> emptyList()
-                    },
-                    sourceIds = setOf(sourceId),
-                )
-            }
-            .merge()
-
-    private fun List<ProtoLabeledComparisonPath>.merge(): List<ProtoLabeledComparisonPath> =
-        when {
-            isEmpty() || (size == 1 && first().children.isEmpty()) -> this
-
-            size == 1 -> map { it.copy(children = it.children.merge()) }
-
-            else -> groupBy { it.id }.values.map { paths -> paths.reduce { a, b -> a.merge(b) } }.sortedBy {
-                when (it.type) {
-                    ComparisonPath.Type.PREDICATE -> {
-                        it.label
-                    }
-
-                    ComparisonPath.Type.ROSETTA_STONE_STATEMENT -> {
-                        it.label
-                    }
-
-                    ComparisonPath.Type.ROSETTA_STONE_STATEMENT_VALUE -> {
-                        val id = it.id.value
-                        when {
-                            id == "hasSubjectPosition" -> "0"
-
-                            // always sort rs subject to first position
-                            id.startsWith("hasObjectPosition") -> id
-
-                            // sort rs objects by id
-                            else -> throw IllegalStateException("""Illegal id "$id" for rosetta stone statement value while fetching comparison paths. This is a bug.""")
-                        }
-                    }
-                }
-            }
-        }
-
-    private fun ProtoLabeledComparisonPath.merge(other: ProtoLabeledComparisonPath): ProtoLabeledComparisonPath {
-        assert(type == other.type)
-        assert(description == other.description)
-        return ProtoLabeledComparisonPath(
-            id = id,
-            label = label,
-            type = type,
-            description = description,
-            children = (children + other.children).merge(),
-            sourceIds = sourceIds + other.sourceIds,
-        )
-    }
-
-    data class ProtoLabeledComparisonPath(
-        val id: ThingId,
-        val label: String,
-        val description: String?,
-        val type: ComparisonPath.Type,
-        val children: List<ProtoLabeledComparisonPath>,
-        val sourceIds: Set<ThingId>,
-    ) {
-        fun toLabeledComparisonPath(): LabeledComparisonPath =
-            LabeledComparisonPath(
-                id = id,
-                label = label,
-                description = description,
-                sources = sourceIds.size,
-                type = type,
-                children = children.map { it.toLabeledComparisonPath() },
-            )
+        return LabeledComparisonPathBuilder.buildTree(entries, rootIds, maxDepth)
     }
 
     override fun findAllLabeledComparisonPathsBySimpleComparionPaths(paths: List<SimpleComparisonPath>): List<LabeledComparisonPath> {
@@ -276,4 +186,158 @@ class SpringDataNeo4jComparisonAuxiliaryAdapter(
         val predicateId: ThingId,
         val children: List<Neo4jComparisonTableData>,
     )
+
+    internal object LabeledComparisonPathBuilder {
+        internal fun buildTree(entries: Set<Neo4jComparisonPathEntry>, rootIds: Set<ThingId>, maxDepth: Int): List<LabeledComparisonPath> {
+            val roots = entries.filter { it.subjectId in rootIds }
+            var parents = roots.map { entry ->
+                ProtoLabeledComparisonPath(
+                    id = entry.predicateId,
+                    label = entry.predicateLabel,
+                    description = entry.description,
+                    type = entry.type,
+                    parent = null,
+                    children = mutableListOf(),
+                    subjectIds = mutableSetOf(entry.subjectId),
+                    objectIds = entry.objectIds.toMutableSet(),
+                    sourceIds = mutableSetOf(entry.subjectId),
+                )
+            }
+            val result = parents.toMutableList()
+            val visited = rootIds.toMutableSet()
+            var depth = maxDepth
+            while (depth > 0 && parents.isNotEmpty()) {
+                val children = mutableListOf<ProtoLabeledComparisonPath>()
+                parents.forEach { parent ->
+                    parent.children += (parent.objectIds - visited).flatMap { objectId -> entries.filter { it.subjectId == objectId } }
+                        .groupBy { it.predicateId }
+                        .map { (predicateId, entries) ->
+                            val first = entries.first()
+                            ProtoLabeledComparisonPath(
+                                id = predicateId,
+                                label = first.predicateLabel,
+                                description = first.description,
+                                type = first.type,
+                                parent = parent,
+                                children = mutableListOf(),
+                                subjectIds = entries.mapTo(mutableSetOf()) { it.subjectId },
+                                objectIds = entries.flatMapTo(mutableSetOf()) { it.objectIds },
+                                sourceIds = parent.sourceIds,
+                            )
+                        }
+                    children += parent.children
+                }
+                parents.forEach { parent -> visited += parent.objectIds }
+                parents = children
+                depth--
+            }
+            return result.mergeAndSort().map { it.toLabeledComparisonPath() }
+        }
+
+        private fun MutableList<ProtoLabeledComparisonPath>.mergeAndSort(): List<ProtoLabeledComparisonPath> {
+            val roots = groupBy { it.id }
+                .map { (predicateId, entries) ->
+                    val first = entries.first()
+                    ProtoLabeledComparisonPath(
+                        id = predicateId,
+                        label = first.label,
+                        description = first.description,
+                        type = first.type,
+                        parent = null,
+                        children = entries.flatMapTo(mutableListOf()) { it.children },
+                        subjectIds = entries.flatMapTo(mutableSetOf()) { it.subjectIds },
+                        objectIds = entries.flatMapTo(mutableSetOf()) { it.objectIds },
+                        sourceIds = entries.flatMapTo(mutableSetOf()) { it.sourceIds },
+                    )
+                }
+                .sortedWith(pathComparator)
+            val visited = roots.flatMapTo(mutableSetOf()) { it.objectIds }
+            var level = listOf(roots)
+            while (level.isNotEmpty()) {
+                val nextLevel = mutableListOf<List<ProtoLabeledComparisonPath>>()
+                level.forEach { levelEntry ->
+                    levelEntry.forEach { parent ->
+                        val updatedChildren = parent.children
+                            .filter { it.expandChildren }
+                            .groupBy { it.id }
+                            .map { (predicateId, entries) ->
+                                val first = entries.first()
+                                val objectIds = entries.flatMapTo(mutableSetOf()) { it.objectIds }
+                                val expandChildren = (objectIds - visited).isNotEmpty()
+                                ProtoLabeledComparisonPath(
+                                    id = predicateId,
+                                    label = first.label,
+                                    description = first.description,
+                                    type = first.type,
+                                    parent = parent,
+                                    children = mutableListOf(),
+                                    subjectIds = entries.flatMapTo(mutableSetOf()) { it.subjectIds },
+                                    objectIds = objectIds,
+                                    sourceIds = parent.sourceIds,
+                                    expandChildren = expandChildren,
+                                )
+                            }
+                            .sortedWith(pathComparator)
+                        parent.children = updatedChildren
+                        nextLevel += parent.children
+                    }
+                }
+                level.forEach { levelEntry ->
+                    levelEntry.forEach { parent ->
+                        visited += parent.subjectIds
+                    }
+                }
+                level = nextLevel
+            }
+            return roots
+        }
+
+        private val pathComparator = Comparator.comparing<ProtoLabeledComparisonPath, String> {
+            when (it.type) {
+                ComparisonPath.Type.PREDICATE -> {
+                    it.label.lowercase()
+                }
+
+                ComparisonPath.Type.ROSETTA_STONE_STATEMENT -> {
+                    it.label.lowercase()
+                }
+
+                ComparisonPath.Type.ROSETTA_STONE_STATEMENT_VALUE -> {
+                    val id = it.id.value
+                    when {
+                        id == "hasSubjectPosition" -> "0"
+
+                        // always sort rs subject to first position
+                        id.startsWith("hasObjectPosition") -> id
+
+                        // sort rs objects by id
+                        else -> throw IllegalStateException("""Illegal id "$id" for rosetta stone statement value while fetching comparison paths. This is a bug.""")
+                    }
+                }
+            }
+        }
+
+        private data class ProtoLabeledComparisonPath(
+            val id: ThingId,
+            val label: String,
+            val description: String?,
+            val type: ComparisonPath.Type,
+            val parent: ProtoLabeledComparisonPath?,
+            var children: List<ProtoLabeledComparisonPath>,
+            val subjectIds: MutableSet<ThingId>,
+            val objectIds: MutableSet<ThingId>,
+            val sourceIds: MutableSet<ThingId>,
+            var expandChildren: Boolean = true,
+        ) {
+            fun toLabeledComparisonPath(): LabeledComparisonPath =
+                LabeledComparisonPath(
+                    id = id,
+                    label = label,
+                    description = description,
+                    sources = sourceIds.size,
+                    type = type,
+                    children = children.map { it.toLabeledComparisonPath() },
+                )
+        }
+    }
 }

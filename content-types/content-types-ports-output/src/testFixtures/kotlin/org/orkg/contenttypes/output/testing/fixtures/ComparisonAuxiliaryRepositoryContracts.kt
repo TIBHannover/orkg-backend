@@ -256,16 +256,7 @@ fun <
                         description = hasOtherResultDescription.label,
                         type = ComparisonPath.Type.PREDICATE,
                         sources = 1,
-                        children = listOf(
-                            LabeledComparisonPath(
-                                id = hasResult.id,
-                                label = hasResult.label,
-                                description = null,
-                                type = ComparisonPath.Type.PREDICATE,
-                                sources = 1,
-                                children = emptyList(),
-                            ),
-                        ),
+                        children = emptyList(), // all values for this path are already covered by a different path at a higher level
                     ),
                     LabeledComparisonPath(
                         id = hasResult.id,
@@ -273,16 +264,7 @@ fun <
                         description = null,
                         type = ComparisonPath.Type.PREDICATE,
                         sources = 1,
-                        children = listOf(
-                            LabeledComparisonPath(
-                                id = hasOtherResult.id,
-                                label = hasOtherResult.label,
-                                description = hasOtherResultDescription.label,
-                                type = ComparisonPath.Type.PREDICATE,
-                                sources = 1,
-                                children = emptyList(),
-                            ),
-                        ),
+                        children = emptyList(), // all values for this path are already covered by a different path at a higher level
                     ),
                 ),
             ),

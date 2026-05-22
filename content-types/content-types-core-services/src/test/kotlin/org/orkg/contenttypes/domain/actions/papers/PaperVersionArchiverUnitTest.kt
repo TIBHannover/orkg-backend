@@ -10,10 +10,13 @@ import io.mockk.verify
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkBaseTest
+import org.orkg.common.testing.fixtures.fixedClock
+import org.orkg.contenttypes.domain.SnapshotId
+import org.orkg.contenttypes.domain.SnapshotIdGenerator
 import org.orkg.contenttypes.domain.actions.PublishPaperState
 import org.orkg.contenttypes.domain.testing.fixtures.createPaper
 import org.orkg.contenttypes.input.testing.fixtures.publishPaperCommand
-import org.orkg.contenttypes.output.PaperPublishedRepository
+import org.orkg.contenttypes.output.PaperSnapshotRepository
 import org.orkg.graph.domain.Bundle
 import org.orkg.graph.domain.BundleConfiguration
 import org.orkg.graph.domain.Classes
@@ -21,12 +24,14 @@ import org.orkg.graph.domain.StatementId
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.testing.fixtures.createStatement
 import org.springframework.data.domain.Sort
+import java.time.OffsetDateTime
 
 internal class PaperVersionArchiverUnitTest : MockkBaseTest {
     private val statementService: StatementUseCases = mockk()
-    private val paperPublishedRepository: PaperPublishedRepository = mockk()
+    private val paperSnapshotRepository: PaperSnapshotRepository = mockk()
+    private val snapshotIdGenerator: SnapshotIdGenerator = mockk()
 
-    private val paperVersionArchiver = PaperVersionArchiver(statementService, paperPublishedRepository)
+    private val paperVersionArchiver = PaperVersionArchiver(statementService, paperSnapshotRepository, snapshotIdGenerator, fixedClock)
 
     @Test
     fun `Given a paper publish command, it archives all paper contribution statements`() {
@@ -45,6 +50,7 @@ internal class PaperVersionArchiverUnitTest : MockkBaseTest {
             blacklist = listOf(Classes.researchField),
             whitelist = emptyList(),
         )
+        val snapshotId = SnapshotId("ABC")
 
         paper.contributions.forEachIndexed { index, (id, _) ->
             every {
@@ -59,7 +65,8 @@ internal class PaperVersionArchiverUnitTest : MockkBaseTest {
                 bundle = mutableListOf(createStatement(StatementId("S$index"))),
             )
         }
-        every { paperPublishedRepository.save(any()) } just runs
+        every { snapshotIdGenerator.nextIdentity() } returns snapshotId
+        every { paperSnapshotRepository.save(any()) } just runs
 
         paperVersionArchiver(command, state).asClue {
             it.paper shouldBe paper
@@ -77,11 +84,14 @@ internal class PaperVersionArchiverUnitTest : MockkBaseTest {
                 )
             }
         }
+        verify(exactly = 1) { snapshotIdGenerator.nextIdentity() }
         verify(exactly = 1) {
-            paperPublishedRepository.save(
+            paperSnapshotRepository.save(
                 withArg {
-                    it.id shouldBe state.paperVersionId!!
-                    it.rootId shouldBe command.id
+                    it.id shouldBe snapshotId
+                    it.createdAt shouldBe OffsetDateTime.now(fixedClock)
+                    it.createdBy shouldBe command.contributorId
+                    it.resourceId shouldBe state.paperVersionId!!
                     it.subgraph shouldBe paper.contributions.flatMapIndexed { index, _ ->
                         listOf(createStatement(StatementId("S$index")))
                     }

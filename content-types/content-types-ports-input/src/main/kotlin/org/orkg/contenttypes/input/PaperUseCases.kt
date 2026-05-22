@@ -7,8 +7,8 @@ import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.Author
 import org.orkg.contenttypes.domain.Paper
+import org.orkg.contenttypes.domain.PaperSnapshot
 import org.orkg.contenttypes.domain.PaperWithStatementCount
-import org.orkg.contenttypes.domain.PublishedContentType
 import org.orkg.graph.domain.ExactSearchString
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.GeneralStatement

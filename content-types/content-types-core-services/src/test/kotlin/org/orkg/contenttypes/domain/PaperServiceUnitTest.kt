@@ -15,12 +15,14 @@ import org.orkg.common.OrganizationId
 import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkBaseTest
+import org.orkg.common.testing.fixtures.fixedClock
 import org.orkg.community.output.ContributorRepository
 import org.orkg.community.output.ObservatoryRepository
 import org.orkg.community.output.OrganizationRepository
+import org.orkg.contenttypes.domain.testing.fixtures.createPaperSnapshotV1
 import org.orkg.contenttypes.output.DoiService
-import org.orkg.contenttypes.output.PaperPublishedRepository
 import org.orkg.contenttypes.output.PaperRepository
+import org.orkg.contenttypes.output.PaperSnapshotRepository
 import org.orkg.graph.domain.BundleConfiguration
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Literals
@@ -67,7 +69,8 @@ internal class PaperServiceUnitTest : MockkBaseTest {
     private val classRepository: ClassRepository = mockk()
     private val listRepository: ListRepository = mockk()
     private val contributorRepository: ContributorRepository = mockk()
-    private val paperPublishedRepository: PaperPublishedRepository = mockk()
+    private val paperSnapshotRepository: PaperSnapshotRepository = mockk()
+    private val snapshotIdGenerator: SnapshotIdGenerator = mockk()
 
     private val service = PaperService(
         resourceRepository = resourceRepository,
@@ -88,7 +91,9 @@ internal class PaperServiceUnitTest : MockkBaseTest {
         paperRepository = paperRepository,
         classRepository = classRepository,
         contributorRepository = contributorRepository,
-        paperPublishedRepository = paperPublishedRepository,
+        paperSnapshotRepository = paperSnapshotRepository,
+        snapshotIdGenerator = snapshotIdGenerator,
+        clock = fixedClock,
         paperPublishBaseUri = "https://orkg.org/paper/",
     )
 
@@ -334,17 +339,17 @@ internal class PaperServiceUnitTest : MockkBaseTest {
     @Test
     fun `Given the published contents of a paper, when fetching by id and published contents exist, it returns the published contents of a paper`() {
         val paperResource = createResource(classes = setOf(Classes.paperVersion))
-        val publishedContents = listOf(createStatement(subject = paperResource))
+        val publishedContents = createPaperSnapshotV1()
 
         every { resourceRepository.findById(paperResource.id) } returns Optional.of(paperResource)
-        every { paperPublishedRepository.findById(paperResource.id) } returns Optional.of(publishedContents)
+        every { paperSnapshotRepository.findByResourceId(paperResource.id) } returns Optional.of(publishedContents)
 
         val result = service.findPublishedContentsById(paperResource.id)
         result.isPresent shouldBe true
-        result.get() shouldBe publishedContents
+        result.get() shouldBe publishedContents.subgraph
 
         verify(exactly = 1) { resourceRepository.findById(paperResource.id) }
-        verify(exactly = 1) { paperPublishedRepository.findById(paperResource.id) }
+        verify(exactly = 1) { paperSnapshotRepository.findByResourceId(paperResource.id) }
     }
 
     @Test

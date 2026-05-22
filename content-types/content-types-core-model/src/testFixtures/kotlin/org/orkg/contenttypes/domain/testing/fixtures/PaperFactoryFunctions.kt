@@ -8,11 +8,15 @@ import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.Author
 import org.orkg.contenttypes.domain.ObjectIdAndLabel
 import org.orkg.contenttypes.domain.Paper
+import org.orkg.contenttypes.domain.PaperSnapshotV1
 import org.orkg.contenttypes.domain.PublicationInfo
 import org.orkg.contenttypes.domain.ResourceReference
+import org.orkg.contenttypes.domain.SnapshotId
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Visibility
+import org.orkg.graph.testing.fixtures.createResource
+import org.orkg.graph.testing.fixtures.createStatement
 import java.time.OffsetDateTime
 
 fun createPaper() = Paper(
@@ -99,4 +103,12 @@ fun createPaper() = Paper(
     visibility = Visibility.DEFAULT,
     verified = false,
     modifiable = true,
+)
+
+fun createPaperSnapshotV1() = PaperSnapshotV1(
+    id = SnapshotId("darigjpnhu"),
+    createdAt = OffsetDateTime.parse("2023-04-12T16:05:05.959539600+02:00"),
+    createdBy = ContributorId("dca4080c-e23f-489d-b900-af8bfc2b0620"),
+    resourceId = ThingId("R123"),
+    subgraph = listOf(createStatement(subject = createResource(id = ThingId("R123")))),
 )

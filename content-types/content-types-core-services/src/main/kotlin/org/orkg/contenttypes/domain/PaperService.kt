@@ -65,8 +65,8 @@ import org.orkg.contenttypes.domain.actions.papers.PaperVersionDoiPublisher
 import org.orkg.contenttypes.domain.actions.papers.PaperVersionHistoryUpdater
 import org.orkg.contenttypes.input.PaperUseCases
 import org.orkg.contenttypes.output.DoiService
-import org.orkg.contenttypes.output.PaperPublishedRepository
 import org.orkg.contenttypes.output.PaperRepository
+import org.orkg.contenttypes.output.PaperSnapshotRepository
 import org.orkg.graph.domain.BundleConfiguration
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ExactSearchString
@@ -92,6 +92,7 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
+import java.time.Clock
 import java.time.OffsetDateTime
 import java.util.Optional
 
@@ -115,7 +116,9 @@ class PaperService(
     private val paperRepository: PaperRepository,
     private val classRepository: ClassRepository,
     private val contributorRepository: ContributorRepository,
-    private val paperPublishedRepository: PaperPublishedRepository,
+    private val paperSnapshotRepository: PaperSnapshotRepository,
+    private val snapshotIdGenerator: SnapshotIdGenerator,
+    private val clock: Clock,
     @param:Value($$"${orkg.publishing.base-url.paper}")
     private val paperPublishBaseUri: String = "http://localhost/paper/",
 ) : PaperUseCases {
@@ -172,7 +175,7 @@ class PaperService(
         resourceRepository.findById(id)
             .map {
                 when {
-                    Classes.paperVersion in it.classes -> paperPublishedRepository.findById(id)
+                    Classes.paperVersion in it.classes -> paperSnapshotRepository.findByResourceId(id).map { it.subgraph }
                     Classes.paper in it.classes -> throw PaperNotPublished(id)
                     else -> throw PaperNotFound.withId(id)
                 }
@@ -251,7 +254,7 @@ class PaperService(
         val steps = listOf<Action<PublishPaperCommand, PublishPaperState>>(
             PaperPublishableValidator(this, resourceRepository),
             PaperVersionCreator(resourceRepository, statementRepository, unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases, listService),
-            PaperVersionArchiver(statementService, paperPublishedRepository),
+            PaperVersionArchiver(statementService, paperSnapshotRepository, snapshotIdGenerator, clock),
             PaperVersionHistoryUpdater(statementService, unsafeStatementUseCases),
             PaperVersionDoiPublisher(unsafeStatementUseCases, unsafeLiteralUseCases, doiService, paperPublishBaseUri),
         )

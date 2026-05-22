@@ -15,7 +15,7 @@ dependencies.constraints {
     api("org.antora:gradle-antora-plugin:1.0.0")
     // NOTE: This version should be the same as the one used in the antora plugin.
     api("com.github.node-gradle:gradle-node-plugin:3.5.1")
-    api("org.openapitools:openapi-generator-gradle-plugin:7.20.0")
+    api("org.openapitools:openapi-generator-gradle-plugin:7.22.0")
 
     api("org.gradlex:jvm-dependency-conflict-resolution:2.5")
     api("com.autonomousapps.dependency-analysis:com.autonomousapps.dependency-analysis.gradle.plugin:3.6.1")
@@ -27,4 +27,6 @@ dependencies.constraints {
     api("com.google.cloud.tools:jib-gradle-plugin:3.5.3")
     api("com.diffplug.spotless:spotless-plugin-gradle:8.3.0")
     api("com.diffplug.spotless-changelog:spotless-changelog-plugin-gradle:3.1.2")
+
+    api("io.github.java-diff-utils:java-diff-utils:4.16")
 }

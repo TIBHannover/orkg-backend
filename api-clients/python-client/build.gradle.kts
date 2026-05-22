@@ -1,12 +1,16 @@
+import Org_orkg_gradle_patch_gradle.GeneratePatchesTask
+import Org_orkg_gradle_patch_gradle.PatchHelper
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.databind.node.ObjectNode
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import org.openapitools.generator.gradle.plugin.tasks.GenerateTask
+import java.io.File
 
 plugins {
     id("org.orkg.gradle.openapi")
+    id("org.orkg.gradle.patch")
 }
 
 @CacheableTask
@@ -56,7 +60,7 @@ abstract class GenerateOpenApiSpecPythonTask : DefaultTask() {
 }
 
 @CacheableTask
-abstract class GeneratePythonClientTask : GenerateTask {
+abstract class GeneratePythonClientTask : GenerateTask() {
     @get:PathSensitive(PathSensitivity.RELATIVE)
     @get:InputDirectory
     abstract val additionalFilesDirectory: DirectoryProperty
@@ -64,21 +68,25 @@ abstract class GeneratePythonClientTask : GenerateTask {
     @get:Input
     abstract val additionalDependencies: MapProperty<String, String>
 
-    @Inject
-    @Suppress("unused")
-    constructor(objectFactory: ObjectFactory) : super(objectFactory) {
+    @get:PathSensitive(PathSensitivity.RELATIVE)
+    @get:InputDirectory
+    abstract val patchesDirectory: DirectoryProperty
+
+    init {
         additionalFilesDirectory.convention(project.layout.projectDirectory.dir("src/main/python"))
+        patchesDirectory.convention(project.layout.projectDirectory.dir("src/main/patches"))
         // We cannot override the default task action function doWork() because it is final, so we use doLast instead
         doLast { customizePythonClient() }
     }
 
     private fun customizePythonClient() {
-        val outputDir = File(outputDir.get())
+        val outputDir = outputDir.get().asFile
         additionalFilesDirectory.get().asFile.copyRecursively(File(outputDir, "orkg_client"))
         addDependenciesToFile(File(outputDir, "pyproject.toml"), "dependencies = [\n") { name, version -> "  \"$name (>= $version)\"," }
         addDependenciesToFile(File(outputDir, "requirements.txt")) { name, version -> "$name >= $version" }
         addDependenciesToFile(File(outputDir, "setup.py"), "REQUIRES = [\n") { name, version -> "    \"$name >= $version\"," }
         removeMetaFiles(outputDir)
+        PatchHelper.applyPatches(patchesDirectory.get().asFile, outputDir)
     }
 
     private fun addDependenciesToFile(file: File, location: String? = null, dependencyFormatter: (String, String) -> String) {

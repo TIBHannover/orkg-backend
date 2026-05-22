@@ -1,0 +1,11 @@
+--- orkg_client/models/comparison_table_representation.py
++++ orkg_client/models/comparison_table_representation.py
+@@ -117,7 +117,7 @@
+ 
+         _obj = cls.model_validate({
+             "selected_paths": [LabeledComparisonPathRepresentation.from_dict(_item) for _item in obj["selected_paths"]] if obj.get("selected_paths") is not None else None,
+-            "subtitles": [ThingReferenceRepresentation.from_dict(_item) for _item in obj["subtitles"]] if obj.get("subtitles") is not None else None,
++            "subtitles": [ThingReferenceRepresentation.from_dict(_item) if _item is not None else None for _item in obj["subtitles"]] if obj.get("subtitles") is not None else None,
+             "titles": [ThingReferenceRepresentation.from_dict(_item) for _item in obj["titles"]] if obj.get("titles") is not None else None,
+             "values": dict(
+                 (_k,

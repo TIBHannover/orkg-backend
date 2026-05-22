@@ -148,7 +148,7 @@ fun OrganizationUseCases.createOrganization(
     url: String = "https://www.example.org",
     displayId: String = organizationName.toDisplayId(),
     type: OrganizationType = OrganizationType.GENERAL,
-    id: OrganizationId? = null,
+    id: OrganizationId? = OrganizationId("fca7911e-e9b4-4b23-842b-f61c0af0df73"),
     logoId: ImageId? = null,
 ) = create(
     id = id,
@@ -163,7 +163,7 @@ fun OrganizationUseCases.createOrganization(
 // Observatories
 
 fun ObservatoryUseCases.createObservatory(
-    id: ObservatoryId? = null,
+    id: ObservatoryId? = ObservatoryId("0af91b32-87c1-4453-92e5-df0caa7387ee"),
     name: String = "Test Observatory",
     description: String = "Example description",
     organizations: Set<OrganizationId> = emptySet(),

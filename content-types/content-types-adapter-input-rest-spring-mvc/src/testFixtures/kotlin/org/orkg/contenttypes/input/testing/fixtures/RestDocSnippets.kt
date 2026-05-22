@@ -13,6 +13,7 @@ import org.orkg.common.testing.fixtures.researchGateIdConstraint
 import org.orkg.common.testing.fixtures.researcherIdConstraint
 import org.orkg.common.testing.fixtures.wikidataIdConstraint
 import org.orkg.common.thingIdConstraint
+import org.orkg.contenttypes.adapter.input.rest.ComparisonTableRowRepresentation
 import org.orkg.contenttypes.adapter.input.rest.LabeledObjectRepresentation
 import org.orkg.contenttypes.adapter.input.rest.LiteratureListSectionRepresentation
 import org.orkg.contenttypes.adapter.input.rest.SmartReviewSectionRepresentation
@@ -701,15 +702,15 @@ fun comparisonTableResponseFields() = listOf(
     subsectionWithPath("titles[]").description("The titles (thing reference representations) of each column. The list is guaranteed to have same count of elements as sources are defined for the comparison."),
     subsectionWithPath("subtitles[]").description("The subtitles (thing reference representations) of each column. Elements might be null. The list is guaranteed to have same count of elements as sources are defined for the comparison.").nullableItems(),
     fieldWithPath("values").description("A key-value map of predicate/rosetta stone template ids to comparison table row representations."),
-    fieldWithPath("values.*").description("The predicate or rosetta stone template id."),
-    fieldWithPath("values.*[]").description("The list of comparison table row representations.").nullableItems(),
+    fieldWithPath("values.*").description("The predicate or rosetta stone template id.").references<ComparisonTableRowRepresentation>(),
+    fieldWithPath("values.*[]").description("The list of comparison table row representations."),
     *applyPathPrefix("values.*[].", comparisonTableRowResponseFields()).toTypedArray(),
 )
 
 fun comparisonTableRowResponseFields() = listOf(
     subsectionWithPath("values[]").description("The values (thing reference representations) of the row. Elements might be null. The list is guaranteed to have same count of elements as sources are defined for the comparison.").nullableItems(),
     fieldWithPath("children").description("A key-value map of predicate/rosetta stone template ids to comparison table row representations."),
-    fieldWithPath("children.*").description("The predicate or rosetta stone template id."),
+    fieldWithPath("children.*").description("The predicate or rosetta stone template id.").references<ComparisonTableRowRepresentation>(),
     subsectionWithPath("children.*[]").description("A list of nested comparison table row representations."),
 )
 

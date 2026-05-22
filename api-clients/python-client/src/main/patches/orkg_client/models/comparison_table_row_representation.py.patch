@@ -1,0 +1,11 @@
+--- orkg_client/models/comparison_table_row_representation.py
++++ orkg_client/models/comparison_table_row_representation.py
+@@ -99,7 +99,7 @@
+ 
+         _obj = cls.model_validate({
+             "children": obj.get("children"),
+-            "values": [ThingReferenceRepresentation.from_dict(_item) for _item in obj["values"]] if obj.get("values") is not None else None
++            "values": [ThingReferenceRepresentation.from_dict(_item) if _item is not None else None for _item in obj["values"]] if obj.get("values") is not None else None
+         })
+         return _obj
+ 

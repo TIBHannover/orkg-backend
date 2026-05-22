@@ -1,0 +1,11 @@
+--- orkg_client/models/row_representation.py
++++ orkg_client/models/row_representation.py
+@@ -89,7 +89,7 @@
+             return cls.model_validate(obj)
+ 
+         _obj = cls.model_validate({
+-            "data": [ThingReferenceRepresentation.from_dict(_item) for _item in obj["data"]] if obj.get("data") is not None else None,
++            "data": [ThingReferenceRepresentation.from_dict(_item) if _item is not None else None for _item in obj["data"]] if obj.get("data") is not None else None,
+             "label": obj.get("label")
+         })
+         return _obj

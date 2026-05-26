@@ -10,6 +10,7 @@ import org.orkg.common.ContributorId
 import org.orkg.common.OrganizationId
 import org.orkg.common.annotations.RequireCuratorRole
 import org.orkg.common.contributorId
+import org.orkg.common.validation.NullableNotBlank
 import org.orkg.community.adapter.input.rest.mapping.ObservatoryRepresentationAdapter
 import org.orkg.community.domain.Contributor
 import org.orkg.community.domain.InvalidImageEncoding
@@ -82,6 +83,7 @@ class OrganizationController(
             organization.displayId,
             OrganizationType.fromOrNull(organization.type)!!,
             imageId,
+            organization.description,
         )
         val location = uriComponentsBuilder
             .path("/api/organizations/{id}")
@@ -152,6 +154,7 @@ class OrganizationController(
                         mimeType = mimeType,
                     )
                 },
+                description = request?.description,
             ),
         )
         val location = uriComponentsBuilder
@@ -196,6 +199,8 @@ class OrganizationController(
         val displayId: String,
         @field:NotBlank
         val type: String,
+        @field:NullableNotBlank
+        val description: String?,
     )
 
     data class UpdateOrganizationPropertiesRequest(
@@ -204,6 +209,7 @@ class OrganizationController(
         @field:Size(min = 1)
         val url: String?,
         val type: OrganizationType?,
+        val description: String?,
     )
 }
 

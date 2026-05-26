@@ -28,6 +28,7 @@ class OrganizationService(
         displayId: String,
         type: OrganizationType,
         logoId: ImageId?,
+        description: String?,
     ): OrganizationId {
         val organizationId = id ?: OrganizationId(UUID.randomUUID())
         val newOrganization = Organization(
@@ -38,6 +39,7 @@ class OrganizationService(
             displayId = displayId,
             type = type,
             logoId = logoId,
+            description = description,
         )
         postgresOrganizationRepository.save(newOrganization)
         return organizationId
@@ -89,6 +91,7 @@ class OrganizationService(
                         ),
                     )
                 }
+                description = command.description ?: description
             }
         postgresOrganizationRepository.save(organization)
     }

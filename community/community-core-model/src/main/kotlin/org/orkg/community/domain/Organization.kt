@@ -20,6 +20,7 @@ data class Organization(
     var type: OrganizationType?,
     @JsonIgnore
     var logoId: ImageId?,
+    var description: String? = null,
 )
 
 enum class OrganizationType {

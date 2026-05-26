@@ -39,7 +39,7 @@ internal fun PostgresObservatoryRepository.toObservatoryEntity(
 internal fun PostgresOrganizationRepository.toOrganizationEntity(
     organization: Organization,
     observatoryRepository: PostgresObservatoryRepository,
-): OrganizationEntity = findById(organization.id!!.value).orElse(OrganizationEntity()).apply {
+): OrganizationEntity = findById(organization.id!!.value).orElseGet(::OrganizationEntity).apply {
     id = organization.id!!.value
     name = organization.name
     createdBy = organization.createdBy?.value // FIXME: should always be set
@@ -50,6 +50,7 @@ internal fun PostgresOrganizationRepository.toOrganizationEntity(
     observatories = organization.observatoryIds.map {
         observatoryRepository.findById(it.value).orElseThrow { ObservatoryNotFound(it) }
     }.toMutableSet()
+    description = organization.description
     // "conferenceSeries" is read-only (not insertable)
 }
 

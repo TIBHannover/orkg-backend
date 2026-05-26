@@ -150,6 +150,7 @@ fun OrganizationUseCases.createOrganization(
     type: OrganizationType = OrganizationType.GENERAL,
     id: OrganizationId? = OrganizationId("fca7911e-e9b4-4b23-842b-f61c0af0df73"),
     logoId: ImageId? = null,
+    description: String? = null,
 ) = create(
     id = id,
     organizationName = organizationName,
@@ -158,6 +159,7 @@ fun OrganizationUseCases.createOrganization(
     displayId = displayId,
     type = type,
     logoId = logoId,
+    description = description,
 )
 
 // Observatories

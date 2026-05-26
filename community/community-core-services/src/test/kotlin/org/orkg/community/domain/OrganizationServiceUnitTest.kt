@@ -82,6 +82,7 @@ internal class OrganizationServiceUnitTest : MockkBaseTest {
             url = null,
             type = null,
             logo = null,
+            description = null,
         )
 
         every { repository.findById(id) } returns Optional.empty()
@@ -104,6 +105,7 @@ internal class OrganizationServiceUnitTest : MockkBaseTest {
             url = null,
             type = null,
             logo = null,
+            description = null,
         )
 
         every { repository.findById(id) } returns Optional.of(organization)
@@ -120,6 +122,7 @@ internal class OrganizationServiceUnitTest : MockkBaseTest {
                     assertEquals(organization.homepage, it.homepage)
                     assertEquals(organization.type, it.type)
                     assertEquals(organization.logoId, it.logoId)
+                    assertEquals(organization.description, it.description)
                 },
             )
         }
@@ -136,6 +139,7 @@ internal class OrganizationServiceUnitTest : MockkBaseTest {
             url = "https://example.org",
             type = null,
             logo = null,
+            description = null,
         )
 
         every { repository.findById(id) } returns Optional.of(organization)
@@ -152,6 +156,7 @@ internal class OrganizationServiceUnitTest : MockkBaseTest {
                     assertEquals("https://example.org", it.homepage)
                     assertEquals(organization.type, it.type)
                     assertEquals(organization.logoId, it.logoId)
+                    assertEquals(organization.description, it.description)
                 },
             )
         }
@@ -168,6 +173,7 @@ internal class OrganizationServiceUnitTest : MockkBaseTest {
             url = null,
             type = OrganizationType.GENERAL,
             logo = null,
+            description = null,
         )
 
         every { repository.findById(id) } returns Optional.of(organization)
@@ -184,6 +190,7 @@ internal class OrganizationServiceUnitTest : MockkBaseTest {
                     assertEquals(organization.homepage, it.homepage)
                     assertEquals(OrganizationType.GENERAL, it.type)
                     assertEquals(organization.logoId, it.logoId)
+                    assertEquals(organization.description, it.description)
                 },
             )
         }
@@ -202,6 +209,7 @@ internal class OrganizationServiceUnitTest : MockkBaseTest {
             url = null,
             type = null,
             logo = image,
+            description = null,
         )
         val createImageCommand = CreateImageUseCase.CreateCommand(image.data, image.mimeType, contributorId)
 
@@ -220,10 +228,45 @@ internal class OrganizationServiceUnitTest : MockkBaseTest {
                     assertEquals(organization.homepage, it.homepage)
                     assertEquals(organization.type, it.type)
                     assertEquals(imageId, it.logoId)
+                    assertEquals(organization.description, it.description)
                 },
             )
         }
         verify(exactly = 1) { imageService.create(createImageCommand) }
+    }
+
+    @Test
+    fun `given an organization update command, when updating the description, it succeeds`() {
+        val organization = createOrganization()
+        val id = organization.id!!
+        val contributorId = ContributorId(UUID.randomUUID())
+        val command = UpdateOrganizationUseCases.UpdateOrganizationCommand(
+            id = id,
+            name = null,
+            url = null,
+            type = null,
+            logo = null,
+            description = "updated description",
+        )
+
+        every { repository.findById(id) } returns Optional.of(organization)
+        every { repository.save(organization) } just runs
+
+        service.update(contributorId, command)
+
+        verify(exactly = 1) { repository.findById(id) }
+        verify(exactly = 1) {
+            repository.save(
+                withArg {
+                    assertEquals(organization.id, it.id)
+                    assertEquals(organization.name, it.name)
+                    assertEquals(organization.homepage, it.homepage)
+                    assertEquals(organization.type, it.type)
+                    assertEquals(organization.logoId, it.logoId)
+                    assertEquals("updated description", it.description)
+                },
+            )
+        }
     }
 
     @Test
@@ -239,6 +282,7 @@ internal class OrganizationServiceUnitTest : MockkBaseTest {
             url = "https://example.org",
             type = OrganizationType.CONFERENCE,
             logo = image,
+            description = "updated description",
         )
 
         every { repository.findById(id) } returns Optional.of(organization)
@@ -256,6 +300,7 @@ internal class OrganizationServiceUnitTest : MockkBaseTest {
                     assertEquals("https://example.org", it.homepage)
                     assertEquals(OrganizationType.CONFERENCE, it.type)
                     assertEquals(imageId, it.logoId)
+                    assertEquals("updated description", it.description)
                 },
             )
         }
@@ -271,6 +316,7 @@ internal class OrganizationServiceUnitTest : MockkBaseTest {
             homepage = "https://example.org",
             type = OrganizationType.CONFERENCE,
             logoId = imageId,
+            description = "description",
         )
         val id = organization.id!!
         val command = UpdateOrganizationUseCases.UpdateOrganizationCommand(
@@ -279,6 +325,7 @@ internal class OrganizationServiceUnitTest : MockkBaseTest {
             url = null,
             type = null,
             logo = null,
+            description = null,
         )
 
         every { repository.findById(id) } returns Optional.of(organization)
@@ -295,6 +342,7 @@ internal class OrganizationServiceUnitTest : MockkBaseTest {
                     assertEquals("https://example.org", it.homepage)
                     assertEquals(OrganizationType.CONFERENCE, it.type)
                     assertEquals(imageId, it.logoId)
+                    assertEquals("description", it.description)
                 },
             )
         }

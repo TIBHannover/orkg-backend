@@ -2,6 +2,8 @@ package org.orkg.community.adapter.input.rest
 
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
+import io.mockk.just
+import io.mockk.runs
 import io.mockk.verify
 import org.hamcrest.Matchers.endsWith
 import org.junit.jupiter.api.DisplayName
@@ -250,6 +252,7 @@ internal class OrganizationControllerUnitTest : MockMvcBaseTest("organizations")
             "name" to "Organization",
             "url" to "https://example.com",
             "type" to OrganizationType.GENERAL,
+            "description" to "updated description",
         )
 
         every { organizationService.update(any(), any()) } returns Unit
@@ -289,6 +292,7 @@ internal class OrganizationControllerUnitTest : MockMvcBaseTest("organizations")
                     fieldWithPath("name").description("The updated name of the organization. (optional)").type("string").optional(),
                     fieldWithPath("url").description("The updated URL of the organization. (optional)").type("string").optional(),
                     fieldWithPath("type").description("The updated type of the organization. One of $allowedOrganizationTypeValues. (optional)").type("string").optional(),
+                    fieldWithPath("description").description("The updated description of the organization. (optional)").type("string").optional(),
                 )
                 throws(InvalidMimeType::class, OrganizationNotFound::class)
             }

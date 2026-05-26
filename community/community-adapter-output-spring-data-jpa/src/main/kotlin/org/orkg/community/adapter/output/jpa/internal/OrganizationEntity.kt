@@ -55,6 +55,9 @@ class OrganizationEntity() {
     @Column(name = "logo_id")
     var logoId: UUID? = null
 
+    @Column
+    var description: String? = null
+
     fun toOrganization() =
         Organization(
             id = OrganizationId(id!!),
@@ -65,5 +68,6 @@ class OrganizationEntity() {
             displayId = displayId,
             type = type!!,
             logoId = if (logoId != null) ImageId(logoId!!) else null,
+            description = description,
         )
 }

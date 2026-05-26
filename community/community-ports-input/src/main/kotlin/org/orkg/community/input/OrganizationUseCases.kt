@@ -18,6 +18,7 @@ interface UpdateOrganizationUseCases {
         val url: String?,
         val type: OrganizationType?,
         val logo: RawImage?,
+        val description: String?,
     )
 }
 
@@ -33,6 +34,7 @@ interface OrganizationUseCases : UpdateOrganizationUseCases {
         displayId: String,
         type: OrganizationType,
         logoId: ImageId?,
+        description: String?,
     ): OrganizationId
 
     fun findAll(): List<Organization>

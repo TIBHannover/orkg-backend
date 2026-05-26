@@ -118,6 +118,7 @@ class PostgresDummyDataSetup(
                         url = it.homepage,
                         type = it.type!!,
                         logo = null,
+                        description = it.description,
                     ),
                 )
             }, {
@@ -129,6 +130,7 @@ class PostgresDummyDataSetup(
                     displayId = organization.displayId!!,
                     type = organization.type!!,
                     logoId = null,
+                    description = organization.description,
                 )
             })
         }

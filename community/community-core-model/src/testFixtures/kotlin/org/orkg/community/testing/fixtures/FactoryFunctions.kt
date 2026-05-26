@@ -63,7 +63,8 @@ fun createOrganization(
     displayId: String = "some display id",
     type: OrganizationType = OrganizationType.GENERAL,
     logoId: ImageId? = null,
-) = Organization(id, name, createdBy, homepage, observatories, displayId, type, logoId)
+    description: String? = null,
+) = Organization(id, name, createdBy, homepage, observatories, displayId, type, logoId, description)
 
 fun createObservatory(
     organizationIds: Set<OrganizationId> = emptySet(),

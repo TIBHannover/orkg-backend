@@ -22,6 +22,12 @@ include:
           optional: true
         - job: secret_detection
         - job: container_scanning
+  # (Security) Scanning templates
+  - template: Security/Container-Scanning.gitlab-ci.yml
+  - template: Security/Secret-Detection.gitlab-ci.yml
+  # Disabled because the scanner does not work properly with Gradle multi-project builds. Remove dot if fixed. See below.
+  #- template: Dependency-Scanning.gitlab-ci.yml
+  - template: 'Workflows/Branch-Pipelines.gitlab-ci.yml'  # Prevents duplicate pipelines
 
 stages:
   - build
@@ -190,14 +196,6 @@ docker_build:
       - '**/build/reports/dependency-analysis/build-health-report.txt'
   rules:
     - if: $CI_COMMIT_REF_NAME != $CI_DEFAULT_BRANCH
-
-# (Security) Scanning templates
-include:
-  - template: Security/Container-Scanning.gitlab-ci.yml
-  - template: Security/Secret-Detection.gitlab-ci.yml
-  # Disabled because the scanner does not work properly with Gradle multi-project builds. Remove dot if fixed. See below.
-  #- template: Dependency-Scanning.gitlab-ci.yml
-  - template: 'Workflows/Branch-Pipelines.gitlab-ci.yml'  # Prevents duplicate pipelines
 
 container_scanning:
   stage: verify

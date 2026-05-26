@@ -36,7 +36,7 @@ fun observatoryResponseFields() = listOf(
 fun organizationResponseFields() = listOf(
     fieldWithPath("id").description("The organization ID"),
     fieldWithPath("name").description("The organization name"),
-    fieldWithPath("description").description("The description of the organization."),
+    fieldWithPath("description").type("string").description("The description of the organization."),
     fieldWithPath("created_by").description("The ID of the user that created the organization."),
     fieldWithPath("homepage").description("The URL of the organization's homepage."),
     fieldWithPath("observatory_ids").description("The list of observatories that belong to this organization"),

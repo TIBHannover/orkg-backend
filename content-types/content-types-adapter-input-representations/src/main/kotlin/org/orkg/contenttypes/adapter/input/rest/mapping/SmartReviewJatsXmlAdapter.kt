@@ -22,6 +22,7 @@ import org.jbibtex.BibTeXParser
 import org.jbibtex.Key
 import org.jbibtex.LaTeXParser
 import org.jbibtex.LaTeXPrinter
+import org.jbibtex.ParseException
 import org.orkg.common.ContributorId
 import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
@@ -101,7 +102,7 @@ private val markdownParser = Parser.builder()
     )
     .build()
 private val laTeXParser = LaTeXParser()
-private val latexPrinter = LaTeXPrinter()
+private val laTeXPrinter = LaTeXPrinter()
 
 interface SmartReviewJatsXmlAdapter : ComparisonJatsXmlAdapter {
     val smartReviewUseCases: SmartReviewUseCases
@@ -340,10 +341,7 @@ interface SmartReviewJatsXmlAdapter : ComparisonJatsXmlAdapter {
         ref {
             attributes["id"] = key.value
             val entries = entry.fields.mapValues { (_, value) ->
-                val userString = value.toUserString().replace("\\r", "")
-                val objects = laTeXParser.parse(StringReader(userString))
-                val printed = latexPrinter.print(objects)
-                printed.replace("\\n", " ").replace("\\r", "").trim()
+                convertValueToString(value.toUserString())
             }
             `element-citation` {
                 entries[BibTeXEntry.KEY_TYPE]?.let { type ->
@@ -404,6 +402,38 @@ interface SmartReviewJatsXmlAdapter : ComparisonJatsXmlAdapter {
                 }
             }
         }
+    }
+
+    private fun convertValueToString(value: String, offset: Int = -1): String {
+        val string = value.replace("\\r", "")
+        try {
+            val objects = laTeXParser.parse(StringReader(string))
+            val printed = laTeXPrinter.print(objects)
+            return printed.replace("\\n", " ").replace("\\r", "").trim()
+        } catch (e: ParseException) {
+            val newOffset = string.split("\n")
+                .take(e.currentToken.beginLine - 1)
+                .fold(0) { acc, string -> acc + string.length }
+                .plus(e.currentToken.beginLine - 1)
+                .plus(e.currentToken.beginColumn)
+            if (newOffset > offset) {
+                try {
+                    return convertValueToString(
+                        StringBuilder(string)
+                            .apply { insert(newOffset, "\\") }
+                            .toString(),
+                        newOffset,
+                    )
+                } catch (_: Throwable) {
+                    // further escaping did not help, return original string
+                }
+            } else {
+                throw e
+            }
+        } catch (_: Throwable) {
+            // ignore, return original string
+        }
+        return string.replace("\\n", " ").trim()
     }
 
     private fun SmartReview.findContentsById(id: ThingId): List<GeneralStatement> {

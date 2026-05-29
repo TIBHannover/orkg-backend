@@ -71,5 +71,5 @@ DELETE {{server_url}}/api/csvs/{{csv_id}}/import
 Authorization: Bearer {{access_token}}
 
 ### Delete CSV
-GET {{server_url}}/api/csvs/{{csv_id}}
+DELETE {{server_url}}/api/csvs/{{csv_id}}
 Authorization: Bearer {{access_token}}

@@ -3,7 +3,7 @@ plugins {
 }
 
 dependencies {
-    api(platform("org.springframework.boot:spring-boot-dependencies:4.0.2"))
+    api(platform("org.springframework.boot:spring-boot-dependencies:4.0.6"))
     // Kotlin
     api(platform(kotlin("bom", "2.3.0"))) // Align with version from Gradle, which is newer than the one in Spring
     // Platforms not included in Spring Boot
@@ -11,8 +11,6 @@ dependencies {
     api(platform("io.kotest:kotest-bom:6.0.7"))
     api(platform("io.rest-assured:rest-assured-bom:6.0.0"))
     api(platform("org.eclipse.rdf4j:rdf4j-bom:5.2.2"))
-
-    api(platform("tools.jackson:jackson-bom:3.0.4"))
 
     // Upgrade to Hibernate 7.3 for Jackson 3 support. Can be removed once Spring includes Hibernate 7.3+.
     api("org.hibernate.orm:hibernate-core:7.3.0.CR1")

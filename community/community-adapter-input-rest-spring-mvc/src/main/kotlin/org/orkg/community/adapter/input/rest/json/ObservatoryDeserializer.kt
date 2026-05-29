@@ -18,10 +18,10 @@ class ObservatoryDeserializer : ValueDeserializer<Observatory>() {
             name = node["name"].asString(),
             description = node["description"].asString(),
             researchField = node["research_field"]["id"].takeIf { !it.isNull }?.let { ThingId(it.asString()) },
-            members = node["members"].map { ContributorId(UUID.fromString(it.asString())) }.toSet(),
-            organizationIds = node["organization_ids"].map { OrganizationId(UUID.fromString(it.asString())) }.toSet(),
+            members = node["members"].toList().map { ContributorId(UUID.fromString(it.asString())) }.toSet(),
+            organizationIds = node["organization_ids"].toList().map { OrganizationId(UUID.fromString(it.asString())) }.toSet(),
             displayId = node["display_id"].asString(),
-            sustainableDevelopmentGoals = node["sdgs"].map { ThingId(it.stringValue(null)) }.toSet(),
+            sustainableDevelopmentGoals = node["sdgs"].toList().map { ThingId(it.stringValue(null)) }.toSet(),
         )
     }
 }

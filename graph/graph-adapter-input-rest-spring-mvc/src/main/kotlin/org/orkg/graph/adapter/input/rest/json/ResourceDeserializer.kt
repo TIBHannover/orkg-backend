@@ -22,7 +22,7 @@ class ResourceDeserializer : ValueDeserializer<Resource>() {
             id = ThingId(node["id"].asString()),
             label = node["label"].asString(),
             createdAt = OffsetDateTime.parse(node["created_at"].asString()),
-            classes = node["classes"].map { ThingId(it.asString()) }.toSet(),
+            classes = node["classes"].toList().map { ThingId(it.asString()) }.toSet(),
             createdBy = ContributorId(node["created_by"].asString()),
             observatoryId = ObservatoryId(node["observatory_id"].asString()),
             extractionMethod = ExtractionMethod.valueOf(node["extraction_method"].asString()),

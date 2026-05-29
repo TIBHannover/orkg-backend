@@ -252,9 +252,7 @@ class PostgresDummyDataSetup(
                 .build()
             val response = httpClient.send(request, HttpResponse.BodyHandlers.ofString())
             val pageResponse = objectMapper.readTree(response.body()) // We cant parse Page or PageImpl without custom deserializers
-            pageResponse.path("content")
-                .map { objectMapper.treeToValue(it, `class`) }
-                .forEach(action)
+            pageResponse.path("content").forEach { action(objectMapper.treeToValue(it, `class`)) }
             if (pageResponse.path("last").asBoolean(true)) return
             page++
         }

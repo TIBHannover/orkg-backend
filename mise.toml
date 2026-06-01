@@ -1,5 +1,5 @@
 [tools]
-java = "zulu-21"
+java = "zulu-25"
 
 [env]
 # Prefer Podman over Docker, e.g. when using TestContainers

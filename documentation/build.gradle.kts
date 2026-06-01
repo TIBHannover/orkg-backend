@@ -166,7 +166,7 @@ abstract class GenerateErrorListingTask : DefaultTask() {
                     |include::{snippets}/${file.toRelativeString(snippetsDir).replace('\\', '/')}[]
                     |
                     |
-                    """.trimMargin()
+                    """.trimMargin(),
                 )
             }
         }
@@ -212,7 +212,7 @@ abstract class GenerateOpenApiErrorSnippetsTask : DefaultTask() {
                         val request = get("request") as ObjectNode
                         request.replace("requestFields", arrayNode())
                         request.replace("example", null)
-                    }
+                    },
                 )
             }
         }

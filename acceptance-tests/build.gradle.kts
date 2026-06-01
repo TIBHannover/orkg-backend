@@ -38,7 +38,7 @@ tasks.withType<Test>().configureEach {
                 "KEYCLOAK_TCP_8080" to "8888",
                 "MAILSERVER_HOST" to "localhost",
                 "MAILSERVER_TCP_8025" to "8025",
-            )
+            ),
         )
     }
     // If we run locally, we either need the seed or have to use a time-based on. If not, we only take the value if passed to us.

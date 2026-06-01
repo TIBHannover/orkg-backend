@@ -115,11 +115,13 @@ abstract class GeneratePythonClientTask : GenerateTask() {
 tasks {
     val generateOpenApiSpecPython by registering(GenerateOpenApiSpecPythonTask::class) {
         inputFile.set(project(":documentation").layout.buildDirectory.file("api-spec/openapi3.yaml"))
+        description = "Postprocces the contents of an OpenAPI specification to always include a response schema"
         dependsOn(":documentation:openapi3")
     }
 
     register<GeneratePythonClientTask>("generateOpenApiClient") {
         generatorName.set("python")
+        description = "Generates a Python client library based on an OpenAPI specification"
         inputSpec.set(layout.buildDirectory.file("api-spec-python/openapi3.yaml").get().asFile.path)
         outputDir.set(layout.buildDirectory.dir("python-client").get().asFile.path)
         httpUserAgent = "ORKG-Python-Client/${project.version}"

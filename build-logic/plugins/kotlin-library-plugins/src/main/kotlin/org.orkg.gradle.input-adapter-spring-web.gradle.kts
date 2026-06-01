@@ -12,6 +12,7 @@ val restdocs: Configuration by configurations.creating {
 
 tasks {
     register<Zip>("restdocsSnippetsZip") {
+        description = "Creates a zip file from all restdocs artifacts"
         archiveClassifier.set("restdocs")
         from(tasks.named("test").get().outputs) {
             include("**/*.adoc")

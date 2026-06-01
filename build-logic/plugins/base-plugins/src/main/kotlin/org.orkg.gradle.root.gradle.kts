@@ -78,6 +78,7 @@ moduleGraphConfig {
 }
 
 val convertModuleGraphCodeBlockToStandaloneFile by tasks.registering {
+    description = "Converts a module graph diagram to a standalone adoc file"
     mustRunAfter(tasks.named("createModuleGraph"))
     doLast {
         val outputFile = File(modulesFile)

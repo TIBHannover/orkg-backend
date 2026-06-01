@@ -357,6 +357,7 @@ tasks {
     }
 }
 
+@Suppress("TaskMissingDescription")
 private fun TaskContainer.registerBootRunTask(
     name: String,
     configuration: BootRun.() -> Unit,
@@ -403,6 +404,7 @@ val integrationTest by tasks.getting {
 
 tasks {
     register<Zip>("restdocsSnippetsZip") {
+        description = "Creates a zip file from all restdocs artifacts"
         archiveClassifier.set("restdocs")
         from(integrationTest.outputs) {
             include("**/*.adoc")

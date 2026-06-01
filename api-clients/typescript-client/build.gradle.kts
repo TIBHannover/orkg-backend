@@ -8,6 +8,7 @@ tasks {
     register<GenerateTask>("generateOpenApiClient") {
         dependsOn(":documentation:openapi3")
         generatorName.set("typescript-fetch")
+        description = "Generates a TypeScript client library based on an OpenAPI specification"
         inputSpec.set(project(":documentation").layout.buildDirectory.file("api-spec/openapi3.yaml").get().asFile.path)
         outputDir.set(layout.buildDirectory.dir("typescript-client").get().asFile.path)
         httpUserAgent = "ORKG-TypeScript-Client/${project.version}"

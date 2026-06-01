@@ -43,6 +43,7 @@ dependencies {
 val aggregatedSnippetsDir = layout.buildDirectory.dir("aggregated-snippets")
 
 val aggregateRestDocsSnippets by tasks.registering(Sync::class) {
+    description = "Aggregates restdocs snippets from all projects into a single folder"
     group = "documentation"
 
     // Explicitly add a dependency on the configuration, because it will not resolve otherwise.
@@ -63,6 +64,7 @@ val aggregateRestDocsSnippets by tasks.registering(Sync::class) {
 val generatedSnippetsDir = layout.buildDirectory.dir("generated-snippets")
 
 val generateRestDocsSnippets by tasks.registering(Sync::class) {
+    description = "Aggregates restdocs snippets from all restdocs snippets generator tasks into a single folder"
     group = "documentation"
 
     from(aggregateRestDocsSnippets) {
@@ -105,6 +107,7 @@ val generateAntoraYml = tasks.named<GenerateAntoraYmlTask>("generateAntoraYml") 
 }
 
 val aggregateAntoraContent = tasks.register<Sync>("aggregateAntoraContent") {
+    description = "Aggregates all antora contents into a single folder"
     group = "documentation"
     from(generateRestDocsSnippets.get().outputs) {
         into("modules/ROOT/examples")
@@ -289,20 +292,24 @@ abstract class GenerateErrorSnippetsTask : DefaultTask() {
 }
 
 val generateErrorListing by tasks.registering(GenerateErrorListingTask::class) {
+    description = "Generates an adoc listing of all errors from the error response fields snippets in the input folder"
     inputs.files(aggregateRestDocsSnippets.get().outputs)
 }
 
 val generateErrorSnippets by tasks.registering(GenerateErrorSnippetsTask::class) {
+    description = "Generates an adoc snippet for each OpenAPI error resource in the input folder"
     inputs.files(aggregateRestDocsSnippets.get().outputs)
 }
 
 val generateOpenApiErrorSnippets by tasks.registering(GenerateOpenApiErrorSnippetsTask::class) {
+    description = "Generates an OpenAPI error resource for each error definition in the input folder"
     inputs.files(aggregateRestDocsSnippets.get().outputs)
 }
 
 val aggregatedOpenApiSnippetsDir = layout.buildDirectory.dir("generated-openapi-snippets")
 
 val aggregateOpenApiSnippets by tasks.registering(Sync::class) {
+    description = "Aggregates all OpenAPI resources into a single folder"
     from(generateOpenApiErrorSnippets.get().outputs)
     from(aggregateRestDocsSnippets.get().outputs) {
         includeEmptyDirs = false

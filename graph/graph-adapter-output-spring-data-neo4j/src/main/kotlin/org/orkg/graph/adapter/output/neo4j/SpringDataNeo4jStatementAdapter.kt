@@ -707,7 +707,7 @@ class SpringDataNeo4jStatementAdapter(
                     )
                     .with(
                         node.property("created_by").`as`(createdBy),
-                        call("custom.parseIsoOffsetDateTime")
+                        call("datetime")
                             .withArgs(node.property("created_at"))
                             .asFunction().`as`(timestamp),
                     )

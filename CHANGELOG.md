@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [0.98.2] - 2026-06-01
 ### Fixed
 - Fixed timeline endpoint not parsing some timestamps correctly, resulting in a status 500.
 
@@ -1935,7 +1937,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - This CHANGELOG file. Finally!
 
-[unreleased]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/compare/0.98.1...master
+[unreleased]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/compare/0.98.2...master
+[0.98.2]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.98.2
 [0.98.1]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.98.1
 [0.98.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.98.0
 [0.97.1]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.97.1

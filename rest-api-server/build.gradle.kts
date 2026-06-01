@@ -264,7 +264,6 @@ dependencies {
     runtimeOnly("org.springframework.boot:spring-boot-starter-security")
     runtimeOnly("org.springframework.boot:spring-boot-starter-validation")
     runtimeOnly("org.springframework.boot:spring-boot-starter-webmvc")
-    runtimeOnly("org.springframework.boot:spring-boot-starter-cache")
     runtimeOnly("org.springframework.boot:spring-boot-starter-security-oauth2-resource-server")
     runtimeOnly("org.springframework.data:spring-data-neo4j")
     runtimeOnly("eu.michael-simons.neo4j:neo4j-migrations-spring-boot-starter")

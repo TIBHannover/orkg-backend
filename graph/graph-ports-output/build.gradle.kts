@@ -12,7 +12,6 @@ dependencies {
     testFixturesImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
     testFixturesImplementation("org.springframework.data:spring-data-commons")
     testFixturesImplementation("dev.forkhandles:fabrikate4k")
-    testFixturesImplementation("io.kotest:kotest-assertions-core")
     testFixturesImplementation(project(":common:core-identifiers"))
     testFixturesImplementation(project(":graph:graph-core-constants"))
     testFixturesImplementation(project(":graph:graph-core-model"))

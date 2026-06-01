@@ -18,8 +18,6 @@ dependencies {
     testFixturesImplementation("io.kotest:kotest-assertions-shared")
     testFixturesImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
     testFixturesImplementation("org.springframework.data:spring-data-commons")
-    testFixturesImplementation("io.kotest:kotest-assertions-core")
-    testFixturesImplementation("io.kotest:kotest-assertions-shared")
     testFixturesImplementation("io.kotest:kotest-runner-junit5")
     testFixturesImplementation(project(":common:core-identifiers"))
     testFixturesImplementation(project(":common:external-identifiers"))

@@ -32,6 +32,7 @@ import org.orkg.testing.annotations.TestWithMockUser
 import org.orkg.testing.spring.MockMvcBaseTest
 import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectErrorStatus
 import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectType
+import org.orkg.testing.spring.restdocs.format
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest
 import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.HttpStatus.NOT_FOUND
@@ -284,7 +285,7 @@ internal class OrganizationControllerUnitTest : MockMvcBaseTest("organizations")
                 requestParts(
                     "UpdateOrganizationRequest",
                     partWithName("properties").description("The updated properties of the organization. (optional)").optional(),
-                    partWithName("logo").description("The updated logo of the organization. (optional)").optional(),
+                    partWithName("logo").description("The updated logo of the organization. (optional)").format("binary").optional(),
                 )
                 requestPartFields(
                     UpdateOrganizationPropertiesRequest::class,

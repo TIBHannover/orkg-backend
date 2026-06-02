@@ -53,6 +53,7 @@ import org.orkg.testing.andExpectPage
 import org.orkg.testing.annotations.TestWithMockUser
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.MockMvcBaseTest
+import org.orkg.testing.spring.restdocs.format
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest
 import org.springframework.mock.web.MockMultipartFile
 import org.springframework.mock.web.MockPart
@@ -225,7 +226,7 @@ internal class CSVControllerUnitTest : MockMvcBaseTest("csvs") {
                 )
                 requestParts(
                     "CreateCSVRequest",
-                    partWithName("file").description("The CSV file."),
+                    partWithName("file").description("The CSV file.").format("binary"),
                     partWithName("type").description("The type of the CSV. See <<csv-types,CSV Types>>."),
                     partWithName("format").description("The format of the CSV. See <<csv-formats,CSV Formats>>. (optional, default: `${CSV.Format.DEFAULT.name}`)"),
                 )
@@ -284,7 +285,7 @@ internal class CSVControllerUnitTest : MockMvcBaseTest("csvs") {
                 )
                 requestParts(
                     "UpdateCSVRequest",
-                    partWithName("file").description("The updated CSV file. (optional)").optional(),
+                    partWithName("file").description("The updated CSV file. (optional)").format("binary").optional(),
                     partWithName("type").description("The updated type of the CSV. See <<csv-types,CSV Types>>. (optional)").optional(),
                     partWithName("format").description("The updated format of the CSV. See <<csv-formats,CSV Formats>>. (optional)").optional(),
                 )

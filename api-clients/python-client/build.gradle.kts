@@ -1,4 +1,3 @@
-import Org_orkg_gradle_patch_gradle.GeneratePatchesTask
 import Org_orkg_gradle_patch_gradle.PatchHelper
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
@@ -6,7 +5,6 @@ import com.fasterxml.jackson.databind.node.ObjectNode
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import org.openapitools.generator.gradle.plugin.tasks.GenerateTask
-import java.io.File
 
 plugins {
     id("org.orkg.gradle.openapi")

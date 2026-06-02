@@ -1,0 +1,11 @@
+--- src/runtime.ts
++++ src/runtime.ts
+@@ -369,7 +369,7 @@
+ 
+ export function canConsumeForm(consumes: Consume[]): boolean {
+     for (const consume of consumes) {
+-        if ('multipart/form-data' === consume.contentType) {
++        if ('multipart/form-data' === consume.contentType || consume.contentType?.startsWith('multipart/form-data;') == true) {
+             return true;
+         }
+     }

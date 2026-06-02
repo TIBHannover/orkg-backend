@@ -1,11 +1,30 @@
+import Org_orkg_gradle_patch_gradle.PatchHelper
 import org.openapitools.generator.gradle.plugin.tasks.GenerateTask
 
 plugins {
     id("org.orkg.gradle.openapi")
 }
 
+@CacheableTask
+abstract class GenerateTypeScriptClientTask : GenerateTask() {
+    @get:PathSensitive(PathSensitivity.RELATIVE)
+    @get:InputDirectory
+    abstract val patchesDirectory: DirectoryProperty
+
+    init {
+        patchesDirectory.convention(project.layout.projectDirectory.dir("src/main/patches"))
+        // We cannot override the default task action function doWork() because it is final, so we use doLast instead
+        doLast { customizeTypeScriptClient() }
+    }
+
+    private fun customizeTypeScriptClient() {
+        val outputDir = outputDir.get().asFile
+        PatchHelper.applyPatches(patchesDirectory.get().asFile, outputDir)
+    }
+}
+
 tasks {
-    register<GenerateTask>("generateOpenApiClient") {
+    register<GenerateTypeScriptClientTask>("generateOpenApiClient") {
         dependsOn(":documentation:openapi3")
         generatorName.set("typescript-fetch")
         description = "Generates a TypeScript client library based on an OpenAPI specification"

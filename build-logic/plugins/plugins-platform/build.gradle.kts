@@ -9,7 +9,7 @@ dependencies.constraints {
     api("org.jetbrains.kotlin:kotlin-noarg:$kotlinVersion")
 
     // FIXME: This version should be the same as the one used in the platform.
-    api("org.springframework.boot:spring-boot-gradle-plugin:4.0.3")
+    api("org.springframework.boot:spring-boot-gradle-plugin:4.0.6")
 
     api("io.spring.gradle.antora:spring-antora-plugin:0.0.1")
     api("org.antora:gradle-antora-plugin:1.0.0")

@@ -32,7 +32,7 @@ class ErrorController(
     @RequestMapping
     fun error(request: HttpServletRequest): ResponseEntity<Map<String, Any?>> {
         val servletWebRequest = ServletWebRequest(request)
-        val exception = errorAttributes.getError(servletWebRequest)!!
+        val exception = errorAttributes.getError(servletWebRequest) ?: RuntimeException("Unknown error")
         val instance = servletWebRequest.getAttribute(RequestDispatcher.ERROR_REQUEST_URI, RequestAttributes.SCOPE_REQUEST) as? String
         val (httpHeaders, problemDetail) = problemResponseFactory.createProblemResponse(exception, getStatus(request), instance)
 

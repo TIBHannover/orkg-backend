@@ -1,6 +1,6 @@
 package org.orkg.dataimport.domain.configuration
 
-import org.springframework.batch.core.configuration.support.DefaultBatchConfiguration
+import org.springframework.batch.core.configuration.support.JdbcDefaultBatchConfiguration
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Configuration
@@ -14,7 +14,7 @@ class SpringBatchConfiguration(
     private val jpaTransactionManager: PlatformTransactionManager,
     @param:Value($$"${job-executor-thread-pool-size:#{2}}")
     private val jobExecutorThreadPoolSize: Int,
-) : DefaultBatchConfiguration() {
+) : JdbcDefaultBatchConfiguration() {
     override fun getTransactionManager(): PlatformTransactionManager = jpaTransactionManager
 
     override fun getTaskExecutor(): TaskExecutor =

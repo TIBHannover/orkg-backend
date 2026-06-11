@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [0.98.4] - 2026-06-11
 ### Fixed
 - Fixed a regression in the Spring Batch 6 update that caused in-memory repository usage instead of jdbc.
 
@@ -1944,7 +1946,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - This CHANGELOG file. Finally!
 
-[unreleased]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/compare/0.98.3...master
+[unreleased]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/compare/0.98.4...master
+[0.98.4]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.98.4
 [0.98.3]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.98.3
 [0.98.2]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.98.2
 [0.98.1]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.98.1

@@ -9,7 +9,7 @@ internal class ItemErrorListenerUnitTest {
     private val itemErrorListener = ItemErrorListener<Any, Any>()
 
     @Test
-    fun `Given a step execution, when an exception is thrown during item processing, the execption is appended to the step execution and the step execution is marked as failed`() {
+    fun `Given a step execution, when an exception is thrown during item processing, the exception is appended to the step execution and the step execution is marked as failed`() {
         val stepExecution = createStepExecution()
 
         itemErrorListener.beforeStep(stepExecution)

@@ -172,7 +172,7 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
     }
 
     @Test
-    @DisplayName("Given a smart review, when it is fetched by idas JATS XML  and service succeeds, then status is 200 OK and smart review is returned")
+    @DisplayName("Given a smart review, when it is fetched by id as JATS XML  and service succeeds, then status is 200 OK and smart review is returned")
     fun findById_asJatsXml() {
         val smartReview = createSmartReview().copy(
             references = listOf(

@@ -6,11 +6,11 @@ import org.springframework.stereotype.Component
 
 @Component
 class JobResultRepresentationFactory(jobResultAdapters: List<JobResultRepresentationFormatter>) {
-    private val jobNameToResultReprensentationAdapter =
+    private val jobNameToResultRepresentationAdapter =
         jobResultAdapters.flatMap { formatter -> formatter.jobNames().map { it to formatter } }.toMap()
 
     fun getResultRepresentation(result: JobResult): Any? {
-        val representationAdapter = jobNameToResultReprensentationAdapter[result.jobName]
+        val representationAdapter = jobNameToResultRepresentationAdapter[result.jobName]
             ?: JobResultRepresentationFormatter.DEFAULT
         return representationAdapter.getRepresentation(result).orElseThrow { JobResultNotFound(result.jobId) }
     }

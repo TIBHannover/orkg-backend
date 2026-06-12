@@ -36,7 +36,7 @@ internal class ComparisonTableServiceUnitTest : MockkBaseTest {
     private val rosettaStoneStatementRepository: RosettaStoneStatementRepository = mockk()
     private val comparisonTableRepository: ComparisonTableRepository = mockk()
     private val resourceRepository: ResourceRepository = mockk()
-    private val statementRepsitory: StatementRepository = mockk()
+    private val statementRepository: StatementRepository = mockk()
     private val formattedLabelUseCases: FormattedLabelUseCases = mockk()
 
     private val service = ComparisonTableService(
@@ -44,7 +44,7 @@ internal class ComparisonTableServiceUnitTest : MockkBaseTest {
         rosettaStoneStatementRepository,
         comparisonTableRepository,
         resourceRepository,
-        statementRepsitory,
+        statementRepository,
         formattedLabelUseCases,
     )
 
@@ -142,7 +142,7 @@ internal class ComparisonTableServiceUnitTest : MockkBaseTest {
 
         every { resourceRepository.findById(comparisonId) } returns Optional.of(comparison)
         every { comparisonTableRepository.findByComparisonId(comparisonId) } returns Optional.of(comparisonTable)
-        every { statementRepsitory.findAll(subjectId = comparisonId, pageable = PageRequests.ALL) } returns sourceStatements
+        every { statementRepository.findAll(subjectId = comparisonId, pageable = PageRequests.ALL) } returns sourceStatements
         every { comparisonAuxiliaryRepository.findComparisonColumnDataByRootIdsAndPaths(any(), any()) } returns thingColumnData
         every { rosettaStoneStatementRepository.findAllByContextIdsAndTemplateIds(any(), any()) } returns statementColumnData
         every { formattedLabelUseCases.findFormattedLabels(any()) } returns emptyMap()
@@ -151,7 +151,7 @@ internal class ComparisonTableServiceUnitTest : MockkBaseTest {
 
         verify(exactly = 1) { resourceRepository.findById(comparisonId) }
         verify(exactly = 1) { comparisonTableRepository.findByComparisonId(comparisonId) }
-        verify(exactly = 1) { statementRepsitory.findAll(subjectId = comparisonId, pageable = PageRequests.ALL) }
+        verify(exactly = 1) { statementRepository.findAll(subjectId = comparisonId, pageable = PageRequests.ALL) }
         verify(exactly = 1) {
             comparisonAuxiliaryRepository.findComparisonColumnDataByRootIdsAndPaths(
                 rootIds = listOf(sourceId1, sourceId2),
@@ -205,7 +205,7 @@ internal class ComparisonTableServiceUnitTest : MockkBaseTest {
 
         every { resourceRepository.findById(comparisonId) } returns Optional.of(comparison)
         every { comparisonTableRepository.findByComparisonId(comparisonId) } returns Optional.of(emptyTable)
-        every { statementRepsitory.findAll(subjectId = comparisonId, pageable = PageRequests.ALL) } returns sourceStatements
+        every { statementRepository.findAll(subjectId = comparisonId, pageable = PageRequests.ALL) } returns sourceStatements
         every { comparisonAuxiliaryRepository.findComparisonColumnDataByRootIdsAndPaths(any(), any()) } returns thingColumnData
         every { rosettaStoneStatementRepository.findAllByContextIdsAndTemplateIds(any(), any()) } returns statementColumnData
         every { formattedLabelUseCases.findFormattedLabels(any()) } returns emptyMap()
@@ -214,7 +214,7 @@ internal class ComparisonTableServiceUnitTest : MockkBaseTest {
 
         verify(exactly = 1) { resourceRepository.findById(comparisonId) }
         verify(exactly = 1) { comparisonTableRepository.findByComparisonId(comparisonId) }
-        verify(exactly = 1) { statementRepsitory.findAll(subjectId = comparisonId, pageable = PageRequests.ALL) }
+        verify(exactly = 1) { statementRepository.findAll(subjectId = comparisonId, pageable = PageRequests.ALL) }
         verify(exactly = 1) {
             comparisonAuxiliaryRepository.findComparisonColumnDataByRootIdsAndPaths(
                 rootIds = listOf(sourceId1, sourceId2),
@@ -241,14 +241,14 @@ internal class ComparisonTableServiceUnitTest : MockkBaseTest {
 
         every { resourceRepository.findById(comparisonId) } returns Optional.of(comparison)
         every { comparisonTableRepository.findByComparisonId(comparisonId) } returns Optional.of(table)
-        every { comparisonAuxiliaryRepository.findAllLabeledComparisonPathsBySimpleComparionPaths(command.selectedPaths) } returns labeledPaths
+        every { comparisonAuxiliaryRepository.findAllLabeledComparisonPathsBySimpleComparisonPaths(command.selectedPaths) } returns labeledPaths
         every { comparisonTableRepository.save(expected) } just runs
 
         service.update(command)
 
         verify(exactly = 1) { resourceRepository.findById(comparisonId) }
         verify(exactly = 1) { comparisonTableRepository.findByComparisonId(comparisonId) }
-        verify(exactly = 1) { comparisonAuxiliaryRepository.findAllLabeledComparisonPathsBySimpleComparionPaths(command.selectedPaths) }
+        verify(exactly = 1) { comparisonAuxiliaryRepository.findAllLabeledComparisonPathsBySimpleComparisonPaths(command.selectedPaths) }
         verify(exactly = 1) { comparisonTableRepository.save(expected) }
     }
 
@@ -300,14 +300,14 @@ internal class ComparisonTableServiceUnitTest : MockkBaseTest {
 
         every { resourceRepository.findById(comparisonId) } returns Optional.of(comparison)
         every { comparisonTableRepository.findByComparisonId(comparisonId) } returns Optional.empty()
-        every { comparisonAuxiliaryRepository.findAllLabeledComparisonPathsBySimpleComparionPaths(command.selectedPaths) } returns labeledPaths
+        every { comparisonAuxiliaryRepository.findAllLabeledComparisonPathsBySimpleComparisonPaths(command.selectedPaths) } returns labeledPaths
         every { comparisonTableRepository.save(expected) } just runs
 
         service.update(command)
 
         verify(exactly = 1) { resourceRepository.findById(comparisonId) }
         verify(exactly = 1) { comparisonTableRepository.findByComparisonId(comparisonId) }
-        verify(exactly = 1) { comparisonAuxiliaryRepository.findAllLabeledComparisonPathsBySimpleComparionPaths(command.selectedPaths) }
+        verify(exactly = 1) { comparisonAuxiliaryRepository.findAllLabeledComparisonPathsBySimpleComparisonPaths(command.selectedPaths) }
         verify(exactly = 1) { comparisonTableRepository.save(expected) }
     }
 
@@ -548,13 +548,13 @@ internal class ComparisonTableServiceUnitTest : MockkBaseTest {
 
         every { resourceRepository.findById(comparisonId) } returns Optional.of(comparison)
         every { comparisonTableRepository.findByComparisonId(comparisonId) } returns Optional.of(table)
-        every { comparisonAuxiliaryRepository.findAllLabeledComparisonPathsBySimpleComparionPaths(command.selectedPaths) } returns labeledPaths
+        every { comparisonAuxiliaryRepository.findAllLabeledComparisonPathsBySimpleComparisonPaths(command.selectedPaths) } returns labeledPaths
 
         shouldThrow<ComparisonPathNotFound> { service.update(command) }
 
         verify(exactly = 1) { resourceRepository.findById(comparisonId) }
         verify(exactly = 1) { comparisonTableRepository.findByComparisonId(comparisonId) }
-        verify(exactly = 1) { comparisonAuxiliaryRepository.findAllLabeledComparisonPathsBySimpleComparionPaths(command.selectedPaths) }
+        verify(exactly = 1) { comparisonAuxiliaryRepository.findAllLabeledComparisonPathsBySimpleComparisonPaths(command.selectedPaths) }
     }
 
     private fun createSimpleComparisonPathWithDepth(depth: Int): SimpleComparisonPath =

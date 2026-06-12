@@ -21,11 +21,11 @@ import java.time.OffsetDateTime
 import java.util.Optional
 
 internal class ContributorIdentifierServiceUnitTest : MockkBaseTest {
-    private val contribtorRepository: ContributorRepository = mockk()
+    private val contributorRepository: ContributorRepository = mockk()
     private val contributorIdentifierRepository: ContributorIdentifierRepository = mockk()
 
     private val service = ContributorIdentifierService(
-        contribtorRepository,
+        contributorRepository,
         contributorIdentifierRepository,
         fixedClock,
     )
@@ -41,13 +41,13 @@ internal class ContributorIdentifierServiceUnitTest : MockkBaseTest {
             createdAt = OffsetDateTime.now(fixedClock),
         )
 
-        every { contribtorRepository.findById(command.contributorId) } returns Optional.of(contributor)
+        every { contributorRepository.findById(command.contributorId) } returns Optional.of(contributor)
         every { contributorIdentifierRepository.findByContributorIdAndValue(command.contributorId, command.value) } returns Optional.empty()
         every { contributorIdentifierRepository.save(any()) } just runs
 
         service.create(command) shouldBe expected
 
-        verify(exactly = 1) { contribtorRepository.findById(command.contributorId) }
+        verify(exactly = 1) { contributorRepository.findById(command.contributorId) }
         verify(exactly = 1) { contributorIdentifierRepository.findByContributorIdAndValue(command.contributorId, command.value) }
         verify(exactly = 1) { contributorIdentifierRepository.save(expected) }
     }
@@ -56,11 +56,11 @@ internal class ContributorIdentifierServiceUnitTest : MockkBaseTest {
     fun `Given a contributor identifier is created, when contributor does not exist, it throws an exception`() {
         val command = createContributorIdentifierCommand()
 
-        every { contribtorRepository.findById(command.contributorId) } returns Optional.empty()
+        every { contributorRepository.findById(command.contributorId) } returns Optional.empty()
 
         shouldThrow<ContributorNotFound> { service.create(command) }
 
-        verify(exactly = 1) { contribtorRepository.findById(command.contributorId) }
+        verify(exactly = 1) { contributorRepository.findById(command.contributorId) }
     }
 
     @Test
@@ -69,12 +69,12 @@ internal class ContributorIdentifierServiceUnitTest : MockkBaseTest {
         val contributor = createContributor(command.contributorId)
         val identifier = createContributorIdentifier()
 
-        every { contribtorRepository.findById(command.contributorId) } returns Optional.of(contributor)
+        every { contributorRepository.findById(command.contributorId) } returns Optional.of(contributor)
         every { contributorIdentifierRepository.findByContributorIdAndValue(command.contributorId, command.value) } returns Optional.of(identifier)
 
         shouldThrow<ContributorIdentifierAlreadyExists> { service.create(command) }
 
-        verify(exactly = 1) { contribtorRepository.findById(command.contributorId) }
+        verify(exactly = 1) { contributorRepository.findById(command.contributorId) }
         verify(exactly = 1) { contributorIdentifierRepository.findByContributorIdAndValue(command.contributorId, command.value) }
     }
 
@@ -83,12 +83,12 @@ internal class ContributorIdentifierServiceUnitTest : MockkBaseTest {
         val command = createContributorIdentifierCommand().copy(value = "invalid orcid")
         val contributor = createContributor(command.contributorId)
 
-        every { contribtorRepository.findById(command.contributorId) } returns Optional.of(contributor)
+        every { contributorRepository.findById(command.contributorId) } returns Optional.of(contributor)
         every { contributorIdentifierRepository.findByContributorIdAndValue(command.contributorId, command.value) } returns Optional.empty()
 
         shouldThrow<InvalidIdentifier> { service.create(command) }
 
-        verify(exactly = 1) { contribtorRepository.findById(command.contributorId) }
+        verify(exactly = 1) { contributorRepository.findById(command.contributorId) }
         verify(exactly = 1) { contributorIdentifierRepository.findByContributorIdAndValue(command.contributorId, command.value) }
     }
 }

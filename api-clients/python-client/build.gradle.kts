@@ -113,7 +113,7 @@ abstract class GeneratePythonClientTask : GenerateTask() {
 tasks {
     val generateOpenApiSpecPython by registering(GenerateOpenApiSpecPythonTask::class) {
         inputFile.set(project(":documentation").layout.buildDirectory.file("api-spec/openapi3.yaml"))
-        description = "Postprocces the contents of an OpenAPI specification to always include a response schema"
+        description = "Postprocess the contents of an OpenAPI specification to always include a response schema"
         dependsOn(":documentation:openapi3")
     }
 

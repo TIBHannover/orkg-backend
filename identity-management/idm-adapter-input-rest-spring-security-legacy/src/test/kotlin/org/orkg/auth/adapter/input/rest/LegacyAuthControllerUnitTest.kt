@@ -429,7 +429,7 @@ internal class LegacyAuthControllerUnitTest : MockMvcBaseTest("legacy-auth") {
     }
 
     @Test
-    fun `Given a token request, when token endpoint is unavailable, then status is 503 SERVICE UNAVILABLE`() {
+    fun `Given a token request, when token endpoint is unavailable, then status is 503 SERVICE UNAVAILABLE`() {
         val username = "test_user"
         val grantType = "password"
 

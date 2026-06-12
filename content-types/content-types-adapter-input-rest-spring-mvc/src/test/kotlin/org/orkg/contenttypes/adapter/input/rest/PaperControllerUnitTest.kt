@@ -58,7 +58,7 @@ import org.orkg.contenttypes.input.CreatePaperUseCase
 import org.orkg.contenttypes.input.PaperUseCases
 import org.orkg.contenttypes.input.testing.fixtures.authorListFields
 import org.orkg.contenttypes.input.testing.fixtures.configuration.ContentTypeControllerUnitTestConfiguration
-import org.orkg.contenttypes.input.testing.fixtures.constributionRequestPartRequestFields
+import org.orkg.contenttypes.input.testing.fixtures.contributionRequestPartRequestFields
 import org.orkg.contenttypes.input.testing.fixtures.mapOfCreateListRequestPartRequestFields
 import org.orkg.contenttypes.input.testing.fixtures.mapOfCreateLiteralRequestPartRequestFields
 import org.orkg.contenttypes.input.testing.fixtures.mapOfCreatePredicateRequestPartRequestFields
@@ -635,7 +635,7 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
                     *mapOfCreatePredicateRequestPartRequestFields("contents.predicates").toTypedArray(),
                     *mapOfCreateListRequestPartRequestFields("contents.lists").toTypedArray(),
                     fieldWithPath("contents.contributions").description("A list of definitions of contribution that need to be created."),
-                    *applyPathPrefix("contents.contributions[].", constributionRequestPartRequestFields()).toTypedArray(),
+                    *applyPathPrefix("contents.contributions[].", contributionRequestPartRequestFields()).toTypedArray(),
                     fieldWithPath("organizations[]").description("The list of IDs of the organizations the paper belongs to. Can be at most one organization id."),
                     fieldWithPath("observatories[]").description("The list of IDs of the observatories the paper belongs to. Can be at most one observatory id."),
                     fieldWithPath("extraction_method").description("""The method used to extract the paper resource. Can be one of $allowedExtractionMethodValues."""),

@@ -72,7 +72,7 @@ fun existingPredicateContributionStatementResponseFields() = listOf(
 )
 
 fun newPredicateContributionStatementResponseFields() = listOf(
-    fieldWithPath("predicate_label").description("The label of the predicate of the statemment. If present, indicates that a new predicate will be created with the provided label. Mutually exclusive with `predicate_id`.").optional(),
+    fieldWithPath("predicate_label").description("The label of the predicate of the statement. If present, indicates that a new predicate will be created with the provided label. Mutually exclusive with `predicate_id`.").optional(),
     fieldWithPath("object").description("The object of the statement.").references<TypedValueRepresentation>(),
     *applyPathPrefix("object.", typedValueResponseFields()).toTypedArray(),
 )

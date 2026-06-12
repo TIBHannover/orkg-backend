@@ -237,8 +237,8 @@ open class PaperCSVRecordParser(
         val url: IRI?,
     )
 
-    private fun List<CSVHeader>.findIndex(namepsace: String, name: String): Int =
-        indexOfFirst { it.namespace == namepsace && it.name == name }
+    private fun List<CSVHeader>.findIndex(namespace: String, name: String): Int =
+        indexOfFirst { it.namespace == namespace && it.name == name }
 
     private fun TypedCSVRecord.getOrNull(index: Int?): TypedValue? =
         if (index != null && index >= 0 && index < values.size) values[index] else null

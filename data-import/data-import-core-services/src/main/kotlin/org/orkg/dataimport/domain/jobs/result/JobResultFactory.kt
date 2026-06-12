@@ -10,10 +10,10 @@ import java.util.Optional
 @Component
 class JobResultFactory(
     private val objectMapper: ObjectMapper,
-    resultformatters: List<JobResultFormatter>,
+    resultFormatters: List<JobResultFormatter>,
 ) {
     private val jobNameToResultFormatter =
-        resultformatters.flatMap { formatter -> formatter.jobNames().map { it to formatter } }.toMap()
+        resultFormatters.flatMap { formatter -> formatter.jobNames().map { it to formatter } }.toMap()
 
     fun getResult(jobExecution: JobExecution, status: Status, pageable: Pageable): Optional<Any> {
         val formatter = jobNameToResultFormatter[jobExecution.jobInstance.jobName]

@@ -1,6 +1,6 @@
 = Contributor Identifiers
 
-Contributors may possess of external identifiers, such as https://orcid.org/[ORCID], wich can be linked to their profile.
+Contributors may possess of external identifiers, such as https://orcid.org/[ORCID], which can be linked to their profile.
 
 include::{snippets}/contributor-identifiers_find-by-id/response-fields.adoc[]
 

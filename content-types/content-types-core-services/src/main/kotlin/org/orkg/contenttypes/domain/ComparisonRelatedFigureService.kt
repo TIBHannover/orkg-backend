@@ -130,7 +130,7 @@ class ComparisonRelatedFigureService(
         ).execute(command)
     }
 
-    override fun deleteByIdAndComaprisonId(
+    override fun deleteByIdAndComparisonId(
         comparisonId: ThingId,
         comparisonRelatedFigureId: ThingId,
         contributorId: ContributorId,

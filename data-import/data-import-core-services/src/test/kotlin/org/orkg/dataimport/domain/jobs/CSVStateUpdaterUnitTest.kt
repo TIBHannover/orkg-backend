@@ -60,7 +60,7 @@ internal class CSVStateUpdaterUnitTest : MockkBaseTest {
     }
 
     @Test
-    fun `Given a job execution, when before the job execution, and csv is alaredy in startState, it only sets the current job id`() {
+    fun `Given a job execution, when before the job execution, and csv is already in startState, it only sets the current job id`() {
         val jobId = JobId(123)
         val csv = createCSV().copy(state = startState)
         val jobParameters = JobParametersBuilder().add(CSV_ID_FIELD, csv.id).toJobParameters()

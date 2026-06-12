@@ -155,7 +155,7 @@ fun <
             //              R5
             //  comparesContribution
             //      contribution3
-            // comparesRosettaStoneContriution
+            // comparesRosettaStoneContribution
             //  contribution2
             //      rosettaStoneStatement1
             //          CONTEXT
@@ -319,7 +319,7 @@ fun <
 
                 val simplePaths = labeledComparisonPaths.toSimpleComparisonPaths()
                 val expected = labeledComparisonPaths.withoutSources()
-                val result = comparisonAuxiliaryRepository.findAllLabeledComparisonPathsBySimpleComparionPaths(simplePaths)
+                val result = comparisonAuxiliaryRepository.findAllLabeledComparisonPathsBySimpleComparisonPaths(simplePaths)
 
                 it("returns the correct result") {
                     result shouldBe expected
@@ -341,7 +341,7 @@ fun <
                     ),
                 )
                 val expected = labeledComparisonPaths.withoutSources()
-                val result = comparisonAuxiliaryRepository.findAllLabeledComparisonPathsBySimpleComparionPaths(simplePaths)
+                val result = comparisonAuxiliaryRepository.findAllLabeledComparisonPathsBySimpleComparisonPaths(simplePaths)
 
                 it("returns the correct result") {
                     result shouldBe expected

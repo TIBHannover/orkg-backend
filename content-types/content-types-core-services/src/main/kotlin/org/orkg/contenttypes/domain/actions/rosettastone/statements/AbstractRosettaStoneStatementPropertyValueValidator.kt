@@ -61,7 +61,7 @@ class AbstractRosettaStoneStatementPropertyValueValidator(
         subjects: List<String>,
         objects: List<List<String>>,
     ): Map<String, Either<CreateThingCommandPart, Thing>> {
-        val validataionCache = validationCacheIn.toMutableMap()
+        val validationCache = validationCacheIn.toMutableMap()
         validateInputPositionCount(templateId, objects, templateProperties)
         val inputs = objects.toMutableList()
         inputs.add(templateProperties.indexOfFirst { it.path.id == Predicates.hasSubjectPosition }, subjects)
@@ -84,7 +84,7 @@ class AbstractRosettaStoneStatementPropertyValueValidator(
                 }
             }
             propertyInstances.forEachIndexed { valueIndex, objectId ->
-                val `object` = thingIdValidator.validate(objectId, thingCommands, validataionCache)
+                val `object` = thingIdValidator.validate(objectId, thingCommands, validationCache)
 
                 `object`.onLeft { command ->
                     validateObject(property, index, valueIndex, objectId, command)
@@ -104,7 +104,7 @@ class AbstractRosettaStoneStatementPropertyValueValidator(
                 }
             }
         }
-        return validataionCache
+        return validationCache
     }
 
     private fun validateObject(property: TemplateProperty, positionIndex: Int, valueIndex: Int, id: String, `object`: CreateThingCommandPart) {

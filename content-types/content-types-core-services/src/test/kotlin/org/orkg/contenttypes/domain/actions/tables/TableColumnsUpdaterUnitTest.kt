@@ -85,7 +85,7 @@ internal class TableColumnsUpdaterUnitTest : MockkBaseTest {
             thingsToDelete = setOf(ThingId("ToBeDeleted")),
             statementsToDelete = setOf(StatementId("SalreadyExists")),
         )
-        val expecetedStatementsToDelete = state.statementsToDelete + setOf(
+        val expectedStatementsToDelete = state.statementsToDelete + setOf(
             StatementId("S_Column_1--CSVW_Titles--Column_1_Title"),
             StatementId("S_Column_2--CSVW_Titles--Column_2_Title"),
             StatementId("S_Column_3--CSVW_Titles--Column_3_Title"),
@@ -111,7 +111,7 @@ internal class TableColumnsUpdaterUnitTest : MockkBaseTest {
             it.existingColumns shouldBe state.existingColumns
             it.existingRows shouldBe state.existingRows
             it.thingsToDelete shouldBe state.thingsToDelete
-            it.statementsToDelete shouldBe expecetedStatementsToDelete
+            it.statementsToDelete shouldBe expectedStatementsToDelete
         }
 
         verify(exactly = 1) {
@@ -171,7 +171,7 @@ internal class TableColumnsUpdaterUnitTest : MockkBaseTest {
         )
         val newColumnId = ThingId("Column3")
         val columnIds = existingColumnIds + newColumnId
-        val expecetedStatementsToDelete = state.statementsToDelete + setOf(
+        val expectedStatementsToDelete = state.statementsToDelete + setOf(
             StatementId("S_Column_1--CSVW_Titles--Column_1_Title"),
             StatementId("S_Column_2--CSVW_Titles--Column_2_Title"),
         )
@@ -204,7 +204,7 @@ internal class TableColumnsUpdaterUnitTest : MockkBaseTest {
             it.existingColumns shouldBe state.existingColumns
             it.existingRows shouldBe state.existingRows
             it.thingsToDelete shouldBe state.thingsToDelete
-            it.statementsToDelete shouldBe expecetedStatementsToDelete
+            it.statementsToDelete shouldBe expectedStatementsToDelete
         }
 
         verify(exactly = 1) {
@@ -266,7 +266,7 @@ internal class TableColumnsUpdaterUnitTest : MockkBaseTest {
         )
         val columnIds = existingColumnIds.take(1)
         val expectedThingsToDelete = state.thingsToDelete + ThingId("Column_2")
-        val expecetedStatementsToDelete = state.statementsToDelete + existingColumns.last().statementIds + setOf(
+        val expectedStatementsToDelete = state.statementsToDelete + existingColumns.last().statementIds + setOf(
             StatementId("S_Column_1--CSVW_Titles--Column_1_Title"),
         )
 
@@ -285,7 +285,7 @@ internal class TableColumnsUpdaterUnitTest : MockkBaseTest {
             it.existingColumns shouldBe state.existingColumns
             it.existingRows shouldBe state.existingRows
             it.thingsToDelete shouldBe expectedThingsToDelete
-            it.statementsToDelete shouldBe expecetedStatementsToDelete
+            it.statementsToDelete shouldBe expectedStatementsToDelete
         }
 
         verify(exactly = 1) {

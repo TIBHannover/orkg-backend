@@ -432,7 +432,7 @@ fun createComparisonColumnData(): List<ComparisonColumnData> =
         ),
     )
 
-// Legacy factory funtcions:
+// Legacy factory functions:
 
 fun createComparisonConfig(): LegacyComparisonConfig =
     LegacyComparisonConfig(

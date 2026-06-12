@@ -27,7 +27,7 @@ fun main(args: Array<String>) {
 /**
  * Calls the actuator health endpoint, and exists the application based on the status.
  *
- * This check is required for Docker, because the Distroless images used do not contain additional tools like `curl` or
+ * This check is required for Docker, because the Distro-less images used do not contain additional tools like `curl` or
  * `sh` to do the job.
  */
 private fun performHealthCheckByCallingActuatorAndExit() {

@@ -580,7 +580,7 @@ internal class StatementCollectionPropertyUpdaterUnitTest : MockkBaseTest {
     }
 
     @Test
-    fun `Given a list of generic objects, when upating, it updates the statements correctly`() {
+    fun `Given a list of generic objects, when updating, it updates the statements correctly`() {
         val subjectId = ThingId("R123")
         val objects = listOf(
             ThingId("R1") to ThingId("P1"),

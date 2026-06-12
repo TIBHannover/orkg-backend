@@ -143,7 +143,7 @@ internal class StatisticsControllerUnitTest : MockMvcBaseTest("statistics") {
     }
 
     @Test
-    @DisplayName("Given a metric, when fetched (deafult), then status is 200 OK and metric is returned")
+    @DisplayName("Given a metric, when fetched (default), then status is 200 OK and metric is returned")
     fun findMetricByGroupAndName_default() {
         findMetricByGroupAndName<DefaultMetricRepresentation>(
             responseFormat = MetricResponseFormat.DEFAULT,
@@ -180,7 +180,7 @@ internal class StatisticsControllerUnitTest : MockMvcBaseTest("statistics") {
     }
 
     @Test
-    fun `Given a metric, when fetched with slim reponse format, then status is 200 OK and metric is returned`() {
+    fun `Given a metric, when fetched with slim response format, then status is 200 OK and metric is returned`() {
         val metric = createSimpleMetric()
 
         every { service.findMetricByGroupAndName(metric.group, metric.name) } returns metric

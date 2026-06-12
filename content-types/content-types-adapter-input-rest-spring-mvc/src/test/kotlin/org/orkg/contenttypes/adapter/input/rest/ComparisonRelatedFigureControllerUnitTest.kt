@@ -243,7 +243,7 @@ internal class ComparisonRelatedFigureControllerUnitTest : MockMvcBaseTest("comp
         val comparisonRelatedFigureId = ThingId("R456")
 
         every {
-            comparisonRelatedFigureService.deleteByIdAndComaprisonId(
+            comparisonRelatedFigureService.deleteByIdAndComparisonId(
                 comparisonId = comparisonId,
                 comparisonRelatedFigureId = comparisonRelatedFigureId,
                 contributorId = any(),
@@ -275,7 +275,7 @@ internal class ComparisonRelatedFigureControllerUnitTest : MockMvcBaseTest("comp
             }
 
         verify(exactly = 1) {
-            comparisonRelatedFigureService.deleteByIdAndComaprisonId(
+            comparisonRelatedFigureService.deleteByIdAndComparisonId(
                 comparisonId = comparisonId,
                 comparisonRelatedFigureId = comparisonRelatedFigureId,
                 contributorId = ContributorId(MockUserId.USER),

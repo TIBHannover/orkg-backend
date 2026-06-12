@@ -116,7 +116,7 @@ internal class TemplateInstanceControllerUnitTest : MockMvcBaseTest("template-in
             .andExpect(status().isOk)
             .andExpectTemplateInstance()
             .andDocument {
-                summary("Fetching template isntances")
+                summary("Fetching template instances")
                 description(
                     """
                     A `GET` request provides information about a template instance.

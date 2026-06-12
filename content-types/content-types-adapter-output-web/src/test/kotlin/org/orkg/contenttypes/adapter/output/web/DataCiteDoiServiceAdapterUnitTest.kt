@@ -43,7 +43,7 @@ internal class DataCiteDoiServiceAdapterUnitTest : MockkBaseTest {
         DataCiteDoiServiceAdapter(dataciteConfiguration, objectMapper, httpClient, ::TestBodyPublisher, userAgent, fixedClock)
 
     @Test
-    fun `Given a doi, when fetching its associated metadata, and external service returns success, it returns the medatadata`() {
+    fun `Given a doi, when fetching its associated metadata, and external service returns success, it returns the medata`() {
         val doi = DOI.of("10.3897/rio.7.e68513")
         // Mock HttpClient dsl
         val response = mockk<HttpResponse<InputStream>>()

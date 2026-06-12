@@ -17,7 +17,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPat
 @ContextConfiguration(classes = [ContentTypeControllerExceptionUnitTestConfiguration::class])
 internal class ComparisonTableExceptionUnitTest : MockMvcExceptionBaseTest() {
     @Test
-    fun invalidComparisonPath_statementustBeAtFirstLevel() {
+    fun invalidComparisonPath_statementMustBeAtFirstLevel() {
         val type = "orkg:problem:invalid_comparison_path"
         documentedGetRequestTo(InvalidComparisonPath.statementMustBeAtFirstLevel(listOf(ThingId("P123"), ThingId("P456"))))
             .andExpectErrorStatus(HttpStatus.BAD_REQUEST)

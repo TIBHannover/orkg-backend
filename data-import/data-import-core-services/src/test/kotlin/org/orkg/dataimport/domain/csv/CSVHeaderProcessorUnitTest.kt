@@ -118,7 +118,7 @@ internal class CSVHeaderProcessorUnitTest : MockkBaseTest {
 
     @Test
     @DisplayName("Given a csv header, when processing predicates, and namespaces is open, it looks up predicates by label, and predicate exists, it saves the predicate to id mapping to the job execution context")
-    fun givenACsvHeader_whenProcessingPredicates_andNamespaceIsOpen_itLooksupPredicatesByLabel_andPredicateExists_itSavesThePredicateToIdMappingToTheJobExecutionContext() {
+    fun givenACsvHeader_whenProcessingPredicates_andNamespaceIsOpen_itLooksUpPredicatesByLabel_andPredicateExists_itSavesThePredicateToIdMappingToTheJobExecutionContext() {
         val label = "predicate label"
         val headers = listOf(
             CSVHeader(
@@ -157,7 +157,7 @@ internal class CSVHeaderProcessorUnitTest : MockkBaseTest {
 
     @Test
     @DisplayName("Given a csv header, when processing predicates, and namespaces is open, it looks up predicates by label, and predicate does not exist, it saves the predicate to id mapping to the job execution context")
-    fun `givenACsvHeader_whenProcessingPredicates_andNamespaceIsOpen_itLooksupPredicatesByLabel_andPredicateDoesNotExist_itSavesThePredicateToIdMappingToTheJobExecutionContext`() {
+    fun `givenACsvHeader_whenProcessingPredicates_andNamespaceIsOpen_itLooksUpPredicatesByLabel_andPredicateDoesNotExist_itSavesThePredicateToIdMappingToTheJobExecutionContext`() {
         val label = "predicate label"
         val headers = listOf(
             CSVHeader(

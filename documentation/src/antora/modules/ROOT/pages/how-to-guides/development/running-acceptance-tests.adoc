@@ -68,7 +68,7 @@ Although the start-up time is saved, it will also write data to system component
 
 Due to Gradle's task avoidance, the tests will only run if the inputs changed, i.e., either the production code or the tests.
 When you do not change the tests but want to run them against a new API container, Gradle will skip executing the tests.
-The reason for this is Gradle not knowing about the container chaning, because it is not part of the build, but <<building_the_image,done manually>>.
+The reason for this is Gradle not knowing about the container changing, because it is not part of the build, but <<building_the_image,done manually>>.
 You can force Gradle to re-run the tests nevertheless by passing the `--rerun` option to the `:acceptance-tests:test` task.
 
 == Reproducing previous runs (or setting the RNG seed)

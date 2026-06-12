@@ -370,7 +370,7 @@ internal class CSVControllerUnitTest : MockMvcBaseTest("csvs") {
                     """,
                 )
                 pathParameters(
-                    parameterWithName("id").description("The identifier of the CSV to fetch the vaidation job status for."),
+                    parameterWithName("id").description("The identifier of the CSV to fetch the validation job status for."),
                 )
                 responseFields<JobStatusRepresentation>(csvJobStatusResponseFields())
                 throws(CSVNotFound::class, CSVValidationJobNotFound::class, JobNotFound::class)
@@ -538,7 +538,7 @@ internal class CSVControllerUnitTest : MockMvcBaseTest("csvs") {
                     """,
                 )
                 pathParameters(
-                    parameterWithName("id").description("The identifier of the CSV to fetch the vaidation job status for."),
+                    parameterWithName("id").description("The identifier of the CSV to fetch the validation job status for."),
                 )
                 responseFields<JobStatusRepresentation>(csvJobStatusResponseFields())
                 throws(CSVNotFound::class, CSVImportJobNotFound::class, JobNotFound::class)

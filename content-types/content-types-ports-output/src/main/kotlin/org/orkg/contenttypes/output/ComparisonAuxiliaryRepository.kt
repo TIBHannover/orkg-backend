@@ -9,7 +9,7 @@ import org.orkg.contenttypes.domain.SimpleComparisonPath
 interface ComparisonAuxiliaryRepository {
     fun findAllLabeledComparisonPathsByComparisonId(id: ThingId, maxDepth: Int): List<LabeledComparisonPath>
 
-    fun findAllLabeledComparisonPathsBySimpleComparionPaths(paths: List<SimpleComparisonPath>): List<LabeledComparisonPath>
+    fun findAllLabeledComparisonPathsBySimpleComparisonPaths(paths: List<SimpleComparisonPath>): List<LabeledComparisonPath>
 
     fun findComparisonColumnDataByRootIdsAndPaths(
         rootIds: List<ThingId>,

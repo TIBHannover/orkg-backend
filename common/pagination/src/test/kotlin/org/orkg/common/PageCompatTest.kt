@@ -53,8 +53,8 @@ internal class PageCompatTest {
         actual.content shouldBe expected
     }
 
-    private fun createList(start: Int, endIncluise: Int): List<NestedValueWrapper> =
-        IntRange(start, endIncluise).map(::ValueWrapper).map(::NestedValueWrapper)
+    private fun createList(start: Int, endInclusive: Int): List<NestedValueWrapper> =
+        IntRange(start, endInclusive).map(::ValueWrapper).map(::NestedValueWrapper)
 
     data class ValueWrapper(
         val property: Int,

@@ -24,7 +24,7 @@ import org.orkg.contenttypes.domain.ThingNotDefined
 import org.orkg.contenttypes.domain.testing.fixtures.createContribution
 import org.orkg.contenttypes.input.ContributionUseCases
 import org.orkg.contenttypes.input.testing.fixtures.configuration.ContentTypeControllerUnitTestConfiguration
-import org.orkg.contenttypes.input.testing.fixtures.constributionRequestPartRequestFields
+import org.orkg.contenttypes.input.testing.fixtures.contributionRequestPartRequestFields
 import org.orkg.contenttypes.input.testing.fixtures.contributionResponseFields
 import org.orkg.contenttypes.input.testing.fixtures.mapOfCreateListRequestPartRequestFields
 import org.orkg.contenttypes.input.testing.fixtures.mapOfCreateLiteralRequestPartRequestFields
@@ -169,7 +169,7 @@ internal class ContributionControllerUnitTest : MockMvcBaseTest("contributions")
                     *mapOfCreatePredicateRequestPartRequestFields().toTypedArray(),
                     *mapOfCreateListRequestPartRequestFields().toTypedArray(),
                     fieldWithPath("contribution").description("The definition of the contribution."),
-                    *applyPathPrefix("contribution.", constributionRequestPartRequestFields()).toTypedArray(),
+                    *applyPathPrefix("contribution.", contributionRequestPartRequestFields()).toTypedArray(),
                 )
                 throws(
                     InvalidTempId::class,

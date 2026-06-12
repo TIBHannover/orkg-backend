@@ -374,7 +374,7 @@ internal class RosettaStoneStatementControllerUnitTest : MockMvcBaseTest("rosett
             .andExpect(status().isCreated)
             .andExpect(header().string("Location", endsWith("/api/rosetta-stone/statements/$newId")))
             .andDocument {
-                summary("Updataing rosetta stone statements")
+                summary("Updating rosetta stone statements")
                 description(
                     """
                     A `POST` request creates a new version of an existing rosetta stone statement with all the given parameters.

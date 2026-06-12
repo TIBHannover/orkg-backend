@@ -91,7 +91,7 @@ internal class ComparisonExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.comparison_related_resource_id").value("R123"))
             .andDocument {
                 responseFields<ComparisonRelatedResourceNotModifiable>(
-                    fieldWithPath("comparison_related_resource_id").description("The id of the comparison related resurce.").type<ThingId>(),
+                    fieldWithPath("comparison_related_resource_id").description("The id of the comparison related resource.").type<ThingId>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }
@@ -159,7 +159,7 @@ internal class ComparisonExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.comparison_related_resource_id").value("R123"))
             .andDocument {
                 responseFields<ComparisonRelatedResourceNotFound>(
-                    fieldWithPath("comparison_related_resource_id").description("The id of the comparison related resurce.").type<ThingId>(),
+                    fieldWithPath("comparison_related_resource_id").description("The id of the comparison related resource.").type<ThingId>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }

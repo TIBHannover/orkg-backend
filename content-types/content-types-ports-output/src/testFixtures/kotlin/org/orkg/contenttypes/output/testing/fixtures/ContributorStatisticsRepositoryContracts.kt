@@ -457,7 +457,7 @@ fun <
             }
         }
         context("by research field") {
-            context("exluding subfields") {
+            context("excluding subfields") {
                 createTestGraph()
                 val expected = listOf(
                     ContributorRecord(
@@ -704,7 +704,7 @@ fun <
             }
         }
         context("by research problem") {
-            context("exluding subproblems") {
+            context("excluding subproblems") {
                 createTestGraph()
                 val expected = listOf(
                     ContributorRecord(

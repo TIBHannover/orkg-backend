@@ -16,7 +16,7 @@ import java.time.OffsetDateTime
 @Service
 @TransactionalOnJPA
 class ContributorIdentifierService(
-    private val contribtorRepository: ContributorRepository,
+    private val contributorRepository: ContributorRepository,
     private val contributorIdentifierRepository: ContributorIdentifierRepository,
     private val clock: Clock,
 ) : ContributorIdentifierUseCases {
@@ -24,7 +24,7 @@ class ContributorIdentifierService(
         contributorIdentifierRepository.findAllByContributorId(id, pageable)
 
     override fun create(command: CreateContributorIdentifierUseCase.CreateCommand): ContributorIdentifier {
-        if (contribtorRepository.findById(command.contributorId).isEmpty) {
+        if (contributorRepository.findById(command.contributorId).isEmpty) {
             throw ContributorNotFound(command.contributorId)
         }
         if (contributorIdentifierRepository.findByContributorIdAndValue(command.contributorId, command.value).isPresent) {

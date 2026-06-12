@@ -45,7 +45,7 @@ class SpringDataNeo4jComparisonAuxiliaryAdapter(
         return LabeledComparisonPathBuilder.buildTree(entries, rootIds, maxDepth)
     }
 
-    override fun findAllLabeledComparisonPathsBySimpleComparionPaths(paths: List<SimpleComparisonPath>): List<LabeledComparisonPath> {
+    override fun findAllLabeledComparisonPathsBySimpleComparisonPaths(paths: List<SimpleComparisonPath>): List<LabeledComparisonPath> {
         val predicateIds = paths.getIds { it.type == ComparisonPath.Type.PREDICATE }.toSet()
         val rosettaStoneTemplateIds = paths.getIds { it.type == ComparisonPath.Type.ROSETTA_STONE_STATEMENT }.toSet()
         val entries = neo4jRepository.findComparisonPathLabelsByThingIdsAndRosettaStoneTemplateIds(predicateIds, rosettaStoneTemplateIds)

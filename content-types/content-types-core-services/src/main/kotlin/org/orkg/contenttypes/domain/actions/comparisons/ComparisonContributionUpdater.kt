@@ -14,10 +14,10 @@ class ComparisonContributionUpdater(
 ) : UpdateComparisonAction {
     constructor(
         unsafeLiteralUseCases: UnsafeLiteralUseCases,
-        statementuseCaes: StatementUseCases,
+        statementUseCases: StatementUseCases,
         unsafeStatementUseCases: UnsafeStatementUseCases,
     ) : this(
-        StatementCollectionPropertyUpdater(unsafeLiteralUseCases, statementuseCaes, unsafeStatementUseCases),
+        StatementCollectionPropertyUpdater(unsafeLiteralUseCases, statementUseCases, unsafeStatementUseCases),
     )
 
     override fun invoke(command: UpdateComparisonCommand, state: State): State {

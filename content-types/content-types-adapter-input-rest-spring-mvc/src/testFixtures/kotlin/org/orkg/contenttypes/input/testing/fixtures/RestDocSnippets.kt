@@ -154,7 +154,7 @@ fun comparisonResponseFields() = listOf(
     *comparisonIdentifierResponseFields().toTypedArray(),
     fieldWithPath("sources").description("The list of data sources of the comparison."),
     fieldWithPath("sources[].id").description("The ID of the data source."),
-    fieldWithPath("sources[].type").description("The type of the data soruce. Either of $allowedComparisonDataSourceTypeValues"),
+    fieldWithPath("sources[].type").description("The type of the data source. Either of $allowedComparisonDataSourceTypeValues"),
     fieldWithPath("visualizations").description("The list of visualizations of the comparison."),
     *applyPathPrefix("visualizations[].", labeledObjectResponseFields()).toTypedArray(),
     fieldWithPath("related_figures").description("The list of related figures of the comparison."),
@@ -513,7 +513,7 @@ fun templateInstanceResponseFields() = listOf(
     *applyPathPrefix("predicates.*.", predicateResponseFields()).toTypedArray(),
     fieldWithPath("statements").description("A map of predicate id to embedded statement representation for statements that are part of the snapshot."),
     fieldWithPath("statements.*").description("The id of the predicate."),
-    subsectionWithPath("statements.*[]").description("A list of embeded statement representations."),
+    subsectionWithPath("statements.*[]").description("A list of embedded statement representations."),
 )
 
 fun embeddedStatementResponseFields() = listOf(
@@ -648,7 +648,7 @@ fun createListRequestPartRequestFields() = listOf(
     fieldWithPath("elements").description("The ids of the elements of the list.").type("array").arrayItemsType("string").constraints(thingIdConstraint),
 )
 
-fun constributionRequestPartRequestFields() = listOf(
+fun contributionRequestPartRequestFields() = listOf(
     fieldWithPath("label").description("The label of the contribution."),
     fieldWithPath("classes").description("The classes of the contribution resource."),
     fieldWithPath("statements").description("A recursive key-value map of predicate ids to list of statements contained within the contribution."),

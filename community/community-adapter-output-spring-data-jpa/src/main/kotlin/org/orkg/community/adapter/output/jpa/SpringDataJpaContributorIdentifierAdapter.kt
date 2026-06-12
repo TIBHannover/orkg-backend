@@ -23,13 +23,13 @@ class SpringDataJpaContributorIdentifierAdapter(
     }
 
     override fun findByContributorIdAndValue(contributorId: ContributorId, value: String): Optional<ContributorIdentifier> =
-        postgresRepository.findByContributorIdAndValue(contributorId.value, value).map { it.toContributorIdenfitier() }
+        postgresRepository.findByContributorIdAndValue(contributorId.value, value).map { it.toContributorIdentifier() }
 
     override fun findAllByContributorId(contributorId: ContributorId, pageable: Pageable): Page<ContributorIdentifier> =
         postgresRepository.findAllByContributorId(
             contributorId = contributorId.value,
             pageable = pageable.withDefaultSort { Sort.by("createdAt") },
-        ).map { it.toContributorIdenfitier() }
+        ).map { it.toContributorIdentifier() }
 
     override fun deleteByContributorIdAndValue(contributorId: ContributorId, value: String) =
         postgresRepository.deleteByContributorIdAndValue(contributorId.value, value)

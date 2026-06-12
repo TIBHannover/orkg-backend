@@ -65,7 +65,7 @@ internal class RosettaStoneTemplatePropertiesUpdateValidatorUnitTest : MockkBase
 
     @Test
     @DisplayName("Given a rosetta stone template update command, when template is used in a rosetta stone statement and new properties override old properties, it returns success")
-    fun whenNotUsedInStatementAndOldPropertyIsOverriden_thenSuccess() {
+    fun whenNotUsedInStatementAndOldPropertyIsOverridden_thenSuccess() {
         val rosettaStoneTemplate = createRosettaStoneTemplate()
         val command = updateRosettaStoneTemplateCommand().copy(
             properties = rosettaStoneTemplate.properties.map { it.toTemplatePropertyCommand() }.reversed(),
@@ -148,7 +148,7 @@ internal class RosettaStoneTemplatePropertiesUpdateValidatorUnitTest : MockkBase
 
     @Test
     @DisplayName("Given a rosetta stone template update command, when template is used in a rosetta stone statement and new properties override old properties, it throws an exception")
-    fun whenUsedInStatementAndOldPropertyIsOverriden_thenException() {
+    fun whenUsedInStatementAndOldPropertyIsOverridden_thenException() {
         val rosettaStoneTemplate = createRosettaStoneTemplate()
         val command = updateRosettaStoneTemplateCommand().copy(
             properties = rosettaStoneTemplate.properties.map { it.toTemplatePropertyCommand() }.reversed(),

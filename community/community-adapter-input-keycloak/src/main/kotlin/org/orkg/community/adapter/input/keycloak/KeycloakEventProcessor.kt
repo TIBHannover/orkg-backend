@@ -53,7 +53,7 @@ class KeycloakEventProcessor(
             )
             events.forEach { event ->
                 when (event.type) {
-                    "REGISTER", "UPDATE_PROFILE" -> fetchUserAsConributorById(event.userId)?.also(contributorRepository::save)
+                    "REGISTER", "UPDATE_PROFILE" -> fetchUserAsContributorById(event.userId)?.also(contributorRepository::save)
                     "DELETE_ACCOUNT" -> contributorRepository.deleteById(ContributorId(event.userId))
                 }
                 keycloakEventStateRepository.save(EventType.USER_EVENT, ++offset)
@@ -87,12 +87,12 @@ class KeycloakEventProcessor(
                 if (event.isUserEvent) {
                     val userId = extractUserIdFromResourcePath(event.resourcePath)
                     when (event.operationType) {
-                        "CREATE", "UPDATE" -> fetchUserAsConributorById(userId)?.also(contributorRepository::save)
+                        "CREATE", "UPDATE" -> fetchUserAsContributorById(userId)?.also(contributorRepository::save)
                         "DELETE" -> contributorRepository.deleteById(ContributorId(userId))
                     }
                 } else if (event.isRoleEvent) {
                     val userId = extractUserIdFromResourcePath(event.resourcePath)
-                    fetchUserAsConributorById(userId)?.also(contributorRepository::save)
+                    fetchUserAsContributorById(userId)?.also(contributorRepository::save)
                 }
                 keycloakEventStateRepository.save(EventType.ADMIN_EVENT, ++offset)
             }
@@ -104,7 +104,7 @@ class KeycloakEventProcessor(
     private fun fetchUserById(id: String): UserResource =
         keycloak.realm(realm).users().get(id)
 
-    private fun fetchUserAsConributorById(id: String) =
+    private fun fetchUserAsContributorById(id: String) =
         fetchUserById(id).toContributor()
 
     private fun extractUserIdFromResourcePath(resourcePath: String): String = resourcePath.substringAfter("/").substringBefore("/")

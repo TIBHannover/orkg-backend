@@ -100,7 +100,7 @@ data class CSVSchema(
 
         fun value(name: String, spec: NamespaceValueScope.() -> Unit = {}) {
             val scope = NamespaceValueScope().apply(spec)
-            properties[name] = Property(name, scope.columnValueType, scope.columnValueContraint)
+            properties[name] = Property(name, scope.columnValueType, scope.columnValueConstraint)
         }
     }
 
@@ -117,14 +117,14 @@ data class CSVSchema(
     @SchemaDSL
     data class NamespaceValueScope(
         internal var columnValueType: ThingId = Classes.string,
-        internal var columnValueContraint: ((String) -> Unit)? = null,
+        internal var columnValueConstraint: ((String) -> Unit)? = null,
     ) {
         fun columnValueType(type: ThingId) {
             columnValueType = type
         }
 
         fun columnValueConstraint(validator: (String) -> Unit) {
-            columnValueContraint = validator
+            columnValueConstraint = validator
         }
     }
 }

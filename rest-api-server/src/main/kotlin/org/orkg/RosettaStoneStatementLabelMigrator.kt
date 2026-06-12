@@ -70,7 +70,7 @@ class RosettaStoneStatementLabelMigrator(
         }
 
         if (ignored.isNotEmpty()) {
-            logger.info("Ignored rosetta stone statments: {}", ignored)
+            logger.info("Ignored rosetta stone statements: {}", ignored)
         }
         logger.info("Done migrating rosetta stone statement labels. Took {}.", time)
     }

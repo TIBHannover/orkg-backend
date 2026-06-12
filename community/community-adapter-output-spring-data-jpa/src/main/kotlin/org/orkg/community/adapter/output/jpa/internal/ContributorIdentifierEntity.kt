@@ -37,7 +37,7 @@ class ContributorIdentifierEntity {
     @Column(name = "created_at_offset_total_seconds", nullable = false)
     var createdAtOffsetTotalSeconds: Int? = null
 
-    fun toContributorIdenfitier() = ContributorIdentifier(
+    fun toContributorIdentifier() = ContributorIdentifier(
         contributorId = ContributorId(contributorId!!),
         type = type!!,
         value = type!!.newInstance(value!!),

@@ -30,7 +30,7 @@ class ComparisonTableService(
     private val rosettaStoneStatementRepository: RosettaStoneStatementRepository,
     private val comparisonTableRepository: ComparisonTableRepository,
     private val resourceRepository: ResourceRepository,
-    private val statementRepsitory: StatementRepository,
+    private val statementRepository: StatementRepository,
     private val formattedLabelUseCases: FormattedLabelUseCases,
 ) : ComparisonTableUseCases {
     override fun findAllPathsByComparisonId(comparisonId: ThingId): List<LabeledComparisonPath> =
@@ -45,7 +45,7 @@ class ComparisonTableService(
         if (Classes.comparisonPublished in comparison.classes) {
             return Optional.of(table)
         }
-        val statements = statementRepsitory.findAll(subjectId = comparisonId, pageable = PageRequests.ALL)
+        val statements = statementRepository.findAll(subjectId = comparisonId, pageable = PageRequests.ALL)
         val sources = parseComparisonDataSources(statements.content)
         val columnData = findComparisonColumnDataByDataSourcesAndPaths(sources, table.selectedPaths)
         val resources = columnData.flatMap { it.values.values.flatMap { it.resources() } }.distinct()
@@ -82,7 +82,7 @@ class ComparisonTableService(
         }
         validateComparisonPathTypingAndDepth(command.selectedPaths)
         // find labels and descriptions
-        val labeledPaths = comparisonAuxiliaryRepository.findAllLabeledComparisonPathsBySimpleComparionPaths(command.selectedPaths)
+        val labeledPaths = comparisonAuxiliaryRepository.findAllLabeledComparisonPathsBySimpleComparisonPaths(command.selectedPaths)
         // check for missing values
         checkForMissingComparisonsPaths(command.selectedPaths, labeledPaths)
         // save

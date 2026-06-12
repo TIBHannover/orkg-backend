@@ -70,7 +70,7 @@ operation::csvs_update[snippets='path-parameters,request-parts,curl-request,http
 [[csvs-validate]]
 == Validating CSVs
 
-Before a CSV can be imported, it must be valiated.
+Before a CSV can be imported, it must be validated.
 The following endpoints describe the workflow of validating a CSV.
 
 [[csvs-validate-start]]

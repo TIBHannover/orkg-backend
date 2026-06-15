@@ -2,6 +2,7 @@ package org.orkg.testing.annotations
 
 import ac.simons.neo4j.migrations.springframework.boot.autoconfigure.MigrationsAutoConfiguration
 import org.orkg.constants.BuildConfig
+import org.orkg.testing.KeycloakTestContainerInitializer
 import org.orkg.testing.Neo4jContainerInitializer
 import org.orkg.testing.PostgresContainerInitializer
 import org.orkg.testing.configuration.Neo4jTransactionManagerConfiguration
@@ -29,6 +30,10 @@ annotation class Neo4jContainerIntegrationTest
 @ContextConfiguration(initializers = [PostgresContainerInitializer::class])
 @TestPropertySource(properties = ["spring.datasource.url=jdbc:tc:postgresql:${BuildConfig.CONTAINER_IMAGE_POSTGRES_TAG}://localhost/db"])
 annotation class PostgresContainerIntegrationTest
+
+@SpringBootTest
+@ContextConfiguration(initializers = [KeycloakTestContainerInitializer::class])
+annotation class KeycloakTestContainerIntegrationTest
 
 @DataNeo4jTest
 @EnableAutoConfiguration

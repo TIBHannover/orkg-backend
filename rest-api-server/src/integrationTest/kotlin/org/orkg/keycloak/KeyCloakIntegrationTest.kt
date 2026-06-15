@@ -14,14 +14,16 @@ import org.keycloak.representations.idm.UserRepresentation
 import org.orkg.testing.KEYCLOAK_CLIENT_ID
 import org.orkg.testing.KEYCLOAK_CLIENT_SECRET
 import org.orkg.testing.KEYCLOAK_REALM
-import org.orkg.testing.KeycloakTestContainersBaseTest
+import org.orkg.testing.KeycloakTestContainerInitializer.Companion.keycloakContainer
+import org.orkg.testing.annotations.KeycloakTestContainerIntegrationTest
 import tools.jackson.databind.ObjectMapper
 import java.util.Base64
 
 private fun KeycloakContainer.wellKnownUrl(realm: String): String =
     "$authServerUrl/realms/$realm/.well-known/openid-configuration"
 
-internal class KeyCloakIntegrationTest : KeycloakTestContainersBaseTest() {
+@KeycloakTestContainerIntegrationTest
+internal class KeyCloakIntegrationTest {
     @Test
     fun `obtains the account service information and successfully connects to it`() {
         val accountService = given().`when`().get("${keycloakContainer.authServerUrl}/realms/$KEYCLOAK_REALM")

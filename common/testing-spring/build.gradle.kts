@@ -31,7 +31,6 @@ dependencies {
     testFixturesApi("org.springframework.data:spring-data-commons")
     testFixturesApi("org.springframework.data:spring-data-neo4j")
     testFixturesApi("tools.jackson.core:jackson-databind")
-    testFixturesApi("org.testcontainers:testcontainers-junit-jupiter")
     testFixturesApi("org.testcontainers:testcontainers-neo4j")
     testFixturesApi("org.testcontainers:testcontainers-postgresql")
     testFixturesApi("org.testcontainers:testcontainers")

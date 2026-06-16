@@ -14,7 +14,7 @@ operation::jobs_find-status-by-id[snippets='path-parameters,curl-request,http-re
 
 include::{snippets}/jobs_find-results-by-id_validate-paper-csv_done/description.adoc[]
 
-operation::jobs_find-results-by-id_validate-paper-csv_done[snippets='path-parameters,curl-request,http-response,errors']
+operation::jobs_find-results-by-id_validate-paper-csv_done[snippets='path-parameters,curl-request,query-parameters,http-response,errors']
 
 === Response fields
 

@@ -51,7 +51,7 @@ operation::csvs_find-data-by-id[snippets='path-parameters,curl-request,http-resp
 
 include::{snippets}/csvs_find-all/description.adoc[]
 
-operation::csvs_find-all[snippets='curl-request']
+operation::csvs_find-all[snippets='curl-request,query-parameters']
 
 [[csvs-create]]
 == Creating CSVs
@@ -92,7 +92,7 @@ operation::csvs_find-validation-status-by-id[snippets='path-parameters,curl-requ
 
 include::{snippets}/csvs_find-validation-results-by-id/description.adoc[]
 
-operation::csvs_find-validation-results-by-id[snippets='path-parameters,curl-request,http-response,response-fields,errors']
+operation::csvs_find-validation-results-by-id[snippets='path-parameters,curl-request,query-parameters,http-response,response-fields,errors']
 
 [[csvs-validate-stop]]
 === Stopping CSV Validation
@@ -126,7 +126,7 @@ operation::csvs_find-import-status-by-id[snippets='path-parameters,curl-request,
 
 include::{snippets}/csvs_find-import-results-by-id/description.adoc[]
 
-operation::csvs_find-import-results-by-id[snippets='path-parameters,curl-request,http-response,response-fields,errors']
+operation::csvs_find-import-results-by-id[snippets='path-parameters,curl-request,query-parameters,http-response,response-fields,errors']
 
 [[csvs-import-stop]]
 === Stopping CSV Imports

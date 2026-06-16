@@ -419,6 +419,7 @@ internal class CSVControllerUnitTest : MockMvcBaseTest("csvs") {
                 pathParameters(
                     parameterWithName("id").description("The identifier of the CSV to retrieve the validation job results for."),
                 )
+                pagedQueryParameters()
                 pagedResponseFields<PaperCSVRecordRepresentation>(paperCSVRecordResponseFields())
                 throws(CSVNotFound::class, CSVValidationJobNotFound::class, JobNotFound::class, JobNotRunning::class)
             }
@@ -587,6 +588,7 @@ internal class CSVControllerUnitTest : MockMvcBaseTest("csvs") {
                 pathParameters(
                     parameterWithName("id").description("The identifier of the CSV to retrieve the import job results for."),
                 )
+                pagedQueryParameters()
                 pagedResponseFields<PaperCSVRecordImportResultRepresentation>(paperCSVRecordImportResultResponseFields())
                 throws(CSVNotFound::class, CSVImportJobNotFound::class, JobNotFound::class)
             }

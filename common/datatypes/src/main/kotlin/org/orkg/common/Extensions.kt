@@ -1,6 +1,5 @@
 package org.orkg.common
 
-import org.orkg.common.IRI
 import java.time.MonthDay
 import java.time.YearMonth
 import java.time.chrono.IsoChronology
@@ -72,14 +71,11 @@ fun String.isValidDateTime(): Boolean {
     return true
 }
 
-fun String.isValidTime(): Boolean {
-    try {
-        DateTimeFormatter.ISO_TIME.parse(this)
-    } catch (e: Exception) {
-        return false
-    }
-    return true
-}
+private val TIME_MATCHER =
+    Pattern.compile("""(([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](\.[0-9]+)?|(24:00:00(\.0+)?))(Z|([+\-])((0[0-9]|1[0-3]):[0-5][0-9]|14:00))?""")
+        .asMatchPredicate()
+
+fun String.isValidTime(): Boolean = TIME_MATCHER.test(this)
 
 private val GREGORIAN_YEAR_MONTH = DateTimeFormatterBuilder()
     .appendValue(ChronoField.YEAR, 4, 10, SignStyle.EXCEEDS_PAD)

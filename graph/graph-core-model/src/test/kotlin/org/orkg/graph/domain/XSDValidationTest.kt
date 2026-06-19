@@ -166,13 +166,13 @@ internal class XSDValidationTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = ["10:15:30+01:00", "10:15:30", "10:15:30.4587+01:00", "10:15:30.1565", "15:30+01:00"])
+    @ValueSource(strings = ["10:15:30+01:00", "10:15:30", "10:15:30.4587+01:00", "10:15:30.1565", "24:00:00", "24:00:00.00000", "24:00:00+01:00", "24:00:00.00000+01:00"])
     fun `Given a time, when tested, it is valid`(value: String) {
         TIME.canParse(value) shouldBe true
     }
 
     @ParameterizedTest
-    @ValueSource(strings = ["", "   ", "abc", "+-5", "\n", "10:15:30+01:00[Europe/Paris]", "10:89:30+01:00", "10:89:30+40:00"])
+    @ValueSource(strings = ["", "   ", "abc", "+-5", "\n", "10:15:30+01:00[Europe/Paris]", "10:89:30+01:00", "10:89:30+40:00", "15:30+01:00"])
     fun `Given a malformed time, when tested, it is not valid`(value: String) {
         TIME.canParse(value) shouldBe false
     }

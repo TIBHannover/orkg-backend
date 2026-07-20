@@ -811,7 +811,7 @@ internal class TableControllerUnitTest : MockMvcBaseTest("tables") {
                     headerWithName("Location").description("The uri path where the updated table can be fetched from."),
                 )
                 requestFields<UpdateTableCellRequest>(
-                    fieldWithPath("id").description("The id of the thing that should replace the current value of the cell. If `null`, the current value will be removed."),
+                    fieldWithPath("id").description("The id of the thing that should replace the current value of the cell. If `null`, the current value will be removed. (optional)").optional(),
                 )
                 throws(
                     TableNotFound::class,

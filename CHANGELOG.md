@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [0.98.6] - 2026-07-20
 ### Fixed
 - Fixed xsd:time validation wrongfully allowing for optional hour and minute fields and not accepting 24:00:00.
   (See [!1512](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1512))
@@ -1959,7 +1961,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - This CHANGELOG file. Finally!
 
-[unreleased]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/compare/0.98.5...master
+[unreleased]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/compare/0.98.6...master
+[0.98.6]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.98.6
 [0.98.5]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.98.5
 [0.98.4]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.98.4
 [0.98.3]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.98.3

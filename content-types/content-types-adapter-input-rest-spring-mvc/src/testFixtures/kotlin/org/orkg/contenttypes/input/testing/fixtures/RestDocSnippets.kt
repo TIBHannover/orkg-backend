@@ -46,8 +46,10 @@ fun authorListFields(type: String, path: String = "authors", optional: Boolean =
     fieldWithPath("$path[].homepage").type("String").description("The homepage of the author. (optional)").optional(),
 )
 
+private class AuthorIdentifierMap
+
 fun authorIdentifierFields(path: String = "identifiers") = listOf(
-    fieldWithPath(path).type("Object").description("A key-map of associated author identifiers."),
+    fieldWithPath(path).type("Object").description("A key-value map of associated author identifiers.").references<AuthorIdentifierMap>(),
     fieldWithPath("$path.open_alex").type("Array").description("The list of Open Alex IDs of the author. (optional)").arrayItemsType("String").constraints(openAlexIdConstraint).optional(),
     fieldWithPath("$path.orcid").type("Array").description("The list of ORCIDs of the author. (optional)").arrayItemsType("String").constraints(orcidConstraint).optional(),
     fieldWithPath("$path.google_scholar").type("Array").description("The list of Google Scholar IDs of the author. (optional)").arrayItemsType("String").constraints(googleScholarIdConstraint).optional(),
@@ -57,26 +59,34 @@ fun authorIdentifierFields(path: String = "identifiers") = listOf(
     fieldWithPath("$path.web_of_science").type("Array").description("The list of Web of Science IDs of the author. (optional)").arrayItemsType("String").constraints(researcherIdConstraint).optional(),
 )
 
+private class PaperIdentifierMap
+
 fun paperIdentifierFields(path: String = "identifiers") = listOf(
-    fieldWithPath(path).description("The unique identifiers of the paper. (optional)").optional(),
+    fieldWithPath(path).type("Object").description("A key-value map of associated paper identifiers. (optional)").optional().references<PaperIdentifierMap>(),
     fieldWithPath("$path.doi").type("Array").description("The list of DOIs of the paper. (optional)").arrayItemsType("String").constraints(doiConstraint).optional(),
     fieldWithPath("$path.isbn").type("Array").description("The list of ISBNs of the paper. (optional)").arrayItemsType("String").constraints(isbnConstraint).optional(),
     fieldWithPath("$path.issn").type("Array").description("The list of ISSNs of the paper. (optional)").arrayItemsType("String").constraints(issnConstraint).optional(),
     fieldWithPath("$path.open_alex").type("Array").description("The list of OpenAlex IDs of the paper. (optional)").arrayItemsType("String").constraints(openAlexIdConstraint).optional(),
 )
 
+private class LiteratureListIdentifierMap
+
 fun literatureListIdentifierResponseFields(path: String = "identifiers") = listOf(
-    fieldWithPath(path).description("The unique identifiers of the literature list."),
+    fieldWithPath(path).type("Object").description("The unique identifiers of the literature list.").references<LiteratureListIdentifierMap>(),
     fieldWithPath("$path.doi").type("Array").description("The list of DOIs of the literature list. (optional)").arrayItemsType("String").constraints(doiConstraint).optional(),
 )
 
+private class SmartReviewIdentifierMap
+
 fun smartReviewIdentifierResponseFields(path: String = "identifiers") = listOf(
-    fieldWithPath(path).description("The unique identifiers of the smart review."),
+    fieldWithPath(path).type("Object").description("The unique identifiers of the smart review.").references<SmartReviewIdentifierMap>(),
     fieldWithPath("$path.doi").type("Array").description("The list of DOIs of the smart review. (optional)").arrayItemsType("String").constraints(doiConstraint).optional(),
 )
 
+private class ComparisonIdentifierMap
+
 fun comparisonIdentifierResponseFields(path: String = "identifiers") = listOf(
-    fieldWithPath(path).description("The unique identifiers of the comparison."),
+    fieldWithPath(path).type("Object").description("The unique identifiers of the comparison.").references<ComparisonIdentifierMap>(),
     fieldWithPath("$path.doi").description("The list of DOIs of the comparison. (optional)").arrayItemsType("String").constraints(doiConstraint).optional(),
 )
 

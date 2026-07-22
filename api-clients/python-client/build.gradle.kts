@@ -4,11 +4,13 @@ import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.databind.node.ObjectNode
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
+import io.spring.gradle.antora.GenerateAntoraYmlTask
 import org.openapitools.generator.gradle.plugin.tasks.GenerateTask
 
 plugins {
     id("org.orkg.gradle.openapi")
     id("org.orkg.gradle.patch")
+    id("io.spring.antora.generate-antora-yml")
 }
 
 @CacheableTask
@@ -133,5 +135,11 @@ tasks {
             "python-keycloak" to "7.1.1",
         )
         dependsOn(generateOpenApiSpecPython)
+    }
+
+    named<GenerateAntoraYmlTask>("generateAntoraYml") {
+        group = "documentation"
+        setProperty("outputFile", layout.buildDirectory.file("aggregated-antora-content/antora.yml"))
+        setProperty("baseAntoraYmlFile", File("src/antora/antora.yml"))
     }
 }

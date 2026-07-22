@@ -1,8 +1,10 @@
 import Org_orkg_gradle_patch_gradle.PatchHelper
+import io.spring.gradle.antora.GenerateAntoraYmlTask
 import org.openapitools.generator.gradle.plugin.tasks.GenerateTask
 
 plugins {
     id("org.orkg.gradle.openapi")
+    id("io.spring.antora.generate-antora-yml")
 }
 
 @CacheableTask
@@ -38,5 +40,11 @@ tasks {
             "licenseName" to "MIT",
             "prefixParameterInterfaces" to "true",
         )
+    }
+
+    named<GenerateAntoraYmlTask>("generateAntoraYml") {
+        group = "documentation"
+        setProperty("outputFile", layout.buildDirectory.file("aggregated-antora-content/antora.yml"))
+        setProperty("baseAntoraYmlFile", File("src/antora/antora.yml"))
     }
 }

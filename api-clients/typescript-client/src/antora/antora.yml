@@ -1,0 +1,12 @@
+name: typescript-client
+version: true
+title: TypeScript Client
+nav:
+  - modules/ROOT/nav.adoc
+ext:
+  collector:
+    - run:
+        command: gradlew --quiet --no-daemon api-clients:typescript-client:generateAntoraYml
+        local: true
+      scan:
+        dir: api-clients/typescript-client/build/aggregated-antora-content

@@ -8,11 +8,14 @@ content:
     - url: ../
       branches:
         - HEAD
-      start_path: documentation/src/antora
+      start_paths:
+        - documentation/src/antora
+        - api-clients/python-client/src/antora
+        - api-clients/typescript-client/src/antora
       edit_url: '{web_url}/-/edit/master/{path}'
 ui:
   bundle:
-    url: https://gitlab.com/TIBHannover/orkg/orkg-docs-theme/-/releases/0.5.6/downloads/ui-bundle.zip
+    url: https://gitlab.com/TIBHannover/orkg/orkg-docs-theme/-/releases/0.5.8/downloads/ui-bundle.zip
     snapshot: true
 antora:
   extensions:
@@ -29,11 +32,12 @@ antora:
     - require: '@springio/antora-extensions/root-attachments-extension'
 asciidoc:
   attributes:
-    page-related-doc-categories: core
-    page-related-doc-projects: rest-api
+    page-related-doc-categories: core,api
+    page-related-doc-projects: rest-api,typescript-client,python-client
     hide-uri-scheme: '@'
     tabs-sync-option: '@'
   extensions:
+    - '@asciidoctor/tabs'
     - '@springio/asciidoctor-extensions'
     - './src/asciidoctor/extensions/operation_block_macro.js'
 urls:

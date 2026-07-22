@@ -1,0 +1,88 @@
+= Overview
+
+The ORKG REST-API provides an auto-generated, OpenAPI based client library for TypeScript.
+The version of the TypeScript client library matches the version of the ORKG REST-API.
+You can find the latest version of the ORKG REST-API in the https://gitlab.com/TIBHannover/orkg/orkg-backend/-/blob/master/CHANGELOG.md?ref_type=heads[changelog].
+
+== Prerequisites
+
+Please follow the respective installation instructions for TypeScript 4.0 or later.
+After that, add the ORKG REST-API package registry to your `.npmrc` by running:
+
+NOTE: This only needs to be done once.
+
+    echo @orkg:registry=https://gitlab.com/api/v4/projects/12710144/packages/npm/ >> .npmrc
+
+== Installation
+
+To install the TypeScript client, run:
+
+    npm install @orkg/orkg-client
+
+== Usage
+
+=== Configuration
+
+[source,typescript]
+----
+import {Configuration, ResourcesApi, ThingsApi} from '@orkg/orkg-client';
+
+const configuration = new Configuration({basePath: "https://incubating.orkg.org"});
+const thingsApi = new ThingsApi(configuration)
+const resourcesApi = new ResourcesApi(configuration)
+----
+
+=== Fetching a thing by id
+
+[tabs]
+======
+
+Async::
++
+[source,typescript]
+----
+thingsApi.findById({id: "R1000"})
+    .then((result) => console.log(result))
+    .catch(async (error) => console.log(await error.response.json()));
+----
+
+Sync::
++
+[source,typescript]
+----
+try {
+    const thing = await thingsApi.findById({id: "R1000"});
+    console.log(thing);
+} catch (error: any) {
+    console.log(await error.response.json());
+}
+----
+======
+
+=== Creating a new resource
+
+[tabs]
+======
+
+Async::
++
+[source,typescript]
+----
+resourcesApi.createRaw({createResourceRequest: {label: "example"}})
+    .then((result) => console.log(result.raw.headers.get("Location")))
+    .catch(async (error) => console.log(await error.response.json()));
+----
+
+Sync::
++
+[source,typescript]
+----
+try {
+    const resource = await resourcesApi.createRaw({createResourceRequest: {label: "example"}});
+    const location = resource.raw.headers.get("Location");
+    console.log(location);
+} catch (error: any) {
+    console.log(await error.response.json());
+}
+----
+======

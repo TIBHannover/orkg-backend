@@ -1,0 +1,12 @@
+name: python-client
+version: true
+title: Python Client
+nav:
+  - modules/ROOT/nav.adoc
+ext:
+  collector:
+    - run:
+        command: gradlew --quiet --no-daemon api-clients:python-client:generateAntoraYml
+        local: true
+      scan:
+        dir: api-clients/python-client/build/aggregated-antora-content

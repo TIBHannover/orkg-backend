@@ -2,6 +2,7 @@ package org.orkg.contenttypes.adapter.input.rest
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import jakarta.validation.Valid
+import jakarta.validation.constraints.Min
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.Size
 import org.orkg.common.ContributorId
@@ -15,6 +16,8 @@ import org.orkg.contenttypes.adapter.input.rest.mapping.ComparisonJatsXmlAdapter
 import org.orkg.contenttypes.adapter.input.rest.mapping.ComparisonRepresentationAdapter
 import org.orkg.contenttypes.domain.ComparisonDataSource
 import org.orkg.contenttypes.domain.ComparisonNotFound
+import org.orkg.contenttypes.domain.ComparisonType
+import org.orkg.contenttypes.input.ComparisonSearchProtocolCommand
 import org.orkg.contenttypes.input.ComparisonTableUseCases
 import org.orkg.contenttypes.input.ComparisonUseCases
 import org.orkg.contenttypes.input.CreateComparisonUseCase
@@ -162,12 +165,16 @@ class ComparisonController(
     data class CreateComparisonRequest(
         @field:NotBlank
         val title: String,
+        val type: ComparisonType = ComparisonType.UNKNOWN,
         val description: String,
         @field:Size(max = 1)
         @field:JsonProperty("research_fields")
         val researchFields: List<ThingId>,
         @field:Valid
         val authors: List<AuthorRequest>,
+        @field:Valid
+        @field:JsonProperty("search_protocol")
+        val searchProtocol: ComparisonSearchProtocolRequest = ComparisonSearchProtocolRequest(),
         @field:JsonProperty("sdgs")
         val sustainableDevelopmentGoals: Set<ThingId>?,
         val sources: List<ComparisonDataSource>,
@@ -185,10 +192,12 @@ class ComparisonController(
         fun toCreateCommand(contributorId: ContributorId): CreateComparisonUseCase.CreateCommand =
             CreateComparisonUseCase.CreateCommand(
                 contributorId = contributorId,
+                type = type,
                 title = title,
                 description = description,
                 researchFields = researchFields,
                 authors = authors.map { it.toAuthor() },
+                searchProtocol = searchProtocol.toCreateCommand(),
                 sustainableDevelopmentGoals = sustainableDevelopmentGoals.orEmpty(),
                 sources = sources,
                 visualizations = visualizations.orEmpty(),
@@ -203,6 +212,7 @@ class ComparisonController(
     data class UpdateComparisonRequest(
         @field:NullableNotBlank
         val title: String?,
+        val type: ComparisonType?,
         @field:NullableNotBlank
         val description: String?,
         @field:Size(min = 1, max = 1)
@@ -210,6 +220,9 @@ class ComparisonController(
         val researchFields: List<ThingId>?,
         @field:Valid
         val authors: List<AuthorRequest>?,
+        @field:Valid
+        @field:JsonProperty("search_protocol")
+        val searchProtocol: ComparisonSearchProtocolRequest?,
         @field:JsonProperty("sdgs")
         val sustainableDevelopmentGoals: Set<ThingId>?,
         val sources: List<ComparisonDataSource>?,
@@ -230,9 +243,11 @@ class ComparisonController(
                 comparisonId = comparisonId,
                 contributorId = contributorId,
                 title = title,
+                type = type,
                 description = description,
                 researchFields = researchFields,
                 authors = authors?.map { it.toAuthor() },
+                searchProtocol = searchProtocol?.toCreateCommand(),
                 sustainableDevelopmentGoals = sustainableDevelopmentGoals,
                 sources = sources,
                 visualizations = visualizations,
@@ -264,6 +279,40 @@ class ComparisonController(
                 description = description,
                 authors = authors.map { it.toAuthor() },
                 assignDOI = assignDOI,
+            )
+    }
+
+    data class ComparisonSearchProtocolRequest(
+        @field:NullableNotBlank
+        @field:JsonProperty("inclusion_criteria")
+        val inclusionCriteria: String? = null,
+        @field:NullableNotBlank
+        @field:JsonProperty("exclusion_criteria")
+        val exclusionCriteria: String? = null,
+        @field:JsonProperty("search_engines")
+        val searchEngines: List<ThingId> = emptyList(),
+        @field:Valid
+        @field:JsonProperty("search_strings")
+        val searchStrings: List<@NotBlank String> = emptyList(),
+        @field:Valid
+        @field:JsonProperty("research_questions")
+        val researchQuestions: List<@NotBlank String> = emptyList(),
+        @field:Min(0)
+        @field:JsonProperty("number_of_studies_originally_returned")
+        val numberOfStudiesOriginallyReturned: Int? = null,
+        @field:Min(0)
+        @field:JsonProperty("number_of_studies_retained")
+        val numberOfStudiesRetained: Int? = null,
+    ) {
+        fun toCreateCommand(): ComparisonSearchProtocolCommand =
+            ComparisonSearchProtocolCommand(
+                inclusionCriteria,
+                exclusionCriteria,
+                searchEngines,
+                searchStrings,
+                researchQuestions,
+                numberOfStudiesOriginallyReturned,
+                numberOfStudiesRetained,
             )
     }
 }

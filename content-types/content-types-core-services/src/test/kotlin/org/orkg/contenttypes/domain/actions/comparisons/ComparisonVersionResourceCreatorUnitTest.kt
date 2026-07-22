@@ -27,7 +27,7 @@ internal class ComparisonVersionResourceCreatorUnitTest : MockkBaseTest {
         val resourceCreateCommand = CreateResourceUseCase.CreateCommand(
             contributorId = command.contributorId,
             label = command.title,
-            classes = setOf(Classes.comparisonPublished, Classes.latestVersion),
+            classes = setOf(Classes.comparisonPublished, Classes.latestVersion, Classes.systematicComparison),
             extractionMethod = command.extractionMethod,
             observatoryId = command.observatories.firstOrNull(),
             organizationId = command.organizations.firstOrNull(),

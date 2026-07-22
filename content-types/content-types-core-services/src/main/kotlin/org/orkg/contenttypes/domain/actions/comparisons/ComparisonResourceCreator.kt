@@ -14,7 +14,7 @@ class ComparisonResourceCreator(
             CreateResourceUseCase.CreateCommand(
                 contributorId = command.contributorId,
                 label = command.title,
-                classes = setOf(Classes.comparison),
+                classes = setOfNotNull(Classes.comparison, command.type.`class`),
                 extractionMethod = command.extractionMethod,
                 observatoryId = command.observatories.singleOrNull(),
                 organizationId = command.organizations.singleOrNull(),

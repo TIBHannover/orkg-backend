@@ -12,13 +12,16 @@ import org.orkg.contenttypes.domain.ComparisonDataSource
 import org.orkg.contenttypes.domain.ComparisonPath
 import org.orkg.contenttypes.domain.ComparisonRelatedFigure
 import org.orkg.contenttypes.domain.ComparisonRelatedResource
+import org.orkg.contenttypes.domain.ComparisonSearchProtocol
 import org.orkg.contenttypes.domain.ComparisonTable
 import org.orkg.contenttypes.domain.ComparisonTableValue
+import org.orkg.contenttypes.domain.ComparisonType
 import org.orkg.contenttypes.domain.HeadVersion
 import org.orkg.contenttypes.domain.LabeledComparisonPath
 import org.orkg.contenttypes.domain.ObjectIdAndLabel
 import org.orkg.contenttypes.domain.PublicationInfo
 import org.orkg.contenttypes.domain.PublishedVersion
+import org.orkg.contenttypes.domain.ResourceReference
 import org.orkg.contenttypes.domain.SimpleComparisonPath
 import org.orkg.contenttypes.domain.VersionInfo
 import org.orkg.contenttypes.domain.legacy.ComparisonHeaderCell
@@ -38,6 +41,7 @@ import java.time.OffsetDateTime
 
 fun createComparison() = Comparison(
     id = ThingId("R8186"),
+    type = ComparisonType.SYSTEMATIC_COMPARISON,
     title = "Dummy Comparison Title",
     description = "Some description about the contents",
     researchFields = listOf(
@@ -74,6 +78,17 @@ fun createComparison() = Comparison(
             identifiers = emptyMap(),
             homepage = null,
         ),
+    ),
+    searchProtocol = ComparisonSearchProtocol(
+        inclusionCriteria = "has more than 5 authors",
+        exclusionCriteria = "has long title",
+        searchEngines = listOf(
+            ResourceReference(ThingId("R85476"), "arXiv", emptySet()),
+        ),
+        searchStrings = listOf("example paper"),
+        researchQuestions = listOf("what makes a paper good"),
+        numberOfStudiesOriginallyReturned = 5,
+        numberOfStudiesRetained = 2,
     ),
     sustainableDevelopmentGoals = setOf(
         ObjectIdAndLabel(

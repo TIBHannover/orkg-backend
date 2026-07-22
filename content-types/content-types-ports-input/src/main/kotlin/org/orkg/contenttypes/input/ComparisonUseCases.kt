@@ -7,6 +7,7 @@ import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.Author
 import org.orkg.contenttypes.domain.Comparison
 import org.orkg.contenttypes.domain.ComparisonDataSource
+import org.orkg.contenttypes.domain.ComparisonType
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.SearchString
 import org.orkg.graph.domain.Visibility
@@ -51,10 +52,12 @@ interface CreateComparisonUseCase {
 
     data class CreateCommand(
         val contributorId: ContributorId,
+        val type: ComparisonType,
         val title: String,
         val description: String,
         val researchFields: List<ThingId>,
         val authors: List<Author>,
+        val searchProtocol: ComparisonSearchProtocolCommand,
         val sustainableDevelopmentGoals: Set<ThingId>,
         val sources: List<ComparisonDataSource>,
         val visualizations: List<ThingId>,
@@ -73,9 +76,11 @@ interface UpdateComparisonUseCase {
         val comparisonId: ThingId,
         val contributorId: ContributorId,
         val title: String?,
+        val type: ComparisonType?,
         val description: String?,
         val researchFields: List<ThingId>?,
         val authors: List<Author>?,
+        val searchProtocol: ComparisonSearchProtocolCommand?,
         val sustainableDevelopmentGoals: Set<ThingId>?,
         val sources: List<ComparisonDataSource>?,
         val visualizations: List<ThingId>?,
@@ -100,3 +105,13 @@ interface PublishComparisonUseCase {
         val assignDOI: Boolean,
     )
 }
+
+data class ComparisonSearchProtocolCommand(
+    val inclusionCriteria: String?,
+    val exclusionCriteria: String?,
+    val searchEngines: List<ThingId>,
+    val searchStrings: List<String>,
+    val researchQuestions: List<String>,
+    val numberOfStudiesOriginallyReturned: Int?,
+    val numberOfStudiesRetained: Int?,
+)

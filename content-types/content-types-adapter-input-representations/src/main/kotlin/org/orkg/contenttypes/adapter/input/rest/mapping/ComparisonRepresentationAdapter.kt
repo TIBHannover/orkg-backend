@@ -10,7 +10,8 @@ interface ComparisonRepresentationAdapter :
     ComparisonDataSourceRepresentationAdapter,
     LabeledObjectRepresentationAdapter,
     PublicationInfoRepresentationAdapter,
-    VersionRepresentationAdapter {
+    VersionRepresentationAdapter,
+    ComparisonSearchProtocolRepresentationAdapter {
     fun Optional<Comparison>.mapToComparisonRepresentation(): Optional<ComparisonRepresentation> =
         map { it.toComparisonRepresentation() }
 
@@ -20,12 +21,14 @@ interface ComparisonRepresentationAdapter :
     fun Comparison.toComparisonRepresentation(): ComparisonRepresentation =
         ComparisonRepresentation(
             id = id,
+            type = type,
             title = title,
             description = description,
             researchFields = researchFields.mapToLabeledObjectRepresentation(),
             identifiers = identifiers,
             publicationInfo = publicationInfo.toPublicationInfoRepresentation(),
             authors = authors.mapToAuthorRepresentation(),
+            searchProtocol = searchProtocol.toComparisonSearchProtocolRepresentation(),
             sustainableDevelopmentGoals = sustainableDevelopmentGoals.mapToLabeledObjectRepresentation(),
             sources = sources.mapToComparisonDataSourceRepresentation(),
             visualizations = visualizations.mapToLabeledObjectRepresentation(),

@@ -6,6 +6,7 @@ import org.orkg.contenttypes.domain.actions.PublishComparisonCommand
 import org.orkg.contenttypes.domain.actions.comparisons.PublishComparisonAction.State
 import org.orkg.contenttypes.domain.actions.execute
 import org.orkg.contenttypes.domain.ids
+import org.orkg.contenttypes.input.ComparisonSearchProtocolCommand
 import org.orkg.graph.input.ListUseCases
 import org.orkg.graph.input.UnsafeLiteralUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
@@ -27,10 +28,20 @@ class ComparisonVersionCreator(
         val comparison = state.comparison!!
         val createComparisonCommand = CreateComparisonCommand(
             contributorId = command.contributorId,
+            type = comparison.type,
             title = comparison.title,
             description = comparison.description.orEmpty(),
             researchFields = comparison.researchFields.ids,
             authors = comparison.authors,
+            searchProtocol = ComparisonSearchProtocolCommand(
+                inclusionCriteria = comparison.searchProtocol.inclusionCriteria,
+                exclusionCriteria = comparison.searchProtocol.exclusionCriteria,
+                searchEngines = comparison.searchProtocol.searchEngines.map { it.id },
+                searchStrings = comparison.searchProtocol.searchStrings,
+                researchQuestions = comparison.searchProtocol.researchQuestions,
+                numberOfStudiesOriginallyReturned = comparison.searchProtocol.numberOfStudiesOriginallyReturned,
+                numberOfStudiesRetained = comparison.searchProtocol.numberOfStudiesRetained,
+            ),
             sustainableDevelopmentGoals = comparison.sustainableDevelopmentGoals.ids,
             sources = comparison.sources,
             visualizations = comparison.visualizations.ids,
@@ -45,6 +56,7 @@ class ComparisonVersionCreator(
             ComparisonVersionResourceCreator(unsafeResourceUseCases),
             ComparisonDescriptionCreator(unsafeLiteralUseCases, unsafeStatementUseCases),
             ComparisonAuthorListCreator(unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases, listService),
+            ComparisonSearchProtocolCreator(unsafeLiteralUseCases, unsafeStatementUseCases, listService),
             ComparisonSDGCreator(unsafeLiteralUseCases, unsafeStatementUseCases),
             ComparisonResearchFieldCreator(unsafeLiteralUseCases, unsafeStatementUseCases),
             ComparisonReferencesCreator(unsafeLiteralUseCases, unsafeStatementUseCases),

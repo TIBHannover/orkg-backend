@@ -1,4 +1,5 @@
 {
+    "type": "RELATED_WORK_COMPARISON",
     "title": "example comparison",
     "description": "comparison description",
     "research_fields": [
@@ -34,6 +35,15 @@
             "name": "Author that just has a name"
         }
     ],
+    "search_protocol": {
+        "inclusion_criteria": "has more than 5 authors",
+        "exclusion_criteria": "has long title",
+        "search_engines": ["R85476"],
+        "search_strings": ["example paper"],
+        "research_questions": ["what makes a paper good"],
+        "number_of_studies_originally_returned": 5,
+        "number_of_studies_retained": 2
+    },
     "sdgs": [
         "SDG_1",
         "SDG_2"

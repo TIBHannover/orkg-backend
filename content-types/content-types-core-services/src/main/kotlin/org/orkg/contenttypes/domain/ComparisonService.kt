@@ -48,6 +48,10 @@ import org.orkg.contenttypes.domain.actions.comparisons.ComparisonResourceCreato
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonResourceUpdater
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonSDGCreator
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonSDGUpdater
+import org.orkg.contenttypes.domain.actions.comparisons.ComparisonSearchProtocolCreateValidator
+import org.orkg.contenttypes.domain.actions.comparisons.ComparisonSearchProtocolCreator
+import org.orkg.contenttypes.domain.actions.comparisons.ComparisonSearchProtocolUpdateValidator
+import org.orkg.contenttypes.domain.actions.comparisons.ComparisonSearchProtocolUpdater
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonTableInitializer
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonVersionCreator
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonVersionDoiPublisher
@@ -76,6 +80,7 @@ import org.orkg.graph.input.UnsafeStatementUseCases
 import org.orkg.graph.output.ListRepository
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.StatementRepository
+import org.orkg.graph.output.ThingRepository
 import org.orkg.spring.data.annotations.TransactionalOnNeo4j
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.domain.Page
@@ -91,6 +96,7 @@ import java.util.Optional
 class ComparisonService(
     private val resourceRepository: ResourceRepository,
     private val statementRepository: StatementRepository,
+    private val thingRepository: ThingRepository,
     private val observatoryRepository: ObservatoryRepository,
     private val organizationRepository: OrganizationRepository,
     private val unsafeResourceUseCases: UnsafeResourceUseCases,
@@ -158,6 +164,7 @@ class ComparisonService(
             LabelCollectionValidator("references") { it.references },
             ComparisonDataSourcesValidator { it.sources },
             ResourceValidator(resourceRepository, { it.sources.map { it.id }.toSet() }),
+            ComparisonSearchProtocolCreateValidator(thingRepository),
             VisualizationIdsValidator(resourceRepository) { it.visualizations },
             ResearchFieldValidator(resourceRepository, { it.researchFields }),
             ObservatoryValidator(observatoryRepository, { it.observatories }),
@@ -167,6 +174,7 @@ class ComparisonService(
             ComparisonResourceCreator(unsafeResourceUseCases),
             ComparisonDescriptionCreator(unsafeLiteralUseCases, unsafeStatementUseCases),
             ComparisonAuthorListCreator(unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases, listService),
+            ComparisonSearchProtocolCreator(unsafeLiteralUseCases, unsafeStatementUseCases, listService),
             ComparisonSDGCreator(unsafeLiteralUseCases, unsafeStatementUseCases),
             ComparisonResearchFieldCreator(unsafeLiteralUseCases, unsafeStatementUseCases),
             ComparisonReferencesCreator(unsafeLiteralUseCases, unsafeStatementUseCases),
@@ -188,6 +196,7 @@ class ComparisonService(
             ExtractionMethodValidator({ it.extractionMethod }, { it.comparison!!.extractionMethod }),
             VisibilityValidator(contributorRepository, { it.contributorId }, { it.comparison!! }, { it.visibility }),
             ResourceValidator(resourceRepository, { it.sources?.map { it.id }?.toSet() }),
+            ComparisonSearchProtocolUpdateValidator(thingRepository),
             VisualizationIdsValidator(resourceRepository) { it.visualizations },
             ResearchFieldValidator(resourceRepository, { it.researchFields }),
             ObservatoryValidator(observatoryRepository, { it.observatories }),
@@ -198,6 +207,7 @@ class ComparisonService(
             ComparisonDescriptionUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases),
             ComparisonResearchFieldUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases),
             ComparisonAuthorListUpdater(unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases, listService, listRepository),
+            ComparisonSearchProtocolUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases, listService),
             ComparisonSDGUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases),
             ComparisonContributionUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases),
             ComparisonVisualizationUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases),

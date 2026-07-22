@@ -516,5 +516,21 @@
         "id": "SCHEMAORG:Thing",
         "label": "Thing",
         "uri": "https://schema.org/Thing"
+    },
+    {
+        "id": "SystematicComparison",
+        "label": "Systematic comparison"
+    },
+    {
+        "id": "RelatedWorkComparison",
+        "label": "Related work comparison"
+    },
+    {
+        "id": "StateOfTheArtComparison",
+        "label": "State of the art comparison"
+    },
+    {
+        "id": "ResourceComparison",
+        "label": "Resource comparison"
     }
 ]

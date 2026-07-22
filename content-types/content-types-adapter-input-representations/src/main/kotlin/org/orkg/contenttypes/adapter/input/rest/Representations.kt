@@ -24,6 +24,7 @@ import org.orkg.contenttypes.domain.Certainty
 import org.orkg.contenttypes.domain.ClassReference
 import org.orkg.contenttypes.domain.ComparisonDataSource
 import org.orkg.contenttypes.domain.ComparisonPath
+import org.orkg.contenttypes.domain.ComparisonType
 import org.orkg.contenttypes.domain.LiteralReference
 import org.orkg.contenttypes.domain.ObjectIdAndLabel
 import org.orkg.contenttypes.domain.PredicateReference
@@ -126,6 +127,7 @@ data class ContributionRepresentation(
 
 data class ComparisonRepresentation(
     val id: ThingId,
+    val type: ComparisonType,
     val title: String,
     val description: String?,
     @field:JsonProperty("research_fields")
@@ -134,6 +136,8 @@ data class ComparisonRepresentation(
     @field:JsonProperty("publication_info")
     val publicationInfo: PublicationInfoRepresentation,
     val authors: List<AuthorRepresentation>,
+    @field:JsonProperty("search_protocol")
+    val searchProtocol: ComparisonSearchProtocolRepresentation,
     @field:JsonProperty("sdgs")
     val sustainableDevelopmentGoals: Set<LabeledObjectRepresentation>,
     val sources: List<ComparisonDataSourceRepresentation>,
@@ -162,6 +166,23 @@ data class ComparisonRepresentation(
     val published: Boolean,
     override val jsonClass: String = "comparison",
 ) : ContentTypeRepresentation
+
+data class ComparisonSearchProtocolRepresentation(
+    @field:JsonProperty("inclusion_criteria")
+    val inclusionCriteria: String?,
+    @field:JsonProperty("exclusion_criteria")
+    val exclusionCriteria: String?,
+    @field:JsonProperty("search_engines")
+    val searchEngines: List<ThingReferenceRepresentation>,
+    @field:JsonProperty("search_strings")
+    val searchStrings: List<String>,
+    @field:JsonProperty("research_questions")
+    val researchQuestions: List<String>,
+    @field:JsonProperty("number_of_studies_originally_returned")
+    val numberOfStudiesOriginallyReturned: Int?,
+    @field:JsonProperty("number_of_studies_retained")
+    val numberOfStudiesRetained: Int?,
+)
 
 data class ComparisonRelatedResourceRepresentation(
     val id: ThingId,

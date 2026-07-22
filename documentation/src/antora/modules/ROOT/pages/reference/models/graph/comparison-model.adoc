@@ -60,6 +60,19 @@ flowchart LR
 	Comparison --> |"reference"| reference[Literal \n xsd:string]
 	Comparison --> |"IsAnonymized"| isAnonymized[Literal \n xsd:boolean]
 	Comparison --> |"sustainableDevelopmentGoal"| sdg[SustainableDevelopmentGoal \n Resource]
+    Comparison --> |"searchProtocol"| searchProtocol[SearchProtocol \n Resource]
+    subgraph Search Protocol
+        searchProtocol --> |"inclusion_criteria"| inclusionCriteria[Literal \n xsd:string]
+        searchProtocol --> |"exclusion_criteria"| exclusionCriteria[Literal \n xsd:string]
+        searchProtocol --> |"searchEngines"| searchEngines[List \n Resource]
+        searchEngines  --> |"hasListElement"| searchEngine[Thing]
+        searchProtocol --> |"searchStrings"| searchStrings[List \n Resource]
+        searchStrings  --> |"hasListElement"| searchString[Literal \n xsd:string]
+        searchProtocol --> |"researchQuestions"| researchQuestions[List \n Resource]
+        researchQuestions  --> |"hasListElement"| researchQuestion[Literal \n xsd:string]
+        searchProtocol --> |"numberOfStudiesOriginallyReturned"| numberOfStudiesOriginallyReturned[Literal \n xsd:integer]
+        searchProtocol --> |"numberOfStudiesRetained"| numberOfStudiesRetained[Literal \n xsd:integer]
+    end
 ----
 
 ^1^ The latest published version of a comparison has the additional label "LatestVersion"

@@ -35,22 +35,29 @@ import org.orkg.contenttypes.domain.ComparisonAlreadyPublished
 import org.orkg.contenttypes.domain.ComparisonDataSource
 import org.orkg.contenttypes.domain.ComparisonNotFound
 import org.orkg.contenttypes.domain.ComparisonNotModifiable
+import org.orkg.contenttypes.domain.ComparisonType
 import org.orkg.contenttypes.domain.ContributionNotFound
 import org.orkg.contenttypes.domain.DuplicateComparisonDataSources
+import org.orkg.contenttypes.domain.InvalidOriginallyReturnedStudyCount
+import org.orkg.contenttypes.domain.InvalidRetainedStudyCount
+import org.orkg.contenttypes.domain.InvalidStudyCounts
 import org.orkg.contenttypes.domain.OnlyOneObservatoryAllowed
 import org.orkg.contenttypes.domain.OnlyOneOrganizationAllowed
 import org.orkg.contenttypes.domain.OnlyOneResearchFieldAllowed
 import org.orkg.contenttypes.domain.RequiresAtLeastTwoSources
 import org.orkg.contenttypes.domain.ResearchFieldNotFound
+import org.orkg.contenttypes.domain.SearchEngineEntityNotFound
 import org.orkg.contenttypes.domain.SustainableDevelopmentGoalNotFound
 import org.orkg.contenttypes.domain.VisualizationNotFound
 import org.orkg.contenttypes.domain.testing.asciidoc.allowedComparisonDataSourceTypeValues
+import org.orkg.contenttypes.domain.testing.asciidoc.allowedComparisonTypeValues
 import org.orkg.contenttypes.domain.testing.fixtures.createComparison
 import org.orkg.contenttypes.domain.testing.fixtures.createComparisonTable
 import org.orkg.contenttypes.input.ComparisonTableUseCases
 import org.orkg.contenttypes.input.ComparisonUseCases
 import org.orkg.contenttypes.input.testing.fixtures.authorListFields
 import org.orkg.contenttypes.input.testing.fixtures.comparisonResponseFields
+import org.orkg.contenttypes.input.testing.fixtures.comparisonSearchProtocolFields
 import org.orkg.contenttypes.input.testing.fixtures.configuration.ContentTypeControllerUnitTestConfiguration
 import org.orkg.graph.domain.ExactSearchString
 import org.orkg.graph.domain.ExtractionMethod
@@ -84,6 +91,7 @@ import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.http.HttpStatus.SERVICE_UNAVAILABLE
 import org.springframework.http.MediaType
 import org.springframework.restdocs.headers.HeaderDocumentation.headerWithName
+import org.springframework.restdocs.payload.PayloadDocumentation.applyPathPrefix
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import org.springframework.test.context.ContextConfiguration
@@ -569,6 +577,7 @@ internal class ComparisonControllerUnitTest : MockMvcBaseTest("comparisons") {
                     headerWithName("Location").description("The uri path where the newly created comparison can be fetched from."),
                 )
                 requestFields<CreateComparisonRequest>(
+                    fieldWithPath("type").description("The type of the comparison. Either of $allowedComparisonTypeValues. (optional, default: `${ComparisonType.UNKNOWN}`)").optional(),
                     fieldWithPath("title").description("The title of the comparison."),
                     fieldWithPath("description").description("The description of the comparison."),
                     fieldWithPath("research_fields").description("The list of research fields the comparison will be assigned to."),
@@ -576,6 +585,8 @@ internal class ComparisonControllerUnitTest : MockMvcBaseTest("comparisons") {
                     fieldWithPath("sources").description("The list of data sources of the comparison."),
                     fieldWithPath("sources[].id").description("The ID of the data source."),
                     fieldWithPath("sources[].type").description("The type of the data source. Either of $allowedComparisonDataSourceTypeValues"),
+                    fieldWithPath("search_protocol").description("The search protocol used to find the literature featured in the comparison. (optional)").optional(),
+                    *applyPathPrefix("search_protocol.", comparisonSearchProtocolFields()).toTypedArray(),
                     fieldWithPath("visualizations[]").description("The list of IDs of visualizations that will be assigned to the comparison."),
                     fieldWithPath("references[]").description("The references to external sources that the comparison refers to."),
                     fieldWithPath("organizations[]").description("The list of IDs of the organizations the comparison belongs to."),
@@ -589,6 +600,10 @@ internal class ComparisonControllerUnitTest : MockMvcBaseTest("comparisons") {
                     InvalidDescription::class,
                     ContributionNotFound::class,
                     DuplicateComparisonDataSources::class,
+                    InvalidOriginallyReturnedStudyCount::class,
+                    InvalidRetainedStudyCount::class,
+                    InvalidStudyCounts::class,
+                    SearchEngineEntityNotFound::class,
                     VisualizationNotFound::class,
                     OnlyOneResearchFieldAllowed::class,
                     ResearchFieldNotFound::class,
@@ -785,6 +800,7 @@ internal class ComparisonControllerUnitTest : MockMvcBaseTest("comparisons") {
                     headerWithName("Location").description("The uri path where the updated comparison can be fetched from."),
                 )
                 requestFields<UpdateComparisonRequest>(
+                    fieldWithPath("type").description("The type of the comparison. Either of $allowedComparisonTypeValues. (optional)").optional(),
                     fieldWithPath("title").description("The title of the comparison. (optional)").optional(),
                     fieldWithPath("description").description("The description of the comparison. (optional)").optional(),
                     fieldWithPath("research_fields").description("The list of research fields the comparison will be assigned to. (optional)").optional(),
@@ -792,6 +808,8 @@ internal class ComparisonControllerUnitTest : MockMvcBaseTest("comparisons") {
                     fieldWithPath("sources").description("The list of data sources of the comparison. (optional)"),
                     fieldWithPath("sources[].id").description("The ID of the data source."),
                     fieldWithPath("sources[].type").description("The type of the data soruce. Either of $allowedComparisonDataSourceTypeValues"),
+                    fieldWithPath("search_protocol").description("The search protocol used to find the literature featured in the comparison. (optional)").optional(),
+                    *applyPathPrefix("search_protocol.", comparisonSearchProtocolFields()).toTypedArray(),
                     fieldWithPath("visualizations[]").description("The list of IDs of visualizations the comparison has. (optional)").optional(),
                     fieldWithPath("references[]").description("The references to external sources that the comparison refers to. (optional)").optional(),
                     fieldWithPath("organizations[]").description("The list of IDs of the organizations or conference series the comparison belongs to. (optional)").optional(),
@@ -805,6 +823,10 @@ internal class ComparisonControllerUnitTest : MockMvcBaseTest("comparisons") {
                     InvalidLabel::class,
                     InvalidDescription::class,
                     DuplicateComparisonDataSources::class,
+                    InvalidOriginallyReturnedStudyCount::class,
+                    InvalidRetainedStudyCount::class,
+                    InvalidStudyCounts::class,
+                    SearchEngineEntityNotFound::class,
                     ComparisonNotModifiable::class,
                     ComparisonNotFound::class,
                     InvalidExtractionMethodChange::class,
@@ -830,6 +852,7 @@ internal class ComparisonControllerUnitTest : MockMvcBaseTest("comparisons") {
     private fun createComparisonRequest() =
         CreateComparisonRequest(
             title = "test",
+            type = ComparisonType.RESOURCE_COMPARISON,
             description = "comparison description",
             researchFields = listOf(ThingId("R12")),
             authors = listOf(
@@ -863,6 +886,17 @@ internal class ComparisonControllerUnitTest : MockMvcBaseTest("comparisons") {
                     identifiers = null,
                     homepage = null,
                 ),
+            ),
+            searchProtocol = ComparisonController.ComparisonSearchProtocolRequest(
+                inclusionCriteria = "has more than 5 authors",
+                exclusionCriteria = "has long title",
+                searchEngines = listOf(
+                    ThingId("R85476"),
+                ),
+                searchStrings = listOf("example paper"),
+                researchQuestions = listOf("what makes a paper good"),
+                numberOfStudiesOriginallyReturned = 5,
+                numberOfStudiesRetained = 2,
             ),
             sustainableDevelopmentGoals = setOf(
                 ThingId("SDG_1"),
@@ -885,6 +919,7 @@ internal class ComparisonControllerUnitTest : MockMvcBaseTest("comparisons") {
     private fun updateComparisonRequest() =
         UpdateComparisonRequest(
             title = "test",
+            type = ComparisonType.RELATED_WORK_COMPARISON,
             description = "comparison description",
             researchFields = listOf(ThingId("R12")),
             authors = listOf(
@@ -918,6 +953,15 @@ internal class ComparisonControllerUnitTest : MockMvcBaseTest("comparisons") {
                     identifiers = null,
                     homepage = null,
                 ),
+            ),
+            searchProtocol = ComparisonController.ComparisonSearchProtocolRequest(
+                inclusionCriteria = "updated inclusion criteria",
+                exclusionCriteria = "updated exclusion criteria",
+                searchEngines = listOf(ThingId("R65847")),
+                searchStrings = listOf("updated search string"),
+                researchQuestions = listOf("updated research question"),
+                numberOfStudiesOriginallyReturned = 7,
+                numberOfStudiesRetained = 3,
             ),
             sustainableDevelopmentGoals = setOf(
                 ThingId("SDG_1"),

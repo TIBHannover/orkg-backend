@@ -34,6 +34,7 @@ import org.orkg.graph.input.UnsafeStatementUseCases
 import org.orkg.graph.output.ListRepository
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.StatementRepository
+import org.orkg.graph.output.ThingRepository
 import org.orkg.graph.testing.fixtures.createLiteral
 import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.graph.testing.fixtures.createResource
@@ -48,6 +49,7 @@ import java.util.UUID
 internal class ComparisonServiceUnitTest : MockkBaseTest {
     private val resourceRepository: ResourceRepository = mockk()
     private val statementRepository: StatementRepository = mockk()
+    private val thingRepository: ThingRepository = mockk()
     private val observatoryRepository: ObservatoryRepository = mockk()
     private val organizationRepository: OrganizationRepository = mockk()
     private val unsafeResourceUseCases: UnsafeResourceUseCases = mockk()
@@ -66,6 +68,7 @@ internal class ComparisonServiceUnitTest : MockkBaseTest {
     private val service = ComparisonService(
         resourceRepository = resourceRepository,
         statementRepository = statementRepository,
+        thingRepository = thingRepository,
         observatoryRepository = observatoryRepository,
         organizationRepository = organizationRepository,
         unsafeResourceUseCases = unsafeResourceUseCases,
@@ -87,7 +90,7 @@ internal class ComparisonServiceUnitTest : MockkBaseTest {
     @Test
     fun `Given an unpublished comparison, when fetching it by id, then it is returned`() {
         val expected = createResource(
-            classes = setOf(Classes.comparison),
+            classes = setOf(Classes.comparison, Classes.relatedWorkComparison),
             organizationId = OrganizationId(UUID.randomUUID()),
             observatoryId = ObservatoryId(UUID.randomUUID()),
         )
@@ -108,6 +111,16 @@ internal class ComparisonServiceUnitTest : MockkBaseTest {
         val publicationMonth = 1
         val reference = "https://orkg.org"
         val authorList = createResource(classes = setOf(Classes.list), id = ThingId("R536456"))
+        val inclusionCriteria = "has more than 5 authors"
+        val exclusionCriteria = "has long title"
+        val searchEngine = createResource(ThingId("R85476"), label = "arXiv")
+        val searchStrings = listOf("example paper")
+        val researchQuestions = listOf("what makes a paper good")
+        val numberOfStudiesOriginallyReturned = 5
+        val numberOfStudiesRetained = 2
+        val searchEngineList = createResource(id = ThingId("R987"), label = "Search engines", classes = setOf(Classes.list))
+        val searchStringsList = createResource(id = ThingId("R654"), label = "Search strings", classes = setOf(Classes.list))
+        val researchQuestionsList = createResource(id = ThingId("R321"), label = "Research questions", classes = setOf(Classes.list))
         val firstBundleConfiguration = BundleConfiguration(
             minLevel = null,
             maxLevel = 3,
@@ -143,6 +156,62 @@ internal class ComparisonServiceUnitTest : MockkBaseTest {
                 sort = Sort.unsorted(),
             )
         } returns pageOf(
+            createStatement(
+                subject = expected,
+                predicate = createPredicate(Predicates.inclusionCriteria),
+                `object` = createLiteral(label = inclusionCriteria, datatype = Literals.XSD.INT.prefixedUri),
+            ),
+            createStatement(
+                subject = expected,
+                predicate = createPredicate(Predicates.exclusionCriteria),
+                `object` = createLiteral(label = exclusionCriteria, datatype = Literals.XSD.INT.prefixedUri),
+            ),
+            createStatement(
+                subject = expected,
+                predicate = createPredicate(Predicates.searchEngines),
+                `object` = searchEngineList,
+            ),
+            createStatement(
+                subject = searchEngineList,
+                predicate = createPredicate(Predicates.hasListElement),
+                `object` = searchEngine,
+            ),
+            createStatement(
+                subject = expected,
+                predicate = createPredicate(Predicates.searchStrings),
+                `object` = searchStringsList,
+            ),
+            *searchStrings.mapIndexed { index, searchString ->
+                createStatement(
+                    index = index,
+                    subject = searchStringsList,
+                    predicate = createPredicate(Predicates.hasListElement),
+                    `object` = createLiteral(label = searchString),
+                )
+            }.toTypedArray(),
+            createStatement(
+                subject = expected,
+                predicate = createPredicate(Predicates.researchQuestions),
+                `object` = researchQuestionsList,
+            ),
+            *researchQuestions.mapIndexed { index, researchQuestion ->
+                createStatement(
+                    index = index,
+                    subject = researchQuestionsList,
+                    predicate = createPredicate(Predicates.hasListElement),
+                    `object` = createLiteral(label = researchQuestion),
+                )
+            }.toTypedArray(),
+            createStatement(
+                subject = expected,
+                predicate = createPredicate(Predicates.numberOfStudiesOriginallyReturned),
+                `object` = createLiteral(label = numberOfStudiesOriginallyReturned.toString(), datatype = Literals.XSD.INT.prefixedUri),
+            ),
+            createStatement(
+                subject = expected,
+                predicate = createPredicate(Predicates.numberOfStudiesRetained),
+                `object` = createLiteral(label = numberOfStudiesRetained.toString(), datatype = Literals.XSD.INT.prefixedUri),
+            ),
             createStatement(
                 subject = expected,
                 predicate = createPredicate(Predicates.hasDOI),
@@ -264,6 +333,7 @@ internal class ComparisonServiceUnitTest : MockkBaseTest {
         actual.isPresent shouldBe true
         actual.get().asClue { comparison ->
             comparison.id shouldBe expected.id
+            comparison.type shouldBe ComparisonType.RELATED_WORK_COMPARISON
             comparison.title shouldBe expected.label
             comparison.researchFields shouldNotBe null
             comparison.researchFields shouldBe listOf(
@@ -289,6 +359,16 @@ internal class ComparisonServiceUnitTest : MockkBaseTest {
                     homepage = null,
                 ),
             )
+            comparison.searchProtocol shouldNotBe null
+            comparison.searchProtocol.asClue { searchProtocol ->
+                searchProtocol.inclusionCriteria shouldBe inclusionCriteria
+                searchProtocol.exclusionCriteria shouldBe exclusionCriteria
+                searchProtocol.searchEngines shouldBe listOf(ResourceReference(searchEngine))
+                searchProtocol.searchStrings shouldBe searchStrings
+                searchProtocol.researchQuestions shouldBe researchQuestions
+                searchProtocol.numberOfStudiesOriginallyReturned shouldBe numberOfStudiesOriginallyReturned
+                searchProtocol.numberOfStudiesRetained shouldBe numberOfStudiesRetained
+            }
             comparison.sustainableDevelopmentGoals shouldBe setOf(
                 ObjectIdAndLabel(ThingId("SDG_1"), "No poverty"),
             )
@@ -343,7 +423,7 @@ internal class ComparisonServiceUnitTest : MockkBaseTest {
     @Test
     fun `Given a published comparison, when fetching it by id, then it is returned`() {
         val expected = createResource(
-            classes = setOf(Classes.comparisonPublished),
+            classes = setOf(Classes.comparisonPublished, Classes.relatedWorkComparison),
             organizationId = OrganizationId(UUID.randomUUID()),
             observatoryId = ObservatoryId(UUID.randomUUID()),
         )
@@ -374,6 +454,16 @@ internal class ComparisonServiceUnitTest : MockkBaseTest {
         val publicationMonth = 1
         val reference = "https://orkg.org"
         val authorList = createResource(classes = setOf(Classes.list), id = ThingId("R536456"))
+        val inclusionCriteria = "has more than 5 authors"
+        val exclusionCriteria = "has long title"
+        val searchEngine = createResource(ThingId("R85476"), label = "arXiv")
+        val searchStrings = listOf("example paper")
+        val researchQuestions = listOf("what makes a paper good")
+        val numberOfStudiesOriginallyReturned = 5
+        val numberOfStudiesRetained = 2
+        val searchEngineList = createResource(id = ThingId("R987"), label = "Search engines", classes = setOf(Classes.list))
+        val searchStringsList = createResource(id = ThingId("R654"), label = "Search strings", classes = setOf(Classes.list))
+        val researchQuestionsList = createResource(id = ThingId("R321"), label = "Research questions", classes = setOf(Classes.list))
         val firstBundleConfiguration = BundleConfiguration(
             minLevel = null,
             maxLevel = 3,
@@ -409,6 +499,62 @@ internal class ComparisonServiceUnitTest : MockkBaseTest {
                 sort = Sort.unsorted(),
             )
         } returns pageOf(
+            createStatement(
+                subject = expected,
+                predicate = createPredicate(Predicates.inclusionCriteria),
+                `object` = createLiteral(label = inclusionCriteria, datatype = Literals.XSD.INT.prefixedUri),
+            ),
+            createStatement(
+                subject = expected,
+                predicate = createPredicate(Predicates.exclusionCriteria),
+                `object` = createLiteral(label = exclusionCriteria, datatype = Literals.XSD.INT.prefixedUri),
+            ),
+            createStatement(
+                subject = expected,
+                predicate = createPredicate(Predicates.searchEngines),
+                `object` = searchEngineList,
+            ),
+            createStatement(
+                subject = searchEngineList,
+                predicate = createPredicate(Predicates.hasListElement),
+                `object` = searchEngine,
+            ),
+            createStatement(
+                subject = expected,
+                predicate = createPredicate(Predicates.searchStrings),
+                `object` = searchStringsList,
+            ),
+            *searchStrings.mapIndexed { index, searchString ->
+                createStatement(
+                    index = index,
+                    subject = searchStringsList,
+                    predicate = createPredicate(Predicates.hasListElement),
+                    `object` = createLiteral(label = searchString),
+                )
+            }.toTypedArray(),
+            createStatement(
+                subject = expected,
+                predicate = createPredicate(Predicates.researchQuestions),
+                `object` = researchQuestionsList,
+            ),
+            *researchQuestions.mapIndexed { index, researchQuestion ->
+                createStatement(
+                    index = index,
+                    subject = researchQuestionsList,
+                    predicate = createPredicate(Predicates.hasListElement),
+                    `object` = createLiteral(label = researchQuestion),
+                )
+            }.toTypedArray(),
+            createStatement(
+                subject = expected,
+                predicate = createPredicate(Predicates.numberOfStudiesOriginallyReturned),
+                `object` = createLiteral(label = numberOfStudiesOriginallyReturned.toString(), datatype = Literals.XSD.INT.prefixedUri),
+            ),
+            createStatement(
+                subject = expected,
+                predicate = createPredicate(Predicates.numberOfStudiesRetained),
+                `object` = createLiteral(label = numberOfStudiesRetained.toString(), datatype = Literals.XSD.INT.prefixedUri),
+            ),
             createStatement(
                 subject = expected,
                 predicate = createPredicate(Predicates.hasDOI),
@@ -528,6 +674,7 @@ internal class ComparisonServiceUnitTest : MockkBaseTest {
         actual.isPresent shouldBe true
         actual.get().asClue { comparison ->
             comparison.id shouldBe expected.id
+            comparison.type shouldBe ComparisonType.RELATED_WORK_COMPARISON
             comparison.title shouldBe expected.label
             comparison.researchFields shouldNotBe null
             comparison.researchFields shouldBe listOf(
@@ -553,6 +700,16 @@ internal class ComparisonServiceUnitTest : MockkBaseTest {
                     homepage = null,
                 ),
             )
+            comparison.searchProtocol shouldNotBe null
+            comparison.searchProtocol.asClue { searchProtocol ->
+                searchProtocol.inclusionCriteria shouldBe inclusionCriteria
+                searchProtocol.exclusionCriteria shouldBe exclusionCriteria
+                searchProtocol.searchEngines shouldBe listOf(ResourceReference(searchEngine))
+                searchProtocol.searchStrings shouldBe searchStrings
+                searchProtocol.researchQuestions shouldBe researchQuestions
+                searchProtocol.numberOfStudiesOriginallyReturned shouldBe numberOfStudiesOriginallyReturned
+                searchProtocol.numberOfStudiesRetained shouldBe numberOfStudiesRetained
+            }
             comparison.sustainableDevelopmentGoals shouldBe setOf(
                 ObjectIdAndLabel(ThingId("SDG_1"), "No poverty"),
             )

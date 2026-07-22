@@ -1,4 +1,5 @@
 {
+    "type": "RESOURCE_COMPARISON",
     "title": "updated comparison",
     "description": "updated comparison description",
     "research_fields": [
@@ -34,6 +35,15 @@
             "name": "Author that just has a name"
         }
     ],
+    "search_protocol": {
+        "inclusion_criteria": "updated inclusion criteria",
+        "exclusion_criteria": "updated exclusion criteria",
+        "search_engines": ["R123"],
+        "search_strings": ["other paper"],
+        "research_questions": ["what makes a paper bad"],
+        "number_of_studies_originally_returned": 7,
+        "number_of_studies_retained": 3
+    },
     "sdgs": [
         "SDG_3",
         "SDG_2"

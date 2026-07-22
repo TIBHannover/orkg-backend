@@ -20,6 +20,7 @@ import org.orkg.contenttypes.adapter.input.rest.SmartReviewSectionRepresentation
 import org.orkg.contenttypes.domain.testing.asciidoc.allowedCertaintyValues
 import org.orkg.contenttypes.domain.testing.asciidoc.allowedComparisonDataSourceTypeValues
 import org.orkg.contenttypes.domain.testing.asciidoc.allowedComparisonPathTypeValues
+import org.orkg.contenttypes.domain.testing.asciidoc.allowedComparisonTypeValues
 import org.orkg.graph.adapter.input.rest.testing.fixtures.predicateResponseFields
 import org.orkg.graph.adapter.input.rest.testing.fixtures.resourceResponseFields
 import org.orkg.graph.adapter.input.rest.testing.fixtures.statementResponseFields
@@ -88,6 +89,16 @@ private class ComparisonIdentifierMap
 fun comparisonIdentifierResponseFields(path: String = "identifiers") = listOf(
     fieldWithPath(path).type("Object").description("The unique identifiers of the comparison.").references<ComparisonIdentifierMap>(),
     fieldWithPath("$path.doi").description("The list of DOIs of the comparison. (optional)").arrayItemsType("String").constraints(doiConstraint).optional(),
+)
+
+fun comparisonSearchProtocolFields() = listOf(
+    fieldWithPath("inclusion_criteria").description("The inclusion criteria of the literature featured in the comparison. (optional)").optional(),
+    fieldWithPath("exclusion_criteria").description("The exclusion criteria of the literature featured in the comparison. (optional)").optional(),
+    fieldWithPath("search_engines[]").description("The ids of the search engines used to find the literature featured in the comparison. (optional)").optional(),
+    fieldWithPath("search_strings[]").description("The list of search string used to find the literature featured in the comparison. (optional)").optional(),
+    fieldWithPath("research_questions[]").description("The list of research questions the comparison tried so answer. (optional)").optional(),
+    fieldWithPath("number_of_studies_originally_returned").description("The number of studies originally returned. (optional)").optional(),
+    fieldWithPath("number_of_studies_retained").description("The number of studies retained. (optional)").optional(),
 )
 
 fun publicationInfoResponseFields(path: String = "publication_info"): List<FieldDescriptor> = listOf(
@@ -159,6 +170,7 @@ fun benchmarkSummaryResponseFields() = listOf(
 
 fun comparisonResponseFields() = listOf(
     fieldWithPath("id").description("The identifier of the comparison."),
+    fieldWithPath("type").description("The type of the comparison. Either of $allowedComparisonTypeValues."),
     fieldWithPath("title").description("The title of the comparison."),
     fieldWithPath("description").description("The description of the comparison."),
     fieldWithPath("research_fields").description("The list of research fields the comparison is assigned to."),
@@ -186,9 +198,22 @@ fun comparisonResponseFields() = listOf(
     fieldWithPath("unlisted_by").type("String").description("The UUID of the user or service who unlisted this comparison.").optional(),
     fieldWithPath("published").description("Whether the comparison is published or not."),
     fieldWithPath("_class").description("Indicates which type of entity was returned. Always has the value `comparison`."),
+    fieldWithPath("search_protocol").description("The search protocol used to find the literature featured in the comparison."),
+    *applyPathPrefix("search_protocol.", comparisonSearchProtocolResponseFields()).toTypedArray(),
     *authorListFields("comparison").toTypedArray(),
     *publicationInfoResponseFields().toTypedArray(),
     *sustainableDevelopmentGoalsResponseFields("comparison").toTypedArray(),
+)
+
+fun comparisonSearchProtocolResponseFields() = listOf(
+    fieldWithPath("inclusion_criteria").description("The inclusion criteria of the literature featured in the comparison. (optional)").optional(),
+    fieldWithPath("exclusion_criteria").description("The exclusion criteria of the literature featured in the comparison. (optional)").optional(),
+    fieldWithPath("search_engines[]").description("The search engines used to find the literature featured in the comparison."),
+    *applyPathPrefix("search_engines[].", thingReferenceResponseFields()).toTypedArray(),
+    fieldWithPath("search_strings[]").description("The list of search string used to find the literature featured in the comparison."),
+    fieldWithPath("research_questions[]").description("The list of research questions the comparison tried so answer."),
+    fieldWithPath("number_of_studies_originally_returned").description("The number of studies originally returned. (optional)").optional(),
+    fieldWithPath("number_of_studies_retained").description("The number of studies retained. (optional)").optional(),
 )
 
 fun comparisonRelatedFigureResponseFields() = listOf(

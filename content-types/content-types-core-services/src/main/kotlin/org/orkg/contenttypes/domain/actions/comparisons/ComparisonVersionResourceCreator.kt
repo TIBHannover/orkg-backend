@@ -14,7 +14,7 @@ class ComparisonVersionResourceCreator(
             CreateResourceUseCase.CreateCommand(
                 contributorId = command.contributorId,
                 label = command.title,
-                classes = setOf(Classes.comparisonPublished, Classes.latestVersion),
+                classes = setOfNotNull(Classes.comparisonPublished, Classes.latestVersion, command.type.`class`),
                 extractionMethod = command.extractionMethod,
                 observatoryId = command.observatories.singleOrNull(),
                 organizationId = command.organizations.singleOrNull(),

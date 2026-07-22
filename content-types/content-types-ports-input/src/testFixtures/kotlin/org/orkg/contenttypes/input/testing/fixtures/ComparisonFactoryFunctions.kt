@@ -7,7 +7,11 @@ import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.Author
 import org.orkg.contenttypes.domain.ComparisonDataSource
+import org.orkg.contenttypes.domain.ComparisonSearchProtocol
+import org.orkg.contenttypes.domain.ComparisonType
+import org.orkg.contenttypes.domain.ResourceReference
 import org.orkg.contenttypes.domain.testing.fixtures.createSimpleComparisonPaths
+import org.orkg.contenttypes.input.ComparisonSearchProtocolCommand
 import org.orkg.contenttypes.input.CreateComparisonUseCase
 import org.orkg.contenttypes.input.PublishComparisonUseCase
 import org.orkg.contenttypes.input.UpdateComparisonTableUseCase
@@ -18,6 +22,7 @@ import java.util.UUID
 
 fun createComparisonCommand() = CreateComparisonUseCase.CreateCommand(
     contributorId = ContributorId("0b3d7108-ea98-448f-85ef-e67a63a8b32b"),
+    type = ComparisonType.SYSTEMATIC_COMPARISON,
     title = "test",
     description = "comparison description",
     researchFields = listOf(ThingId("R12")),
@@ -42,6 +47,17 @@ fun createComparisonCommand() = CreateComparisonUseCase.CreateCommand(
         Author(
             name = "Author that just has a name",
         ),
+    ),
+    searchProtocol = ComparisonSearchProtocolCommand(
+        inclusionCriteria = "has more than 5 authors",
+        exclusionCriteria = "has long title",
+        searchEngines = listOf(
+            ThingId("R85476"),
+        ),
+        searchStrings = listOf("example paper"),
+        researchQuestions = listOf("what makes a paper good"),
+        numberOfStudiesOriginallyReturned = 5,
+        numberOfStudiesRetained = 2,
     ),
     sustainableDevelopmentGoals = setOf(ThingId("SDG_1"), ThingId("SDG_2")),
     sources = listOf(
@@ -61,6 +77,7 @@ fun createComparisonCommand() = CreateComparisonUseCase.CreateCommand(
 fun updateComparisonCommand() = UpdateComparisonUseCase.UpdateCommand(
     comparisonId = ThingId("R16453"),
     contributorId = ContributorId("0b3d7108-ea98-448f-85ef-e67a63a8b32b"),
+    type = ComparisonType.SYSTEMATIC_COMPARISON,
     title = "test",
     description = "comparison description",
     researchFields = listOf(ThingId("R12")),
@@ -85,6 +102,17 @@ fun updateComparisonCommand() = UpdateComparisonUseCase.UpdateCommand(
         Author(
             name = "Author that just has a name",
         ),
+    ),
+    searchProtocol = ComparisonSearchProtocolCommand(
+        inclusionCriteria = "has more than 5 authors",
+        exclusionCriteria = "has long title",
+        searchEngines = listOf(
+            ThingId("R85476"),
+        ),
+        searchStrings = listOf("example paper"),
+        researchQuestions = listOf("what makes a paper good"),
+        numberOfStudiesOriginallyReturned = 5,
+        numberOfStudiesRetained = 2,
     ),
     sustainableDevelopmentGoals = setOf(ThingId("SDG_2"), ThingId("SDG_3")),
     sources = listOf(

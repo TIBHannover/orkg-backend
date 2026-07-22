@@ -6,6 +6,7 @@ import org.orkg.contenttypes.domain.Author
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.GeneralStatement
+import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Resource
 import org.orkg.graph.input.ListUseCases
 import org.orkg.graph.input.UnsafeLiteralUseCases
@@ -37,7 +38,7 @@ class AbstractAuthorListUpdater(
     ) {
         // Remove current authors list, literal authors will be fully deleted in the process
         statements[subjectId].orEmpty()
-            .singleOrNull { it.`object` is Resource && Classes.list in (it.`object` as Resource).classes }
+            .singleOrNull { it.predicate.id == Predicates.hasAuthors && it.`object` is Resource && Classes.list in (it.`object` as Resource).classes }
             ?.let { listRepository.deleteById(it.`object`.id) }
         // Create new authors list
         authorCreator.create(contributorId, authors, subjectId, extractionMethod)

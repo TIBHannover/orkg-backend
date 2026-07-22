@@ -24,8 +24,10 @@ import org.orkg.contenttypes.adapter.output.simcomp.internal.InMemorySimCompThin
 import org.orkg.contenttypes.domain.Author
 import org.orkg.contenttypes.domain.ComparisonDataSource
 import org.orkg.contenttypes.domain.ComparisonNotFound
+import org.orkg.contenttypes.domain.ComparisonType
 import org.orkg.contenttypes.domain.HeadVersion
 import org.orkg.contenttypes.domain.ObjectIdAndLabel
+import org.orkg.contenttypes.domain.ResourceReference
 import org.orkg.contenttypes.domain.VersionInfo
 import org.orkg.contenttypes.input.ComparisonUseCases
 import org.orkg.createClasses
@@ -109,6 +111,13 @@ internal class ComparisonControllerIntegrationTest : MockMvcBaseTest("comparison
             Predicates.hasListElement,
             Predicates.sustainableDevelopmentGoal,
             Predicates.hasVisualization,
+            Predicates.inclusionCriteria,
+            Predicates.exclusionCriteria,
+            Predicates.searchEngines,
+            Predicates.searchStrings,
+            Predicates.researchQuestions,
+            Predicates.numberOfStudiesOriginallyReturned,
+            Predicates.numberOfStudiesRetained,
         )
 
         classService.createClasses(
@@ -119,6 +128,8 @@ internal class ComparisonControllerIntegrationTest : MockMvcBaseTest("comparison
             Classes.venue,
             Classes.sustainableDevelopmentGoal,
             Classes.visualization,
+            Classes.relatedWorkComparison,
+            Classes.resourceComparison,
         )
 
         resourceService.createResource(
@@ -152,6 +163,8 @@ internal class ComparisonControllerIntegrationTest : MockMvcBaseTest("comparison
         resourceService.createResource(id = ThingId("SDG_1"), label = "No poverty", classes = setOf(Classes.sustainableDevelopmentGoal))
         resourceService.createResource(id = ThingId("SDG_2"), label = "Zero hunger", classes = setOf(Classes.sustainableDevelopmentGoal))
         resourceService.createResource(id = ThingId("SDG_3"), label = "Good health and well-being", classes = setOf(Classes.sustainableDevelopmentGoal))
+
+        resourceService.createResource(id = ThingId("R85476"), label = "arXiv")
 
         statementService.createStatement(
             subject = resourceService.createResource(
@@ -238,6 +251,7 @@ internal class ComparisonControllerIntegrationTest : MockMvcBaseTest("comparison
 
         comparison.asClue {
             it.id shouldBe id
+            it.type shouldBe ComparisonType.RELATED_WORK_COMPARISON
             it.title shouldBe "example comparison"
             it.researchFields shouldBe listOf(
                 LabeledObjectRepresentation(ThingId("R12"), "Computer Science"),
@@ -273,6 +287,17 @@ internal class ComparisonControllerIntegrationTest : MockMvcBaseTest("comparison
                 identifiers = emptyMap(),
                 homepage = null,
             )
+            it.searchProtocol.asClue { searchProtocol ->
+                searchProtocol.inclusionCriteria shouldBe "has more than 5 authors"
+                searchProtocol.exclusionCriteria shouldBe "has long title"
+                searchProtocol.searchEngines shouldBe listOf(
+                    ResourceReferenceRepresentation(ThingId("R85476"), "arXiv", emptySet()),
+                )
+                searchProtocol.searchStrings shouldBe listOf("example paper")
+                searchProtocol.researchQuestions shouldBe listOf("what makes a paper good")
+                searchProtocol.numberOfStudiesOriginallyReturned shouldBe 5
+                searchProtocol.numberOfStudiesRetained shouldBe 2
+            }
             it.sustainableDevelopmentGoals shouldBe setOf(
                 LabeledObjectRepresentation(ThingId("SDG_1"), "No poverty"),
                 LabeledObjectRepresentation(ThingId("SDG_2"), "Zero hunger"),
@@ -315,6 +340,7 @@ internal class ComparisonControllerIntegrationTest : MockMvcBaseTest("comparison
 
         updatedComparison.asClue {
             it.id shouldBe id
+            it.type shouldBe ComparisonType.RESOURCE_COMPARISON
             it.title shouldBe "updated comparison"
             it.researchFields shouldBe listOf(
                 ObjectIdAndLabel(ThingId("R13"), "Engineering"),
@@ -350,6 +376,17 @@ internal class ComparisonControllerIntegrationTest : MockMvcBaseTest("comparison
                 identifiers = emptyMap(),
                 homepage = null,
             )
+            it.searchProtocol.asClue { searchProtocol ->
+                searchProtocol.inclusionCriteria shouldBe "updated inclusion criteria"
+                searchProtocol.exclusionCriteria shouldBe "updated exclusion criteria"
+                searchProtocol.searchEngines shouldBe listOf(
+                    ResourceReference(ThingId("R123"), "Author with id", setOf(Classes.author)),
+                )
+                searchProtocol.searchStrings shouldBe listOf("other paper")
+                searchProtocol.researchQuestions shouldBe listOf("what makes a paper bad")
+                searchProtocol.numberOfStudiesOriginallyReturned shouldBe 7
+                searchProtocol.numberOfStudiesRetained shouldBe 3
+            }
             it.sustainableDevelopmentGoals shouldBe setOf(
                 ObjectIdAndLabel(ThingId("SDG_2"), "Zero hunger"),
                 ObjectIdAndLabel(ThingId("SDG_3"), "Good health and well-being"),

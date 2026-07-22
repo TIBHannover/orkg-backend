@@ -498,5 +498,33 @@
     {
         "id": "compareRosettaStoneContribution",
         "label": "compare rosetta stone contribution"
+    },
+    {
+        "id": "P175068",
+        "label": "exclusion criteria"
+    },
+    {
+        "id": "P174086",
+        "label": "inclusion criteria"
+    },
+    {
+        "id": "searchEngines",
+        "label": "search engines"
+    },
+    {
+        "id": "searchStrings",
+        "label": "search strings"
+    },
+    {
+        "id": "researchQuestions",
+        "label": "research questions"
+    },
+    {
+        "id": "numberOfStudiesOriginallyReturned",
+        "label": "number of studies originally returned"
+    },
+    {
+        "id": "numberOfStudiesRetained",
+        "label": "number of studies retained"
     }
 ]

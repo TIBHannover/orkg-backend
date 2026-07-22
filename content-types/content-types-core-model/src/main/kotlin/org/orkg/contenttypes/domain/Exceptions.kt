@@ -1372,3 +1372,36 @@ class ComparisonPathNotFound(
         """Comparison path "${path.joinToString(" > ")}" not found.""",
         properties = mapOf("comparison_path" to path),
     )
+
+class InvalidOriginallyReturnedStudyCount(count: Int) :
+    SimpleMessageException(
+        HttpStatus.BAD_REQUEST,
+        """Invalid number of studies originally returned "$count". Must be greater than or equal to 0.""",
+        properties = mapOf("number_of_studies_originally_returned" to count),
+    )
+
+class InvalidRetainedStudyCount(count: Int) :
+    SimpleMessageException(
+        HttpStatus.BAD_REQUEST,
+        """Invalid number of studies retained: "$count". Must be greater than or equal to 0.""",
+        properties = mapOf("number_of_studies_retained" to count),
+    )
+
+class InvalidStudyCounts(
+    numberOfStudiesOriginallyReturned: Int,
+    numberOfStudiesRetained: Int,
+) : SimpleMessageException(
+        HttpStatus.BAD_REQUEST,
+        """Invalid study counts. The number of studies originally returned must be equal or greater than the number of studies retained.""",
+        properties = mapOf(
+            "number_of_studies_originally_returned" to numberOfStudiesOriginallyReturned,
+            "number_of_studies_retained" to numberOfStudiesRetained,
+        ),
+    )
+
+class SearchEngineEntityNotFound(entities: Set<ThingId>) :
+    SimpleMessageException(
+        HttpStatus.NOT_FOUND,
+        """Search engine entity not found among entities ${entities.joinToString { """"$it"""" }}.""",
+        properties = mapOf("search_engine_entities" to entities),
+    )

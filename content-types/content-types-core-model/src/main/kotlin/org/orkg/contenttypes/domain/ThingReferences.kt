@@ -9,15 +9,15 @@ import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.Thing
 
 sealed interface ThingReference {
-    val id: ThingId?
+    val id: ThingId
     val label: String
 
     companion object {
-        fun from(thing: Thing, maskLiteralId: Boolean = true): ThingReference =
+        fun from(thing: Thing): ThingReference =
             when (thing) {
                 is Resource -> ResourceReference(thing)
                 is Class -> ClassReference(thing)
-                is Literal -> LiteralReference(thing, maskLiteralId)
+                is Literal -> LiteralReference(thing)
                 is Predicate -> PredicateReference(thing)
             }
     }
@@ -47,12 +47,12 @@ data class ClassReference(
 }
 
 data class LiteralReference(
-    override val id: ThingId?,
+    override val id: ThingId,
     override val label: String,
     val datatype: String,
 ) : ThingReference {
-    constructor(literal: Literal, maskId: Boolean = true) :
-        this(literal.id.takeUnless { maskId }, literal.label, literal.datatype)
+    constructor(literal: Literal) :
+        this(literal.id, literal.label, literal.datatype)
 }
 
-inline val Set<ThingReference>.ids get() = mapNotNullTo(mutableSetOf()) { it.id }
+inline val Set<ThingReference>.ids: Set<ThingId> get() = mapTo(mutableSetOf()) { it.id }

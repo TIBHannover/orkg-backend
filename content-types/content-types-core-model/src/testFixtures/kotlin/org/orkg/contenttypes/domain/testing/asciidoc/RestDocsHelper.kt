@@ -3,6 +3,7 @@ package org.orkg.contenttypes.domain.testing.asciidoc
 import org.orkg.contenttypes.domain.Certainty
 import org.orkg.contenttypes.domain.ComparisonDataSource
 import org.orkg.contenttypes.domain.ComparisonPath
+import org.orkg.contenttypes.domain.ComparisonType
 import org.orkg.contenttypes.domain.ContentTypeClass
 
 val allowedContentTypeClassValues =
@@ -16,3 +17,6 @@ val allowedComparisonPathTypeValues =
 
 val allowedComparisonDataSourceTypeValues =
     ComparisonDataSource.Type.entries.sorted().joinToString(separator = ", ", prefix = "`", postfix = "`")
+
+val allowedComparisonTypeValues =
+    ComparisonType.entries.sorted().joinToString(separator = ", ", prefix = "`", postfix = "`")

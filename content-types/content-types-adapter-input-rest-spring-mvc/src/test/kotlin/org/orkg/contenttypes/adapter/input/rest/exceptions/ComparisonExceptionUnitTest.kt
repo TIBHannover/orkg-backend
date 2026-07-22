@@ -2,6 +2,7 @@ package org.orkg.contenttypes.adapter.input.rest.exceptions
 
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
+import org.orkg.common.thingIdConstraint
 import org.orkg.contenttypes.domain.ComparisonAlreadyPublished
 import org.orkg.contenttypes.domain.ComparisonDataSource
 import org.orkg.contenttypes.domain.ComparisonNotFound
@@ -12,14 +13,22 @@ import org.orkg.contenttypes.domain.ComparisonRelatedResourceNotFound
 import org.orkg.contenttypes.domain.ComparisonRelatedResourceNotModifiable
 import org.orkg.contenttypes.domain.ComparisonTableNotFound
 import org.orkg.contenttypes.domain.DuplicateComparisonDataSources
+import org.orkg.contenttypes.domain.InvalidOriginallyReturnedStudyCount
+import org.orkg.contenttypes.domain.InvalidRetainedStudyCount
+import org.orkg.contenttypes.domain.InvalidStudyCounts
+import org.orkg.contenttypes.domain.OntologyEntityNotFound
+import org.orkg.contenttypes.domain.SearchEngineEntityNotFound
 import org.orkg.contenttypes.input.testing.fixtures.configuration.ContentTypeControllerExceptionUnitTestConfiguration
 import org.orkg.testing.spring.MockMvcExceptionBaseTest
+import org.orkg.testing.spring.restdocs.arrayItemsType
+import org.orkg.testing.spring.restdocs.constraints
 import org.orkg.testing.spring.restdocs.exceptionResponseFields
 import org.orkg.testing.spring.restdocs.type
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest
 import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.HttpStatus.FORBIDDEN
+import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
@@ -177,6 +186,78 @@ internal class ComparisonExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andDocument {
                 responseFields<ComparisonRelatedFigureNotFound>(
                     fieldWithPath("comparison_related_figure_id").description("The id of the comparison related figure.").type<ThingId>(),
+                    *exceptionResponseFields(type).toTypedArray(),
+                )
+            }
+    }
+
+    @Test
+    fun invalidOriginallyReturnedStudyCount() {
+        val type = "orkg:problem:invalid_originally_returned_study_count"
+        documentedGetRequestTo(InvalidOriginallyReturnedStudyCount(-4))
+            .andExpectErrorStatus(HttpStatus.BAD_REQUEST)
+            .andExpectType(type)
+            .andExpectTitle("Bad Request")
+            .andExpectDetail("""Invalid number of studies originally returned "-4". Must be greater than or equal to 0.""")
+            .andExpect(jsonPath("$.number_of_studies_originally_returned").value(-4))
+            .andDocument {
+                responseFields<InvalidOriginallyReturnedStudyCount>(
+                    fieldWithPath("number_of_studies_originally_returned").description("The number of studies originally returned.").type<Int>(),
+                    *exceptionResponseFields(type).toTypedArray(),
+                )
+            }
+    }
+
+    @Test
+    fun invalidRetainedStudyCount() {
+        val type = "orkg:problem:invalid_retained_study_count"
+        documentedGetRequestTo(InvalidRetainedStudyCount(-4))
+            .andExpectErrorStatus(HttpStatus.BAD_REQUEST)
+            .andExpectType(type)
+            .andExpectTitle("Bad Request")
+            .andExpectDetail("""Invalid number of studies retained: "-4". Must be greater than or equal to 0.""")
+            .andExpect(jsonPath("$.number_of_studies_retained").value(-4))
+            .andDocument {
+                responseFields<InvalidRetainedStudyCount>(
+                    fieldWithPath("number_of_studies_retained").description("The number of studies retained.").type<Int>(),
+                    *exceptionResponseFields(type).toTypedArray(),
+                )
+            }
+    }
+
+    @Test
+    fun invalidStudyCounts() {
+        val type = "orkg:problem:invalid_study_counts"
+        documentedGetRequestTo(InvalidStudyCounts(2, 5))
+            .andExpectErrorStatus(HttpStatus.BAD_REQUEST)
+            .andExpectType(type)
+            .andExpectTitle("Bad Request")
+            .andExpectDetail("""Invalid study counts. The number of studies originally returned must be equal or greater than the number of studies retained.""")
+            .andExpect(jsonPath("$.number_of_studies_originally_returned").value(2))
+            .andExpect(jsonPath("$.number_of_studies_retained").value(5))
+            .andDocument {
+                responseFields<InvalidStudyCounts>(
+                    fieldWithPath("number_of_studies_originally_returned").description("The number of studies originally returned.").type<Int>(),
+                    fieldWithPath("number_of_studies_retained").description("The number of studies retained.").type<Int>(),
+                    *exceptionResponseFields(type).toTypedArray(),
+                )
+            }
+    }
+
+    @Test
+    fun searchEngineEntityNotFound() {
+        val type = "orkg:problem:search_engine_entity_not_found"
+        documentedGetRequestTo(SearchEngineEntityNotFound(setOf(ThingId("not"), ThingId("found"))))
+            .andExpectErrorStatus(NOT_FOUND)
+            .andExpectType(type)
+            .andExpectTitle("Not Found")
+            .andExpectDetail("""Search engine entity not found among entities "not", "found".""")
+            .andExpect(jsonPath("$.search_engine_entities.length()").value(2))
+            .andExpect(jsonPath("$.search_engine_entities[0]").value("not"))
+            .andExpect(jsonPath("$.search_engine_entities[1]").value("found"))
+            .andDocument {
+                responseFields<SearchEngineEntityNotFound>(
+                    fieldWithPath("search_engine_entities[]").description("The list of provided search engine entities.").arrayItemsType("string").constraints(thingIdConstraint),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }

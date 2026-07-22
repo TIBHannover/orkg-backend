@@ -87,75 +87,21 @@ fun <
         statementRepository.save(it)
     }
 
-    data class TestGraph(
-        val resources: List<Resource>,
-        val statements: List<GeneralStatement>,
-        val ignored: Set<Resource>,
-    ) {
-        val expected: List<Resource> get() = (resources - ignored)
-
-        fun save(): TestGraph {
-            resources.forEach(resourceRepository::save)
-            statements.forEach(saveStatement)
-            return this
-        }
-    }
-
-    // (unpublished 1)
-    // (unpublished 2)
-    // (unpublished 3) -> (published 1)
-    // (unpublished 4) -> (published 2)
-    // (unpublished 5) -> (published 3 + 4)
-    // (unpublished 6) -> (published 5 + 6)
-    fun createTestGraph(transform: (Int, Resource) -> Resource = { _, it -> it.copy(visibility = Visibility.DEFAULT) }): TestGraph {
-        val resources = fabricator.random<List<Resource>>().mapIndexed(transform)
-        val unpublished = resources.take(6).map { it.copy(classes = setOf(Classes.smartReview)) }
-        val published = resources.drop(6).mapIndexed { index, it ->
-            it.copy(
-                classes = setOf(Classes.smartReviewPublished, Classes.latestVersion),
-                createdAt = OffsetDateTime.now(fixedClock).minusHours(index.toLong()),
-            )
-        }.toMutableList()
-        val statements = mutableListOf<GeneralStatement>()
-        val hasPublishedVersion = fabricator.random<Predicate>().copy(id = Predicates.hasPublishedVersion)
-        val ignored = mutableSetOf<Resource>()
-        // link two published lists to an unpublished list (2x)
-        for (i in 0..1) {
-            for (j in 0..1) {
-                if (j > 0) {
-                    // published, but outdated, so we want to ignore them later
-                    val outdated = published[2 + i * 2 + j].let {
-                        it.copy(classes = it.classes - Classes.latestVersion)
-                    }
-                    published[2 + i * 2 + j] = outdated
-                    ignored.add(outdated)
-                }
-                statements.add(
-                    fabricator.random<GeneralStatement>().copy(
-                        subject = unpublished[4 + i],
-                        predicate = hasPublishedVersion,
-                        `object` = published[2 + i * 2 + j],
-                    ),
-                )
-            }
-        }
-        // link a single published list to an unpublished list (2x)
-        for (i in 0..1) {
-            statements.add(
-                fabricator.random<GeneralStatement>().copy(
-                    subject = unpublished[2 + i],
-                    predicate = hasPublishedVersion,
-                    `object` = published[i],
-                ),
-            )
-        }
-        return TestGraph(unpublished + published, statements, ignored)
-    }
+    val publicationTestGraphFactory = PublicationTestGraphFactory(
+        fabricator = fabricator,
+        statementRepository = statementRepository,
+        classRepository = classRepository,
+        literalRepository = literalRepository,
+        resourceRepository = resourceRepository,
+        predicateRepository = predicateRepository,
+        unpublishedClassId = Classes.smartReview,
+        publishedClassId = Classes.smartReviewPublished,
+    )
 
     describe("finding several smart reviews") {
         context("with filters") {
             context("using no parameters") {
-                val graph = createTestGraph().save()
+                val graph = publicationTestGraphFactory.create().save()
                 val expected = graph.expected.sortedBy { it.createdAt }.take(10)
                 val pageable = PageRequest.of(0, 10)
                 val result = repository.findAll(pageable)
@@ -182,7 +128,7 @@ fun <
             }
             context("by label") {
                 val label = "label-to-find"
-                val graph = createTestGraph { index, resource ->
+                val graph = publicationTestGraphFactory.create { index, resource ->
                     resource.copy(label = if (index % 2 == 0) label else resource.label)
                 }
                 val expected = graph.expected.filter { it.label == label }
@@ -240,7 +186,7 @@ fun <
                 }
             }
             context("by visibility") {
-                val graph = createTestGraph { index, resource ->
+                val graph = publicationTestGraphFactory.create { index, resource ->
                     resource.copy(visibility = Visibility.entries[index % Visibility.entries.size])
                 }
                 VisibilityFilter.entries.forEach { visibilityFilter ->
@@ -276,7 +222,7 @@ fun <
             }
             context("by created by") {
                 val createdBy = ContributorId(UUID.randomUUID())
-                val graph = createTestGraph { index, resource ->
+                val graph = publicationTestGraphFactory.create { index, resource ->
                     resource.copy(createdBy = if (index % 2 == 0) createdBy else resource.createdBy)
                 }.save()
 
@@ -307,7 +253,7 @@ fun <
                 }
             }
             context("by created at start") {
-                val graph = createTestGraph { index, resource ->
+                val graph = publicationTestGraphFactory.create { index, resource ->
                     resource.copy(createdAt = OffsetDateTime.now(fixedClock).minusHours(index.toLong()))
                 }.save()
 
@@ -339,7 +285,7 @@ fun <
                 }
             }
             context("by created at end") {
-                val graph = createTestGraph { index, resource ->
+                val graph = publicationTestGraphFactory.create { index, resource ->
                     resource.copy(createdAt = OffsetDateTime.now(fixedClock).minusHours(index.toLong()))
                 }.save()
 
@@ -372,7 +318,7 @@ fun <
             }
             context("by observatory id") {
                 val observatoryId = ObservatoryId(UUID.randomUUID())
-                val graph = createTestGraph { index, resource ->
+                val graph = publicationTestGraphFactory.create { index, resource ->
                     resource.copy(observatoryId = if (index % 2 == 0) observatoryId else resource.observatoryId)
                 }.save()
 
@@ -404,7 +350,7 @@ fun <
             }
             context("by organization id") {
                 val organizationId = OrganizationId(UUID.randomUUID())
-                val graph = createTestGraph { index, resource ->
+                val graph = publicationTestGraphFactory.create { index, resource ->
                     resource.copy(organizationId = if (index % 2 == 0) organizationId else resource.organizationId)
                 }.save()
 
@@ -435,7 +381,7 @@ fun <
                 }
             }
             context("by publication status") {
-                val graph = createTestGraph().save()
+                val graph = publicationTestGraphFactory.create()
 
                 context("when published") {
                     graph.save()
@@ -497,8 +443,10 @@ fun <
                 }
             }
             context("by research field") {
+                val graph = publicationTestGraphFactory.create().save()
+
                 context("excluding subfields") {
-                    val graph = createTestGraph().save()
+                    graph.save()
                     val researchField = fabricator.random<Resource>().copy(
                         classes = setOf(Classes.researchField),
                     )
@@ -553,7 +501,7 @@ fun <
                     }
                 }
                 context("including subfields") {
-                    val graph = createTestGraph().save()
+                    graph.save()
                     val researchField = fabricator.random<Resource>().copy(
                         classes = setOf(Classes.researchField),
                     )
@@ -657,7 +605,7 @@ fun <
             }
             context("by sdg") {
                 val sdg = ThingId("SDG_1")
-                val graph = createTestGraph().save()
+                val graph = publicationTestGraphFactory.create().save()
 
                 val resources = graph.resources.filterIndexed { index, _ -> index % 2 == 0 }
                 resources.forEach {
@@ -697,7 +645,7 @@ fun <
                 }
             }
             context("using all parameters") {
-                val graph = createTestGraph().save()
+                val graph = publicationTestGraphFactory.create().save()
                 val expected = graph.resources.first()
                 val researchField = fabricator.random<Resource>().copy(
                     classes = setOf(Classes.researchField),
@@ -752,7 +700,7 @@ fun <
                 }
             }
             it("sorts the results by multiple properties") {
-                createTestGraph { index, resource ->
+                publicationTestGraphFactory.create { index, resource ->
                     if (index < 2) {
                         resource.copy(label = "label")
                     } else {

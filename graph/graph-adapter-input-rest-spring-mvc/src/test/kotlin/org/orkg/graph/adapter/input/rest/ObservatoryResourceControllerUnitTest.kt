@@ -58,7 +58,7 @@ internal class ObservatoryResourceControllerUnitTest : MockMvcBaseTest("observat
             classes = setOf(Classes.paper),
         )
         every {
-            resourceService.findAllPapersByObservatoryIdAndFilters(id, emptyList(), VisibilityFilter.ALL_LISTED, any())
+            resourceService.findAllUnpublishedPapersByObservatoryIdAndFilters(id, emptyList(), VisibilityFilter.ALL_LISTED, any())
         } returns PageImpl(listOf(paperResource))
         every { statementService.countAllIncomingStatementsById(any<Set<ThingId>>()) } returns emptyMap()
 
@@ -69,7 +69,7 @@ internal class ObservatoryResourceControllerUnitTest : MockMvcBaseTest("observat
             .andExpectResource("$.content[*]")
 
         verify(exactly = 1) {
-            resourceService.findAllPapersByObservatoryIdAndFilters(id, emptyList(), VisibilityFilter.ALL_LISTED, any())
+            resourceService.findAllUnpublishedPapersByObservatoryIdAndFilters(id, emptyList(), VisibilityFilter.ALL_LISTED, any())
         }
         verify(exactly = 1) { statementService.countAllIncomingStatementsById(any<Set<ThingId>>()) }
     }
@@ -83,7 +83,7 @@ internal class ObservatoryResourceControllerUnitTest : MockMvcBaseTest("observat
             visibility = Visibility.FEATURED,
         )
         every {
-            resourceService.findAllPapersByObservatoryIdAndFilters(id, emptyList(), VisibilityFilter.FEATURED, any())
+            resourceService.findAllUnpublishedPapersByObservatoryIdAndFilters(id, emptyList(), VisibilityFilter.FEATURED, any())
         } returns PageImpl(listOf(paperResource))
         every { statementService.countAllIncomingStatementsById(any<Set<ThingId>>()) } returns emptyMap()
 
@@ -94,7 +94,7 @@ internal class ObservatoryResourceControllerUnitTest : MockMvcBaseTest("observat
             .andExpectResource("$.content[*]")
 
         verify(exactly = 1) {
-            resourceService.findAllPapersByObservatoryIdAndFilters(id, emptyList(), VisibilityFilter.FEATURED, any())
+            resourceService.findAllUnpublishedPapersByObservatoryIdAndFilters(id, emptyList(), VisibilityFilter.FEATURED, any())
         }
         verify(exactly = 1) { statementService.countAllIncomingStatementsById(any<Set<ThingId>>()) }
     }
@@ -124,7 +124,7 @@ internal class ObservatoryResourceControllerUnitTest : MockMvcBaseTest("observat
         val encodedFilterConfig = objectMapper.writeValueAsString(filterConfig)
 
         every {
-            resourceService.findAllPapersByObservatoryIdAndFilters(id, filterConfig, VisibilityFilter.ALL_LISTED, any())
+            resourceService.findAllUnpublishedPapersByObservatoryIdAndFilters(id, filterConfig, VisibilityFilter.ALL_LISTED, any())
         } returns PageImpl(listOf(paperResource))
         every { statementService.countAllIncomingStatementsById(any<Set<ThingId>>()) } returns emptyMap()
 
@@ -136,7 +136,7 @@ internal class ObservatoryResourceControllerUnitTest : MockMvcBaseTest("observat
             .andExpectResource("$.content[*]")
 
         verify(exactly = 1) {
-            resourceService.findAllPapersByObservatoryIdAndFilters(id, filterConfig, VisibilityFilter.ALL_LISTED, any())
+            resourceService.findAllUnpublishedPapersByObservatoryIdAndFilters(id, filterConfig, VisibilityFilter.ALL_LISTED, any())
         }
         verify(exactly = 1) { statementService.countAllIncomingStatementsById(any<Set<ThingId>>()) }
     }
@@ -167,7 +167,7 @@ internal class ObservatoryResourceControllerUnitTest : MockMvcBaseTest("observat
         val encodedFilterConfig = objectMapper.writeValueAsString(filterConfig)
 
         every {
-            resourceService.findAllPapersByObservatoryIdAndFilters(id, filterConfig, VisibilityFilter.FEATURED, any())
+            resourceService.findAllUnpublishedPapersByObservatoryIdAndFilters(id, filterConfig, VisibilityFilter.FEATURED, any())
         } returns PageImpl(listOf(paperResource))
         every { statementService.countAllIncomingStatementsById(any<Set<ThingId>>()) } returns emptyMap()
 
@@ -206,7 +206,7 @@ internal class ObservatoryResourceControllerUnitTest : MockMvcBaseTest("observat
             }
 
         verify(exactly = 1) {
-            resourceService.findAllPapersByObservatoryIdAndFilters(id, filterConfig, VisibilityFilter.FEATURED, any())
+            resourceService.findAllUnpublishedPapersByObservatoryIdAndFilters(id, filterConfig, VisibilityFilter.FEATURED, any())
         }
         verify(exactly = 1) { statementService.countAllIncomingStatementsById(any<Set<ThingId>>()) }
     }

@@ -72,6 +72,7 @@ import org.orkg.graph.domain.BundleConfiguration
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ExactSearchString
 import org.orkg.graph.domain.GeneralStatement
+import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.SearchString
 import org.orkg.graph.domain.VisibilityFilter
@@ -96,6 +97,7 @@ import org.springframework.stereotype.Service
 import java.time.Clock
 import java.time.OffsetDateTime
 import java.util.Optional
+import kotlin.collections.plus
 
 @Service
 class PaperService(
@@ -130,7 +132,8 @@ class PaperService(
         }
 
     override fun findById(id: ThingId): Optional<Paper> =
-        resourceRepository.findPaperById(id)
+        resourceRepository.findById(id)
+            .filter { Classes.paper in it.classes || Classes.paperVersion in it.classes }
             .map { it.toPaper() }
 
     override fun findAll(
@@ -151,6 +154,7 @@ class PaperService(
         mentionings: Set<ThingId>?,
         researchProblem: ThingId?,
         venue: ThingId?,
+        published: Boolean?,
     ): Page<Paper> =
         paperRepository.findAll(
             pageable = pageable,
@@ -170,6 +174,7 @@ class PaperService(
             mentionings = mentionings,
             researchProblem = researchProblem,
             venue = venue,
+            published = published,
         ).pmap { it.toPaper() }
 
     override fun findPublishedContentsById(id: ThingId): Optional<List<GeneralStatement>> =
@@ -257,7 +262,7 @@ class PaperService(
             PaperPublishableValidator(this, resourceRepository),
             PaperVersionCreator(resourceRepository, statementRepository, unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases, listService),
             PaperVersionArchiver(statementService, paperSnapshotRepository, snapshotIdGenerator, clock),
-            PaperVersionHistoryUpdater(statementService, unsafeStatementUseCases),
+            PaperVersionHistoryUpdater(unsafeStatementUseCases, unsafeResourceUseCases),
             PaperVersionDoiPublisher(unsafeStatementUseCases, unsafeLiteralUseCases, doiService, paperPublishBaseUri),
         )
         return steps.execute(command, PublishPaperState()).paperVersionId!!
@@ -272,12 +277,12 @@ class PaperService(
             .let { Optional.ofNullable(it?.id) }
 
     internal fun findSubgraph(resource: Resource): ContentTypeSubgraph {
-        val statements = statementRepository.fetchAsBundle(
+        var statements = statementRepository.fetchAsBundle(
             id = resource.id,
             configuration = BundleConfiguration(
                 minLevel = null,
                 maxLevel = 3,
-                blacklist = listOf(Classes.researchField, Classes.contribution, Classes.venue),
+                blacklist = listOf(Classes.researchField, Classes.contribution, Classes.venue, Classes.paperVersion),
                 whitelist = emptyList(),
             ),
             sort = Sort.unsorted(),
@@ -287,10 +292,25 @@ class PaperService(
                 minLevel = null,
                 maxLevel = 1,
                 blacklist = emptyList(),
-                whitelist = listOf(Classes.researchField, Classes.contribution, Classes.venue),
+                whitelist = listOf(Classes.researchField, Classes.contribution, Classes.venue, Classes.paperVersion),
             ),
             sort = Sort.unsorted(),
         )
+        if (Classes.paperVersion in resource.classes) {
+            val headVersion = statementRepository.findAll(
+                predicateId = Predicates.hasPublishedVersion,
+                objectId = resource.id,
+                pageable = PageRequests.SINGLE,
+            )
+            if (!headVersion.isEmpty) {
+                val versions = statementRepository.findAll(
+                    subjectId = headVersion.single().subject.id,
+                    predicateId = Predicates.hasPublishedVersion,
+                    pageable = PageRequests.ALL,
+                )
+                statements += versions
+            }
+        }
         return ContentTypeSubgraph(
             root = resource.id,
             statements = statements.groupBy { it.subject.id },

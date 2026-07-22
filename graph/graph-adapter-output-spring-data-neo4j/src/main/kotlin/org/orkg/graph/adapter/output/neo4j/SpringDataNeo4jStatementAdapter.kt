@@ -726,7 +726,7 @@ class SpringDataNeo4jStatementAdapter(
             .mappedBy { _, record -> ResourceContributor(record["createdBy"].toContributorId(), record["createdAt"].toOffsetDateTime()) }
             .fetch(pageable)
 
-    override fun findAllPapersByObservatoryIdAndFilters(
+    override fun findAllUnpublishedPapersByObservatoryIdAndFilters(
         observatoryId: ObservatoryId?,
         filters: List<SearchFilter>,
         visibility: VisibilityFilter,

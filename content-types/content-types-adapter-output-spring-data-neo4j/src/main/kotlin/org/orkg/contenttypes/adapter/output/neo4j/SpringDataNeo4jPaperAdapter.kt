@@ -4,12 +4,13 @@ import org.neo4j.cypherdsl.core.Condition
 import org.neo4j.cypherdsl.core.Cypher.anonParameter
 import org.neo4j.cypherdsl.core.Cypher.collect
 import org.neo4j.cypherdsl.core.Cypher.literalOf
-import org.neo4j.cypherdsl.core.Cypher.match
 import org.neo4j.cypherdsl.core.Cypher.name
 import org.neo4j.cypherdsl.core.Cypher.noCondition
 import org.neo4j.cypherdsl.core.Cypher.node
 import org.neo4j.cypherdsl.core.Cypher.size
 import org.neo4j.cypherdsl.core.Cypher.toLower
+import org.neo4j.cypherdsl.core.Node
+import org.neo4j.cypherdsl.core.RelationshipPattern
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
@@ -22,7 +23,6 @@ import org.orkg.contenttypes.adapter.output.neo4j.internal.Neo4jPaperRepository
 import org.orkg.contenttypes.adapter.output.neo4j.internal.Neo4jPaperWithPath
 import org.orkg.contenttypes.output.PaperRepository
 import org.orkg.graph.adapter.output.neo4j.ResourceMapper
-import org.orkg.graph.adapter.output.neo4j.call
 import org.orkg.graph.adapter.output.neo4j.internal.Neo4jPredicate
 import org.orkg.graph.adapter.output.neo4j.internal.Neo4jResource
 import org.orkg.graph.adapter.output.neo4j.internal.Neo4jThing
@@ -31,7 +31,6 @@ import org.orkg.graph.adapter.output.neo4j.orElseGet
 import org.orkg.graph.adapter.output.neo4j.orderByOptimizations
 import org.orkg.graph.adapter.output.neo4j.query
 import org.orkg.graph.adapter.output.neo4j.toCondition
-import org.orkg.graph.adapter.output.neo4j.toMatchOrNull
 import org.orkg.graph.adapter.output.neo4j.toSortItems
 import org.orkg.graph.adapter.output.neo4j.where
 import org.orkg.graph.domain.Classes
@@ -80,6 +79,7 @@ class SpringDataNeo4jPaperAdapter(
         mentionings: Set<ThingId>?,
         researchProblem: ThingId?,
         venue: ThingId?,
+        published: Boolean?,
     ): Page<Resource> =
         buildFindAllQuery(
             sort = pageable.sort.orElseGet { Sort.by("created_at") },
@@ -99,6 +99,7 @@ class SpringDataNeo4jPaperAdapter(
             mentionings = mentionings,
             researchProblem = researchProblem,
             venue = venue,
+            published = published,
         ).fetch(pageable, false)
 
     override fun count(
@@ -118,6 +119,7 @@ class SpringDataNeo4jPaperAdapter(
         mentionings: Set<ThingId>?,
         researchProblem: ThingId?,
         venue: ThingId?,
+        published: Boolean?,
     ): Long =
         buildFindAllQuery(
             label = label,
@@ -136,6 +138,7 @@ class SpringDataNeo4jPaperAdapter(
             mentionings = mentionings,
             researchProblem = researchProblem,
             venue = venue,
+            published = published,
         ).count()
 
     private fun buildFindAllQuery(
@@ -156,83 +159,73 @@ class SpringDataNeo4jPaperAdapter(
         mentionings: Set<ThingId>?,
         researchProblem: ThingId?,
         venue: ThingId?,
+        published: Boolean?,
     ) = cypherQueryBuilderFactory.newBuilder(QueryCache.Uncached)
         .withCommonQuery {
-            val node = node("Paper").named("node")
-            val nodes = name("nodes")
             val doiLiteral = name("doi")
-            val patterns = listOfNotNull(
-                researchField?.let {
-                    val researchFieldNode = node(Classes.researchField).withProperties("id", anonParameter(it.value))
-                    if (includeSubfields) {
-                        node.relationshipTo(node(Classes.researchField), RELATED)
-                            .relationshipFrom(researchFieldNode, RELATED)
-                            .properties("predicate_id", literalOf<String>(Predicates.hasSubfield.value))
-                            .min(0)
-                    } else {
-                        node.relationshipTo(researchFieldNode, RELATED)
-                    }
-                },
-                if (doi != null || doiPrefix != null) node.relationshipTo(node("Literal").named(doiLiteral), RELATED) else null,
-                sustainableDevelopmentGoal?.let {
-                    node.relationshipTo(node(Classes.sustainableDevelopmentGoal).withProperties("id", anonParameter(it.value)), RELATED)
-                        .withProperties("predicate_id", literalOf<String>(Predicates.sustainableDevelopmentGoal.value))
-                },
-                *mentionings?.map {
-                    node.relationshipTo(node("Resource").withProperties("id", anonParameter(it.value)), RELATED)
-                        .withProperties("predicate_id", literalOf<String>(Predicates.mentions.value))
-                }.orEmpty().toTypedArray(),
-                researchProblem?.let {
-                    // we are not checking for predicate ids here, because the computational overhead is too high and results are expected to be almost identical
-                    node.relationshipTo(node(Classes.contribution), RELATED)
-                        .relationshipTo(node(Classes.problem).withProperties("id", anonParameter(it.value)), RELATED)
-                },
-                venue?.let {
-                    node.relationshipTo(node(Classes.venue).withProperties("id", anonParameter(it.value)), RELATED)
-                        .withProperties("predicate_id", literalOf<String>(Predicates.hasVenue.value))
-                },
-            )
+            val patterns: (Node) -> Collection<RelationshipPattern> = { node ->
+                listOfNotNull(
+                    researchField?.let {
+                        val researchFieldNode = node(Classes.researchField).withProperties("id", anonParameter(it.value))
+                        if (includeSubfields) {
+                            node.relationshipTo(node(Classes.researchField), RELATED)
+                                .relationshipFrom(researchFieldNode, RELATED)
+                                .properties("predicate_id", literalOf<String>(Predicates.hasSubfield.value))
+                                .min(0)
+                        } else {
+                            node.relationshipTo(researchFieldNode, RELATED)
+                        }
+                    },
+                    if (doi != null || doiPrefix != null) node.relationshipTo(node("Literal").named(doiLiteral), RELATED) else null,
+                    sustainableDevelopmentGoal?.let {
+                        node.relationshipTo(node(Classes.sustainableDevelopmentGoal).withProperties("id", anonParameter(it.value)), RELATED)
+                            .withProperties("predicate_id", literalOf<String>(Predicates.sustainableDevelopmentGoal.value))
+                    },
+                    *mentionings?.map {
+                        node.relationshipTo(node("Resource").withProperties("id", anonParameter(it.value)), RELATED)
+                            .withProperties("predicate_id", literalOf<String>(Predicates.mentions.value))
+                    }.orEmpty().toTypedArray(),
+                    researchProblem?.let {
+                        // we are not checking for predicate ids here, because the computational overhead is too high and results are expected to be almost identical
+                        node.relationshipTo(node(Classes.contribution), RELATED)
+                            .relationshipTo(node(Classes.problem).withProperties("id", anonParameter(it.value)), RELATED)
+                    },
+                    venue?.let {
+                        node.relationshipTo(node(Classes.venue).withProperties("id", anonParameter(it.value)), RELATED)
+                            .withProperties("predicate_id", literalOf<String>(Predicates.hasVenue.value))
+                    },
+                )
+            }
             val patternBoundWhere = listOf(
                 doi.toCondition { toLower(doiLiteral.property("label")).eq(anonParameter(doi)) },
                 doiPrefix.toCondition { toLower(doiLiteral.property("label")).startsWith(anonParameter(it.lowercase().dropLastWhile { c -> c == '/' } + '/')) },
-            ).reduceOrNull(Condition::and) ?: noCondition()
-            val match = label?.let {
-                when (label) {
+            ).reduceOrNull(Condition::and)
+            val node = name("node")
+            val nodes = name("nodes")
+            val matchPapers = matchPaper(node, patterns, patternBoundWhere, published)
+            val match = label?.let { searchString ->
+                when (searchString) {
                     is ExactSearchString -> {
-                        patterns.toMatchOrNull(node)
-                            ?.where(patternBoundWhere)
-                            ?.with(collect(node).`as`(nodes))
-                            .call(
-                                function = "db.index.fulltext.queryNodes",
-                                arguments = arrayOf(
-                                    anonParameter(FULLTEXT_INDEX_FOR_LABEL),
-                                    anonParameter(label.query),
-                                ),
-                                yieldItems = arrayOf("node"),
-                                condition = toLower(node.property("label")).eq(toLower(anonParameter(label.input))),
-                            )
+                        matchPapers
+                            .with(collect(node).`as`(nodes))
+                            .call("db.index.fulltext.queryNodes")
+                            .withArgs(anonParameter(FULLTEXT_INDEX_FOR_LABEL), anonParameter(searchString.query))
+                            .yield("node")
+                            .where(toLower(node.property("label")).eq(toLower(anonParameter(searchString.input))).and(node.`in`(nodes)))
                             .with(node)
                     }
 
                     is FuzzySearchString -> {
-                        patterns.toMatchOrNull(node)
-                            ?.where(patternBoundWhere)
-                            ?.with(collect(node).`as`(nodes))
-                            .call(
-                                function = "db.index.fulltext.queryNodes",
-                                arguments = arrayOf(
-                                    anonParameter(FULLTEXT_INDEX_FOR_LABEL),
-                                    anonParameter(label.query),
-                                ),
-                                yieldItems = arrayOf("node", "score"),
-                                condition = size(node.property("label")).gte(anonParameter(label.input.length)),
-                            )
+                        matchPapers
+                            .with(collect(node).`as`(nodes))
+                            .call("db.index.fulltext.queryNodes")
+                            .withArgs(anonParameter(FULLTEXT_INDEX_FOR_LABEL), anonParameter(searchString.query))
+                            .yield("node", "score")
+                            .where(size(node.property("label")).gte(anonParameter(searchString.input.length)).and(node.`in`(nodes)))
                             .with(node, name("score"))
                     }
                 }
-            }
-                ?: patterns.toMatchOrNull(node)?.where(patternBoundWhere)?.with(node)
-                ?: match(node).with(node)
+            } ?: matchPapers
             match.where(
                 visibility.toCondition { filter ->
                     filter.targets.map { node.property("visibility").eq(literalOf<String>(it.name)) }
@@ -250,7 +243,6 @@ class SpringDataNeo4jPaperAdapter(
                 createdAtEnd.toCondition { node.property("created_at").lte(anonParameter(it.format(ISO_OFFSET_DATE_TIME))) },
                 observatoryId.toCondition { node.property("observatory_id").eq(anonParameter(it.value.toString())) },
                 organizationId.toCondition { node.property("organization_id").eq(anonParameter(it.value.toString())) },
-                if (label != null && patterns.isNotEmpty()) node.asExpression().`in`(nodes) else noCondition(),
             )
         }
         .withQuery { commonQuery ->

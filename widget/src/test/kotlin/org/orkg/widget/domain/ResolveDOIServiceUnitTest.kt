@@ -87,13 +87,13 @@ internal class ResolveDOIServiceUnitTest :
         }
         describe("title is provided, but DOI is not") {
             context("a resource with this title is not found") {
-                every { resourceUseCases.findPaperByTitle("some title") } returns Optional.empty()
+                every { resourceUseCases.findUnpublishedPaperByTitle("some title") } returns Optional.empty()
 
                 it("should throw") {
                     shouldThrowExactly<PaperNotFound> {
                         service.resolveDOI(null, "some title")
                     }
-                    verify(exactly = 1) { resourceUseCases.findPaperByTitle("some title") }
+                    verify(exactly = 1) { resourceUseCases.findUnpublishedPaperByTitle("some title") }
                 }
             }
             context("a resource with this title is found") {

@@ -24,7 +24,7 @@ class ResolveDOIService(
             doi != null -> service.findByDOI(doi, classes = PUBLISHABLE_CLASSES + Classes.paperVersion)
                 .orElseThrow { PaperNotFound.withDOI(doi) }
 
-            title != null -> service.findPaperByTitle(title).orElseThrow { PaperNotFound.withTitle(title) }
+            title != null -> service.findUnpublishedPaperByTitle(title).orElseThrow { PaperNotFound.withTitle(title) }
 
             else -> throw MissingParameter.requiresAtLeastOneOf("doi", "title")
         }

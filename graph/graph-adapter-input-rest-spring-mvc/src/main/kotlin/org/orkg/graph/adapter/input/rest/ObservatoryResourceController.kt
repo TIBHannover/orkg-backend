@@ -36,7 +36,7 @@ class ObservatoryResourceController(
         pageable: Pageable,
         capabilities: MediaTypeCapabilities,
     ): Page<ResourceRepresentation> =
-        resourceService.findAllPapersByObservatoryIdAndFilters(
+        resourceService.findAllUnpublishedPapersByObservatoryIdAndFilters(
             observatoryId = id,
             filters = objectMapper.parseFilterConfig(filterConfig),
             visibility = visibility ?: VisibilityFilter.ALL_LISTED,

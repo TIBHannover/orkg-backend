@@ -374,7 +374,7 @@ class InMemoryStatementRepository(private val inMemoryGraph: InMemoryGraph) :
         return id
     }
 
-    override fun findAllPapersByObservatoryIdAndFilters(
+    override fun findAllUnpublishedPapersByObservatoryIdAndFilters(
         observatoryId: ObservatoryId?,
         filters: List<SearchFilter>,
         visibility: VisibilityFilter,

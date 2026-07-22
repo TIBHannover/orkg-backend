@@ -1,5 +1,6 @@
 package org.orkg.contenttypes.adapter.output.neo4j
 
+import org.neo4j.cypherdsl.core.Condition
 import org.neo4j.cypherdsl.core.Cypher.call
 import org.neo4j.cypherdsl.core.Cypher.node
 import org.neo4j.cypherdsl.core.Cypher.unionAll
@@ -217,6 +218,39 @@ private fun matchUnpublishedComparisons(
     patternGenerator: (Node) -> Collection<RelationshipPattern>,
 ): StatementBuilder.OrderableOngoingReadingAndWithWithoutWhere =
     matchDistinct(node("Comparison").named(symbolicName), patternGenerator)
+
+internal fun matchPaper(
+    node: SymbolicName,
+    patternProvider: (Node) -> Collection<RelationshipPattern>,
+    condition: Condition? = null,
+    published: Boolean? = null,
+): StatementBuilder.OrderableOngoingReadingAndWithWithoutWhere =
+    when (published) {
+        true -> matchPublishedPapers(node, patternProvider, condition)
+
+        false -> matchUnpublishedPapers(node, patternProvider, condition)
+
+        else -> call(
+            unionAll(
+                matchPublishedPapers(node, patternProvider, condition).returning(node).build(),
+                matchUnpublishedPapers(node, patternProvider, condition).returning(node).build(),
+            ),
+        ).with(node)
+    }
+
+private fun matchPublishedPapers(
+    symbolicName: SymbolicName,
+    patternProvider: (Node) -> Collection<RelationshipPattern>,
+    condition: Condition?,
+): StatementBuilder.OrderableOngoingReadingAndWithWithoutWhere =
+    matchDistinct(node("PaperVersion", "LatestVersion").named(symbolicName), patternProvider, condition)
+
+private fun matchUnpublishedPapers(
+    symbolicName: SymbolicName,
+    patternGenerator: (Node) -> Collection<RelationshipPattern>,
+    condition: Condition?,
+): StatementBuilder.OrderableOngoingReadingAndWithWithoutWhere =
+    matchDistinct(node("Paper").named(symbolicName), patternGenerator, condition)
 
 fun OffsetDateTime?.toAfterString(): String =
     (this ?: OffsetDateTime.MIN).format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)

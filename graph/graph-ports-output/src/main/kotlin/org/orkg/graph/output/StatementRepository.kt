@@ -61,7 +61,7 @@ interface StatementReadRepository : EntityRepository<GeneralStatement, Statement
 
     fun findAllDescriptionsById(ids: Set<ThingId>): Map<ThingId, String>
 
-    fun findAllPapersByObservatoryIdAndFilters(
+    fun findAllUnpublishedPapersByObservatoryIdAndFilters(
         observatoryId: ObservatoryId?,
         filters: List<SearchFilter>,
         visibility: VisibilityFilter,

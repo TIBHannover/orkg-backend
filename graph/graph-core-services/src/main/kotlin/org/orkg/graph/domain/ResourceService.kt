@@ -82,24 +82,24 @@ class ResourceService(
     override fun findByDOI(doi: String, classes: Set<ThingId>): Optional<Resource> =
         statementRepository.findByDOI(doi, classes)
 
-    override fun findPaperByTitle(title: String): Optional<Resource> =
-        repository.findPaperByLabel(title)
+    override fun findUnpublishedPaperByTitle(title: String): Optional<Resource> =
+        repository.findUnpublishedPaperByTitle(title)
 
-    override fun findAllPapersByTitle(title: String?): List<Resource> =
-        repository.findAllPapersByLabel(title!!)
+    override fun findAllUnpublishedPapersByTitle(title: String?): List<Resource> =
+        repository.findAllUnpublishedPapersByTitle(title!!)
 
     override fun findTimelineByResourceId(id: ThingId, pageable: Pageable): Page<ResourceContributor> =
         repository.findById(id)
             .map { statementRepository.findTimelineByResourceId(id, pageable) }
             .orElseThrow { ResourceNotFound(id) }
 
-    override fun findAllPapersByObservatoryIdAndFilters(
+    override fun findAllUnpublishedPapersByObservatoryIdAndFilters(
         observatoryId: ObservatoryId?,
         filters: List<SearchFilter>,
         visibility: VisibilityFilter,
         pageable: Pageable,
     ): Page<Resource> =
-        statementRepository.findAllPapersByObservatoryIdAndFilters(observatoryId, filters, visibility, pageable)
+        statementRepository.findAllUnpublishedPapersByObservatoryIdAndFilters(observatoryId, filters, visibility, pageable)
 
     override fun update(command: UpdateCommand) {
         if (command.hasNoContents()) return

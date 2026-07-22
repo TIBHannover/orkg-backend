@@ -6,12 +6,15 @@ import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.Author
+import org.orkg.contenttypes.domain.HeadVersion
 import org.orkg.contenttypes.domain.ObjectIdAndLabel
 import org.orkg.contenttypes.domain.Paper
 import org.orkg.contenttypes.domain.PaperSnapshotV1
 import org.orkg.contenttypes.domain.PublicationInfo
+import org.orkg.contenttypes.domain.PublishedVersion
 import org.orkg.contenttypes.domain.ResourceReference
 import org.orkg.contenttypes.domain.SnapshotId
+import org.orkg.contenttypes.domain.VersionInfo
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Visibility
@@ -55,6 +58,30 @@ fun createPaper() = Paper(
             name = "Author 2",
             identifiers = emptyMap(),
             homepage = null,
+        ),
+    ),
+    versions = VersionInfo(
+        head = HeadVersion(
+            id = ThingId("R8186"),
+            label = "Dummy Comparison Title",
+            createdAt = OffsetDateTime.parse("2023-04-12T16:05:05.959539600+02:00"),
+            createdBy = ContributorId("dca4080c-e23f-489d-b900-af8bfc2b0620"),
+        ),
+        published = listOf(
+            PublishedVersion(
+                id = ThingId("R156"),
+                label = "Previous version paper",
+                createdAt = OffsetDateTime.parse("2023-04-11T13:15:48.959539600+02:00"),
+                createdBy = ContributorId("dca4080c-e23f-489d-b900-af8bfc2b0620"),
+                changelog = null,
+            ),
+            PublishedVersion(
+                id = ThingId("R155"),
+                label = "Previous version paper",
+                createdAt = OffsetDateTime.parse("2023-04-10T14:07:21.959539600+02:00"),
+                createdBy = ContributorId("dca4080c-e23f-489d-b900-af8bfc2b0620"),
+                changelog = null,
+            ),
         ),
     ),
     contributions = listOf(
@@ -103,6 +130,7 @@ fun createPaper() = Paper(
     visibility = Visibility.DEFAULT,
     verified = false,
     modifiable = true,
+    published = false,
 )
 
 fun createPaperSnapshotV1() = PaperSnapshotV1(

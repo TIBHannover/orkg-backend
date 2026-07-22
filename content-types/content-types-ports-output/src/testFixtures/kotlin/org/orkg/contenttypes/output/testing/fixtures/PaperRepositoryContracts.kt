@@ -31,7 +31,6 @@ import org.orkg.graph.output.PredicateRepository
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.StatementRepository
 import org.orkg.graph.testing.fixtures.createPredicate
-import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.withGraphMappings
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
@@ -107,6 +106,17 @@ fun <
             ),
         )
     }
+
+    val publicationTestGraphFactory = PublicationTestGraphFactory(
+        fabricator = fabricator,
+        statementRepository = statementRepository,
+        classRepository = classRepository,
+        literalRepository = literalRepository,
+        resourceRepository = resourceRepository,
+        predicateRepository = predicateRepository,
+        unpublishedClassId = Classes.paper,
+        publishedClassId = Classes.paperVersion,
+    )
 
     describe("finding several papers") {
         context("using no parameters") {
@@ -961,6 +971,68 @@ fun <
                 }
             }
         }
+        context("by publication status") {
+            val graph = publicationTestGraphFactory.create()
+
+            context("when published") {
+                graph.save()
+                val expected = graph.expected.filter { Classes.paperVersion in it.classes }
+
+                val result = repository.findAll(
+                    pageable = PageRequest.of(0, 5),
+                    published = true,
+                )
+
+                expected.size shouldNotBe 0
+
+                it("returns the correct result") {
+                    result shouldNotBe null
+                    result.content shouldNotBe null
+                    result.content.size shouldBe expected.size
+                    result.content shouldContainAll expected
+                }
+                it("pages the result correctly") {
+                    result.size shouldBe 5
+                    result.number shouldBe 0
+                    result.totalPages shouldBe 1
+                    result.totalElements shouldBe expected.size
+                }
+                it("sorts the results by creation date by default") {
+                    result.content.zipWithNext { a, b ->
+                        a.createdAt shouldBeLessThan b.createdAt
+                    }
+                }
+            }
+            context("when unpublished") {
+                graph.save()
+                val expected = graph.expected.filter { Classes.paper in it.classes }
+
+                val result = repository.findAll(
+                    pageable = PageRequest.of(0, 10),
+                    published = false,
+                )
+
+                expected.size shouldNotBe 0
+
+                it("returns the correct result") {
+                    result shouldNotBe null
+                    result.content shouldNotBe null
+                    result.content.size shouldBe expected.size
+                    result.content shouldContainAll expected
+                }
+                it("pages the result correctly") {
+                    result.size shouldBe 10
+                    result.number shouldBe 0
+                    result.totalPages shouldBe 1
+                    result.totalElements shouldBe expected.size
+                }
+                it("sorts the results by creation date by default") {
+                    result.content.zipWithNext { a, b ->
+                        a.createdAt shouldBeLessThan b.createdAt
+                    }
+                }
+            }
+        }
         context("using all parameters") {
             val researchField = fabricator.random<Resource>().copy(
                 classes = setOf(Classes.researchField),
@@ -969,7 +1041,14 @@ fun <
             val hasDoi = createPredicate(Predicates.hasDOI)
             val hasSDG = createPredicate(Predicates.sustainableDevelopmentGoal)
             val hasVenue = createPredicate(Predicates.hasVenue)
-            fabricator.random<List<Resource>>().toPapers().forEachIndexed { index, paper ->
+            val graph = publicationTestGraphFactory.create { idx, resource ->
+                if (idx == 0) {
+                    resource.copy(verified = true)
+                } else {
+                    resource
+                }
+            }
+            graph.resources.forEachIndexed { index, paper ->
                 saveStatement(
                     fabricator.random<GeneralStatement>().copy(
                         subject = paper,
@@ -1004,7 +1083,7 @@ fun <
                 )
             }
 
-            val expected = createResource(classes = setOf(Classes.paper), verified = true)
+            val expected = graph.resources.first()
 
             val doi = "10.4564/456546"
             saveStatement(
@@ -1061,6 +1140,7 @@ fun <
                 sustainableDevelopmentGoal = sdg,
                 researchProblem = researchProblem.id,
                 venue = venue.id,
+                published = false,
             )
 
             it("returns the correct result") {

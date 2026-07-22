@@ -268,31 +268,16 @@ fun StatementBuilder.OrderableOngoingReadingAndWithWithoutWhere.where(
 ): StatementBuilder.OrderableOngoingReadingAndWithWithWhere =
     where(conditions.reduceOrNull(Condition::and) ?: noCondition())
 
-fun StatementBuilder.OrderableOngoingReadingAndWithWithoutWhere?.call(
-    function: String,
-    arguments: Array<Expression>,
-    yieldItems: Array<String>,
-    condition: Condition,
-): StatementBuilder.OngoingReading =
-    this?.apply {
-        call(function)
-            .withArgs(*arguments)
-            .yield(*yieldItems)
-            .where(condition)
-    } ?: call(function)
-        .withArgs(*arguments)
-        .yield(*yieldItems)
-        .where(condition)
-
-fun Collection<PatternElement>.toMatchOrNull(node: org.neo4j.cypherdsl.core.Node): StatementBuilder.OngoingReadingWithoutWhere? =
-    if (isEmpty()) null else match(node).match(this)
-
 fun matchDistinct(
     node: org.neo4j.cypherdsl.core.Node,
     patternGenerator: (org.neo4j.cypherdsl.core.Node) -> Collection<PatternElement>,
+    condition: Condition? = null,
 ): StatementBuilder.OrderableOngoingReadingAndWithWithoutWhere =
     patternGenerator(node).let { patterns ->
-        match(node).let { if (patterns.isNotEmpty()) it.match(patterns) else it }.withDistinct(node)
+        match(node)
+            .let { if (patterns.isNotEmpty()) it.match(patterns) else it }
+            .let { if (condition != null) it.where(condition) else it }
+            .withDistinct(node)
     }
 
 inline fun Sort.orElseGet(sort: () -> Sort): Sort =

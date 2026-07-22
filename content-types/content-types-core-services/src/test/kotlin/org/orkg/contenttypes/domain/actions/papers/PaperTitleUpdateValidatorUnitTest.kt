@@ -29,7 +29,7 @@ internal class PaperTitleUpdateValidatorUnitTest : MockkBaseTest {
         val command = updatePaperCommand()
         val state = UpdatePaperState(paper = createPaper())
 
-        every { resourceService.findAllPapersByTitle(command.title) } returns listOf(
+        every { resourceService.findAllUnpublishedPapersByTitle(command.title) } returns listOf(
             createResource(id = command.paperId, label = command.title!!),
         )
 
@@ -40,7 +40,7 @@ internal class PaperTitleUpdateValidatorUnitTest : MockkBaseTest {
             it.authors shouldBe state.authors
         }
 
-        verify(exactly = 1) { resourceService.findAllPapersByTitle(command.title) }
+        verify(exactly = 1) { resourceService.findAllUnpublishedPapersByTitle(command.title) }
     }
 
     @Test
@@ -49,14 +49,14 @@ internal class PaperTitleUpdateValidatorUnitTest : MockkBaseTest {
         val state = UpdatePaperState(paper = createPaper())
         val expected = PaperAlreadyExists.withTitle(command.title!!)
 
-        every { resourceService.findAllPapersByTitle(command.title) } returns listOf(
+        every { resourceService.findAllUnpublishedPapersByTitle(command.title) } returns listOf(
             createResource(id = command.paperId, label = command.title!!),
             createResource(id = ThingId("R12346"), label = command.title!!),
         )
 
         assertThrows<PaperAlreadyExists> { paperTitleUpdateValidator(command, state) }.message shouldBe expected.message
 
-        verify(exactly = 1) { resourceService.findAllPapersByTitle(command.title) }
+        verify(exactly = 1) { resourceService.findAllUnpublishedPapersByTitle(command.title) }
     }
 
     @Test

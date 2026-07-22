@@ -49,18 +49,18 @@ interface RetrieveResourceUseCase {
     ): Page<Resource>
 
     // Legacy methods:
-    fun findAllPapersByTitle(title: String?): List<Resource>
+    fun findAllUnpublishedPapersByTitle(title: String?): List<Resource>
 
     fun findByDOI(doi: String, classes: Set<ThingId>): Optional<Resource>
 
     /** Find a paper resource by DOI. */
     fun findById(id: ThingId): Optional<Resource>
 
-    fun findPaperByTitle(title: String): Optional<Resource>
+    fun findUnpublishedPaperByTitle(title: String): Optional<Resource>
 
     fun findTimelineByResourceId(id: ThingId, pageable: Pageable): Page<ResourceContributor>
 
-    fun findAllPapersByObservatoryIdAndFilters(
+    fun findAllUnpublishedPapersByObservatoryIdAndFilters(
         observatoryId: ObservatoryId?,
         filters: List<SearchFilter>,
         visibility: VisibilityFilter,

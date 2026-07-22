@@ -47,6 +47,7 @@ import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.createStatement
 import org.orkg.testing.pageOf
 import org.springframework.data.domain.Sort
+import java.time.OffsetDateTime
 import java.util.Optional
 import java.util.UUID
 
@@ -98,9 +99,9 @@ internal class PaperServiceUnitTest : MockkBaseTest {
     )
 
     @Test
-    fun `Given a paper exists, when fetching it by id, then it is returned`() {
+    fun `Given an unpublished paper, when fetching it by id, then it is returned`() {
         val expected = createResource(
-            classes = setOf(Classes.comparison),
+            classes = setOf(Classes.paper),
             organizationId = OrganizationId(UUID.randomUUID()),
             observatoryId = ObservatoryId(UUID.randomUUID()),
         )
@@ -114,20 +115,280 @@ internal class PaperServiceUnitTest : MockkBaseTest {
         val publishedUrl = "https://example.org/conference"
         val authorList = createResource(classes = setOf(Classes.list), id = ThingId("R536456"))
         val resourceAuthor = createResource(id = resourceAuthorId, label = "Author 2", classes = setOf(Classes.author))
+        val publishedVersion1 = createResource(
+            id = ThingId("R235467"),
+            label = "published1",
+            classes = setOf(Classes.paperVersion),
+        )
+        val publishedVersion2 = createResource(
+            id = ThingId("R154687"),
+            label = "published2",
+            classes = setOf(Classes.paperVersion),
+        )
         val firstBundleConfiguration = BundleConfiguration(
             minLevel = null,
             maxLevel = 3,
-            blacklist = listOf(Classes.researchField, Classes.contribution, Classes.venue),
+            blacklist = listOf(Classes.researchField, Classes.contribution, Classes.venue, Classes.paperVersion),
             whitelist = emptyList(),
         )
         val secondBundleConfiguration = BundleConfiguration(
             minLevel = null,
             maxLevel = 1,
             blacklist = emptyList(),
-            whitelist = listOf(Classes.researchField, Classes.contribution, Classes.venue),
+            whitelist = listOf(Classes.researchField, Classes.contribution, Classes.venue, Classes.paperVersion),
         )
 
-        every { resourceRepository.findPaperById(expected.id) } returns Optional.of(expected)
+        every { resourceRepository.findById(expected.id) } returns Optional.of(expected)
+        every {
+            statementRepository.fetchAsBundle(
+                id = expected.id,
+                configuration = firstBundleConfiguration,
+                sort = Sort.unsorted(),
+            )
+        } returns pageOf(
+            createStatement(
+                subject = expected,
+                predicate = createPredicate(Predicates.hasDOI),
+                `object` = createLiteral(label = doi),
+            ),
+            createStatement(
+                subject = expected,
+                predicate = createPredicate(Predicates.yearPublished),
+                `object` = createLiteral(label = publishedYear.toString(), datatype = Literals.XSD.DECIMAL.prefixedUri),
+            ),
+            createStatement(
+                subject = expected,
+                predicate = createPredicate(Predicates.monthPublished),
+                `object` = createLiteral(label = publishedMonth.toString(), datatype = Literals.XSD.INT.prefixedUri),
+            ),
+            createStatement(
+                subject = expected,
+                predicate = createPredicate(Predicates.hasURL),
+                `object` = createLiteral(label = publishedUrl, datatype = Literals.XSD.URI.prefixedUri),
+            ),
+            createStatement(
+                subject = expected,
+                predicate = createPredicate(Predicates.hasAuthors),
+                `object` = authorList,
+            ),
+            createStatement(
+                subject = authorList,
+                predicate = createPredicate(Predicates.hasListElement),
+                `object` = createLiteral(label = "Author 1"),
+            ),
+            createStatement(
+                subject = authorList,
+                predicate = createPredicate(Predicates.hasListElement),
+                `object` = resourceAuthor,
+            ),
+            createStatement(
+                subject = resourceAuthor,
+                predicate = createPredicate(Predicates.hasORCID),
+                `object` = createLiteral(label = "0000-1111-2222-3333"),
+            ),
+            createStatement(
+                subject = resourceAuthor,
+                predicate = createPredicate(Predicates.hasWebsite),
+                `object` = createLiteral(label = "https://example.org", datatype = Literals.XSD.URI.prefixedUri),
+            ),
+            createStatement(
+                subject = expected,
+                predicate = createPredicate(Predicates.sustainableDevelopmentGoal),
+                `object` = createResource(
+                    classes = setOf(Classes.sustainableDevelopmentGoal),
+                    label = "No poverty",
+                    id = ThingId("SDG_1"),
+                ),
+            ),
+            createStatement(
+                subject = expected,
+                predicate = createPredicate(Predicates.mentions),
+                `object` = createResource(
+                    classes = setOf(Classes.paper),
+                    label = "Some paper",
+                    id = ThingId("R159"),
+                ),
+            ),
+        )
+        every {
+            statementRepository.fetchAsBundle(
+                id = expected.id,
+                configuration = secondBundleConfiguration,
+                sort = Sort.unsorted(),
+            )
+        } returns pageOf(
+            createStatement(
+                subject = expected,
+                predicate = createPredicate(Predicates.hasPublishedVersion),
+                `object` = publishedVersion1,
+                createdAt = OffsetDateTime.now(fixedClock).minusDays(2),
+            ),
+            createStatement(
+                subject = expected,
+                predicate = createPredicate(Predicates.hasPublishedVersion),
+                `object` = publishedVersion2,
+                createdAt = OffsetDateTime.now(fixedClock).minusDays(1),
+            ),
+            createStatement(
+                subject = expected,
+                predicate = createPredicate(Predicates.hasResearchField),
+                `object` = createResource(
+                    id = researchFieldId,
+                    classes = setOf(Classes.researchField),
+                    label = "Research Field 1",
+                ),
+            ),
+            createStatement(
+                subject = expected,
+                predicate = createPredicate(Predicates.hasContribution),
+                `object` = createResource(
+                    classes = setOf(Classes.contribution),
+                    label = "Contribution",
+                    id = ThingId("Contribution123"),
+                ),
+            ),
+            createStatement(
+                subject = expected,
+                predicate = createPredicate(Predicates.hasVenue),
+                `object` = createResource(publishedInId, label = publishedIn),
+            ),
+        )
+
+        val actual = service.findById(expected.id)
+
+        actual.isPresent shouldBe true
+        actual.get() shouldNotBe null
+        actual.get().asClue { paper ->
+            paper.id shouldBe expected.id
+            paper.title shouldBe expected.label
+            paper.researchFields shouldNotBe null
+            paper.researchFields shouldBe listOf(
+                ObjectIdAndLabel(id = researchFieldId, label = "Research Field 1"),
+            )
+            paper.identifiers shouldNotBe null
+            paper.identifiers shouldBe mapOf(
+                "doi" to listOf(doi),
+            )
+            paper.publicationInfo shouldNotBe null
+            paper.publicationInfo.asClue { publicationInfo ->
+                publicationInfo.publishedMonth shouldBe publishedMonth
+                publicationInfo.publishedYear shouldBe publishedYear
+                publicationInfo.publishedIn shouldBe ObjectIdAndLabel(publishedInId, publishedIn)
+                publicationInfo.url shouldBe IRI.create(publishedUrl)
+            }
+            paper.authors shouldNotBe null
+            paper.authors shouldBe listOf(
+                Author(
+                    id = null,
+                    name = "Author 1",
+                    identifiers = emptyMap(),
+                    homepage = null,
+                ),
+                Author(
+                    id = resourceAuthorId,
+                    name = "Author 2",
+                    identifiers = mapOf(
+                        "orcid" to listOf("0000-1111-2222-3333"),
+                    ),
+                    homepage = IRI.create("https://example.org"),
+                ),
+            )
+            paper.versions shouldBe VersionInfo(
+                head = HeadVersion(expected),
+                published = listOf(
+                    PublishedVersion(publishedVersion2, null),
+                    PublishedVersion(publishedVersion1, null),
+                ),
+            )
+            paper.contributions shouldNotBe null
+            paper.contributions shouldBe listOf(
+                ObjectIdAndLabel(ThingId("Contribution123"), "Contribution"),
+            )
+            paper.sustainableDevelopmentGoals shouldBe setOf(
+                ObjectIdAndLabel(ThingId("SDG_1"), "No poverty"),
+            )
+            paper.mentionings shouldBe setOf(
+                ResourceReference(
+                    id = ThingId("R159"),
+                    label = "Some paper",
+                    classes = setOf(Classes.paper),
+                ),
+            )
+            paper.observatories shouldBe setOf(expected.observatoryId)
+            paper.organizations shouldBe setOf(expected.organizationId)
+            paper.extractionMethod shouldBe expected.extractionMethod
+            paper.createdAt shouldBe expected.createdAt
+            paper.createdBy shouldBe expected.createdBy
+            paper.verified shouldBe false
+            paper.visibility shouldBe Visibility.DEFAULT
+            paper.unlistedBy shouldBe expected.unlistedBy
+            paper.published shouldBe false
+        }
+
+        verify(exactly = 1) { resourceRepository.findById(expected.id) }
+        verify(exactly = 1) {
+            statementRepository.fetchAsBundle(
+                id = expected.id,
+                configuration = firstBundleConfiguration,
+                sort = Sort.unsorted(),
+            )
+        }
+        verify(exactly = 1) {
+            statementRepository.fetchAsBundle(
+                id = expected.id,
+                configuration = secondBundleConfiguration,
+                sort = Sort.unsorted(),
+            )
+        }
+    }
+
+    @Test
+    fun `Given a published paper, when fetching it by id, then it is returned`() {
+        val expected = createResource(
+            classes = setOf(Classes.paperVersion),
+            organizationId = OrganizationId(UUID.randomUUID()),
+            observatoryId = ObservatoryId(UUID.randomUUID()),
+        )
+        val researchFieldId = ThingId("R20")
+        val resourceAuthorId = ThingId("R132564")
+        val doi = "10.1000/182"
+        val publishedYear: Long = 2016
+        val publishedMonth = 1
+        val publishedInId = ThingId("R4153")
+        val publishedIn = "Conference"
+        val publishedUrl = "https://example.org/conference"
+        val authorList = createResource(classes = setOf(Classes.list), id = ThingId("R536456"))
+        val resourceAuthor = createResource(id = resourceAuthorId, label = "Author 2", classes = setOf(Classes.author))
+        val unpublished = createResource(
+            id = ThingId("R452"),
+            classes = setOf(Classes.paper),
+            organizationId = OrganizationId(UUID.randomUUID()),
+            observatoryId = ObservatoryId(UUID.randomUUID()),
+        )
+        val publishedVersion1 = createResource(
+            id = ThingId("R235467"),
+            label = "published1",
+            classes = setOf(Classes.paperVersion),
+        )
+        val publishedVersion2 = createResource(
+            id = ThingId("R154687"),
+            label = "published2",
+            classes = setOf(Classes.paperVersion),
+        )
+        val firstBundleConfiguration = BundleConfiguration(
+            minLevel = null,
+            maxLevel = 3,
+            blacklist = listOf(Classes.researchField, Classes.contribution, Classes.venue, Classes.paperVersion),
+            whitelist = emptyList(),
+        )
+        val secondBundleConfiguration = BundleConfiguration(
+            minLevel = null,
+            maxLevel = 1,
+            blacklist = emptyList(),
+            whitelist = listOf(Classes.researchField, Classes.contribution, Classes.venue, Classes.paperVersion),
+        )
+
+        every { resourceRepository.findById(expected.id) } returns Optional.of(expected)
         every {
             statementRepository.fetchAsBundle(
                 id = expected.id,
@@ -230,6 +491,39 @@ internal class PaperServiceUnitTest : MockkBaseTest {
                 `object` = createResource(publishedInId, label = publishedIn),
             ),
         )
+        every {
+            statementRepository.findAll(
+                predicateId = Predicates.hasPublishedVersion,
+                objectId = expected.id,
+                pageable = PageRequests.SINGLE,
+            )
+        } returns pageOf(
+            createStatement(
+                subject = unpublished,
+                predicate = createPredicate(Predicates.hasPublishedVersion),
+                `object` = expected,
+            ),
+        )
+        every {
+            statementRepository.findAll(
+                subjectId = unpublished.id,
+                predicateId = Predicates.hasPublishedVersion,
+                pageable = PageRequests.ALL,
+            )
+        } returns pageOf(
+            createStatement(
+                subject = expected,
+                predicate = createPredicate(Predicates.hasPublishedVersion),
+                `object` = publishedVersion1,
+                createdAt = OffsetDateTime.now(fixedClock).minusDays(2),
+            ),
+            createStatement(
+                subject = expected,
+                predicate = createPredicate(Predicates.hasPublishedVersion),
+                `object` = publishedVersion2,
+                createdAt = OffsetDateTime.now(fixedClock).minusDays(1),
+            ),
+        )
 
         val actual = service.findById(expected.id)
 
@@ -270,6 +564,13 @@ internal class PaperServiceUnitTest : MockkBaseTest {
                     homepage = IRI.create("https://example.org"),
                 ),
             )
+            paper.versions shouldBe VersionInfo(
+                head = HeadVersion(expected),
+                published = listOf(
+                    PublishedVersion(publishedVersion2, null),
+                    PublishedVersion(publishedVersion1, null),
+                ),
+            )
             paper.contributions shouldNotBe null
             paper.contributions shouldBe listOf(
                 ObjectIdAndLabel(ThingId("Contribution123"), "Contribution"),
@@ -292,9 +593,10 @@ internal class PaperServiceUnitTest : MockkBaseTest {
             paper.verified shouldBe false
             paper.visibility shouldBe Visibility.DEFAULT
             paper.unlistedBy shouldBe expected.unlistedBy
+            paper.published shouldBe true
         }
 
-        verify(exactly = 1) { resourceRepository.findPaperById(expected.id) }
+        verify(exactly = 1) { resourceRepository.findById(expected.id) }
         verify(exactly = 1) {
             statementRepository.fetchAsBundle(
                 id = expected.id,
@@ -307,6 +609,20 @@ internal class PaperServiceUnitTest : MockkBaseTest {
                 id = expected.id,
                 configuration = secondBundleConfiguration,
                 sort = Sort.unsorted(),
+            )
+        }
+        verify(exactly = 1) {
+            statementRepository.findAll(
+                predicateId = Predicates.hasPublishedVersion,
+                objectId = expected.id,
+                pageable = PageRequests.SINGLE,
+            )
+        }
+        verify(exactly = 1) {
+            statementRepository.findAll(
+                subjectId = unpublished.id,
+                predicateId = Predicates.hasPublishedVersion,
+                pageable = PageRequests.ALL,
             )
         }
     }

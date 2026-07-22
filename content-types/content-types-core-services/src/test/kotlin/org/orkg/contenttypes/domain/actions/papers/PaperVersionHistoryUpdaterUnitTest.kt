@@ -17,44 +17,37 @@ import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.StatementId
 import org.orkg.graph.input.CreateStatementUseCase
-import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
-import org.orkg.graph.testing.fixtures.createPredicate
-import org.orkg.graph.testing.fixtures.createResource
-import org.orkg.graph.testing.fixtures.createStatement
+import org.orkg.graph.input.UpdateResourceUseCase
 
 internal class PaperVersionHistoryUpdaterUnitTest : MockkBaseTest {
-    private val statementService: StatementUseCases = mockk()
     private val unsafeStatementUseCases: UnsafeStatementUseCases = mockk()
+    private val unsafeResourceUseCases: UnsafeResourceUseCases = mockk()
 
-    private val paperVersionHistoryUpdater = PaperVersionHistoryUpdater(statementService, unsafeStatementUseCases)
+    private val paperVersionHistoryUpdater = PaperVersionHistoryUpdater(unsafeStatementUseCases, unsafeResourceUseCases)
 
     @Test
-    fun `Given a paper publish command, when paper does not yet have a published version, it creates a new hasPreviousVersion statement`() {
+    fun `Given a paper publish command, it crates a new previous version statement and updates the previous version paper class labels`() {
         val paper = createPaper()
         val command = publishPaperCommand().copy(id = paper.id)
-        val statements = listOf(createStatement()).groupBy { it.subject.id }
-        val paperVersionId = ThingId("R321")
-        val state = PublishPaperState(
-            paper = paper,
-            statements = statements,
-            paperVersionId = paperVersionId,
-        )
+        val paperVersionId = ThingId("R165")
+        val state = PublishPaperState(paper, paperVersionId = paperVersionId)
 
         every {
             unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = command.contributorId,
-                    subjectId = command.id,
-                    predicateId = Predicates.hasPreviousVersion,
-                    objectId = state.paperVersionId!!,
+                    subjectId = paper.id,
+                    predicateId = Predicates.hasPublishedVersion,
+                    objectId = paperVersionId,
                 ),
             )
         } returns StatementId("S1")
+        every { unsafeResourceUseCases.update(any()) } just runs
 
         paperVersionHistoryUpdater(command, state).asClue {
             it.paper shouldBe paper
-            it.statements shouldBe statements
             it.paperVersionId shouldBe paperVersionId
         }
 
@@ -62,93 +55,55 @@ internal class PaperVersionHistoryUpdaterUnitTest : MockkBaseTest {
             unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = command.contributorId,
-                    subjectId = command.id,
-                    predicateId = Predicates.hasPreviousVersion,
-                    objectId = state.paperVersionId!!,
+                    subjectId = paper.id,
+                    predicateId = Predicates.hasPublishedVersion,
+                    objectId = paperVersionId,
+                ),
+            )
+        }
+        verify(exactly = 1) {
+            unsafeResourceUseCases.update(
+                UpdateResourceUseCase.UpdateCommand(
+                    id = paper.versions.published.first().id,
+                    contributorId = command.contributorId,
+                    classes = setOf(Classes.paperVersion),
                 ),
             )
         }
     }
 
-    /**
-     * The method tests for the following changes in statements:
-     *
-     * Given: (paper)-&#91;hasPreviousVersion&#93;->(v1)
-     *
-     * Expected: (paper)-&#91;hasPreviousVersion&#93;->(v2)-&#91;hasPreviousVersion&#93;->(v1)
-     */
     @Test
-    fun `Given a paper publish command, when paper already has a published version, it inserts the new version between the paper and the already published version`() {
-        val paper = createPaper()
+    fun `Given a paper publish command, when no previous published version exists, it only crates a new previous version statement`() {
+        val paper = createPaper().let {
+            it.copy(versions = it.versions.copy(it.versions.head, emptyList()))
+        }
         val command = publishPaperCommand().copy(id = paper.id)
-        val resource = createResource(
-            id = paper.id,
-            label = paper.title,
-            classes = setOf(Classes.paper),
-        )
-        val statementId = StatementId("S1")
-        val previousVersionId = ThingId("R456")
-        val statements = listOf(
-            createStatement(
-                id = statementId,
-                subject = resource,
-                predicate = createPredicate(Predicates.hasPreviousVersion),
-                `object` = createResource(previousVersionId),
-            ),
-        ).groupBy { it.subject.id }
-        val paperVersionId = ThingId("R321")
-        val state = PublishPaperState(
-            paper = paper,
-            statements = statements,
-            paperVersionId = paperVersionId,
-        )
+        val paperVersionId = ThingId("R165")
+        val state = PublishPaperState(paper, paperVersionId = paperVersionId)
 
-        every { statementService.deleteAllById(setOf(statementId)) } just runs
         every {
             unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = command.contributorId,
-                    subjectId = state.paperVersionId!!,
-                    predicateId = Predicates.hasPreviousVersion,
-                    objectId = previousVersionId,
+                    subjectId = paper.id,
+                    predicateId = Predicates.hasPublishedVersion,
+                    objectId = paperVersionId,
                 ),
             )
         } returns StatementId("S1")
-        every {
-            unsafeStatementUseCases.create(
-                CreateStatementUseCase.CreateCommand(
-                    contributorId = command.contributorId,
-                    subjectId = command.id,
-                    predicateId = Predicates.hasPreviousVersion,
-                    objectId = state.paperVersionId!!,
-                ),
-            )
-        } returns StatementId("S2")
 
         paperVersionHistoryUpdater(command, state).asClue {
             it.paper shouldBe paper
-            it.statements shouldBe statements
             it.paperVersionId shouldBe paperVersionId
         }
 
-        verify(exactly = 1) { statementService.deleteAllById(setOf(statementId)) }
         verify(exactly = 1) {
             unsafeStatementUseCases.create(
                 CreateStatementUseCase.CreateCommand(
                     contributorId = command.contributorId,
-                    subjectId = state.paperVersionId!!,
-                    predicateId = Predicates.hasPreviousVersion,
-                    objectId = previousVersionId,
-                ),
-            )
-        }
-        verify(exactly = 1) {
-            unsafeStatementUseCases.create(
-                CreateStatementUseCase.CreateCommand(
-                    contributorId = command.contributorId,
-                    subjectId = command.id,
-                    predicateId = Predicates.hasPreviousVersion,
-                    objectId = state.paperVersionId!!,
+                    subjectId = paper.id,
+                    predicateId = Predicates.hasPublishedVersion,
+                    objectId = paperVersionId,
                 ),
             )
         }

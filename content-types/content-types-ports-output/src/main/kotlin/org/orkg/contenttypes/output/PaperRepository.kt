@@ -33,6 +33,7 @@ interface PaperRepository {
         mentionings: Set<ThingId>? = null,
         researchProblem: ThingId? = null,
         venue: ThingId? = null,
+        published: Boolean? = null,
     ): Page<Resource>
 
     fun count(
@@ -52,5 +53,6 @@ interface PaperRepository {
         mentionings: Set<ThingId>? = null,
         researchProblem: ThingId? = null,
         venue: ThingId? = null,
+        published: Boolean? = null,
     ): Long
 }

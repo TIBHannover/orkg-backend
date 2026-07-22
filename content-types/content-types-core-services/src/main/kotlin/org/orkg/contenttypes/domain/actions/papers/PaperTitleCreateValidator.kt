@@ -13,7 +13,7 @@ class PaperTitleCreateValidator(
 ) : CreatePaperAction {
     override fun invoke(command: CreatePaperCommand, state: State): State {
         Label.ofOrNull(command.title) ?: throw InvalidLabel("title")
-        val resource = resourceService.findAllPapersByTitle(command.title).firstOrNull()
+        val resource = resourceService.findAllUnpublishedPapersByTitle(command.title).firstOrNull()
         if (resource != null) {
             throw PaperAlreadyExists.withTitle(resource.label)
         }

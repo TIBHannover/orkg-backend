@@ -14,7 +14,7 @@ class PaperTitleUpdateValidator(
     override fun invoke(command: UpdatePaperCommand, state: State): State {
         if (command.title != null && command.title != state.paper!!.title) {
             Label.ofOrNull(command.title!!) ?: throw InvalidLabel("title")
-            if (resourceService.findAllPapersByTitle(command.title).any { it.id != command.paperId }) {
+            if (resourceService.findAllUnpublishedPapersByTitle(command.title).any { it.id != command.paperId }) {
                 throw PaperAlreadyExists.withTitle(command.title!!)
             }
         }

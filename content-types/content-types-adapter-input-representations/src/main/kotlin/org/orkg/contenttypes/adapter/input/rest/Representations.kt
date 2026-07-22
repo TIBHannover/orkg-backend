@@ -56,6 +56,7 @@ data class PaperRepresentation(
     @field:JsonProperty("publication_info")
     val publicationInfo: PublicationInfoRepresentation,
     val authors: List<AuthorRepresentation>,
+    val versions: VersionInfoRepresentation,
     val contributions: List<LabeledObjectRepresentation>,
     @field:JsonProperty("sdgs")
     val sustainableDevelopmentGoals: Set<LabeledObjectRepresentation>,
@@ -76,6 +77,7 @@ data class PaperRepresentation(
     @get:JsonInclude(Include.NON_NULL)
     @field:JsonProperty("unlisted_by")
     val unlistedBy: ContributorId?,
+    val published: Boolean,
     override val jsonClass: String = "paper",
 ) : ContentTypeRepresentation
 

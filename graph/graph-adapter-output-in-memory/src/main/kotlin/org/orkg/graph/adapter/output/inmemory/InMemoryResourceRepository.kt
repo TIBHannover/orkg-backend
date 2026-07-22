@@ -177,14 +177,14 @@ class InMemoryResourceRepository(private val inMemoryGraph: InMemoryGraph) :
         return false
     }
 
-    override fun findAllPapersByLabel(label: String) =
+    override fun findAllUnpublishedPapersByTitle(label: String) =
         entities.values.filter {
             it.label.equals(label, ignoreCase = true) &&
                 Classes.paper in it.classes &&
                 Classes.paperDeleted !in it.classes
         }
 
-    override fun findPaperByLabel(label: String) =
+    override fun findUnpublishedPaperByTitle(label: String) =
         Optional.ofNullable(
             entities.values.firstOrNull {
                 it.label.equals(label, ignoreCase = true) && Classes.paper in it.classes

@@ -51,9 +51,9 @@ interface ResourceRepository : EntityRepository<Resource, ThingId> {
         organizationId: OrganizationId? = null,
     ): Long
 
-    fun findPaperByLabel(label: String): Optional<Resource>
+    fun findUnpublishedPaperByTitle(label: String): Optional<Resource>
 
-    fun findAllPapersByLabel(label: String): List<Resource>
+    fun findAllUnpublishedPapersByTitle(label: String): List<Resource>
 
     fun findPaperById(id: ThingId): Optional<Resource>
 

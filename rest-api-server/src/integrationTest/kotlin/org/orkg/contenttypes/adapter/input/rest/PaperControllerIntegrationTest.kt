@@ -17,9 +17,11 @@ import org.orkg.community.input.ContributorUseCases
 import org.orkg.community.input.ObservatoryUseCases
 import org.orkg.community.input.OrganizationUseCases
 import org.orkg.contenttypes.domain.Author
+import org.orkg.contenttypes.domain.HeadVersion
 import org.orkg.contenttypes.domain.ObjectIdAndLabel
 import org.orkg.contenttypes.domain.PaperNotFound
 import org.orkg.contenttypes.domain.ResourceReference
+import org.orkg.contenttypes.domain.VersionInfo
 import org.orkg.contenttypes.input.PaperUseCases
 import org.orkg.createClasses
 import org.orkg.createContributor
@@ -266,6 +268,15 @@ internal class PaperControllerIntegrationTest : MockMvcBaseTest("papers") {
                 identifiers = emptyMap(),
                 homepage = null,
             )
+            it.versions shouldBe VersionInfoRepresentation(
+                head = HeadVersionRepresentation(
+                    id = paper.id,
+                    label = paper.title,
+                    createdAt = paper.createdAt,
+                    createdBy = paper.createdBy,
+                ),
+                published = emptyList(),
+            )
             it.contributions.asClue { contributions ->
                 contributions.size shouldBe 1
                 contributions[0].asClue { contribution ->
@@ -290,6 +301,7 @@ internal class PaperControllerIntegrationTest : MockMvcBaseTest("papers") {
             it.visibility shouldBe Visibility.DEFAULT
             it.modifiable shouldBe true
             it.unlistedBy shouldBe null
+            it.published shouldBe false
         }
 
         put("/api/papers/{id}", id)
@@ -353,6 +365,15 @@ internal class PaperControllerIntegrationTest : MockMvcBaseTest("papers") {
                 identifiers = emptyMap(),
                 homepage = null,
             )
+            it.versions shouldBe VersionInfo(
+                head = HeadVersion(
+                    id = updatedPaper.id,
+                    label = updatedPaper.title,
+                    createdAt = updatedPaper.createdAt,
+                    createdBy = updatedPaper.createdBy,
+                ),
+                published = emptyList(),
+            )
             it.contributions.asClue { contributions ->
                 contributions.size shouldBe 1
                 contributions[0].asClue { contribution ->
@@ -377,6 +398,7 @@ internal class PaperControllerIntegrationTest : MockMvcBaseTest("papers") {
             it.visibility shouldBe Visibility.DELETED
             it.modifiable shouldBe true
             it.unlistedBy shouldBe null
+            it.published shouldBe false
         }
 
         delete("/api/papers/{id}", paper.id)

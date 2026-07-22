@@ -1236,7 +1236,7 @@ fun <
 
                 saveStatement(paper2HasContribution1)
 
-                val result = repository.findAllPapersByObservatoryIdAndFilters(observatoryId, emptyList(), VisibilityFilter.FEATURED, PageRequest.of(0, 5))
+                val result = repository.findAllUnpublishedPapersByObservatoryIdAndFilters(observatoryId, emptyList(), VisibilityFilter.FEATURED, PageRequest.of(0, 5))
 
                 it("returns the correct result") {
                     result shouldNotBe null
@@ -1351,7 +1351,7 @@ fun <
                     ),
                 )
 
-                val result = repository.findAllPapersByObservatoryIdAndFilters(observatoryId, filterConfig, VisibilityFilter.FEATURED, PageRequest.of(0, 5))
+                val result = repository.findAllUnpublishedPapersByObservatoryIdAndFilters(observatoryId, filterConfig, VisibilityFilter.FEATURED, PageRequest.of(0, 5))
 
                 it("returns the correct result") {
                     result shouldNotBe null

@@ -139,7 +139,7 @@ fun <
                     classes = setOf(Classes.paper),
                 )
                 repository.save(resource)
-                val actual = repository.findPaperByLabel("LABEL to find")
+                val actual = repository.findUnpublishedPaperByTitle("LABEL to find")
                 actual.isPresent shouldBe true
                 actual.get() shouldBe resource
             }
@@ -662,7 +662,7 @@ fun <
 
             it("returns the correct result") {
                 resources.forEach(repository::save)
-                val result = repository.findAllPapersByLabel("label to find")
+                val result = repository.findAllUnpublishedPapersByTitle("label to find")
                 result shouldNotBe null
                 result.count() shouldBe expectedCount
                 result shouldContainAll expected

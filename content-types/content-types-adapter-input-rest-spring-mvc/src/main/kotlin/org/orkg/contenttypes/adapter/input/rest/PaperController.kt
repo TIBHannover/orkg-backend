@@ -114,6 +114,7 @@ class PaperController(
         @RequestParam("mentionings", required = false) mentionings: Set<ThingId>?,
         @RequestParam("research_problem", required = false) researchProblem: ThingId?,
         @RequestParam("venue", required = false) venue: ThingId?,
+        @RequestParam("published", required = false) published: Boolean?,
         pageable: Pageable,
     ): Page<PaperRepresentation> =
         service.findAll(
@@ -134,6 +135,7 @@ class PaperController(
             mentionings = mentionings,
             researchProblem = researchProblem,
             venue = venue,
+            published = published,
         ).mapToPaperRepresentation()
 
     @RequireLogin

@@ -402,10 +402,10 @@ class SpringDataNeo4jResourceAdapter(
         .countOver("node")
         .mappedBy(ResourceMapper("node"))
 
-    override fun findAllPapersByLabel(label: String): List<Resource> =
+    override fun findAllUnpublishedPapersByTitle(label: String): List<Resource> =
         neo4jRepository.findAllPapersByLabel(label).map(Neo4jResource::toResource)
 
-    override fun findPaperByLabel(label: String): Optional<Resource> =
+    override fun findUnpublishedPaperByTitle(label: String): Optional<Resource> =
         neo4jRepository.findPaperByLabel(label).map(Neo4jResource::toResource)
 
     override fun findPaperById(id: ThingId): Optional<Resource> =

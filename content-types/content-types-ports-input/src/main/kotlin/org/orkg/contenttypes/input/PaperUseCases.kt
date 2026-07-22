@@ -48,6 +48,7 @@ interface RetrievePaperUseCase {
         mentionings: Set<ThingId>? = emptySet(),
         researchProblem: ThingId? = null,
         venue: ThingId? = null,
+        published: Boolean? = null,
     ): Page<Paper>
 
     fun findPublishedContentsById(id: ThingId): Optional<List<GeneralStatement>>

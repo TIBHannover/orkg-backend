@@ -227,7 +227,7 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
     @DisplayName("Given several papers, when they are fetched, then status is 200 OK and papers are returned")
     fun getPaged() {
         every {
-            paperService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
+            paperService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
         } returns pageOf(createPaper())
 
         documentedGetRequestTo("/api/papers")
@@ -240,7 +240,7 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
             .andDo(generateDefaultDocSnippets())
 
         verify(exactly = 1) {
-            paperService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
+            paperService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
         }
     }
 
@@ -248,7 +248,7 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
     @DisplayName("Given several papers, when filtering by several parameters, then status is 200 OK and papers are returned")
     fun findAll() {
         every {
-            paperService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
+            paperService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
         } returns pageOf(createPaper())
 
         val title = "label"
@@ -268,6 +268,7 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
         val mentionings = setOf(ThingId("R357"))
         val researchProblemId = ThingId("R357")
         val venueId = ThingId("159")
+        val published = false
 
         documentedGetRequestTo("/api/papers")
             .param("title", title)
@@ -287,6 +288,7 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
             .param("mentionings", mentionings.joinToString(","))
             .param("research_problem", researchProblemId.value)
             .param("venue", venueId.value)
+            .param("published", published.toString())
             .accept(PAPER_JSON_V2)
             .contentType(PAPER_JSON_V2)
             .perform()
@@ -319,6 +321,7 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
                     parameterWithName("mentionings").description("Filter for resources that are linked to the paper via a mentions statement. (optional)").optional(),
                     parameterWithName("research_problem").description("Filter for research problem id. (optional)").optional(),
                     parameterWithName("venue").description("Filter for venue id. (optional)").optional(),
+                    parameterWithName("published").description("Filter for the publication status of the paper. (optional)").optional(),
                 )
                 pagedResponseFields<PaperRepresentation>(paperResponseFields())
                 throws(UnknownSortingProperty::class)
@@ -345,6 +348,7 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
                 mentionings = mentionings,
                 researchProblem = researchProblemId,
                 venue = venueId,
+                published = published,
             )
         }
     }
@@ -353,7 +357,7 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
     fun `Given several papers, when invalid sorting property is specified, then status is 400 BAD REQUEST`() {
         val exception = UnknownSortingProperty("unknown")
         every {
-            paperService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
+            paperService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
         } throws exception
 
         get("/api/papers")
@@ -364,7 +368,7 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
             .andExpectType("orkg:problem:unknown_sorting_property")
 
         verify(exactly = 1) {
-            paperService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
+            paperService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any())
         }
     }
 

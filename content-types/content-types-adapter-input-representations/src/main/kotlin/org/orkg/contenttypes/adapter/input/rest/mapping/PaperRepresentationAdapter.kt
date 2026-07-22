@@ -9,7 +9,8 @@ interface PaperRepresentationAdapter :
     AuthorRepresentationAdapter,
     LabeledObjectRepresentationAdapter,
     PublicationInfoRepresentationAdapter,
-    ThingReferenceRepresentationAdapter {
+    ThingReferenceRepresentationAdapter,
+    VersionRepresentationAdapter {
     fun Optional<Paper>.mapToPaperRepresentation(): Optional<PaperRepresentation> =
         map { it.toPaperRepresentation() }
 
@@ -24,6 +25,7 @@ interface PaperRepresentationAdapter :
             identifiers = identifiers,
             publicationInfo = publicationInfo.toPublicationInfoRepresentation(),
             authors = authors.mapToAuthorRepresentation(),
+            versions = versions.toVersionInfoRepresentation(),
             contributions = contributions.mapToLabeledObjectRepresentation(),
             sustainableDevelopmentGoals = sustainableDevelopmentGoals.mapToLabeledObjectRepresentation(),
             mentionings = mentionings.map { it.toResourceReferenceRepresentation() }.toSet(),
@@ -36,5 +38,6 @@ interface PaperRepresentationAdapter :
             visibility = visibility,
             modifiable = modifiable,
             unlistedBy = unlistedBy,
+            published = published,
         )
 }

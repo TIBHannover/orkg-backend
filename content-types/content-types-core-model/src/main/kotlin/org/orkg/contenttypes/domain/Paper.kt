@@ -5,6 +5,7 @@ import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.identifiers.Identifiers
+import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.GeneralStatement
 import org.orkg.graph.domain.Predicates
@@ -19,6 +20,7 @@ data class Paper(
     val identifiers: Map<String, List<String>>,
     val publicationInfo: PublicationInfo,
     val authors: List<Author>,
+    val versions: VersionInfo,
     val contributions: List<ObjectIdAndLabel>,
     val sustainableDevelopmentGoals: Set<ObjectIdAndLabel>,
     val mentionings: Set<ResourceReference>,
@@ -31,10 +33,17 @@ data class Paper(
     override val visibility: Visibility,
     val modifiable: Boolean,
     override val unlistedBy: ContributorId? = null,
+    val published: Boolean,
 ) : ContentType {
     companion object {
         fun from(resource: Resource, statements: Map<ThingId, List<GeneralStatement>>): Paper {
             val directStatements = statements[resource.id].orEmpty()
+            val versions = VersionInfo(
+                head = HeadVersion(directStatements.firstOrNull()?.subject ?: resource),
+                published = directStatements.wherePredicate(Predicates.hasPublishedVersion)
+                    .sortedByDescending { it.createdAt }
+                    .map { PublishedVersion(it.`object`, null) },
+            )
             return Paper(
                 id = resource.id,
                 title = resource.label,
@@ -44,6 +53,7 @@ data class Paper(
                 identifiers = directStatements.associateIdentifiers(Identifiers.paper),
                 publicationInfo = PublicationInfo.from(directStatements),
                 authors = statements.authors(resource.id),
+                versions = versions,
                 contributions = directStatements.wherePredicate(Predicates.hasContribution).objectIdsAndLabel(),
                 sustainableDevelopmentGoals = directStatements.wherePredicate(Predicates.sustainableDevelopmentGoal)
                     .objectIdsAndLabel()
@@ -64,6 +74,7 @@ data class Paper(
                 visibility = resource.visibility,
                 modifiable = resource.modifiable,
                 unlistedBy = resource.unlistedBy,
+                published = Classes.paperVersion in resource.classes,
             )
         }
     }

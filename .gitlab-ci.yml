@@ -27,6 +27,7 @@ include:
           optional: true
         - job: secret_detection
         - job: container_scanning
+          optional: true
   # (Security) Scanning components
   - component: gitlab.com/components/container-scanning/container-scanning@5.2.0
     inputs:

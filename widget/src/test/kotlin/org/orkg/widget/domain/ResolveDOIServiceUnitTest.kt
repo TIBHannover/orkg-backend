@@ -42,6 +42,7 @@ internal class ResolveDOIServiceUnitTest :
             "returns correct information for a paper" to (Classes.paper to 23),
             "returns correct information for a paper version" to (Classes.paperVersion to null),
             "returns correct information for a comparison" to (Classes.comparisonPublished to null),
+            "returns correct information for a literature list" to (Classes.literatureListPublished to null),
             "returns correct information for a review" to (Classes.smartReviewPublished to null),
         )
 

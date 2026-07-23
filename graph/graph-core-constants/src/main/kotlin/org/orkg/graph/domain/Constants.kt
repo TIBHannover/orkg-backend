@@ -212,6 +212,7 @@ object Classes {
         paper,
         paperVersion,
         comparisonPublished,
+        literatureListPublished,
         smartReviewPublished,
     )
 }

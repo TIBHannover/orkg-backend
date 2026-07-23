@@ -33,6 +33,7 @@ typealias PathRepresentation = List<ThingRepresentation>
 )
 sealed interface ThingRepresentation {
     val id: ThingId
+    val label: String
 }
 
 interface ProvenanceMetadata {
@@ -68,7 +69,7 @@ interface ContentTypeFlags {
 
 data class LiteralRepresentation(
     override val id: ThingId,
-    val label: String,
+    override val label: String,
     val datatype: String,
     override val createdAt: OffsetDateTime,
     override val createdBy: ContributorId,
@@ -83,7 +84,7 @@ data class LiteralRepresentation(
 
 data class ClassRepresentation(
     override val id: ThingId,
-    val label: String,
+    override val label: String,
     val uri: IRI?,
     val description: String?,
     override val createdAt: OffsetDateTime,
@@ -99,7 +100,7 @@ data class ClassRepresentation(
 
 data class PredicateRepresentation(
     override val id: ThingId,
-    val label: String,
+    override val label: String,
     val description: String?,
     override val createdAt: OffsetDateTime,
     override val createdBy: ContributorId,
@@ -114,7 +115,7 @@ data class PredicateRepresentation(
 
 data class ResourceRepresentation(
     override val id: ThingId,
-    val label: String,
+    override val label: String,
     val classes: Set<ThingId>,
     val shared: Long,
     override val observatoryId: ObservatoryId,
@@ -173,7 +174,7 @@ data class ListRepresentation(
 data class PaperResourceWithPathRepresentation(
     val path: List<PathRepresentation>,
     override val id: ThingId,
-    val label: String,
+    override val label: String,
     val classes: Set<ThingId>,
     val shared: Long,
     override val observatoryId: ObservatoryId,

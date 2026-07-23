@@ -118,3 +118,8 @@ fun pathResponseFields() = listOf(
     fieldWithPath("[]").description("The list of path items.").arrayItemsType("object").references<ThingRepresentation>(),
     *applyPathPrefix("[].", thingResponseFields()).toTypedArray(),
 )
+
+fun inversePathResponseFields() = listOf(
+    fieldWithPath("[]").description("The list of inverse paths.").arrayItemsType("array").references("PathRepresentation"),
+    *applyPathPrefix("[]", pathResponseFields()).toTypedArray(),
+)

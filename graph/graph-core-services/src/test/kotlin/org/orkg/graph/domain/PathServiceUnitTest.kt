@@ -61,4 +61,43 @@ internal class PathServiceUnitTest : MockkBaseTest {
 
         verify(exactly = 1) { thingRepository.findById(id) }
     }
+
+    @Test
+    fun `Given several statements, when fetching all paths by root id (inverse), it returns the path`() {
+        val id = ThingId("R123")
+        val path = pageOf(*arrayOf(listOf(listOf(createResource(id), createPredicate(), createClass()))))
+
+        every { thingRepository.findById(id) } returns Optional.of(path.first().first().first())
+        every { pathRepository.findAllByRootIdInverse(id, any(), any(), any(), any(), any(), any(), any(), any()) } returns path
+
+        service.findAllByRootIdInverse(id, PageRequest.of(0, 10)) shouldBe path
+
+        verify(exactly = 1) { thingRepository.findById(id) }
+        verify(exactly = 1) { pathRepository.findAllByRootIdInverse(id, any(), any(), any(), any(), any(), any(), any(), any()) }
+    }
+
+    @Test
+    fun `Given several statements, when fetching all paths by root id (inverse), but min hops is larger than max bounds, it throws an exception`() {
+        shouldThrow<InvalidHopBounds> {
+            service.findAllByRootIdInverse(
+                id = ThingId("R123"),
+                minHops = 5,
+                maxHops = 2,
+                pageable = PageRequest.of(0, 10),
+            )
+        }
+    }
+
+    @Test
+    fun `Given several statements, when fetching all paths by root id (inverse), but root does not exist, it throws an exception`() {
+        val id = ThingId("R123")
+
+        every { thingRepository.findById(id) } returns Optional.empty()
+
+        shouldThrow<ThingNotFound> {
+            service.findAllByRootIdInverse(id, PageRequest.of(0, 10))
+        }
+
+        verify(exactly = 1) { thingRepository.findById(id) }
+    }
 }

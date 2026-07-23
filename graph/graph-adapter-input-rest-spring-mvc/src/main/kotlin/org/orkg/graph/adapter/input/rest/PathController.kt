@@ -50,4 +50,29 @@ class PathController(
             pathDirection = direction,
             includeRoot = includeRoot,
         ).mapToPathRepresentation(capabilities)
+
+    @GetMapping("/inverse-paths")
+    fun findAllByRootIdInverse(
+        @PathVariable id: ThingId,
+        @Valid @Min(1) @Max(10) @RequestParam("min_hops", required = false) minHops: Int? = null,
+        @Valid @Min(1) @Max(10) @RequestParam("max_hops", required = false) maxHops: Int? = null,
+        @RequestParam("deny_classes", required = false) denyClasses: Set<ThingId>?,
+        @RequestParam("allow_classes", required = false) allowClasses: Set<ThingId>?,
+        @RequestParam("termination_classes", required = false) terminationClasses: Set<ThingId>?,
+        @RequestParam("direction", required = false) direction: PathDirection = PathDirection.OUTGOING,
+        @RequestParam("include_root", required = false) includeRoot: Boolean = true,
+        pageable: Pageable,
+        capabilities: MediaTypeCapabilities,
+    ): Page<List<PathRepresentation>> =
+        pathUseCases.findAllByRootIdInverse(
+            id = id,
+            pageable = pageable,
+            minHops = minHops,
+            maxHops = maxHops,
+            denyClasses = denyClasses.orEmpty(),
+            allowClasses = allowClasses.orEmpty(),
+            terminationClasses = terminationClasses.orEmpty(),
+            pathDirection = direction,
+            includeRoot = includeRoot,
+        ).mapToInversePathRepresentation(capabilities)
 }

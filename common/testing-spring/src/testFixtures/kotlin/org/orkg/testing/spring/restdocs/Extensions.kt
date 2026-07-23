@@ -15,6 +15,9 @@ import org.springframework.restdocs.snippet.AbstractDescriptor
 import org.springframework.restdocs.snippet.Attributes
 import kotlin.reflect.KClass
 
+fun <T : AbstractDescriptor<T>> T.references(schemaName: String): T =
+    attributes(Attributes.Attribute("schemaName", schemaName))
+
 fun <T : AbstractDescriptor<T>> T.references(schemaClass: KClass<*>): T =
     attributes(Attributes.Attribute("schemaName", schemaClass.simpleName!!))
 

@@ -35,6 +35,7 @@ import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.FuzzySearchString
 import org.orkg.graph.domain.GeneralStatement
 import org.orkg.graph.domain.Literal
+import org.orkg.graph.domain.Path
 import org.orkg.graph.domain.Predicate
 import org.orkg.graph.domain.PredicateNotFound
 import org.orkg.graph.domain.Resource
@@ -46,6 +47,7 @@ import org.springframework.data.domain.Sort
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 import java.util.function.BiFunction
+import org.neo4j.driver.types.Path as Neo4jPath
 
 val reservedLabels = setOf(
     Classes.literal,
@@ -123,7 +125,7 @@ data class PathMapper(
     private val name: String,
     private val predicateRepository: PredicateRepository,
     private val includeRoot: Boolean,
-) : BiFunction<TypeSystem, Record, List<Thing>> {
+) : BiFunction<TypeSystem, Record, Path> {
     constructor(
         symbolicName: SymbolicName,
         predicateRepository: PredicateRepository,
@@ -134,20 +136,41 @@ data class PathMapper(
         includeRoot,
     )
 
-    override fun apply(typeSystem: TypeSystem, record: Record): List<Thing> {
-        val path = record["path"].asPath()
-        val nodes: List<Thing> = path.nodes().map { it.toThing() }
-        val predicates: List<Thing> = path.relationships().map {
-            predicateRepository.findById(it["predicate_id"].toThingId()!!).get()
-        }
-        return IntRange(0, nodes.size + predicates.size - 1).map { index ->
-            if (index % 2 == 0) {
-                nodes[index shr 1]
-            } else {
-                predicates[(index - 1) shr 1]
-            }
-        }.drop(if (includeRoot) 0 else 1)
+    override fun apply(typeSystem: TypeSystem, record: Record): Path =
+        record["path"].asPath().toPath(predicateRepository, includeRoot)
+}
+
+data class InversePathMapper(
+    private val name: String,
+    private val predicateRepository: PredicateRepository,
+    private val includeRoot: Boolean,
+) : BiFunction<TypeSystem, Record, List<Path>> {
+    constructor(
+        symbolicName: SymbolicName,
+        predicateRepository: PredicateRepository,
+        includeRoot: Boolean,
+    ) : this(
+        symbolicName.value,
+        predicateRepository,
+        includeRoot,
+    )
+
+    override fun apply(typeSystem: TypeSystem, record: Record): List<Path> =
+        record["paths"].asList { it.asPath().toPath(predicateRepository, includeRoot).reversed() }
+}
+
+fun Neo4jPath.toPath(predicateRepository: PredicateRepository, includeRoot: Boolean): Path {
+    val nodes: List<Thing> = nodes().map { it.toThing() }
+    val predicates: List<Thing> = relationships().map {
+        predicateRepository.findById(it["predicate_id"].toThingId()!!).get()
     }
+    return IntRange(0, nodes.size + predicates.size - 1).map { index ->
+        if (index % 2 == 0) {
+            nodes[index shr 1]
+        } else {
+            predicates[(index - 1) shr 1]
+        }
+    }.drop(if (includeRoot) 0 else 1)
 }
 
 fun Node.toLiteral() = Literal(

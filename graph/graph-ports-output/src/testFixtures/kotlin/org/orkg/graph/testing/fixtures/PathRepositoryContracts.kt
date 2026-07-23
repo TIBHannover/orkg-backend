@@ -394,4 +394,295 @@ fun <
             }
         }
     }
+
+    describe("fetching all inverse paths by id") {
+        val testGraph = createTestGraph()
+        describe("without filters") {
+            testGraph.forEach(saveStatement)
+
+            val expected = listOf(
+                listOf(testGraph.pathOf(-"S4")),
+                listOf(testGraph.pathOf(-"S1")),
+                listOf(testGraph.pathOf(-"S5", -"S4")),
+                listOf(testGraph.pathOf(-"S2", -"S1")),
+                listOf(testGraph.pathOf(-"S3", -"S2", -"S1")),
+            )
+            val pageable = PageRequest.of(0, 10)
+            val result = repository.findAllByRootIdInverse(
+                id = ThingId("R1"),
+                pageable = pageable,
+            )
+
+            it("returns the correct result") {
+                result shouldNotBe null
+                result.content shouldNotBe null
+                result.content.size shouldBe expected.size
+                result.content shouldContainAll expected
+            }
+            it("pages the result correctly") {
+                result.size shouldBe 10
+                result.number shouldBe 0
+                result.totalPages shouldBe 1
+                result.totalElements shouldBe expected.size
+            }
+        }
+        describe("with min hops") {
+            testGraph.forEach(saveStatement)
+
+            val expected = listOf(
+                listOf(testGraph.pathOf(-"S3", -"S2", -"S1")),
+            )
+            val pageable = PageRequest.of(0, 10)
+            val result = repository.findAllByRootIdInverse(
+                id = ThingId("R1"),
+                pageable = pageable,
+                minHops = 3,
+                maxHops = 3,
+            )
+
+            it("returns the correct result") {
+                result shouldNotBe null
+                result.content shouldNotBe null
+                result.content.size shouldBe expected.size
+                result.content shouldContainAll expected
+            }
+            it("pages the result correctly") {
+                result.size shouldBe 10
+                result.number shouldBe 0
+                result.totalPages shouldBe 1
+                result.totalElements shouldBe expected.size
+            }
+        }
+        describe("with max hops") {
+            testGraph.forEach(saveStatement)
+
+            val expected = listOf(
+                listOf(testGraph.pathOf(-"S4")),
+                listOf(testGraph.pathOf(-"S1")),
+                listOf(testGraph.pathOf(-"S5", -"S4")),
+                listOf(testGraph.pathOf(-"S2", -"S1")),
+            )
+            val pageable = PageRequest.of(0, 10)
+            val result = repository.findAllByRootIdInverse(
+                id = ThingId("R1"),
+                pageable = pageable,
+                maxHops = 2,
+            )
+
+            it("returns the correct result") {
+                result shouldNotBe null
+                result.content shouldNotBe null
+                result.content.size shouldBe expected.size
+                result.content shouldContainAll expected
+            }
+            it("pages the result correctly") {
+                result.size shouldBe 10
+                result.number shouldBe 0
+                result.totalPages shouldBe 1
+                result.totalElements shouldBe expected.size
+            }
+        }
+        describe("with deny classes") {
+            testGraph.forEach(saveStatement)
+
+            val expected = listOf(
+                listOf(testGraph.pathOf(-"S1")),
+            )
+            val pageable = PageRequest.of(0, 10)
+            val result = repository.findAllByRootIdInverse(
+                id = ThingId("R1"),
+                pageable = pageable,
+                denyClasses = setOf(ThingId("C2"), ThingId("C3")),
+            )
+
+            it("returns the correct result") {
+                result shouldNotBe null
+                result.content shouldNotBe null
+                result.content.size shouldBe expected.size
+                result.content shouldContainAll expected
+            }
+            it("pages the result correctly") {
+                result.size shouldBe 10
+                result.number shouldBe 0
+                result.totalPages shouldBe 1
+                result.totalElements shouldBe expected.size
+            }
+        }
+        describe("with allow classes") {
+            testGraph.forEach(saveStatement)
+
+            val expected = listOf(
+                listOf(testGraph.pathOf(-"S1")),
+            )
+            val pageable = PageRequest.of(0, 10)
+            val result = repository.findAllByRootIdInverse(
+                id = ThingId("R1"),
+                pageable = pageable,
+                allowClasses = setOf(ThingId("C1")),
+            )
+
+            it("returns the correct result") {
+                result shouldNotBe null
+                result.content shouldNotBe null
+                result.content.size shouldBe expected.size
+                result.content shouldContainAll expected
+            }
+            it("pages the result correctly") {
+                result.size shouldBe 10
+                result.number shouldBe 0
+                result.totalPages shouldBe 1
+                result.totalElements shouldBe expected.size
+            }
+        }
+        describe("with termination classes") {
+            testGraph.forEach(saveStatement)
+
+            val expected = listOf(
+                listOf(testGraph.pathOf(-"S4")),
+            )
+            val pageable = PageRequest.of(0, 10)
+            val result = repository.findAllByRootIdInverse(
+                id = ThingId("R1"),
+                pageable = pageable,
+                terminationClasses = setOf(ThingId("C3")),
+            )
+
+            it("returns the correct result") {
+                result shouldNotBe null
+                result.content shouldNotBe null
+                result.content.size shouldBe expected.size
+                result.content shouldContainAll expected
+            }
+            it("pages the result correctly") {
+                result.size shouldBe 10
+                result.number shouldBe 0
+                result.totalPages shouldBe 1
+                result.totalElements shouldBe expected.size
+            }
+        }
+        describe("with path direction (incoming)") {
+            testGraph.forEach(saveStatement)
+
+            val expected = listOf(
+                listOf(testGraph.pathOf(+"S3")),
+                listOf(testGraph.pathOf(+"S2", +"S3")),
+                listOf(testGraph.pathOf(+"S1", +"S2", +"S3")),
+            )
+            val pageable = PageRequest.of(0, 10)
+            val result = repository.findAllByRootIdInverse(
+                id = ThingId("R1"),
+                pageable = pageable,
+                pathDirection = PathDirection.INCOMING,
+            )
+
+            it("returns the correct result") {
+                result shouldNotBe null
+                result.content shouldNotBe null
+                result.content.size shouldBe expected.size
+                result.content shouldContainAll expected
+            }
+            it("pages the result correctly") {
+                result.size shouldBe 10
+                result.number shouldBe 0
+                result.totalPages shouldBe 1
+                result.totalElements shouldBe expected.size
+            }
+        }
+        describe("with path direction (undirected)") {
+            testGraph.forEach(saveStatement)
+
+            val expected = listOf(
+                listOf(testGraph.pathOf(-"S4")),
+                listOf(testGraph.pathOf(+"S3")),
+                listOf(
+                    testGraph.pathOf(-"S1"),
+                    testGraph.pathOf(+"S2", +"S3"),
+                ),
+                listOf(testGraph.pathOf(-"S5", -"S4")),
+            )
+            val pageable = PageRequest.of(0, 10)
+            val result = repository.findAllByRootIdInverse(
+                id = ThingId("R1"),
+                pageable = pageable,
+                pathDirection = PathDirection.UNDIRECTED,
+            )
+
+            it("returns the correct result") {
+                result shouldNotBe null
+                result.content shouldNotBe null
+                result.content.size shouldBe expected.size
+                result.content shouldContainAll expected
+            }
+            it("pages the result correctly") {
+                result.size shouldBe 10
+                result.number shouldBe 0
+                result.totalPages shouldBe 1
+                result.totalElements shouldBe expected.size
+            }
+        }
+        describe("without including root") {
+            testGraph.forEach(saveStatement)
+
+            val expected = listOf(
+                testGraph.pathOf(-"S4"),
+                testGraph.pathOf(-"S1"),
+                testGraph.pathOf(-"S5", -"S4"),
+                testGraph.pathOf(-"S2", -"S1"),
+                testGraph.pathOf(-"S3", -"S2", -"S1"),
+            ).map {
+                listOf(it.dropLast(1))
+            }
+            val pageable = PageRequest.of(0, 10)
+            val result = repository.findAllByRootIdInverse(
+                id = ThingId("R1"),
+                pageable = pageable,
+                includeRoot = false,
+            )
+
+            it("returns the correct result") {
+                result shouldNotBe null
+                result.content shouldNotBe null
+                result.content.size shouldBe expected.size
+                result.content shouldContainAll expected
+            }
+            it("pages the result correctly") {
+                result.size shouldBe 10
+                result.number shouldBe 0
+                result.totalPages shouldBe 1
+                result.totalElements shouldBe expected.size
+            }
+        }
+        describe("with all filters") {
+            testGraph.forEach(saveStatement)
+
+            val expected = listOf(
+                listOf(testGraph.pathOf(+"S3")),
+            )
+            val pageable = PageRequest.of(0, 10)
+            val result = repository.findAllByRootIdInverse(
+                id = ThingId("R1"),
+                pageable = pageable,
+                minHops = 1,
+                maxHops = 1,
+                allowClasses = setOf(ThingId("C1")),
+                denyClasses = setOf(ThingId("C3")),
+                terminationClasses = setOf(ThingId("C2")),
+                pathDirection = PathDirection.UNDIRECTED,
+                includeRoot = true,
+            )
+
+            it("returns the correct result") {
+                result shouldNotBe null
+                result.content shouldNotBe null
+                result.content.size shouldBe expected.size
+                result.content shouldContainAll expected
+            }
+            it("pages the result correctly") {
+                result.size shouldBe 10
+                result.number shouldBe 0
+                result.totalPages shouldBe 1
+                result.totalElements shouldBe expected.size
+            }
+        }
+    }
 }

@@ -9,3 +9,10 @@ It is represented as a list of <<Things,things>>.
 include::{snippets}/paths_find-all-by-root-id/description.adoc[]
 
 operation::paths_find-all-by-root-id[snippets='path-parameters,curl-request,query-parameters,http-response,response-fields,errors']
+
+[[paths-fetch-inverse]]
+== Fetching Inverse Paths
+
+include::{snippets}/paths_find-all-by-root-id-inverse/description.adoc[]
+
+operation::paths_find-all-by-root-id-inverse[snippets='path-parameters,curl-request,query-parameters,http-response,response-fields,errors']

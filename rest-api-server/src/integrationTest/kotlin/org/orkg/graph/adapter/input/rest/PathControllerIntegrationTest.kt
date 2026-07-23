@@ -96,4 +96,71 @@ internal class PathControllerIntegrationTest : MockMvcBaseTest("paths") {
 
         result.content.size shouldBe expected.size
     }
+
+    @Test
+    fun findAllByRootIdInverse() {
+        /* Test setup:
+             A → B → C  → D ← F ← E
+                 ↑   ↓↑   ↑
+                BB ← CC → DD
+
+           Expected result (starting from A):
+             - 9 paths (excluding E→F,F→D), grouped into 6 lists (B, C and D are reachable via two paths)
+         */
+
+        val a = resourceService.createResource(label = "A")
+        val b = resourceService.createResource(label = "B")
+        val c = resourceService.createResource(label = "C")
+        val d = resourceService.createResource(label = "D")
+        val e = resourceService.createResource(label = "E")
+        val f = resourceService.createResource(label = "F")
+        val bb = resourceService.createResource(label = "BB")
+        val cc = resourceService.createResource(label = "CC")
+        val dd = resourceService.createResource(label = "DD")
+
+        val p = predicateService.createPredicate(label = "relation")
+
+        statementService.createStatement(a, p, b)
+        statementService.createStatement(b, p, c)
+        statementService.createStatement(c, p, d)
+        statementService.createStatement(c, p, cc)
+        statementService.createStatement(cc, p, c)
+        statementService.createStatement(cc, p, bb)
+        statementService.createStatement(cc, p, dd)
+        statementService.createStatement(bb, p, b)
+        statementService.createStatement(dd, p, d)
+        statementService.createStatement(e, p, f)
+        statementService.createStatement(f, p, d)
+
+        val expected = listOf(
+            listOf(
+                listOf("B", "relation", "A"),
+                listOf("B", "relation", "BB", "relation", "CC", "relation", "C", "relation", "B", "relation", "A"),
+            ),
+            listOf(
+                listOf("C", "relation", "B", "relation", "A"),
+                listOf("C", "relation", "CC", "relation", "C", "relation", "B", "relation", "A"),
+            ),
+            listOf(listOf("CC", "relation", "C", "relation", "B", "relation", "A")),
+            listOf(
+                listOf("D", "relation", "C", "relation", "B", "relation", "A"),
+                listOf("D", "relation", "DD", "relation", "CC", "relation", "C", "relation", "B", "relation", "A"),
+            ),
+            listOf(listOf("DD", "relation", "CC", "relation", "C", "relation", "B", "relation", "A")),
+            listOf(listOf("BB", "relation", "CC", "relation", "C", "relation", "B", "relation", "A")),
+        )
+
+        val result = get("/api/things/{id}/inverse-paths", a)
+            .perform()
+            .andExpect(status().isOk)
+            .andExpectPage()
+            .andExpectStatement("$.content[*]")
+            .andReturn()
+            .response
+            .contentAsString
+            .let { objectMapper.readValue<PageRepresentation<List<PathRepresentation>>>(it) }
+
+        result.content.size shouldBe expected.size
+        result.content.map { paths -> paths.map { paths -> paths.map { thing -> thing.label } } } shouldBe expected
+    }
 }

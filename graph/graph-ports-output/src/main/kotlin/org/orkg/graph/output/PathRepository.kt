@@ -18,4 +18,16 @@ interface PathRepository {
         pathDirection: PathDirection = PathDirection.OUTGOING,
         includeRoot: Boolean = true,
     ): Page<Path>
+
+    fun findAllByRootIdInverse(
+        id: ThingId,
+        pageable: Pageable,
+        minHops: Int? = null,
+        maxHops: Int? = null,
+        denyClasses: Set<ThingId> = emptySet(),
+        allowClasses: Set<ThingId> = emptySet(),
+        terminationClasses: Set<ThingId> = emptySet(),
+        pathDirection: PathDirection = PathDirection.OUTGOING,
+        includeRoot: Boolean = true,
+    ): Page<List<Path>>
 }

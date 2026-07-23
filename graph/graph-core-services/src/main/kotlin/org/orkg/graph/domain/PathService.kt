@@ -8,6 +8,7 @@ import org.orkg.spring.data.annotations.TransactionalOnNeo4j
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
+import kotlin.collections.List
 
 @Service
 @TransactionalOnNeo4j
@@ -33,6 +34,36 @@ class PathService(
             throw ThingNotFound(id)
         }
         return pathRepository.findAllByRootId(
+            id = id,
+            pageable = pageable,
+            minHops = minHops,
+            maxHops = maxHops,
+            denyClasses = denyClasses,
+            allowClasses = allowClasses,
+            terminationClasses = terminationClasses,
+            pathDirection = pathDirection,
+            includeRoot = includeRoot,
+        )
+    }
+
+    override fun findAllByRootIdInverse(
+        id: ThingId,
+        pageable: Pageable,
+        minHops: Int?,
+        maxHops: Int?,
+        denyClasses: Set<ThingId>,
+        allowClasses: Set<ThingId>,
+        terminationClasses: Set<ThingId>,
+        pathDirection: PathDirection,
+        includeRoot: Boolean,
+    ): Page<List<Path>> {
+        if (minHops != null && maxHops != null && minHops > maxHops) {
+            throw InvalidHopBounds(minHops, maxHops)
+        }
+        if (thingRepository.findById(id).isEmpty) {
+            throw ThingNotFound(id)
+        }
+        return pathRepository.findAllByRootIdInverse(
             id = id,
             pageable = pageable,
             minHops = minHops,

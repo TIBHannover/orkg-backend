@@ -22,4 +22,20 @@ interface PathRepresentationAdapter : ThingRepresentationAdapter {
             }
         }
     }
+
+    fun Page<List<Path>>.mapToInversePathRepresentation(
+        capabilities: MediaTypeCapabilities,
+    ): Page<List<PathRepresentation>> {
+        val resources = content.flatten().flatten().filterIsInstance<Resource>()
+        val statementCounts = countIncomingStatements(resources)
+        val formattedLabelCount = formatLabelFor(resources, capabilities)
+        val descriptions = findAllDescriptions(content.flatten().flatten().filter { it is Predicate || it is Class })
+        return map { group ->
+            group.map { path ->
+                path.map { thing ->
+                    thing.toThingRepresentation(statementCounts, formattedLabelCount, descriptions[thing.id])
+                }
+            }
+        }
+    }
 }

@@ -399,13 +399,13 @@ internal class CSVServiceUnitTest : MockkBaseTest {
 
         every { repository.findById(csv.id) } returns Optional.of(csv)
         every { repository.save(any()) } just runs
-        every { jobUseCases.runJob(csv.type.validateJobName, any()) } returns jobId
+        every { jobUseCases.runJob(csv.type.validateJobName, any(), any()) } returns jobId
 
         service.validate(command) shouldBe jobId
 
         verify(exactly = 1) { repository.findById(csv.id) }
         verify(exactly = 1) { repository.save(csv.copy(state = State.VALIDATION_QUEUED)) }
-        verify(exactly = 1) { jobUseCases.runJob(csv.type.validateJobName, any()) }
+        verify(exactly = 1) { jobUseCases.runJob(csv.type.validateJobName, any(), any()) }
     }
 
     @Test
@@ -421,14 +421,14 @@ internal class CSVServiceUnitTest : MockkBaseTest {
         every { repository.findById(csv.id) } returns Optional.of(csv)
         every { contributorRepository.findById(admin.id) } returns Optional.of(admin)
         every { repository.save(any()) } just runs
-        every { jobUseCases.runJob(csv.type.validateJobName, any()) } returns jobId
+        every { jobUseCases.runJob(csv.type.validateJobName, any(), any()) } returns jobId
 
         service.validate(command) shouldBe jobId
 
         verify(exactly = 1) { repository.findById(csv.id) }
         verify(exactly = 1) { contributorRepository.findById(admin.id) }
         verify(exactly = 1) { repository.save(csv.copy(state = State.VALIDATION_QUEUED)) }
-        verify(exactly = 1) { jobUseCases.runJob(csv.type.validateJobName, any()) }
+        verify(exactly = 1) { jobUseCases.runJob(csv.type.validateJobName, any(), any()) }
     }
 
     @Test
@@ -512,13 +512,13 @@ internal class CSVServiceUnitTest : MockkBaseTest {
 
         every { repository.findById(csv.id) } returns Optional.of(csv)
         every { repository.save(any()) } just runs
-        every { jobUseCases.runJob(csv.type.validateJobName, any()) } throws JobAlreadyRunning(JobId(123))
+        every { jobUseCases.runJob(csv.type.validateJobName, any(), any()) } throws JobAlreadyRunning(JobId(123))
 
         shouldThrow<CSVValidationAlreadyRunning> { service.validate(command) }
 
         verify(exactly = 1) { repository.findById(csv.id) }
         verify(exactly = 1) { repository.save(csv.copy(state = State.VALIDATION_QUEUED)) }
-        verify(exactly = 1) { jobUseCases.runJob(csv.type.validateJobName, any()) }
+        verify(exactly = 1) { jobUseCases.runJob(csv.type.validateJobName, any(), any()) }
         verify(exactly = 1) { repository.save(csv.copy(state = State.VALIDATION_RUNNING)) }
     }
 
@@ -532,13 +532,13 @@ internal class CSVServiceUnitTest : MockkBaseTest {
 
         every { repository.findById(csv.id) } returns Optional.of(csv)
         every { repository.save(any()) } just runs
-        every { jobUseCases.runJob(csv.type.validateJobName, any()) } throws JobRestartFailed(JobId(123), RuntimeException())
+        every { jobUseCases.runJob(csv.type.validateJobName, any(), any()) } throws JobRestartFailed(JobId(123), RuntimeException())
 
         shouldThrow<CSVValidationRestartFailed> { service.validate(command) }
 
         verify(exactly = 1) { repository.findById(csv.id) }
         verify(exactly = 1) { repository.save(csv.copy(state = State.VALIDATION_QUEUED)) }
-        verify(exactly = 1) { jobUseCases.runJob(csv.type.validateJobName, any()) }
+        verify(exactly = 1) { jobUseCases.runJob(csv.type.validateJobName, any(), any()) }
         verify(exactly = 1) { repository.save(csv.copy(state = State.VALIDATION_FAILED)) }
     }
 
@@ -552,13 +552,13 @@ internal class CSVServiceUnitTest : MockkBaseTest {
 
         every { repository.findById(csv.id) } returns Optional.of(csv)
         every { repository.save(any()) } just runs
-        every { jobUseCases.runJob(csv.type.validateJobName, any()) } throws JobAlreadyComplete(JobId(123))
+        every { jobUseCases.runJob(csv.type.validateJobName, any(), any()) } throws JobAlreadyComplete(JobId(123))
 
         shouldThrow<CSVAlreadyValidated> { service.validate(command) }
 
         verify(exactly = 1) { repository.findById(csv.id) }
         verify(exactly = 1) { repository.save(csv.copy(state = State.VALIDATION_QUEUED)) }
-        verify(exactly = 1) { jobUseCases.runJob(csv.type.validateJobName, any()) }
+        verify(exactly = 1) { jobUseCases.runJob(csv.type.validateJobName, any(), any()) }
         verify(exactly = 1) { repository.save(csv.copy(state = State.VALIDATION_DONE)) }
     }
 

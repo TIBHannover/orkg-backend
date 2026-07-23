@@ -3,7 +3,9 @@ package org.orkg.dataimport.domain
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
 import io.mockk.every
+import io.mockk.just
 import io.mockk.mockk
+import io.mockk.runs
 import io.mockk.verify
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
@@ -107,6 +109,22 @@ internal class JobServiceUnitTest : MockkBaseTest {
 
         verify(exactly = 1) { jobOperator.start(testJob, parameters) }
         verify(exactly = 1) { jobRepository.getJobInstance(testJob.name, parameters) }
+    }
+
+    @Test
+    fun `Given a job name and job parameters, when starting an already completed job, and flag is set to restart completed jobs, it restarts the job`() {
+        val parameters = JobParametersBuilder().add("parameter", "testing123").toJobParameters()
+        val completedJobInstance = createJobInstance(name = testJob.name)
+
+        every { jobRepository.getJobInstance(testJob.name, parameters) } returns completedJobInstance
+        every { jobRepository.deleteJobInstance(completedJobInstance) } just runs
+        every { jobOperator.start(testJob, parameters) } returns createJobExecution(jobParameters = parameters)
+
+        service.runJob(testJob.name, parameters, true)
+
+        verify(exactly = 1) { jobRepository.getJobInstance(testJob.name, parameters) }
+        verify(exactly = 1) { jobRepository.deleteJobInstance(completedJobInstance) }
+        verify(exactly = 1) { jobOperator.start(testJob, parameters) }
     }
 
     @Test

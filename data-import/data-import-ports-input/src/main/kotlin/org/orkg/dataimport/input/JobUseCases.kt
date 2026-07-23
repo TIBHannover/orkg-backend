@@ -9,7 +9,7 @@ import org.springframework.data.domain.Pageable
 import java.util.Optional
 
 interface JobUseCases {
-    fun runJob(jobName: String, jobParameters: JobParameters): JobId
+    fun runJob(jobName: String, jobParameters: JobParameters, rerun: Boolean = false): JobId
 
     fun findJobStatusById(jobId: JobId, contributorId: ContributorId): Optional<JobStatus>
 

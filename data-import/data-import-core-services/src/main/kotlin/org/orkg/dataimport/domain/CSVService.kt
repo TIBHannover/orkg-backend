@@ -90,7 +90,7 @@ class CSVService(
             paperCSVRecordRepository.deleteAllByCSVID(csv.id)
             repository.save(
                 updated.copy(
-                    state = CSV.State.UPLOADED,
+                    state = State.UPLOADED,
                     validationJobId = null,
                 ),
             )
@@ -113,7 +113,7 @@ class CSVService(
             .toJobParameters()
         try {
             repository.save(csv.copy(state = State.VALIDATION_QUEUED))
-            return jobUseCases.runJob(csv.type.validateJobName, jobParameters)
+            return jobUseCases.runJob(csv.type.validateJobName, jobParameters, true)
         } catch (_: JobAlreadyRunning) {
             // align csv state with job state
             repository.save(csv.copy(state = State.VALIDATION_RUNNING))

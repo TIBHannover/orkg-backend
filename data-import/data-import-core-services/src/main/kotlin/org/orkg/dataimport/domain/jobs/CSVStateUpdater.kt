@@ -39,7 +39,7 @@ class CSVStateUpdater(
         }
     }
 
-    public override fun afterJob(jobExecution: JobExecution) {
+    override fun afterJob(jobExecution: JobExecution) {
         val id = extractCSVID(jobExecution)
         val csv = csvRepository.findById(id).orElseThrow { CSVNotFound(id) }
 

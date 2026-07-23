@@ -16,7 +16,7 @@ class JobExecutionErrorListener(
     private val problemResponseFactory: ProblemResponseFactory,
     private val objectMapper: ObjectMapper,
 ) : JobExecutionListener {
-    public override fun afterJob(jobExecution: JobExecution) {
+    override fun afterJob(jobExecution: JobExecution) {
         val exceptions: List<Throwable> = jobExecution.allFailureExceptions.filter { it !is FatalStepExecutionException }
         if (exceptions.isEmpty()) {
             return

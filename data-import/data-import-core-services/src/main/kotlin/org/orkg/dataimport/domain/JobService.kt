@@ -33,7 +33,15 @@ class JobService(
 ) : JobUseCases {
     private val jobsByName = jobs.associateBy { it.name }
 
-    override fun runJob(jobName: String, jobParameters: JobParameters): JobId {
+    override fun runJob(jobName: String, jobParameters: JobParameters, rerun: Boolean): JobId {
+        if (rerun) {
+            // We need to fully delete old job instances. Otherwise, Spring Batch will exectue the same job instance again
+            // and skip every step that has already completed. We want to fully re-run the job.
+            val jobInstance = jobRepository.getJobInstance(jobName, jobParameters)
+            if (jobInstance != null) {
+                jobRepository.deleteJobInstance(jobInstance)
+            }
+        }
         val job = jobsByName[jobName] ?: throw IllegalArgumentException("""Job "$jobName" not found.""")
         try {
             val jobExecution = jobOperator.start(job, jobParameters)
@@ -56,7 +64,7 @@ class JobService(
         pageable: Pageable,
     ): Optional<JobResult> {
         val jobExecution = findJobExecutionById(jobId, contributorId)
-        val status = JobStatus.Status.fromJobExecution(jobExecution)
+        val status = Status.fromJobExecution(jobExecution)
         if (status != Status.DONE && status != Status.FAILED) {
             return Optional.empty()
         }

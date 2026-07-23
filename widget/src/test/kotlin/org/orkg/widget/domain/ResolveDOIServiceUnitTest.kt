@@ -13,7 +13,6 @@ import org.orkg.common.exceptions.TooManyParameters
 import org.orkg.common.testing.fixtures.MockkDescribeSpec
 import org.orkg.contenttypes.domain.PaperNotFound
 import org.orkg.graph.domain.Classes
-import org.orkg.graph.domain.PUBLISHABLE_CLASSES
 import org.orkg.graph.input.RetrieveResourceUseCase
 import org.orkg.graph.input.RetrieveStatementUseCase
 import org.orkg.graph.testing.fixtures.createResource
@@ -39,36 +38,35 @@ internal class ResolveDOIServiceUnitTest :
                 }
             }
         }
-        val classNamesAndOutputs = mapOf<String, Pair<String, Long?>>(
-            "returns correct information for a paper" to ("Paper" to 23),
-            "returns correct information for a comparison" to ("Comparison" to null),
-            "returns correct information for a review" to ("SmartReviewPublished" to null),
+        val classNamesAndOutputs = mapOf<String, Pair<ThingId, Long?>>(
+            "returns correct information for a paper" to (Classes.paper to 23),
+            "returns correct information for a paper version" to (Classes.paperVersion to null),
+            "returns correct information for a comparison" to (Classes.comparisonPublished to null),
+            "returns correct information for a review" to (Classes.smartReviewPublished to null),
         )
-        val publishableClasses = PUBLISHABLE_CLASSES + Classes.paperVersion
 
         describe("DOI is provided, but title is not") {
             context("a resource with this DOI is not found") {
-                every { resourceUseCases.findByDOI("some DOI", publishableClasses) } returns Optional.empty()
+                every { resourceUseCases.findByDOI("some DOI", Classes.publishedArtifactClasses) } returns Optional.empty()
 
                 it("should throw") {
                     shouldThrowExactly<PaperNotFound> {
                         service.resolveDOI("some DOI", null)
                     }
-                    verify(exactly = 1) { resourceUseCases.findByDOI("some DOI", publishableClasses) }
+                    verify(exactly = 1) { resourceUseCases.findByDOI("some DOI", Classes.publishedArtifactClasses) }
                 }
             }
             context("a resource with this DOI is found") {
-                withData(classNamesAndOutputs) { (publishedClassName, numStatements) ->
-                    val resource = createResource(label = "some irrelevant title")
-                        .copy(classes = setOf(ThingId(publishedClassName)))
-                    every { resourceUseCases.findByDOI("some DOI", publishableClasses) } returns Optional.of(resource)
+                withData(classNamesAndOutputs) { (publishedClass, numStatements) ->
+                    val resource = createResource(label = "some irrelevant title", classes = setOf(publishedClass))
+                    every { resourceUseCases.findByDOI("some DOI", Classes.publishedArtifactClasses) } returns Optional.of(resource)
                     if (numStatements != null) {
                         every { statementUseCases.countStatementsInPaperSubgraph(ThingId("R1")) } returns numStatements
                     }
 
                     val result = service.resolveDOI("some DOI", null)
 
-                    verify(exactly = 1) { resourceUseCases.findByDOI("some DOI", publishableClasses) }
+                    verify(exactly = 1) { resourceUseCases.findByDOI("some DOI", Classes.publishedArtifactClasses) }
                     if (numStatements != null) {
                         verify(exactly = 1) { statementUseCases.countStatementsInPaperSubgraph(ThingId("R1")) }
                     } else {
@@ -80,7 +78,7 @@ internal class ResolveDOIServiceUnitTest :
                         it.doi shouldBe "some DOI"
                         it.title shouldBe "some irrelevant title"
                         it.numberOfStatements shouldBe (numStatements ?: 0)
-                        it.`class` shouldBe publishedClassName
+                        it.`class` shouldBe publishedClass.value
                     }
                 }
             }
@@ -97,17 +95,16 @@ internal class ResolveDOIServiceUnitTest :
                 }
             }
             context("a resource with this title is found") {
-                withData(classNamesAndOutputs) { (publishedClassName, numStatements) ->
-                    val resource = createResource(label = "some irrelevant title")
-                        .copy(classes = setOf(ThingId(publishedClassName)))
-                    every { resourceUseCases.findByDOI("some DOI", publishableClasses) } returns Optional.of(resource)
+                withData(classNamesAndOutputs) { (publishedClass, numStatements) ->
+                    val resource = createResource(label = "some irrelevant title", classes = setOf(publishedClass))
+                    every { resourceUseCases.findByDOI("some DOI", Classes.publishedArtifactClasses) } returns Optional.of(resource)
                     if (numStatements != null) {
                         every { statementUseCases.countStatementsInPaperSubgraph(ThingId("R1")) } returns numStatements
                     }
 
                     val result = service.resolveDOI("some DOI", null)
 
-                    verify(exactly = 1) { resourceUseCases.findByDOI("some DOI", publishableClasses) }
+                    verify(exactly = 1) { resourceUseCases.findByDOI("some DOI", Classes.publishedArtifactClasses) }
                     if (numStatements != null) {
                         verify(exactly = 1) { statementUseCases.countStatementsInPaperSubgraph(ThingId("R1")) }
                     } else {
@@ -119,7 +116,7 @@ internal class ResolveDOIServiceUnitTest :
                         it.doi shouldBe "some DOI"
                         it.title shouldBe "some irrelevant title"
                         it.numberOfStatements shouldBe (numStatements ?: 0)
-                        it.`class` shouldBe publishedClassName
+                        it.`class` shouldBe publishedClass.value
                     }
                 }
             }

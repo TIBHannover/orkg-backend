@@ -9,8 +9,8 @@ import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
 import org.orkg.common.exceptions.MissingParameter
 import org.orkg.common.exceptions.TooManyParameters
-import org.orkg.graph.domain.PUBLISHABLE_CLASSES
-import org.orkg.graph.testing.asciidoc.Asciidoc
+import org.orkg.graph.domain.Classes
+import org.orkg.graph.testing.asciidoc.publishedArtifactClasses
 import org.orkg.testing.spring.MockMvcBaseTest
 import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectDetail
 import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectErrorResponse
@@ -80,7 +80,7 @@ internal class WidgetControllerUnitTest : MockMvcBaseTest("widget") {
                     fieldWithPath("id").description("The identifier of the resource."),
                     fieldWithPath("doi").description("The DOI of the resource. May be `null` if the resource does not have a DOI.").optional(),
                     fieldWithPath("title").description("The title of the resource."),
-                    fieldWithPath("class").description("The class of the resource. Always one of ${Asciidoc.formatPublishableClasses()}.").type("enum").enumValues(PUBLISHABLE_CLASSES.map(ThingId::value)),
+                    fieldWithPath("class").description("The class of the resource. Always one of $publishedArtifactClasses.").type("enum").enumValues(Classes.publishedArtifactClasses.map(ThingId::value)),
                     fieldWithPath("num_statements").description("The number of statements connected to the resource if the class is `Paper`, or 0 in all other cases.").type<Long>(),
                 )
             }

@@ -20,8 +20,8 @@ data class Resource(
     val unlistedBy: ContributorId? = null,
     override val modifiable: Boolean = true,
 ) : Thing {
-    val publishableClasses: Set<ThingId>
-        get() = classes intersect PUBLISHABLE_CLASSES
+    val publishedArtifactClasses: Set<ThingId>
+        get() = classes intersect Classes.publishedArtifactClasses
 
     fun isOwnedBy(contributorId: ContributorId): Boolean = createdBy == contributorId
 }

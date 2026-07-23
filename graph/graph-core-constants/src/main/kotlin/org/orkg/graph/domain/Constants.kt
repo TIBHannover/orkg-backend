@@ -206,4 +206,12 @@ object Classes {
     val visualization = ThingId("Visualization")
     val visualizationSection = ThingId("VisualizationSection")
     val yearMonthDuration = ThingId("YearMonthDuration")
+
+    /** The set of classes that represent an artifact that is published, meaning a DOI could be registered for them. */
+    val publishedArtifactClasses: Set<ThingId> = setOf(
+        paper,
+        paperVersion,
+        comparisonPublished,
+        smartReviewPublished,
+    )
 }

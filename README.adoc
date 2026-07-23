@@ -21,6 +21,23 @@ To make use of the installed versions, run commands via `mise exec`, e. g. `mise
 
 The default configuration prefers Podman over Docker.
 If you do not like that change or run into problems, you can override the settings in `mise.local.toml`.
+There is a known incompatibility when using Podman with Testcontainers, resulting in sporadic test failures when running Integration Tests.
+As a workaround you need to increase the default `service_timeout` of your Podman instance.
+This can be done by running the following command for your operating system:
+
+Linux::
++
+[source,sh]
+--
+mkdir -p /etc/containers/containers.conf.d && printf "[engine]\nservice_timeout=180\n" > /etc/containers/containers.conf.d/service-timeout.conf && systemctl restart podman.socket
+--
+
+macOS::
++
+[source,sh]
+--
+echo 'mkdir -p /etc/containers/containers.conf.d && printf "[engine]\nservice_timeout=180\n" > /etc/containers/containers.conf.d/service-timeout.conf && systemctl restart podman.socket' |  podman machine ssh --username root --
+--
 
 == REST API documentation
 

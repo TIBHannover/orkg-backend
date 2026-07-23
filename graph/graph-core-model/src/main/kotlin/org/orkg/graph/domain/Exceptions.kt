@@ -472,3 +472,15 @@ class RosettaStoneStatementResourceNotModifiable(id: ThingId) :
         """A rosetta stone statement resource cannot be managed using the resources endpoint. Please see the documentation on how to manage rosetta stone statements.""",
         properties = mapOf("resource_id" to id),
     )
+
+class InvalidHopBounds(
+    min: Int,
+    max: Int,
+) : SimpleMessageException(
+        HttpStatus.BAD_REQUEST,
+        """Invalid hop bounds. Min hops must be less than or equal to max hops. Found: min: "$min", max: "$max".""",
+        properties = mapOf(
+            "min_hops" to min,
+            "max_hops" to max,
+        ),
+    )

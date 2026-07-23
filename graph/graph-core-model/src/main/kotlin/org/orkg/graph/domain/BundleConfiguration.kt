@@ -10,12 +10,14 @@ import org.orkg.common.ThingId
  * @param blacklist the list of classes to be black-listed (i.e. not fetched), these classes are checked on the subjects and objects of a statement
  * @param whitelist the list of classes to be white-listed (i.e. the only ones to be fetched), these classes are checked on the subjects and objects of a statement
  */
+@Deprecated(message = "To be removed.")
 data class BundleConfiguration(
     val minLevel: Int?,
     val maxLevel: Int?,
     val blacklist: kotlin.collections.List<ThingId>,
     val whitelist: kotlin.collections.List<ThingId>,
 ) {
+    @Deprecated(message = "To be removed.")
     companion object Factory {
         fun firstLevelConf(): BundleConfiguration =
             BundleConfiguration(minLevel = null, maxLevel = 1, blacklist = emptyList(), whitelist = emptyList())

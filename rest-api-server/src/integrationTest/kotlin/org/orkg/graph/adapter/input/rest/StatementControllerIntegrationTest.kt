@@ -171,6 +171,7 @@ internal class StatementControllerIntegrationTest : MockMvcBaseTest("statements"
     }
 
     @Test
+    @Deprecated(message = "To be removed.")
     fun fetchBundle() {
         val r1 = resourceService.createResource(label = "one")
         val r2 = resourceService.createResource(label = "two")
@@ -189,6 +190,7 @@ internal class StatementControllerIntegrationTest : MockMvcBaseTest("statements"
     }
 
     @Test
+    @Deprecated(message = "To be removed.")
     fun fetchBundleListsAllRelationshipsOnce() {
         /* Test setup:
              A → B → C  → D ← F ← E

@@ -20,7 +20,6 @@ import org.neo4j.cypherdsl.core.Cypher.toUpper
 import org.neo4j.cypherdsl.core.Cypher.unwind
 import org.neo4j.cypherdsl.core.Cypher.valueAt
 import org.neo4j.cypherdsl.core.ExposesWith
-import org.neo4j.cypherdsl.core.Expression
 import org.neo4j.cypherdsl.core.StatementBuilder
 import org.neo4j.driver.internal.value.NullValue
 import org.orkg.common.ContributorId
@@ -494,7 +493,7 @@ class SpringDataNeo4jStatementAdapter(
                     )
             }
             .withQuery { commonQuery ->
-                commonQuery.returningWithSortableFields("r", "sub", "obj")
+                commonQuery.returningStatementWithSortableFields("r", "sub", "obj")
             }
             .countOver("r")
             .withParameters("ids" to ids.map { it.value })
@@ -528,6 +527,7 @@ class SpringDataNeo4jStatementAdapter(
         .one()
         .orElse(0)
 
+    @Deprecated(message = "To be removed. Replace with subgraph repository.")
     override fun fetchAsBundle(id: ThingId, configuration: BundleConfiguration, sort: Sort): Iterable<GeneralStatement> =
         cypherQueryBuilderFactory.newBuilder()
             .withQuery {
@@ -545,7 +545,7 @@ class SpringDataNeo4jStatementAdapter(
                     .unwind(relationships).`as`(rel)
                     .with(startNode(rel).`as`("sub"), rel.`as`("rel"), endNode(rel).`as`("obj"))
                     .orderBy(rel.property("created_at").descending())
-                    .returningWithSortableFields("rel", "sub", "obj")
+                    .returningStatementWithSortableFields("rel", "sub", "obj")
                     .orderBy(sort.toSortItems(rel.property("id")))
             }
             .withParameters(
@@ -842,6 +842,7 @@ class SpringDataNeo4jStatementAdapter(
         return PageImpl(elements.toList(), pageable, count)
     }
 
+    @Deprecated(message = "To be removed.")
     private fun BundleConfiguration.toApocConfiguration(): Map<String, Any> {
         val conf = mutableMapOf<String, Any>(
             "relationshipFilter" to "RELATED>",
@@ -876,31 +877,5 @@ class SpringDataNeo4jStatementAdapter(
         cacheManager?.getCache(LITERAL_ID_TO_LITERAL_CACHE)?.evictIfPresent(id)
         cacheManager?.getCache(LITERAL_ID_TO_LITERAL_EXISTS_CACHE)?.evictIfPresent(id)
         cacheManager?.getCache(THING_ID_TO_THING_CACHE)?.evictIfPresent(id)
-    }
-
-    private fun ExposesWith.returningWithSortableFields(
-        relation: String,
-        subject: String,
-        `object`: String,
-    ): StatementBuilder.OngoingReadingAndReturn =
-        returningWithSortableFields(name(relation), name(subject), name(`object`))
-
-    private fun ExposesWith.returningWithSortableFields(
-        relation: Expression,
-        subject: Expression,
-        `object`: Expression,
-    ): StatementBuilder.OngoingReadingAndReturn {
-        val sub = name("sub")
-        val obj = name("obj")
-        val rel = name("rel")
-        return with(
-            relation.`as`(rel),
-            subject.`as`(sub),
-            `object`.`as`(obj),
-            relation.property("id").`as`("id"),
-            relation.property("created_at").`as`("created_at"),
-            relation.property("created_by").`as`("created_by"),
-            relation.property("index").`as`("index"),
-        ).returning(rel, sub, obj)
     }
 }

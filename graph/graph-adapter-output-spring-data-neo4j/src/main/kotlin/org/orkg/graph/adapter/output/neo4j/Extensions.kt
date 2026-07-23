@@ -364,3 +364,29 @@ private fun StringReader.skipWhitespace() {
 }
 
 private fun Char.isWordCharacter(): Boolean = toString().matches(Regex("\\w"))
+
+internal fun ExposesWith.returningStatementWithSortableFields(
+    relation: String,
+    subject: String,
+    `object`: String,
+): StatementBuilder.OngoingReadingAndReturn =
+    returningStatementWithSortableFields(name(relation), name(subject), name(`object`))
+
+internal fun ExposesWith.returningStatementWithSortableFields(
+    relation: Expression,
+    subject: Expression,
+    `object`: Expression,
+): StatementBuilder.OngoingReadingAndReturn {
+    val sub = name("sub")
+    val obj = name("obj")
+    val rel = name("rel")
+    return with(
+        relation.`as`(rel),
+        subject.`as`(sub),
+        `object`.`as`(obj),
+        relation.property("id").`as`("id"),
+        relation.property("created_at").`as`("created_at"),
+        relation.property("created_by").`as`("created_by"),
+        relation.property("index").`as`("index"),
+    ).returning(rel, sub, obj)
+}

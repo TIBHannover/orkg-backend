@@ -26,6 +26,7 @@ interface StatementReadRepository : EntityRepository<GeneralStatement, Statement
 
     fun countIncomingStatementsById(id: ThingId): Long
 
+    @Deprecated(message = "To be removed. Replace with subgraph repository.")
     fun fetchAsBundle(
         id: ThingId,
         configuration: BundleConfiguration,

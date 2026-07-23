@@ -182,6 +182,7 @@ class InMemoryStatementRepository(private val inMemoryGraph: InMemoryGraph) :
                 }
         }.count().toLong()
 
+    @Deprecated(message = "To be removed. Replace with subgraph repository.")
     override fun fetchAsBundle(id: ThingId, configuration: BundleConfiguration, sort: Sort): Iterable<GeneralStatement> =
         entities.values.find { it.subject.id == id }?.let {
             val exclude = mutableSetOf<GeneralStatement>()

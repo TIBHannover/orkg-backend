@@ -163,6 +163,7 @@ class StatementService(
     override fun countStatementsInPaperSubgraph(paperId: ThingId): Long =
         statementRepository.countStatementsInPaperSubgraph(paperId)
 
+    @Deprecated(message = "To be removed. Replace with subgraph use case.")
     override fun fetchAsBundle(
         thingId: ThingId,
         configuration: BundleConfiguration,
@@ -195,6 +196,7 @@ class StatementService(
      *
      * @return returns a Bundle object
      */
+    @Deprecated(message = "To be removed.")
     private fun createBundle(
         thingId: ThingId,
         configuration: BundleConfiguration,
@@ -213,6 +215,7 @@ class StatementService(
      *
      * @return returns a Bundle object (addition of normal bundle and first level bundle)
      */
+    @Deprecated(message = "To be removed.")
     private fun createBundleFirstIncluded(
         thingId: ThingId,
         configuration: BundleConfiguration,

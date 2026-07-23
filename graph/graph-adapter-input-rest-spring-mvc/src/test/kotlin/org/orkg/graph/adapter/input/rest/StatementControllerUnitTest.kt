@@ -446,6 +446,7 @@ internal class StatementControllerUnitTest : MockMvcBaseTest("statements") {
     }
 
     @Test
+    @Deprecated(message = "To be removed.")
     @DisplayName("Given a statement, when it is fetched by id and service succeeds, then status is 200 OK and statement is returned")
     fun fetchAsBundle() {
         val id = ThingId("R1")
@@ -477,11 +478,14 @@ internal class StatementControllerUnitTest : MockMvcBaseTest("statements") {
             .andExpect(status().isOk)
             .andExpectBundle()
             .andDocument {
+                deprecated()
                 summary("Fetching statements as bundles")
                 description(
                     """
                     A `Bundle` is a collection of statements that represent the subgraph starting from a specified entity in the graph.
                     A `GET` request fetches a subgraph of a certain entity and returns all the statements as a bundle.
+                    
+                    WARNING: *Deprecated*: This endpoint is deprecated and will be removed soon. Please use <<Subgraphs,subgraphs>> instead!
                     """,
                 )
                 pathParameters(

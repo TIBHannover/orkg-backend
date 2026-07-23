@@ -45,6 +45,7 @@ interface RetrieveStatementUseCase {
 
     fun countStatementsInPaperSubgraph(paperId: ThingId): Long
 
+    @Deprecated(message = "To be removed. Replace with subgraph use case.")
     fun fetchAsBundle(thingId: ThingId, configuration: BundleConfiguration, includeFirst: Boolean, sort: Sort): Bundle
 
     fun countIncomingStatementsById(id: ThingId): Long

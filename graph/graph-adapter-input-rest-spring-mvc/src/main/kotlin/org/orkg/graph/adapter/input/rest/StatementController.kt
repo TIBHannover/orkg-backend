@@ -140,6 +140,7 @@ class StatementController(
         return ResponseEntity.noContent().build()
     }
 
+    @Deprecated(message = "To be removed. Replace with subgraph endpoint.")
     @GetMapping("/{id}/bundle")
     fun fetchAsBundle(
         @PathVariable id: ThingId,

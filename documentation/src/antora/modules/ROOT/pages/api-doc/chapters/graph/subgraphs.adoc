@@ -1,0 +1,11 @@
+= Subgraphs
+
+A subgraph is limited view of the knowledge graph.
+It is represented as a list of <<Statements,statements>>.
+
+[[subgraphs-fetch]]
+== Fetching Subgraphs
+
+include::{snippets}/subgraphs_find-by-root-id/description.adoc[]
+
+operation::subgraphs_find-by-root-id[snippets='path-parameters,curl-request,query-parameters,http-response,response-fields,errors']

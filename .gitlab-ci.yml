@@ -37,8 +37,12 @@ include:
     inputs:
       stage: verify
       enable_mr_pipelines: false
-  # Disabled because the scanner does not work properly with Gradle multi-project builds. Remove dot if fixed. See below.
-  #- template: Dependency-Scanning.gitlab-ci.yml
+  - component: $CI_SERVER_FQDN/components/dependency-scanning/main@2.0.0
+    inputs:
+      stage: verify
+      job_name: dependency_scanning
+      # Dependency resolution is done during custom resolve_dependencies job, disable dependency resolution jobs provided by component
+      disabled_resolution_jobs: maven,gradle,python
 
 stages:
   - build
@@ -208,10 +212,30 @@ docker_build:
   rules:
     - if: $CI_COMMIT_REF_NAME != $CI_DEFAULT_BRANCH
 
-# Disabled because the scanner does not work properly with Gradle multi-project builds. Remove dot if fixed. See above.
-.dependency_scanning:
-  stage: verify
+resolve_dependencies:
+  extends: .gradle_build_job
+  stage: build
+  cache:
+    - <<: *gradle_cache
+      policy: pull
+    - <<: *gradle_wrapper_cache
+      policy: pull
   needs: []
+  script:
+    - ./gradlew :rest-api-server:dependencies > gradle.graph.txt
+  artifacts:
+    name: dependencies
+    expire_in: 1 mos
+    paths:
+      - gradle.graph.txt
+
+dependency_scanning:
+  cache: []
+  needs:
+    - job: resolve_dependencies
+      artifacts: true
+  rules:
+    - if: $CI_COMMIT_BRANCH || $CI_COMMIT_TAG
 
 container_scanning:
   cache: []

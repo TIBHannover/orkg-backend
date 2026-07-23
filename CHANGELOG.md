@@ -6,6 +6,30 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Added optional `type` field to comparisons.
+  (See [!1502](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1502))
+- Added search protocol to comparisons.
+  (See [!1502](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1502))
+- Added dependency scanning.
+  (See [!1504](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1504))
+- Added endpoint for fetching paths.
+  (See [!1513](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1513))
+- Added endpoint for fetching inverse paths.
+  (See [!1515](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1515))
+- Added support for published literature lists on the widget endpoint.
+### Changed
+- Moved API client documentation to Antora.
+  (See [!1491](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1491))
+- Integrated published papers into paper endpoint.
+  (See [!1500](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1500))
+- Updated to Spring Boot 4.1.0.
+  (See [!1510](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1510))
+### Fixed
+- Fixed CSV validation not working correctly after uploading a modified CSV.
+  (See [!1514](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1514))
+- Fixed widget endpoint not looking up published comparisons correctly.
+  (See [!1517](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1517))
 
 ## [0.98.6] - 2026-07-20
 ### Fixed

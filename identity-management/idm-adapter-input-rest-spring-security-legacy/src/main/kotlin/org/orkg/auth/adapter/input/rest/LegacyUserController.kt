@@ -63,7 +63,7 @@ class LegacyUserController(
             fun from(contributor: Contributor, jwtToken: JwtAuthenticationToken): UserDetails =
                 UserDetails(
                     id = contributor.id,
-                    email = jwtToken.token.getClaim("email"),
+                    email = jwtToken.token.getClaim("email")!!,
                     displayName = contributor.name,
                     created = contributor.joinedAt,
                     organizationId = contributor.organizationId.takeUnless { it == OrganizationId.UNKNOWN },

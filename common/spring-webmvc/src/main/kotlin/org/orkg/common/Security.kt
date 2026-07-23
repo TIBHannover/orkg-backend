@@ -59,15 +59,15 @@ class JwtAuthenticationConverter : Converter<Jwt, AbstractAuthenticationToken> {
     private val jwtGrantedAuthoritiesConverter = JwtGrantedAuthoritiesConverter()
 
     override fun convert(jwt: Jwt): AbstractAuthenticationToken {
-        val scopes = jwtGrantedAuthoritiesConverter.convert(jwt)!!
+        val scopes = jwtGrantedAuthoritiesConverter.convert(jwt)
         val roles = extractRoles(jwt)
-        val name = jwt.getClaim<String>(JwtClaimNames.SUB) // user id
+        val name = jwt.getClaim<String>(JwtClaimNames.SUB)!! // user id
         return JwtAuthenticationToken(jwt, scopes + roles, name)
     }
 
     fun extractRoles(jwt: Jwt): Collection<GrantedAuthority> {
         val resourceAccess = jwt.getClaim<Map<String, Any?>>("realm_access")
-        val roles = resourceAccess["roles"] as? List<*> ?: emptyList<Any?>()
+        val roles = resourceAccess?.get("roles") as? List<*> ?: emptyList<Any?>()
         return roles.map { SimpleGrantedAuthority("ROLE_${it.toString().uppercase()}") }
     }
 }

@@ -64,6 +64,8 @@ class ApocConfig(
 
         companion object {
             val RELATED_OUTGOING = CompoundRelationshipFilter(outgoingLabels = setOf(ThingId("RELATED")))
+            val RELATED_INCOMING = CompoundRelationshipFilter(incomingLabels = setOf(ThingId("RELATED")))
+            val RELATED_UNDIRECTED = CompoundRelationshipFilter(undirectedLabels = setOf(ThingId("RELATED")))
         }
     }
 

@@ -45,7 +45,9 @@ fun pagedResponseFields(
     if (ignorePageFields) {
         pageResponseFields.forEach { it.ignored() }
     }
-    return pageResponseFields + applyPathPrefix("content[].", fieldDescriptors.filter { it.path != "content[]" })
+    return pageResponseFields +
+        applyPathPrefix("content[]", fieldDescriptors.filter { it.path != "content[]" && it.path.startsWith("[") }) +
+        applyPathPrefix("content[].", fieldDescriptors.filter { it.path != "content[]" && !it.path.startsWith("[") })
 }
 
 /**

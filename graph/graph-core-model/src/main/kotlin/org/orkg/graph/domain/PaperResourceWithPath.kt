@@ -1,8 +1,8 @@
 package org.orkg.graph.domain
 
-typealias Path = kotlin.collections.List<kotlin.collections.List<Thing>>
+import kotlin.collections.List
 
 data class PaperResourceWithPath(
     val paper: Resource,
-    var path: Path,
+    var path: List<Path>,
 )

@@ -3,6 +3,7 @@ package org.orkg.graph.testing.asciidoc
 import org.orkg.common.ThingId
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ExtractionMethod
+import org.orkg.graph.domain.PathDirection
 import org.orkg.graph.domain.Visibility
 import org.orkg.graph.domain.VisibilityFilter
 import org.orkg.testing.spring.restdocs.enumValues
@@ -18,6 +19,9 @@ val allowedVisibilityValues =
 
 val allowedVisibilityFilterValues =
     VisibilityFilter.entries.sorted().joinToString(separator = "`, `", prefix = "`", postfix = "`")
+
+val allowedPathDirectionValues =
+    PathDirection.entries.sorted().joinToString(separator = "`, `", prefix = "`", postfix = "`")
 
 val allowedThingClassValues =
     listOf("class", "resource", "predicate", "literal").sorted().joinToString(separator = "`, `", prefix = "`", postfix = "`")

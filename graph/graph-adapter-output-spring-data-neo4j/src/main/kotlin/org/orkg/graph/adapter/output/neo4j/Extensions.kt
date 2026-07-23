@@ -119,6 +119,37 @@ data class ThingMapper(val name: String) : BiFunction<TypeSystem, Record, Thing>
     override fun apply(typeSystem: TypeSystem, record: Record) = record[name].asNode().toThing()
 }
 
+data class PathMapper(
+    private val name: String,
+    private val predicateRepository: PredicateRepository,
+    private val includeRoot: Boolean,
+) : BiFunction<TypeSystem, Record, List<Thing>> {
+    constructor(
+        symbolicName: SymbolicName,
+        predicateRepository: PredicateRepository,
+        includeRoot: Boolean,
+    ) : this(
+        symbolicName.value,
+        predicateRepository,
+        includeRoot,
+    )
+
+    override fun apply(typeSystem: TypeSystem, record: Record): List<Thing> {
+        val path = record["path"].asPath()
+        val nodes: List<Thing> = path.nodes().map { it.toThing() }
+        val predicates: List<Thing> = path.relationships().map {
+            predicateRepository.findById(it["predicate_id"].toThingId()!!).get()
+        }
+        return IntRange(0, nodes.size + predicates.size - 1).map { index ->
+            if (index % 2 == 0) {
+                nodes[index shr 1]
+            } else {
+                predicates[(index - 1) shr 1]
+            }
+        }.drop(if (includeRoot) 0 else 1)
+    }
+}
+
 fun Node.toLiteral() = Literal(
     id = this["id"].toThingId()!!,
     label = this["label"].asString(),

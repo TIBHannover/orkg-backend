@@ -21,5 +21,8 @@ include::graph/statements.adoc[leveloffset=+1]
 [[lists]]
 include::graph/lists.adoc[leveloffset=+1]
 
+[[paths]]
+include::graph/paths.adoc[leveloffset=+1]
+
 [[subgraphs]]
 include::graph/subgraphs.adoc[leveloffset=+1]

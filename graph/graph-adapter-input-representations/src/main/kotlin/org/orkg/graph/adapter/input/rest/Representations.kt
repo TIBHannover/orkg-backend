@@ -16,7 +16,7 @@ import org.orkg.graph.domain.StatementId
 import org.orkg.graph.domain.Visibility
 import java.time.OffsetDateTime
 
-typealias PathRepresentation = List<List<ThingRepresentation>>
+typealias PathRepresentation = List<ThingRepresentation>
 
 @JsonTypeInfo(
     use = JsonTypeInfo.Id.NAME,
@@ -171,7 +171,7 @@ data class ListRepresentation(
 //  resource: ResourceRepresentation
 //  path: PathRepresentation
 data class PaperResourceWithPathRepresentation(
-    val path: PathRepresentation,
+    val path: List<PathRepresentation>,
     override val id: ThingId,
     val label: String,
     val classes: Set<ThingId>,

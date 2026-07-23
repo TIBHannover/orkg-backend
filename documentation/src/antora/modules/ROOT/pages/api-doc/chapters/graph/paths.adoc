@@ -1,0 +1,11 @@
+= Paths
+
+A path is limited view of the knowledge graph.
+It is represented as a list of <<Things,things>>.
+
+[[paths-fetch]]
+== Fetching Paths
+
+include::{snippets}/paths_find-all-by-root-id/description.adoc[]
+
+operation::paths_find-all-by-root-id[snippets='path-parameters,curl-request,query-parameters,http-response,response-fields,errors']

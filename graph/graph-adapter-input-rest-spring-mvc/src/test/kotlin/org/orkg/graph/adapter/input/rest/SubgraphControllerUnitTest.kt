@@ -1,5 +1,6 @@
 package org.orkg.graph.adapter.input.rest
 
+import com.epages.restdocs.apispec.ParameterType
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
 import io.mockk.verify
@@ -20,6 +21,7 @@ import org.orkg.testing.andExpectStatement
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.MockMvcBaseTest
 import org.orkg.testing.spring.restdocs.repeatable
+import org.orkg.testing.spring.restdocs.type
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
@@ -79,8 +81,8 @@ internal class SubgraphControllerUnitTest : MockMvcBaseTest("subgraphs") {
                     parameterWithName("id").description("The identifier of the root thing."),
                 )
                 pagedQueryParameters(
-                    parameterWithName("min_hops").description("Limits the returned subgraph to paths which are at least as long as the given value. Must be greater than 0 and less than or equal to 10. (optional, default: 1)").optional(),
-                    parameterWithName("max_hops").description("Limits the returned subgraph to paths which are at most as long as the given value. Must be greater than 0 and less than or equal to 10. (optional, default: 10)").optional(),
+                    parameterWithName("min_hops").description("Limits the returned subgraph to paths which are at least as long as the given value. Must be greater than 0 and less than or equal to 10. (optional, default: 1)").type(ParameterType.INTEGER).optional(),
+                    parameterWithName("max_hops").description("Limits the returned subgraph to paths which are at most as long as the given value. Must be greater than 0 and less than or equal to 10. (optional, default: 10)").type(ParameterType.INTEGER).optional(),
                     parameterWithName("deny_classes").description("Limits the returned subgraph to paths which do not include any of the given classes. (optional)").repeatable().optional(),
                     parameterWithName("allow_classes").description("""Limits subgraph expansion to things assigned to one of the given classes. Termination classes are exempt from this requirement. (optional)""").repeatable().optional(),
                     parameterWithName("termination_classes").description("Limits the returned subgraph to paths that end on a thing assigned to one of the given classes. (optional)").repeatable().optional(),

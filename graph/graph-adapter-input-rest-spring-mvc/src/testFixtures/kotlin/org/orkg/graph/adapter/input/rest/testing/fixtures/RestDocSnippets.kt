@@ -1,12 +1,15 @@
 package org.orkg.graph.adapter.input.rest.testing.fixtures
 
+import org.orkg.graph.adapter.input.rest.ThingRepresentation
 import org.orkg.graph.testing.asciidoc.allowedExtractionMethodValues
 import org.orkg.graph.testing.asciidoc.allowedThingClassValues
 import org.orkg.graph.testing.asciidoc.allowedVisibilityValues
 import org.orkg.testing.spring.restdocs.arrayItemsType
 import org.orkg.testing.spring.restdocs.deprecated
+import org.orkg.testing.spring.restdocs.references
 import org.orkg.testing.spring.restdocs.timestampFieldWithPath
 import org.springframework.restdocs.payload.FieldDescriptor
+import org.springframework.restdocs.payload.PayloadDocumentation.applyPathPrefix
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.subsectionWithPath
 
@@ -109,4 +112,9 @@ fun listResponseFields() = listOf(
     fieldWithPath("extraction_method").description("Determines how the list was created. Can be one of $allowedExtractionMethodValues."),
     fieldWithPath("modifiable").description("Whether this list can be modified."),
     fieldWithPath("_class").description("The type of object this json contains. Always has the value \"list\"."),
+)
+
+fun pathResponseFields() = listOf(
+    fieldWithPath("[]").description("The list of path items.").arrayItemsType("object").references<ThingRepresentation>(),
+    *applyPathPrefix("[].", thingResponseFields()).toTypedArray(),
 )

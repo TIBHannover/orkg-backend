@@ -63,6 +63,16 @@ RETURN predicateId, templateId, predicateLabel, description, type""",
         predicateIds: Set<ThingId>,
         rosettaStoneStatementIds: Set<ThingId>,
     ): Set<Neo4jComparisonPathLabelEntry>
+
+    @Query(
+        """
+MATCH (:Comparison {id: $ID})-[:RELATED {predicate_id: "compareContribution"}]->(n:Resource)
+RETURN DISTINCT n.id AS id
+UNION
+MATCH (:Comparison {id: $ID})-[:RELATED {predicate_id: "compareRosettaStoneContribution"}]->(n:Resource)
+RETURN DISTINCT n.id AS id""",
+    )
+    fun findAllSourceIdsByComparisonId(id: ThingId): Set<ThingId>
 }
 
 data class Neo4jComparisonPathEntry(

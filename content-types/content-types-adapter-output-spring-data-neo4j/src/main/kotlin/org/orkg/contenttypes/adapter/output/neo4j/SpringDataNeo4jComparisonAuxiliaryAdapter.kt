@@ -40,9 +40,10 @@ class SpringDataNeo4jComparisonAuxiliaryAdapter(
     private val cypherQueryBuilderFactory: CypherQueryBuilderFactory,
 ) : ComparisonAuxiliaryRepository {
     override fun findAllLabeledComparisonPathsByComparisonId(id: ThingId, maxDepth: Int): List<LabeledComparisonPath> {
+        val sourceIds = neo4jRepository.findAllSourceIdsByComparisonId(id)
+        if (sourceIds.isEmpty()) return emptyList()
         val entries = neo4jRepository.findAllComparisonTablePredicatePathsByComparisonId(id, maxDepth)
-        val rootIds = entries.filter { entry -> entries.none { entry.subjectId in it.objectIds } }.map { it.subjectId }.toSet()
-        return LabeledComparisonPathBuilder.buildTree(entries, rootIds, maxDepth)
+        return LabeledComparisonPathBuilder.buildTree(entries, sourceIds, maxDepth)
     }
 
     override fun findAllLabeledComparisonPathsBySimpleComparisonPaths(paths: List<SimpleComparisonPath>): List<LabeledComparisonPath> {

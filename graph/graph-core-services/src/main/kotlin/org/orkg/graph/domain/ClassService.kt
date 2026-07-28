@@ -3,6 +3,7 @@ package org.orkg.graph.domain
 import dev.forkhandles.values.ofOrNull
 import org.orkg.common.ContributorId
 import org.orkg.common.IRI
+import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
 import org.orkg.graph.input.ClassUseCases
 import org.orkg.graph.input.CreateClassUseCase
@@ -30,8 +31,9 @@ class ClassService(
             if (!uri.isAbsolute) {
                 throw URINotAbsolute(uri)
             }
-            repository.findByUri(uri.toString()).ifPresent {
-                throw URIAlreadyInUse(uri, it.id)
+            val things = thingRepository.findAll(PageRequests.SINGLE, uri = uri)
+            if (!things.isEmpty) {
+                throw URIAlreadyInUse(uri, things.single().id)
             }
         }
         command.id?.also { id ->
@@ -73,16 +75,18 @@ class ClassService(
             throw InvalidExtractionMethodChange(`class`.extractionMethod, command.extractionMethod!!)
         }
         command.uri?.also { newUri ->
-            if (`class`.uri != null && command.uri != `class`.uri) {
+            if (newUri == `class`.uri) {
+                return@also
+            }
+            if (`class`.uri != null) {
                 throw CannotResetURI(command.id)
             }
             if (!newUri.isAbsolute) {
                 throw URINotAbsolute(newUri)
             }
-            findByURI(newUri).ifPresent {
-                if (it.id != `class`.id) {
-                    throw URIAlreadyInUse(newUri, it.id)
-                }
+            val things = thingRepository.findAll(PageRequests.SINGLE, uri = newUri)
+            if (!things.isEmpty) {
+                throw URIAlreadyInUse(newUri, things.single().id)
             }
         }
         val updated = `class`.apply(command)
@@ -105,13 +109,15 @@ class ClassService(
             throw InvalidExtractionMethodChange(`class`.extractionMethod, command.extractionMethod!!)
         }
         command.uri?.also { newUri ->
+            if (newUri == `class`.uri) {
+                return@also
+            }
             if (!newUri.isAbsolute) {
                 throw URINotAbsolute(newUri)
             }
-            findByURI(newUri).ifPresent {
-                if (it.id != `class`.id) {
-                    throw URIAlreadyInUse(newUri, it.id)
-                }
+            val things = thingRepository.findAll(PageRequests.SINGLE, uri = newUri)
+            if (!things.isEmpty) {
+                throw URIAlreadyInUse(newUri, things.single().id)
             }
         }
         val updated = `class`.apply(command)

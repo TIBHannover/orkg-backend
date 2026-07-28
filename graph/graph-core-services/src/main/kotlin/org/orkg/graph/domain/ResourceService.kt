@@ -51,9 +51,9 @@ class ResourceService(
             if (!uri.isAbsolute) {
                 throw URINotAbsolute(uri)
             }
-            val predicates = repository.findAll(PageRequests.SINGLE, uri = uri)
-            if (!predicates.isEmpty) {
-                throw URIAlreadyInUse(uri, predicates.single().id)
+            val things = thingRepository.findAll(PageRequests.SINGLE, uri = uri)
+            if (!things.isEmpty) {
+                throw URIAlreadyInUse(uri, things.single().id)
             }
         }
         command.id?.also { id -> thingRepository.findById(id).ifPresent { throw ThingAlreadyExists(id) } }
@@ -130,15 +130,18 @@ class ResourceService(
         command.label?.also { Label.ofOrNull(it) ?: throw InvalidLabel() }
         command.classes?.also { validateClasses(it) }
         command.uri?.also { newUri ->
-            if (resource.uri != null && newUri != resource.uri) {
+            if (newUri == resource.uri) {
+                return@also
+            }
+            if (resource.uri != null) {
                 throw CannotResetURI(command.id)
             }
             if (!newUri.isAbsolute) {
                 throw URINotAbsolute(newUri)
             }
-            val resources = repository.findAll(PageRequests.SINGLE, uri = newUri)
-            if (!resources.isEmpty) {
-                throw URIAlreadyInUse(newUri, resources.single().id)
+            val things = thingRepository.findAll(PageRequests.SINGLE, uri = newUri)
+            if (!things.isEmpty) {
+                throw URIAlreadyInUse(newUri, things.single().id)
             }
         }
         command.observatoryId?.also { observatoryId ->

@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.orkg.common.ContributorId
 import org.orkg.common.IRI
+import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.graph.input.CreateClassUseCase
@@ -21,6 +22,7 @@ import org.orkg.graph.output.ThingRepository
 import org.orkg.graph.testing.fixtures.createClass
 import org.orkg.graph.testing.fixtures.createClassWithoutURI
 import org.orkg.testing.MockUserId
+import org.orkg.testing.pageOf
 import java.util.Optional
 
 internal class ClassServiceUnitTest : MockkBaseTest {
@@ -120,11 +122,11 @@ internal class ClassServiceUnitTest : MockkBaseTest {
             uri = mockClass.uri,
         )
 
-        every { repository.findByUri(mockClass.uri.toString()) } returns mockClass.toOptional()
+        every { thingRepository.findAll(PageRequests.SINGLE, uri = mockClass.uri) } returns pageOf(mockClass)
 
         assertThrows<URIAlreadyInUse> { service.create(command) }
 
-        verify(exactly = 1) { repository.findByUri(mockClass.uri.toString()) }
+        verify(exactly = 1) { thingRepository.findAll(PageRequests.SINGLE, uri = mockClass.uri) }
     }
 
     @Test
@@ -153,7 +155,7 @@ internal class ClassServiceUnitTest : MockkBaseTest {
         val modifiable = false
 
         every { repository.findById(`class`.id) } returns Optional.of(`class`)
-        every { repository.findByUri(uri.toString()) } returns Optional.empty()
+        every { thingRepository.findAll(PageRequests.SINGLE, uri = uri) } returns pageOf()
         every { repository.save(any()) } just runs
 
         service.update(
@@ -167,7 +169,7 @@ internal class ClassServiceUnitTest : MockkBaseTest {
         )
 
         verify(exactly = 1) { repository.findById(`class`.id) }
-        verify(exactly = 1) { repository.findByUri(uri.toString()) }
+        verify(exactly = 1) { thingRepository.findAll(PageRequests.SINGLE, uri = uri) }
         verify(exactly = 1) {
             repository.save(
                 withArg {
@@ -293,13 +295,13 @@ internal class ClassServiceUnitTest : MockkBaseTest {
         )
 
         every { repository.findById(originalClass.id) } returns Optional.of(originalClass)
-        every { service.findByURI(expectedClass.uri!!) } returns Optional.empty()
+        every { thingRepository.findAll(PageRequests.SINGLE, uri = expectedClass.uri) } returns pageOf()
         every { repository.save(expectedClass) } returns Unit
 
         service.update(command)
 
         verify(exactly = 1) { repository.findById(originalClass.id) }
-        verify(exactly = 1) { service.findByURI(expectedClass.uri!!) }
+        verify(exactly = 1) { thingRepository.findAll(PageRequests.SINGLE, uri = expectedClass.uri) }
         verify(exactly = 1) { repository.save(expectedClass) }
     }
 
@@ -333,12 +335,12 @@ internal class ClassServiceUnitTest : MockkBaseTest {
         )
 
         every { repository.findById(originalClass.id) } returns Optional.of(originalClass)
-        every { service.findByURI(expectedClass.uri!!) } returns differentWithSameURI.toOptional()
+        every { thingRepository.findAll(PageRequests.SINGLE, uri = expectedClass.uri) } returns pageOf(differentWithSameURI)
 
         assertThrows<URIAlreadyInUse> { service.update(command) }
 
         verify(exactly = 1) { repository.findById(originalClass.id) }
-        verify(exactly = 1) { service.findByURI(expectedClass.uri!!) }
+        verify(exactly = 1) { thingRepository.findAll(PageRequests.SINGLE, uri = expectedClass.uri) }
     }
 
     @Test
@@ -391,7 +393,7 @@ internal class ClassServiceUnitTest : MockkBaseTest {
         val modifiable = false
 
         every { repository.findById(`class`.id) } returns Optional.of(`class`)
-        every { repository.findByUri(uri.toString()) } returns Optional.empty()
+        every { thingRepository.findAll(PageRequests.SINGLE, uri = uri) } returns pageOf()
         every { repository.save(any()) } just runs
 
         service.replace(
@@ -405,7 +407,7 @@ internal class ClassServiceUnitTest : MockkBaseTest {
         )
 
         verify(exactly = 1) { repository.findById(`class`.id) }
-        verify(exactly = 1) { repository.findByUri(uri.toString()) }
+        verify(exactly = 1) { thingRepository.findAll(PageRequests.SINGLE, uri = uri) }
         verify(exactly = 1) {
             repository.save(
                 withArg {
@@ -428,13 +430,11 @@ internal class ClassServiceUnitTest : MockkBaseTest {
         val contributorId = ContributorId(MockUserId.USER)
 
         every { repository.findById(originalClass.id) } returns Optional.of(originalClass)
-        every { service.findByURI(expectedClass.uri!!) } returns Optional.empty()
         every { repository.save(expectedClass) } returns Unit
 
         service.replace(replacingClass.toReplaceCommand(contributorId))
 
         verify(exactly = 1) { repository.findById(originalClass.id) }
-        verify(exactly = 1) { service.findByURI(expectedClass.uri!!) }
         verify(exactly = 1) { repository.save(expectedClass) }
     }
 
@@ -483,13 +483,11 @@ internal class ClassServiceUnitTest : MockkBaseTest {
         val contributorId = ContributorId(MockUserId.USER)
 
         every { repository.findById(classToReplace) } returns existingClass.toOptional()
-        every { service.findByURI(expectedClass.uri!!) } returns Optional.empty()
         every { repository.save(expectedClass) } returns Unit
 
         service.replace(replacingClass.toReplaceCommand(contributorId))
 
         verify(exactly = 1) { repository.findById(classToReplace) }
-        verify(exactly = 1) { service.findByURI(expectedClass.uri!!) }
         verify(exactly = 1) { repository.save(expectedClass) }
     }
 
@@ -502,13 +500,13 @@ internal class ClassServiceUnitTest : MockkBaseTest {
         val contributorId = ContributorId(MockUserId.USER)
 
         every { repository.findById(classToReplace) } returns existingClass.toOptional()
-        every { service.findByURI(expectedClass.uri!!) } returns Optional.empty()
+        every { thingRepository.findAll(PageRequests.SINGLE, uri = expectedClass.uri) } returns pageOf()
         every { repository.save(expectedClass) } returns Unit
 
         service.replace(replacingClass.toReplaceCommand(contributorId))
 
         verify(exactly = 1) { repository.findById(classToReplace) }
-        verify(exactly = 1) { service.findByURI(expectedClass.uri!!) }
+        verify(exactly = 1) { thingRepository.findAll(PageRequests.SINGLE, uri = expectedClass.uri) }
         verify(exactly = 1) { repository.save(expectedClass) }
     }
 
@@ -540,12 +538,12 @@ internal class ClassServiceUnitTest : MockkBaseTest {
         val contributorId = ContributorId(MockUserId.USER)
 
         every { repository.findById(classToReplace) } returns existingClass.toOptional()
-        every { service.findByURI(expectedClass.uri!!) } returns differentWithSameURI.toOptional()
+        every { thingRepository.findAll(PageRequests.SINGLE, uri = expectedClass.uri) } returns pageOf(differentWithSameURI)
 
         assertThrows<URIAlreadyInUse> { service.replace(replacingClass.toReplaceCommand(contributorId)) }
 
         verify(exactly = 1) { repository.findById(classToReplace) }
-        verify(exactly = 1) { service.findByURI(expectedClass.uri!!) }
+        verify(exactly = 1) { thingRepository.findAll(PageRequests.SINGLE, uri = expectedClass.uri) }
     }
 
     @Test

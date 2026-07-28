@@ -49,13 +49,13 @@ internal class PredicateServiceUnitTest : MockkBaseTest {
 
         every { thingRepository.findById(id) } returns Optional.empty()
         every { unsafePredicateUseCases.create(command) } returns id
-        every { repository.findAll(PageRequests.SINGLE, uri = command.uri) } returns pageOf()
+        every { thingRepository.findAll(PageRequests.SINGLE, uri = command.uri) } returns pageOf()
 
         service.create(command) shouldBe id
 
         verify(exactly = 1) { thingRepository.findById(id) }
         verify(exactly = 1) { unsafePredicateUseCases.create(command) }
-        verify(exactly = 1) { repository.findAll(PageRequests.SINGLE, uri = command.uri) }
+        verify(exactly = 1) { thingRepository.findAll(PageRequests.SINGLE, uri = command.uri) }
     }
 
     @Test
@@ -127,11 +127,11 @@ internal class PredicateServiceUnitTest : MockkBaseTest {
             uri = IRI.create("https://example.com/"),
         )
 
-        every { repository.findAll(PageRequests.SINGLE, uri = command.uri) } returns pageOf(createPredicate())
+        every { thingRepository.findAll(PageRequests.SINGLE, uri = command.uri) } returns pageOf(createPredicate())
 
         assertThrows<URIAlreadyInUse> { service.create(command) }
 
-        verify(exactly = 1) { repository.findAll(PageRequests.SINGLE, uri = command.uri) }
+        verify(exactly = 1) { thingRepository.findAll(PageRequests.SINGLE, uri = command.uri) }
     }
 
     @Test
@@ -204,12 +204,12 @@ internal class PredicateServiceUnitTest : MockkBaseTest {
         )
 
         every { repository.findById(predicate.id) } returns Optional.of(predicate)
-        every { repository.findAll(PageRequests.SINGLE, uri = command.uri) } returns pageOf(createPredicate())
+        every { thingRepository.findAll(PageRequests.SINGLE, uri = command.uri) } returns pageOf(createPredicate())
 
         assertThrows<URIAlreadyInUse> { service.update(command) }
 
         verify(exactly = 1) { repository.findById(predicate.id) }
-        verify(exactly = 1) { repository.findAll(PageRequests.SINGLE, uri = command.uri) }
+        verify(exactly = 1) { thingRepository.findAll(PageRequests.SINGLE, uri = command.uri) }
     }
 
     @Test
@@ -295,13 +295,13 @@ internal class PredicateServiceUnitTest : MockkBaseTest {
         )
 
         every { repository.findById(predicate.id) } returns Optional.of(predicate)
-        every { repository.findAll(PageRequests.SINGLE, uri = command.uri) } returns pageOf()
+        every { thingRepository.findAll(PageRequests.SINGLE, uri = command.uri) } returns pageOf()
         every { repository.save(any()) } just runs
 
         service.update(command)
 
         verify(exactly = 1) { repository.findById(predicate.id) }
-        verify(exactly = 1) { repository.findAll(PageRequests.SINGLE, uri = command.uri) }
+        verify(exactly = 1) { thingRepository.findAll(PageRequests.SINGLE, uri = command.uri) }
         verify(exactly = 1) {
             repository.save(
                 withArg {

@@ -78,14 +78,14 @@ internal class ResourceServiceUnitTest : MockkBaseTest {
 
         every { thingRepository.findById(id) } returns Optional.empty()
         every { classRepository.existsAllById(command.classes) } returns true
-        every { repository.findAll(PageRequests.SINGLE, uri = command.uri) } returns pageOf()
+        every { thingRepository.findAll(PageRequests.SINGLE, uri = command.uri) } returns pageOf()
         every { unsafeResourceUseCases.create(command) } returns id
 
         service.create(command) shouldBe id
 
         verify(exactly = 1) { thingRepository.findById(id) }
         verify(exactly = 1) { classRepository.existsAllById(command.classes) }
-        verify(exactly = 1) { repository.findAll(PageRequests.SINGLE, uri = command.uri) }
+        verify(exactly = 1) { thingRepository.findAll(PageRequests.SINGLE, uri = command.uri) }
         verify(exactly = 1) { unsafeResourceUseCases.create(command) }
     }
 
@@ -166,11 +166,11 @@ internal class ResourceServiceUnitTest : MockkBaseTest {
             uri = IRI.create("https://example.com/"),
         )
 
-        every { repository.findAll(PageRequests.SINGLE, uri = command.uri) } returns pageOf(createResource())
+        every { thingRepository.findAll(PageRequests.SINGLE, uri = command.uri) } returns pageOf(createResource())
 
         assertThrows<URIAlreadyInUse> { service.create(command) }
 
-        verify(exactly = 1) { repository.findAll(PageRequests.SINGLE, uri = command.uri) }
+        verify(exactly = 1) { thingRepository.findAll(PageRequests.SINGLE, uri = command.uri) }
     }
 
     @Test
@@ -425,12 +425,12 @@ internal class ResourceServiceUnitTest : MockkBaseTest {
         )
 
         every { repository.findById(resource.id) } returns Optional.of(resource)
-        every { repository.findAll(PageRequests.SINGLE, uri = command.uri) } returns pageOf(createResource())
+        every { thingRepository.findAll(PageRequests.SINGLE, uri = command.uri) } returns pageOf(createResource())
 
         assertThrows<URIAlreadyInUse> { service.update(command) }
 
         verify(exactly = 1) { repository.findById(resource.id) }
-        verify(exactly = 1) { repository.findAll(PageRequests.SINGLE, uri = command.uri) }
+        verify(exactly = 1) { thingRepository.findAll(PageRequests.SINGLE, uri = command.uri) }
     }
 
     @Test
@@ -793,7 +793,7 @@ internal class ResourceServiceUnitTest : MockkBaseTest {
 
         every { repository.findById(resource.id) } returns Optional.of(resource)
         every { classRepository.existsAllById(classes) } returns true
-        every { repository.findAll(PageRequests.SINGLE, uri = uri) } returns pageOf()
+        every { thingRepository.findAll(PageRequests.SINGLE, uri = uri) } returns pageOf()
         every { contributorRepository.findById(contributorId) } returns Optional.of(contributor)
         every { observatoryRepository.existsById(observatoryId) } returns true
         every { organizationRepository.findById(organizationId) } returns Optional.of(createOrganization(organizationId))
@@ -817,7 +817,7 @@ internal class ResourceServiceUnitTest : MockkBaseTest {
 
         verify(exactly = 1) { repository.findById(resource.id) }
         verify(exactly = 1) { classRepository.existsAllById(classes) }
-        verify(exactly = 1) { repository.findAll(PageRequests.SINGLE, uri = uri) }
+        verify(exactly = 1) { thingRepository.findAll(PageRequests.SINGLE, uri = uri) }
         verify(exactly = 1) { contributorRepository.findById(contributorId) }
         verify(exactly = 1) { observatoryRepository.existsById(observatoryId) }
         verify(exactly = 1) { organizationRepository.findById(organizationId) }

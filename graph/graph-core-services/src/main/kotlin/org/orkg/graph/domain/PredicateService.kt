@@ -37,9 +37,9 @@ class PredicateService(
             if (!uri.isAbsolute) {
                 throw URINotAbsolute(uri)
             }
-            val predicates = repository.findAll(PageRequests.SINGLE, uri = uri)
-            if (!predicates.isEmpty) {
-                throw URIAlreadyInUse(uri, predicates.single().id)
+            val things = thingRepository.findAll(PageRequests.SINGLE, uri = uri)
+            if (!things.isEmpty) {
+                throw URIAlreadyInUse(uri, things.single().id)
             }
         }
         command.id?.also { id -> thingRepository.findById(id).ifPresent { throw ThingAlreadyExists(id) } }
@@ -71,15 +71,18 @@ class PredicateService(
         }
         command.label?.also { Label.ofOrNull(it) ?: throw InvalidLabel() }
         command.uri?.also { newUri ->
-            if (predicate.uri != null && newUri != predicate.uri) {
+            if (newUri == predicate.uri) {
+                return@also
+            }
+            if (predicate.uri != null) {
                 throw CannotResetURI(command.id)
             }
             if (!newUri.isAbsolute) {
                 throw URINotAbsolute(newUri)
             }
-            val predicates = repository.findAll(PageRequests.SINGLE, uri = newUri)
-            if (!predicates.isEmpty) {
-                throw URIAlreadyInUse(newUri, predicates.single().id)
+            val things = thingRepository.findAll(PageRequests.SINGLE, uri = newUri)
+            if (!things.isEmpty) {
+                throw URIAlreadyInUse(newUri, things.single().id)
             }
         }
         val updated = predicate.apply(command)

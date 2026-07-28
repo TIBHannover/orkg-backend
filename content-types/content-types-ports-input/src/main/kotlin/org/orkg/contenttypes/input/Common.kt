@@ -23,6 +23,14 @@ sealed interface CreateThingsCommand {
 
     fun tempIds(): List<String> =
         listOf(resources.keys, literals.keys, predicates.keys, classes.keys, lists.keys).flatten()
+
+    fun uris(): List<IRI> =
+        listOf(
+            resources.values.mapNotNull { it.uri },
+            predicates.values.mapNotNull { it.uri },
+            classes.values.mapNotNull { it.uri },
+            lists.values.mapNotNull { it.uri },
+        ).flatten()
 }
 
 sealed interface CreateThingCommandPart {
@@ -32,6 +40,7 @@ sealed interface CreateThingCommandPart {
 data class CreateResourceCommandPart(
     override val label: String,
     val classes: Set<ThingId> = emptySet(),
+    val uri: IRI? = null,
 ) : CreateThingCommandPart
 
 data class CreateClassCommandPart(
@@ -42,6 +51,7 @@ data class CreateClassCommandPart(
 data class CreateListCommandPart(
     override val label: String,
     val elements: List<String> = emptyList(),
+    val uri: IRI? = null,
 ) : CreateThingCommandPart
 
 data class CreateLiteralCommandPart(
@@ -52,6 +62,7 @@ data class CreateLiteralCommandPart(
 data class CreatePredicateCommandPart(
     override val label: String,
     val description: String? = null,
+    val uri: IRI? = null,
 ) : CreateThingCommandPart
 
 data class CreateContributionCommandPart(

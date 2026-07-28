@@ -36,7 +36,6 @@ import org.orkg.graph.input.UnsafeLiteralUseCases
 import org.orkg.graph.input.UnsafePredicateUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
-import org.orkg.graph.output.ClassRepository
 import org.orkg.graph.output.ListRepository
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.StatementRepository
@@ -67,7 +66,6 @@ internal class PaperServiceUnitTest : MockkBaseTest {
     private val listService: ListUseCases = mockk()
     private val doiService: DoiService = mockk()
     private val paperRepository: PaperRepository = mockk()
-    private val classRepository: ClassRepository = mockk()
     private val listRepository: ListRepository = mockk()
     private val contributorRepository: ContributorRepository = mockk()
     private val paperSnapshotRepository: PaperSnapshotRepository = mockk()
@@ -90,7 +88,6 @@ internal class PaperServiceUnitTest : MockkBaseTest {
         listRepository = listRepository,
         doiService = doiService,
         paperRepository = paperRepository,
-        classRepository = classRepository,
         contributorRepository = contributorRepository,
         paperSnapshotRepository = paperSnapshotRepository,
         snapshotIdGenerator = snapshotIdGenerator,

@@ -28,6 +28,7 @@ import org.orkg.contenttypes.adapter.input.rest.TableController.UpdateTableReque
 import org.orkg.contenttypes.adapter.input.rest.TableController.UpdateTableRowRequest
 import org.orkg.contenttypes.domain.CannotDeleteTableHeader
 import org.orkg.contenttypes.domain.DuplicateTempIds
+import org.orkg.contenttypes.domain.DuplicateURIs
 import org.orkg.contenttypes.domain.InvalidTableColumnIndex
 import org.orkg.contenttypes.domain.InvalidTableRowIndex
 import org.orkg.contenttypes.domain.InvalidTempId
@@ -314,6 +315,7 @@ internal class TableControllerUnitTest : MockMvcBaseTest("tables") {
                     ThingIsNotAClass::class,
                     InvalidLiteralLabel::class,
                     InvalidLiteralDatatype::class,
+                    DuplicateURIs::class,
                     URINotAbsolute::class,
                     URIAlreadyInUse::class,
                     TableHeaderValueMustBeLiteral::class,
@@ -393,6 +395,7 @@ internal class TableControllerUnitTest : MockMvcBaseTest("tables") {
                     ThingIsNotAClass::class,
                     InvalidLiteralLabel::class,
                     InvalidLiteralDatatype::class,
+                    DuplicateURIs::class,
                     URINotAbsolute::class,
                     URIAlreadyInUse::class,
                     TableHeaderValueMustBeLiteral::class,
@@ -477,6 +480,7 @@ internal class TableControllerUnitTest : MockMvcBaseTest("tables") {
                     ThingIsNotAClass::class,
                     InvalidLiteralLabel::class,
                     InvalidLiteralDatatype::class,
+                    DuplicateURIs::class,
                     URINotAbsolute::class,
                     URIAlreadyInUse::class,
                     TableHeaderValueMustBeLiteral::class,
@@ -543,6 +547,7 @@ internal class TableControllerUnitTest : MockMvcBaseTest("tables") {
                     ThingIsNotAClass::class,
                     InvalidLiteralLabel::class,
                     InvalidLiteralDatatype::class,
+                    DuplicateURIs::class,
                     URINotAbsolute::class,
                     URIAlreadyInUse::class,
                     TableHeaderValueMustBeLiteral::class,
@@ -669,6 +674,7 @@ internal class TableControllerUnitTest : MockMvcBaseTest("tables") {
                     ThingIsNotAClass::class,
                     InvalidLiteralLabel::class,
                     InvalidLiteralDatatype::class,
+                    DuplicateURIs::class,
                     URINotAbsolute::class,
                     URIAlreadyInUse::class,
                     TableHeaderValueMustBeLiteral::class,
@@ -727,6 +733,7 @@ internal class TableControllerUnitTest : MockMvcBaseTest("tables") {
                     ThingIsNotAClass::class,
                     InvalidLiteralLabel::class,
                     InvalidLiteralDatatype::class,
+                    DuplicateURIs::class,
                     URINotAbsolute::class,
                     URIAlreadyInUse::class,
                     TableHeaderValueMustBeLiteral::class,

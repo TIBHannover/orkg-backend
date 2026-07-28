@@ -4,6 +4,8 @@ import org.hamcrest.Matchers.`is`
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
 import org.orkg.graph.adapter.input.rest.testing.fixtures.configuration.GraphControllerExceptionUnitTestConfiguration
+import org.orkg.graph.domain.CannotResetURI
+import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ThingAlreadyExists
 import org.orkg.graph.domain.ThingNotFound
 import org.orkg.testing.spring.MockMvcExceptionBaseTest
@@ -11,6 +13,7 @@ import org.orkg.testing.spring.restdocs.exceptionResponseFields
 import org.orkg.testing.spring.restdocs.type
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest
 import org.springframework.http.HttpStatus.BAD_REQUEST
+import org.springframework.http.HttpStatus.FORBIDDEN
 import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.test.context.ContextConfiguration
@@ -51,5 +54,17 @@ internal class ThingExceptionUnitTest : MockMvcExceptionBaseTest() {
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }
+    }
+
+    @Test
+    fun cannotResetURI() {
+        val type = "orkg:problem:cannot_reset_uri"
+        documentedGetRequestTo(CannotResetURI(Classes.list))
+            .andExpectErrorStatus(FORBIDDEN)
+            .andExpectType(type)
+            .andExpectTitle("Forbidden")
+            .andExpect(jsonPath("$.errors[0].detail", `is`("""The thing "${Classes.list}" already has a URI. It is not allowed to change URIs.""")))
+            .andExpect(jsonPath("$.errors[0].pointer", `is`("#/uri")))
+            .andDocumentWithValidationExceptionResponseFields<CannotResetURI>(type)
     }
 }

@@ -81,7 +81,6 @@ import org.orkg.graph.input.UnsafeLiteralUseCases
 import org.orkg.graph.input.UnsafePredicateUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
-import org.orkg.graph.output.ClassRepository
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.StatementRepository
 import org.orkg.graph.output.ThingRepository
@@ -97,7 +96,6 @@ class TableService(
     private val resourceRepository: ResourceRepository,
     private val statementRepository: StatementRepository,
     private val thingRepository: ThingRepository,
-    private val classRepository: ClassRepository,
     private val unsafeClassUseCases: UnsafeClassUseCases,
     private val unsafeResourceUseCases: UnsafeResourceUseCases,
     private val unsafeStatementUseCases: UnsafeStatementUseCases,
@@ -143,7 +141,7 @@ class TableService(
             TableRowsValidator { it.rows },
             ObservatoryValidator(observatoryRepository, { it.observatories }),
             OrganizationValidator(organizationRepository, { it.organizations }),
-            TableThingsCommandCreateValidator(thingRepository, classRepository),
+            TableThingsCommandCreateValidator(thingRepository),
             TableColumnsCreateValidator(thingRepository),
             TableCellsCreateValidator(thingRepository),
             TableResourceCreator(unsafeResourceUseCases),
@@ -166,7 +164,7 @@ class TableService(
             ExtractionMethodValidator({ it.extractionMethod }, { it.table!!.extractionMethod }),
             ObservatoryValidator(observatoryRepository, { it.observatories }),
             OrganizationValidator(organizationRepository, { it.organizations }),
-            TableThingsCommandUpdateValidator(thingRepository, classRepository),
+            TableThingsCommandUpdateValidator(thingRepository),
             TableUpdateValidationCacheInitializer(),
             TableColumnsUpdateValidator(thingRepository),
             TableCellsUpdateValidator(thingRepository),
@@ -184,7 +182,7 @@ class TableService(
             TableExistenceValidator(this, resourceRepository, CreateTableRowCommand::tableId) { table, statements -> copy(table = table, statements = statements) },
             TableModifiableValidator { it.table!! },
             TableRowIndexCreateValidator(),
-            TableRowCreator(thingRepository, unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases, classRepository, unsafeClassUseCases, unsafePredicateUseCases, statementRepository, listService),
+            TableRowCreator(thingRepository, unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases, unsafeClassUseCases, unsafePredicateUseCases, statementRepository, listService),
         )
         return steps.execute(command, CreateTableRowState()).rowId!!
     }
@@ -194,7 +192,7 @@ class TableService(
             TableExistenceValidator(this, resourceRepository, UpdateTableRowCommand::tableId) { table, statements -> copy(table = table, statements = statements) },
             TableModifiableValidator { it.table!! },
             TableRowIndexUpdateValidator(),
-            TableRowUpdater(thingRepository, unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases, classRepository, unsafeClassUseCases, unsafePredicateUseCases, statementRepository, listService),
+            TableRowUpdater(thingRepository, unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases, unsafeClassUseCases, unsafePredicateUseCases, statementRepository, listService),
         )
         steps.execute(command, UpdateTableRowState())
     }
@@ -215,7 +213,7 @@ class TableService(
             TableModifiableValidator { it.table!! },
             TableColumnIndexCreateValidator(),
             TableColumnCreateValidator(),
-            TableColumnCreator(thingRepository, unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases, classRepository, unsafeClassUseCases, unsafePredicateUseCases, statementRepository, listService),
+            TableColumnCreator(thingRepository, unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases, unsafeClassUseCases, unsafePredicateUseCases, statementRepository, listService),
         )
         return steps.execute(command, CreateTableColumnState()).columnId!!
     }
@@ -225,7 +223,7 @@ class TableService(
             TableExistenceValidator(this, resourceRepository, UpdateTableColumnCommand::tableId) { table, statements -> copy(table = table, statements = statements) },
             TableModifiableValidator { it.table!! },
             TableColumnIndexUpdateValidator(),
-            TableColumnUpdater(thingRepository, unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases, classRepository, unsafeClassUseCases, unsafePredicateUseCases, statementRepository, listService),
+            TableColumnUpdater(thingRepository, unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases, unsafeClassUseCases, unsafePredicateUseCases, statementRepository, listService),
         )
         steps.execute(command, UpdateTableColumnState())
     }

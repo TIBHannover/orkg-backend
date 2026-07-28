@@ -3,7 +3,6 @@ package org.orkg.contenttypes.domain.actions.rosettastone.statements
 import org.orkg.contenttypes.domain.actions.ThingsCommandValidator
 import org.orkg.contenttypes.domain.actions.UpdateRosettaStoneStatementCommand
 import org.orkg.contenttypes.domain.actions.rosettastone.statements.UpdateRosettaStoneStatementAction.State
-import org.orkg.graph.output.ClassRepository
 import org.orkg.graph.output.ThingRepository
 
 class RosettaStoneStatementThingsCommandUpdateValidator(
@@ -11,9 +10,8 @@ class RosettaStoneStatementThingsCommandUpdateValidator(
 ) : UpdateRosettaStoneStatementAction {
     constructor(
         thingRepository: ThingRepository,
-        classRepository: ClassRepository,
     ) : this(
-        ThingsCommandValidator(thingRepository, classRepository),
+        ThingsCommandValidator(thingRepository),
     )
 
     override fun invoke(command: UpdateRosettaStoneStatementCommand, state: State): State =

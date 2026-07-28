@@ -20,7 +20,6 @@ import org.orkg.graph.input.UnsafeLiteralUseCases
 import org.orkg.graph.input.UnsafePredicateUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
-import org.orkg.graph.output.ClassRepository
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.StatementRepository
 import org.orkg.graph.output.ThingRepository
@@ -40,7 +39,6 @@ class ContributionService(
     private val unsafeLiteralUseCases: UnsafeLiteralUseCases,
     private val unsafePredicateUseCases: UnsafePredicateUseCases,
     private val listService: ListUseCases,
-    private val classRepository: ClassRepository,
 ) : ContributionUseCases {
     override fun findById(id: ThingId): Optional<Contribution> =
         resourceRepository.findById(id)
@@ -55,7 +53,7 @@ class ContributionService(
         val steps = listOf(
             TempIdValidator { it.tempIds() },
             ContributionPaperValidator(resourceRepository),
-            ContributionThingsCommandValidator(thingRepository, classRepository),
+            ContributionThingsCommandValidator(thingRepository),
             ContributionContentsValidator(thingRepository),
             ContributionContentsCreator(unsafeClassUseCases, unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases, unsafePredicateUseCases, statementRepository, listService),
         )

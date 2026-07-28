@@ -26,11 +26,13 @@ data class CreateListRequestPart(
     @field:NotBlank
     val label: String,
     val elements: List<String>,
+    val uri: IRI? = null,
 ) {
     fun toCreateCommand(): CreateListCommandPart =
         CreateListCommandPart(
             label = label,
             elements = elements,
+            uri = uri,
         )
 }
 
@@ -52,11 +54,13 @@ data class CreatePredicateRequestPart(
     val label: String,
     @field:NotBlank
     val description: String?,
+    val uri: IRI? = null,
 ) {
     fun toCreateCommand(): CreatePredicateCommandPart =
         CreatePredicateCommandPart(
             label = label,
             description = description,
+            uri = uri,
         )
 }
 
@@ -64,11 +68,13 @@ data class CreateResourceRequestPart(
     @field:NotBlank
     val label: String,
     val classes: Set<ThingId>?,
+    val uri: IRI? = null,
 ) {
     fun toCreateCommand(): CreateResourceCommandPart =
         CreateResourceCommandPart(
             label = label,
             classes = classes.orEmpty(),
+            uri = uri,
         )
 }
 

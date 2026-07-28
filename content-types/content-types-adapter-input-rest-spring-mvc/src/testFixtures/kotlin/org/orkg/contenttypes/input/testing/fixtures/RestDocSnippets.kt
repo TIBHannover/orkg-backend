@@ -655,26 +655,29 @@ fun versionInfoResponseFields(path: String = "versions") = listOf(
 fun createResourceRequestPartRequestFields() = listOf(
     fieldWithPath("label").description("The label of the resource.").type("string"),
     fieldWithPath("classes").description("The list of classes of the resource.").type("array").arrayItemsType("string").constraints(thingIdConstraint),
+    fieldWithPath("uri").description("The uri of the resource. (optional)").type<IRI>().optional(),
 )
 
 fun createLiteralRequestPartRequestFields() = listOf(
     fieldWithPath("label").description("The value of the literal.").type("string"),
-    fieldWithPath("data_type").description("The data type of the literal.").type("string").optional(),
+    fieldWithPath("data_type").description("The data type of the literal. (optional, default: xsd:string)").type("string").optional(),
 )
 
 fun createPredicateRequestPartRequestFields() = listOf(
     fieldWithPath("label").description("The label of the predicate.").type("string"),
-    fieldWithPath("description").description("The description of the predicate.").type("string").optional(),
+    fieldWithPath("description").description("The description of the predicate. (optional)").type("string").optional(),
+    fieldWithPath("uri").description("The uri of the predicate. (optional)").type<IRI>().optional(),
 )
 
 fun createClassRequestPartRequestFields() = listOf(
     fieldWithPath("label").description("The label of the class.").type("string"),
-    fieldWithPath("uri").description("The uri of the class.").type<IRI>().optional(),
+    fieldWithPath("uri").description("The uri of the class. (optional)").type<IRI>().optional(),
 )
 
 fun createListRequestPartRequestFields() = listOf(
     fieldWithPath("label").description("The label of the list.").type("string"),
-    fieldWithPath("elements").description("The ids of the elements of the list.").type("array").arrayItemsType("string").constraints(thingIdConstraint),
+    fieldWithPath("elements").description("The ids of the elements of the list.").type("array").arrayItemsType("string"),
+    fieldWithPath("uri").description("The uri of the list. (optional)").type<IRI>().optional(),
 )
 
 fun contributionRequestPartRequestFields() = listOf(

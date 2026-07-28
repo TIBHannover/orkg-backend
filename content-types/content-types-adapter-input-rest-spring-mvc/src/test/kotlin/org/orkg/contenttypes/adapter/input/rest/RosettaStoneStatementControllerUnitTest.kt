@@ -23,6 +23,7 @@ import org.orkg.contenttypes.adapter.input.rest.RosettaStoneStatementController.
 import org.orkg.contenttypes.domain.CannotDeleteIndividualRosettaStoneStatementVersion
 import org.orkg.contenttypes.domain.Certainty
 import org.orkg.contenttypes.domain.DuplicateTempIds
+import org.orkg.contenttypes.domain.DuplicateURIs
 import org.orkg.contenttypes.domain.InvalidTempId
 import org.orkg.contenttypes.domain.LabelDoesNotMatchPattern
 import org.orkg.contenttypes.domain.MissingInputPositions
@@ -335,6 +336,7 @@ internal class RosettaStoneStatementControllerUnitTest : MockMvcBaseTest("rosett
                     InvalidLabel::class,
                     InvalidLiteralLabel::class,
                     InvalidLiteralDatatype::class,
+                    DuplicateURIs::class,
                     URINotAbsolute::class,
                     URIAlreadyInUse::class,
                     MissingInputPositions::class,
@@ -420,6 +422,7 @@ internal class RosettaStoneStatementControllerUnitTest : MockMvcBaseTest("rosett
                     InvalidLabel::class,
                     InvalidLiteralLabel::class,
                     InvalidLiteralDatatype::class,
+                    DuplicateURIs::class,
                     URINotAbsolute::class,
                     URIAlreadyInUse::class,
                     MissingInputPositions::class,

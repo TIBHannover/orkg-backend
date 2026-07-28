@@ -94,6 +94,7 @@ class SubgraphCreator(
                         contributorId = contributorId,
                         label = it.value.label,
                         classes = it.value.classes,
+                        uri = it.value.uri,
                         extractionMethod = extractionMethod,
                     ),
                 )
@@ -135,6 +136,7 @@ class SubgraphCreator(
                     CreatePredicateUseCase.CreateCommand(
                         contributorId = contributorId,
                         label = it.value.label,
+                        uri = it.value.uri,
                         extractionMethod = extractionMethod,
                     ),
                 )
@@ -175,6 +177,7 @@ class SubgraphCreator(
                 CreateListUseCase.CreateCommand(
                     label = it.value.label,
                     elements = emptyList(),
+                    uri = it.value.uri,
                     contributorId = contributorId,
                     extractionMethod = extractionMethod,
                 ),

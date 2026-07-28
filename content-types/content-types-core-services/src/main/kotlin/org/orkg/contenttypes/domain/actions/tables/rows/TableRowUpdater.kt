@@ -23,7 +23,6 @@ import org.orkg.graph.input.UnsafeLiteralUseCases
 import org.orkg.graph.input.UnsafePredicateUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
-import org.orkg.graph.output.ClassRepository
 import org.orkg.graph.output.StatementRepository
 import org.orkg.graph.output.ThingRepository
 
@@ -32,7 +31,6 @@ class TableRowUpdater(
     private val unsafeResourceUseCases: UnsafeResourceUseCases,
     private val unsafeStatementUseCases: UnsafeStatementUseCases,
     private val unsafeLiteralUseCases: UnsafeLiteralUseCases,
-    private val classRepository: ClassRepository,
     private val unsafeClassUseCases: UnsafeClassUseCases,
     private val unsafePredicateUseCases: UnsafePredicateUseCases,
     private val statementRepository: StatementRepository,
@@ -60,7 +58,7 @@ class TableRowUpdater(
             TempIdValidator { it.tempIds() },
             TableDimensionsValidator { it.rows },
             TableRowsValidator { it.rows },
-            TableThingsCommandUpdateValidator(thingRepository, classRepository),
+            TableThingsCommandUpdateValidator(thingRepository),
             TableUpdateValidationCacheInitializer(),
             TableColumnsUpdateValidator(thingRepository),
             TableCellsUpdateValidator(thingRepository),

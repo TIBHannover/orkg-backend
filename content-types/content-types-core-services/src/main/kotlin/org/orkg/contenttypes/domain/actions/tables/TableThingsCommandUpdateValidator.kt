@@ -3,7 +3,6 @@ package org.orkg.contenttypes.domain.actions.tables
 import org.orkg.contenttypes.domain.actions.ThingsCommandValidator
 import org.orkg.contenttypes.domain.actions.UpdateTableCommand
 import org.orkg.contenttypes.domain.actions.tables.UpdateTableAction.State
-import org.orkg.graph.output.ClassRepository
 import org.orkg.graph.output.ThingRepository
 
 class TableThingsCommandUpdateValidator(
@@ -11,9 +10,8 @@ class TableThingsCommandUpdateValidator(
 ) : UpdateTableAction {
     constructor(
         thingRepository: ThingRepository,
-        classRepository: ClassRepository,
     ) : this(
-        ThingsCommandValidator(thingRepository, classRepository),
+        ThingsCommandValidator(thingRepository),
     )
 
     override fun invoke(command: UpdateTableCommand, state: State): State {

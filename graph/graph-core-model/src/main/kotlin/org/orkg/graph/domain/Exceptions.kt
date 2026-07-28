@@ -333,7 +333,7 @@ class InvalidLiteralDatatype :
 class CannotResetURI(id: ThingId) :
     ForbiddenOperationException(
         jsonFieldPathToJsonPointerReference("uri"),
-        """The class "$id" already has a URI. It is not allowed to change URIs.""",
+        """The thing "$id" already has a URI. It is not allowed to change URIs.""",
         type = createProblemURI("cannot_reset_uri"),
     )
 

@@ -70,6 +70,7 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
         val resourceCommand = CreateResourceCommandPart(
             label = "MOTO",
             classes = setOf(ThingId("R2000")),
+            uri = IRI.create("https://example.org/"),
         )
         val contents = CreatePaperUseCase.CreateCommand.PaperContents(
             resources = mapOf(
@@ -85,6 +86,7 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     label = resourceCommand.label,
                     classes = resourceCommand.classes,
+                    uri = resourceCommand.uri,
                     extractionMethod = extractionMethod,
                 ),
             )
@@ -104,6 +106,7 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
                     contributorId = contributorId,
                     label = resourceCommand.label,
                     classes = resourceCommand.classes,
+                    uri = resourceCommand.uri,
                     extractionMethod = extractionMethod,
                 ),
             )
@@ -285,6 +288,7 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
         val contributorId = ContributorId(UUID.randomUUID())
         val predicateCommand = CreatePredicateCommandPart(
             label = "MOTO",
+            uri = IRI.create("https://example.org/"),
         )
         val extractionMethod = ExtractionMethod.MANUAL
         val contents = CreatePaperUseCase.CreateCommand.PaperContents(
@@ -299,6 +303,7 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
                 CreatePredicateUseCase.CreateCommand(
                     contributorId = contributorId,
                     label = predicateCommand.label,
+                    uri = predicateCommand.uri,
                     extractionMethod = extractionMethod,
                 ),
             )
@@ -317,6 +322,7 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
                 CreatePredicateUseCase.CreateCommand(
                     contributorId = contributorId,
                     label = predicateCommand.label,
+                    uri = predicateCommand.uri,
                     extractionMethod = extractionMethod,
                 ),
             )
@@ -437,6 +443,7 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
         val listCommand = CreateListCommandPart(
             label = "MOTO",
             elements = listOf("R2000"),
+            uri = IRI.create("https://example.org/"),
         )
         val contents = CreatePaperUseCase.CreateCommand.PaperContents(
             lists = mapOf(
@@ -449,6 +456,7 @@ internal class SubgraphCreatorUnitTest : MockkBaseTest {
         val createListCommand = CreateListUseCase.CreateCommand(
             label = listCommand.label,
             elements = emptyList(),
+            uri = listCommand.uri,
             contributorId = contributorId,
             extractionMethod = extractionMethod,
         )

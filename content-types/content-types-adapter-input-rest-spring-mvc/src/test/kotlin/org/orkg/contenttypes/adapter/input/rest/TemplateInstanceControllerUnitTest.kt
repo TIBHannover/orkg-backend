@@ -19,6 +19,7 @@ import org.orkg.common.testing.fixtures.fixedClock
 import org.orkg.contenttypes.adapter.input.rest.TemplateInstanceController.CreateTemplateInstanceRequest
 import org.orkg.contenttypes.adapter.input.rest.TemplateInstanceController.UpdateTemplateInstanceRequest
 import org.orkg.contenttypes.domain.DuplicateTempIds
+import org.orkg.contenttypes.domain.DuplicateURIs
 import org.orkg.contenttypes.domain.InvalidLiteral
 import org.orkg.contenttypes.domain.InvalidTempId
 import org.orkg.contenttypes.domain.LabelDoesNotMatchPattern
@@ -302,6 +303,7 @@ internal class TemplateInstanceControllerUnitTest : MockMvcBaseTest("template-in
                     ThingIsNotAClass::class,
                     InvalidLiteralLabel::class,
                     InvalidLiteralDatatype::class,
+                    DuplicateURIs::class,
                     URINotAbsolute::class,
                     URIAlreadyInUse::class,
                     UnknownTemplateProperties::class,
@@ -380,6 +382,7 @@ internal class TemplateInstanceControllerUnitTest : MockMvcBaseTest("template-in
                     ThingIsNotAClass::class,
                     InvalidLiteralLabel::class,
                     InvalidLiteralDatatype::class,
+                    DuplicateURIs::class,
                     URINotAbsolute::class,
                     URIAlreadyInUse::class,
                     UnknownTemplateProperties::class,

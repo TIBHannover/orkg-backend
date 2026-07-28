@@ -34,6 +34,7 @@ import org.orkg.contenttypes.domain.AmbiguousAuthor
 import org.orkg.contenttypes.domain.Author
 import org.orkg.contenttypes.domain.AuthorNotFound
 import org.orkg.contenttypes.domain.DuplicateTempIds
+import org.orkg.contenttypes.domain.DuplicateURIs
 import org.orkg.contenttypes.domain.EmptyContribution
 import org.orkg.contenttypes.domain.InvalidDOI
 import org.orkg.contenttypes.domain.InvalidMonth
@@ -670,6 +671,7 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
                     InvalidLabel::class,
                     InvalidLiteralLabel::class,
                     InvalidLiteralDatatype::class,
+                    DuplicateURIs::class,
                     URINotAbsolute::class,
                     URIAlreadyInUse::class,
                     EmptyContribution::class,

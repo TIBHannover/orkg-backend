@@ -28,7 +28,6 @@ import org.orkg.graph.input.UnsafePredicateUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
 import org.orkg.graph.output.ClassHierarchyRepository
-import org.orkg.graph.output.ClassRepository
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.StatementRepository
 import org.orkg.graph.output.ThingRepository
@@ -42,7 +41,6 @@ internal class RosettaStoneStatementServiceUnitTest : MockkBaseTest {
     private val observatoryRepository: ObservatoryRepository = mockk()
     private val organizationRepository: OrganizationRepository = mockk()
     private val thingRepository: ThingRepository = mockk()
-    private val classRepository: ClassRepository = mockk()
     private val unsafeClassUseCases: UnsafeClassUseCases = mockk()
     private val unsafeResourceUseCases: UnsafeResourceUseCases = mockk()
     private val unsafeStatementUseCases: UnsafeStatementUseCases = mockk()
@@ -60,7 +58,6 @@ internal class RosettaStoneStatementServiceUnitTest : MockkBaseTest {
         observatoryRepository,
         organizationRepository,
         thingRepository,
-        classRepository,
         unsafeClassUseCases,
         unsafeResourceUseCases,
         unsafeStatementUseCases,

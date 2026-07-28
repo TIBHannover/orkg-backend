@@ -1,5 +1,6 @@
 package org.orkg.contenttypes.domain
 
+import org.orkg.common.IRI
 import org.orkg.common.ThingId
 import org.orkg.common.exceptions.PropertyValidationException
 import org.orkg.common.exceptions.SimpleMessageException
@@ -353,6 +354,14 @@ class DuplicateTempIds(val duplicates: Map<String, Int>) :
         HttpStatus.BAD_REQUEST,
         """Duplicate temp ids: ${duplicates.entries.joinToString { "${it.key}=${it.value}" }}.""",
         properties = mapOf("duplicate_temp_ids" to duplicates),
+    )
+
+class DuplicateURIs(val duplicates: Map<IRI, Int>) :
+    SimpleMessageException(
+        HttpStatus.BAD_REQUEST,
+        """Duplicate URIs: ${duplicates.entries.joinToString { "${it.key}=${it.value}" }}.""",
+        type = createProblemURI("duplicate_uris"),
+        properties = mapOf("duplicate_uris" to duplicates),
     )
 
 class InvalidTempId(id: String) :

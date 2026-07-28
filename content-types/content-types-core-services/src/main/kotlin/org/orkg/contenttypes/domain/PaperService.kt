@@ -84,7 +84,6 @@ import org.orkg.graph.input.UnsafeLiteralUseCases
 import org.orkg.graph.input.UnsafePredicateUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
-import org.orkg.graph.output.ClassRepository
 import org.orkg.graph.output.ListRepository
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.StatementRepository
@@ -97,7 +96,6 @@ import org.springframework.stereotype.Service
 import java.time.Clock
 import java.time.OffsetDateTime
 import java.util.Optional
-import kotlin.collections.plus
 
 @Service
 class PaperService(
@@ -117,7 +115,6 @@ class PaperService(
     private val listRepository: ListRepository,
     private val doiService: DoiService,
     private val paperRepository: PaperRepository,
-    private val classRepository: ClassRepository,
     private val contributorRepository: ContributorRepository,
     private val paperSnapshotRepository: PaperSnapshotRepository,
     private val snapshotIdGenerator: SnapshotIdGenerator,
@@ -205,7 +202,7 @@ class PaperService(
             SDGValidator({ it.sustainableDevelopmentGoals }),
             ResourceValidator(resourceRepository, { it.mentionings }),
             PaperAuthorListCreateValidator(resourceRepository, statementRepository),
-            PaperThingsCommandValidator(thingRepository, classRepository),
+            PaperThingsCommandValidator(thingRepository),
             PaperContributionValidator(thingRepository),
             PaperResourceCreator(unsafeResourceUseCases),
             PaperIdentifierCreator(unsafeStatementUseCases, unsafeLiteralUseCases),

@@ -1,8 +1,10 @@
 package org.orkg.contenttypes.adapter.input.rest.exceptions
 
 import org.junit.jupiter.api.Test
+import org.orkg.common.IRI
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.DuplicateTempIds
+import org.orkg.contenttypes.domain.DuplicateURIs
 import org.orkg.contenttypes.domain.EmptyContribution
 import org.orkg.contenttypes.domain.InvalidBibTeXReference
 import org.orkg.contenttypes.domain.InvalidMonth
@@ -157,6 +159,24 @@ internal class CommonExceptionUnitTest : MockMvcExceptionBaseTest() {
                 responseFields<DuplicateTempIds>(
                     fieldWithPath("duplicate_temp_ids").description("A key-value map of temp ids to their occurrence count."),
                     fieldWithPath("duplicate_temp_ids.*").description("The occurrence count of the temp id.").type<Int>(),
+                    *exceptionResponseFields(type).toTypedArray(),
+                )
+            }
+    }
+
+    @Test
+    fun duplicateURIs() {
+        val type = "orkg:problem:duplicate_uris"
+        documentedGetRequestTo(DuplicateURIs(mapOf(IRI.create("https://example.org/temp1") to 5)))
+            .andExpectErrorStatus(BAD_REQUEST)
+            .andExpectType(type)
+            .andExpectTitle("Bad Request")
+            .andExpectDetail("""Duplicate URIs: https://example.org/temp1=5.""")
+            .andExpect(jsonPath("$.duplicate_uris['https://example.org/temp1']").value("5"))
+            .andDocument {
+                responseFields<DuplicateURIs>(
+                    fieldWithPath("duplicate_uris").description("A key-value map of URIs to their occurrence count."),
+                    fieldWithPath("duplicate_uris.*").description("The occurrence count of the URI.").type<Int>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }

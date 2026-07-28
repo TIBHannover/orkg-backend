@@ -8,8 +8,10 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.orkg.common.Either
 import org.orkg.common.IRI
+import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkBaseTest
+import org.orkg.contenttypes.domain.DuplicateURIs
 import org.orkg.contenttypes.domain.ThingIsNotAClass
 import org.orkg.contenttypes.input.CreateClassCommandPart
 import org.orkg.contenttypes.input.CreateListCommandPart
@@ -31,17 +33,16 @@ import org.orkg.graph.domain.ThingNotFound
 import org.orkg.graph.domain.URIAlreadyInUse
 import org.orkg.graph.domain.URINotAbsolute
 import org.orkg.graph.domain.reservedClassIds
-import org.orkg.graph.output.ClassRepository
 import org.orkg.graph.output.ThingRepository
 import org.orkg.graph.testing.fixtures.createClass
 import org.orkg.graph.testing.fixtures.createResource
+import org.orkg.testing.pageOf
 import java.util.Optional
 
 internal class ThingsCommandValidatorUnitTest : MockkBaseTest {
     private val thingRepository: ThingRepository = mockk()
-    private val classRepository: ClassRepository = mockk()
 
-    private val thingsCommandValidator = ThingsCommandValidator(thingRepository, classRepository)
+    private val thingsCommandValidator = ThingsCommandValidator(thingRepository)
 
     @Test
     fun `Given paper contents, when valid, it returns success`() {
@@ -294,7 +295,7 @@ internal class ThingsCommandValidatorUnitTest : MockkBaseTest {
     }
 
     @Test
-    fun `Given a things command, when specified class uri already exists, it throws an exception`() {
+    fun `Given a things command, when specified uri already exists, it throws an exception`() {
         val uri = IRI.create("https://orkg.org/class/C1")
         val contents = updateTemplateInstanceCommand().copy(
             resources = emptyMap(),
@@ -310,10 +311,52 @@ internal class ThingsCommandValidatorUnitTest : MockkBaseTest {
         )
         val `class` = createClass(uri = uri)
 
-        every { classRepository.findByUri(uri.toString()) } returns Optional.of(`class`)
+        every { thingRepository.findAll(PageRequests.SINGLE, uri = uri) } returns pageOf(`class`)
 
         assertThrows<URIAlreadyInUse> { thingsCommandValidator.validate(contents, mutableMapOf()) }
 
-        verify(exactly = 1) { classRepository.findByUri(uri.toString()) }
+        verify(exactly = 1) { thingRepository.findAll(PageRequests.SINGLE, uri = uri) }
+    }
+
+    @Test
+    fun `Given a things command, when specified uri is not absolute, it throws an exception`() {
+        val uri = IRI.create("invalid")
+        val contents = updateTemplateInstanceCommand().copy(
+            resources = emptyMap(),
+            literals = emptyMap(),
+            predicates = emptyMap(),
+            lists = emptyMap(),
+            classes = mapOf(
+                "#temp1" to CreateClassCommandPart(
+                    label = "irrelevant",
+                    uri = uri,
+                ),
+            ),
+        )
+
+        assertThrows<URINotAbsolute> { thingsCommandValidator.validate(contents, mutableMapOf()) }
+    }
+
+    @Test
+    fun `Given a things command, when two things share the same uri, it throws an exception`() {
+        val uri = IRI.create("invalid")
+        val contents = updateTemplateInstanceCommand().copy(
+            resources = emptyMap(),
+            literals = emptyMap(),
+            predicates = emptyMap(),
+            lists = emptyMap(),
+            classes = mapOf(
+                "#temp1" to CreateClassCommandPart(
+                    label = "first",
+                    uri = uri,
+                ),
+                "#temp2" to CreateClassCommandPart(
+                    label = "other",
+                    uri = uri,
+                ),
+            ),
+        )
+
+        assertThrows<DuplicateURIs> { thingsCommandValidator.validate(contents, mutableMapOf()) }
     }
 }

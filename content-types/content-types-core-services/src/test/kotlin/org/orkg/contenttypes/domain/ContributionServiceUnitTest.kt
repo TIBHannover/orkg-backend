@@ -17,7 +17,6 @@ import org.orkg.graph.input.UnsafeLiteralUseCases
 import org.orkg.graph.input.UnsafePredicateUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
-import org.orkg.graph.output.ClassRepository
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.StatementRepository
 import org.orkg.graph.output.ThingRepository
@@ -35,7 +34,6 @@ internal class ContributionServiceUnitTest : MockkBaseTest {
     private val unsafeLiteralUseCases: UnsafeLiteralUseCases = mockk()
     private val unsafePredicateUseCases: UnsafePredicateUseCases = mockk()
     private val listService: ListUseCases = mockk()
-    private val classRepository: ClassRepository = mockk()
 
     private val service = ContributionService(
         resourceRepository,
@@ -47,7 +45,6 @@ internal class ContributionServiceUnitTest : MockkBaseTest {
         unsafeLiteralUseCases,
         unsafePredicateUseCases,
         listService,
-        classRepository,
     )
 
     @Test

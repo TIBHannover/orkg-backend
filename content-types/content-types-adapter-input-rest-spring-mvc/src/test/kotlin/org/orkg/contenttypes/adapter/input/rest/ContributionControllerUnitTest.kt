@@ -13,6 +13,7 @@ import org.orkg.contenttypes.adapter.input.rest.PaperController.CreatePaperReque
 import org.orkg.contenttypes.adapter.input.rest.PaperController.CreatePaperRequest.ContributionRequestPart.StatementObjectRequest
 import org.orkg.contenttypes.domain.ContributionNotFound
 import org.orkg.contenttypes.domain.DuplicateTempIds
+import org.orkg.contenttypes.domain.DuplicateURIs
 import org.orkg.contenttypes.domain.EmptyContribution
 import org.orkg.contenttypes.domain.InvalidStatementSubject
 import org.orkg.contenttypes.domain.InvalidTempId
@@ -183,6 +184,7 @@ internal class ContributionControllerUnitTest : MockMvcBaseTest("contributions")
                     InvalidLabel::class,
                     InvalidLiteralLabel::class,
                     InvalidLiteralDatatype::class,
+                    DuplicateURIs::class,
                     URINotAbsolute::class,
                     URIAlreadyInUse::class,
                     EmptyContribution::class,

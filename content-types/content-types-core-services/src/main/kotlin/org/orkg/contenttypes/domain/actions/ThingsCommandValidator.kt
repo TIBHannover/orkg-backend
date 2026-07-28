@@ -2,7 +2,9 @@ package org.orkg.contenttypes.domain.actions
 
 import dev.forkhandles.values.ofOrNull
 import org.orkg.common.Either
+import org.orkg.common.PageRequests
 import org.orkg.common.toIRIOrNull
+import org.orkg.contenttypes.domain.DuplicateURIs
 import org.orkg.contenttypes.domain.ThingIsNotAClass
 import org.orkg.contenttypes.input.CreateThingCommandPart
 import org.orkg.contenttypes.input.CreateThingsCommand
@@ -18,19 +20,15 @@ import org.orkg.graph.domain.Thing
 import org.orkg.graph.domain.URIAlreadyInUse
 import org.orkg.graph.domain.URINotAbsolute
 import org.orkg.graph.domain.reservedClassIds
-import org.orkg.graph.output.ClassRepository
 import org.orkg.graph.output.ThingRepository
 
 class ThingsCommandValidator(
     private val thingIdValidator: ThingIdValidator,
-    private val classRepository: ClassRepository,
+    private val thingRepository: ThingRepository,
 ) {
-    constructor(
-        thingRepository: ThingRepository,
-        classRepository: ClassRepository,
-    ) : this(
+    constructor(thingRepository: ThingRepository) : this(
         ThingIdValidator(thingRepository),
-        classRepository,
+        thingRepository,
     )
 
     internal fun validate(
@@ -40,7 +38,7 @@ class ThingsCommandValidator(
         val result = validationCache.toMutableMap()
         validateIds(thingsCommand, result)
         validateLabels(thingsCommand)
-        validateClassURIs(thingsCommand)
+        validateURIs(thingsCommand)
         return result
     }
 
@@ -93,15 +91,21 @@ class ThingsCommandValidator(
         }
     }
 
-    private fun validateClassURIs(thingsCommand: CreateThingsCommand) {
-        thingsCommand.classes.values.forEach {
-            if (it.uri != null) {
-                if (!it.uri!!.isAbsolute) {
-                    throw URINotAbsolute(it.uri!!)
-                }
-                classRepository.findByUri(it.uri.toString()).ifPresent { found ->
-                    throw URIAlreadyInUse(found.uri!!, found.id)
-                }
+    private fun validateURIs(thingsCommand: CreateThingsCommand) {
+        val uris = thingsCommand.uris()
+        val duplicates = uris.groupingBy { it }
+            .eachCount()
+            .filter { it.value > 1 }
+        if (duplicates.isNotEmpty()) {
+            throw DuplicateURIs(duplicates)
+        }
+        uris.forEach { uri ->
+            if (!uri.isAbsolute) {
+                throw URINotAbsolute(uri)
+            }
+            val things = thingRepository.findAll(PageRequests.SINGLE, uri = uri)
+            if (!things.isEmpty) {
+                throw URIAlreadyInUse(uri, things.single().id)
             }
         }
     }

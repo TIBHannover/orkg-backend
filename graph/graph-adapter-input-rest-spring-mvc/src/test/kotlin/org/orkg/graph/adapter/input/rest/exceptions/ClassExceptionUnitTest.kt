@@ -5,10 +5,8 @@ import org.junit.jupiter.api.Test
 import org.orkg.common.IRI
 import org.orkg.common.ThingId
 import org.orkg.graph.adapter.input.rest.testing.fixtures.configuration.GraphControllerExceptionUnitTestConfiguration
-import org.orkg.graph.domain.CannotResetURI
 import org.orkg.graph.domain.ClassNotFound
 import org.orkg.graph.domain.ClassNotModifiable
-import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ExternalClassNotFound
 import org.orkg.graph.domain.ExternalEntityIsNotAClass
 import org.orkg.graph.domain.URIAlreadyInUse
@@ -66,18 +64,6 @@ internal class ClassExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andExpect(jsonPath("$.errors[0].detail", `is`("""The URI <invalid> is not absolute.""")))
             .andExpect(jsonPath("$.errors[0].pointer", `is`("#/uri")))
             .andDocumentWithValidationExceptionResponseFields<URINotAbsolute>(type)
-    }
-
-    @Test
-    fun cannotResetURI() {
-        val type = "orkg:problem:cannot_reset_uri"
-        documentedGetRequestTo(CannotResetURI(Classes.list))
-            .andExpectErrorStatus(FORBIDDEN)
-            .andExpectType(type)
-            .andExpectTitle("Forbidden")
-            .andExpect(jsonPath("$.errors[0].detail", `is`("""The class "${Classes.list}" already has a URI. It is not allowed to change URIs.""")))
-            .andExpect(jsonPath("$.errors[0].pointer", `is`("#/uri")))
-            .andDocumentWithValidationExceptionResponseFields<CannotResetURI>(type)
     }
 
     @Test

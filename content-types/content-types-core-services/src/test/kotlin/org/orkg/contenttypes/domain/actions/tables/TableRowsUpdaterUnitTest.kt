@@ -14,7 +14,6 @@ import org.orkg.contenttypes.domain.actions.UpdateTableState
 import org.orkg.contenttypes.domain.testing.fixtures.createRowGraph
 import org.orkg.contenttypes.input.CreateRowCommand
 import org.orkg.contenttypes.input.testing.fixtures.updateTableCommand
-import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.StatementId
 import org.orkg.graph.input.CreateLiteralUseCase

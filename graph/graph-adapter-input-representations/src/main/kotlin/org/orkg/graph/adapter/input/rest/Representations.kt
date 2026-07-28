@@ -102,6 +102,7 @@ data class PredicateRepresentation(
     override val id: ThingId,
     override val label: String,
     val description: String?,
+    val uri: IRI?,
     override val createdAt: OffsetDateTime,
     override val createdBy: ContributorId,
     @field:JsonProperty("extraction_method")

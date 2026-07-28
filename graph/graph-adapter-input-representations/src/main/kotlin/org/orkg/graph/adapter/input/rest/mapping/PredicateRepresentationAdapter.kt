@@ -41,5 +41,5 @@ interface PredicateRepresentationAdapter {
     fun Predicate.toPredicateRepresentation(
         description: String?,
     ): PredicateRepresentation =
-        PredicateRepresentation(id, label, description, createdAt, createdBy, extractionMethod, modifiable)
+        PredicateRepresentation(id, label, description, uri, createdAt, createdBy, extractionMethod, modifiable)
 }

@@ -7,6 +7,7 @@ import org.neo4j.cypherdsl.core.Cypher.name
 import org.neo4j.cypherdsl.core.Cypher.size
 import org.neo4j.cypherdsl.core.Cypher.toLower
 import org.orkg.common.ContributorId
+import org.orkg.common.IRI
 import org.orkg.common.ThingId
 import org.orkg.common.neo4jdsl.CypherQueryBuilderFactory
 import org.orkg.common.neo4jdsl.PagedQueryBuilder.countOver
@@ -58,6 +59,7 @@ class SpringDataNeo4jPredicateAdapter(
             createdBy = null,
             createdAtStart = null,
             createdAtEnd = null,
+            uri = null,
         )
 
     override fun findAll(
@@ -66,6 +68,7 @@ class SpringDataNeo4jPredicateAdapter(
         createdBy: ContributorId?,
         createdAtStart: OffsetDateTime?,
         createdAtEnd: OffsetDateTime?,
+        uri: IRI?,
     ): Page<Predicate> = cypherQueryBuilderFactory.newBuilder(Uncached)
         .withCommonQuery {
             val node = Cypher.node("Predicate").named("node")
@@ -92,6 +95,7 @@ class SpringDataNeo4jPredicateAdapter(
                 createdBy.toCondition { node.property("created_by").eq(anonParameter(it.value.toString())) },
                 createdAtStart.toCondition { node.property("created_at").gte(anonParameter(it.format(ISO_OFFSET_DATE_TIME))) },
                 createdAtEnd.toCondition { node.property("created_at").lte(anonParameter(it.format(ISO_OFFSET_DATE_TIME))) },
+                uri.toCondition { node.property("uri").eq(anonParameter(it.toString())) },
             )
         }
         .withQuery { commonQuery ->
@@ -179,6 +183,7 @@ class SpringDataNeo4jPredicateAdapter(
             label = this@toNeo4jPredicate.label
             created_by = this@toNeo4jPredicate.createdBy
             created_at = this@toNeo4jPredicate.createdAt
+            uri = this@toNeo4jPredicate.uri?.toString()
             extraction_method = this@toNeo4jPredicate.extractionMethod
             modifiable = this@toNeo4jPredicate.modifiable
         }

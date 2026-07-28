@@ -11,6 +11,8 @@ import io.mockk.verify
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.orkg.common.ContributorId
+import org.orkg.common.IRI
+import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.community.output.ContributorRepository
@@ -22,6 +24,7 @@ import org.orkg.graph.output.PredicateRepository
 import org.orkg.graph.output.ThingRepository
 import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.testing.MockUserId
+import org.orkg.testing.pageOf
 import java.util.Optional
 
 internal class PredicateServiceUnitTest : MockkBaseTest {
@@ -40,16 +43,19 @@ internal class PredicateServiceUnitTest : MockkBaseTest {
             contributorId = ContributorId(MockUserId.USER),
             label = "label",
             extractionMethod = ExtractionMethod.MANUAL,
+            uri = IRI.create("https://orkg.org/predicate/P1"),
             modifiable = false,
         )
 
         every { thingRepository.findById(id) } returns Optional.empty()
         every { unsafePredicateUseCases.create(command) } returns id
+        every { repository.findAll(PageRequests.SINGLE, uri = command.uri) } returns pageOf()
 
         service.create(command) shouldBe id
 
         verify(exactly = 1) { thingRepository.findById(id) }
         verify(exactly = 1) { unsafePredicateUseCases.create(command) }
+        verify(exactly = 1) { repository.findAll(PageRequests.SINGLE, uri = command.uri) }
     }
 
     @Test
@@ -99,6 +105,36 @@ internal class PredicateServiceUnitTest : MockkBaseTest {
     }
 
     @Test
+    fun `Given a predicate create command, when uri is not absolute, it throws an exception`() {
+        val id = ThingId("R123")
+        val command = CreatePredicateUseCase.CreateCommand(
+            id = id,
+            contributorId = ContributorId(MockUserId.USER),
+            label = "some label",
+            uri = IRI.create("invalid"),
+        )
+
+        assertThrows<URINotAbsolute> { service.create(command) }
+    }
+
+    @Test
+    fun `Given a predicate create command, when uri is already in use, it throws an exception`() {
+        val id = ThingId("R123")
+        val command = CreatePredicateUseCase.CreateCommand(
+            id = id,
+            contributorId = ContributorId(MockUserId.USER),
+            label = "some label",
+            uri = IRI.create("https://example.com/"),
+        )
+
+        every { repository.findAll(PageRequests.SINGLE, uri = command.uri) } returns pageOf(createPredicate())
+
+        assertThrows<URIAlreadyInUse> { service.create(command) }
+
+        verify(exactly = 1) { repository.findAll(PageRequests.SINGLE, uri = command.uri) }
+    }
+
+    @Test
     fun `Given a predicate update command, when updating no properties, it does nothing`() {
         val id = ThingId("P123")
         val contributorId = ContributorId(MockUserId.USER)
@@ -120,6 +156,60 @@ internal class PredicateServiceUnitTest : MockkBaseTest {
         shouldThrow<InvalidLabel> { service.update(command) }
 
         verify(exactly = 1) { repository.findById(predicate.id) }
+    }
+
+    @Test
+    fun `Given a predicate update command, when uri would be reset, it throws an exception`() {
+        val id = ThingId("R123")
+        val predicate = createPredicate(id = id, uri = IRI.create("https://example.org/OK"))
+        val command = UpdatePredicateUseCase.UpdateCommand(
+            id = id,
+            contributorId = ContributorId(MockUserId.USER),
+            uri = IRI.create("https://exmaple.org/changed"),
+        )
+
+        every { repository.findById(predicate.id) } returns Optional.of(predicate)
+
+        assertThrows<CannotResetURI> { service.update(command) }
+
+        verify(exactly = 1) { repository.findById(predicate.id) }
+    }
+
+    @Test
+    fun `Given a predicate update command, when uri is not absolute, it throws an exception`() {
+        val id = ThingId("R123")
+        val predicate = createPredicate(id = id, uri = null)
+        val command = UpdatePredicateUseCase.UpdateCommand(
+            id = id,
+            contributorId = ContributorId(MockUserId.USER),
+            uri = IRI.create("invalid"),
+        )
+
+        every { repository.findById(predicate.id) } returns Optional.of(predicate)
+
+        assertThrows<URINotAbsolute> { service.update(command) }
+
+        verify(exactly = 1) { repository.findById(predicate.id) }
+    }
+
+    @Test
+    fun `Given a predicate update command, when uri is already in use, it throws an exception`() {
+        val id = ThingId("R123")
+        val predicate = createPredicate(id = id, uri = null)
+        val command = UpdatePredicateUseCase.UpdateCommand(
+            id = id,
+            contributorId = ContributorId(MockUserId.USER),
+            label = "some label",
+            uri = IRI.create("https://example.com/"),
+        )
+
+        every { repository.findById(predicate.id) } returns Optional.of(predicate)
+        every { repository.findAll(PageRequests.SINGLE, uri = command.uri) } returns pageOf(createPredicate())
+
+        assertThrows<URIAlreadyInUse> { service.update(command) }
+
+        verify(exactly = 1) { repository.findById(predicate.id) }
+        verify(exactly = 1) { repository.findAll(PageRequests.SINGLE, uri = command.uri) }
     }
 
     @Test
@@ -191,23 +281,27 @@ internal class PredicateServiceUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a predicate update command, when all properties, it returns success`() {
-        val predicate = createPredicate()
+        val predicate = createPredicate(uri = null)
         val contributorId = ContributorId(MockUserId.USER)
         val label = "updated label"
         val modifiable = true
+        val uri = IRI.create("https://orkg.org/predicates/P1")
         val command = UpdatePredicateUseCase.UpdateCommand(
             id = predicate.id,
             contributorId = contributorId,
             label = label,
+            uri = uri,
             modifiable = modifiable,
         )
 
         every { repository.findById(predicate.id) } returns Optional.of(predicate)
+        every { repository.findAll(PageRequests.SINGLE, uri = command.uri) } returns pageOf()
         every { repository.save(any()) } just runs
 
         service.update(command)
 
         verify(exactly = 1) { repository.findById(predicate.id) }
+        verify(exactly = 1) { repository.findAll(PageRequests.SINGLE, uri = command.uri) }
         verify(exactly = 1) {
             repository.save(
                 withArg {
@@ -215,6 +309,7 @@ internal class PredicateServiceUnitTest : MockkBaseTest {
                     it.label shouldBe label
                     it.createdAt shouldBe predicate.createdAt
                     it.createdBy shouldBe predicate.createdBy
+                    it.uri shouldBe uri
                     it.modifiable shouldBe modifiable
                 },
             )

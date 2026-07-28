@@ -154,7 +154,7 @@ fun createSmartReviewResourceSection() = SmartReviewResourceSection(
 fun createSmartReviewPredicateSection() = SmartReviewPredicateSection(
     id = ThingId("R15696541"),
     heading = "predicate section heading",
-    predicate = PredicateReference(ThingId("P1"), "some predicate label"),
+    predicate = PredicateReference(ThingId("P1"), "some predicate label", null),
 )
 
 fun createSmartReviewOntologySection() = SmartReviewOntologySection(
@@ -162,9 +162,9 @@ fun createSmartReviewOntologySection() = SmartReviewOntologySection(
     heading = "ontology section heading",
     entities = listOf(
         ResourceReference(ThingId("R1"), "some resource label", classes = setOf(Classes.problem)),
-        PredicateReference(ThingId("P1"), "some predicate label"),
+        PredicateReference(ThingId("P1"), "some predicate label", null),
     ),
-    predicates = listOf(PredicateReference(ThingId("P1"), "some predicate label")),
+    predicates = listOf(PredicateReference(ThingId("P1"), "some predicate label", null)),
 )
 
 fun createSmartReviewTextSection() = SmartReviewTextSection(

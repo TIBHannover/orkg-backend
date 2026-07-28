@@ -59,6 +59,7 @@ fun CreatePredicateUseCase.createPredicates(vararg predicates: ThingId) =
 fun CreatePredicateUseCase.createPredicate(
     id: ThingId? = null,
     label: String = "label",
+    uri: IRI? = null,
     contributorId: ContributorId = ContributorId.UNKNOWN,
     extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN,
     modifiable: Boolean = true,
@@ -67,6 +68,7 @@ fun CreatePredicateUseCase.createPredicate(
         id = id,
         contributorId = contributorId,
         label = label,
+        uri = uri,
         extractionMethod = extractionMethod,
         modifiable = modifiable,
     ),

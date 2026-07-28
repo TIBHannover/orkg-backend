@@ -297,7 +297,7 @@ internal class ClassControllerUnitTest : MockMvcBaseTest("classes") {
                 )
                 requestFields<ReplaceClassRequest>(
                     fieldWithPath("label").description("The updated class label"),
-                    fieldWithPath("uri").description("The updated class label"),
+                    fieldWithPath("uri").description("The updated class uri"),
                     fieldWithPath("extraction_method").description("""The method used to extract the class. Can be one of $allowedExtractionMethodValues. (optional)""").optional(),
                 )
                 throws(
@@ -356,7 +356,7 @@ internal class ClassControllerUnitTest : MockMvcBaseTest("classes") {
                 )
                 requestFields<UpdateClassRequest>(
                     fieldWithPath("label").description("The updated class label (optional)").optional(),
-                    fieldWithPath("uri").description("The updated class label (optional)").optional(),
+                    fieldWithPath("uri").description("The updated class uri (optional)").optional(),
                     fieldWithPath("extraction_method").description("""The method used to extract the class. Can be one of $allowedExtractionMethodValues. (optional)""").optional(),
                 )
                 throws(

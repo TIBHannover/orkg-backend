@@ -1,6 +1,7 @@
 package org.orkg.graph.adapter.output.inmemory
 
 import org.orkg.common.ContributorId
+import org.orkg.common.IRI
 import org.orkg.common.ThingId
 import org.orkg.common.withDefaultSort
 import org.orkg.graph.domain.Predicate
@@ -40,6 +41,7 @@ class InMemoryPredicateRepository(val inMemoryGraph: InMemoryGraph) :
             createdBy = null,
             createdAtStart = null,
             createdAtEnd = null,
+            uri = null,
         )
 
     override fun findAll(
@@ -48,6 +50,7 @@ class InMemoryPredicateRepository(val inMemoryGraph: InMemoryGraph) :
         createdBy: ContributorId?,
         createdAtStart: OffsetDateTime?,
         createdAtEnd: OffsetDateTime?,
+        uri: IRI?,
     ): Page<Predicate> =
         findAllFilteredAndPaged(
             pageable = pageable,
@@ -60,7 +63,8 @@ class InMemoryPredicateRepository(val inMemoryGraph: InMemoryGraph) :
                 (label == null || it.label.matches(label)) &&
                     (createdBy == null || it.createdBy == createdBy) &&
                     (createdAtStart == null || it.createdAt >= createdAtStart) &&
-                    (createdAtEnd == null || it.createdAt <= createdAtEnd)
+                    (createdAtEnd == null || it.createdAt <= createdAtEnd) &&
+                    (uri == null || it.uri == uri)
             },
         )
 

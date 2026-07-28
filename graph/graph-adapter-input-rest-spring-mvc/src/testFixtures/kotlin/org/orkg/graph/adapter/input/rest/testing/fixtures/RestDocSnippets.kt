@@ -47,6 +47,7 @@ fun resourceResponseFields(): List<FieldDescriptor> = listOf(
 fun predicateResponseFields() = listOf(
     fieldWithPath("id").description("The identifier of the predicate."),
     fieldWithPath("label").description("The label of the predicate."),
+    fieldWithPath("uri").type("String").description("An optional URI to describe the predicate (RDF).").optional(),
     timestampFieldWithPath("created_at", "the predicate was created"),
     fieldWithPath("created_by").description("The UUID of the user or service who created the predicate."),
     fieldWithPath("description").type("String").description("The description of the predicate, if exists."),

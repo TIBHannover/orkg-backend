@@ -2,6 +2,8 @@ package org.orkg.graph.domain
 
 import dev.forkhandles.values.ofOrNull
 import org.orkg.common.ContributorId
+import org.orkg.common.IRI
+import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
 import org.orkg.community.domain.ContributorNotFound
 import org.orkg.community.output.ContributorRepository
@@ -31,6 +33,15 @@ class PredicateService(
 
     override fun create(command: CreatePredicateUseCase.CreateCommand): ThingId {
         Label.ofOrNull(command.label) ?: throw InvalidLabel()
+        command.uri?.also { uri ->
+            if (!uri.isAbsolute) {
+                throw URINotAbsolute(uri)
+            }
+            val predicates = repository.findAll(PageRequests.SINGLE, uri = uri)
+            if (!predicates.isEmpty) {
+                throw URIAlreadyInUse(uri, predicates.single().id)
+            }
+        }
         command.id?.also { id -> thingRepository.findById(id).ifPresent { throw ThingAlreadyExists(id) } }
         return unsafePredicateUseCases.create(command)
     }
@@ -41,8 +52,9 @@ class PredicateService(
         createdBy: ContributorId?,
         createdAtStart: OffsetDateTime?,
         createdAtEnd: OffsetDateTime?,
+        uri: IRI?,
     ): Page<Predicate> =
-        repository.findAll(pageable, label, createdBy, createdAtStart, createdAtEnd)
+        repository.findAll(pageable, label, createdBy, createdAtStart, createdAtEnd, uri)
 
     override fun findById(id: ThingId): Optional<Predicate> =
         repository.findById(id)
@@ -58,6 +70,18 @@ class PredicateService(
             throw InvalidExtractionMethodChange(predicate.extractionMethod, command.extractionMethod!!)
         }
         command.label?.also { Label.ofOrNull(it) ?: throw InvalidLabel() }
+        command.uri?.also { newUri ->
+            if (predicate.uri != null && newUri != predicate.uri) {
+                throw CannotResetURI(command.id)
+            }
+            if (!newUri.isAbsolute) {
+                throw URINotAbsolute(newUri)
+            }
+            val predicates = repository.findAll(PageRequests.SINGLE, uri = newUri)
+            if (!predicates.isEmpty) {
+                throw URIAlreadyInUse(newUri, predicates.single().id)
+            }
+        }
         val updated = predicate.apply(command)
         if (updated != predicate) {
             repository.save(updated)

@@ -619,6 +619,7 @@ fun resourceReferenceResponseFields() = listOf(
 fun predicateReferenceResponseFields() = listOf(
     fieldWithPath("id").description("The id of the predicate."),
     fieldWithPath("label").description("The label of the predicate."),
+    fieldWithPath("uri").type("string").description("The uri of the predicate. (optional)").optional(),
     fieldWithPath("_class").description("Indicates which type of entity was returned. Always has the value `predicate_ref`."),
 )
 

@@ -13,6 +13,7 @@ import org.hamcrest.Matchers.endsWith
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
+import org.orkg.common.IRI
 import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
 import org.orkg.common.exceptions.UnknownSortingProperty
@@ -21,6 +22,7 @@ import org.orkg.graph.adapter.input.rest.PredicateController.CreatePredicateRequ
 import org.orkg.graph.adapter.input.rest.PredicateController.UpdatePredicateRequest
 import org.orkg.graph.adapter.input.rest.testing.fixtures.configuration.GraphControllerUnitTestConfiguration
 import org.orkg.graph.adapter.input.rest.testing.fixtures.predicateResponseFields
+import org.orkg.graph.domain.CannotResetURI
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ExactSearchString
 import org.orkg.graph.domain.ExtractionMethod
@@ -32,6 +34,8 @@ import org.orkg.graph.domain.PredicateNotFound
 import org.orkg.graph.domain.PredicateNotModifiable
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.ThingAlreadyExists
+import org.orkg.graph.domain.URIAlreadyInUse
+import org.orkg.graph.domain.URINotAbsolute
 import org.orkg.graph.input.PredicateUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UpdatePredicateUseCase
@@ -148,12 +152,13 @@ internal class PredicateControllerUnitTest : MockMvcBaseTest("predicates") {
                 requestFields<CreatePredicateRequest>(
                     fieldWithPath("label").description("The label of the predicate."),
                     fieldWithPath("id").type("String").description("The id of the predicate. (optional)").optional(),
+                    fieldWithPath("uri").description("The predicate URI (optional)").optional(),
                     fieldWithPath("extraction_method").description("""The method used to extract the predicate. Can be one of $allowedExtractionMethodValues. (optional)""").optional(),
                 )
                 responseHeaders(
                     headerWithName("Location").description("The uri path where the newly created predicate can be fetched from."),
                 )
-                throws(InvalidLabel::class, ThingAlreadyExists::class)
+                throws(InvalidLabel::class, ThingAlreadyExists::class, URINotAbsolute::class, URIAlreadyInUse::class)
             }
 
         verify(exactly = 1) {
@@ -161,6 +166,7 @@ internal class PredicateControllerUnitTest : MockMvcBaseTest("predicates") {
                 withArg {
                     it.id shouldBe request.id
                     it.label shouldBe request.label
+                    it.uri shouldBe request.uri
                     it.contributorId shouldBe ContributorId(MockUserId.USER)
                 },
             )
@@ -190,6 +196,7 @@ internal class PredicateControllerUnitTest : MockMvcBaseTest("predicates") {
                 withArg {
                     it.id shouldBe request.id
                     it.label shouldBe request.label
+                    it.uri shouldBe request.uri
                     it.contributorId shouldBe ContributorId(MockUserId.USER)
                 },
             )
@@ -217,7 +224,7 @@ internal class PredicateControllerUnitTest : MockMvcBaseTest("predicates") {
     @Test
     @DisplayName("Given several predicates, when they are fetched with all possible filtering parameters, then status is 200 OK and predicates are returned")
     fun findAll() {
-        every { predicateService.findAll(any(), any(), any(), any(), any()) } returns pageOf(createPredicate())
+        every { predicateService.findAll(any(), any(), any(), any(), any(), any()) } returns pageOf(createPredicate())
         every { statementService.findAllDescriptionsById(any<Set<ThingId>>()) } returns emptyMap()
 
         val label = "label"
@@ -225,6 +232,7 @@ internal class PredicateControllerUnitTest : MockMvcBaseTest("predicates") {
         val createdBy = ContributorId(MockUserId.USER)
         val createdAtStart = OffsetDateTime.now(clock).minusHours(1)
         val createdAtEnd = OffsetDateTime.now(clock).plusHours(1)
+        val uri = IRI.create("https://example.org/OK")
 
         documentedGetRequestTo("/api/predicates")
             .param("q", label)
@@ -232,6 +240,7 @@ internal class PredicateControllerUnitTest : MockMvcBaseTest("predicates") {
             .param("created_by", createdBy.value.toString())
             .param("created_at_start", createdAtStart.format(ISO_OFFSET_DATE_TIME))
             .param("created_at_end", createdAtEnd.format(ISO_OFFSET_DATE_TIME))
+            .param("uri", uri.toString())
             .accept(APPLICATION_JSON)
             .perform()
             .andExpect(status().isOk)
@@ -251,6 +260,7 @@ internal class PredicateControllerUnitTest : MockMvcBaseTest("predicates") {
                     parameterWithName("created_by").description("Filter for the UUID of the user or service who created the predicate. (optional)").format("uuid").optional(),
                     parameterWithName("created_at_start").description("Filter for the created at timestamp, marking the oldest timestamp a returned predicate can have. (optional)").optional(),
                     parameterWithName("created_at_end").description("Filter for the created at timestamp, marking the most recent timestamp a returned predicate can have. (optional)").optional(),
+                    parameterWithName("uri").description("Filter for the URI of the predicate. Must match exactly. (optional)").format("iri").optional(),
                 )
                 pagedResponseFields<PredicateRepresentation>(predicateResponseFields())
                 throws(UnknownSortingProperty::class)
@@ -265,6 +275,7 @@ internal class PredicateControllerUnitTest : MockMvcBaseTest("predicates") {
                 createdBy = createdBy,
                 createdAtStart = createdAtStart,
                 createdAtEnd = createdAtEnd,
+                uri = uri,
             )
         }
         verify(exactly = 1) { statementService.findAllDescriptionsById(any<Set<ThingId>>()) }
@@ -288,15 +299,17 @@ internal class PredicateControllerUnitTest : MockMvcBaseTest("predicates") {
     @TestWithMockUser
     @DisplayName("Given a predicate update command, when service succeeds, then status is 204 NO CONTENT")
     fun update() {
-        val predicate = createPredicate(label = "foo")
+        val predicate = createPredicate(label = "foo", uri = IRI.create("https://example.org/OK"))
         val command = UpdatePredicateUseCase.UpdateCommand(
             id = predicate.id,
             contributorId = ContributorId(MockUserId.USER),
             label = predicate.label,
+            uri = predicate.uri,
             extractionMethod = ExtractionMethod.AUTOMATIC,
         )
         val request = mapOf(
             "label" to command.label,
+            "uri" to command.uri,
             "extraction_method" to command.extractionMethod,
         )
 
@@ -324,9 +337,18 @@ internal class PredicateControllerUnitTest : MockMvcBaseTest("predicates") {
                 )
                 requestFields<UpdatePredicateRequest>(
                     fieldWithPath("label").description("The updated predicate label. (optional)").optional(),
+                    fieldWithPath("uri").description("The updated predicate uri. (optional)").optional(),
                     fieldWithPath("extraction_method").description("""The method used to extract the predicate. Can be one of $allowedExtractionMethodValues. (optional)""").optional(),
                 )
-                throws(PredicateNotFound::class, PredicateNotModifiable::class, InvalidExtractionMethodChange::class, InvalidLabel::class)
+                throws(
+                    PredicateNotFound::class,
+                    PredicateNotModifiable::class,
+                    InvalidExtractionMethodChange::class,
+                    InvalidLabel::class,
+                    URINotAbsolute::class,
+                    CannotResetURI::class,
+                    URIAlreadyInUse::class,
+                )
             }
 
         verify(exactly = 1) { predicateService.update(command) }

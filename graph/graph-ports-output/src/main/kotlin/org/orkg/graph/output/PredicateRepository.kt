@@ -1,6 +1,7 @@
 package org.orkg.graph.output
 
 import org.orkg.common.ContributorId
+import org.orkg.common.IRI
 import org.orkg.common.ThingId
 import org.orkg.graph.domain.Predicate
 import org.orkg.graph.domain.SearchString
@@ -18,6 +19,7 @@ interface PredicateRepository : EntityRepository<Predicate, ThingId> {
         createdBy: ContributorId? = null,
         createdAtStart: OffsetDateTime? = null,
         createdAtEnd: OffsetDateTime? = null,
+        uri: IRI? = null,
     ): Page<Predicate>
 
     fun deleteById(id: ThingId)

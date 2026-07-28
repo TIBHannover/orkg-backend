@@ -706,6 +706,7 @@ data class ResourceReferenceRepresentation(
 data class PredicateReferenceRepresentation(
     override val id: ThingId,
     override val label: String,
+    val uri: IRI?,
 ) : ThingReferenceRepresentation
 
 @JsonTypeName("class_ref")

@@ -64,6 +64,7 @@ class PredicateFabricator : Fabricator<Predicate> {
         label = fabrikate.random(),
         createdAt = fabrikate.random(),
         createdBy = fabrikate.random(),
+        uri = fabrikate.random(),
         // Do not create a random description for tests, as it needs to be saved via statements
         // description = random(),
         modifiable = true,

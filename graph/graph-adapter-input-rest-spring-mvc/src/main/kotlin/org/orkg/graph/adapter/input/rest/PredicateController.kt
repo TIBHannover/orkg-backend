@@ -2,6 +2,7 @@ package org.orkg.graph.adapter.input.rest
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import org.orkg.common.ContributorId
+import org.orkg.common.IRI
 import org.orkg.common.ThingId
 import org.orkg.common.annotations.RequireLogin
 import org.orkg.common.contributorId
@@ -53,6 +54,7 @@ class PredicateController(
         @RequestParam("created_by", required = false) createdBy: ContributorId?,
         @RequestParam("created_at_start", required = false) @DateTimeFormat(iso = ISO.DATE_TIME) createdAtStart: OffsetDateTime?,
         @RequestParam("created_at_end", required = false) @DateTimeFormat(iso = ISO.DATE_TIME) createdAtEnd: OffsetDateTime?,
+        @RequestParam("uri", required = false) uri: IRI?,
         pageable: Pageable,
     ): Page<PredicateRepresentation> =
         service.findAll(
@@ -61,6 +63,7 @@ class PredicateController(
             createdBy = createdBy,
             createdAtStart = createdAtStart,
             createdAtEnd = createdAtEnd,
+            uri = uri,
         ).mapToPredicateRepresentation()
 
     @RequireLogin
@@ -70,14 +73,7 @@ class PredicateController(
         uriComponentsBuilder: UriComponentsBuilder,
         currentUser: Authentication?,
     ): ResponseEntity<PredicateRepresentation> {
-        val id = service.create(
-            CreatePredicateUseCase.CreateCommand(
-                id = request.id,
-                contributorId = currentUser.contributorId(),
-                label = request.label,
-                extractionMethod = request.extractionMethod,
-            ),
-        )
+        val id = service.create(request.toCreateCommand(currentUser.contributorId()))
         val location = uriComponentsBuilder
             .path("/api/predicates/{id}")
             .buildAndExpand(id)
@@ -93,14 +89,7 @@ class PredicateController(
         uriComponentsBuilder: UriComponentsBuilder,
         currentUser: Authentication?,
     ): ResponseEntity<PredicateRepresentation> {
-        service.update(
-            UpdatePredicateUseCase.UpdateCommand(
-                id = id,
-                contributorId = currentUser.contributorId(),
-                label = request.label,
-                extractionMethod = request.extractionMethod,
-            ),
-        )
+        service.update(request.toUpdateCommand(id, currentUser.contributorId()))
         val location = uriComponentsBuilder
             .path("/api/predicates/{id}")
             .buildAndExpand(id)
@@ -121,13 +110,33 @@ class PredicateController(
     data class CreatePredicateRequest(
         val id: ThingId?,
         val label: String,
+        val uri: IRI? = null,
         @field:JsonProperty("extraction_method")
         val extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN,
-    )
+    ) {
+        fun toCreateCommand(contributorId: ContributorId): CreatePredicateUseCase.CreateCommand =
+            CreatePredicateUseCase.CreateCommand(
+                id = id,
+                contributorId = contributorId,
+                label = label,
+                uri = uri,
+                extractionMethod = extractionMethod,
+            )
+    }
 
     data class UpdatePredicateRequest(
         val label: String?,
+        val uri: IRI? = null,
         @field:JsonProperty("extraction_method")
         val extractionMethod: ExtractionMethod?,
-    )
+    ) {
+        fun toUpdateCommand(id: ThingId, contributorId: ContributorId): UpdatePredicateUseCase.UpdateCommand =
+            UpdatePredicateUseCase.UpdateCommand(
+                id = id,
+                contributorId = contributorId,
+                label = label,
+                uri = uri,
+                extractionMethod = extractionMethod,
+            )
+    }
 }

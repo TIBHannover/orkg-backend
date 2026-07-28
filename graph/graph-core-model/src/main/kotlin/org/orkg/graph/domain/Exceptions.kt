@@ -294,7 +294,7 @@ class URIAlreadyInUse(
     id: ThingId,
 ) : PropertyValidationException(
         jsonFieldPathToJsonPointerReference("uri"),
-        """The URI <$uri> is already assigned to class with ID "$id".""",
+        """The URI <$uri> is already assigned to thing with ID "$id".""",
         type = createProblemURI("uri_already_in_use"),
     )
 

@@ -297,16 +297,16 @@ internal class SmartReviewControllerIntegrationTest : MockMvcBaseTest("smart-rev
             it.sections[3].shouldBeInstanceOf<SmartReviewPredicateSectionRepresentation>().asClue { section ->
                 section.id shouldNotBe null
                 section.heading shouldBe "predicate section heading"
-                section.predicate shouldBe PredicateReferenceRepresentation(ThingId("R15696541"), "Some predicate")
+                section.predicate shouldBe PredicateReferenceRepresentation(ThingId("R15696541"), "Some predicate", null)
             }
             it.sections[4].shouldBeInstanceOf<SmartReviewOntologySectionRepresentation>().asClue { section ->
                 section.id shouldNotBe null
                 section.heading shouldBe "ontology section heading"
                 section.entities shouldBe listOf(
                     ResourceReferenceRepresentation(ThingId("R1"), "Some ontology resource", emptySet()),
-                    PredicateReferenceRepresentation(ThingId("P1"), "Some ontology predicate"),
+                    PredicateReferenceRepresentation(ThingId("P1"), "Some ontology predicate", null),
                 )
-                section.predicates shouldBe listOf(PredicateReferenceRepresentation(ThingId("P1"), "Some ontology predicate"))
+                section.predicates shouldBe listOf(PredicateReferenceRepresentation(ThingId("P1"), "Some ontology predicate", null))
             }
             it.sections[5].shouldBeInstanceOf<SmartReviewTextSectionRepresentation>().asClue { section ->
                 section.id shouldNotBe null
@@ -405,16 +405,16 @@ internal class SmartReviewControllerIntegrationTest : MockMvcBaseTest("smart-rev
             it.sections[3].shouldBeInstanceOf<SmartReviewPredicateSection>().asClue { section ->
                 section.id shouldNotBe null
                 section.heading shouldBe "updated predicate section heading"
-                section.predicate shouldBe PredicateReference(ThingId("R215696541"), "Some other predicate")
+                section.predicate shouldBe PredicateReference(ThingId("R215696541"), "Some other predicate", null)
             }
             it.sections[4].shouldBeInstanceOf<SmartReviewOntologySection>().asClue { section ->
                 section.id shouldNotBe null
                 section.heading shouldBe "updated ontology section heading"
                 section.entities shouldBe listOf(
                     ResourceReference(ThingId("R21"), "Some other ontology resource", emptySet()),
-                    PredicateReference(ThingId("P1"), "Some ontology predicate"),
+                    PredicateReference(ThingId("P1"), "Some ontology predicate", null),
                 )
-                section.predicates shouldBe listOf(PredicateReference(ThingId("P21"), "Some other ontology predicate"))
+                section.predicates shouldBe listOf(PredicateReference(ThingId("P21"), "Some other ontology predicate", null))
             }
             it.sections[5].shouldBeInstanceOf<SmartReviewTextSection>().asClue { section ->
                 section.id shouldNotBe null
@@ -575,7 +575,7 @@ internal class SmartReviewControllerIntegrationTest : MockMvcBaseTest("smart-rev
         smartReview.sections.last().shouldBeInstanceOf<SmartReviewPredicateSection>().asClue {
             it.id shouldNotBe null
             it.heading shouldBe "new predicate section heading"
-            it.predicate shouldBe PredicateReference(ThingId("R15696541"), "Some predicate")
+            it.predicate shouldBe PredicateReference(ThingId("R15696541"), "Some predicate", null)
         }
 
         val sectionId = smartReview.sections.last().id
@@ -593,7 +593,7 @@ internal class SmartReviewControllerIntegrationTest : MockMvcBaseTest("smart-rev
         updatedSmartReview.sections.last().shouldBeInstanceOf<SmartReviewPredicateSection>().asClue {
             it.id shouldBe sectionId
             it.heading shouldBe "updated predicate section heading"
-            it.predicate shouldBe PredicateReference(ThingId("R215696541"), "Some other predicate")
+            it.predicate shouldBe PredicateReference(ThingId("R215696541"), "Some other predicate", null)
         }
     }
 
@@ -618,9 +618,9 @@ internal class SmartReviewControllerIntegrationTest : MockMvcBaseTest("smart-rev
             it.heading shouldBe "new ontology section heading"
             it.entities shouldBe listOf(
                 ResourceReference(ThingId("R1"), "Some ontology resource", emptySet()),
-                PredicateReference(ThingId("P1"), "Some ontology predicate"),
+                PredicateReference(ThingId("P1"), "Some ontology predicate", null),
             )
-            it.predicates shouldBe listOf(PredicateReference(ThingId("P1"), "Some ontology predicate"))
+            it.predicates shouldBe listOf(PredicateReference(ThingId("P1"), "Some ontology predicate", null))
         }
 
         val sectionId = smartReview.sections.last().id
@@ -640,9 +640,9 @@ internal class SmartReviewControllerIntegrationTest : MockMvcBaseTest("smart-rev
             it.heading shouldBe "updated ontology section heading"
             it.entities shouldBe listOf(
                 ResourceReference(ThingId("R21"), "Some other ontology resource", emptySet()),
-                PredicateReference(ThingId("P1"), "Some ontology predicate"),
+                PredicateReference(ThingId("P1"), "Some ontology predicate", null),
             )
-            it.predicates shouldBe listOf(PredicateReference(ThingId("P21"), "Some other ontology predicate"))
+            it.predicates shouldBe listOf(PredicateReference(ThingId("P21"), "Some other ontology predicate", null))
         }
     }
 

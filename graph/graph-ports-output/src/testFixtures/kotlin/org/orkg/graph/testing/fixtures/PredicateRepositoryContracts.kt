@@ -4,13 +4,16 @@ import dev.forkhandles.fabrikate.FabricatorConfig
 import dev.forkhandles.fabrikate.Fabrikate
 import io.kotest.assertions.asClue
 import io.kotest.core.spec.style.describeSpec
+import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.collections.shouldContainAll
 import io.kotest.matchers.comparables.shouldBeGreaterThan
 import io.kotest.matchers.comparables.shouldBeLessThan
+import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.kotest.matchers.string.shouldNotMatch
 import org.orkg.common.ContributorId
+import org.orkg.common.IRI
 import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.fixedClock
 import org.orkg.graph.domain.Class
@@ -29,6 +32,7 @@ import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 import java.time.OffsetDateTime
 import java.util.UUID
+import kotlin.collections.forEach
 
 fun <
     P : PredicateRepository,
@@ -83,13 +87,13 @@ fun <
 
             val actual = repository.findById(expected.id).orElse(null)
 
-            actual shouldNotBe null
-            actual.asClue {
+            actual.shouldNotBeNull().asClue {
                 it.id shouldBe expected.id
                 it.label shouldBe expected.label
                 it.createdAt shouldBe expected.createdAt
                 it.createdBy shouldBe expected.createdBy
-                it.id shouldBe expected.id
+                it.uri shouldBe expected.uri
+                it.extractionMethod shouldBe expected.extractionMethod
                 it.modifiable shouldBe expected.modifiable
             }
         }
@@ -293,11 +297,39 @@ fun <
                     }
                 }
             }
+            context("by uri") {
+                val predicates = fabricator.random<List<Predicate>>()
+                predicates.forEach(repository::save)
+
+                val expected = predicates[3]
+                val result = repository.findAll(
+                    pageable = PageRequest.of(0, 5),
+                    uri = expected.uri,
+                )
+
+                it("returns the correct result") {
+                    result shouldNotBe null
+                    result.content shouldNotBe null
+                    result.content.size shouldBe 1
+                    result.content shouldContain expected
+                }
+                it("pages the result correctly") {
+                    result.size shouldBe 5
+                    result.number shouldBe 0
+                    result.totalPages shouldBe 1
+                    result.totalElements shouldBe 1
+                }
+                it("sorts the results by creation date by default") {
+                    result.content.zipWithNext { a, b ->
+                        a.createdAt shouldBeLessThan b.createdAt
+                    }
+                }
+            }
             context("using all parameters") {
                 val predicates = fabricator.random<List<Predicate>>()
                 predicates.forEach(repository::save)
 
-                val expected = createPredicate()
+                val expected = createPredicate(uri = IRI.create("https://exmaple.org/OK"))
                 repository.save(expected)
 
                 val result = repository.findAll(
@@ -306,6 +338,7 @@ fun <
                     createdBy = expected.createdBy,
                     createdAtStart = expected.createdAt,
                     createdAtEnd = expected.createdAt,
+                    uri = expected.uri,
                 )
 
                 it("returns the correct result") {
@@ -356,7 +389,7 @@ fun <
 
     it("delete all predicates") {
         repeat(3) {
-            repository.save(createPredicate(id = ThingId("P$it")))
+            repository.save(createPredicate(id = ThingId("P$it"), uri = null))
         }
         // PredicateRepository has no count method
         repository.findAll(PageRequest.of(0, Int.MAX_VALUE)).totalElements shouldBe 3

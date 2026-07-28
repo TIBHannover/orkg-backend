@@ -221,6 +221,7 @@ fun Node.toPredicate() = Predicate(
     label = this["label"].asString(),
     createdAt = this["created_at"].toOffsetDateTime(),
     createdBy = this["created_by"].toContributorId(),
+    uri = this["uri"].toIRI(),
     extractionMethod = this["extraction_method"].toExtractionMethod(),
     modifiable = this["modifiable"].asBoolean(),
 )

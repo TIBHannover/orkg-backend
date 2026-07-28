@@ -581,6 +581,7 @@ internal class OpenApiDocTest : MockMvcOpenApiBaseTest() {
     private fun createPredicateReferenceRepresentation() = PredicateReferenceRepresentation(
         id = ThingId("P123"),
         label = "Default label",
+        uri = IRI("http://example.org"),
     )
 
     private fun createClassReferenceRepresentation() = ClassReferenceRepresentation(

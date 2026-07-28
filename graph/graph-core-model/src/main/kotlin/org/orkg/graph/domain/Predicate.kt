@@ -1,6 +1,7 @@
 package org.orkg.graph.domain
 
 import org.orkg.common.ContributorId
+import org.orkg.common.IRI
 import org.orkg.common.ThingId
 import java.time.OffsetDateTime
 
@@ -9,6 +10,7 @@ data class Predicate(
     override val label: String,
     override val createdAt: OffsetDateTime,
     override val createdBy: ContributorId = ContributorId.UNKNOWN,
+    val uri: IRI? = null,
     val extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN,
     override val modifiable: Boolean = true,
 ) : Thing {

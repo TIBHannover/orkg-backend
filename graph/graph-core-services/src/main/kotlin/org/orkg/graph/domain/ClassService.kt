@@ -76,6 +76,9 @@ class ClassService(
             if (`class`.uri != null && command.uri != `class`.uri) {
                 throw CannotResetURI(command.id)
             }
+            if (!newUri.isAbsolute) {
+                throw URINotAbsolute(newUri)
+            }
             findByURI(newUri).ifPresent {
                 if (it.id != `class`.id) {
                     throw URIAlreadyInUse(newUri, it.id)
@@ -102,6 +105,9 @@ class ClassService(
             throw InvalidExtractionMethodChange(`class`.extractionMethod, command.extractionMethod!!)
         }
         command.uri?.also { newUri ->
+            if (!newUri.isAbsolute) {
+                throw URINotAbsolute(newUri)
+            }
             findByURI(newUri).ifPresent {
                 if (it.id != `class`.id) {
                     throw URIAlreadyInUse(newUri, it.id)

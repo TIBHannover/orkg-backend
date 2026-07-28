@@ -1,7 +1,5 @@
 package org.orkg.graph.domain
 
-import io.kotest.assertions.asClue
-import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.just
@@ -18,12 +16,10 @@ import org.orkg.graph.input.CreateClassUseCase
 import org.orkg.graph.input.UnsafeClassUseCases
 import org.orkg.graph.input.UpdateClassUseCase
 import org.orkg.graph.input.UpdateClassUseCase.ReplaceCommand
-import org.orkg.graph.input.UpdateResourceUseCase
 import org.orkg.graph.output.ClassRepository
 import org.orkg.graph.output.ThingRepository
 import org.orkg.graph.testing.fixtures.createClass
 import org.orkg.graph.testing.fixtures.createClassWithoutURI
-import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.testing.MockUserId
 import java.util.Optional
 
@@ -308,6 +304,23 @@ internal class ClassServiceUnitTest : MockkBaseTest {
     }
 
     @Test
+    fun `Given a class update command, when uri is not absolute, it throws an exception`() {
+        val id = ThingId("R123")
+        val `class` = createClass(id = id, uri = null)
+        val command = UpdateClassUseCase.UpdateCommand(
+            id = id,
+            contributorId = ContributorId(MockUserId.USER),
+            uri = IRI.create("invalid"),
+        )
+
+        every { repository.findById(`class`.id) } returns Optional.of(`class`)
+
+        assertThrows<URINotAbsolute> { service.update(command) }
+
+        verify(exactly = 1) { repository.findById(`class`.id) }
+    }
+
+    @Test
     fun `Given a class exists and has no URI, when updating the URI and the URI is valid and the URI is already used, it returns an appropriate error`() {
         val originalClass = createClassWithoutURI()
         val expectedClass = originalClass.copy(uri = IRI.create("https://example.org/NEW"))
@@ -497,6 +510,24 @@ internal class ClassServiceUnitTest : MockkBaseTest {
         verify(exactly = 1) { repository.findById(classToReplace) }
         verify(exactly = 1) { service.findByURI(expectedClass.uri!!) }
         verify(exactly = 1) { repository.save(expectedClass) }
+    }
+
+    @Test
+    fun `Given a class replace command, when uri is not absolute, it throws an exception`() {
+        val id = ThingId("R123")
+        val `class` = createClass(id = id, uri = null)
+        val command = ReplaceCommand(
+            id = id,
+            contributorId = ContributorId(MockUserId.USER),
+            label = "some label",
+            uri = IRI.create("invalid"),
+        )
+
+        every { repository.findById(`class`.id) } returns Optional.of(`class`)
+
+        assertThrows<URINotAbsolute> { service.replace(command) }
+
+        verify(exactly = 1) { repository.findById(`class`.id) }
     }
 
     @Test

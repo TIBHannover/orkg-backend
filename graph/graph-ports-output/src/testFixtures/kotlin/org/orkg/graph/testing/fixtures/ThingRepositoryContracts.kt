@@ -3,12 +3,14 @@ package org.orkg.graph.testing.fixtures
 import dev.forkhandles.fabrikate.FabricatorConfig
 import dev.forkhandles.fabrikate.Fabrikate
 import io.kotest.core.spec.style.describeSpec
+import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.collections.shouldContainAll
 import io.kotest.matchers.comparables.shouldBeGreaterThan
 import io.kotest.matchers.comparables.shouldBeLessThan
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import org.orkg.common.ContributorId
+import org.orkg.common.IRI
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
@@ -31,6 +33,7 @@ import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 import java.time.OffsetDateTime
 import java.util.UUID
+import kotlin.collections.forEach
 
 fun <
     T : ThingRepository,
@@ -428,11 +431,39 @@ fun <
                     }
                 }
             }
+            context("by uri") {
+                val things = fabricator.random<List<Resource>>()
+                things.forEach(resourceRepository::save)
+
+                val expected = things[3]
+                val result = repository.findAll(
+                    pageable = PageRequest.of(0, 5),
+                    uri = expected.uri,
+                )
+
+                it("returns the correct result") {
+                    result shouldNotBe null
+                    result.content shouldNotBe null
+                    result.content.size shouldBe 1
+                    result.content shouldContain expected
+                }
+                it("pages the result correctly") {
+                    result.size shouldBe 5
+                    result.number shouldBe 0
+                    result.totalPages shouldBe 1
+                    result.totalElements shouldBe 1
+                }
+                it("sorts the results by creation date by default") {
+                    result.content.zipWithNext { a, b ->
+                        a.createdAt shouldBeLessThan b.createdAt
+                    }
+                }
+            }
             context("using all parameters") {
                 val things = fabricator.random<List<Class>>()
                 things.forEach(::save)
 
-                val expected = createResource(classes = setOf(Classes.paper))
+                val expected = createResource(classes = setOf(Classes.paper), uri = IRI("https://orkg.org/resource/R1"))
                 resourceRepository.save(expected)
 
                 val result = repository.findAll(
@@ -446,6 +477,7 @@ fun <
                     excludeClasses = setOf(ThingId("MissingClass")),
                     observatoryId = expected.observatoryId,
                     organizationId = expected.organizationId,
+                    uri = expected.uri,
                 )
 
                 it("returns the correct result") {

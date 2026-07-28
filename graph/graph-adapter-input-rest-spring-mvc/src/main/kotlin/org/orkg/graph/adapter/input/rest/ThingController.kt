@@ -1,6 +1,7 @@
 package org.orkg.graph.adapter.input.rest
 
 import org.orkg.common.ContributorId
+import org.orkg.common.IRI
 import org.orkg.common.MediaTypeCapabilities
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
@@ -50,6 +51,7 @@ class ThingController(
         @RequestParam("exclude", required = false, defaultValue = "") excludeClasses: Set<ThingId>,
         @RequestParam("observatory_id", required = false) observatoryId: ObservatoryId?,
         @RequestParam("organization_id", required = false) organizationId: OrganizationId?,
+        @RequestParam("uri", required = false) uri: IRI?,
         pageable: Pageable,
         capabilities: MediaTypeCapabilities,
     ): Page<ThingRepresentation> =
@@ -64,5 +66,6 @@ class ThingController(
             excludeClasses = excludeClasses,
             observatoryId = observatoryId,
             organizationId = organizationId,
+            uri = uri,
         ).mapToThingRepresentation(capabilities)
 }

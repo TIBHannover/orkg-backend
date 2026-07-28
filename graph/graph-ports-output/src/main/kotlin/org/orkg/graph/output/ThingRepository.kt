@@ -1,6 +1,7 @@
 package org.orkg.graph.output
 
 import org.orkg.common.ContributorId
+import org.orkg.common.IRI
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
@@ -26,6 +27,7 @@ interface ThingRepository {
         excludeClasses: Set<ThingId> = emptySet(),
         observatoryId: ObservatoryId? = null,
         organizationId: OrganizationId? = null,
+        uri: IRI? = null,
     ): Page<Thing>
 
     fun count(
@@ -38,6 +40,7 @@ interface ThingRepository {
         excludeClasses: Set<ThingId> = emptySet(),
         observatoryId: ObservatoryId? = null,
         organizationId: OrganizationId? = null,
+        uri: IRI? = null,
     ): Long
 
     fun existsAllById(ids: Set<ThingId>): Boolean

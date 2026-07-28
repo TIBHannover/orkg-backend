@@ -454,7 +454,7 @@ internal class ResourceControllerUnitTest : MockMvcBaseTest("resources") {
                     fieldWithPath("id").description("The id for the resource. (optional)").optional(),
                     fieldWithPath("label").description("The resource label."),
                     fieldWithPath("classes[]").type("Array").description("The classes of the resource. (optional)").optional(),
-                    fieldWithPath("uri").description("The resource URI (optional)").optional(),
+                    fieldWithPath("uri").type("String").description("The resource URI (optional)").optional(),
                     fieldWithPath("extraction_method").type("Enum").description("""The method used to extract the resource. Can be one of $allowedExtractionMethodValues. (optional, default: `UNKNOWN`)""").optional(),
                 )
                 throws(

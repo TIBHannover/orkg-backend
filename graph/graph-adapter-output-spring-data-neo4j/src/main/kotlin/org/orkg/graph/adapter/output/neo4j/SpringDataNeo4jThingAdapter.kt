@@ -11,6 +11,7 @@ import org.neo4j.cypherdsl.core.Cypher.node
 import org.neo4j.cypherdsl.core.Cypher.size
 import org.neo4j.cypherdsl.core.Cypher.toLower
 import org.orkg.common.ContributorId
+import org.orkg.common.IRI
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
@@ -61,6 +62,7 @@ class SpringDataNeo4jThingAdapter(
         excludeClasses: Set<ThingId>,
         observatoryId: ObservatoryId?,
         organizationId: OrganizationId?,
+        uri: IRI?,
     ): Page<Thing> =
         buildFindAllQuery(
             sort = pageable.sort.orElseGet { Sort.by("created_at") },
@@ -73,6 +75,7 @@ class SpringDataNeo4jThingAdapter(
             excludeClasses = excludeClasses,
             observatoryId = observatoryId,
             organizationId = organizationId,
+            uri = uri,
         ).fetch(pageable, false)
 
     override fun count(
@@ -85,6 +88,7 @@ class SpringDataNeo4jThingAdapter(
         excludeClasses: Set<ThingId>,
         observatoryId: ObservatoryId?,
         organizationId: OrganizationId?,
+        uri: IRI?,
     ): Long =
         buildFindAllQuery(
             label = label,
@@ -96,6 +100,7 @@ class SpringDataNeo4jThingAdapter(
             excludeClasses = excludeClasses,
             observatoryId = observatoryId,
             organizationId = organizationId,
+            uri = uri,
         ).count()
 
     private fun buildFindAllQuery(
@@ -109,6 +114,7 @@ class SpringDataNeo4jThingAdapter(
         excludeClasses: Set<ThingId>,
         observatoryId: ObservatoryId?,
         organizationId: OrganizationId?,
+        uri: IRI?,
     ) = cypherQueryBuilderFactory.newBuilder(Uncached)
         .withCommonQuery {
             val node = node("Thing", includeClasses.map { it.value }).named("node")
@@ -145,6 +151,7 @@ class SpringDataNeo4jThingAdapter(
                 excludeClasses.toCondition { classes -> classes.map { node.hasLabels(it.value).not() }.reduce(Condition::and) },
                 observatoryId.toCondition { node.property("observatory_id").eq(anonParameter(it.value.toString())) },
                 organizationId.toCondition { node.property("organization_id").eq(anonParameter(it.value.toString())) },
+                uri.toCondition { node.property("uri").eq(anonParameter(it.toString())) },
             )
         }
         .withQuery { commonQuery ->

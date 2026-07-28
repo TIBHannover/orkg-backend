@@ -1,6 +1,7 @@
 package org.orkg.graph.input
 
 import org.orkg.common.ContributorId
+import org.orkg.common.IRI
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
@@ -30,5 +31,6 @@ interface RetrieveThingUseCase {
         excludeClasses: Set<ThingId> = emptySet(),
         observatoryId: ObservatoryId? = null,
         organizationId: OrganizationId? = null,
+        uri: IRI? = null,
     ): Page<Thing>
 }

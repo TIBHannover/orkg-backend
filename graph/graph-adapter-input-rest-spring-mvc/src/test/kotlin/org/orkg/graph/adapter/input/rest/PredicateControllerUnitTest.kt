@@ -152,7 +152,7 @@ internal class PredicateControllerUnitTest : MockMvcBaseTest("predicates") {
                 requestFields<CreatePredicateRequest>(
                     fieldWithPath("label").description("The label of the predicate."),
                     fieldWithPath("id").type("String").description("The id of the predicate. (optional)").optional(),
-                    fieldWithPath("uri").description("The predicate URI (optional)").optional(),
+                    fieldWithPath("uri").type("String").description("The predicate URI (optional)").optional(),
                     fieldWithPath("extraction_method").description("""The method used to extract the predicate. Can be one of $allowedExtractionMethodValues. (optional)""").optional(),
                 )
                 responseHeaders(

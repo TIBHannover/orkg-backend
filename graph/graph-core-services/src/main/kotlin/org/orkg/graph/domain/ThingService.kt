@@ -1,6 +1,7 @@
 package org.orkg.graph.domain
 
 import org.orkg.common.ContributorId
+import org.orkg.common.IRI
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
@@ -33,6 +34,7 @@ class ThingService(
         excludeClasses: Set<ThingId>,
         observatoryId: ObservatoryId?,
         organizationId: OrganizationId?,
+        uri: IRI?,
     ): Page<Thing> =
         repository.findAll(
             pageable = pageable,
@@ -45,5 +47,6 @@ class ThingService(
             excludeClasses = excludeClasses,
             observatoryId = observatoryId,
             organizationId = organizationId,
+            uri = uri,
         )
 }

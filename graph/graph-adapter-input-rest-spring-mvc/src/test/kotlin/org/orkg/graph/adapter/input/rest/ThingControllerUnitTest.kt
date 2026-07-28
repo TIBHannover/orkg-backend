@@ -9,6 +9,7 @@ import io.mockk.verify
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
+import org.orkg.common.IRI
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
@@ -119,7 +120,7 @@ internal class ThingControllerUnitTest : MockMvcBaseTest("things") {
     @Test
     @DisplayName("Given several things, when they are fetched with all possible filtering parameters, then status is 200 OK and things are returned")
     fun findAll() {
-        every { thingService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any()) } returns pageOf(createResource())
+        every { thingService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any()) } returns pageOf(createResource())
         every { statementService.countAllIncomingStatementsById(any<Set<ThingId>>()) } returns emptyMap()
 
         val label = "label"
@@ -132,6 +133,7 @@ internal class ThingControllerUnitTest : MockMvcBaseTest("things") {
         val excludeClasses = setOf(ThingId("Exclude1"), ThingId("Exclude2"))
         val observatoryId = ObservatoryId("cb71eebf-8afd-4fe3-9aea-d0966d71cece")
         val organizationId = OrganizationId("a700c55f-aae2-4696-b7d5-6e8b89f66a8f")
+        val uri = IRI.create("https://example.org/OK")
 
         documentedGetRequestTo("/api/things")
             .param("q", label)
@@ -144,6 +146,7 @@ internal class ThingControllerUnitTest : MockMvcBaseTest("things") {
             .param("exclude", excludeClasses.joinToString(separator = ","))
             .param("observatory_id", observatoryId.value.toString())
             .param("organization_id", organizationId.value.toString())
+            .param("uri", uri.toString())
             .perform()
             .andExpect(status().isOk)
             .andExpectPage()
@@ -167,6 +170,7 @@ internal class ThingControllerUnitTest : MockMvcBaseTest("things") {
                     parameterWithName("exclude").description("A comma-separated set of classes that the thing must not have. The ids `Resource`, `Class`, `Predicate` and `Literal` can be used to filter for a general type of object. (optional)").repeatable().optional(),
                     parameterWithName("observatory_id").description("Filter for the UUID of the observatory that the thing belongs to. (optional)").format("uuid").optional(),
                     parameterWithName("organization_id").description("Filter for the UUID of the organization that the thing belongs to. (optional)").format("uuid").optional(),
+                    parameterWithName("uri").description("Filter for the URI of the thing. Must match exactly. (optional)").format("iri").optional(),
                 )
                 pagedResponseFields<ThingRepresentation>(thingResponseFields())
                 throws(UnknownSortingProperty::class)
@@ -186,6 +190,7 @@ internal class ThingControllerUnitTest : MockMvcBaseTest("things") {
                 excludeClasses = excludeClasses,
                 observatoryId = observatoryId,
                 organizationId = organizationId,
+                uri = uri,
             )
         }
         verify(exactly = 1) { statementService.countAllIncomingStatementsById(any<Set<ThingId>>()) }

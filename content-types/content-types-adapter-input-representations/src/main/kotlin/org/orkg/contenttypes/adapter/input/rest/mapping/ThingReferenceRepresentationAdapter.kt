@@ -26,7 +26,7 @@ interface ThingReferenceRepresentationAdapter {
         }
 
     fun ResourceReference.toResourceReferenceRepresentation(): ResourceReferenceRepresentation =
-        ResourceReferenceRepresentation(id, label, classes)
+        ResourceReferenceRepresentation(id, label, classes, uri)
 
     fun PredicateReference.toPredicateReferenceRepresentation(): PredicateReferenceRepresentation =
         PredicateReferenceRepresentation(id, label, uri)
@@ -46,7 +46,7 @@ interface ThingReferenceRepresentationAdapter {
         }
 
     fun Resource.toResourceReferenceRepresentation(): ResourceReferenceRepresentation =
-        ResourceReferenceRepresentation(id, label, classes)
+        ResourceReferenceRepresentation(id, label, classes, uri)
 
     fun Predicate.toPredicateReferenceRepresentation(): PredicateReferenceRepresentation =
         PredicateReferenceRepresentation(id, label, uri)

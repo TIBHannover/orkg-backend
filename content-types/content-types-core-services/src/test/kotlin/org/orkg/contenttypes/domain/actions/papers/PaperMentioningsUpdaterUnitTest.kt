@@ -49,11 +49,13 @@ internal class PaperMentioningsUpdaterUnitTest : MockkBaseTest {
                     id = ThingId("R591"),
                     label = "Famous Comparison",
                     classes = setOf(Classes.comparison),
+                    uri = null,
                 ),
                 ResourceReference(
                     id = ThingId("R357"),
                     label = "Some Paper",
                     classes = setOf(Classes.paper),
+                    uri = null,
                 ),
             ),
         )

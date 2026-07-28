@@ -132,6 +132,7 @@ fun createSmartReviewComparisonSection() = SmartReviewComparisonSection(
         id = ThingId("R6416"),
         label = "Comparison",
         classes = setOf(Classes.comparison),
+        uri = null,
     ),
 )
 
@@ -142,13 +143,19 @@ fun createSmartReviewVisualizationSection() = SmartReviewVisualizationSection(
         id = ThingId("R215648"),
         label = "Visualization",
         classes = setOf(Classes.visualization),
+        uri = null,
     ),
 )
 
 fun createSmartReviewResourceSection() = SmartReviewResourceSection(
     id = ThingId("R14565"),
     heading = "resource section heading",
-    resource = ResourceReference(ThingId("R1"), "some resource label", classes = setOf(Classes.problem)),
+    resource = ResourceReference(
+        id = ThingId("R1"),
+        label = "some resource label",
+        classes = setOf(Classes.problem),
+        uri = null,
+    ),
 )
 
 fun createSmartReviewPredicateSection() = SmartReviewPredicateSection(
@@ -161,7 +168,12 @@ fun createSmartReviewOntologySection() = SmartReviewOntologySection(
     id = ThingId("R16532"),
     heading = "ontology section heading",
     entities = listOf(
-        ResourceReference(ThingId("R1"), "some resource label", classes = setOf(Classes.problem)),
+        ResourceReference(
+            id = ThingId("R1"),
+            label = "some resource label",
+            classes = setOf(Classes.problem),
+            uri = null,
+        ),
         PredicateReference(ThingId("P1"), "some predicate label", null),
     ),
     predicates = listOf(PredicateReference(ThingId("P1"), "some predicate label", null)),

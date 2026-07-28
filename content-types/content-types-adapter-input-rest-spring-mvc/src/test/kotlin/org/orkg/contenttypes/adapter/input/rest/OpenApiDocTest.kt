@@ -168,6 +168,7 @@ internal class OpenApiDocTest : MockMvcOpenApiBaseTest() {
                         id = ThingId("R154686"),
                         label = "Paper",
                         classes = setOf(Classes.paper),
+                        uri = null,
                     ),
                     "paper entry description",
                 ),
@@ -576,6 +577,7 @@ internal class OpenApiDocTest : MockMvcOpenApiBaseTest() {
         id = ThingId("R123"),
         label = "Default label",
         classes = emptySet(),
+        uri = null,
     )
 
     private fun createPredicateReferenceRepresentation() = PredicateReferenceRepresentation(
@@ -600,6 +602,7 @@ internal class OpenApiDocTest : MockMvcOpenApiBaseTest() {
         id = ThingId("R1"),
         label = "Default Label",
         classes = emptySet(),
+        uri = IRI("http://example.org"),
         shared = 0,
         observatoryId = ObservatoryId.UNKNOWN,
         organizationId = OrganizationId.UNKNOWN,

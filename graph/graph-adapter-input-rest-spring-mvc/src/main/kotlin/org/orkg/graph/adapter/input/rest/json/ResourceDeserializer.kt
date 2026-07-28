@@ -1,6 +1,7 @@
 package org.orkg.graph.adapter.input.rest.json
 
 import org.orkg.common.ContributorId
+import org.orkg.common.IRI
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
@@ -23,6 +24,7 @@ class ResourceDeserializer : ValueDeserializer<Resource>() {
             label = node["label"].asString(),
             createdAt = OffsetDateTime.parse(node["created_at"].asString()),
             classes = node["classes"].toList().map { ThingId(it.asString()) }.toSet(),
+            uri = node["uri"]?.stringValue(null)?.let(IRI::create),
             createdBy = ContributorId(node["created_by"].asString()),
             observatoryId = ObservatoryId(node["observatory_id"].asString()),
             extractionMethod = ExtractionMethod.valueOf(node["extraction_method"].asString()),

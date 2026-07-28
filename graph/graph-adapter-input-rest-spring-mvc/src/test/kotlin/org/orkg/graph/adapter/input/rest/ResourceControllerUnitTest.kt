@@ -13,6 +13,7 @@ import org.hamcrest.Matchers
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
+import org.orkg.common.IRI
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
@@ -26,6 +27,7 @@ import org.orkg.graph.adapter.input.rest.ResourceController.CreateResourceReques
 import org.orkg.graph.adapter.input.rest.ResourceController.UpdateResourceRequest
 import org.orkg.graph.adapter.input.rest.testing.fixtures.configuration.GraphControllerUnitTestConfiguration
 import org.orkg.graph.adapter.input.rest.testing.fixtures.resourceResponseFields
+import org.orkg.graph.domain.CannotResetURI
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ExactSearchString
 import org.orkg.graph.domain.ExtractionMethod
@@ -41,6 +43,8 @@ import org.orkg.graph.domain.ResourceNotFound
 import org.orkg.graph.domain.ResourceNotModifiable
 import org.orkg.graph.domain.RosettaStoneStatementResourceNotModifiable
 import org.orkg.graph.domain.ThingAlreadyExists
+import org.orkg.graph.domain.URIAlreadyInUse
+import org.orkg.graph.domain.URINotAbsolute
 import org.orkg.graph.domain.VisibilityFilter
 import org.orkg.graph.input.CreateResourceUseCase.CreateCommand
 import org.orkg.graph.input.FormattedLabelUseCases
@@ -208,7 +212,7 @@ internal class ResourceControllerUnitTest : MockMvcBaseTest("resources") {
     @Test
     @DisplayName("Given several resources, when they are fetched with all possible filtering parameters, then status is 200 OK and resources are returned")
     fun findAll() {
-        every { resourceService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any()) } returns pageOf(createResource())
+        every { resourceService.findAll(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any()) } returns pageOf(createResource())
         every { statementService.countAllIncomingStatementsById(any<Set<ThingId>>()) } returns emptyMap()
 
         val label = "label"
@@ -222,6 +226,7 @@ internal class ResourceControllerUnitTest : MockMvcBaseTest("resources") {
         val baseClass = ThingId("BaseClass")
         val observatoryId = ObservatoryId("cb71eebf-8afd-4fe3-9aea-d0966d71cece")
         val organizationId = OrganizationId("a700c55f-aae2-4696-b7d5-6e8b89f66a8f")
+        val uri = IRI.create("https://example.org/OK")
 
         documentedGetRequestTo("/api/resources")
             .param("q", label)
@@ -235,6 +240,7 @@ internal class ResourceControllerUnitTest : MockMvcBaseTest("resources") {
             .param("base_class", baseClass.value)
             .param("observatory_id", observatoryId.value.toString())
             .param("organization_id", organizationId.value.toString())
+            .param("uri", uri.toString())
             .perform()
             .andExpect(status().isOk)
             .andExpectPage()
@@ -259,6 +265,7 @@ internal class ResourceControllerUnitTest : MockMvcBaseTest("resources") {
                     parameterWithName("base_class").description("The id of the base class that the resource has to be an instance of. (optional)").optional(),
                     parameterWithName("observatory_id").description("Filter for the UUID of the observatory that the resource belongs to. (optional)").format("uuid").optional(),
                     parameterWithName("organization_id").description("Filter for the UUID of the organization that the resource belongs to. (optional)").format("uuid").optional(),
+                    parameterWithName("uri").description("Filter for the URI of the resource. Must match exactly. (optional)").format("iri").optional(),
                 )
                 pagedResponseFields<ResourceRepresentation>(resourceResponseFields())
                 throws(UnknownSortingProperty::class)
@@ -279,6 +286,7 @@ internal class ResourceControllerUnitTest : MockMvcBaseTest("resources") {
                 baseClass = baseClass,
                 observatoryId = observatoryId,
                 organizationId = organizationId,
+                uri = uri,
             )
         }
         verify(exactly = 1) { statementService.countAllIncomingStatementsById(any<Set<ThingId>>()) }
@@ -302,12 +310,13 @@ internal class ResourceControllerUnitTest : MockMvcBaseTest("resources") {
     @TestWithMockUser
     @DisplayName("Given a resource update command, when service succeeds, then status is 204 NO CONTENT")
     fun update() {
-        val resource = createResource(classes = setOf(Classes.data), label = "foo")
+        val resource = createResource(classes = setOf(Classes.data), label = "foo", uri = IRI.create("https://example.org/OK"))
         val command = UpdateResourceUseCase.UpdateCommand(
             id = resource.id,
             contributorId = ContributorId(MockUserId.USER),
             label = resource.label,
             classes = resource.classes,
+            uri = resource.uri,
             extractionMethod = resource.extractionMethod,
             visibility = resource.visibility,
             observatoryId = resource.observatoryId,
@@ -320,6 +329,7 @@ internal class ResourceControllerUnitTest : MockMvcBaseTest("resources") {
             "visibility" to resource.visibility,
             "observatory_id" to resource.observatoryId,
             "organization_id" to resource.organizationId,
+            "uri" to resource.uri,
         )
 
         every { resourceService.update(command) } just runs
@@ -355,6 +365,7 @@ internal class ResourceControllerUnitTest : MockMvcBaseTest("resources") {
                 )
                 requestFields<UpdateResourceRequest>(
                     fieldWithPath("label").description("The updated resource label. (optional)").optional(),
+                    fieldWithPath("uri").description("The updated resource uri. (optional)").optional(),
                     fieldWithPath("classes[]").description("The classes to which the resource belongs to. (optional)").optional(),
                     fieldWithPath("extraction_method").description("""The method used to extract the resource. Can be one of $allowedExtractionMethodValues. (optional)""").optional(),
                     fieldWithPath("visibility").description("""Visibility of the resource. Can be one of $allowedVisibilityValues. (optional)""").optional(),
@@ -374,6 +385,9 @@ internal class ResourceControllerUnitTest : MockMvcBaseTest("resources") {
                     ContributorNotFound::class,
                     NeitherOwnerNorCurator::class,
                     NotACurator::class,
+                    URINotAbsolute::class,
+                    CannotResetURI::class,
+                    URIAlreadyInUse::class,
                 )
             }
 
@@ -440,9 +454,17 @@ internal class ResourceControllerUnitTest : MockMvcBaseTest("resources") {
                     fieldWithPath("id").description("The id for the resource. (optional)").optional(),
                     fieldWithPath("label").description("The resource label."),
                     fieldWithPath("classes[]").type("Array").description("The classes of the resource. (optional)").optional(),
+                    fieldWithPath("uri").description("The resource URI (optional)").optional(),
                     fieldWithPath("extraction_method").type("Enum").description("""The method used to extract the resource. Can be one of $allowedExtractionMethodValues. (optional, default: `UNKNOWN`)""").optional(),
                 )
-                throws(InvalidLabel::class, ReservedClassId::class, InvalidClassCollection::class, ThingAlreadyExists::class)
+                throws(
+                    InvalidLabel::class,
+                    ReservedClassId::class,
+                    InvalidClassCollection::class,
+                    ThingAlreadyExists::class,
+                    URINotAbsolute::class,
+                    URIAlreadyInUse::class,
+                )
             }
 
         verify(exactly = 1) {
@@ -452,6 +474,7 @@ internal class ResourceControllerUnitTest : MockMvcBaseTest("resources") {
                     it.contributorId shouldBe contributorId
                     it.label shouldBe command.label
                     it.classes shouldBe command.classes
+                    it.uri shouldBe command.uri
                     it.extractionMethod shouldBe command.extractionMethod
                 },
             )

@@ -49,6 +49,7 @@ interface ResourceRepresentationAdapter : FormattedLabelRepresentationAdapter {
             id = id,
             label = label,
             classes = classes,
+            uri = uri,
             shared = usageCounts[this@toResourceRepresentation.id] ?: 0,
             observatoryId = observatoryId,
             organizationId = organizationId,

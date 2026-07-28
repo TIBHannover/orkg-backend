@@ -269,11 +269,11 @@ internal class LiteratureListControllerIntegrationTest : MockMvcBaseTest("litera
                 section.id shouldNotBe null
                 section.entries shouldBe listOf(
                     LiteratureListListSectionRepresentation.EntryRepresentation(
-                        ResourceReferenceRepresentation(ThingId("R3003"), "Some resource", setOf(Classes.paper)),
+                        ResourceReferenceRepresentation(ThingId("R3003"), "Some resource", setOf(Classes.paper), null),
                         "example description",
                     ),
                     LiteratureListListSectionRepresentation.EntryRepresentation(
-                        ResourceReferenceRepresentation(ThingId("R3004"), "Some other resource", setOf(Classes.software)),
+                        ResourceReferenceRepresentation(ThingId("R3004"), "Some other resource", setOf(Classes.software), null),
                         null,
                     ),
                 )
@@ -357,15 +357,15 @@ internal class LiteratureListControllerIntegrationTest : MockMvcBaseTest("litera
                 section.id shouldNotBe null
                 section.entries shouldBe listOf(
                     LiteratureListListSection.Entry(
-                        ResourceReference(ThingId("R3004"), "Some other resource", setOf(Classes.software)),
+                        ResourceReference(ThingId("R3004"), "Some other resource", setOf(Classes.software), null),
                         "new description",
                     ),
                     LiteratureListListSection.Entry(
-                        ResourceReference(ThingId("R3003"), "Some resource", setOf(Classes.paper)),
+                        ResourceReference(ThingId("R3003"), "Some resource", setOf(Classes.paper), null),
                         null,
                     ),
                     LiteratureListListSection.Entry(
-                        ResourceReference(ThingId("R3005"), "Some dataset resource", setOf(Classes.dataset)),
+                        ResourceReference(ThingId("R3005"), "Some dataset resource", setOf(Classes.dataset), null),
                         "updated example description",
                     ),
                 )
@@ -440,15 +440,15 @@ internal class LiteratureListControllerIntegrationTest : MockMvcBaseTest("litera
             it.id shouldNotBe null
             it.entries shouldBe listOf(
                 LiteratureListListSection.Entry(
-                    ResourceReference(ThingId("R3005"), "Some dataset resource", setOf(Classes.dataset)),
+                    ResourceReference(ThingId("R3005"), "Some dataset resource", setOf(Classes.dataset), null),
                     "example description",
                 ),
                 LiteratureListListSection.Entry(
-                    ResourceReference(ThingId("R3004"), "Some other resource", setOf(Classes.software)),
+                    ResourceReference(ThingId("R3004"), "Some other resource", setOf(Classes.software), null),
                     null,
                 ),
                 LiteratureListListSection.Entry(
-                    ResourceReference(ThingId("R3003"), "Some resource", setOf(Classes.paper)),
+                    ResourceReference(ThingId("R3003"), "Some resource", setOf(Classes.paper), null),
                     null,
                 ),
             )
@@ -470,15 +470,15 @@ internal class LiteratureListControllerIntegrationTest : MockMvcBaseTest("litera
             it.id shouldBe literatureListSectionId
             it.entries shouldBe listOf(
                 LiteratureListListSection.Entry(
-                    ResourceReference(ThingId("R3003"), "Some resource", setOf(Classes.paper)),
+                    ResourceReference(ThingId("R3003"), "Some resource", setOf(Classes.paper), null),
                     null,
                 ),
                 LiteratureListListSection.Entry(
-                    ResourceReference(ThingId("R3004"), "Some other resource", setOf(Classes.software)),
+                    ResourceReference(ThingId("R3004"), "Some other resource", setOf(Classes.software), null),
                     "new description",
                 ),
                 LiteratureListListSection.Entry(
-                    ResourceReference(ThingId("R3005"), "Some dataset resource", setOf(Classes.dataset)),
+                    ResourceReference(ThingId("R3005"), "Some dataset resource", setOf(Classes.dataset), null),
                     "updated example description",
                 ),
             )

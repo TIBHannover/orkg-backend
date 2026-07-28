@@ -118,6 +118,7 @@ data class ResourceRepresentation(
     override val id: ThingId,
     override val label: String,
     val classes: Set<ThingId>,
+    val uri: IRI?,
     val shared: Long,
     override val observatoryId: ObservatoryId,
     override val organizationId: OrganizationId,

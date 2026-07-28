@@ -12,6 +12,7 @@ import org.orkg.graph.output.ThingRepository
 fun UpdateResourceUseCase.UpdateCommand.hasNoContents(): Boolean =
     label == null &&
         classes == null &&
+        uri == null &&
         observatoryId == null &&
         organizationId == null &&
         extractionMethod == null &&
@@ -23,6 +24,7 @@ fun Resource.apply(command: UpdateResourceUseCase.UpdateCommand): Resource =
     copy(
         label = command.label ?: label,
         classes = command.classes ?: classes,
+        uri = command.uri ?: uri,
         observatoryId = command.observatoryId ?: observatoryId,
         organizationId = command.organizationId ?: organizationId,
         extractionMethod = command.extractionMethod ?: extractionMethod,

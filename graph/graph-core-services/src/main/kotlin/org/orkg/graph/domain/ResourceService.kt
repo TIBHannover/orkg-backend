@@ -2,8 +2,10 @@ package org.orkg.graph.domain
 
 import dev.forkhandles.values.ofOrNull
 import org.orkg.common.ContributorId
+import org.orkg.common.IRI
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
+import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
 import org.orkg.community.domain.ContributorNotFound
 import org.orkg.community.domain.ObservatoryNotFound
@@ -45,6 +47,15 @@ class ResourceService(
     override fun create(command: CreateResourceUseCase.CreateCommand): ThingId {
         Label.ofOrNull(command.label) ?: throw InvalidLabel()
         validateClasses(command.classes)
+        command.uri?.also { uri ->
+            if (!uri.isAbsolute) {
+                throw URINotAbsolute(uri)
+            }
+            val predicates = repository.findAll(PageRequests.SINGLE, uri = uri)
+            if (!predicates.isEmpty) {
+                throw URIAlreadyInUse(uri, predicates.single().id)
+            }
+        }
         command.id?.also { id -> thingRepository.findById(id).ifPresent { throw ThingAlreadyExists(id) } }
         return unsafeResourceUseCases.create(command)
     }
@@ -61,6 +72,7 @@ class ResourceService(
         baseClass: ThingId?,
         observatoryId: ObservatoryId?,
         organizationId: OrganizationId?,
+        uri: IRI?,
     ): Page<Resource> =
         repository.findAll(
             pageable = pageable,
@@ -74,6 +86,7 @@ class ResourceService(
             baseClass = baseClass,
             observatoryId = observatoryId,
             organizationId = organizationId,
+            uri = uri,
         )
 
     override fun findById(id: ThingId): Optional<Resource> =
@@ -116,6 +129,18 @@ class ResourceService(
         }
         command.label?.also { Label.ofOrNull(it) ?: throw InvalidLabel() }
         command.classes?.also { validateClasses(it) }
+        command.uri?.also { newUri ->
+            if (resource.uri != null && newUri != resource.uri) {
+                throw CannotResetURI(command.id)
+            }
+            if (!newUri.isAbsolute) {
+                throw URINotAbsolute(newUri)
+            }
+            val resources = repository.findAll(PageRequests.SINGLE, uri = newUri)
+            if (!resources.isEmpty) {
+                throw URIAlreadyInUse(newUri, resources.single().id)
+            }
+        }
         command.observatoryId?.also { observatoryId ->
             if (observatoryId != resource.observatoryId && observatoryId != ObservatoryId.UNKNOWN && !observatoryRepository.existsById(observatoryId)) {
                 throw ObservatoryNotFound(observatoryId)

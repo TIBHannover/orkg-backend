@@ -289,8 +289,8 @@ internal class PaperControllerIntegrationTest : MockMvcBaseTest("papers") {
                 LabeledObjectRepresentation(ThingId("SDG_2"), "Zero hunger"),
             )
             it.mentionings shouldBe setOf(
-                ResourceReferenceRepresentation(ThingId("R3003"), "Some resource", emptySet()),
-                ResourceReferenceRepresentation(ThingId("R3004"), "Some other resource", emptySet()),
+                ResourceReferenceRepresentation(ThingId("R3003"), "Some resource", emptySet(), null),
+                ResourceReferenceRepresentation(ThingId("R3004"), "Some other resource", emptySet(), null),
             )
             it.observatories shouldBe listOf(ObservatoryId("1afefdd0-5c09-4c9c-b718-2b35316b56f3"))
             it.organizations shouldBe listOf(OrganizationId("edc18168-c4ee-4cb8-a98a-136f748e912e"))
@@ -386,8 +386,8 @@ internal class PaperControllerIntegrationTest : MockMvcBaseTest("papers") {
                 ObjectIdAndLabel(ThingId("SDG_4"), "Quality education"),
             )
             it.mentionings shouldBe setOf(
-                ResourceReference(ThingId("R3004"), "Some other resource", emptySet()),
-                ResourceReference(ThingId("R3005"), "Some other more different resource", setOf(Classes.problem)),
+                ResourceReference(ThingId("R3004"), "Some other resource", emptySet(), null),
+                ResourceReference(ThingId("R3005"), "Some other more different resource", setOf(Classes.problem), null),
             )
             it.observatories shouldBe listOf(ObservatoryId("1afefdd0-5c09-4c9c-b718-2b35316b56f3"))
             it.organizations shouldBe listOf(OrganizationId("edc18168-c4ee-4cb8-a98a-136f748e912e"))

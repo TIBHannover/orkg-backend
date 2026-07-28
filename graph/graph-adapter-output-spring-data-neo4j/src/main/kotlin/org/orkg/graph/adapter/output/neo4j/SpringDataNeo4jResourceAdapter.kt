@@ -21,6 +21,7 @@ import org.neo4j.cypherdsl.core.Node
 import org.neo4j.cypherdsl.core.RelationshipPattern
 import org.neo4j.cypherdsl.core.renderer.Renderer
 import org.orkg.common.ContributorId
+import org.orkg.common.IRI
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
@@ -179,6 +180,7 @@ class SpringDataNeo4jResourceAdapter(
                     "__properties__" to mapOf(
                         "id" to resource.id.value,
                         "label" to resource.label,
+                        "uri" to resource.uri?.toString(),
                         "created_by" to resource.createdBy.value.toString(),
                         "created_at" to resource.createdAt.format(ISO_OFFSET_DATE_TIME),
                         "observatory_id" to resource.observatoryId.value.toString(),
@@ -226,6 +228,7 @@ class SpringDataNeo4jResourceAdapter(
             excludeClasses = emptySet(),
             observatoryId = null,
             organizationId = null,
+            uri = null,
         )
 
     @Cacheable(key = "#id", cacheNames = [RESOURCE_ID_TO_RESOURCE_EXISTS_CACHE])
@@ -247,6 +250,7 @@ class SpringDataNeo4jResourceAdapter(
         baseClass: ThingId?,
         observatoryId: ObservatoryId?,
         organizationId: OrganizationId?,
+        uri: IRI?,
     ): Page<Resource> =
         buildFindAll(
             sort = pageable.sort.orElseGet { Sort.by("created_at") },
@@ -260,6 +264,7 @@ class SpringDataNeo4jResourceAdapter(
             baseClass = baseClass,
             observatoryId = observatoryId,
             organizationId = organizationId,
+            uri = uri,
         ).fetch(pageable, false)
 
     override fun count(
@@ -273,6 +278,7 @@ class SpringDataNeo4jResourceAdapter(
         baseClass: ThingId?,
         observatoryId: ObservatoryId?,
         organizationId: OrganizationId?,
+        uri: IRI?,
     ): Long =
         buildFindAll(
             label = label,
@@ -285,6 +291,7 @@ class SpringDataNeo4jResourceAdapter(
             baseClass = baseClass,
             observatoryId = observatoryId,
             organizationId = organizationId,
+            uri = uri,
         ).count()
 
     private fun buildFindAll(
@@ -299,6 +306,7 @@ class SpringDataNeo4jResourceAdapter(
         baseClass: ThingId?,
         observatoryId: ObservatoryId?,
         organizationId: OrganizationId?,
+        uri: IRI?,
     ) = cypherQueryBuilderFactory.newBuilder(Uncached)
         .withCommonQuery {
             val patterns: (Node) -> Collection<RelationshipPattern> = { node ->
@@ -365,6 +373,7 @@ class SpringDataNeo4jResourceAdapter(
                 excludeClasses.toCondition { classes -> classes.map { resource.hasLabels(it.value).not() }.reduce(Condition::and) },
                 observatoryId.toCondition { node.property("observatory_id").eq(anonParameter(it.value.toString())) },
                 organizationId.toCondition { node.property("organization_id").eq(anonParameter(it.value.toString())) },
+                uri.toCondition { node.property("uri").eq(anonParameter(it.toString())) },
             )
         }
         .withQuery { commonQuery ->

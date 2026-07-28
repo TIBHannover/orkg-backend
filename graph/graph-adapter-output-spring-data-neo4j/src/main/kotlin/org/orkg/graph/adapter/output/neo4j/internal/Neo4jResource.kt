@@ -4,6 +4,7 @@ import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
+import org.orkg.common.toIRIOrNull
 import org.orkg.graph.adapter.output.neo4j.reservedLabels
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Resource
@@ -15,6 +16,9 @@ import org.springframework.data.neo4j.core.schema.Property
 @Node("Resource")
 @Suppress("ktlint:standard:property-naming")
 class Neo4jResource : Neo4jThing() {
+    @Property("uri")
+    var uri: String? = null
+
     @Property("observatory_id")
     var observatory_id: ObservatoryId = ObservatoryId.UNKNOWN
 
@@ -56,6 +60,7 @@ class Neo4jResource : Neo4jThing() {
         label = label!!,
         createdAt = created_at!!,
         classes = classes - reservedLabels,
+        uri = uri?.toIRIOrNull(),
         createdBy = created_by,
         observatoryId = observatory_id,
         extractionMethod = extraction_method,

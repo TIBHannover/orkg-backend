@@ -109,11 +109,13 @@ fun createPaper() = Paper(
             id = ThingId("R159"),
             label = "Famous Comparison",
             classes = setOf(Classes.comparison),
+            uri = null,
         ),
         ResourceReference(
             id = ThingId("R753"),
             label = "Some Paper",
             classes = setOf(Classes.paper),
+            uri = null,
         ),
     ),
     observatories = listOf(

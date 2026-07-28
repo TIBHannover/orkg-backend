@@ -12,8 +12,10 @@ import io.mockk.verify
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.orkg.common.ContributorId
+import org.orkg.common.IRI
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
+import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.community.domain.ObservatoryNotFound
@@ -32,6 +34,7 @@ import org.orkg.graph.output.StatementRepository
 import org.orkg.graph.output.ThingRepository
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.testing.MockUserId
+import org.orkg.testing.pageOf
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
 import java.util.Optional
@@ -69,17 +72,20 @@ internal class ResourceServiceUnitTest : MockkBaseTest {
             extractionMethod = ExtractionMethod.MANUAL,
             observatoryId = ObservatoryId("1255bbe4-1850-4033-ba10-c80d4b370e3e"),
             organizationId = OrganizationId("56a4b65e-de56-0d4b-255b-255b372b65ef"),
+            uri = IRI.create("https://orkg.org/predicate/P1"),
             modifiable = false,
         )
 
         every { thingRepository.findById(id) } returns Optional.empty()
         every { classRepository.existsAllById(command.classes) } returns true
+        every { repository.findAll(PageRequests.SINGLE, uri = command.uri) } returns pageOf()
         every { unsafeResourceUseCases.create(command) } returns id
 
         service.create(command) shouldBe id
 
         verify(exactly = 1) { thingRepository.findById(id) }
         verify(exactly = 1) { classRepository.existsAllById(command.classes) }
+        verify(exactly = 1) { repository.findAll(PageRequests.SINGLE, uri = command.uri) }
         verify(exactly = 1) { unsafeResourceUseCases.create(command) }
     }
 
@@ -135,6 +141,36 @@ internal class ResourceServiceUnitTest : MockkBaseTest {
         assertThrows<InvalidClassCollection> { service.create(command) }
 
         verify(exactly = 1) { classRepository.existsAllById(command.classes) }
+    }
+
+    @Test
+    fun `Given a resource create command, when uri is not absolute, it throws an exception`() {
+        val id = ThingId("R123")
+        val command = CreateResourceUseCase.CreateCommand(
+            id = id,
+            contributorId = ContributorId(MockUserId.USER),
+            label = "some label",
+            uri = IRI.create("invalid"),
+        )
+
+        assertThrows<URINotAbsolute> { service.create(command) }
+    }
+
+    @Test
+    fun `Given a resource create command, when uri is already in use, it throws an exception`() {
+        val id = ThingId("R123")
+        val command = CreateResourceUseCase.CreateCommand(
+            id = id,
+            contributorId = ContributorId(MockUserId.USER),
+            label = "some label",
+            uri = IRI.create("https://example.com/"),
+        )
+
+        every { repository.findAll(PageRequests.SINGLE, uri = command.uri) } returns pageOf(createResource())
+
+        assertThrows<URIAlreadyInUse> { service.create(command) }
+
+        verify(exactly = 1) { repository.findAll(PageRequests.SINGLE, uri = command.uri) }
     }
 
     @Test
@@ -341,6 +377,60 @@ internal class ResourceServiceUnitTest : MockkBaseTest {
         }
 
         verify(exactly = 1) { repository.findById(resource.id) }
+    }
+
+    @Test
+    fun `Given a resource update command, when uri would be reset, it throws an exception`() {
+        val id = ThingId("R123")
+        val resource = createResource(id = id, uri = IRI.create("https://example.org/OK"))
+        val command = UpdateResourceUseCase.UpdateCommand(
+            id = id,
+            contributorId = ContributorId(MockUserId.USER),
+            uri = IRI.create("https://exmaple.org/changed"),
+        )
+
+        every { repository.findById(resource.id) } returns Optional.of(resource)
+
+        assertThrows<CannotResetURI> { service.update(command) }
+
+        verify(exactly = 1) { repository.findById(resource.id) }
+    }
+
+    @Test
+    fun `Given a resource update command, when uri is not absolute, it throws an exception`() {
+        val id = ThingId("R123")
+        val resource = createResource(id = id, uri = null)
+        val command = UpdateResourceUseCase.UpdateCommand(
+            id = id,
+            contributorId = ContributorId(MockUserId.USER),
+            uri = IRI.create("invalid"),
+        )
+
+        every { repository.findById(resource.id) } returns Optional.of(resource)
+
+        assertThrows<URINotAbsolute> { service.update(command) }
+
+        verify(exactly = 1) { repository.findById(resource.id) }
+    }
+
+    @Test
+    fun `Given a resource update command, when uri is already in use, it throws an exception`() {
+        val id = ThingId("R123")
+        val resource = createResource(id = id, uri = null)
+        val command = UpdateResourceUseCase.UpdateCommand(
+            id = id,
+            contributorId = ContributorId(MockUserId.USER),
+            label = "some label",
+            uri = IRI.create("https://example.com/"),
+        )
+
+        every { repository.findById(resource.id) } returns Optional.of(resource)
+        every { repository.findAll(PageRequests.SINGLE, uri = command.uri) } returns pageOf(createResource())
+
+        assertThrows<URIAlreadyInUse> { service.update(command) }
+
+        verify(exactly = 1) { repository.findById(resource.id) }
+        verify(exactly = 1) { repository.findAll(PageRequests.SINGLE, uri = command.uri) }
     }
 
     @Test
@@ -688,7 +778,7 @@ internal class ResourceServiceUnitTest : MockkBaseTest {
 
     @Test
     fun `Given a resource update command, when updating all properties, it returns success`() {
-        val resource = createResource()
+        val resource = createResource(uri = null)
         val contributorId = ContributorId(MockUserId.USER)
         val contributor = createContributor(contributorId, isCurator = true)
         val label = "updated label"
@@ -696,12 +786,14 @@ internal class ResourceServiceUnitTest : MockkBaseTest {
         val observatoryId = ObservatoryId(UUID.randomUUID())
         val organizationId = OrganizationId(UUID.randomUUID())
         val extractionMethod = ExtractionMethod.AUTOMATIC
+        val uri = IRI.create("https://orkg.org/predicates/R1")
         val modifiable = false
         val visibility = Visibility.FEATURED
         val verified = true
 
         every { repository.findById(resource.id) } returns Optional.of(resource)
         every { classRepository.existsAllById(classes) } returns true
+        every { repository.findAll(PageRequests.SINGLE, uri = uri) } returns pageOf()
         every { contributorRepository.findById(contributorId) } returns Optional.of(contributor)
         every { observatoryRepository.existsById(observatoryId) } returns true
         every { organizationRepository.findById(organizationId) } returns Optional.of(createOrganization(organizationId))
@@ -713,6 +805,7 @@ internal class ResourceServiceUnitTest : MockkBaseTest {
                 contributorId = contributorId,
                 label = label,
                 classes = classes,
+                uri = uri,
                 observatoryId = observatoryId,
                 organizationId = organizationId,
                 extractionMethod = extractionMethod,
@@ -724,6 +817,7 @@ internal class ResourceServiceUnitTest : MockkBaseTest {
 
         verify(exactly = 1) { repository.findById(resource.id) }
         verify(exactly = 1) { classRepository.existsAllById(classes) }
+        verify(exactly = 1) { repository.findAll(PageRequests.SINGLE, uri = uri) }
         verify(exactly = 1) { contributorRepository.findById(contributorId) }
         verify(exactly = 1) { observatoryRepository.existsById(observatoryId) }
         verify(exactly = 1) { organizationRepository.findById(organizationId) }
@@ -734,6 +828,7 @@ internal class ResourceServiceUnitTest : MockkBaseTest {
                     it.label shouldBe label
                     it.createdAt shouldBe resource.createdAt
                     it.classes shouldBe classes
+                    it.uri shouldBe uri
                     it.createdBy shouldBe resource.createdBy
                     it.observatoryId shouldBe observatoryId
                     it.extractionMethod shouldBe extractionMethod

@@ -1,6 +1,7 @@
 package org.orkg.graph.domain
 
 import org.orkg.common.ContributorId
+import org.orkg.common.IRI
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
@@ -11,6 +12,7 @@ data class Resource(
     override val label: String,
     override val createdAt: OffsetDateTime,
     val classes: Set<ThingId> = emptySet(),
+    val uri: IRI? = null,
     override val createdBy: ContributorId = ContributorId.UNKNOWN,
     val observatoryId: ObservatoryId = ObservatoryId.UNKNOWN,
     val extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN,

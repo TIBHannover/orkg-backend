@@ -88,6 +88,7 @@ class ResourceFabricator : Fabricator<Resource> {
         label = fabrikate.random(),
         createdAt = fabrikate.random(),
         classes = fabrikate.random(),
+        uri = fabrikate.random(),
         createdBy = fabrikate.random(),
         observatoryId = fabrikate.random(),
         extractionMethod = fabrikate.random(),

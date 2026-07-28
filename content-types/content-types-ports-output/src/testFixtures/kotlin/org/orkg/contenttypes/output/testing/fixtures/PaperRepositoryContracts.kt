@@ -62,6 +62,7 @@ fun <
 
     val fabricator = Fabrikate(
         FabricatorConfig(
+            seed = 456_542_412,
             collectionSizes = 12..12,
             nullableStrategy = FabricatorConfig.NullableStrategy.NeverSetToNull, // FIXME: because "id" is nullable
         )

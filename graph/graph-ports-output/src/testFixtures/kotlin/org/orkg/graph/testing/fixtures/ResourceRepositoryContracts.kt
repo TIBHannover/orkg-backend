@@ -4,14 +4,17 @@ import dev.forkhandles.fabrikate.FabricatorConfig
 import dev.forkhandles.fabrikate.Fabrikate
 import io.kotest.assertions.asClue
 import io.kotest.core.spec.style.describeSpec
+import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.collections.shouldContainAll
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.comparables.shouldBeGreaterThan
 import io.kotest.matchers.comparables.shouldBeLessThan
+import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.kotest.matchers.string.shouldNotMatch
 import org.orkg.common.ContributorId
+import org.orkg.common.IRI
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
@@ -61,11 +64,11 @@ fun <
 
             val actual = repository.findById(expected.id).orElse(null)
 
-            actual shouldNotBe null
-            actual.asClue {
+            actual.shouldNotBeNull().asClue {
                 it.id shouldBe expected.id
                 it.label shouldBe expected.label
                 it.createdAt shouldBe expected.createdAt
+                it.uri shouldBe expected.uri
                 it.classes shouldContainExactlyInAnyOrder expected.classes
                 it.createdBy shouldBe expected.createdBy
                 it.observatoryId shouldBe expected.observatoryId
@@ -543,6 +546,34 @@ fun <
                     }
                 }
             }
+            context("by uri") {
+                val resources = fabricator.random<List<Resource>>()
+                resources.forEach(repository::save)
+
+                val expected = resources[3]
+                val result = repository.findAll(
+                    pageable = PageRequest.of(0, 5),
+                    uri = expected.uri,
+                )
+
+                it("returns the correct result") {
+                    result shouldNotBe null
+                    result.content shouldNotBe null
+                    result.content.size shouldBe 1
+                    result.content shouldContain expected
+                }
+                it("pages the result correctly") {
+                    result.size shouldBe 5
+                    result.number shouldBe 0
+                    result.totalPages shouldBe 1
+                    result.totalElements shouldBe 1
+                }
+                it("sorts the results by creation date by default") {
+                    result.content.zipWithNext { a, b ->
+                        a.createdAt shouldBeLessThan b.createdAt
+                    }
+                }
+            }
             context("using all parameters") {
                 val parent = createClass(id = ThingId("A"), uri = null)
                 val child = createClass(id = ThingId("B"), uri = null)
@@ -553,7 +584,7 @@ fun <
                 val resources = fabricator.random<List<Resource>>()
                 resources.forEach(repository::save)
 
-                val expected = createResource(classes = setOf(child.id))
+                val expected = createResource(classes = setOf(child.id), uri = IRI.create("https://exmaple.org/OK"))
                 repository.save(expected)
 
                 val result = repository.findAll(
@@ -568,6 +599,7 @@ fun <
                     baseClass = parent.id,
                     observatoryId = expected.observatoryId,
                     organizationId = expected.organizationId,
+                    uri = expected.uri,
                 )
 
                 it("returns the correct result") {

@@ -613,6 +613,7 @@ fun resourceReferenceResponseFields() = listOf(
     fieldWithPath("id").description("The id of the resource."),
     fieldWithPath("label").description("The label of the resource."),
     fieldWithPath("classes[]").type("array").description("The classes of the resource.").arrayItemsType("string").references<ThingId>(),
+    fieldWithPath("uri").type("string").description("The uri of the resource. (optional)").optional(),
     fieldWithPath("_class").description("Indicates which type of entity was returned. Always has the value `resource_ref`."),
 )
 

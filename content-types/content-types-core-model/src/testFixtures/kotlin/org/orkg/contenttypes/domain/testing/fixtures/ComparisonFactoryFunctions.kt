@@ -83,7 +83,7 @@ fun createComparison() = Comparison(
         inclusionCriteria = "has more than 5 authors",
         exclusionCriteria = "has long title",
         searchEngines = listOf(
-            ResourceReference(ThingId("R85476"), "arXiv", emptySet()),
+            ResourceReference(ThingId("R85476"), "arXiv", emptySet(), null),
         ),
         searchStrings = listOf("example paper"),
         researchQuestions = listOf("what makes a paper good"),

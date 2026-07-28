@@ -205,6 +205,7 @@ fun Node.toResource() = Resource(
     id = this["id"].toThingId()!!,
     label = this["label"].asString(),
     classes = this.labels().filter { it !in reservedLabelsAsStrings }.map(::ThingId).toSet(),
+    uri = this["uri"].toIRI(),
     createdAt = this["created_at"].toOffsetDateTime(),
     createdBy = this["created_by"].toContributorId(),
     observatoryId = this["observatory_id"].toObservatoryId(),

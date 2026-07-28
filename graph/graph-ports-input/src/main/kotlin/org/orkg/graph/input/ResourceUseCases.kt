@@ -1,6 +1,7 @@
 package org.orkg.graph.input
 
 import org.orkg.common.ContributorId
+import org.orkg.common.IRI
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
@@ -46,6 +47,7 @@ interface RetrieveResourceUseCase {
         baseClass: ThingId? = null,
         observatoryId: ObservatoryId? = null,
         organizationId: OrganizationId? = null,
+        uri: IRI? = null,
     ): Page<Resource>
 
     // Legacy methods:
@@ -76,6 +78,7 @@ interface CreateResourceUseCase {
         val contributorId: ContributorId,
         val label: String,
         val classes: Set<ThingId> = emptySet(),
+        val uri: IRI? = null,
         val extractionMethod: ExtractionMethod? = null,
         val observatoryId: ObservatoryId? = null,
         val organizationId: OrganizationId? = null,
@@ -91,6 +94,7 @@ interface UpdateResourceUseCase {
         val contributorId: ContributorId,
         val label: String? = null,
         val classes: Set<ThingId>? = null,
+        val uri: IRI? = null,
         val observatoryId: ObservatoryId? = null,
         val organizationId: OrganizationId? = null,
         val extractionMethod: ExtractionMethod? = null,

@@ -291,7 +291,7 @@ internal class ComparisonControllerIntegrationTest : MockMvcBaseTest("comparison
                 searchProtocol.inclusionCriteria shouldBe "has more than 5 authors"
                 searchProtocol.exclusionCriteria shouldBe "has long title"
                 searchProtocol.searchEngines shouldBe listOf(
-                    ResourceReferenceRepresentation(ThingId("R85476"), "arXiv", emptySet()),
+                    ResourceReferenceRepresentation(ThingId("R85476"), "arXiv", emptySet(), null),
                 )
                 searchProtocol.searchStrings shouldBe listOf("example paper")
                 searchProtocol.researchQuestions shouldBe listOf("what makes a paper good")
@@ -380,7 +380,7 @@ internal class ComparisonControllerIntegrationTest : MockMvcBaseTest("comparison
                 searchProtocol.inclusionCriteria shouldBe "updated inclusion criteria"
                 searchProtocol.exclusionCriteria shouldBe "updated exclusion criteria"
                 searchProtocol.searchEngines shouldBe listOf(
-                    ResourceReference(ThingId("R123"), "Author with id", setOf(Classes.author)),
+                    ResourceReference(ThingId("R123"), "Author with id", setOf(Classes.author), null),
                 )
                 searchProtocol.searchStrings shouldBe listOf("other paper")
                 searchProtocol.researchQuestions shouldBe listOf("what makes a paper bad")

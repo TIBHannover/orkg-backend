@@ -228,8 +228,8 @@ internal class RosettaStoneStatementControllerIntegrationTest : MockMvcBaseTest(
             it.dynamicLabel shouldBe DynamicLabel("{0} {1} {2} {3} {4} {5}")
             it.subjects.asClue { subjects ->
                 subjects.size shouldBe 3
-                subjects[0] shouldBe ResourceReferenceRepresentation(ThingId("R258"), "label", setOf(ThingId("C28")))
-                subjects[1] shouldBe ResourceReferenceRepresentation(ThingId("R369"), "label", setOf(ThingId("C28")))
+                subjects[0] shouldBe ResourceReferenceRepresentation(ThingId("R258"), "label", setOf(ThingId("C28")), null)
+                subjects[1] shouldBe ResourceReferenceRepresentation(ThingId("R369"), "label", setOf(ThingId("C28")), null)
                 subjects[2].shouldBeInstanceOf<ResourceReferenceRepresentation>().asClue { subject ->
                     subject.id shouldNotBe null
                     subject.label shouldBe "Subject Resource"
@@ -240,7 +240,7 @@ internal class RosettaStoneStatementControllerIntegrationTest : MockMvcBaseTest(
                 objects.size shouldBe 5
                 objects[0].asClue { position ->
                     position.size shouldBe 3
-                    position[0] shouldBe ResourceReferenceRepresentation(ThingId("R174"), "label", emptySet())
+                    position[0] shouldBe ResourceReferenceRepresentation(ThingId("R174"), "label", emptySet(), null)
                     position[1].shouldBeInstanceOf<PredicateReferenceRepresentation>().asClue { `object` ->
                         `object`.id shouldNotBe null
                         `object`.label shouldBe "hasResult"
@@ -268,8 +268,8 @@ internal class RosettaStoneStatementControllerIntegrationTest : MockMvcBaseTest(
                 }
                 objects[4].asClue { position ->
                     position.size shouldBe 3
-                    position[0] shouldBe ResourceReferenceRepresentation(ThingId("R258"), "label", setOf(ThingId("C28")))
-                    position[1] shouldBe ResourceReferenceRepresentation(ThingId("R369"), "label", setOf(ThingId("C28")))
+                    position[0] shouldBe ResourceReferenceRepresentation(ThingId("R258"), "label", setOf(ThingId("C28")), null)
+                    position[1] shouldBe ResourceReferenceRepresentation(ThingId("R369"), "label", setOf(ThingId("C28")), null)
                     position[2].shouldBeInstanceOf<ResourceReferenceRepresentation>().asClue { `object` ->
                         `object`.id shouldNotBe null
                         `object`.label shouldBe "list"

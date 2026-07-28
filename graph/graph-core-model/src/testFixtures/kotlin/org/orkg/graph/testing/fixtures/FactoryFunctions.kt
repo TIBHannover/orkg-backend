@@ -25,6 +25,7 @@ typealias KotlinList<T> = kotlin.collections.List<T>
 fun createResource(
     id: ThingId = ThingId("R1"),
     label: String = "Default Label",
+    uri: IRI? = null,
     createdAt: OffsetDateTime = OffsetDateTime.parse("2023-10-06T11:28:14.613254+01:00"),
     classes: Set<ThingId> = emptySet(),
     createdBy: ContributorId = ContributorId.UNKNOWN,
@@ -40,6 +41,7 @@ fun createResource(
     label = label,
     createdAt = createdAt,
     classes = classes,
+    uri = uri,
     createdBy = createdBy,
     observatoryId = observatoryId,
     extractionMethod = extractionMethod,

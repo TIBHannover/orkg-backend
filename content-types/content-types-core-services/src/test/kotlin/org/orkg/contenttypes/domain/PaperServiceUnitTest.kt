@@ -312,6 +312,7 @@ internal class PaperServiceUnitTest : MockkBaseTest {
                     id = ThingId("R159"),
                     label = "Some paper",
                     classes = setOf(Classes.paper),
+                    uri = null,
                 ),
             )
             paper.observatories shouldBe setOf(expected.observatoryId)
@@ -583,6 +584,7 @@ internal class PaperServiceUnitTest : MockkBaseTest {
                     id = ThingId("R159"),
                     label = "Some paper",
                     classes = setOf(Classes.paper),
+                    uri = null,
                 ),
             )
             paper.observatories shouldBe setOf(expected.observatoryId)

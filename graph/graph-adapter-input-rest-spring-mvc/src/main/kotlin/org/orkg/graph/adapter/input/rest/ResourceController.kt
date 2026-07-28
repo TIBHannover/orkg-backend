@@ -2,6 +2,7 @@ package org.orkg.graph.adapter.input.rest
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import org.orkg.common.ContributorId
+import org.orkg.common.IRI
 import org.orkg.common.MediaTypeCapabilities
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
@@ -70,6 +71,7 @@ class ResourceController(
         @RequestParam("base_class", required = false) baseClass: ThingId?,
         @RequestParam("observatory_id", required = false) observatoryId: ObservatoryId?,
         @RequestParam("organization_id", required = false) organizationId: OrganizationId?,
+        @RequestParam("uri", required = false) uri: IRI?,
         pageable: Pageable,
         capabilities: MediaTypeCapabilities,
     ): Page<ResourceRepresentation> =
@@ -85,27 +87,17 @@ class ResourceController(
             baseClass = baseClass,
             observatoryId = observatoryId,
             organizationId = organizationId,
+            uri = uri,
         ).mapToResourceRepresentation(capabilities)
 
     @RequireLogin
     @PostMapping(consumes = [MediaType.APPLICATION_JSON_VALUE])
-    fun add(
+    fun create(
         @RequestBody request: CreateResourceRequest,
         uriComponentsBuilder: UriComponentsBuilder,
         currentUser: Authentication?,
     ): ResponseEntity<ResourceRepresentation> {
-        val contributor = contributorService.findById(currentUser.contributorId())
-        val id = service.create(
-            CreateResourceUseCase.CreateCommand(
-                id = request.id,
-                contributorId = currentUser.contributorId(),
-                label = request.label,
-                classes = request.classes,
-                extractionMethod = request.extractionMethod,
-                observatoryId = contributor.map { it.observatoryId }.orElse(ObservatoryId.UNKNOWN),
-                organizationId = contributor.map { it.organizationId }.orElse(OrganizationId.UNKNOWN),
-            ),
-        )
+        val id = service.create(request.toCreateCommand(currentUser.contributorId(), contributorService))
         val location = uriComponentsBuilder
             .path("/api/resources/{id}")
             .buildAndExpand(id)
@@ -150,14 +142,33 @@ class ResourceController(
         val id: ThingId?,
         val label: String,
         val classes: Set<ThingId> = emptySet(),
+        val uri: IRI? = null,
         @field:JsonProperty("extraction_method")
         val extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN,
-    )
+    ) {
+        fun toCreateCommand(
+            contributorId: ContributorId,
+            contributorService: RetrieveContributorUseCase,
+        ): CreateResourceUseCase.CreateCommand {
+            val contributor = contributorService.findById(contributorId).orElse(null)
+            return CreateResourceUseCase.CreateCommand(
+                id = id,
+                contributorId = contributorId,
+                label = label,
+                classes = classes,
+                uri = uri,
+                extractionMethod = extractionMethod,
+                observatoryId = contributor?.observatoryId ?: ObservatoryId.UNKNOWN,
+                organizationId = contributor?.organizationId ?: OrganizationId.UNKNOWN,
+            )
+        }
+    }
 
     data class UpdateResourceRequest(
         val id: ThingId?,
         val label: String?,
         val classes: Set<ThingId>?,
+        val uri: IRI? = null,
         @field:JsonProperty("observatory_id")
         val observatoryId: ObservatoryId?,
         @field:JsonProperty("organization_id")
@@ -172,6 +183,7 @@ class ResourceController(
                 contributorId = contributorId,
                 label = label,
                 classes = classes,
+                uri = uri,
                 observatoryId = observatoryId,
                 organizationId = organizationId,
                 extractionMethod = extractionMethod,

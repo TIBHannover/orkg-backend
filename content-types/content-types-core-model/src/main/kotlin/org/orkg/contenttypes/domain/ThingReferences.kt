@@ -27,8 +27,9 @@ data class ResourceReference(
     override val id: ThingId,
     override val label: String,
     val classes: Set<ThingId>,
+    val uri: IRI?,
 ) : ThingReference {
-    constructor(resource: Resource) : this(resource.id, resource.label, resource.classes)
+    constructor(resource: Resource) : this(resource.id, resource.label, resource.classes, resource.uri)
 }
 
 data class PredicateReference(

@@ -700,6 +700,7 @@ data class ResourceReferenceRepresentation(
     override val id: ThingId,
     override val label: String,
     val classes: Set<ThingId>,
+    val uri: IRI?,
 ) : ThingReferenceRepresentation
 
 @JsonTypeName("predicate_ref")

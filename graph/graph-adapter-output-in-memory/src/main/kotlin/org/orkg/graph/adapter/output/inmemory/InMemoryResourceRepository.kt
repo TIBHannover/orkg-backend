@@ -1,6 +1,7 @@
 package org.orkg.graph.adapter.output.inmemory
 
 import org.orkg.common.ContributorId
+import org.orkg.common.IRI
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
@@ -73,6 +74,7 @@ class InMemoryResourceRepository(private val inMemoryGraph: InMemoryGraph) :
             excludeClasses = emptySet(),
             observatoryId = null,
             organizationId = null,
+            uri = null,
         )
 
     override fun count(
@@ -86,6 +88,7 @@ class InMemoryResourceRepository(private val inMemoryGraph: InMemoryGraph) :
         baseClass: ThingId?,
         observatoryId: ObservatoryId?,
         organizationId: OrganizationId?,
+        uri: IRI?,
     ): Long =
         entities.values.filter(
             buildFindAllPredicate(
@@ -99,6 +102,7 @@ class InMemoryResourceRepository(private val inMemoryGraph: InMemoryGraph) :
                 observatoryId,
                 organizationId,
                 baseClass,
+                uri,
             ),
         ).size.toLong()
 
@@ -114,6 +118,7 @@ class InMemoryResourceRepository(private val inMemoryGraph: InMemoryGraph) :
         baseClass: ThingId?,
         observatoryId: ObservatoryId?,
         organizationId: OrganizationId?,
+        uri: IRI?,
     ): Page<Resource> =
         findAllFilteredAndPaged(
             pageable = pageable,
@@ -133,6 +138,7 @@ class InMemoryResourceRepository(private val inMemoryGraph: InMemoryGraph) :
                 observatoryId,
                 organizationId,
                 baseClass,
+                uri,
             ),
         )
 
@@ -147,6 +153,7 @@ class InMemoryResourceRepository(private val inMemoryGraph: InMemoryGraph) :
         observatoryId: ObservatoryId?,
         organizationId: OrganizationId?,
         baseClass: ThingId?,
+        uri: IRI?,
     ): (Resource) -> Boolean = {
         (label == null || it.label.matches(label)) &&
             (visibility == null || it.visibility in visibility.targets) &&
@@ -157,7 +164,8 @@ class InMemoryResourceRepository(private val inMemoryGraph: InMemoryGraph) :
             (excludeClasses.isEmpty() || excludeClasses.none { `class` -> `class` in it.classes }) &&
             (observatoryId == null || it.observatoryId == observatoryId) &&
             (organizationId == null || it.organizationId == organizationId) &&
-            (baseClass == null || it.isInstanceOf(baseClass))
+            (baseClass == null || it.isInstanceOf(baseClass)) &&
+            (uri == null || it.uri == uri)
     }
 
     private fun Resource.isInstanceOf(baseClass: ThingId): Boolean {

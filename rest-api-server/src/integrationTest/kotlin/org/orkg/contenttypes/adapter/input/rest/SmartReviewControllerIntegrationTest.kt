@@ -282,17 +282,32 @@ internal class SmartReviewControllerIntegrationTest : MockMvcBaseTest("smart-rev
             it.sections[0].shouldBeInstanceOf<SmartReviewComparisonSectionRepresentation>().asClue { section ->
                 section.id shouldNotBe null
                 section.heading shouldBe "comparison section heading"
-                section.comparison shouldBe ResourceReferenceRepresentation(ThingId("R6416"), "Some comparison", setOf(Classes.comparison))
+                section.comparison shouldBe ResourceReferenceRepresentation(
+                    id = ThingId("R6416"),
+                    label = "Some comparison",
+                    classes = setOf(Classes.comparison),
+                    uri = null,
+                )
             }
             it.sections[1].shouldBeInstanceOf<SmartReviewVisualizationSectionRepresentation>().asClue { section ->
                 section.id shouldNotBe null
                 section.heading shouldBe "visualization section heading"
-                section.visualization shouldBe ResourceReferenceRepresentation(ThingId("R215648"), "Some visualization", setOf(Classes.visualization))
+                section.visualization shouldBe ResourceReferenceRepresentation(
+                    id = ThingId("R215648"),
+                    label = "Some visualization",
+                    classes = setOf(Classes.visualization),
+                    uri = null,
+                )
             }
             it.sections[2].shouldBeInstanceOf<SmartReviewResourceSectionRepresentation>().asClue { section ->
                 section.id shouldNotBe null
                 section.heading shouldBe "resource section heading"
-                section.resource shouldBe ResourceReferenceRepresentation(ThingId("R14565"), "Some dataset resource", setOf(Classes.dataset))
+                section.resource shouldBe ResourceReferenceRepresentation(
+                    id = ThingId("R14565"),
+                    label = "Some dataset resource",
+                    classes = setOf(Classes.dataset),
+                    uri = null,
+                )
             }
             it.sections[3].shouldBeInstanceOf<SmartReviewPredicateSectionRepresentation>().asClue { section ->
                 section.id shouldNotBe null
@@ -303,7 +318,7 @@ internal class SmartReviewControllerIntegrationTest : MockMvcBaseTest("smart-rev
                 section.id shouldNotBe null
                 section.heading shouldBe "ontology section heading"
                 section.entities shouldBe listOf(
-                    ResourceReferenceRepresentation(ThingId("R1"), "Some ontology resource", emptySet()),
+                    ResourceReferenceRepresentation(ThingId("R1"), "Some ontology resource", emptySet(), null),
                     PredicateReferenceRepresentation(ThingId("P1"), "Some ontology predicate", null),
                 )
                 section.predicates shouldBe listOf(PredicateReferenceRepresentation(ThingId("P1"), "Some ontology predicate", null))
@@ -390,17 +405,32 @@ internal class SmartReviewControllerIntegrationTest : MockMvcBaseTest("smart-rev
             it.sections[0].shouldBeInstanceOf<SmartReviewComparisonSection>().asClue { section ->
                 section.id shouldNotBe null
                 section.heading shouldBe "updated comparison section heading"
-                section.comparison shouldBe ResourceReference(ThingId("R26416"), "Some other comparison", setOf(Classes.comparison))
+                section.comparison shouldBe ResourceReference(
+                    id = ThingId("R26416"),
+                    label = "Some other comparison",
+                    classes = setOf(Classes.comparison),
+                    uri = null,
+                )
             }
             it.sections[1].shouldBeInstanceOf<SmartReviewVisualizationSection>().asClue { section ->
                 section.id shouldNotBe null
                 section.heading shouldBe "updated visualization section heading"
-                section.visualization shouldBe ResourceReference(ThingId("R2215648"), "Some other visualization", setOf(Classes.visualization))
+                section.visualization shouldBe ResourceReference(
+                    id = ThingId("R2215648"),
+                    label = "Some other visualization",
+                    classes = setOf(Classes.visualization),
+                    uri = null,
+                )
             }
             it.sections[2].shouldBeInstanceOf<SmartReviewResourceSection>().asClue { section ->
                 section.id shouldNotBe null
                 section.heading shouldBe "updated resource section heading"
-                section.resource shouldBe ResourceReference(ThingId("R214565"), "Some other dataset resource", setOf(Classes.dataset))
+                section.resource shouldBe ResourceReference(
+                    id = ThingId("R214565"),
+                    label = "Some other dataset resource",
+                    classes = setOf(Classes.dataset),
+                    uri = null,
+                )
             }
             it.sections[3].shouldBeInstanceOf<SmartReviewPredicateSection>().asClue { section ->
                 section.id shouldNotBe null
@@ -411,7 +441,7 @@ internal class SmartReviewControllerIntegrationTest : MockMvcBaseTest("smart-rev
                 section.id shouldNotBe null
                 section.heading shouldBe "updated ontology section heading"
                 section.entities shouldBe listOf(
-                    ResourceReference(ThingId("R21"), "Some other ontology resource", emptySet()),
+                    ResourceReference(ThingId("R21"), "Some other ontology resource", emptySet(), null),
                     PredicateReference(ThingId("P1"), "Some ontology predicate", null),
                 )
                 section.predicates shouldBe listOf(PredicateReference(ThingId("P21"), "Some other ontology predicate", null))
@@ -452,7 +482,7 @@ internal class SmartReviewControllerIntegrationTest : MockMvcBaseTest("smart-rev
         smartReview.sections.last().shouldBeInstanceOf<SmartReviewComparisonSection>().asClue {
             it.id shouldNotBe null
             it.heading shouldBe "new comparison section heading"
-            it.comparison shouldBe ResourceReference(ThingId("R6416"), "Some comparison", setOf(Classes.comparison))
+            it.comparison shouldBe ResourceReference(ThingId("R6416"), "Some comparison", setOf(Classes.comparison), null)
         }
 
         val sectionId = smartReview.sections.last().id
@@ -470,7 +500,7 @@ internal class SmartReviewControllerIntegrationTest : MockMvcBaseTest("smart-rev
         updatedSmartReview.sections.last().shouldBeInstanceOf<SmartReviewComparisonSection>().asClue {
             it.id shouldBe sectionId
             it.heading shouldBe "updated comparison section heading"
-            it.comparison shouldBe ResourceReference(ThingId("R26416"), "Some other comparison", setOf(Classes.comparison))
+            it.comparison shouldBe ResourceReference(ThingId("R26416"), "Some other comparison", setOf(Classes.comparison), null)
         }
     }
 
@@ -493,7 +523,7 @@ internal class SmartReviewControllerIntegrationTest : MockMvcBaseTest("smart-rev
         smartReview.sections.last().shouldBeInstanceOf<SmartReviewVisualizationSection>().asClue {
             it.id shouldNotBe null
             it.heading shouldBe "new visualization section heading"
-            it.visualization shouldBe ResourceReference(ThingId("R215648"), "Some visualization", setOf(Classes.visualization))
+            it.visualization shouldBe ResourceReference(ThingId("R215648"), "Some visualization", setOf(Classes.visualization), null)
         }
 
         val sectionId = smartReview.sections.last().id
@@ -511,7 +541,12 @@ internal class SmartReviewControllerIntegrationTest : MockMvcBaseTest("smart-rev
         updatedSmartReview.sections.last().shouldBeInstanceOf<SmartReviewVisualizationSection>().asClue {
             it.id shouldBe sectionId
             it.heading shouldBe "updated visualization section heading"
-            it.visualization shouldBe ResourceReference(ThingId("R2215648"), "Some other visualization", setOf(Classes.visualization))
+            it.visualization shouldBe ResourceReference(
+                id = ThingId("R2215648"),
+                label = "Some other visualization",
+                classes = setOf(Classes.visualization),
+                uri = null,
+            )
         }
     }
 
@@ -534,7 +569,7 @@ internal class SmartReviewControllerIntegrationTest : MockMvcBaseTest("smart-rev
         smartReview.sections.last().shouldBeInstanceOf<SmartReviewResourceSection>().asClue {
             it.id shouldNotBe null
             it.heading shouldBe "new resource section heading"
-            it.resource shouldBe ResourceReference(ThingId("R14565"), "Some dataset resource", setOf(Classes.dataset))
+            it.resource shouldBe ResourceReference(ThingId("R14565"), "Some dataset resource", setOf(Classes.dataset), null)
         }
 
         val sectionId = smartReview.sections.last().id
@@ -552,7 +587,12 @@ internal class SmartReviewControllerIntegrationTest : MockMvcBaseTest("smart-rev
         updatedSmartReview.sections.last().shouldBeInstanceOf<SmartReviewResourceSection>().asClue {
             it.id shouldBe sectionId
             it.heading shouldBe "updated resource section heading"
-            it.resource shouldBe ResourceReference(ThingId("R214565"), "Some other dataset resource", setOf(Classes.dataset))
+            it.resource shouldBe ResourceReference(
+                id = ThingId("R214565"),
+                label = "Some other dataset resource",
+                classes = setOf(Classes.dataset),
+                uri = null,
+            )
         }
     }
 
@@ -617,7 +657,7 @@ internal class SmartReviewControllerIntegrationTest : MockMvcBaseTest("smart-rev
             it.id shouldNotBe null
             it.heading shouldBe "new ontology section heading"
             it.entities shouldBe listOf(
-                ResourceReference(ThingId("R1"), "Some ontology resource", emptySet()),
+                ResourceReference(ThingId("R1"), "Some ontology resource", emptySet(), null),
                 PredicateReference(ThingId("P1"), "Some ontology predicate", null),
             )
             it.predicates shouldBe listOf(PredicateReference(ThingId("P1"), "Some ontology predicate", null))
@@ -639,7 +679,7 @@ internal class SmartReviewControllerIntegrationTest : MockMvcBaseTest("smart-rev
             it.id shouldBe sectionId
             it.heading shouldBe "updated ontology section heading"
             it.entities shouldBe listOf(
-                ResourceReference(ThingId("R21"), "Some other ontology resource", emptySet()),
+                ResourceReference(ThingId("R21"), "Some other ontology resource", emptySet(), null),
                 PredicateReference(ThingId("P1"), "Some ontology predicate", null),
             )
             it.predicates shouldBe listOf(PredicateReference(ThingId("P21"), "Some other ontology predicate", null))

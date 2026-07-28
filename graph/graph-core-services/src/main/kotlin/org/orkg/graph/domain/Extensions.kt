@@ -107,11 +107,12 @@ fun Class.apply(command: UpdateClassUseCase.ReplaceCommand): Class =
     )
 
 fun UpdateListUseCase.UpdateCommand.hasNoContents(): Boolean =
-    label == null && elements == null && extractionMethod == null
+    label == null && uri == null && elements == null && extractionMethod == null
 
 fun List.apply(command: UpdateListUseCase.UpdateCommand): List =
     copy(
         label = command.label ?: label,
+        uri = command.uri ?: uri,
         extractionMethod = command.extractionMethod ?: extractionMethod,
         elements = command.elements ?: elements,
     )

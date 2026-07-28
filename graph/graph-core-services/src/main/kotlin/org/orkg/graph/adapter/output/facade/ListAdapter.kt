@@ -37,6 +37,7 @@ class ListAdapter(
             id = list.id,
             classes = setOf(Classes.list),
             label = list.label,
+            uri = list.uri,
             createdAt = list.createdAt,
             createdBy = list.createdBy,
             extractionMethod = list.extractionMethod,
@@ -122,6 +123,7 @@ class ListAdapter(
     private fun Resource.toList(): List = List(
         id = id,
         label = label,
+        uri = uri,
         elements = statementRepository.findAll(
             subjectId = id,
             predicateId = Predicates.hasListElement,

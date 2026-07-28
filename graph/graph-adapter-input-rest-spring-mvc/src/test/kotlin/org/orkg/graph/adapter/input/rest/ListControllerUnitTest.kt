@@ -14,6 +14,7 @@ import org.orkg.graph.adapter.input.rest.ListController.CreateListRequest
 import org.orkg.graph.adapter.input.rest.ListController.UpdateListRequest
 import org.orkg.graph.adapter.input.rest.testing.fixtures.configuration.GraphControllerUnitTestConfiguration
 import org.orkg.graph.adapter.input.rest.testing.fixtures.thingResponseFields
+import org.orkg.graph.domain.CannotResetURI
 import org.orkg.graph.domain.InvalidExtractionMethodChange
 import org.orkg.graph.domain.InvalidLabel
 import org.orkg.graph.domain.ListElementNotFound
@@ -21,6 +22,8 @@ import org.orkg.graph.domain.ListInUse
 import org.orkg.graph.domain.ListNotFound
 import org.orkg.graph.domain.ListNotModifiable
 import org.orkg.graph.domain.ThingAlreadyExists
+import org.orkg.graph.domain.URIAlreadyInUse
+import org.orkg.graph.domain.URINotAbsolute
 import org.orkg.graph.input.FormattedLabelUseCases
 import org.orkg.graph.input.ListUseCases
 import org.orkg.graph.input.StatementUseCases
@@ -151,9 +154,16 @@ internal class ListControllerUnitTest : MockMvcBaseTest("lists") {
                 requestFields<CreateListRequest>(
                     fieldWithPath("label").description("The label of the list."),
                     fieldWithPath("elements[]").description("The ids of the elements of the list."),
+                    fieldWithPath("uri").type("String").description("The list URI (optional)").optional(),
                     fieldWithPath("extraction_method").description("""The method used to extract the list. Can be one of $allowedExtractionMethodValues. (optional)""").optional(),
                 )
-                throws(InvalidLabel::class, ThingAlreadyExists::class, ListElementNotFound::class)
+                throws(
+                    InvalidLabel::class,
+                    ThingAlreadyExists::class,
+                    ListElementNotFound::class,
+                    URINotAbsolute::class,
+                    URIAlreadyInUse::class,
+                )
             }
 
         verify(exactly = 1) { listService.create(any()) }
@@ -242,6 +252,7 @@ internal class ListControllerUnitTest : MockMvcBaseTest("lists") {
                 requestFields<UpdateListRequest>(
                     fieldWithPath("label").description("The new label of the list. (optional)").optional(),
                     fieldWithPath("elements[]").description("The new ids of the elements of the list. (optional)").optional(),
+                    fieldWithPath("uri").type("String").description("The updated list uri. (optional)").optional(),
                     fieldWithPath("extraction_method").description("""The method used to extract the list. Can be one of $allowedExtractionMethodValues. (optional)""").optional(),
                 )
                 throws(
@@ -250,6 +261,9 @@ internal class ListControllerUnitTest : MockMvcBaseTest("lists") {
                     InvalidExtractionMethodChange::class,
                     InvalidLabel::class,
                     ListElementNotFound::class,
+                    URINotAbsolute::class,
+                    CannotResetURI::class,
+                    URIAlreadyInUse::class,
                 )
             }
 

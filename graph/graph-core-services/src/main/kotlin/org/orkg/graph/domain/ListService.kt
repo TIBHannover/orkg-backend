@@ -1,6 +1,7 @@
 package org.orkg.graph.domain
 
 import dev.forkhandles.values.ofOrNull
+import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
 import org.orkg.graph.input.CreateListUseCase
 import org.orkg.graph.input.ListUseCases
@@ -24,6 +25,15 @@ class ListService(
 ) : ListUseCases {
     override fun create(command: CreateListUseCase.CreateCommand): ThingId {
         Label.ofOrNull(command.label) ?: throw InvalidLabel()
+        command.uri?.also { uri ->
+            if (!uri.isAbsolute) {
+                throw URINotAbsolute(uri)
+            }
+            val things = thingRepository.findAll(PageRequests.SINGLE, uri = uri)
+            if (!things.isEmpty) {
+                throw URIAlreadyInUse(uri, things.single().id)
+            }
+        }
         val id = command.id
             ?.also { id -> thingRepository.findById(id).ifPresent { throw ThingAlreadyExists(id) } }
             ?: repository.nextIdentity()
@@ -33,6 +43,7 @@ class ListService(
         val list = List(
             id = id,
             label = command.label,
+            uri = command.uri,
             elements = command.elements,
             createdAt = OffsetDateTime.now(clock),
             createdBy = command.contributorId,
@@ -64,6 +75,21 @@ class ListService(
             throw InvalidExtractionMethodChange(list.extractionMethod, command.extractionMethod!!)
         }
         command.label?.also { Label.ofOrNull(it) ?: throw InvalidLabel() }
+        command.uri?.also { newUri ->
+            if (newUri == list.uri) {
+                return@also
+            }
+            if (list.uri != null) {
+                throw CannotResetURI(command.id)
+            }
+            if (!newUri.isAbsolute) {
+                throw URINotAbsolute(newUri)
+            }
+            val things = thingRepository.findAll(PageRequests.SINGLE, uri = newUri)
+            if (!things.isEmpty) {
+                throw URIAlreadyInUse(newUri, things.single().id)
+            }
+        }
         command.elements?.also {
             if (it.isNotEmpty() && !thingRepository.existsAllById(it.toSet())) {
                 throw ListElementNotFound()

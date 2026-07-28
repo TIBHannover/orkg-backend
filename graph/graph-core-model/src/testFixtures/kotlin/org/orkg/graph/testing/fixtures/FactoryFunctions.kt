@@ -99,9 +99,10 @@ fun createStatement(
 fun createList(
     id: ThingId = ThingId("List1"),
     label: String = "Default Label",
+    uri: IRI? = null,
     elements: KotlinList<ThingId> = emptyList(),
     createdAt: OffsetDateTime = OffsetDateTime.parse("2023-10-01T16:33:19.156943+01:00"),
     createdBy: ContributorId = ContributorId.UNKNOWN,
     extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN,
     modifiable: Boolean = true,
-) = List(id, label, elements, createdAt, createdBy, extractionMethod, modifiable)
+) = List(id, label, elements, createdAt, uri, createdBy, extractionMethod, modifiable)

@@ -2,6 +2,7 @@ package org.orkg.graph.adapter.input.rest
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import org.orkg.common.ContributorId
+import org.orkg.common.IRI
 import org.orkg.common.MediaTypeCapabilities
 import org.orkg.common.ThingId
 import org.orkg.common.annotations.RequireLogin
@@ -86,6 +87,7 @@ class ListController(
     data class CreateListRequest(
         val label: String,
         val elements: List<ThingId>,
+        val uri: IRI? = null,
         @field:JsonProperty("extraction_method")
         val extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN,
     ) {
@@ -94,6 +96,7 @@ class ListController(
                 contributorId = contributorId,
                 label = label,
                 elements = elements,
+                uri = uri,
                 extractionMethod = extractionMethod,
             )
     }
@@ -101,10 +104,11 @@ class ListController(
     data class UpdateListRequest(
         val label: String? = null,
         val elements: List<ThingId>? = null,
+        val uri: IRI? = null,
         @field:JsonProperty("extraction_method")
         val extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN,
     ) {
         fun toUpdateCommand(id: ThingId, contributorId: ContributorId): UpdateCommand =
-            UpdateCommand(id, contributorId, label, elements, extractionMethod)
+            UpdateCommand(id, contributorId, label, elements, uri, extractionMethod)
     }
 }

@@ -7,6 +7,7 @@ import io.kotest.core.spec.style.describeSpec
 import io.kotest.matchers.collections.shouldContainAll
 import io.kotest.matchers.comparables.shouldBeGreaterThan
 import io.kotest.matchers.comparables.shouldBeLessThan
+import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.kotest.matchers.string.shouldNotMatch
@@ -61,10 +62,10 @@ fun <
 
             val actual = repository.findById(expected.id).orElse(null)
 
-            actual shouldNotBe null
-            actual.asClue {
+            actual.shouldNotBeNull().asClue {
                 it.id shouldBe expected.id
                 it.label shouldBe expected.label
+                it.uri shouldBe expected.uri
                 it.elements.asClue { elements ->
                     elements shouldNotBe null
                     elements.size shouldBe expected.elements.size

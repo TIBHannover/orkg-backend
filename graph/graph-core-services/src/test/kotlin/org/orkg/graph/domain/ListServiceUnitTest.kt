@@ -10,6 +10,8 @@ import io.mockk.verify
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.orkg.common.ContributorId
+import org.orkg.common.IRI
+import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.common.testing.fixtures.fixedClock
@@ -23,8 +25,10 @@ import org.orkg.graph.testing.fixtures.createLiteral
 import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.testing.MockUserId
+import org.orkg.testing.pageOf
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.PageRequest
+import java.time.OffsetDateTime
 import java.util.Optional
 import java.util.UUID
 
@@ -53,7 +57,21 @@ internal class ListServiceUnitTest : MockkBaseTest {
 
         verify(exactly = 1) { thingRepository.findById(command.id!!) }
         verify(exactly = 1) { thingRepository.existsAllById(command.elements.toSet()) }
-        verify(exactly = 1) { repository.save(any(), any()) }
+        verify(exactly = 1) {
+            repository.save(
+                List(
+                    id = command.id!!,
+                    label = command.label,
+                    uri = command.uri,
+                    elements = command.elements,
+                    createdAt = OffsetDateTime.now(fixedClock),
+                    createdBy = command.contributorId,
+                    extractionMethod = command.extractionMethod,
+                    modifiable = command.modifiable,
+                ),
+                command.contributorId,
+            )
+        }
     }
 
     @Test
@@ -66,6 +84,38 @@ internal class ListServiceUnitTest : MockkBaseTest {
         )
 
         assertThrows<InvalidLabel> { service.create(command) }
+    }
+
+    @Test
+    fun `given a list is created, when uri is not absolute, it throws an exception`() {
+        val id = ThingId("R123")
+        val command = CreateListUseCase.CreateCommand(
+            id = id,
+            contributorId = ContributorId(MockUserId.USER),
+            label = "some label",
+            elements = listOf(ThingId("R1")),
+            uri = IRI.create("invalid"),
+        )
+
+        assertThrows<URINotAbsolute> { service.create(command) }
+    }
+
+    @Test
+    fun `given a list is created, when uri is already in use, it throws an exception`() {
+        val id = ThingId("R123")
+        val command = CreateListUseCase.CreateCommand(
+            id = id,
+            contributorId = ContributorId(MockUserId.USER),
+            label = "some label",
+            elements = listOf(ThingId("R1")),
+            uri = IRI.create("https://example.com/"),
+        )
+
+        every { thingRepository.findAll(PageRequests.SINGLE, uri = command.uri) } returns pageOf(createResource())
+
+        assertThrows<URIAlreadyInUse> { service.create(command) }
+
+        verify(exactly = 1) { thingRepository.findAll(PageRequests.SINGLE, uri = command.uri) }
     }
 
     @Test
@@ -193,6 +243,60 @@ internal class ListServiceUnitTest : MockkBaseTest {
         shouldThrow<InvalidExtractionMethodChange> { service.update(command) }
 
         verify(exactly = 1) { repository.findById(list.id) }
+    }
+
+    @Test
+    fun `given a list is updated, when uri would be reset, it throws an exception`() {
+        val id = ThingId("R123")
+        val list = createList(id = id, uri = IRI.create("https://example.org/OK"))
+        val command = UpdateListUseCase.UpdateCommand(
+            id = id,
+            contributorId = ContributorId(MockUserId.USER),
+            uri = IRI.create("https://exmaple.org/changed"),
+        )
+
+        every { repository.findById(list.id) } returns Optional.of(list)
+
+        assertThrows<CannotResetURI> { service.update(command) }
+
+        verify(exactly = 1) { repository.findById(list.id) }
+    }
+
+    @Test
+    fun `given a list is updated, when uri is not absolute, it throws an exception`() {
+        val id = ThingId("R123")
+        val list = createList(id = id, uri = null)
+        val command = UpdateListUseCase.UpdateCommand(
+            id = id,
+            contributorId = ContributorId(MockUserId.USER),
+            uri = IRI.create("invalid"),
+        )
+
+        every { repository.findById(list.id) } returns Optional.of(list)
+
+        assertThrows<URINotAbsolute> { service.update(command) }
+
+        verify(exactly = 1) { repository.findById(list.id) }
+    }
+
+    @Test
+    fun `given a list is updated, when uri is already in use, it throws an exception`() {
+        val id = ThingId("R123")
+        val list = createList(id = id, uri = null)
+        val command = UpdateListUseCase.UpdateCommand(
+            id = id,
+            contributorId = ContributorId(MockUserId.USER),
+            label = "some label",
+            uri = IRI.create("https://example.com/"),
+        )
+
+        every { repository.findById(list.id) } returns Optional.of(list)
+        every { thingRepository.findAll(PageRequests.SINGLE, uri = command.uri) } returns pageOf(createResource())
+
+        assertThrows<URIAlreadyInUse> { service.update(command) }
+
+        verify(exactly = 1) { repository.findById(list.id) }
+        verify(exactly = 1) { thingRepository.findAll(PageRequests.SINGLE, uri = command.uri) }
     }
 
     @Test

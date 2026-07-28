@@ -1,6 +1,7 @@
 package org.orkg.graph.input
 
 import org.orkg.common.ContributorId
+import org.orkg.common.IRI
 import org.orkg.common.ThingId
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Thing
@@ -29,6 +30,7 @@ interface CreateListUseCase {
         val contributorId: ContributorId,
         val label: String,
         val elements: List<ThingId>,
+        val uri: IRI? = null,
         val id: ThingId? = null,
         val extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN,
         val modifiable: Boolean = true,
@@ -43,6 +45,7 @@ interface UpdateListUseCase {
         val contributorId: ContributorId,
         val label: String? = null,
         val elements: List<ThingId>? = null,
+        val uri: IRI? = null,
         val extractionMethod: ExtractionMethod? = null,
     )
 }

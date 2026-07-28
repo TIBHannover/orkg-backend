@@ -160,6 +160,7 @@ data class StatementRepresentation(
 data class ListRepresentation(
     val id: ThingId,
     val label: String,
+    val uri: IRI?,
     val elements: List<ThingId>,
     override val createdAt: OffsetDateTime,
     override val createdBy: ContributorId,

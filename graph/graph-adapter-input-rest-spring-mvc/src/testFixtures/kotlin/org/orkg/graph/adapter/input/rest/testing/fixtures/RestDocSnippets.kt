@@ -108,6 +108,7 @@ fun thingResponseFields() = listOf(
 fun listResponseFields() = listOf(
     fieldWithPath("id").description("The identifier of the list."),
     fieldWithPath("label").description("The label of the list."),
+    fieldWithPath("uri").type("String").description("An optional URI to describe the list (RDF).").optional(),
     fieldWithPath("elements[]").description("The ids of the elements of the list."),
     timestampFieldWithPath("created_at", "the list was created"),
     fieldWithPath("created_by").description("The UUID of the user or service who created this list."),

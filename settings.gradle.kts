@@ -54,7 +54,6 @@ include(
     "content-types:content-types-adapter-input-rest-spring-mvc",
     "content-types:content-types-adapter-input-representations",
     "content-types:content-types-adapter-output-web",
-    "content-types:content-types-adapter-output-simcomp",
     "content-types:content-types-adapter-output-spring-data-jpa",
     "content-types:content-types-adapter-output-spring-data-neo4j",
 )

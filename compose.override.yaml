@@ -55,4 +55,3 @@ services:
       - database
       - mail
       - rest-api
-      - simcomp

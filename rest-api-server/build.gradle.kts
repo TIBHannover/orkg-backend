@@ -96,7 +96,6 @@ testing {
                 implementation(testFixtures(project(":common:testing-spring")))
                 implementation(testFixtures(project(":community:community-adapter-input-rest-spring-mvc")))
                 implementation(testFixtures(project(":community:community-core-model")))
-                implementation(testFixtures(project(":content-types:content-types-adapter-output-simcomp")))
                 implementation(testFixtures(project(":graph:graph-adapter-input-rest-spring-mvc")))
                 runtimeOnly("com.fasterxml.jackson.core:jackson-annotations")
                 runtimeOnly("com.github.multiformats:java-multihash")
@@ -162,14 +161,13 @@ dependencies {
     runtimeOnly(project(":community:community-adapter-output-spring-data-jpa"))
 
     runtimeOnly(project(":content-types:content-types-adapter-input-rest-spring-mvc"))
-    implementation(project(":content-types:content-types-adapter-output-simcomp"))
     runtimeOnly(project(":content-types:content-types-adapter-output-spring-data-jpa"))
     runtimeOnly(project(":content-types:content-types-adapter-output-spring-data-neo4j"))
     runtimeOnly(project(":content-types:content-types-adapter-output-web"))
     runtimeOnly(project(":content-types:content-types-core-model"))
-    implementation(project(":content-types:content-types-core-services"))
+    runtimeOnly(project(":content-types:content-types-core-services"))
     runtimeOnly(project(":content-types:content-types-ports-input"))
-    runtimeOnly(project(":content-types:content-types-ports-output"))
+    implementation(project(":content-types:content-types-ports-output"))
 
     runtimeOnly(project(":data-export:data-export-adapters"))
     runtimeOnly(project(":data-export:data-export-core"))
@@ -351,30 +349,6 @@ tasks {
         group = "migration"
         description = "Migrates the current database to use list entities."
         args("--spring.profiles.active=development,listMigrations")
-    }
-
-    registerBootRunTask("runComparisonTableMigrations") {
-        group = "migration"
-        description = "Migrates the comparison tables to v3 format."
-        args("--spring.profiles.active=development,comparisonTableMigrations")
-    }
-
-    registerBootRunTask("runSmartReviewSnapshotMigration") {
-        group = "migration"
-        description = "Migrates published smart reviews from SimComp to the backend database."
-        args("--spring.profiles.active=development,smartReviewSnapshotMigration")
-    }
-
-    registerBootRunTask("runLiteratureListSnapshotMigration") {
-        group = "migration"
-        description = "Migrates published literature lists from SimComp to the backend database."
-        args("--spring.profiles.active=development,literatureListSnapshotMigration")
-    }
-
-    registerBootRunTask("runPaperSnapshotMigration") {
-        group = "migration"
-        description = "Migrates published papers from SimComp to the backend database."
-        args("--spring.profiles.active=development,paperSnapshotMigration")
     }
 
     withType<JacocoReport>().configureEach {

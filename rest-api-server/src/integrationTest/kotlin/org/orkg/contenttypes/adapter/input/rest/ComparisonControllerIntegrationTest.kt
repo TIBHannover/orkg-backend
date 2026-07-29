@@ -20,7 +20,6 @@ import org.orkg.common.testing.fixtures.Assets.requestJson
 import org.orkg.community.input.ContributorUseCases
 import org.orkg.community.input.ObservatoryUseCases
 import org.orkg.community.input.OrganizationUseCases
-import org.orkg.contenttypes.adapter.output.simcomp.internal.InMemorySimCompThingRepositoryAdapter
 import org.orkg.contenttypes.domain.Author
 import org.orkg.contenttypes.domain.ComparisonDataSource
 import org.orkg.contenttypes.domain.ComparisonNotFound
@@ -52,12 +51,10 @@ import org.orkg.testing.annotations.IntegrationTest
 import org.orkg.testing.annotations.TestWithMockUser
 import org.orkg.testing.spring.MockMvcBaseTest
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.context.annotation.Import
 import org.springframework.data.domain.PageRequest
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @IntegrationTest
-@Import(InMemorySimCompThingRepositoryAdapter::class)
 internal class ComparisonControllerIntegrationTest : MockMvcBaseTest("comparisons") {
     @Autowired
     private lateinit var contributorService: ContributorUseCases

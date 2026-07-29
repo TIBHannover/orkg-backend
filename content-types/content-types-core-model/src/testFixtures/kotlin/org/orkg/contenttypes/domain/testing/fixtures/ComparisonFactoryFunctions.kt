@@ -24,12 +24,6 @@ import org.orkg.contenttypes.domain.PublishedVersion
 import org.orkg.contenttypes.domain.ResourceReference
 import org.orkg.contenttypes.domain.SimpleComparisonPath
 import org.orkg.contenttypes.domain.VersionInfo
-import org.orkg.contenttypes.domain.legacy.ComparisonHeaderCell
-import org.orkg.contenttypes.domain.legacy.ComparisonIndexCell
-import org.orkg.contenttypes.domain.legacy.ConfiguredComparisonTargetCell
-import org.orkg.contenttypes.domain.legacy.LegacyComparisonConfig
-import org.orkg.contenttypes.domain.legacy.LegacyComparisonData
-import org.orkg.contenttypes.domain.legacy.LegacyComparisonType
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Predicates
@@ -441,62 +435,6 @@ fun createComparisonColumnData(): List<ComparisonColumnData> =
                                 ),
                             ),
                         ),
-                    ),
-                ),
-            ),
-        ),
-    )
-
-// Legacy factory functions:
-
-fun createComparisonConfig(): LegacyComparisonConfig =
-    LegacyComparisonConfig(
-        predicates = listOf(),
-        contributions = listOf("R456789", "R987654"),
-        transpose = false,
-        type = LegacyComparisonType.MERGE,
-        shortCodes = emptyList(),
-    )
-
-fun createComparisonData(): LegacyComparisonData =
-    LegacyComparisonData(
-        listOf(
-            ComparisonHeaderCell(
-                id = "R456789",
-                label = "Contribution 1",
-                paperId = "R456",
-                paperLabel = "Paper 1",
-                paperYear = 2024,
-                active = true,
-            ),
-            ComparisonHeaderCell(
-                id = "R987654",
-                label = "Contribution 1",
-                paperId = "R789",
-                paperLabel = "Paper 2",
-                paperYear = 2022,
-                active = true,
-            ),
-        ),
-        listOf(
-            ComparisonIndexCell(
-                id = "P32",
-                label = "research problem",
-                contributionAmount = 2,
-                active = true,
-                similarPredicates = listOf("P15"),
-            ),
-        ),
-        mapOf(
-            "P32" to listOf(
-                listOf(
-                    ConfiguredComparisonTargetCell(
-                        id = "R192326",
-                        label = "Covid-19 Pandemic Ontology Development",
-                        classes = listOf(Classes.problem),
-                        path = listOf(ThingId("R187004"), Predicates.hasResearchProblem),
-                        pathLabels = listOf("Contribution 1", "research problem"),
-                        `class` = "resource",
                     ),
                 ),
             ),

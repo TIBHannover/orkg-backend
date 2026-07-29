@@ -82,9 +82,6 @@ orkg:
       comparison: "http://localhost/comparison/"
       smart-review: "http://localhost/review/"
       literature-list: "http://localhost/list/"
-  simcomp:
-    host: "http://localhost:4321"
-    api-key: "K3Y-4CC3SS"
   external-services:
     geonames:
       host: "https://secure.geonames.org"

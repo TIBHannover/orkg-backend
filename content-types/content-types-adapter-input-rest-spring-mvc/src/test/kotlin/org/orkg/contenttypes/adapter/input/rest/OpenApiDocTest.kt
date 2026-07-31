@@ -136,8 +136,8 @@ internal class OpenApiDocTest : MockMvcOpenApiBaseTest() {
                 oneOf(
                     "type",
                     mapOf(
-                        "text" to LiteratureListListSectionRepresentation::class,
-                        "list" to LiteratureListTextSectionRepresentation::class,
+                        "list" to LiteratureListListSectionRepresentation::class,
+                        "text" to LiteratureListTextSectionRepresentation::class,
                     ),
                 ),
             )

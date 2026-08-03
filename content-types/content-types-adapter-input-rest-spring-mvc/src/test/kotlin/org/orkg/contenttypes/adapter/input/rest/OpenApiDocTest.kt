@@ -41,16 +41,24 @@ import org.orkg.contenttypes.input.testing.fixtures.smartReviewPropertySectionRe
 import org.orkg.contenttypes.input.testing.fixtures.smartReviewResourceSectionResponseFields
 import org.orkg.contenttypes.input.testing.fixtures.smartReviewTextSectionResponseFields
 import org.orkg.contenttypes.input.testing.fixtures.smartReviewVisualizationSectionResponseFields
+import org.orkg.contenttypes.input.testing.fixtures.statementListResponseFields
 import org.orkg.contenttypes.input.testing.fixtures.untypedTemplatePropertyRequest
+import org.orkg.graph.adapter.input.rest.PredicateRepresentation
 import org.orkg.graph.adapter.input.rest.ResourceRepresentation
 import org.orkg.graph.adapter.input.rest.SimpleAuthorRepresentation
 import org.orkg.graph.adapter.input.rest.SimpleAuthorRepresentation.LiteralAuthorRepresentation
 import org.orkg.graph.adapter.input.rest.SimpleAuthorRepresentation.ResourceAuthorRepresentation
+import org.orkg.graph.adapter.input.rest.StatementRepresentation
+import org.orkg.graph.adapter.input.rest.mapping.StatementRepresentationAdapter
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
+import org.orkg.graph.domain.StatementId
 import org.orkg.graph.domain.Visibility
+import org.orkg.graph.testing.fixtures.createClass
+import org.orkg.graph.testing.fixtures.createPredicate
+import org.orkg.graph.testing.fixtures.createStatement
 import org.orkg.testing.spring.MockMvcOpenApiBaseTest
 import org.orkg.testing.spring.restdocs.oneOf
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest
@@ -498,6 +506,29 @@ internal class OpenApiDocTest : MockMvcOpenApiBaseTest() {
     }
 
     @Test
+    fun statementListRepresentation() {
+        val statementListRepresentation = StatementListRepresentation(
+            listOf(
+                StatementRepresentation(
+                    id = StatementId(1),
+                    subject = createResourceRepresentation(),
+                    predicate = createPredicateRepresentation(),
+                    `object` = createResourceRepresentation(),
+                    createdAt = OffsetDateTime.parse("2023-10-02T15:32:18.753961+01:00"),
+                    createdBy = ContributorId("34da5516-7901-4b0d-94c5-b062082e11a7"),
+                    extractionMethod = ExtractionMethod.UNKNOWN,
+                    modifiable = true,
+                    index = null,
+                ),
+            ),
+        )
+
+        document(statementListRepresentation) {
+            responseFields<StatementListRepresentation>(statementListResponseFields())
+        }
+    }
+
+    @Test
     fun literalReferenceRepresentation() {
         document(createLiteralReferenceRepresentation()) {
             responseFields<LiteralReferenceRepresentation>(literalReferenceResponseFields())
@@ -614,6 +645,17 @@ internal class OpenApiDocTest : MockMvcOpenApiBaseTest() {
         verified = false,
         unlistedBy = null,
         formattedLabel = null,
+        extractionMethod = ExtractionMethod.UNKNOWN,
+        modifiable = true,
+    )
+
+    private fun createPredicateRepresentation(): PredicateRepresentation = PredicateRepresentation(
+        id = ThingId("P1"),
+        label = "Default Label",
+        description = "predicate description",
+        uri = IRI("http://example.org"),
+        createdAt = OffsetDateTime.parse("2023-10-06T11:28:14.613254+01:00"),
+        createdBy = ContributorId.UNKNOWN,
         extractionMethod = ExtractionMethod.UNKNOWN,
         modifiable = true,
     )

@@ -56,9 +56,7 @@ import org.orkg.contenttypes.input.UpdateLiteratureListUseCase
 import org.orkg.contenttypes.input.testing.fixtures.authorListFields
 import org.orkg.contenttypes.input.testing.fixtures.configuration.ContentTypeControllerUnitTestConfiguration
 import org.orkg.contenttypes.input.testing.fixtures.literatureListResponseFields
-import org.orkg.contenttypes.input.testing.fixtures.paperResponseFields
 import org.orkg.graph.adapter.input.rest.ResourceRepresentation
-import org.orkg.graph.adapter.input.rest.testing.fixtures.resourceResponseFields
 import org.orkg.graph.domain.ExactSearchString
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.InvalidDescription
@@ -87,6 +85,7 @@ import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectType
 import org.orkg.testing.spring.restdocs.arrayItemsType
 import org.orkg.testing.spring.restdocs.constraints
 import org.orkg.testing.spring.restdocs.format
+import org.orkg.testing.spring.restdocs.oneOf
 import org.orkg.testing.spring.restdocs.type
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest
 import org.springframework.http.HttpStatus.BAD_REQUEST
@@ -782,9 +781,8 @@ internal class LiteratureListControllerUnitTest : MockMvcBaseTest("literature-li
     }
 
     @Test
-    @TestWithMockUser
-    @DisplayName("Given a published literature list, when fetching its contents (paper), it returns success")
-    fun findPublishedContentById_paper() {
+    @DisplayName("Given a published literature list, when fetching its contents, it returns success")
+    fun findPublishedContentById() {
         val id = ThingId("R3541")
         val contentId = ThingId("R123")
         every { literatureListService.findPublishedContentById(any(), any()) } returns Either.left(createPaper())
@@ -792,7 +790,6 @@ internal class LiteratureListControllerUnitTest : MockMvcBaseTest("literature-li
         documentedGetRequestTo("/api/literature-lists/{id}/published-contents/{contentId}", id, contentId)
             .perform()
             .andExpect(status().isOk)
-            .andExpectPaper()
             .andDocument {
                 summary("Fetching published literature list contents")
                 description(
@@ -804,7 +801,16 @@ internal class LiteratureListControllerUnitTest : MockMvcBaseTest("literature-li
                     parameterWithName("id").description("The id of the published literature list."),
                     parameterWithName("contentId").description("The id of the resource to fetch."),
                 )
-                responseFields<PaperRepresentation>(paperResponseFields())
+                responseFields(
+                    "PublishedLiteratureListContentRepresentation",
+                    oneOf(
+                        "_class",
+                        mapOf(
+                            "resource" to ResourceRepresentation::class,
+                            "paper" to PaperRepresentation::class,
+                        ),
+                    ),
+                )
                 throws(LiteratureListNotFound::class, PublishedLiteratureListContentNotFound::class)
             }
 
@@ -812,7 +818,21 @@ internal class LiteratureListControllerUnitTest : MockMvcBaseTest("literature-li
     }
 
     @Test
-    @TestWithMockUser
+    @DisplayName("Given a published literature list, when fetching its contents (paper), it returns success")
+    fun findPublishedContentById_paper() {
+        val id = ThingId("R3541")
+        val contentId = ThingId("R123")
+        every { literatureListService.findPublishedContentById(any(), any()) } returns Either.left(createPaper())
+
+        get("/api/literature-lists/{id}/published-contents/{contentId}", id, contentId)
+            .perform()
+            .andExpect(status().isOk)
+            .andExpectPaper()
+
+        verify(exactly = 1) { literatureListService.findPublishedContentById(any(), any()) }
+    }
+
+    @Test
     @DisplayName("Given a published literature list, when fetching its contents (resource), it returns success")
     fun findPublishedContentById_resource() {
         val id = ThingId("R3541")
@@ -820,24 +840,10 @@ internal class LiteratureListControllerUnitTest : MockMvcBaseTest("literature-li
         every { literatureListService.findPublishedContentById(any(), any()) } returns Either.right(createResource(id = contentId))
         every { statementService.countIncomingStatementsById(contentId) } returns 0
 
-        documentedGetRequestTo("/api/literature-lists/{id}/published-contents/{contentId}", id, contentId)
+        get("/api/literature-lists/{id}/published-contents/{contentId}", id, contentId)
             .perform()
             .andExpect(status().isOk)
             .andExpectResource()
-            .andDocument {
-                summary("Fetching published literature list contents")
-                description(
-                    """
-                    A `GET` request returns contents of an already published literature list, at the state of publishing.
-                    """,
-                )
-                pathParameters(
-                    parameterWithName("id").description("The id of the published literature list."),
-                    parameterWithName("contentId").description("The id of the resource to fetch."),
-                )
-                responseFields<ResourceRepresentation>(resourceResponseFields())
-                throws(LiteratureListNotFound::class, PublishedLiteratureListContentNotFound::class)
-            }
 
         verify(exactly = 1) { literatureListService.findPublishedContentById(any(), any()) }
         verify(exactly = 1) { statementService.countIncomingStatementsById(contentId) }

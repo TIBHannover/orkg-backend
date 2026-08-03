@@ -68,11 +68,8 @@ import org.orkg.contenttypes.input.SmartReviewUseCases
 import org.orkg.contenttypes.input.UpdateSmartReviewSectionUseCase
 import org.orkg.contenttypes.input.UpdateSmartReviewUseCase
 import org.orkg.contenttypes.input.testing.fixtures.authorListFields
-import org.orkg.contenttypes.input.testing.fixtures.comparisonResponseFields
 import org.orkg.contenttypes.input.testing.fixtures.configuration.ContentTypeControllerUnitTestConfiguration
 import org.orkg.contenttypes.input.testing.fixtures.smartReviewResponseFields
-import org.orkg.contenttypes.input.testing.fixtures.statementListResponseFields
-import org.orkg.contenttypes.input.testing.fixtures.visualizationResponseFields
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ExactSearchString
 import org.orkg.graph.domain.ExtractionMethod
@@ -105,6 +102,7 @@ import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectType
 import org.orkg.testing.spring.restdocs.arrayItemsType
 import org.orkg.testing.spring.restdocs.constraints
 import org.orkg.testing.spring.restdocs.format
+import org.orkg.testing.spring.restdocs.oneOf
 import org.orkg.testing.spring.restdocs.type
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest
 import org.springframework.http.HttpStatus.BAD_REQUEST
@@ -1527,8 +1525,8 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
     }
 
     @Test
-    @DisplayName("Given a published smart review, when fetching its contents (resource), returns success")
-    fun findPublishedContentById_statements() {
+    @DisplayName("Given a published smart review, when fetching its contents, returns success")
+    fun findPublishedContentById() {
         val id = ThingId("R3541")
         val sectionId = ThingId("R123")
 
@@ -1551,9 +1549,39 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
                     parameterWithName("id").description("The id of the published smart review."),
                     parameterWithName("contentId").description("The id of the resource to fetch."),
                 )
-                responseFields<StatementListRepresentation>(statementListResponseFields())
+                responseFields(
+                    "PublishedSmartReviewContentRepresentation",
+                    oneOf(
+                        "_class",
+                        mapOf(
+                            "statement_list" to StatementListRepresentation::class,
+                            "comparison" to ComparisonRepresentation::class,
+                            "visualization" to VisualizationRepresentation::class,
+                        ),
+                    ),
+                )
                 throws(SmartReviewNotFound::class, PublishedSmartReviewContentNotFound::class)
             }
+
+        verify(exactly = 1) { smartReviewService.findPublishedContentById(id, sectionId) }
+        verify(exactly = 1) { statementService.countAllIncomingStatementsById(any<Set<ThingId>>()) }
+        verify(exactly = 1) { statementService.findAllDescriptionsById(any()) }
+    }
+
+    @Test
+    @DisplayName("Given a published smart review, when fetching its contents (resource), returns success")
+    fun findPublishedContentById_statements() {
+        val id = ThingId("R3541")
+        val sectionId = ThingId("R123")
+
+        every { smartReviewService.findPublishedContentById(any(), any()) } returns Either.right(listOf(createStatement(subject = createResource(sectionId))))
+        every { statementService.countAllIncomingStatementsById(any<Set<ThingId>>()) } returns emptyMap()
+        every { statementService.findAllDescriptionsById(any()) } returns emptyMap()
+
+        get("/api/smart-reviews/{id}/published-contents/{contentId}", id, sectionId)
+            .perform()
+            .andExpect(status().isOk)
+            .andExpectStatementList()
 
         verify(exactly = 1) { smartReviewService.findPublishedContentById(id, sectionId) }
         verify(exactly = 1) { statementService.countAllIncomingStatementsById(any<Set<ThingId>>()) }
@@ -1568,24 +1596,10 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
 
         every { smartReviewService.findPublishedContentById(any(), any()) } returns Either.left(createComparison())
 
-        documentedGetRequestTo("/api/smart-reviews/{id}/published-contents/{contentId}", id, sectionId)
+        get("/api/smart-reviews/{id}/published-contents/{contentId}", id, sectionId)
             .perform()
             .andExpect(status().isOk)
             .andExpectComparison()
-            .andDocument {
-                summary("Fetching published smart review contents")
-                description(
-                    """
-                    A `GET` request returns contents of an already published smart review, at the state of publishing.
-                    """,
-                )
-                pathParameters(
-                    parameterWithName("id").description("The id of the published smart review."),
-                    parameterWithName("contentId").description("The id of the resource to fetch."),
-                )
-                responseFields<ComparisonRepresentation>(comparisonResponseFields())
-                throws(SmartReviewNotFound::class, PublishedSmartReviewContentNotFound::class)
-            }
 
         verify(exactly = 1) { smartReviewService.findPublishedContentById(id, sectionId) }
     }
@@ -1598,24 +1612,10 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
 
         every { smartReviewService.findPublishedContentById(any(), any()) } returns Either.left(createVisualization())
 
-        documentedGetRequestTo("/api/smart-reviews/{id}/published-contents/{contentId}", id, sectionId)
+        get("/api/smart-reviews/{id}/published-contents/{contentId}", id, sectionId)
             .perform()
             .andExpect(status().isOk)
             .andExpectVisualization()
-            .andDocument {
-                summary("Fetching published smart review contents")
-                description(
-                    """
-                    A `GET` request returns contents of an already published smart review, at the state of publishing.
-                    """,
-                )
-                pathParameters(
-                    parameterWithName("id").description("The id of the published smart review."),
-                    parameterWithName("contentId").description("The id of the resource to fetch."),
-                )
-                responseFields<VisualizationRepresentation>(visualizationResponseFields())
-                throws(SmartReviewNotFound::class, PublishedSmartReviewContentNotFound::class)
-            }
 
         verify(exactly = 1) { smartReviewService.findPublishedContentById(id, sectionId) }
     }

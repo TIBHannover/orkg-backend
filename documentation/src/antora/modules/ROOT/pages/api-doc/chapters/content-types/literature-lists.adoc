@@ -48,9 +48,9 @@ operation::literature-lists_publish[snippets='path-parameters,request-fields,cur
 [[literature-lists-published-contents]]
 == Fetching Published Literature List Contents
 
-include::{snippets}/literature-lists_find-published-content-by-id_paper/description.adoc[]
+include::{snippets}/literature-lists_find-published-content-by-id/description.adoc[]
 
-operation::literature-lists_find-published-content-by-id_paper[snippets='path-parameters,curl-request,errors']
+operation::literature-lists_find-published-content-by-id[snippets='path-parameters,curl-request']
 
 Depending on the type of the requested content, the following representations are returned:
 
@@ -61,3 +61,5 @@ Depending on the type of the requested content, the following representations ar
 | Paper    | <<papers-fetch,Paper>>
 | Software | <<resources-fetch,Resource>>
 |===
+
+operation::literature-lists_find-published-content-by-id[snippets='errors']

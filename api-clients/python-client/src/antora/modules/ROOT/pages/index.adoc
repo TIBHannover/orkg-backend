@@ -1,7 +1,7 @@
 = Overview
 
 The ORKG REST-API provides an auto-generated, OpenAPI based client library for Python.
-The version of the TypeScript client library matches the version of the ORKG REST-API.
+The version of the Python client library matches the version of the ORKG REST-API.
 You can find the latest version of the ORKG REST-API in the https://gitlab.com/TIBHannover/orkg/orkg-backend/-/blob/master/CHANGELOG.md?ref_type=heads[changelog].
 
 == Prerequisites

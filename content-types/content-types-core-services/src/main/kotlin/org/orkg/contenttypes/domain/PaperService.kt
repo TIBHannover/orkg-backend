@@ -7,6 +7,7 @@ import org.orkg.common.OrganizationId
 import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
 import org.orkg.common.pmap
+import org.orkg.community.output.ConferenceSeriesRepository
 import org.orkg.community.output.ContributorRepository
 import org.orkg.community.output.ObservatoryRepository
 import org.orkg.community.output.OrganizationRepository
@@ -17,6 +18,7 @@ import org.orkg.contenttypes.domain.actions.DeletePaperCommand
 import org.orkg.contenttypes.domain.actions.DeletePaperState
 import org.orkg.contenttypes.domain.actions.ExtractionMethodValidator
 import org.orkg.contenttypes.domain.actions.ObservatoryValidator
+import org.orkg.contenttypes.domain.actions.OrganizationOrConferenceValidator
 import org.orkg.contenttypes.domain.actions.OrganizationValidator
 import org.orkg.contenttypes.domain.actions.PublicationInfoValidator
 import org.orkg.contenttypes.domain.actions.PublishPaperCommand
@@ -118,6 +120,7 @@ class PaperService(
     private val contributorRepository: ContributorRepository,
     private val paperSnapshotRepository: PaperSnapshotRepository,
     private val snapshotIdGenerator: SnapshotIdGenerator,
+    private val conferenceSeriesRepository: ConferenceSeriesRepository,
     private val clock: Clock,
     @param:Value($$"${orkg.publishing.base-url.paper}")
     private val paperPublishBaseUri: String = "http://localhost/paper/",
@@ -198,7 +201,7 @@ class PaperService(
             PaperIdentifierCreateValidator(statementRepository),
             ResearchFieldValidator(resourceRepository, { it.researchFields }),
             ObservatoryValidator(observatoryRepository, { it.observatories }),
-            OrganizationValidator(organizationRepository, { it.organizations }),
+            OrganizationOrConferenceValidator(organizationRepository, conferenceSeriesRepository, { it.organizations }),
             SDGValidator({ it.sustainableDevelopmentGoals }),
             ResourceValidator(resourceRepository, { it.mentionings }),
             PaperAuthorListCreateValidator(resourceRepository, statementRepository),
@@ -226,7 +229,7 @@ class PaperService(
             VerifiedValidator(contributorRepository, { it.contributorId }, { it.paper!!.verified }, { it.verified }),
             ResearchFieldValidator(resourceRepository, { it.researchFields }, { it.paper!!.researchFields.ids }),
             ObservatoryValidator(observatoryRepository, { it.observatories }, { it.paper!!.observatories }),
-            OrganizationValidator(organizationRepository, { it.organizations }, { it.paper!!.organizations }),
+            OrganizationOrConferenceValidator(organizationRepository, conferenceSeriesRepository, { it.organizations }, { it.paper!!.organizations }),
             SDGValidator({ it.sustainableDevelopmentGoals }, { it.paper!!.sustainableDevelopmentGoals.ids }),
             ResourceValidator(resourceRepository, { it.mentionings }, { it.paper!!.mentionings.ids }),
             PaperTitleUpdateValidator(resourceService),

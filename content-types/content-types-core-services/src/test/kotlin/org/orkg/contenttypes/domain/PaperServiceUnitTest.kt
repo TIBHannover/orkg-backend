@@ -16,6 +16,7 @@ import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.common.testing.fixtures.fixedClock
+import org.orkg.community.output.ConferenceSeriesRepository
 import org.orkg.community.output.ContributorRepository
 import org.orkg.community.output.ObservatoryRepository
 import org.orkg.community.output.OrganizationRepository
@@ -70,6 +71,7 @@ internal class PaperServiceUnitTest : MockkBaseTest {
     private val contributorRepository: ContributorRepository = mockk()
     private val paperSnapshotRepository: PaperSnapshotRepository = mockk()
     private val snapshotIdGenerator: SnapshotIdGenerator = mockk()
+    private val conferenceSeriesRepository: ConferenceSeriesRepository = mockk()
 
     private val service = PaperService(
         resourceRepository = resourceRepository,
@@ -91,6 +93,7 @@ internal class PaperServiceUnitTest : MockkBaseTest {
         contributorRepository = contributorRepository,
         paperSnapshotRepository = paperSnapshotRepository,
         snapshotIdGenerator = snapshotIdGenerator,
+        conferenceSeriesRepository = conferenceSeriesRepository,
         clock = fixedClock,
         paperPublishBaseUri = "https://orkg.org/paper/",
     )

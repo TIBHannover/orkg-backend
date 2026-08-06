@@ -19,7 +19,6 @@ import org.orkg.contenttypes.domain.actions.DeletePaperState
 import org.orkg.contenttypes.domain.actions.ExtractionMethodValidator
 import org.orkg.contenttypes.domain.actions.ObservatoryValidator
 import org.orkg.contenttypes.domain.actions.OrganizationOrConferenceValidator
-import org.orkg.contenttypes.domain.actions.OrganizationValidator
 import org.orkg.contenttypes.domain.actions.PublicationInfoValidator
 import org.orkg.contenttypes.domain.actions.PublishPaperCommand
 import org.orkg.contenttypes.domain.actions.PublishPaperState
@@ -308,12 +307,12 @@ class PaperService(
                     predicateId = Predicates.hasPublishedVersion,
                     pageable = PageRequests.ALL,
                 )
-                statements += versions
+                statements = statements + versions.content
             }
         }
         return ContentTypeSubgraph(
             root = resource.id,
-            statements = statements.groupBy { it.subject.id },
+            statements = statements.distinct().groupBy { it.subject.id },
         )
     }
 

@@ -38,9 +38,24 @@ data class Paper(
     companion object {
         fun from(resource: Resource, statements: Map<ThingId, List<GeneralStatement>>): Paper {
             val directStatements = statements[resource.id].orEmpty()
+            val published = Classes.paperVersion in resource.classes
+            val versionStatements = if (published) {
+                val headVersionId = statements.values.flatten()
+                    .firstOrNull {
+                        it.predicate.id == Predicates.hasPublishedVersion &&
+                            it.`object`.id == resource.id &&
+                            it.subject is Resource && Classes.paper in (it.subject as Resource).classes
+                    }
+                    ?.subject
+                    ?.id
+                    ?: resource.id
+                statements[headVersionId].orEmpty()
+            } else {
+                directStatements
+            }
             val versions = VersionInfo(
-                head = HeadVersion(directStatements.firstOrNull()?.subject ?: resource),
-                published = directStatements.wherePredicate(Predicates.hasPublishedVersion)
+                head = HeadVersion(versionStatements.firstOrNull()?.subject ?: resource),
+                published = versionStatements.wherePredicate(Predicates.hasPublishedVersion)
                     .sortedByDescending { it.createdAt }
                     .map { PublishedVersion(it.`object`, null) },
             )
@@ -74,7 +89,7 @@ data class Paper(
                 visibility = resource.visibility,
                 modifiable = resource.modifiable,
                 unlistedBy = resource.unlistedBy,
-                published = Classes.paperVersion in resource.classes,
+                published = published,
             )
         }
     }

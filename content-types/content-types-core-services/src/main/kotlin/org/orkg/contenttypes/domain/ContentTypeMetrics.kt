@@ -185,7 +185,7 @@ class ContentTypeMetrics {
         name = "paper-count",
         description = "Number of papers in the graph.",
         group = "content-types",
-        parameterSpecs = sharedContentTypeParameters + mapOf(
+        parameterSpecs = publishableContentTypeParameters + mapOf(
             "verified" to verifiedParameter,
             "sdg" to sdgParameter,
             "research_problem" to researchProblemParameter,
@@ -205,6 +205,7 @@ class ContentTypeMetrics {
                 verified = parameters[verifiedParameter],
                 researchProblem = parameters[researchProblemParameter],
                 venue = parameters[venueParameter],
+                published = parameters[publishedParameter],
             )
         },
     )

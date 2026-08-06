@@ -135,5 +135,9 @@ include(
     "api-clients:typescript-client",
 )
 
+include(
+    "event-sourcing:common",
+)
+
 includeBuild("acceptance-tests")
 includeBuild("world")

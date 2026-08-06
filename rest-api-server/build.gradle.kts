@@ -226,6 +226,8 @@ dependencies {
     runtimeOnly(project(":migrations:liquibase"))
     runtimeOnly(project(":migrations:neo4j-migrations"))
 
+    runtimeOnly(project(":event-sourcing:common"))
+
     // Direct transitive dependencies
     implementation("com.github.multiformats:java-multihash")
     implementation("io.micrometer:micrometer-core")
@@ -274,6 +276,8 @@ dependencies {
     // Monitoring
     runtimeOnly("org.springframework.boot:spring-boot-starter-actuator")
     runtimeOnly("io.micrometer:micrometer-registry-jmx")
+    // Axon
+    runtimeOnly("org.axonframework.extensions.spring:axon-spring-boot-starter")
 }
 
 val restdocsSnippetsDir = layout.buildDirectory.dir("generated-snippets")

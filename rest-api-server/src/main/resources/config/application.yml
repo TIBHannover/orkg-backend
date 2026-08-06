@@ -1,4 +1,6 @@
 spring:
+  jpa:
+    database-platform: org.orkg.api.common.configuration.ByteaEnforcedPostgresSQLDialect
   data.web.pageable.max-page-size: 2500
   rdf:
     # Vocab prefix not used, still hard coded
@@ -29,6 +31,13 @@ spring:
       enabled: false
     jdbc:
       initialize-schema: never
+axon:
+  axonserver:
+    enabled: false
+  converter:
+    general: jackson
+    messages: jackson
+    events: jackson
 orkg:
   mail:
     from:

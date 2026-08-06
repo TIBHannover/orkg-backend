@@ -11,6 +11,9 @@ dependencies {
     api(platform("io.kotest:kotest-bom:6.0.7"))
     api(platform("io.rest-assured:rest-assured-bom:6.0.0"))
     api(platform("org.eclipse.rdf4j:rdf4j-bom:5.2.2"))
+    api(platform("org.axonframework:axon-framework-bom:5.2.2"))
+    // May not be needed when axon bom and spring bom use the same version
+    api(platform("org.junit:junit-bom:6.1.2"))
 
     // Third-party versions not provided by Spring, and without platform/BOM
     api("io.mockk:mockk:1.14.9") // anchor for MockKVirtualPlatformAlignmentRule

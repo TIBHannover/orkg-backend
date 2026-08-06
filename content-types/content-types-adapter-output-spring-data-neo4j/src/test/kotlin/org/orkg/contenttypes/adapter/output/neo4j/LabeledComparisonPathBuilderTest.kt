@@ -314,6 +314,86 @@ internal class LabeledComparisonPathBuilderTest {
         result shouldBe expected
     }
 
+    @Test
+    fun `Given a list of path entries, when building a labeled comparison path tree, it expands paths deeper than two levels`() {
+        /*
+         * Contribution
+         *   measure
+         *     Quantity
+         *       quantityValue
+         *         QuantityValue
+         *           numericValue
+         *             SomeLiteral
+         *           unit
+         *             Unit
+         */
+        val entries = setOf(
+            createPredicatePathEntry(
+                subjectId = ThingId("Contribution"),
+                predicateId = ThingId("measure"),
+                objectIds = listOf(ThingId("Quantity")),
+            ),
+            createPredicatePathEntry(
+                subjectId = ThingId("Quantity"),
+                predicateId = ThingId("quantityValue"),
+                objectIds = listOf(ThingId("QuantityValue")),
+            ),
+            createPredicatePathEntry(
+                subjectId = ThingId("QuantityValue"),
+                predicateId = ThingId("numericValue"),
+                objectIds = listOf(ThingId("SomeLiteral")),
+            ),
+            createPredicatePathEntry(
+                subjectId = ThingId("QuantityValue"),
+                predicateId = ThingId("unit"),
+                objectIds = listOf(ThingId("Unit")),
+            ),
+        )
+        val expected = listOf(
+            LabeledComparisonPath(
+                id = ThingId("measure"),
+                label = "measure",
+                description = null,
+                type = ComparisonPath.Type.PREDICATE,
+                children = listOf(
+                    LabeledComparisonPath(
+                        id = ThingId("quantityValue"),
+                        label = "quantityValue",
+                        description = null,
+                        type = ComparisonPath.Type.PREDICATE,
+                        children = listOf(
+                            LabeledComparisonPath(
+                                id = ThingId("numericValue"),
+                                label = "numericValue",
+                                description = null,
+                                type = ComparisonPath.Type.PREDICATE,
+                                children = emptyList(),
+                                sources = 1,
+                            ),
+                            LabeledComparisonPath(
+                                id = ThingId("unit"),
+                                label = "unit",
+                                description = null,
+                                type = ComparisonPath.Type.PREDICATE,
+                                children = emptyList(),
+                                sources = 1,
+                            ),
+                        ),
+                        sources = 1,
+                    ),
+                ),
+                sources = 1,
+            ),
+        )
+
+        val result = LabeledComparisonPathBuilder.buildTree(
+            entries = entries,
+            rootIds = setOf(ThingId("Contribution")),
+            maxDepth = 10,
+        )
+        result shouldBe expected
+    }
+
     private fun createPredicatePathEntry(subjectId: ThingId, predicateId: ThingId, objectIds: List<ThingId>) =
         Neo4jComparisonPathEntry(
             subjectId = subjectId,

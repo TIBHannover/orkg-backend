@@ -258,28 +258,24 @@ class SpringDataNeo4jComparisonAuxiliaryAdapter(
                 val nextLevel = mutableListOf<List<ProtoLabeledComparisonPath>>()
                 level.forEach { levelEntry ->
                     levelEntry.forEach { parent ->
-                        val updatedChildren = parent.children
-                            .filter { it.expandChildren }
-                            .groupBy { it.id }
+                        parent.children = parent.children.groupBy { it.id }
                             .map { (predicateId, entries) ->
                                 val first = entries.first()
                                 val objectIds = entries.flatMapTo(mutableSetOf()) { it.objectIds }
-                                val expandChildren = (objectIds - visited).isNotEmpty()
+                                val children = entries.flatMap { it.children }.filter { it.id !in visited }
                                 ProtoLabeledComparisonPath(
                                     id = predicateId,
                                     label = first.label,
                                     description = first.description,
                                     type = first.type,
                                     parent = parent,
-                                    children = mutableListOf(),
+                                    children = children,
                                     subjectIds = entries.flatMapTo(mutableSetOf()) { it.subjectIds },
                                     objectIds = objectIds,
                                     sourceIds = parent.sourceIds,
-                                    expandChildren = expandChildren,
                                 )
                             }
                             .sortedWith(pathComparator)
-                        parent.children = updatedChildren
                         nextLevel += parent.children
                     }
                 }
@@ -328,7 +324,6 @@ class SpringDataNeo4jComparisonAuxiliaryAdapter(
             val subjectIds: MutableSet<ThingId>,
             val objectIds: MutableSet<ThingId>,
             val sourceIds: MutableSet<ThingId>,
-            var expandChildren: Boolean = true,
         ) {
             fun toLabeledComparisonPath(): LabeledComparisonPath =
                 LabeledComparisonPath(

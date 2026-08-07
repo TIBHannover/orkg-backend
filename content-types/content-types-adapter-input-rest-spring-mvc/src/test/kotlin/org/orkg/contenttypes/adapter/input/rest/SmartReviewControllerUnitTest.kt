@@ -313,7 +313,7 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
                     parameterWithName("organization_id").description("Filter for the UUID of the organization that the resource belongs to. (optional)").format("uuid").optional(),
                     parameterWithName("research_field").description("Filter for research field id. (optional)").optional(),
                     parameterWithName("include_subfields").description("Flag for whether subfields are included in the search or not. (optional, default: false)").type(ParameterType.BOOLEAN).optional(),
-                    parameterWithName("published").description("Filter for the publication status of the smart reviews. (optional)").optional(),
+                    parameterWithName("published").description("Filter for the publication status of the smart reviews. (optional)").type(ParameterType.BOOLEAN).optional(),
                     parameterWithName("sdg").description("Filter for the sustainable development goal that the smart review belongs to. (optional)").optional(),
                 )
                 pagedResponseFields<SmartReviewRepresentation>(smartReviewResponseFields())
@@ -394,7 +394,7 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
                     fieldWithPath("extraction_method").type("String").description("""The method used to extract the resource. Can be one of $allowedExtractionMethodValues. (optional, default: `UNKNOWN`)""").optional(),
                     subsectionWithPath("sections").description("The list of sections of the smart review. See <<smart-review-sections,smart review sections>> for more information. (optional)").optional(),
                     fieldWithPath("references[]").description("The list of bibtex references of the smart review. (optional)").optional(),
-                    *authorListFields("smart review").toTypedArray(),
+                    *authorListFields("smart review", optional = true).toTypedArray(),
                 )
                 throws(
                     InvalidLabel::class,
@@ -504,7 +504,7 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
                 )
                 pathParameters(
                     parameterWithName("id").description("The id of the smart review to which the new section should be appended to."),
-                    parameterWithName("index").description("The insertion index the of the section. Otherwise, the created comparison section will be appended at the end of the smart review."),
+                    parameterWithName("index").description("The insertion index the of the section. Otherwise, the created comparison section will be appended at the end of the smart review.").type(ParameterType.INTEGER),
                 )
                 responseHeaders(
                     headerWithName("Location").description("The uri path where the updated smart review can be fetched from."),
@@ -614,7 +614,7 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
                 )
                 pathParameters(
                     parameterWithName("id").description("The id of the smart review to which the new section should be appended to."),
-                    parameterWithName("index").description("The insertion index the of the section. Otherwise, the created visualization section will be appended at the end of the smart review."),
+                    parameterWithName("index").description("The insertion index the of the section. Otherwise, the created visualization section will be appended at the end of the smart review.").type(ParameterType.INTEGER),
                 )
                 responseHeaders(
                     headerWithName("Location").description("The uri path where the updated smart review can be fetched from."),
@@ -724,7 +724,7 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
                 )
                 pathParameters(
                     parameterWithName("id").description("The id of the smart review to which the new section should be appended to."),
-                    parameterWithName("index").description("The insertion index the of the section. Otherwise, the created resource section will be appended at the end of the smart review."),
+                    parameterWithName("index").description("The insertion index the of the section. Otherwise, the created resource section will be appended at the end of the smart review.").type(ParameterType.INTEGER),
                 )
                 responseHeaders(
                     headerWithName("Location").description("The uri path where the updated smart review can be fetched from."),
@@ -834,7 +834,7 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
                 )
                 pathParameters(
                     parameterWithName("id").description("The id of the smart review to which the new section should be appended to."),
-                    parameterWithName("index").description("The insertion index the of the section. Otherwise, the created predicate section will be appended at the end of the smart review."),
+                    parameterWithName("index").description("The insertion index the of the section. Otherwise, the created predicate section will be appended at the end of the smart review.").type(ParameterType.INTEGER),
                 )
                 responseHeaders(
                     headerWithName("Location").description("The uri path where the updated smart review can be fetched from."),
@@ -946,7 +946,7 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
                 )
                 pathParameters(
                     parameterWithName("id").description("The id of the smart review to which the new section should be appended to."),
-                    parameterWithName("index").description("The insertion index the of the section. Otherwise, the created ontology section will be appended at the end of the smart review."),
+                    parameterWithName("index").description("The insertion index the of the section. Otherwise, the created ontology section will be appended at the end of the smart review.").type(ParameterType.INTEGER),
                 )
                 responseHeaders(
                     headerWithName("Location").description("The uri path where the updated smart review can be fetched from."),
@@ -1060,7 +1060,7 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
                 )
                 pathParameters(
                     parameterWithName("id").description("The id of the smart review to which the new section should be appended to."),
-                    parameterWithName("index").description("The insertion index the of the section. Otherwise, the created text section will be appended at the end of the smart review."),
+                    parameterWithName("index").description("The insertion index the of the section. Otherwise, the created text section will be appended at the end of the smart review.").type(ParameterType.INTEGER),
                 )
                 responseHeaders(
                     headerWithName("Location").description("The uri path where the updated smart review can be fetched from."),

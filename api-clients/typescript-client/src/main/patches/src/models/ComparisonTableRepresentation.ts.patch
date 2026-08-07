@@ -1,0 +1,28 @@
+--- src/models/ComparisonTableRepresentation.ts
++++ src/models/ComparisonTableRepresentation.ts
+@@ -12,7 +12,7 @@
+  * Do not edit the class manually.
+  */
+
+-import { mapValues } from '../runtime';
++import { mapArrayValues, mapValues } from '../runtime';
+ import type { LabeledComparisonPathRepresentation } from './LabeledComparisonPathRepresentation';
+ import {
+     LabeledComparisonPathRepresentationFromJSON,
+@@ -91,7 +91,7 @@
+         'selectedPaths': ((json['selected_paths'] as Array<any>).map(LabeledComparisonPathRepresentationFromJSON)),
+         'subtitles': ((json['subtitles'] as Array<any>).map(ThingReferenceRepresentationFromJSON)),
+         'titles': ((json['titles'] as Array<any>).map(ThingReferenceRepresentationFromJSON)),
+-        'values': json['values'],
++        'values': (mapArrayValues(json['values'], ComparisonTableRowRepresentationFromJSON)),
+     };
+ }
+ 
+@@ -109,7 +109,7 @@
+         'selected_paths': ((value['selectedPaths'] as Array<any>).map(LabeledComparisonPathRepresentationToJSON)),
+         'subtitles': ((value['subtitles'] as Array<any>).map(ThingReferenceRepresentationToJSON)),
+         'titles': ((value['titles'] as Array<any>).map(ThingReferenceRepresentationToJSON)),
+-        'values': value['values'],
++        'values': (mapArrayValues(value['values'], ComparisonTableRowRepresentationToJSON)),
+     };
+ }

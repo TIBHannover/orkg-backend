@@ -301,7 +301,7 @@ internal class LiteratureListControllerUnitTest : MockMvcBaseTest("literature-li
                     fieldWithPath("observatories[]").description("The list of IDs of the observatories the literature list belongs to. (optional)").optional(),
                     fieldWithPath("extraction_method").type("String").description("""The method used to extract the resource. Can be one of $allowedExtractionMethodValues. (optional, default: `UNKNOWN`)""").optional(),
                     subsectionWithPath("sections[]").description("A list of sections of the literature list (optional). See <<literature-list-sections,literature list sections>> for more information. (optional)").optional(),
-                    *authorListFields("literature list").toTypedArray(),
+                    *authorListFields("literature list", optional = true).toTypedArray(),
                 )
                 throws(
                     InvalidLabel::class,
@@ -417,7 +417,7 @@ internal class LiteratureListControllerUnitTest : MockMvcBaseTest("literature-li
                 )
                 pathParameters(
                     parameterWithName("id").description("The id of the literature list to which the new section should be appended to."),
-                    parameterWithName("index").description("The insertion index the of the section. Otherwise, the created list section will be appended at the end of the literature list."),
+                    parameterWithName("index").description("The insertion index the of the section. Otherwise, the created list section will be appended at the end of the literature list.").type(ParameterType.INTEGER),
                 )
                 responseHeaders(
                     headerWithName("Location").description("The uri path where the updated literature list can be fetched from."),
@@ -537,7 +537,7 @@ internal class LiteratureListControllerUnitTest : MockMvcBaseTest("literature-li
                 )
                 pathParameters(
                     parameterWithName("id").description("The id of the literature list to which the new section should be appended to."),
-                    parameterWithName("index").description("The insertion index the of the section. Otherwise, the created text section will be appended at the end of the literature list."),
+                    parameterWithName("index").description("The insertion index the of the section. Otherwise, the created text section will be appended at the end of the literature list.").type(ParameterType.INTEGER),
                 )
                 responseHeaders(
                     headerWithName("Location").description("The uri path where the updated literature list can be fetched from."),

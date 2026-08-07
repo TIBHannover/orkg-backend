@@ -1,0 +1,37 @@
+--- src/apis/ComparisonTablesApi.ts
++++ src/apis/ComparisonTablesApi.ts
+@@ -167,6 +167,34 @@
+     }
+ 
+     /**
++     * A `GET` request provides information about a comparison table.  [NOTE] If present, formatted labels will be returned for resource labels instead of the original resource label.
++     * Fetching comparison tables
++     */
++    async findTableByComparisonIdAsCsvRaw(
++        requestParameters: ComparisonTablesApiFindTableByComparisonIdRequest,
++        transposed: boolean = false,
++        initOverrides?: RequestInit | runtime.InitOverrideFunction
++    ): Promise<runtime.ApiResponse<string>> {
++        const requestOptions = await this.findTableByComparisonIdRequestOpts(requestParameters);
++        requestOptions.headers["Accept"] = transposed ? "text/csv;transposed=true" : "text/csv";
++        const response = await this.request(requestOptions, initOverrides);
++        return new runtime.TextApiResponse(response);
++    }
++
++    /**
++     * A `GET` request provides information about a comparison table.  [NOTE] If present, formatted labels will be returned for resource labels instead of the original resource label.
++     * Fetching comparison tables
++     */
++    async findTableByComparisonIdAsCsv(
++        requestParameters: ComparisonTablesApiFindTableByComparisonIdRequest,
++        transposed: boolean = false,
++        initOverrides?: RequestInit | runtime.InitOverrideFunction
++    ): Promise<string> {
++        const response = await this.findTableByComparisonIdAsCsvRaw(requestParameters, transposed, initOverrides);
++        return await response.value();
++    }
++
++    /**
+      * Creates request options for updateTable without sending the request
+      */
+     async updateTableRequestOpts(requestParameters: ComparisonTablesApiUpdateTableRequest): Promise<runtime.RequestOpts> {

@@ -449,7 +449,7 @@ internal class TableControllerUnitTest : MockMvcBaseTest("tables") {
                 )
                 pathParameters(
                     parameterWithName("id").description("The identifier of the table."),
-                    parameterWithName("index").description("The insertion index the of the row. If not specified, the row will be appended at the end of the table. (optional)").optional(),
+                    parameterWithName("index").description("The insertion index the of the row. If not specified, the row will be appended at the end of the table. (optional)").optional().type(ParameterType.INTEGER),
                 )
                 responseHeaders(
                     headerWithName("Location").description("The uri path where the updated table can be fetched from."),
@@ -516,7 +516,7 @@ internal class TableControllerUnitTest : MockMvcBaseTest("tables") {
                 )
                 pathParameters(
                     parameterWithName("id").description("The identifier of the table."),
-                    parameterWithName("index").description("The index of the row."),
+                    parameterWithName("index").description("The index of the row.").type(ParameterType.INTEGER),
                 )
                 responseHeaders(
                     headerWithName("Location").description("The uri path where the updated table can be fetched from."),
@@ -588,7 +588,7 @@ internal class TableControllerUnitTest : MockMvcBaseTest("tables") {
                 )
                 pathParameters(
                     parameterWithName("id").description("The identifier of the table."),
-                    parameterWithName("index").description("The index of the row."),
+                    parameterWithName("index").description("The index of the row.").type(ParameterType.INTEGER),
                 )
                 responseHeaders(
                     headerWithName("Location").description("The uri path where the updated table can be fetched from."),
@@ -649,7 +649,7 @@ internal class TableControllerUnitTest : MockMvcBaseTest("tables") {
                 )
                 pathParameters(
                     parameterWithName("id").description("The identifier of the table."),
-                    parameterWithName("index").description("The insertion index the of the column. If not specified, the column will be appended at the end of the table. (optional)").optional(),
+                    parameterWithName("index").description("The insertion index the of the column. If not specified, the column will be appended at the end of the table. (optional)").optional().type(ParameterType.INTEGER),
                 )
                 responseHeaders(
                     headerWithName("Location").description("The uri path where the updated table can be fetched from."),
@@ -710,7 +710,7 @@ internal class TableControllerUnitTest : MockMvcBaseTest("tables") {
                 )
                 pathParameters(
                     parameterWithName("id").description("The identifier of the table."),
-                    parameterWithName("index").description("The index of the column."),
+                    parameterWithName("index").description("The index of the column.").type(ParameterType.INTEGER),
                 )
                 responseHeaders(
                     headerWithName("Location").description("The uri path where the updated table can be fetched from."),
@@ -768,7 +768,7 @@ internal class TableControllerUnitTest : MockMvcBaseTest("tables") {
                 )
                 pathParameters(
                     parameterWithName("id").description("The identifier of the table."),
-                    parameterWithName("index").description("The index of the column."),
+                    parameterWithName("index").description("The index of the column.").type(ParameterType.INTEGER),
                 )
                 responseHeaders(
                     headerWithName("Location").description("The uri path where the updated table can be fetched from."),

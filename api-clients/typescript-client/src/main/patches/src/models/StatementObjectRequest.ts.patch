@@ -1,0 +1,28 @@
+--- src/models/StatementObjectRequest.ts
++++ src/models/StatementObjectRequest.ts
+@@ -12,7 +12,7 @@
+  * Do not edit the class manually.
+  */
+
+-import { mapValues } from '../runtime';
++import { mapArrayValues, mapValues } from '../runtime';
+
+ /**
+  *
+@@ -53,7 +53,7 @@
+     return {
+         
+         'id': json['id'],
+-        'statements': json['statements'] == null ? undefined : json['statements'],
++        ...(json['statements'] != null && {'statements': (mapArrayValues(json['statements'], StatementObjectRequestFromJSON))}),
+     };
+ }
+ 
+@@ -69,7 +69,7 @@
+     return {
+         
+         'id': value['id'],
+-        'statements': value['statements'],
++        ...(value['statements'] != null && {'statements': (mapArrayValues(value['statements'], StatementObjectRequestToJSON))}),
+     };
+ }

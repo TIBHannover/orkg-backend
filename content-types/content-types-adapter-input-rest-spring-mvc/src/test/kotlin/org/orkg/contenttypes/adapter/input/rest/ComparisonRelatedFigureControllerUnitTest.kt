@@ -215,7 +215,7 @@ internal class ComparisonRelatedFigureControllerUnitTest : MockMvcBaseTest("comp
                     headerWithName("Location").description("The uri path where the updated comparison related figure can be fetched from."),
                 )
                 pathParameters(
-                    parameterWithName("id").description("The id of the comparison the comparison related figure belongs to."),
+                    parameterWithName("id").description("The id of the comparison the related figure belongs to."),
                     parameterWithName("comparisonRelatedFigureId").description("The identifier of the comparison related figure to update."),
                 )
                 requestFields<UpdateComparisonRelatedFigureRequest>(

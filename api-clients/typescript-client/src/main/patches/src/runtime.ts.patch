@@ -1,7 +1,17 @@
 --- src/runtime.ts
 +++ src/runtime.ts
-@@ -369,7 +369,7 @@
- 
+@@ -367,9 +367,17 @@
+     return result;
+ }
+
++export function mapArrayValues(data: any, fn: (item: any) => any) {
++    const result: { [key: string]: any } = {};
++    for (const key of Object.keys(data)) {
++        result[key] = (data[key] as Array<any>).map(fn);
++    }
++    return result;
++}
++
  export function canConsumeForm(consumes: Consume[]): boolean {
      for (const consume of consumes) {
 -        if ('multipart/form-data' === consume.contentType) {

@@ -243,7 +243,7 @@ class DocumentationBuilder(private val documentationContext: DocumentationContex
         requestHeaders(requestHeaders.toList())
 
     fun requestHeaders(vararg requestHeaders: HeaderDescriptor) =
-        requestHeaders(requestHeaders.map { HeaderDescriptorWithType.fromHeaderDescriptor(it) })
+        requestHeaders(requestHeaders.map { it.toHeaderDescriptorWithType() })
 
     fun responseHeaders(responseHeaders: List<HeaderDescriptorWithType>) {
         this.responseHeaders = responseHeaders
@@ -253,7 +253,7 @@ class DocumentationBuilder(private val documentationContext: DocumentationContex
         responseHeaders(responseHeaders.toList())
 
     fun responseHeaders(vararg responseHeaders: HeaderDescriptor) =
-        responseHeaders(responseHeaders.map { HeaderDescriptorWithType.fromHeaderDescriptor(it) })
+        responseHeaders(responseHeaders.map { it.toHeaderDescriptorWithType() })
 
     fun requestParts(schemaName: String, vararg requestParts: RequestPartDescriptor) {
         this.requestSchema = Schema(schemaName)
@@ -385,11 +385,20 @@ class DocumentationBuilder(private val documentationContext: DocumentationContex
     companion object {
         private fun ParameterDescriptor.toParameterDescriptorWithType(): ParameterDescriptorWithType {
             val type = attributes.remove("type") as? ParameterType
+            val defaultValue = attributes.remove("defaultValue")
             val parameterWithType = ParameterDescriptorWithType.fromParameterDescriptor(this)
             if (type != null) {
                 parameterWithType.type(type)
             }
+            parameterWithType.defaultValue = defaultValue
             return parameterWithType
+        }
+
+        private fun HeaderDescriptor.toHeaderDescriptorWithType(): HeaderDescriptorWithType {
+            val defaultValue = attributes.remove("defaultValue")
+            val headerDescriptorWithType = HeaderDescriptorWithType.fromHeaderDescriptor(this)
+            headerDescriptorWithType.defaultValue = defaultValue
+            return headerDescriptorWithType
         }
     }
 }

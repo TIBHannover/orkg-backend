@@ -194,7 +194,7 @@ internal class ComparisonRelatedResourceControllerUnitTest : MockMvcBaseTest("co
         val comparisonId = ThingId("R100")
         every { comparisonRelatedResourceService.update(any()) } just runs
 
-        documentedPutRequestTo("/api/comparisons/{id}/related-resources/{comparisonRelatedFigureId}", comparisonId, id)
+        documentedPutRequestTo("/api/comparisons/{id}/related-resources/{comparisonRelatedResourceId}", comparisonId, id)
             .content(updateComparisonRelatedResourceRequest())
             .accept(COMPARISON_JSON_V3)
             .contentType(COMPARISON_JSON_V3)
@@ -216,8 +216,8 @@ internal class ComparisonRelatedResourceControllerUnitTest : MockMvcBaseTest("co
                     headerWithName("Location").description("The uri path where the updated comparison related resource can be fetched from."),
                 )
                 pathParameters(
-                    parameterWithName("id").description("The id of the comparison the comparison related resource belongs to."),
-                    parameterWithName("comparisonRelatedFigureId").description("The identifier of the comparison related resource to update."),
+                    parameterWithName("id").description("The id of the comparison the related resource belongs to."),
+                    parameterWithName("comparisonRelatedResourceId").description("The identifier of the comparison related resource to update."),
                 )
                 requestFields<UpdateComparisonRelatedResourceRequest>(
                     fieldWithPath("label").description("The label of the comparison related resource. (optional)").optional(),

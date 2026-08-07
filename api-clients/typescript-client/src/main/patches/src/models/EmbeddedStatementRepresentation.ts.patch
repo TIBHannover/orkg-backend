@@ -1,0 +1,29 @@
+--- src/models/EmbeddedStatementRepresentation.ts
++++ src/models/EmbeddedStatementRepresentation.ts
+@@ -12,7 +12,7 @@
+  * Do not edit the class manually.
+  */
+
+-import { mapValues } from '../runtime';
++import { mapArrayValues, mapValues } from '../runtime';
+ import type { ThingRepresentation } from './ThingRepresentation';
+ import {
+     ThingRepresentationFromJSON,
+@@ -76,7 +76,7 @@
+         
+         'createdAt': json['created_at'],
+         'createdBy': json['created_by'],
+-        'statements': json['statements'],
++        'statements': (mapArrayValues(json['statements'], EmbeddedStatementRepresentationFromJSON)),
+         'thing': ThingRepresentationFromJSON(json['thing']),
+     };
+ }
+@@ -94,7 +94,7 @@
+         
+         'created_at': value['createdAt'],
+         'created_by': value['createdBy'],
+-        'statements': value['statements'],
++        'statements': (mapArrayValues(value['statements'], EmbeddedStatementRepresentationToJSON)),
+         'thing': ThingRepresentationToJSON(value['thing']),
+     };
+ }

@@ -60,6 +60,9 @@ fun <T : AbstractDescriptor<T>> T.constraints(constraints: List<Constraint>): T 
 fun <T : AbstractDescriptor<T>> T.format(format: String): T =
     attributes(Attributes.Attribute("format", format))
 
+fun <T : AbstractDescriptor<T>> T.defaultValue(value: Any): T =
+    attributes(Attributes.Attribute("defaultValue", value))
+
 fun <T : AbstractDescriptor<T>> T.min(min: Int): T =
     constraints(
         Constraint(

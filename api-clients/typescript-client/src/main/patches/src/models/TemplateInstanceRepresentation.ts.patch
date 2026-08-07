@@ -1,0 +1,28 @@
+--- src/models/TemplateInstanceRepresentation.ts
++++ src/models/TemplateInstanceRepresentation.ts
+@@ -12,7 +12,7 @@
+  * Do not edit the class manually.
+  */
+
+-import { mapValues } from '../runtime';
++import { mapArrayValues, mapValues } from '../runtime';
+ import type { PredicateRepresentation } from './PredicateRepresentation';
+ import {
+     PredicateRepresentationFromJSON,
+@@ -83,7 +83,7 @@
+         
+         'predicates': (mapValues(json['predicates'], PredicateRepresentationFromJSON)),
+         'root': ResourceRepresentationFromJSON(json['root']),
+-        'statements': json['statements'],
++        'statements': (mapArrayValues(json['statements'], EmbeddedStatementRepresentationFromJSON)),
+     };
+ }
+ 
+@@ -100,7 +100,7 @@
+         
+         'predicates': (mapValues(value['predicates'], PredicateRepresentationToJSON)),
+         'root': ResourceRepresentationToJSON(value['root']),
+-        'statements': value['statements'],
++        'statements': (mapArrayValues(value['statements'], EmbeddedStatementRepresentationToJSON)),
+     };
+ }

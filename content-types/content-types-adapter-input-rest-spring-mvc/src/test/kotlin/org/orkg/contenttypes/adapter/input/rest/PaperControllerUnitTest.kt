@@ -322,7 +322,7 @@ internal class PaperControllerUnitTest : MockMvcBaseTest("papers") {
                     parameterWithName("mentionings").description("Filter for resources that are linked to the paper via a mentions statement. (optional)").optional(),
                     parameterWithName("research_problem").description("Filter for research problem id. (optional)").optional(),
                     parameterWithName("venue").description("Filter for venue id. (optional)").optional(),
-                    parameterWithName("published").description("Filter for the publication status of the paper. (optional)").optional(),
+                    parameterWithName("published").description("Filter for the publication status of the paper. (optional)").type(ParameterType.INTEGER).optional(),
                 )
                 pagedResponseFields<PaperRepresentation>(paperResponseFields())
                 throws(UnknownSortingProperty::class)

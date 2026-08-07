@@ -1,0 +1,29 @@
+--- src/models/ComparisonTableRowRepresentation.ts
++++ src/models/ComparisonTableRowRepresentation.ts
+@@ -12,7 +12,7 @@
+  * Do not edit the class manually.
+  */
+
+-import { mapValues } from '../runtime';
++import { mapArrayValues, mapValues } from '../runtime';
+ import type { ThingReferenceRepresentation } from './ThingReferenceRepresentation';
+ import {
+     ThingReferenceRepresentationFromJSON,
+@@ -60,7 +60,7 @@
+     }
+     return {
+         
+-        'children': json['children'],
++        'children': (mapArrayValues(json['children'], ComparisonTableRowRepresentationFromJSON)),
+         'values': ((json['values'] as Array<any>).map(ThingReferenceRepresentationFromJSON)),
+     };
+ }
+@@ -75,7 +75,7 @@
+ 
+     return {
+
+-        'children': value['children'],
++        'children': (mapArrayValues(value['children'], ComparisonTableRowRepresentationToJSON)),
+         'values': ((value['values'] as Array<any>).map(ThingReferenceRepresentationToJSON)),
+     };
+ }

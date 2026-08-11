@@ -24,7 +24,7 @@ services:
       retries: 60
 
   neo4j:
-    image: neo4j:2026.03-community
+    image: neo4j:2026-community
     environment:
       NEO4J_PLUGINS: '["apoc", "apoc-extended"]'
       NEO4J_initial_dbms_default__database: orkg

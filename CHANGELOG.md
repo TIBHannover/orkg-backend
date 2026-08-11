@@ -6,6 +6,36 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Added support for URIs on predicates, resources and lists.
+  (See [!1519](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1519),
+       [!1520](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1520),
+       [!1524](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1524))
+- Added URI filtering parameter to things endpoint.
+  (See [!1522](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1522))
+- Added the option for assigning papers to conference series through organization id field.
+  (See [!1529](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1529))
+- Added Axon 5 based event-sourcing infrastructure.
+  (See [!1530](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1530))
+### Fixed
+- Fixed comparison table paths being empty when sources are referenced in contents.
+  (See [!1518](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1518))
+- Fixed relative URIs being allowed on class updates.
+  (See [!1521](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1521))
+- Fixed missing published filtering parameter to paper count metric.
+  (See [!1531](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1531))
+- Fixed version history parsing for published papers.
+  (See [!1532](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1532))
+- Fixed comparison path merging for path depths greater than two.
+  (See [!1533](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1533))
+- Fixed several issues with the generated OpenAPI specification, and it's downstream client libraries.
+  (See [!1534](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1534),
+       [!1528](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1528),
+       [!1527](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1527))
+- Fixed typos in Python client documentation.
+### Removed
+- Removed legacy SimComp adapters.
+  (See [!1505](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1505))
 
 ## [0.99.1] - 2026-07-23
 ### Fixed

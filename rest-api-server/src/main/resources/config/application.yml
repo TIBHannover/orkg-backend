@@ -38,6 +38,8 @@ axon:
     general: jackson
     messages: jackson
     events: jackson
+  update-check:
+    disabled: true
 orkg:
   mail:
     from:

@@ -85,6 +85,7 @@ import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectType
 import org.orkg.testing.spring.restdocs.arrayItemsType
 import org.orkg.testing.spring.restdocs.constraints
 import org.orkg.testing.spring.restdocs.format
+import org.orkg.testing.spring.restdocs.nullable
 import org.orkg.testing.spring.restdocs.oneOf
 import org.orkg.testing.spring.restdocs.type
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest
@@ -363,7 +364,7 @@ internal class LiteratureListControllerUnitTest : MockMvcBaseTest("literature-li
                 requestFields<LiteratureListListSectionRequest>(
                     fieldWithPath("entries").description("""The list entries that should be part of this section."""),
                     fieldWithPath("entries[].id").description("""The id of the linked resource. Every resource must either be an instance of "Paper", "Dataset" or "Software"."""),
-                    fieldWithPath("entries[].description").type("String").description("""The description of the entry. (optional)""").optional(),
+                    fieldWithPath("entries[].description").type("String").description("""The description of the entry. (optional)""").nullable(),
                 )
                 throws(
                     LiteratureListNotModifiable::class,
@@ -425,7 +426,7 @@ internal class LiteratureListControllerUnitTest : MockMvcBaseTest("literature-li
                 requestFields<LiteratureListListSectionRequest>(
                     fieldWithPath("entries").description("""The list entries that should be part of this section."""),
                     fieldWithPath("entries[].id").description("""The id of the linked resource. Every resource must either be an instance of "Paper", "Dataset" or "Software"."""),
-                    fieldWithPath("entries[].description").type("String").description("""The description of the entry. (optional)""").optional(),
+                    fieldWithPath("entries[].description").type("String").description("""The description of the entry. (optional)""").nullable(),
                 )
                 throws(
                     LiteratureListNotModifiable::class,
@@ -669,7 +670,7 @@ internal class LiteratureListControllerUnitTest : MockMvcBaseTest("literature-li
                 requestFields<LiteratureListListSectionRequest>(
                     fieldWithPath("entries").description("""The list of updated entries that should be part of this section."""),
                     fieldWithPath("entries[].id").description("""The id of the linked resource. Every resource must either be an instance of "Paper", "Dataset" or "Software"."""),
-                    fieldWithPath("entries[].description").type("String").description("""The description of the entry. (optional)""").optional(),
+                    fieldWithPath("entries[].description").type("String").description("""The description of the entry. (optional)""").nullable(),
                 )
                 throws(
                     LiteratureListNotModifiable::class,

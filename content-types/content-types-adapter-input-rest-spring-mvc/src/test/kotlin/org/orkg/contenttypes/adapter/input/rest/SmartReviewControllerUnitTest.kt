@@ -102,6 +102,7 @@ import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectType
 import org.orkg.testing.spring.restdocs.arrayItemsType
 import org.orkg.testing.spring.restdocs.constraints
 import org.orkg.testing.spring.restdocs.format
+import org.orkg.testing.spring.restdocs.nullable
 import org.orkg.testing.spring.restdocs.oneOf
 import org.orkg.testing.spring.restdocs.type
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest
@@ -455,7 +456,7 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
                 )
                 requestFields<SmartReviewComparisonSectionRequest>(
                     fieldWithPath("heading").description("The heading of the comparison section."),
-                    fieldWithPath("comparison").description("The id of the linked comparison. (optional)").optional(),
+                    fieldWithPath("comparison").description("The id of the linked comparison. (optional)").nullable(),
                 )
                 throws(
                     SmartReviewNotFound::class,
@@ -511,7 +512,7 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
                 )
                 requestFields<SmartReviewComparisonSectionRequest>(
                     fieldWithPath("heading").description("The heading of the comparison section."),
-                    fieldWithPath("comparison").description("The id of the linked comparison. (optional)").optional(),
+                    fieldWithPath("comparison").description("The id of the linked comparison. (optional)").nullable(),
                 )
                 throws(
                     SmartReviewNotFound::class,
@@ -565,7 +566,7 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
                 )
                 requestFields<SmartReviewVisualizationSectionRequest>(
                     fieldWithPath("heading").description("The heading of the visualization section."),
-                    fieldWithPath("visualization").description("The id of the linked visualization. (optional)").optional(),
+                    fieldWithPath("visualization").description("The id of the linked visualization. (optional)").nullable(),
                 )
                 throws(
                     SmartReviewNotFound::class,
@@ -621,7 +622,7 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
                 )
                 requestFields<SmartReviewVisualizationSectionRequest>(
                     fieldWithPath("heading").description("The heading of the visualization section."),
-                    fieldWithPath("visualization").description("The id of the linked visualization. (optional)").optional(),
+                    fieldWithPath("visualization").description("The id of the linked visualization. (optional)").nullable(),
                 )
                 throws(
                     SmartReviewNotFound::class,
@@ -675,7 +676,7 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
                 )
                 requestFields<SmartReviewResourceSectionRequest>(
                     fieldWithPath("heading").description("The heading of the resource section."),
-                    fieldWithPath("resource").description("The id of the linked resource. (optional)").optional(),
+                    fieldWithPath("resource").description("The id of the linked resource. (optional)").nullable(),
                 )
                 throws(
                     SmartReviewNotFound::class,
@@ -731,7 +732,7 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
                 )
                 requestFields<SmartReviewResourceSectionRequest>(
                     fieldWithPath("heading").description("The heading of the resource section."),
-                    fieldWithPath("resource").description("The id of the linked resource. (optional)").optional(),
+                    fieldWithPath("resource").description("The id of the linked resource. (optional)").nullable(),
                 )
                 throws(
                     SmartReviewNotFound::class,
@@ -785,7 +786,7 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
                 )
                 requestFields<SmartReviewPredicateSectionRequest>(
                     fieldWithPath("heading").description("The heading of the predicate section."),
-                    fieldWithPath("predicate").description("The id of the linked predicate. (optional)").optional(),
+                    fieldWithPath("predicate").description("The id of the linked predicate. (optional)").nullable(),
                 )
                 throws(
                     SmartReviewNotFound::class,
@@ -841,7 +842,7 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
                 )
                 requestFields<SmartReviewPredicateSectionRequest>(
                     fieldWithPath("heading").description("The heading of the predicate section."),
-                    fieldWithPath("predicate").description("The id of the linked predicate. (optional)").optional(),
+                    fieldWithPath("predicate").description("The id of the linked predicate. (optional)").nullable(),
                 )
                 throws(
                     SmartReviewNotFound::class,
@@ -1010,7 +1011,7 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
                 requestFields<SmartReviewTextSectionRequest>(
                     fieldWithPath("heading").description("The heading of the text section."),
                     fieldWithPath("text").description("The text contents of the text section."),
-                    fieldWithPath("class").description("The id of the class that indicates the type of the text section. (optional)").optional(),
+                    fieldWithPath("class").description("The id of the class that indicates the type of the text section. (optional)").nullable(),
                 )
                 throws(
                     SmartReviewNotFound::class,
@@ -1068,7 +1069,7 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
                 requestFields<SmartReviewTextSectionRequest>(
                     fieldWithPath("heading").description("The heading of the text section."),
                     fieldWithPath("text").description("The text contents of the text section."),
-                    fieldWithPath("class").description("The id of the class that indicates the type of the text section. (optional)").optional(),
+                    fieldWithPath("class").description("The id of the class that indicates the type of the text section. (optional)").nullable(),
                 )
                 throws(
                     SmartReviewNotFound::class,
@@ -1203,7 +1204,7 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
                 )
                 requestFields<SmartReviewComparisonSectionRequest>(
                     fieldWithPath("heading").description("The heading of the comparison section."),
-                    fieldWithPath("comparison").description("The id of the linked comparison."),
+                    fieldWithPath("comparison").description("The id of the linked comparison. (optional)").nullable(),
                 )
                 throws(
                     SmartReviewNotModifiable::class,
@@ -1255,7 +1256,7 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
                 )
                 requestFields<SmartReviewVisualizationSectionRequest>(
                     fieldWithPath("heading").description("The heading of the visualization section."),
-                    fieldWithPath("visualization").description("The id of the linked visualization. (optional)").optional(),
+                    fieldWithPath("visualization").description("The id of the linked visualization. (optional)").nullable(),
                 )
                 throws(
                     SmartReviewNotModifiable::class,
@@ -1307,7 +1308,7 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
                 )
                 requestFields<SmartReviewResourceSectionRequest>(
                     fieldWithPath("heading").description("The heading of the resource section."),
-                    fieldWithPath("resource").description("The id of the linked resource. (optional)").optional(),
+                    fieldWithPath("resource").description("The id of the linked resource. (optional)").nullable(),
                 )
                 throws(
                     SmartReviewNotModifiable::class,
@@ -1359,7 +1360,7 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
                 )
                 requestFields<SmartReviewPredicateSectionRequest>(
                     fieldWithPath("heading").description("The heading of the predicate section."),
-                    fieldWithPath("predicate").description("The id of the linked predicate. (optional)").optional(),
+                    fieldWithPath("predicate").description("The id of the linked predicate. (optional)").nullable(),
                 )
                 throws(
                     SmartReviewNotModifiable::class,
@@ -1466,7 +1467,7 @@ internal class SmartReviewControllerUnitTest : MockMvcBaseTest("smart-reviews") 
                 requestFields<SmartReviewTextSectionRequest>(
                     fieldWithPath("heading").description("The heading of the text section."),
                     fieldWithPath("text").description("The text contents of the text section."),
-                    fieldWithPath("class").description("The id of the class that indicates the type of the text section. An absent value indicates no type. (optional)").optional(),
+                    fieldWithPath("class").description("The id of the class that indicates the type of the text section. An absent value indicates no type. (optional)").nullable(),
                 )
                 throws(
                     SmartReviewNotModifiable::class,

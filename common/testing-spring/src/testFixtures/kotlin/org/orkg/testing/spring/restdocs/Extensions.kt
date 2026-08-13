@@ -33,6 +33,9 @@ inline fun <reified T> FieldDescriptor.referencesPageOf(): FieldDescriptor =
 fun <T : AbstractDescriptor<T>> T.arrayItemsType(type: String): T =
     attributes(Attributes.Attribute("itemsType", type))
 
+fun <T : AbstractDescriptor<T>> T.nullable(): T =
+    attributes(Attributes.Attribute("nullable", true))
+
 fun <T : AbstractDescriptor<T>> T.nullableItems(): T =
     attributes(Attributes.Attribute("nullableItems", true))
 

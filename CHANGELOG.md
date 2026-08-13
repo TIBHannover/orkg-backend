@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Added feature flag for widget endpoint.
+  (See [!1537](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1537))
+### Changed
+- The Neo4j database version now points to 2026 instead of 2026.03.
+  (See [!1489](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1489))
+- Disabled Axon update-checker.
+  (See [!1536](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1536))
 
 ## [0.100.0] - 2026-08-11
 ### Added

@@ -8,6 +8,7 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
 import org.orkg.common.exceptions.MissingParameter
+import org.orkg.common.exceptions.ServiceUnavailable
 import org.orkg.common.exceptions.TooManyParameters
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.testing.asciidoc.publishedArtifactClasses
@@ -24,9 +25,11 @@ import org.orkg.widget.input.ResolveDOIUseCase
 import org.orkg.widget.input.ResolveDOIUseCase.WidgetInfo
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest
 import org.springframework.http.HttpStatus.BAD_REQUEST
+import org.springframework.http.HttpStatus.SERVICE_UNAVAILABLE
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import org.springframework.test.context.ContextConfiguration
+import org.springframework.test.context.TestPropertySource
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
@@ -83,6 +86,7 @@ internal class WidgetControllerUnitTest : MockMvcBaseTest("widget") {
                     fieldWithPath("class").description("The class of the resource. Always one of $publishedArtifactClasses.").type("enum").enumValues(Classes.publishedArtifactClasses.map(ThingId::value)),
                     fieldWithPath("num_statements").description("The number of statements connected to the resource if the class is `Paper`, or 0 in all other cases.").type<Long>(),
                 )
+                throws(ServiceUnavailable::class)
             }
 
         verify(exactly = 1) { resolveDOIUseCase.resolveDOI(EXAMPLE_DOI, null) }
@@ -124,5 +128,25 @@ internal class WidgetControllerUnitTest : MockMvcBaseTest("widget") {
             .andExpectErrorResponse("/api/widgets")
 
         verify(exactly = 1) { resolveDOIUseCase.resolveDOI(null, null) }
+    }
+}
+
+@TestPropertySource(properties = ["orkg.widget.enabled=false"])
+@ContextConfiguration(classes = [WidgetController::class, WidgetControllerUnitTestConfiguration::class])
+@WebMvcTest(controllers = [WidgetController::class])
+internal class WidgetControllerDisabledUnitTest : MockMvcBaseTest("widget") {
+    @MockkBean
+    private lateinit var resolveDOIUseCase: ResolveDOIUseCase
+
+    @Test
+    fun `Given a widget controller, when widget endpoint is disabled, it returns status 503 SERVICE UNAVAILABLE`() {
+        get("/api/widgets")
+            .param("doi", EXAMPLE_DOI)
+            .perform()
+            .andExpectErrorStatus(SERVICE_UNAVAILABLE)
+            .andExpectType("orkg:problem:service_unavailable")
+            .andExpectTitle("Service Unavailable")
+            .andExpectDetail("Widget service is not available.")
+            .andExpectErrorResponse("/api/widgets")
     }
 }

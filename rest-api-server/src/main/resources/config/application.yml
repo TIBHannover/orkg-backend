@@ -131,6 +131,8 @@ orkg:
     user-agent: "ORKG-API/${project.version}"
   api-spec:
     path: "openapi3.yaml"
+  widget:
+    enabled: true
 management:
   endpoints:
     web:

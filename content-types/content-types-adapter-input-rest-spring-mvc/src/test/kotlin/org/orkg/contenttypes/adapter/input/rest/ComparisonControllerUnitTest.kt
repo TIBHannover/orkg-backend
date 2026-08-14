@@ -33,6 +33,7 @@ import org.orkg.contenttypes.domain.Author
 import org.orkg.contenttypes.domain.AuthorNotFound
 import org.orkg.contenttypes.domain.ComparisonAlreadyPublished
 import org.orkg.contenttypes.domain.ComparisonDataSource
+import org.orkg.contenttypes.domain.ComparisonInUse
 import org.orkg.contenttypes.domain.ComparisonNotFound
 import org.orkg.contenttypes.domain.ComparisonNotModifiable
 import org.orkg.contenttypes.domain.ComparisonType
@@ -76,6 +77,7 @@ import org.orkg.graph.testing.fixtures.createLiteral
 import org.orkg.testing.MockUserId
 import org.orkg.testing.andExpectComparison
 import org.orkg.testing.andExpectPage
+import org.orkg.testing.annotations.TestWithMockCurator
 import org.orkg.testing.annotations.TestWithMockUser
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.MockMvcBaseTest
@@ -847,6 +849,62 @@ internal class ComparisonControllerUnitTest : MockMvcBaseTest("comparisons") {
             }
 
         verify(exactly = 1) { comparisonService.update(any()) }
+    }
+
+    @Test
+    @TestWithMockCurator
+    fun deleteById() {
+        val id = ThingId("R123")
+        val contributorId = ContributorId(MockUserId.CURATOR)
+
+        every { comparisonService.deleteById(any()) } just runs
+
+        documentedDeleteRequestTo("/api/comparisons/{id}", id)
+            .contentType(COMPARISON_JSON_V3)
+            .perform()
+            .andExpect(status().isNoContent)
+            .andDocument {
+                summary("Deleting comparisons")
+                description(
+                    """
+                    A `DELETE` request deletes an existing comparison by id.
+                    The response will be `204 NO CONTENT` when successful.
+
+                    [NOTE]
+                    ====
+                    1. If the comparison is not modifiable, the return status will be `403 FORBIDDEN`.
+                    2. If the comparison is used as an object in a statement, the return status will be `403 FORBIDDEN`.
+                    3. If the comparison is published, the return status will be `403 FORBIDDEN`.
+                    4. If the comparison has a published version, the return status will be `403 FORBIDDEN`.
+                    5. If the performing user is not the creator of the comparison and does not have the curator role, the return status will be `403 FORBIDDEN`.
+                    ====
+
+                    [NOTE]
+                    ====
+                    Deleting a comparison will also delete all associated comparison related resources, comparison related figures and visualizations.
+                    ====
+                    """,
+                )
+                pathParameters(
+                    parameterWithName("id").description("The identifier of the comparison."),
+                )
+                throws(
+                    ComparisonNotModifiable::class,
+                    ComparisonInUse::class,
+                    ComparisonAlreadyPublished::class,
+                    ContributorNotFound::class,
+                    NeitherOwnerNorCurator::class,
+                )
+            }
+
+        verify(exactly = 1) {
+            comparisonService.deleteById(
+                withArg {
+                    it.comparisonId shouldBe id
+                    it.contributorId shouldBe contributorId
+                },
+            )
+        }
     }
 
     private fun createComparisonRequest() =

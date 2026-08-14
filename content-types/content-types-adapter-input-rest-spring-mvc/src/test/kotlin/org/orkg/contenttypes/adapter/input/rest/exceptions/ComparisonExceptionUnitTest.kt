@@ -5,6 +5,7 @@ import org.orkg.common.ThingId
 import org.orkg.common.thingIdConstraint
 import org.orkg.contenttypes.domain.ComparisonAlreadyPublished
 import org.orkg.contenttypes.domain.ComparisonDataSource
+import org.orkg.contenttypes.domain.ComparisonInUse
 import org.orkg.contenttypes.domain.ComparisonNotFound
 import org.orkg.contenttypes.domain.ComparisonNotModifiable
 import org.orkg.contenttypes.domain.ComparisonRelatedFigureNotFound
@@ -16,7 +17,6 @@ import org.orkg.contenttypes.domain.DuplicateComparisonDataSources
 import org.orkg.contenttypes.domain.InvalidOriginallyReturnedStudyCount
 import org.orkg.contenttypes.domain.InvalidRetainedStudyCount
 import org.orkg.contenttypes.domain.InvalidStudyCounts
-import org.orkg.contenttypes.domain.OntologyEntityNotFound
 import org.orkg.contenttypes.domain.SearchEngineEntityNotFound
 import org.orkg.contenttypes.input.testing.fixtures.configuration.ContentTypeControllerExceptionUnitTestConfiguration
 import org.orkg.testing.spring.MockMvcExceptionBaseTest
@@ -258,6 +258,23 @@ internal class ComparisonExceptionUnitTest : MockMvcExceptionBaseTest() {
             .andDocument {
                 responseFields<SearchEngineEntityNotFound>(
                     fieldWithPath("search_engine_entities[]").description("The list of provided search engine entities.").arrayItemsType("string").constraints(thingIdConstraint),
+                    *exceptionResponseFields(type).toTypedArray(),
+                )
+            }
+    }
+
+    @Test
+    fun comparisonInUse() {
+        val type = "orkg:problem:comparison_in_use"
+        documentedGetRequestTo(ComparisonInUse(ThingId("R123")))
+            .andExpectErrorStatus(FORBIDDEN)
+            .andExpectType(type)
+            .andExpectTitle("Forbidden")
+            .andExpectDetail("""Unable to delete comparison "R123" because it is used in at least one statement.""")
+            .andExpect(jsonPath("$.comparison_id").value("R123"))
+            .andDocument {
+                responseFields<ComparisonInUse>(
+                    fieldWithPath("comparison_id").description("The id of the comparison.").type<ThingId>(),
                     *exceptionResponseFields(type).toTypedArray(),
                 )
             }

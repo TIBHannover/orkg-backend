@@ -21,6 +21,7 @@ interface ComparisonUseCases :
     RetrieveComparisonUseCase,
     CreateComparisonUseCase,
     UpdateComparisonUseCase,
+    DeleteComparisonUseCase,
     PublishComparisonUseCase
 
 interface RetrieveComparisonUseCase {
@@ -90,6 +91,15 @@ interface UpdateComparisonUseCase {
         val isAnonymized: Boolean?,
         val extractionMethod: ExtractionMethod?,
         val visibility: Visibility?,
+    )
+}
+
+interface DeleteComparisonUseCase {
+    fun deleteById(command: DeleteCommand)
+
+    data class DeleteCommand(
+        val comparisonId: ThingId,
+        val contributorId: ContributorId,
     )
 }
 

@@ -27,11 +27,11 @@ import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.createStatement
 import java.util.Optional
 
-internal class ComparisonExistenceValidatorUnitTest : MockkBaseTest {
+internal class ComparisonExistenceUpdateValidatorUnitTest : MockkBaseTest {
     private val comparisonService: ComparisonService = mockk()
     private val resourceRepository: ResourceRepository = mockk()
 
-    private val comparisonExistenceValidator = ComparisonExistenceValidator(comparisonService, resourceRepository)
+    private val comparisonExistenceUpdateValidator = ComparisonExistenceUpdateValidator(comparisonService, resourceRepository)
 
     @Test
     fun `Given a comparison update command, when checking for comparison existence, it returns success`() {
@@ -55,7 +55,7 @@ internal class ComparisonExistenceValidatorUnitTest : MockkBaseTest {
             every { with(comparisonService) { root.findVersionInfo(statements) } } returns versionInfo
             every { Comparison.from(root, statements, versionInfo) } returns comparison
 
-            comparisonExistenceValidator(command, state).asClue {
+            comparisonExistenceUpdateValidator(command, state).asClue {
                 it.comparison shouldBe comparison
                 it.statements shouldBe statements
                 it.authors shouldBe state.authors
@@ -77,7 +77,7 @@ internal class ComparisonExistenceValidatorUnitTest : MockkBaseTest {
 
         every { resourceRepository.findById(comparisonId) } returns Optional.of(root)
 
-        assertThrows<ComparisonNotModifiable> { comparisonExistenceValidator(command, state) }
+        assertThrows<ComparisonNotModifiable> { comparisonExistenceUpdateValidator(command, state) }
 
         verify(exactly = 1) { resourceRepository.findById(comparisonId) }
     }
@@ -90,7 +90,7 @@ internal class ComparisonExistenceValidatorUnitTest : MockkBaseTest {
 
         every { resourceRepository.findById(comparison.id) } returns Optional.empty()
 
-        shouldThrow<ComparisonNotFound> { comparisonExistenceValidator(command, state) }
+        shouldThrow<ComparisonNotFound> { comparisonExistenceUpdateValidator(command, state) }
 
         verify(exactly = 1) { resourceRepository.findById(comparison.id) }
     }

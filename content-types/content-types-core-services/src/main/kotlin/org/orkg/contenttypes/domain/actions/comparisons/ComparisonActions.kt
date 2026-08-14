@@ -5,9 +5,11 @@ import org.orkg.contenttypes.domain.Author
 import org.orkg.contenttypes.domain.Comparison
 import org.orkg.contenttypes.domain.actions.Action
 import org.orkg.contenttypes.domain.actions.CreateComparisonCommand
+import org.orkg.contenttypes.domain.actions.DeleteComparisonCommand
 import org.orkg.contenttypes.domain.actions.PublishComparisonCommand
 import org.orkg.contenttypes.domain.actions.UpdateComparisonCommand
 import org.orkg.graph.domain.GeneralStatement
+import org.orkg.graph.domain.Resource
 
 interface CreateComparisonAction : Action<CreateComparisonCommand, CreateComparisonAction.State> {
     data class State(
@@ -21,6 +23,13 @@ interface UpdateComparisonAction : Action<UpdateComparisonCommand, UpdateCompari
         val comparison: Comparison? = null,
         val statements: Map<ThingId, List<GeneralStatement>> = emptyMap(),
         val authors: List<Author> = emptyList(),
+    )
+}
+
+interface DeleteComparisonAction : Action<DeleteComparisonCommand, DeleteComparisonAction.State> {
+    data class State(
+        val comparison: Resource? = null,
+        val statements: Map<ThingId, List<GeneralStatement>> = emptyMap(),
     )
 }
 

@@ -27,6 +27,8 @@ import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Visibility
 import org.orkg.graph.input.ListUseCases
+import org.orkg.graph.input.PredicateUseCases
+import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UnsafeLiteralUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
@@ -56,6 +58,8 @@ internal class ComparisonServiceUnitTest : MockkBaseTest {
     private val statementService: StatementUseCases = mockk()
     private val unsafeStatementUseCases: UnsafeStatementUseCases = mockk()
     private val unsafeLiteralUseCases: UnsafeLiteralUseCases = mockk()
+    private val resourceUseCases: ResourceUseCases = mockk()
+    private val predicateUseCases: PredicateUseCases = mockk()
     private val listService: ListUseCases = mockk()
     private val listRepository: ListRepository = mockk()
     private val doiService: DoiService = mockk()
@@ -75,6 +79,8 @@ internal class ComparisonServiceUnitTest : MockkBaseTest {
         statementService = statementService,
         unsafeStatementUseCases = unsafeStatementUseCases,
         unsafeLiteralUseCases = unsafeLiteralUseCases,
+        resourceUseCases = resourceUseCases,
+        predicateUseCases = predicateUseCases,
         listService = listService,
         listRepository = listRepository,
         doiService = doiService,

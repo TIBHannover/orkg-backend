@@ -395,6 +395,13 @@ class PaperInUse(id: ThingId) :
         properties = mapOf("paper_id" to id),
     )
 
+class ComparisonInUse(id: ThingId) :
+    SimpleMessageException(
+        HttpStatus.FORBIDDEN,
+        """Unable to delete comparison "$id" because it is used in at least one statement.""",
+        properties = mapOf("comparison_id" to id),
+    )
+
 class AmbiguousAuthor(author: Author) :
     SimpleMessageException(
         HttpStatus.BAD_REQUEST,

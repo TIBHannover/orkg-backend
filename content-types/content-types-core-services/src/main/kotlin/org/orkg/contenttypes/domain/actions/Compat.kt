@@ -1,6 +1,7 @@
 package org.orkg.contenttypes.domain.actions
 
 import org.orkg.contenttypes.domain.actions.comparisons.CreateComparisonAction
+import org.orkg.contenttypes.domain.actions.comparisons.DeleteComparisonAction
 import org.orkg.contenttypes.domain.actions.comparisons.PublishComparisonAction
 import org.orkg.contenttypes.domain.actions.comparisons.UpdateComparisonAction
 import org.orkg.contenttypes.domain.actions.contributions.ContributionAction
@@ -58,6 +59,7 @@ import org.orkg.contenttypes.input.CreateTemplateInstanceUseCase
 import org.orkg.contenttypes.input.CreateTemplatePropertyUseCase
 import org.orkg.contenttypes.input.CreateTemplateUseCase
 import org.orkg.contenttypes.input.CreateVisualizationUseCase
+import org.orkg.contenttypes.input.DeleteComparisonUseCase
 import org.orkg.contenttypes.input.DeleteLiteratureListSectionUseCase
 import org.orkg.contenttypes.input.DeletePaperUseCase
 import org.orkg.contenttypes.input.DeleteSmartReviewSectionUseCase
@@ -125,6 +127,7 @@ internal typealias UpdateTemplateInstanceCommand = UpdateTemplateInstanceUseCase
 internal typealias UpdateTemplatePropertyCommand = UpdateTemplatePropertyUseCase.UpdateCommand
 
 internal typealias DeletePaperCommand = DeletePaperUseCase.DeleteCommand
+internal typealias DeleteComparisonCommand = DeleteComparisonUseCase.DeleteCommand
 internal typealias DeleteLiteratureListSectionCommand = DeleteLiteratureListSectionUseCase.DeleteCommand
 internal typealias DeleteSmartReviewSectionCommand = DeleteSmartReviewSectionUseCase.DeleteCommand
 internal typealias DeleteTableColumnCommand = DeleteTableColumnUseCase.DeleteCommand
@@ -173,6 +176,7 @@ internal typealias PublishLiteratureListState = PublishLiteratureListAction.Stat
 internal typealias PublishSmartReviewState = PublishSmartReviewAction.State
 
 internal typealias DeletePaperState = DeletePaperAction.State
+internal typealias DeleteComparisonState = DeleteComparisonAction.State
 internal typealias DeleteLiteratureListSectionState = DeleteLiteratureListSectionAction.State
 internal typealias DeleteSmartReviewSectionState = DeleteSmartReviewSectionAction.State
 internal typealias DeleteTableColumnState = DeleteTableColumnAction.State

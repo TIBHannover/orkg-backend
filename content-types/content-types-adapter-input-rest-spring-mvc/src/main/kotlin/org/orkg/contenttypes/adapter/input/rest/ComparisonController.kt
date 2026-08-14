@@ -21,6 +21,7 @@ import org.orkg.contenttypes.input.ComparisonSearchProtocolCommand
 import org.orkg.contenttypes.input.ComparisonTableUseCases
 import org.orkg.contenttypes.input.ComparisonUseCases
 import org.orkg.contenttypes.input.CreateComparisonUseCase
+import org.orkg.contenttypes.input.DeleteComparisonUseCase
 import org.orkg.contenttypes.input.PublishComparisonUseCase
 import org.orkg.contenttypes.input.UpdateComparisonUseCase
 import org.orkg.graph.domain.ExtractionMethod
@@ -37,6 +38,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.created
 import org.springframework.http.ResponseEntity.noContent
 import org.springframework.security.core.Authentication
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -143,6 +145,16 @@ class ComparisonController(
             .buildAndExpand(id)
             .toUri()
         return noContent().location(location).build()
+    }
+
+    @DeleteMapping("/{id}", consumes = [COMPARISON_JSON_V3])
+    @RequireLogin
+    fun deleteById(
+        @PathVariable id: ThingId,
+        currentUser: Authentication?,
+    ): ResponseEntity<Unit> {
+        service.deleteById(DeleteComparisonUseCase.DeleteCommand(id, currentUser.contributorId()))
+        return noContent().build()
     }
 
     @RequireLogin

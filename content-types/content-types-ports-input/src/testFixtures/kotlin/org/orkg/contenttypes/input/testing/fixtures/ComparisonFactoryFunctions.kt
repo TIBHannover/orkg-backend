@@ -13,6 +13,7 @@ import org.orkg.contenttypes.domain.ResourceReference
 import org.orkg.contenttypes.domain.testing.fixtures.createSimpleComparisonPaths
 import org.orkg.contenttypes.input.ComparisonSearchProtocolCommand
 import org.orkg.contenttypes.input.CreateComparisonUseCase
+import org.orkg.contenttypes.input.DeleteComparisonUseCase
 import org.orkg.contenttypes.input.PublishComparisonUseCase
 import org.orkg.contenttypes.input.UpdateComparisonTableUseCase
 import org.orkg.contenttypes.input.UpdateComparisonUseCase
@@ -128,6 +129,11 @@ fun updateComparisonCommand() = UpdateComparisonUseCase.UpdateCommand(
     isAnonymized = false,
     extractionMethod = ExtractionMethod.UNKNOWN,
     visibility = Visibility.DEFAULT,
+)
+
+fun deleteComparisonCommand() = DeleteComparisonUseCase.DeleteCommand(
+    comparisonId = ThingId("R123"),
+    contributorId = ContributorId("dca4080c-e23f-489d-b900-af8bfc2b0620"),
 )
 
 fun publishComparisonCommand() = PublishComparisonUseCase.PublishCommand(

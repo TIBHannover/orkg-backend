@@ -9,7 +9,7 @@ import org.orkg.contenttypes.domain.actions.comparisons.UpdateComparisonAction.S
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.output.ResourceRepository
 
-class ComparisonExistenceValidator(
+class ComparisonExistenceUpdateValidator(
     private val comparisonService: ComparisonService,
     private val resourceRepository: ResourceRepository,
 ) : UpdateComparisonAction {

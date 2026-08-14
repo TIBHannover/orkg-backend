@@ -222,7 +222,7 @@ internal class ComparisonControllerIntegrationTest : MockMvcBaseTest("comparison
 
     @Test
     @TestWithMockUser
-    fun createAndFetchAndUpdate() {
+    fun createAndFetchAndUpdateAndDelete() {
         val id = post("/api/comparisons")
             .content(requestJson("orkg/createComparison"))
             .accept(COMPARISON_JSON_V3)
@@ -414,5 +414,12 @@ internal class ComparisonControllerIntegrationTest : MockMvcBaseTest("comparison
             it.published shouldBe false
             it.unlistedBy shouldBe null
         }
+
+        delete("/api/comparisons/{id}", id)
+            .contentType(COMPARISON_JSON_V3)
+            .perform()
+            .andExpect(status().isNoContent)
+
+        comparisonService.findById(id).isPresent shouldBe false
     }
 }

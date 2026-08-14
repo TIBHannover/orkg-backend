@@ -38,6 +38,13 @@ include::{snippets}/comparisons_update/description.adoc[]
 
 operation::comparisons_update[snippets='path-parameters,request-fields,curl-request,response-headers,http-response,errors']
 
+[[comparisons-delete]]
+== Deleting Comparisons
+
+include::{snippets}/comparisons_delete-by-id/description.adoc[]
+
+operation::comparisons_delete-by-id[snippets='path-parameters,curl-request,http-response,errors']
+
 [[comparisons-publish]]
 == Publishing Comparisons
 

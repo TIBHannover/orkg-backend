@@ -12,6 +12,8 @@ import org.orkg.community.output.OrganizationRepository
 import org.orkg.contenttypes.domain.actions.Action
 import org.orkg.contenttypes.domain.actions.CreateComparisonCommand
 import org.orkg.contenttypes.domain.actions.CreateComparisonState
+import org.orkg.contenttypes.domain.actions.DeleteComparisonCommand
+import org.orkg.contenttypes.domain.actions.DeleteComparisonState
 import org.orkg.contenttypes.domain.actions.DescriptionValidator
 import org.orkg.contenttypes.domain.actions.ExtractionMethodValidator
 import org.orkg.contenttypes.domain.actions.LabelCollectionValidator
@@ -21,6 +23,7 @@ import org.orkg.contenttypes.domain.actions.OrganizationOrConferenceValidator
 import org.orkg.contenttypes.domain.actions.PublishComparisonCommand
 import org.orkg.contenttypes.domain.actions.PublishComparisonState
 import org.orkg.contenttypes.domain.actions.ResearchFieldValidator
+import org.orkg.contenttypes.domain.actions.ResourceOwnerValidator
 import org.orkg.contenttypes.domain.actions.ResourceValidator
 import org.orkg.contenttypes.domain.actions.SDGValidator
 import org.orkg.contenttypes.domain.actions.UpdateComparisonCommand
@@ -34,9 +37,12 @@ import org.orkg.contenttypes.domain.actions.comparisons.ComparisonAuthorListUpda
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonContributionCreator
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonContributionUpdater
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonDataSourcesValidator
+import org.orkg.contenttypes.domain.actions.comparisons.ComparisonDeleteValidator
+import org.orkg.contenttypes.domain.actions.comparisons.ComparisonDeleter
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonDescriptionCreator
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonDescriptionUpdater
-import org.orkg.contenttypes.domain.actions.comparisons.ComparisonExistenceValidator
+import org.orkg.contenttypes.domain.actions.comparisons.ComparisonExistenceDeleteValidator
+import org.orkg.contenttypes.domain.actions.comparisons.ComparisonExistenceUpdateValidator
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonIsAnonymizedCreator
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonIsAnonymizedUpdater
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonPublishableValidator
@@ -73,6 +79,8 @@ import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.SearchString
 import org.orkg.graph.domain.VisibilityFilter
 import org.orkg.graph.input.ListUseCases
+import org.orkg.graph.input.PredicateUseCases
+import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UnsafeLiteralUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
@@ -81,7 +89,6 @@ import org.orkg.graph.output.ListRepository
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.StatementRepository
 import org.orkg.graph.output.ThingRepository
-import org.orkg.spring.data.annotations.TransactionalOnNeo4j
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -92,7 +99,6 @@ import java.time.OffsetDateTime
 import java.util.Optional
 
 @Service
-@TransactionalOnNeo4j
 class ComparisonService(
     private val resourceRepository: ResourceRepository,
     private val statementRepository: StatementRepository,
@@ -103,6 +109,8 @@ class ComparisonService(
     private val statementService: StatementUseCases,
     private val unsafeStatementUseCases: UnsafeStatementUseCases,
     private val unsafeLiteralUseCases: UnsafeLiteralUseCases,
+    private val resourceUseCases: ResourceUseCases,
+    private val predicateUseCases: PredicateUseCases,
     private val listService: ListUseCases,
     private val listRepository: ListRepository,
     private val doiService: DoiService,
@@ -192,7 +200,7 @@ class ComparisonService(
             DescriptionValidator { it.description },
             LabelCollectionValidator("references") { it.references },
             ComparisonDataSourcesValidator { it.sources },
-            ComparisonExistenceValidator(this, resourceRepository),
+            ComparisonExistenceUpdateValidator(this, resourceRepository),
             ExtractionMethodValidator({ it.extractionMethod }, { it.comparison!!.extractionMethod }),
             VisibilityValidator(contributorRepository, { it.contributorId }, { it.comparison!! }, { it.visibility }),
             ResourceValidator(resourceRepository, { it.sources?.map { it.id }?.toSet() }),
@@ -215,6 +223,16 @@ class ComparisonService(
             ComparisonIsAnonymizedUpdater(unsafeLiteralUseCases, statementService, unsafeStatementUseCases),
         )
         steps.execute(command, UpdateComparisonState())
+    }
+
+    override fun deleteById(command: DeleteComparisonCommand) {
+        val steps = listOf(
+            ComparisonExistenceDeleteValidator(this, resourceRepository),
+            ComparisonDeleteValidator(thingRepository),
+            ResourceOwnerValidator(contributorRepository, { it.comparison }, { it.contributorId }),
+            ComparisonDeleter(statementRepository, resourceUseCases, predicateUseCases),
+        )
+        steps.execute(command, DeleteComparisonState())
     }
 
     override fun publish(command: PublishComparisonCommand): ThingId {

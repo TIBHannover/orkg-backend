@@ -3,7 +3,7 @@
 @@ -12,7 +12,7 @@
   * Do not edit the class manually.
   */
-
+ 
 -import { mapValues } from '../runtime';
 +import { mapArrayValues, mapValues } from '../runtime';
  import type { PredicateRepresentation } from './PredicateRepresentation';
@@ -18,7 +18,7 @@
      };
  }
  
-@@ -100,7 +100,7 @@
+@@ -100,7 +100,6 @@
          
          'predicates': (mapValues(value['predicates'], PredicateRepresentationToJSON)),
          'root': ResourceRepresentationToJSON(value['root']),
@@ -26,3 +26,4 @@
 +        'statements': (mapArrayValues(value['statements'], EmbeddedStatementRepresentationToJSON)),
      };
  }
+-

@@ -1,6 +1,6 @@
 --- orkg_client/models/row_representation.py
 +++ orkg_client/models/row_representation.py
-@@ -89,7 +89,7 @@
+@@ -90,9 +90,7 @@
              return cls.model_validate(obj)
  
          _obj = cls.model_validate({
@@ -9,3 +9,5 @@
              "label": obj.get("label")
          })
          return _obj
+-
+-

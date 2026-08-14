@@ -3,7 +3,7 @@
 @@ -12,7 +12,7 @@
   * Do not edit the class manually.
   */
-
+ 
 -import { mapValues } from '../runtime';
 +import { mapArrayValues, mapValues } from '../runtime';
  import type { StatementObjectRequest } from './StatementObjectRequest';
@@ -18,7 +18,7 @@
      };
  }
  
-@@ -86,7 +86,7 @@
+@@ -86,7 +86,6 @@
          
          'classes': value['classes'],
          'label': value['label'],
@@ -26,3 +26,4 @@
 +        'statements': (mapArrayValues(value['statements'], StatementObjectRequestToJSON)),
      };
  }
+-

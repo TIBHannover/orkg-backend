@@ -3,7 +3,7 @@
 @@ -12,7 +12,7 @@
   * Do not edit the class manually.
   */
-
+ 
 -import { mapValues } from '../runtime';
 +import { mapArrayValues, mapValues } from '../runtime';
  import type { ThingReferenceRepresentation } from './ThingReferenceRepresentation';
@@ -18,12 +18,13 @@
          'values': ((json['values'] as Array<any>).map(ThingReferenceRepresentationFromJSON)),
      };
  }
-@@ -75,7 +75,7 @@
+@@ -76,8 +76,7 @@
  
      return {
-
+         
 -        'children': value['children'],
 +        'children': (mapArrayValues(value['children'], ComparisonTableRowRepresentationToJSON)),
          'values': ((value['values'] as Array<any>).map(ThingReferenceRepresentationToJSON)),
      };
  }
+-

@@ -3,7 +3,7 @@
 @@ -367,9 +367,17 @@
      return result;
  }
-
+ 
 +export function mapArrayValues(data: any, fn: (item: any) => any) {
 +    const result: { [key: string]: any } = {};
 +    for (const key of Object.keys(data)) {

@@ -1,4 +1,5 @@
-import Org_orkg_gradle_patch_gradle.PatchHelper
+import Org_orkg_gradle_patch_gradle.ApplyPatchesTask
+import Org_orkg_gradle_patch_gradle.GeneratePatchesTask
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.databind.node.ObjectNode
@@ -59,71 +60,18 @@ abstract class GenerateOpenApiSpecPythonTask : DefaultTask() {
     }
 }
 
-@CacheableTask
-abstract class GeneratePythonClientTask : GenerateTask() {
-    @get:PathSensitive(PathSensitivity.RELATIVE)
-    @get:InputDirectory
-    abstract val additionalFilesDirectory: DirectoryProperty
-
-    @get:Input
-    abstract val additionalDependencies: MapProperty<String, String>
-
-    @get:PathSensitive(PathSensitivity.RELATIVE)
-    @get:InputDirectory
-    abstract val patchesDirectory: DirectoryProperty
-
-    init {
-        additionalFilesDirectory.convention(project.layout.projectDirectory.dir("src/main/python"))
-        patchesDirectory.convention(project.layout.projectDirectory.dir("src/main/patches"))
-        // We cannot override the default task action function doWork() because it is final, so we use doLast instead
-        doLast { customizePythonClient() }
-    }
-
-    private fun customizePythonClient() {
-        val outputDir = outputDir.get().asFile
-        additionalFilesDirectory.get().asFile.copyRecursively(File(outputDir, "orkg_client"))
-        addDependenciesToFile(File(outputDir, "pyproject.toml"), "dependencies = [\n") { name, version -> "  \"$name (>= $version)\"," }
-        addDependenciesToFile(File(outputDir, "requirements.txt")) { name, version -> "$name >= $version" }
-        addDependenciesToFile(File(outputDir, "setup.py"), "REQUIRES = [\n") { name, version -> "    \"$name >= $version\"," }
-        removeMetaFiles(outputDir)
-        PatchHelper.applyPatches(patchesDirectory.get().asFile, outputDir)
-    }
-
-    private fun addDependenciesToFile(file: File, location: String? = null, dependencyFormatter: (String, String) -> String) {
-        val dependencies = additionalDependencies.get().entries
-            .joinToString(separator = "\n", postfix = "\n") { (name, version) -> dependencyFormatter(name, version) }
-        val text = StringBuilder(file.readText())
-        val index = if (location != null) {
-            val index = text.indexOf(location)
-            if (index == -1) {
-                throw IllegalArgumentException("""Location "$location" does not exist in file "$file".""")
-            }
-            index + location.length
-        } else {
-            0
-        }
-        text.insert(index, dependencies)
-        file.writeText(text.toString())
-    }
-
-    private fun removeMetaFiles(outputDir: File) {
-        File(outputDir, ".openapi-generator").deleteRecursively()
-        File(outputDir, ".openapi-generator-ignore").delete()
-    }
-}
-
 tasks {
-    val generateOpenApiSpecPython by registering(GenerateOpenApiSpecPythonTask::class) {
+    register<GenerateOpenApiSpecPythonTask>("generateOpenApiSpecPython") {
         inputFile.set(project(":documentation").layout.buildDirectory.file("api-spec/openapi3.yaml"))
         description = "Postprocess the contents of an OpenAPI specification to always include a response schema"
         dependsOn(":documentation:openapi3")
     }
 
-    register<GeneratePythonClientTask>("generateOpenApiClient") {
+    register<GenerateTask>("generateOpenApiClientBase") {
         generatorName.set("python")
         description = "Generates a Python client library based on an OpenAPI specification"
-        inputSpec.set(layout.buildDirectory.file("api-spec-python/openapi3.yaml").get().asFile.path)
-        outputDir.set(layout.buildDirectory.dir("python-client").get().asFile.path)
+        inputSpec.set(layout.buildDirectory.file("api-spec-python/openapi3.yaml"))
+        outputDir.set(layout.buildDirectory.dir("python-client-clean"))
         httpUserAgent = "ORKG-Python-Client/${project.version}"
         // See https://github.com/OpenAPITools/openapi-generator/blob/master/docs/generators/python.md
         configOptions = mapOf(
@@ -131,10 +79,25 @@ tasks {
             "packageVersion" to project.version.toString(),
             "useOneOfDiscriminatorLookup" to "true",
         )
-        additionalDependencies = mapOf(
-            "python-keycloak" to "7.1.1",
-        )
-        dependsOn(generateOpenApiSpecPython)
+        dependsOn("generateOpenApiSpecPython")
+    }
+
+    register<ApplyPatchesTask>("generateOpenApiClient") {
+        group = "openapi client generation"
+        description = "Generates a Python client library based on an OpenAPI specification"
+        originalDirectory.set(named<GenerateTask>("generateOpenApiClientBase").get().outputDir)
+        patchesDirectory.set(layout.projectDirectory.dir("src/main/patches"))
+        outputDirectory.set(layout.buildDirectory.dir("python-client"))
+    }
+
+    register<GeneratePatchesTask>("generatePatches") {
+        group = "openapi client generation"
+        description = "Generates patches for the Python client library"
+        originalDirectory.set(named<GenerateTask>("generateOpenApiClientBase").get().outputDir)
+        // We are intentionally not linking generatePatches.patchedDirectory with generateOpenApiClient.outputDirectory,
+        // so that generateOpenApiClient does not get executed again, potentially overwriting our changes.
+        patchedDirectory.set(layout.buildDirectory.dir("python-client"))
+        outputDirectory.set(layout.projectDirectory.dir("src/main/patches"))
     }
 
     named<GenerateAntoraYmlTask>("generateAntoraYml") {

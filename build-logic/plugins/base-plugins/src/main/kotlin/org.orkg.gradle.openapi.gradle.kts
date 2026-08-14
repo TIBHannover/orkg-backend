@@ -12,9 +12,6 @@ tasks {
     }
 
     withType<GenerateTask>().configureEach {
-        if (name != "openApiGenerate") {
-            setGroup("openapi client generation")
-        }
         inputSpec.set(layout.buildDirectory.file("api-spec/openapi3.yaml").get().asFile.path)
         cleanupOutput = true
         removeOperationIdPrefix = true

@@ -84,6 +84,7 @@ import org.orkg.testing.spring.MockMvcBaseTest
 import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectErrorStatus
 import org.orkg.testing.spring.MockMvcExceptionBaseTest.Companion.andExpectType
 import org.orkg.testing.spring.restdocs.format
+import org.orkg.testing.spring.restdocs.nullable
 import org.orkg.testing.spring.restdocs.type
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest
 import org.springframework.http.HttpStatus.BAD_REQUEST
@@ -690,7 +691,7 @@ internal class TemplateControllerUnitTest : MockMvcBaseTest("templates") {
         """,
         stringLiteralTemplatePropertyRequest(),
         listOf(
-            fieldWithPath("pattern").description("The pattern (regular expression) of the property. (optional)").optional(),
+            fieldWithPath("pattern").description("The pattern (regular expression) of the property. (optional)").nullable(),
             fieldWithPath("datatype").type("String").description("""The class id of the datatype of the property. Must be "String"."""),
         ),
         setOf(
@@ -711,8 +712,8 @@ internal class TemplateControllerUnitTest : MockMvcBaseTest("templates") {
         """,
         numberLiteralTemplatePropertyRequest(),
         listOf(
-            fieldWithPath("min_inclusive").description("The minimum value (inclusive) that the number can have (optional).").optional(),
-            fieldWithPath("max_inclusive").description("The maximum value (inclusive) that the number can have (optional).").optional(),
+            fieldWithPath("min_inclusive").description("The minimum value (inclusive) that the number can have (optional).").nullable(),
+            fieldWithPath("max_inclusive").description("The maximum value (inclusive) that the number can have (optional).").nullable(),
             fieldWithPath("datatype").type("String").description("""The class id of the datatype of the property. Must be either of "Integer", "Decimal" or "Float"."""),
         ),
         setOf(
@@ -988,7 +989,7 @@ internal class TemplateControllerUnitTest : MockMvcBaseTest("templates") {
         """,
         stringLiteralTemplatePropertyRequest(),
         listOf(
-            fieldWithPath("pattern").description("The pattern (regular expression) of the property."),
+            fieldWithPath("pattern").description("The pattern (regular expression) of the property.").nullable(),
             fieldWithPath("datatype").type("String").description("""The class id of the datatype of the property. Must be "String"."""),
         ),
         setOf(
@@ -1011,8 +1012,8 @@ internal class TemplateControllerUnitTest : MockMvcBaseTest("templates") {
         """,
         numberLiteralTemplatePropertyRequest(),
         listOf(
-            fieldWithPath("min_inclusive").description("The minimum value (inclusive) that the number can have."),
-            fieldWithPath("max_inclusive").description("The maximum value (inclusive) that the number can have."),
+            fieldWithPath("min_inclusive").description("The minimum value (inclusive) that the number can have.").nullable(),
+            fieldWithPath("max_inclusive").description("The maximum value (inclusive) that the number can have.").nullable(),
             fieldWithPath("datatype").type("String").description("""The class id of the datatype of the property. Must be either of "Integer", "Decimal" or "Float"."""),
         ),
         setOf(

@@ -42,6 +42,13 @@ include::{snippets}/resources_delete-by-id/description.adoc[]
 
 operation::resources_delete-by-id[snippets='path-parameters,curl-request,http-response,errors']
 
+[[resource-timeline-fetch]]
+== Fetching Resource Timelines
+
+include::{snippets}/resources_find-timeline-by-id/description.adoc[]
+
+operation::resources_find-timeline-by-id[snippets='path-parameters,curl-request,http-response,response-fields,errors']
+
 [[resources-import]]
 == Importing Resources
 

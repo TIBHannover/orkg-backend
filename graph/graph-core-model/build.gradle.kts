@@ -8,7 +8,6 @@ dependencies {
     api("org.springframework:spring-web")
     api(project(":common:core-identifiers"))
     api(project(":common:spring-webmvc"))
-    implementation("com.fasterxml.jackson.core:jackson-annotations")
     implementation(project(":common:datatypes"))
     implementation(project(":common:string-utils"))
     implementation(project(":graph:graph-core-constants"))

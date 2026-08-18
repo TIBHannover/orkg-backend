@@ -7,9 +7,9 @@ import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Resource
-import org.orkg.graph.domain.ResourceContributor
 import org.orkg.graph.domain.SearchFilter
 import org.orkg.graph.domain.SearchString
+import org.orkg.graph.domain.SubgraphContribution
 import org.orkg.graph.domain.Visibility
 import org.orkg.graph.domain.VisibilityFilter
 import org.springframework.data.domain.Page
@@ -60,7 +60,7 @@ interface RetrieveResourceUseCase {
 
     fun findUnpublishedPaperByTitle(title: String): Optional<Resource>
 
-    fun findTimelineByResourceId(id: ThingId, pageable: Pageable): Page<ResourceContributor>
+    fun findTimelineById(id: ThingId, pageable: Pageable): Page<SubgraphContribution>
 
     fun findAllUnpublishedPapersByObservatoryIdAndFilters(
         observatoryId: ObservatoryId?,

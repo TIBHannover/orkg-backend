@@ -25,11 +25,11 @@ import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicate
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Resource
-import org.orkg.graph.domain.ResourceContributor
 import org.orkg.graph.domain.SearchFilter
 import org.orkg.graph.domain.SearchFilter.Operator
 import org.orkg.graph.domain.SearchFilter.Value
 import org.orkg.graph.domain.StatementId
+import org.orkg.graph.domain.SubgraphContribution
 import org.orkg.graph.domain.Thing
 import org.orkg.graph.domain.Visibility
 import org.orkg.graph.domain.VisibilityFilter
@@ -1427,16 +1427,16 @@ fun <
             saveStatement(resourceRelatesToOldResource)
 
             val expected = setOf(
-                ResourceContributor(resource.createdBy, resource.createdAt),
-                ResourceContributor(otherResource.createdBy, otherResource.createdAt),
-                ResourceContributor(resourceRelatesToOtherResource.createdBy, resourceRelatesToOtherResource.createdAt!!),
-                ResourceContributor(anotherResource.createdBy, anotherResource.createdAt),
-                ResourceContributor(otherResourceRelatesToAnotherResource.createdBy, otherResourceRelatesToAnotherResource.createdAt!!),
+                SubgraphContribution(resource.createdBy, resource.createdAt),
+                SubgraphContribution(otherResource.createdBy, otherResource.createdAt),
+                SubgraphContribution(resourceRelatesToOtherResource.createdBy, resourceRelatesToOtherResource.createdAt!!),
+                SubgraphContribution(anotherResource.createdBy, anotherResource.createdAt),
+                SubgraphContribution(otherResourceRelatesToAnotherResource.createdBy, otherResourceRelatesToAnotherResource.createdAt!!),
             ).map {
                 it.copy(createdAt = it.createdAt.withSecond(0).withNano(0).withOffsetSameInstant(ZoneOffset.UTC))
             }
 
-            val result = repository.findTimelineByResourceId(resource.id, PageRequest.of(0, 5))
+            val result = repository.findTimelineById(resource.id, PageRequest.of(0, 5))
 
             it("returns the correct result") {
                 result shouldNotBe null

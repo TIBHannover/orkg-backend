@@ -19,8 +19,6 @@ import org.neo4j.cypherdsl.core.Cypher.returning
 import org.neo4j.cypherdsl.core.Cypher.toUpper
 import org.neo4j.cypherdsl.core.Cypher.unwind
 import org.neo4j.cypherdsl.core.Cypher.valueAt
-import org.neo4j.cypherdsl.core.ExposesWith
-import org.neo4j.cypherdsl.core.StatementBuilder
 import org.neo4j.driver.internal.value.NullValue
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
@@ -41,11 +39,11 @@ import org.orkg.graph.domain.GeneralStatement
 import org.orkg.graph.domain.Literal
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Resource
-import org.orkg.graph.domain.ResourceContributor
 import org.orkg.graph.domain.SearchFilter
 import org.orkg.graph.domain.SearchFilter.Operator
 import org.orkg.graph.domain.SearchFilter.Value
 import org.orkg.graph.domain.StatementId
+import org.orkg.graph.domain.SubgraphContribution
 import org.orkg.graph.domain.VisibilityFilter
 import org.orkg.graph.output.PredicateRepository
 import org.orkg.graph.output.StatementRepository
@@ -662,7 +660,7 @@ class SpringDataNeo4jStatementAdapter(
             .mappedBy { _, record -> record["createdBy"].toContributorId() }
             .fetch(pageable)
 
-    override fun findTimelineByResourceId(id: ThingId, pageable: Pageable): Page<ResourceContributor> =
+    override fun findTimelineById(id: ThingId, pageable: Pageable): Page<SubgraphContribution> =
         cypherQueryBuilderFactory.newBuilder()
             .withCommonQuery {
                 val apocConfiguration = mapOf<String, Any>(
@@ -723,7 +721,7 @@ class SpringDataNeo4jStatementAdapter(
             }
             .countOver("edit")
             .withParameters("id" to id.value)
-            .mappedBy { _, record -> ResourceContributor(record["createdBy"].toContributorId(), record["createdAt"].toOffsetDateTime()) }
+            .mappedBy { _, record -> SubgraphContribution(record["createdBy"].toContributorId(), record["createdAt"].toOffsetDateTime()) }
             .fetch(pageable)
 
     override fun findAllUnpublishedPapersByObservatoryIdAndFilters(

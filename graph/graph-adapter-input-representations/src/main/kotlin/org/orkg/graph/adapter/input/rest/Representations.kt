@@ -247,3 +247,10 @@ data class CountResponse(
     @field:JsonProperty("count")
     val count: Long,
 )
+
+data class SubgraphContributionRepresentation(
+    @field:JsonProperty("created_by")
+    val createdBy: ContributorId,
+    @field:JsonProperty("created_at")
+    val createdAt: OffsetDateTime,
+)

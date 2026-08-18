@@ -101,9 +101,9 @@ class ResourceService(
     override fun findAllUnpublishedPapersByTitle(title: String?): List<Resource> =
         repository.findAllUnpublishedPapersByTitle(title!!)
 
-    override fun findTimelineByResourceId(id: ThingId, pageable: Pageable): Page<ResourceContributor> =
+    override fun findTimelineById(id: ThingId, pageable: Pageable): Page<SubgraphContribution> =
         repository.findById(id)
-            .map { statementRepository.findTimelineByResourceId(id, pageable) }
+            .map { statementRepository.findTimelineById(id, pageable) }
             .orElseThrow { ResourceNotFound(id) }
 
     override fun findAllUnpublishedPapersByObservatoryIdAndFilters(

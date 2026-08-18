@@ -15,10 +15,10 @@ import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicate
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Resource
-import org.orkg.graph.domain.ResourceContributor
 import org.orkg.graph.domain.SearchFilter
 import org.orkg.graph.domain.SearchFilter.Operator
 import org.orkg.graph.domain.StatementId
+import org.orkg.graph.domain.SubgraphContribution
 import org.orkg.graph.domain.Thing
 import org.orkg.graph.domain.Visibility
 import org.orkg.graph.domain.VisibilityFilter
@@ -339,7 +339,7 @@ class InMemoryStatementRepository(private val inMemoryGraph: InMemoryGraph) :
             .sortedBy { it.toString() }
             .paged(pageable)
 
-    override fun findTimelineByResourceId(id: ThingId, pageable: Pageable): Page<ResourceContributor> {
+    override fun findTimelineById(id: ThingId, pageable: Pageable): Page<SubgraphContribution> {
         val resource = entities.values
             .first { it.subject.id == id && (it.subject is Resource) }
             .subject as Resource
@@ -351,9 +351,9 @@ class InMemoryStatementRepository(private val inMemoryGraph: InMemoryGraph) :
         }.asSequence()
             .map {
                 setOf(
-                    ResourceContributor(it.subject.createdBy, it.subject.createdAt),
-                    ResourceContributor(it.`object`.createdBy, it.`object`.createdAt),
-                    ResourceContributor(it.createdBy, it.createdAt!!),
+                    SubgraphContribution(it.subject.createdBy, it.subject.createdAt),
+                    SubgraphContribution(it.`object`.createdBy, it.`object`.createdAt),
+                    SubgraphContribution(it.createdBy, it.createdAt!!),
                 )
             }
             .flatten()

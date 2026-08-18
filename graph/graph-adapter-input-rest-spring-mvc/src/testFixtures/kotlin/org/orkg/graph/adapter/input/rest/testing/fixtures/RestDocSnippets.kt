@@ -126,3 +126,8 @@ fun inversePathResponseFields() = listOf(
     fieldWithPath("[]").description("The list of inverse paths.").arrayItemsType("array").references("PathRepresentation"),
     *applyPathPrefix("[]", pathResponseFields()).toTypedArray(),
 )
+
+fun subgraphContributionResponseFields() = listOf(
+    fieldWithPath("created_by").description("The UUID of the user or service who created the entity of the subgraph."),
+    timestampFieldWithPath("created_at", "the entity of the subgraph was created"),
+)

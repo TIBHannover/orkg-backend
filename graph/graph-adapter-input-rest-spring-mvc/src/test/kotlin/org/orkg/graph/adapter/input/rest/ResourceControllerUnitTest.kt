@@ -27,6 +27,7 @@ import org.orkg.graph.adapter.input.rest.ResourceController.CreateResourceReques
 import org.orkg.graph.adapter.input.rest.ResourceController.UpdateResourceRequest
 import org.orkg.graph.adapter.input.rest.testing.fixtures.configuration.GraphControllerUnitTestConfiguration
 import org.orkg.graph.adapter.input.rest.testing.fixtures.resourceResponseFields
+import org.orkg.graph.adapter.input.rest.testing.fixtures.subgraphContributionResponseFields
 import org.orkg.graph.domain.CannotResetURI
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ExactSearchString
@@ -37,11 +38,11 @@ import org.orkg.graph.domain.InvalidLabel
 import org.orkg.graph.domain.NeitherOwnerNorCurator
 import org.orkg.graph.domain.NotACurator
 import org.orkg.graph.domain.ReservedClassId
-import org.orkg.graph.domain.ResourceContributor
 import org.orkg.graph.domain.ResourceInUse
 import org.orkg.graph.domain.ResourceNotFound
 import org.orkg.graph.domain.ResourceNotModifiable
 import org.orkg.graph.domain.RosettaStoneStatementResourceNotModifiable
+import org.orkg.graph.domain.SubgraphContribution
 import org.orkg.graph.domain.ThingAlreadyExists
 import org.orkg.graph.domain.URIAlreadyInUse
 import org.orkg.graph.domain.URINotAbsolute
@@ -131,18 +132,19 @@ internal class ResourceControllerUnitTest : MockMvcBaseTest("resources") {
     }
 
     @Test
-    fun `Given a timeline is requested, when service succeeds, then status is 200 OK and timeline is returned`() {
+    @DisplayName("Given a timeline is requested, when service succeeds, then status is 200 OK and timeline is returned")
+    fun findTimelineById() {
         val id = ThingId("R123")
-        val resourceContributors = listOf(
-            ResourceContributor(ContributorId(MockUserId.USER), OffsetDateTime.now(clock)),
-            ResourceContributor(ContributorId(MockUserId.ADMIN), OffsetDateTime.now(clock)),
+        val subgraphContributions = listOf(
+            SubgraphContribution(ContributorId(MockUserId.USER), OffsetDateTime.now(clock)),
+            SubgraphContribution(ContributorId(MockUserId.ADMIN), OffsetDateTime.now(clock)),
         )
         val timeline = PageImpl(
-            resourceContributors,
+            subgraphContributions,
             PageRequest.of(0, 25),
-            resourceContributors.size.toLong(),
+            subgraphContributions.size.toLong(),
         )
-        every { resourceService.findTimelineByResourceId(id, any()) } returns timeline
+        every { resourceService.findTimelineById(id, any()) } returns timeline
 
         get("/api/resources/{id}/timeline", id)
             .perform()
@@ -150,21 +152,35 @@ internal class ResourceControllerUnitTest : MockMvcBaseTest("resources") {
             .andExpect(jsonPath("$.content", Matchers.hasSize<Int>(2)))
             .andExpect(jsonPath("$.page.number").value(0)) // page number
             .andExpect(jsonPath("$.page.total_elements").value(2))
+            .andDocument {
+                summary("Fetching Resource Timelines")
+                description(
+                    """
+                    A `GET` request provides information about the graph changes over time for a given resource.
+                    """,
+                )
+                pathParameters(
+                    parameterWithName("id").description("The identifier of the resource to retrieve."),
+                )
+                pagedQueryParameters()
+                pagedResponseFields<SubgraphContributionRepresentation>(subgraphContributionResponseFields())
+                throws(ResourceNotFound::class)
+            }
 
-        verify(exactly = 1) { resourceService.findTimelineByResourceId(id, any()) }
+        verify(exactly = 1) { resourceService.findTimelineById(id, any()) }
     }
 
     @Test
     fun `Given a timeline is requested, when service reports missing resource, then status is 404 NOT FOUND`() {
         val id = ThingId("R123")
-        every { resourceService.findTimelineByResourceId(id, any()) } throws ResourceNotFound(id)
+        every { resourceService.findTimelineById(id, any()) } throws ResourceNotFound(id)
 
         get("/api/resources/{id}/timeline", id)
             .perform()
             .andExpectErrorStatus(NOT_FOUND)
             .andExpectType("orkg:problem:resource_not_found")
 
-        verify(exactly = 1) { resourceService.findTimelineByResourceId(id, any()) }
+        verify(exactly = 1) { resourceService.findTimelineById(id, any()) }
     }
 
     @Test

@@ -196,12 +196,12 @@ internal class ResourceServiceUnitTest : MockkBaseTest {
         val pageable = PageRequest.of(0, 5)
 
         every { repository.findById(id) } returns Optional.of(resource)
-        every { statementRepository.findTimelineByResourceId(id, pageable) } returns Page.empty()
+        every { statementRepository.findTimelineById(id, pageable) } returns Page.empty()
 
-        service.findTimelineByResourceId(id, pageable)
+        service.findTimelineById(id, pageable)
 
         verify(exactly = 1) { repository.findById(id) }
-        verify(exactly = 1) { statementRepository.findTimelineByResourceId(any(), any()) }
+        verify(exactly = 1) { statementRepository.findTimelineById(any(), any()) }
     }
 
     @Test
@@ -212,7 +212,7 @@ internal class ResourceServiceUnitTest : MockkBaseTest {
         every { repository.findById(id) } returns Optional.empty()
 
         shouldThrow<ResourceNotFound> {
-            service.findTimelineByResourceId(id, pageable)
+            service.findTimelineById(id, pageable)
         }
 
         verify(exactly = 1) { repository.findById(id) }

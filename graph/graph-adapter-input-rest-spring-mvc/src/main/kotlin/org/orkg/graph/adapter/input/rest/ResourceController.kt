@@ -11,8 +11,8 @@ import org.orkg.common.annotations.RequireLogin
 import org.orkg.common.contributorId
 import org.orkg.community.input.RetrieveContributorUseCase
 import org.orkg.graph.adapter.input.rest.mapping.ResourceRepresentationAdapter
+import org.orkg.graph.adapter.input.rest.mapping.SubgraphContributionRepresentationAdapter
 import org.orkg.graph.domain.ExtractionMethod
-import org.orkg.graph.domain.ResourceContributor
 import org.orkg.graph.domain.ResourceNotFound
 import org.orkg.graph.domain.SearchString
 import org.orkg.graph.domain.Visibility
@@ -50,7 +50,8 @@ class ResourceController(
     private val contributorService: RetrieveContributorUseCase,
     override val statementService: StatementUseCases,
     override val formattedLabelService: FormattedLabelUseCases,
-) : ResourceRepresentationAdapter {
+) : ResourceRepresentationAdapter,
+    SubgraphContributionRepresentationAdapter {
     @GetMapping("/{id}")
     fun findById(
         @PathVariable id: ThingId,
@@ -125,8 +126,9 @@ class ResourceController(
     fun findTimelineById(
         @PathVariable id: ThingId,
         pageable: Pageable,
-    ): Page<ResourceContributor> =
-        service.findTimelineByResourceId(id, pageable)
+    ): Page<SubgraphContributionRepresentation> =
+        service.findTimelineById(id, pageable)
+            .mapToSubgraphContributionRepresentation()
 
     @DeleteMapping("/{id}")
     @RequireLogin

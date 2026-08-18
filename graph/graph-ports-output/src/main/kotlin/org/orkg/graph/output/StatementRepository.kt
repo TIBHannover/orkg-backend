@@ -7,9 +7,9 @@ import org.orkg.graph.domain.BundleConfiguration
 import org.orkg.graph.domain.GeneralStatement
 import org.orkg.graph.domain.Literal
 import org.orkg.graph.domain.Resource
-import org.orkg.graph.domain.ResourceContributor
 import org.orkg.graph.domain.SearchFilter
 import org.orkg.graph.domain.StatementId
+import org.orkg.graph.domain.SubgraphContribution
 import org.orkg.graph.domain.VisibilityFilter
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -78,10 +78,10 @@ interface StatementReadRepository : EntityRepository<GeneralStatement, Statement
 
     fun findDOIByContributionId(id: ThingId): Optional<Literal>
 
-    fun findTimelineByResourceId(
+    fun findTimelineById(
         id: ThingId,
         pageable: Pageable,
-    ): Page<ResourceContributor>
+    ): Page<SubgraphContribution>
 
     fun count(
         subjectClasses: Set<ThingId> = emptySet(),

@@ -8,9 +8,11 @@ import com.epages.restdocs.apispec.References
 import com.epages.restdocs.apispec.Schema
 import com.epages.restdocs.apispec.Schema.Companion.schema
 import com.epages.restdocs.apispec.SimpleType
+import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import org.springframework.restdocs.constraints.Constraint
 import org.springframework.restdocs.constraints.ValidatorConstraintResolver
 import org.springframework.restdocs.headers.HeaderDescriptor
+import org.springframework.restdocs.headers.HeaderDocumentation.headerWithName
 import org.springframework.restdocs.hypermedia.LinkDescriptor
 import org.springframework.restdocs.payload.FieldDescriptor
 import org.springframework.restdocs.payload.PayloadDocumentation.applyPathPrefix
@@ -19,6 +21,23 @@ import org.springframework.restdocs.request.ParameterDescriptor
 import org.springframework.restdocs.request.RequestPartDescriptor
 import kotlin.reflect.KClass
 import org.orkg.testing.spring.restdocs.pagedResponseFields as pagedResponseFieldsWrapper
+
+private val defaultRequestHeaders = listOf(
+    headerWithName("Accept")
+        .description("A mime type indicating the type of the response contents.")
+        .defaultValue(APPLICATION_JSON_VALUE)
+        .optional(),
+    headerWithName("Content-Type")
+        .description("A mime type indicating the type of the request contents.")
+        .optional(),
+).map(HeaderDescriptorWithType::fromHeaderDescriptor)
+
+private val defaultResponseHeaders = listOf(
+    headerWithName("Content-Type")
+        .description("A mime type indicating the type of the request contents.")
+        .defaultValue(APPLICATION_JSON_VALUE)
+        .optional(),
+).map(HeaderDescriptorWithType::fromHeaderDescriptor)
 
 /**
  * Based on [com.epages.restdocs.apispec.ResourceSnippetParametersBuilder]
@@ -37,8 +56,8 @@ class DocumentationBuilder(private val documentationContext: DocumentationContex
     private var pathParameters: List<ParameterDescriptorWithType> = emptyList()
     private var queryParameters: List<ParameterDescriptorWithType> = emptyList()
     private var formParameters: List<ParameterDescriptorWithType> = emptyList()
-    private var requestHeaders: List<HeaderDescriptorWithType> = emptyList()
-    private var responseHeaders: List<HeaderDescriptorWithType> = emptyList()
+    private var requestHeaders: List<HeaderDescriptorWithType> = defaultRequestHeaders
+    private var responseHeaders: List<HeaderDescriptorWithType> = defaultResponseHeaders
     private var requestParts: List<RequestPartDescriptor> = emptyList()
     private var requestPartFields: Map<String, List<FieldDescriptor>> = emptyMap()
     private var throws: List<KClass<out Throwable>> = emptyList()
@@ -236,7 +255,9 @@ class DocumentationBuilder(private val documentationContext: DocumentationContex
         formParameters(formParameters.map { it.toParameterDescriptorWithType() })
 
     fun requestHeaders(requestHeaders: List<HeaderDescriptorWithType>) {
-        this.requestHeaders = requestHeaders
+        this.requestHeaders = defaultRequestHeaders.associateBy { it.name.lowercase() }
+            .plus(requestHeaders.associateBy { it.name.lowercase() })
+            .values.toList()
     }
 
     fun requestHeaders(vararg requestHeaders: HeaderDescriptorWithType) =
@@ -246,7 +267,9 @@ class DocumentationBuilder(private val documentationContext: DocumentationContex
         requestHeaders(requestHeaders.map { it.toHeaderDescriptorWithType() })
 
     fun responseHeaders(responseHeaders: List<HeaderDescriptorWithType>) {
-        this.responseHeaders = responseHeaders
+        this.responseHeaders = defaultResponseHeaders.associateBy { it.name.lowercase() }
+            .plus(responseHeaders.associateBy { it.name.lowercase() })
+            .values.toList()
     }
 
     fun responseHeaders(vararg responseHeaders: HeaderDescriptorWithType) =

@@ -71,70 +71,70 @@ internal class RosettaStoneStatementServiceUnitTest : MockkBaseTest {
     )
 
     @Test
-    fun `Given a rosetta stone statement, when soft deleting, it soft deletes the rosetta stone statement`() {
+    fun `Given a rosetta stone statement, when deleting the latest version, it soft deletes the rosetta stone statement`() {
         val statement = createRosettaStoneStatement()
         val contributorId = ContributorId(MockUserId.USER)
 
         every { repository.findByIdOrVersionId(statement.id) } returns Optional.of(statement)
-        every { repository.softDelete(statement.id, contributorId) } just runs
+        every { repository.deleteLatestVersionById(statement.id, contributorId) } just runs
 
-        service.softDeleteById(statement.id, contributorId)
+        service.deleteLatestVersionById(statement.id, contributorId)
 
         verify(exactly = 1) { repository.findByIdOrVersionId(statement.id) }
-        verify(exactly = 1) { repository.softDelete(statement.id, contributorId) }
+        verify(exactly = 1) { repository.deleteLatestVersionById(statement.id, contributorId) }
     }
 
     @Test
-    fun `Given a rosetta stone statement, when soft deleting but statement does not exist, it does nothing`() {
+    fun `Given a rosetta stone statement, when deleting the latest version but statement does not exist, it does nothing`() {
         val statementId = ThingId("R123")
         val contributorId = ContributorId(MockUserId.USER)
 
         every { repository.findByIdOrVersionId(statementId) } returns Optional.empty()
 
-        service.softDeleteById(statementId, contributorId)
+        service.deleteLatestVersionById(statementId, contributorId)
 
         verify(exactly = 1) { repository.findByIdOrVersionId(statementId) }
     }
 
     @Test
-    fun `Given a rosetta stone statement, when soft deleting but statement is not modifiable, it throws an exception`() {
+    fun `Given a rosetta stone statement, when deleting the latest version but statement is not modifiable, it throws an exception`() {
         val statement = createRosettaStoneStatement().copy(modifiable = false)
         val contributorId = ContributorId(MockUserId.USER)
 
         every { repository.findByIdOrVersionId(statement.id) } returns Optional.of(statement)
 
-        assertThrows<RosettaStoneStatementNotModifiable> { service.softDeleteById(statement.id, contributorId) }
+        assertThrows<RosettaStoneStatementNotModifiable> { service.deleteLatestVersionById(statement.id, contributorId) }
 
         verify(exactly = 1) { repository.findByIdOrVersionId(statement.id) }
     }
 
     @Test
-    fun `Given a rosetta stone statement, when soft deleting but provided id is not the latest version, it throws an exception`() {
+    fun `Given a rosetta stone statement, when deleting the latest version but provided id is not the latest version, it throws an exception`() {
         val statement = createRosettaStoneStatement()
         val contributorId = ContributorId(MockUserId.USER)
         val id = statement.versions.first().id
 
         every { repository.findByIdOrVersionId(id) } returns Optional.of(statement)
 
-        assertThrows<CannotDeleteIndividualRosettaStoneStatementVersion> { service.softDeleteById(id, contributorId) }
+        assertThrows<CannotDeleteIndividualRosettaStoneStatementVersion> { service.deleteLatestVersionById(id, contributorId) }
 
         verify(exactly = 1) { repository.findByIdOrVersionId(id) }
     }
 
     @Test
-    fun `Given a rosetta stone statement, when soft deleting but existing statement is already deleted, it does nothing`() {
+    fun `Given a rosetta stone statement, when deleting the latest version but existing statement is already deleted, it does nothing`() {
         val statement = createRosettaStoneStatement().copy(visibility = Visibility.DELETED)
         val contributorId = ContributorId(MockUserId.USER)
 
         every { repository.findByIdOrVersionId(statement.id) } returns Optional.of(statement)
 
-        service.softDeleteById(statement.id, contributorId)
+        service.deleteLatestVersionById(statement.id, contributorId)
 
         verify(exactly = 1) { repository.findByIdOrVersionId(statement.id) }
     }
 
     @Test
-    fun `Given a rosetta stone statement, when deleting, it deletes the rosetta stone statement`() {
+    fun `Given a rosetta stone statement, when deleting all versions, it deletes the rosetta stone statement`() {
         val statement = createRosettaStoneStatement()
         val contributorId = ContributorId(MockUserId.USER)
         val contributor = createContributor(contributorId, isCurator = true)
@@ -142,24 +142,24 @@ internal class RosettaStoneStatementServiceUnitTest : MockkBaseTest {
         every { repository.findByIdOrVersionId(statement.id) } returns Optional.of(statement)
         every { contributorRepository.findById(contributorId) } returns Optional.of(contributor)
         every { repository.isUsedAsObject(statement.id) } returns false
-        every { repository.delete(statement.id) } just runs
+        every { repository.deleteAllVersionsById(statement.id) } just runs
 
-        service.deleteById(statement.id, contributorId)
+        service.deleteAllVersionsById(statement.id, contributorId)
 
         verify(exactly = 1) { repository.findByIdOrVersionId(statement.id) }
         verify(exactly = 1) { contributorRepository.findById(contributorId) }
         verify(exactly = 1) { repository.isUsedAsObject(statement.id) }
-        verify(exactly = 1) { repository.delete(statement.id) }
+        verify(exactly = 1) { repository.deleteAllVersionsById(statement.id) }
     }
 
     @Test
-    fun `Given a rosetta stone statement, when deleting but statement does not exist, it does nothing`() {
+    fun `Given a rosetta stone statement, when deleting all versions but statement does not exist, it does nothing`() {
         val statementId = ThingId("R123")
         val contributorId = ContributorId(MockUserId.USER)
 
         every { repository.findByIdOrVersionId(statementId) } returns Optional.empty()
 
-        service.deleteById(statementId, contributorId)
+        service.deleteAllVersionsById(statementId, contributorId)
 
         verify(exactly = 1) { repository.findByIdOrVersionId(statementId) }
     }
@@ -171,41 +171,41 @@ internal class RosettaStoneStatementServiceUnitTest : MockkBaseTest {
 
         every { repository.findByIdOrVersionId(statement.id) } returns Optional.of(statement)
 
-        assertThrows<RosettaStoneStatementNotModifiable> { service.deleteById(statement.id, contributorId) }
+        assertThrows<RosettaStoneStatementNotModifiable> { service.deleteAllVersionsById(statement.id, contributorId) }
 
         verify(exactly = 1) { repository.findByIdOrVersionId(statement.id) }
     }
 
     @Test
-    fun `Given a rosetta stone statement, when deleting but provided id is not the latest version, it throws an exception`() {
+    fun `Given a rosetta stone statement, when deleting all versions but provided id is not the latest version, it throws an exception`() {
         val statement = createRosettaStoneStatement()
         val contributorId = ContributorId(MockUserId.USER)
 
         every { repository.findByIdOrVersionId(statement.versions.first().id) } returns Optional.of(statement)
 
         assertThrows<CannotDeleteIndividualRosettaStoneStatementVersion> {
-            service.deleteById(statement.versions.first().id, contributorId)
+            service.deleteAllVersionsById(statement.versions.first().id, contributorId)
         }
 
         verify(exactly = 1) { repository.findByIdOrVersionId(statement.versions.first().id) }
     }
 
     @Test
-    fun `Given a rosetta stone statement, when deleting but contributor cannot be found, it throws an exception`() {
+    fun `Given a rosetta stone statement, when deleting all versions but contributor cannot be found, it throws an exception`() {
         val statement = createRosettaStoneStatement()
         val contributorId = ContributorId(MockUserId.USER)
 
         every { repository.findByIdOrVersionId(statement.id) } returns Optional.of(statement)
         every { contributorRepository.findById(contributorId) } returns Optional.empty()
 
-        assertThrows<ContributorNotFound> { service.deleteById(statement.id, contributorId) }
+        assertThrows<ContributorNotFound> { service.deleteAllVersionsById(statement.id, contributorId) }
 
         verify(exactly = 1) { repository.findByIdOrVersionId(statement.id) }
         verify(exactly = 1) { contributorRepository.findById(contributorId) }
     }
 
     @Test
-    fun `Given a rosetta stone statement, when deleting but contributor is not a curator, it throws an exception`() {
+    fun `Given a rosetta stone statement, when deleting all versions but contributor is not a curator, it throws an exception`() {
         val statement = createRosettaStoneStatement()
         val contributorId = ContributorId(MockUserId.USER)
         val contributor = createContributor(contributorId, isCurator = false)
@@ -213,14 +213,14 @@ internal class RosettaStoneStatementServiceUnitTest : MockkBaseTest {
         every { repository.findByIdOrVersionId(statement.id) } returns Optional.of(statement)
         every { contributorRepository.findById(contributorId) } returns Optional.of(contributor)
 
-        assertThrows<NotACurator> { service.deleteById(statement.id, contributorId) }
+        assertThrows<NotACurator> { service.deleteAllVersionsById(statement.id, contributorId) }
 
         verify(exactly = 1) { repository.findByIdOrVersionId(statement.id) }
         verify(exactly = 1) { contributorRepository.findById(contributorId) }
     }
 
     @Test
-    fun `Given a rosetta stone statement, when deleting but statement version is used an object, it throws an exception`() {
+    fun `Given a rosetta stone statement, when deleting all versions but statement version is used an object, it throws an exception`() {
         val statement = createRosettaStoneStatement()
         val contributorId = ContributorId(MockUserId.USER)
         val contributor = createContributor(contributorId, isCurator = true)
@@ -229,7 +229,7 @@ internal class RosettaStoneStatementServiceUnitTest : MockkBaseTest {
         every { contributorRepository.findById(contributorId) } returns Optional.of(contributor)
         every { repository.isUsedAsObject(statement.id) } returns true
 
-        assertThrows<RosettaStoneStatementInUse> { service.deleteById(statement.id, contributorId) }
+        assertThrows<RosettaStoneStatementInUse> { service.deleteAllVersionsById(statement.id, contributorId) }
 
         verify(exactly = 1) { repository.findByIdOrVersionId(statement.id) }
         verify(exactly = 1) { contributorRepository.findById(contributorId) }

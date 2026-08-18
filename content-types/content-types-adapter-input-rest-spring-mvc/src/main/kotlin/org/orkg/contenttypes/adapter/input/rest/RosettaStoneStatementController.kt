@@ -121,23 +121,23 @@ class RosettaStoneStatementController(
 
     @RequireLogin
     @DeleteMapping("/{id}")
-    fun softDeleteById(
+    fun deleteLatestVersionById(
         @PathVariable id: ThingId,
         currentUser: Authentication?,
     ): ResponseEntity<Any> {
         val userId = currentUser.contributorId()
-        service.softDeleteById(id, userId)
+        service.deleteLatestVersionById(id, userId)
         return noContent().build()
     }
 
     @RequireCuratorRole
     @DeleteMapping("/{id}/versions")
-    fun deleteById(
+    fun deleteAllVersionsById(
         @PathVariable id: ThingId,
         currentUser: Authentication?,
     ): ResponseEntity<Any> {
         val userId = currentUser.contributorId()
-        service.deleteById(id, userId)
+        service.deleteAllVersionsById(id, userId)
         return noContent().build()
     }
 

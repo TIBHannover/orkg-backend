@@ -46,14 +46,14 @@ operation::rosetta-stone-statements_update[snippets='path-parameters,request-fie
 [[rosetta-stone-statements-delete]]
 == Deleting Rosetta Stone Statements
 
-=== Soft-Deleting Rosetta Stone Statements
+=== Soft-deleting Rosetta Stone Statements
 
-include::{snippets}/rosetta-stone-statements_soft-delete-by-id/description.adoc[]
+include::{snippets}/rosetta-stone-statements_delete-latest-version-by-id/description.adoc[]
 
-operation::rosetta-stone-statements_soft-delete-by-id[snippets='path-parameters,curl-request,http-response,errors']
+operation::rosetta-stone-statements_delete-latest-version-by-id[snippets='path-parameters,curl-request,http-response,errors']
 
 === Fully Deleting Rosetta Stone Statements
 
-include::{snippets}/rosetta-stone-statements_delete-by-id/description.adoc[]
+include::{snippets}/rosetta-stone-statements_delete-all-versions-by-id/description.adoc[]
 
-operation::rosetta-stone-statements_delete-by-id[snippets='path-parameters,curl-request,http-response,errors']
+operation::rosetta-stone-statements_delete-all-versions-by-id[snippets='path-parameters,curl-request,http-response,errors']

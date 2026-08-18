@@ -448,20 +448,20 @@ internal class RosettaStoneStatementControllerUnitTest : MockMvcBaseTest("rosett
 
     @Test
     @TestWithMockUser
-    @DisplayName("Given a rosetta stone statement, when soft deleting and service succeeds, then status is 204 NO CONTENT")
-    fun softDeleteById() {
+    @DisplayName("Given a rosetta stone statement, when soft-deleting the latest version and service succeeds, then status is 204 NO CONTENT")
+    fun deleteLatestVersionById() {
         val id = ThingId("R123")
-        every { statementService.softDeleteById(id, any()) } just runs
+        every { statementService.deleteLatestVersionById(id, any()) } just runs
 
         documentedDeleteRequestTo("/api/rosetta-stone/statements/{id}", id)
             .accept(ROSETTA_STONE_STATEMENT_JSON_V1)
             .perform()
             .andExpect(status().isNoContent)
             .andDocument {
-                summary("Soft-deleting rosetta stone statements")
+                summary("Deleting rosetta stone statement versions")
                 description(
                     """
-                    A `DELETE` request soft-deletes a rosetta stone statement with all its versions.
+                    A `DELETE` request soft-deletes the latest version of a rosetta stone statement.
                     The response will be `204 No Content` when successful.
                     """,
                 )
@@ -474,22 +474,22 @@ internal class RosettaStoneStatementControllerUnitTest : MockMvcBaseTest("rosett
                 )
             }
 
-        verify(exactly = 1) { statementService.softDeleteById(id, ContributorId(MockUserId.USER)) }
+        verify(exactly = 1) { statementService.deleteLatestVersionById(id, ContributorId(MockUserId.USER)) }
     }
 
     @Test
     @TestWithMockCurator
-    @DisplayName("Given a rosetta stone statement, when deleting and service succeeds, then status is 204 NO CONTENT")
-    fun deleteById() {
+    @DisplayName("Given a rosetta stone statement, when deleting all versions and service succeeds, then status is 204 NO CONTENT")
+    fun deleteAllVersionsById() {
         val id = ThingId("R123")
-        every { statementService.deleteById(id, any()) } just runs
+        every { statementService.deleteAllVersionsById(id, any()) } just runs
 
         documentedDeleteRequestTo("/api/rosetta-stone/statements/{id}/versions", id)
             .accept(ROSETTA_STONE_STATEMENT_JSON_V1)
             .perform()
             .andExpect(status().isNoContent)
             .andDocument {
-                summary("Fully deleting rosetta stone statements")
+                summary("Deleting all rosetta stone statement versions")
                 description(
                     """
                     A `DELETE` request fully deletes a rosetta stone statement with all its versions.
@@ -510,7 +510,7 @@ internal class RosettaStoneStatementControllerUnitTest : MockMvcBaseTest("rosett
                 )
             }
 
-        verify(exactly = 1) { statementService.deleteById(id, ContributorId(MockUserId.CURATOR)) }
+        verify(exactly = 1) { statementService.deleteAllVersionsById(id, ContributorId(MockUserId.CURATOR)) }
     }
 
     private fun createRosettaStoneStatementRequest() =

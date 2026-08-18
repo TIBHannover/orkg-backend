@@ -132,7 +132,7 @@ class RosettaStoneStatementService(
         return steps.execute(command, UpdateRosettaStoneStatementState()).rosettaStoneStatementId!!
     }
 
-    override fun softDeleteById(id: ThingId, contributorId: ContributorId) {
+    override fun deleteLatestVersionById(id: ThingId, contributorId: ContributorId) {
         findByIdOrVersionId(id).ifPresent {
             if (!it.modifiable) {
                 throw RosettaStoneStatementNotModifiable(id)
@@ -141,12 +141,12 @@ class RosettaStoneStatementService(
                 throw CannotDeleteIndividualRosettaStoneStatementVersion(id)
             }
             if (it.visibility != Visibility.DELETED) {
-                repository.softDelete(id, contributorId)
+                repository.deleteLatestVersionById(id, contributorId)
             }
         }
     }
 
-    override fun deleteById(id: ThingId, contributorId: ContributorId) {
+    override fun deleteAllVersionsById(id: ThingId, contributorId: ContributorId) {
         findByIdOrVersionId(id).ifPresent {
             if (!it.modifiable) {
                 throw RosettaStoneStatementNotModifiable(id)
@@ -162,7 +162,7 @@ class RosettaStoneStatementService(
             if (repository.isUsedAsObject(id)) {
                 throw RosettaStoneStatementInUse(id)
             }
-            repository.delete(id)
+            repository.deleteAllVersionsById(id)
         }
     }
 

@@ -38,7 +38,7 @@ interface RosettaStoneStatementRepository {
 
     fun deleteAll()
 
-    fun softDelete(id: ThingId, contributorId: ContributorId)
+    fun deleteLatestVersionById(id: ThingId, contributorId: ContributorId)
 
-    fun delete(id: ThingId)
+    fun deleteAllVersionsById(id: ThingId)
 }

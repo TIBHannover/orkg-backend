@@ -468,7 +468,7 @@ class SpringDataNeo4jRosettaStoneStatementAdapter(
         ).run()
     }
 
-    override fun softDelete(id: ThingId, contributorId: ContributorId) {
+    override fun deleteLatestVersionById(id: ThingId, contributorId: ContributorId) {
         neo4jClient.query(
             $$"""
             MATCH (latest:RosettaStoneStatement:LatestVersion {id: $id}),
@@ -490,7 +490,7 @@ class SpringDataNeo4jRosettaStoneStatementAdapter(
             .run()
     }
 
-    override fun delete(id: ThingId) {
+    override fun deleteAllVersionsById(id: ThingId) {
         neo4jClient.query(
             $$"""
             MATCH (latest:RosettaStoneStatement:LatestVersion {id: $id})

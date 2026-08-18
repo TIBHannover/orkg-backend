@@ -617,13 +617,13 @@ fun <
         repository.findAll(PageRequests.ALL).totalElements shouldBe 0
     }
 
-    it("soft deletes a rosetta stone statement") {
+    it("deletes the latest version of a rosetta stone statement") {
         val statement = fabricator.random<RosettaStoneStatement>()
         statement.requiredEntities(fabricator).forEach(saveThing)
         repository.save(statement)
         val contributorId = ContributorId(MockUserId.USER)
 
-        repository.softDelete(statement.id, contributorId)
+        repository.deleteLatestVersionById(statement.id, contributorId)
 
         repository.findByIdOrVersionId(statement.id).asClue { optional ->
             optional.isPresent shouldBe true
@@ -638,12 +638,12 @@ fun <
         }
     }
 
-    it("deletes a rosetta stone statement") {
+    it("deletes all versions of a rosetta stone statement") {
         val statement = fabricator.random<RosettaStoneStatement>()
         statement.requiredEntities(fabricator).forEach(saveThing)
         repository.save(statement)
 
-        repository.delete(statement.id)
+        repository.deleteAllVersionsById(statement.id)
 
         repository.findByIdOrVersionId(statement.id).isPresent shouldBe false
     }

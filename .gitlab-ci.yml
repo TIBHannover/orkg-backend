@@ -203,7 +203,7 @@ docker_build_master:
 docker_build:
   extends: .docker_build_instructions
   variables:
-    IMAGE_TAGS: $CI_COMMIT_REF_NAME release
+    IMAGE_TAGS: $CI_COMMIT_REF_NAME
   artifacts:
     name: docker_build
     when: on_failure

@@ -6,6 +6,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Added endpoint for deleting draft comparisons.
+  (See [!1516](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1516))
+- Added documentation to the resource timeline endpoint, which is now also available in the API client libraries.
+### Changed
+- Renamed rosetta stone statement deletion endpoints in API client libraries.
+- The `Accept` and `Content-Type` headers can now be set for every request in the API client libraries.
+### Fixed
+- Fixed TemplatePropertyRequest (de-)serialization for TypeScript client.
+### Removed
+- Removed unused `release` tag that got added to every container image built during CI.
+- Removed redundant module-graph plugin. Use the tasks of the dependency-analaysis-plugin instead.
 
 ## [0.101.1] - 2026-08-13
 ### Fixed

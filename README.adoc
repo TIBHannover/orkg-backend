@@ -48,7 +48,7 @@ Alternatively, an OpenAPI specification can be fetched directly from the API at 
 
 This project provides two auto-generated client libraries, based on OpenAPI.
 The version of the client library matches the version of the backend API.
-The documentation for the client liberaries can be found at {apiclientdoc_url}.
+The documentation for the client libraries can be found at {apiclientdoc_url}.
 
 == Building and running
 

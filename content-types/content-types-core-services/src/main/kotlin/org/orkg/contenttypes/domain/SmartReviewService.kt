@@ -231,7 +231,7 @@ class SmartReviewService(
             SmartReviewExistenceValidator(this, resourceRepository),
             SmartReviewModifiableValidator(),
             LabelValidator("title") { it.title },
-            ExtractionMethodValidator({ it.extractionMethod }, { it.smartReview!!.extractionMethod }),
+            ExtractionMethodValidator({ it.extractionMethod }, { it.smartReview!!.extractionMethod }, { it.title }, { it.smartReview!!.title }),
             BibTeXReferencesValidator({ it.references }),
             VisibilityValidator(contributorRepository, { it.contributorId }, { it.smartReview!! }, { it.visibility }),
             ResearchFieldValidator(resourceRepository, { it.researchFields }, { it.smartReview!!.researchFields.ids }),

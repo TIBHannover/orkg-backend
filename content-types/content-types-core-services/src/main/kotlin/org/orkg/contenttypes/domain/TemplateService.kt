@@ -168,7 +168,7 @@ class TemplateService(
             LabelValidator { it.label },
             DescriptionValidator { it.description },
             LabelValidator("formatted_label") { it.formattedLabel?.value },
-            ExtractionMethodValidator({ it.extractionMethod }, { it.template!!.extractionMethod }),
+            ExtractionMethodValidator({ it.extractionMethod }, { it.template!!.extractionMethod }, { it.label }, { it.template!!.label }),
             VisibilityValidator(contributorRepository, { it.contributorId }, { it.template!! }, { it.visibility }),
             TemplateTargetClassValidator(classRepository, statementRepository, { it.targetClass }, { it.template!!.targetClass.id }),
             TemplateRelationsUpdateValidator(resourceRepository, predicateRepository),

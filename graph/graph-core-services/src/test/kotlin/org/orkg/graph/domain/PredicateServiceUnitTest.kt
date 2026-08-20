@@ -19,9 +19,11 @@ import org.orkg.community.output.ContributorRepository
 import org.orkg.community.testing.fixtures.createContributor
 import org.orkg.graph.input.CreatePredicateUseCase
 import org.orkg.graph.input.UnsafePredicateUseCases
+import org.orkg.graph.input.UpdateLiteralUseCase
 import org.orkg.graph.input.UpdatePredicateUseCase
 import org.orkg.graph.output.PredicateRepository
 import org.orkg.graph.output.ThingRepository
+import org.orkg.graph.testing.fixtures.createLiteral
 import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.testing.MockUserId
 import org.orkg.testing.pageOf
@@ -213,7 +215,7 @@ internal class PredicateServiceUnitTest : MockkBaseTest {
     }
 
     @Test
-    fun `Given a predicate update command, when updating the extraction method with an invalid transition, it throws an exception`() {
+    fun `Given a predicate update command, when updating the extraction method with an invalid transitionand label is unchanged, it throws an exception`() {
         val predicate = createPredicate(extractionMethod = ExtractionMethod.AI_GENERATED)
         val command = UpdatePredicateUseCase.UpdateCommand(
             id = predicate.id,
@@ -258,6 +260,31 @@ internal class PredicateServiceUnitTest : MockkBaseTest {
         }
 
         verify(exactly = 1) { repository.findById(predicate.id) }
+    }
+
+    @Test
+    fun `Given a predicate update command, when label is changed and previous extraction method was ai generated, it sets the extraction method to manual`() {
+        val predicate = createPredicate(extractionMethod = ExtractionMethod.AI_GENERATED)
+        val command = UpdatePredicateUseCase.UpdateCommand(
+            id = predicate.id,
+            label = "updated label",
+            contributorId = ContributorId(MockUserId.USER),
+        )
+
+        every { repository.findById(predicate.id) } returns Optional.of(predicate)
+        every { repository.save(any()) } just runs
+
+        service.update(command)
+
+        verify(exactly = 1) { repository.findById(predicate.id) }
+        verify(exactly = 1) {
+            repository.save(
+                withArg {
+                    it.label shouldBe command.label
+                    it.extractionMethod shouldBe ExtractionMethod.MANUAL
+                },
+            )
+        }
     }
 
     @Test

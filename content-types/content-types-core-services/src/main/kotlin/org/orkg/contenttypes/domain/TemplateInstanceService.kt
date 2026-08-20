@@ -7,7 +7,6 @@ import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
 import org.orkg.common.pmap
 import org.orkg.contenttypes.domain.actions.CreateTemplateInstanceState
-import org.orkg.contenttypes.domain.actions.ExtractionMethodValidator
 import org.orkg.contenttypes.domain.actions.LabelValidator
 import org.orkg.contenttypes.domain.actions.TempIdValidator
 import org.orkg.contenttypes.domain.actions.UpdateTemplateInstanceState
@@ -125,7 +124,6 @@ class TemplateInstanceService(
             TempIdValidator { it.tempIds() },
             TemplateInstanceTemplateUpdateValidator(templateService),
             TemplateInstanceSubjectValidator(resourceRepository, this),
-            ExtractionMethodValidator({ it.extractionMethod }, { it.templateInstance!!.root.extractionMethod }),
             TemplateInstanceThingsCommandUpdateValidator(thingRepository),
             TemplateInstancePropertyValueUpdateValidator(thingRepository, classRepository, statementRepository, classHierarchyRepository),
             TemplateInstanceSubjectUpdater(resourceRepository),

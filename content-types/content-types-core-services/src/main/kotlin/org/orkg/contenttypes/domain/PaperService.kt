@@ -222,7 +222,7 @@ class PaperService(
         val steps = listOf(
             PaperExistenceUpdateValidator(this, resourceRepository),
             PaperModifiableValidator({ it.paper?.modifiable }, { it.paperId }),
-            ExtractionMethodValidator({ it.extractionMethod }, { it.paper!!.extractionMethod }),
+            ExtractionMethodValidator({ it.extractionMethod }, { it.paper!!.extractionMethod }, { it.title }, { it.paper!!.title }),
             PublicationInfoValidator { it.publicationInfo },
             VisibilityValidator(contributorRepository, { it.contributorId }, { it.paper!! }, { it.visibility }),
             VerifiedValidator(contributorRepository, { it.contributorId }, { it.paper!!.verified }, { it.verified }),

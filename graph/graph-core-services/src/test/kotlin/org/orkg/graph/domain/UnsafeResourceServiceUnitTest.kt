@@ -329,6 +329,31 @@ internal class UnsafeResourceServiceUnitTest : MockkBaseTest {
     }
 
     @Test
+    fun `Given a resource update command, when label is changed and previous extraction method was ai generated, it sets the extraction method to manual`() {
+        val resource = createResource(extractionMethod = ExtractionMethod.AI_GENERATED)
+        val command = UpdateResourceUseCase.UpdateCommand(
+            id = resource.id,
+            label = "updated label",
+            contributorId = ContributorId(MockUserId.USER),
+        )
+
+        every { repository.findById(resource.id) } returns Optional.of(resource)
+        every { repository.save(any()) } just runs
+
+        service.update(command)
+
+        verify(exactly = 1) { repository.findById(resource.id) }
+        verify(exactly = 1) {
+            repository.save(
+                withArg {
+                    it.label shouldBe command.label
+                    it.extractionMethod shouldBe ExtractionMethod.MANUAL
+                },
+            )
+        }
+    }
+
+    @Test
     fun `Given a resource, when deleting, it deletes the resource from the repository`() {
         val id = ThingId("R2145")
         val couldBeAnyone = ContributorId("1255bbe4-1850-4033-ba10-c80d4b370e3e")

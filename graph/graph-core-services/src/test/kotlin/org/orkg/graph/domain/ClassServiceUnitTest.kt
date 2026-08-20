@@ -233,7 +233,7 @@ internal class ClassServiceUnitTest : MockkBaseTest {
     }
 
     @Test
-    fun `Given a class, when extraction method transition is invalid, it throws an exception`() {
+    fun `Given a class, when extraction method transition is invalid and label is unchanged, it throws an exception`() {
         val originalClass = createClass(extractionMethod = ExtractionMethod.AI_GENERATED)
         val contributorId = ContributorId(MockUserId.USER)
         val command = UpdateClassUseCase.UpdateCommand(
@@ -368,6 +368,31 @@ internal class ClassServiceUnitTest : MockkBaseTest {
     }
 
     @Test
+    fun `Given a class update command, when label is changed and previous extraction method was ai generated, it sets the extraction method to manual`() {
+        val `class` = createClass(extractionMethod = ExtractionMethod.AI_GENERATED)
+        val command = UpdateClassUseCase.UpdateCommand(
+            id = `class`.id,
+            label = "updated label",
+            contributorId = ContributorId(MockUserId.USER),
+        )
+
+        every { repository.findById(`class`.id) } returns Optional.of(`class`)
+        every { repository.save(any()) } just runs
+
+        service.update(command)
+
+        verify(exactly = 1) { repository.findById(`class`.id) }
+        verify(exactly = 1) {
+            repository.save(
+                withArg {
+                    it.label shouldBe command.label
+                    it.extractionMethod shouldBe ExtractionMethod.MANUAL
+                },
+            )
+        }
+    }
+
+    @Test
     fun `Given a class is unmodifiable, when updating the URI, it returns an appropriate error`() {
         val originalClass = createClass(modifiable = false)
         val contributorId = ContributorId(MockUserId.USER)
@@ -447,7 +472,7 @@ internal class ClassServiceUnitTest : MockkBaseTest {
     }
 
     @Test
-    fun `Given a class is replaced, when extraction method transition is invalid, it throws an exception`() {
+    fun `Given a class is replaced, when extraction method transition is invalid and label is unchanged, it throws an exception`() {
         val classToReplace = ThingId("ToReplace")
         val replacingClass = createClassWithoutURI().copy(id = classToReplace, extractionMethod = ExtractionMethod.UNKNOWN)
         val existingClass = createClassWithoutURI().copy(id = classToReplace, extractionMethod = ExtractionMethod.AI_GENERATED)

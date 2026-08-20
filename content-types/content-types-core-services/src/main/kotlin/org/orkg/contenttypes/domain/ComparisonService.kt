@@ -201,7 +201,7 @@ class ComparisonService(
             LabelCollectionValidator("references") { it.references },
             ComparisonDataSourcesValidator { it.sources },
             ComparisonExistenceUpdateValidator(this, resourceRepository),
-            ExtractionMethodValidator({ it.extractionMethod }, { it.comparison!!.extractionMethod }),
+            ExtractionMethodValidator({ it.extractionMethod }, { it.comparison!!.extractionMethod }, { it.title }, { it.comparison!!.title }),
             VisibilityValidator(contributorRepository, { it.contributorId }, { it.comparison!! }, { it.visibility }),
             ResourceValidator(resourceRepository, { it.sources?.map { it.id }?.toSet() }),
             ComparisonSearchProtocolUpdateValidator(thingRepository),

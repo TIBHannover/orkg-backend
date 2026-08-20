@@ -120,7 +120,7 @@ class RosettaStoneStatementService(
             TempIdValidator { it.tempIds() },
             RosettaStoneStatementExistenceValidator(this),
             RosettaStoneStatementModifiableValidator(),
-            ExtractionMethodValidator({ it.extractionMethod }, { it.rosettaStoneStatement!!.extractionMethod }),
+            ExtractionMethodValidator({ it.extractionMethod }, { it.rosettaStoneStatement!!.extractionMethod }, { null }, { it.rosettaStoneStatement!!.label }),
             RosettaStoneStatementTemplateUpdateValidator(rosettaStoneTemplateService),
             ObservatoryValidator(observatoryRepository, { it.observatories }, { it.observatories }),
             OrganizationValidator(organizationRepository, { it.organizations }, { it.organizations }),

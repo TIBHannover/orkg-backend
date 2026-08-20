@@ -180,6 +180,31 @@ internal class UnsafePredicateServiceUnitTest : MockkBaseTest {
     }
 
     @Test
+    fun `Given a predicate update command, when label is changed and previous extraction method was ai generated, it sets the extraction method to manual`() {
+        val predicate = createPredicate(extractionMethod = ExtractionMethod.AI_GENERATED)
+        val command = UpdatePredicateUseCase.UpdateCommand(
+            id = predicate.id,
+            label = "updated label",
+            contributorId = ContributorId(MockUserId.USER),
+        )
+
+        every { repository.findById(predicate.id) } returns Optional.of(predicate)
+        every { repository.save(any()) } just runs
+
+        service.update(command)
+
+        verify(exactly = 1) { repository.findById(predicate.id) }
+        verify(exactly = 1) {
+            repository.save(
+                withArg {
+                    it.label shouldBe command.label
+                    it.extractionMethod shouldBe ExtractionMethod.MANUAL
+                },
+            )
+        }
+    }
+
+    @Test
     fun `Given a predicate, when deleting, it deletes the predicate from the repository`() {
         val id = ThingId("R2145")
         val couldBeAnyone = ContributorId("1255bbe4-1850-4033-ba10-c80d4b370e3e")

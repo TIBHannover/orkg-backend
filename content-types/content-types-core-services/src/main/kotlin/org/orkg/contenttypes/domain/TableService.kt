@@ -161,7 +161,7 @@ class TableService(
             TempIdValidator { it.tempIds() },
             TableDimensionsValidator { it.rows },
             TableRowsValidator { it.rows },
-            ExtractionMethodValidator({ it.extractionMethod }, { it.table!!.extractionMethod }),
+            ExtractionMethodValidator({ it.extractionMethod }, { it.table!!.extractionMethod }, { it.label }, { it.table!!.label }),
             ObservatoryValidator(observatoryRepository, { it.observatories }),
             OrganizationValidator(organizationRepository, { it.organizations }),
             TableThingsCommandUpdateValidator(thingRepository),

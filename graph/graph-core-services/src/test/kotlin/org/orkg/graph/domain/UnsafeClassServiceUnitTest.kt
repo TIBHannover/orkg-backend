@@ -444,6 +444,31 @@ internal class UnsafeClassServiceUnitTest : MockkBaseTest {
     }
 
     @Test
+    fun `Given a class update command, when label is changed and previous extraction method was ai generated, it sets the extraction method to manual`() {
+        val `class` = createClass(extractionMethod = ExtractionMethod.AI_GENERATED)
+        val command = UpdateClassUseCase.UpdateCommand(
+            id = `class`.id,
+            label = "updated label",
+            contributorId = ContributorId(MockUserId.USER),
+        )
+
+        every { repository.findById(`class`.id) } returns Optional.of(`class`)
+        every { repository.save(any()) } just runs
+
+        service.update(command)
+
+        verify(exactly = 1) { repository.findById(`class`.id) }
+        verify(exactly = 1) {
+            repository.save(
+                withArg {
+                    it.label shouldBe command.label
+                    it.extractionMethod shouldBe ExtractionMethod.MANUAL
+                },
+            )
+        }
+    }
+
+    @Test
     fun `Given a class is unmodifiable, when updating the URI, it updates the URI`() {
         val originalClass = createClass(modifiable = false)
         val contributorId = ContributorId(MockUserId.USER)

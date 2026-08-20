@@ -344,7 +344,7 @@ internal class ResourceServiceUnitTest : MockkBaseTest {
     }
 
     @Test
-    fun `Given a resource update command, when updating the extraction method with an invalid transition, it throws an exception`() {
+    fun `Given a resource update command, when updating the extraction method with an invalid transitionand label is unchanged, it throws an exception`() {
         val resource = createResource(extractionMethod = ExtractionMethod.AI_GENERATED)
         val command = UpdateResourceUseCase.UpdateCommand(
             id = resource.id,
@@ -749,6 +749,31 @@ internal class ResourceServiceUnitTest : MockkBaseTest {
 
         verify(exactly = 1) { repository.findById(resource.id) }
         verify(exactly = 1) { repository.save(withArg { it.unlistedBy shouldBe resource.unlistedBy }) }
+    }
+
+    @Test
+    fun `Given a resource update command, when label is changed and previous extraction method was ai generated, it sets the extraction method to manual`() {
+        val resource = createResource(extractionMethod = ExtractionMethod.AI_GENERATED)
+        val command = UpdateResourceUseCase.UpdateCommand(
+            id = resource.id,
+            label = "updated label",
+            contributorId = ContributorId(MockUserId.USER),
+        )
+
+        every { repository.findById(resource.id) } returns Optional.of(resource)
+        every { repository.save(any()) } just runs
+
+        service.update(command)
+
+        verify(exactly = 1) { repository.findById(resource.id) }
+        verify(exactly = 1) {
+            repository.save(
+                withArg {
+                    it.label shouldBe command.label
+                    it.extractionMethod shouldBe ExtractionMethod.MANUAL
+                },
+            )
+        }
     }
 
     @Test

@@ -27,7 +27,7 @@ fun Resource.apply(command: UpdateResourceUseCase.UpdateCommand): Resource =
         uri = command.uri ?: uri,
         observatoryId = command.observatoryId ?: observatoryId,
         organizationId = command.organizationId ?: organizationId,
-        extractionMethod = command.extractionMethod ?: extractionMethod,
+        extractionMethod = updatedExtractionMethod(command.label, label, command.extractionMethod, extractionMethod),
         modifiable = command.modifiable ?: modifiable,
         visibility = command.visibility ?: visibility,
         verified = command.verified ?: verified,
@@ -72,7 +72,7 @@ fun Predicate.apply(command: UpdatePredicateUseCase.UpdateCommand): Predicate =
     copy(
         label = command.label ?: label,
         uri = command.uri ?: uri,
-        extractionMethod = command.extractionMethod ?: extractionMethod,
+        extractionMethod = updatedExtractionMethod(command.label, label, command.extractionMethod, extractionMethod),
         modifiable = command.modifiable ?: modifiable,
     )
 
@@ -83,7 +83,7 @@ fun Literal.apply(command: UpdateLiteralUseCase.UpdateCommand): Literal =
     copy(
         label = command.label ?: label,
         datatype = command.datatype ?: datatype,
-        extractionMethod = command.extractionMethod ?: extractionMethod,
+        extractionMethod = updatedExtractionMethod(command.label, label, command.extractionMethod, extractionMethod),
         modifiable = command.modifiable ?: modifiable,
     )
 
@@ -94,7 +94,7 @@ fun Class.apply(command: UpdateClassUseCase.UpdateCommand): Class =
     copy(
         label = command.label ?: label,
         uri = command.uri ?: uri,
-        extractionMethod = command.extractionMethod ?: extractionMethod,
+        extractionMethod = updatedExtractionMethod(command.label, label, command.extractionMethod, extractionMethod),
         modifiable = command.modifiable ?: modifiable,
     )
 
@@ -113,6 +113,21 @@ fun List.apply(command: UpdateListUseCase.UpdateCommand): List =
     copy(
         label = command.label ?: label,
         uri = command.uri ?: uri,
-        extractionMethod = command.extractionMethod ?: extractionMethod,
+        extractionMethod = updatedExtractionMethod(command.label, label, command.extractionMethod, extractionMethod),
         elements = command.elements ?: elements,
     )
+
+private fun updatedExtractionMethod(
+    newLabel: String?,
+    oldLabel: String,
+    newExtractionMethod: ExtractionMethod?,
+    oldExtractionMethod: ExtractionMethod,
+): ExtractionMethod =
+    if (newLabel != null && oldLabel != newLabel && newExtractionMethod == null && oldExtractionMethod.isAiGenerated) {
+        ExtractionMethod.MANUAL
+    } else {
+        newExtractionMethod ?: oldExtractionMethod
+    }
+
+private val ExtractionMethod.isAiGenerated get() =
+    this == ExtractionMethod.AI_GENERATED || this == ExtractionMethod.AI_GENERATED_WITH_MANUAL_REVIEW

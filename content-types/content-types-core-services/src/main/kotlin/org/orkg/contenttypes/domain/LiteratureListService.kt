@@ -215,7 +215,7 @@ class LiteratureListService(
             LiteratureListExistenceValidator(this, resourceRepository),
             LiteratureListModifiableValidator(),
             LabelValidator("title") { it.title },
-            ExtractionMethodValidator({ it.extractionMethod }, { it.literatureList!!.extractionMethod }),
+            ExtractionMethodValidator({ it.extractionMethod }, { it.literatureList!!.extractionMethod }, { it.title }, { it.literatureList!!.title }),
             VisibilityValidator(contributorRepository, { it.contributorId }, { it.literatureList!! }, { it.visibility }),
             ResearchFieldValidator(resourceRepository, { it.researchFields }, { it.literatureList!!.researchFields.ids }),
             LiteratureListAuthorListUpdateValidator(resourceRepository, statementRepository),

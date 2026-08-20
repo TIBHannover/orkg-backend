@@ -64,8 +64,10 @@ class LiteralService(
         if (!literal.modifiable) {
             throw LiteralNotModifiable(literal.id)
         }
-        if (command.extractionMethod != null && !literal.extractionMethod.canBeChangedTo(command.extractionMethod!!)) {
-            throw InvalidExtractionMethodChange(literal.extractionMethod, command.extractionMethod!!)
+        if (literal.label == command.label || command.label == null) {
+            if (command.extractionMethod != null && !literal.extractionMethod.canBeChangedTo(command.extractionMethod!!)) {
+                throw InvalidExtractionMethodChange(literal.extractionMethod, command.extractionMethod!!)
+            }
         }
         val updated = literal.apply(command)
         if (literal.label != updated.label || literal.datatype != updated.datatype) {

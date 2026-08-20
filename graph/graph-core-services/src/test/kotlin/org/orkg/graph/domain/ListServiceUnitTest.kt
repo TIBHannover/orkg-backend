@@ -17,6 +17,7 @@ import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.common.testing.fixtures.fixedClock
 import org.orkg.graph.input.CreateListUseCase
 import org.orkg.graph.input.UpdateListUseCase
+import org.orkg.graph.input.UpdateResourceUseCase
 import org.orkg.graph.output.ListRepository
 import org.orkg.graph.output.ThingRepository
 import org.orkg.graph.testing.fixtures.createClass
@@ -167,6 +168,32 @@ internal class ListServiceUnitTest : MockkBaseTest {
     }
 
     @Test
+    fun `Given a list update command, when label is changed and previous extraction method was ai generated, it sets the extraction method to manual`() {
+        val list = createList(extractionMethod = ExtractionMethod.AI_GENERATED)
+        val command = UpdateListUseCase.UpdateCommand(
+            id = list.id,
+            label = "updated label",
+            contributorId = ContributorId(MockUserId.USER),
+        )
+
+        every { repository.findById(list.id) } returns Optional.of(list)
+        every { repository.save(any(), any()) } just runs
+
+        service.update(command)
+
+        verify(exactly = 1) { repository.findById(list.id) }
+        verify(exactly = 1) {
+            repository.save(
+                withArg {
+                    it.label shouldBe command.label
+                    it.extractionMethod shouldBe ExtractionMethod.MANUAL
+                },
+                any(),
+            )
+        }
+    }
+
+    @Test
     fun `given a list is updated, when valid inputs are provided, it returns success`() {
         val id = ThingId("List1")
         val command = UpdateListUseCase.UpdateCommand(
@@ -230,7 +257,7 @@ internal class ListServiceUnitTest : MockkBaseTest {
     }
 
     @Test
-    fun `Given a list update command, when updating the extraction method with an invalid transition, it throws an exception`() {
+    fun `Given a list update command, when updating the extraction method with an invalid transition and label is unchanged, it throws an exception`() {
         val list = createList(extractionMethod = ExtractionMethod.AI_GENERATED)
         val command = UpdateListUseCase.UpdateCommand(
             id = list.id,

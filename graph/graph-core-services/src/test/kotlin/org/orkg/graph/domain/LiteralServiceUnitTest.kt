@@ -143,7 +143,7 @@ internal class LiteralServiceUnitTest {
     }
 
     @Test
-    fun `Given a literal update command, when updating the extraction method with an invalid transition, it throws an exception`() {
+    fun `Given a literal update command, when updating the extraction method with an invalid transition and label is unchanged, it throws an exception`() {
         val literal = createLiteral(extractionMethod = ExtractionMethod.AI_GENERATED)
         val command = UpdateLiteralUseCase.UpdateCommand(
             id = literal.id,
@@ -237,6 +237,31 @@ internal class LiteralServiceUnitTest {
         shouldThrowExactly<InvalidLiteralLabel> { service.update(command) }
 
         verify(exactly = 1) { literalRepository.findById(literal.id) }
+    }
+
+    @Test
+    fun `Given a literal update command, when label is changed and previous extraction method was ai generated, it sets the extraction method to manual`() {
+        val literal = createLiteral(extractionMethod = ExtractionMethod.AI_GENERATED)
+        val command = UpdateLiteralUseCase.UpdateCommand(
+            id = literal.id,
+            label = "updated label",
+            contributorId = ContributorId(MockUserId.USER),
+        )
+
+        every { literalRepository.findById(literal.id) } returns Optional.of(literal)
+        every { literalRepository.save(any()) } just runs
+
+        service.update(command)
+
+        verify(exactly = 1) { literalRepository.findById(literal.id) }
+        verify(exactly = 1) {
+            literalRepository.save(
+                withArg {
+                    it.label shouldBe command.label
+                    it.extractionMethod shouldBe ExtractionMethod.MANUAL
+                },
+            )
+        }
     }
 
     @Test

@@ -66,8 +66,10 @@ class PredicateService(
         if (!predicate.modifiable) {
             throw PredicateNotModifiable(predicate.id)
         }
-        if (command.extractionMethod != null && !predicate.extractionMethod.canBeChangedTo(command.extractionMethod!!)) {
-            throw InvalidExtractionMethodChange(predicate.extractionMethod, command.extractionMethod!!)
+        if (predicate.label == command.label || command.label == null) {
+            if (command.extractionMethod != null && !predicate.extractionMethod.canBeChangedTo(command.extractionMethod!!)) {
+                throw InvalidExtractionMethodChange(predicate.extractionMethod, command.extractionMethod!!)
+            }
         }
         command.label?.also { Label.ofOrNull(it) ?: throw InvalidLabel() }
         command.uri?.also { newUri ->

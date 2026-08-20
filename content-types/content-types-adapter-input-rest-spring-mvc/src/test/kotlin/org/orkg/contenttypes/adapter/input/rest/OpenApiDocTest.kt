@@ -49,16 +49,12 @@ import org.orkg.graph.adapter.input.rest.SimpleAuthorRepresentation
 import org.orkg.graph.adapter.input.rest.SimpleAuthorRepresentation.LiteralAuthorRepresentation
 import org.orkg.graph.adapter.input.rest.SimpleAuthorRepresentation.ResourceAuthorRepresentation
 import org.orkg.graph.adapter.input.rest.StatementRepresentation
-import org.orkg.graph.adapter.input.rest.mapping.StatementRepresentationAdapter
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.StatementId
 import org.orkg.graph.domain.Visibility
-import org.orkg.graph.testing.fixtures.createClass
-import org.orkg.graph.testing.fixtures.createPredicate
-import org.orkg.graph.testing.fixtures.createStatement
 import org.orkg.testing.spring.MockMvcOpenApiBaseTest
 import org.orkg.testing.spring.restdocs.oneOf
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest
@@ -258,11 +254,11 @@ internal class OpenApiDocTest : MockMvcOpenApiBaseTest() {
         document(untypedTemplatePropertyRequest()) {
             responseFields<TemplatePropertyRequest>(
                 oneOf(
+                    StringLiteralPropertyRequest::class, // datatype, pattern
+                    NumberLiteralPropertyRequest::class, // datatype, minInclusive, maxInclusive
+                    OtherLiteralPropertyRequest::class, // datatype
+                    ResourcePropertyRequest::class, // class
                     UntypedPropertyRequest::class,
-                    StringLiteralPropertyRequest::class,
-                    NumberLiteralPropertyRequest::class,
-                    OtherLiteralPropertyRequest::class,
-                    ResourcePropertyRequest::class,
                 ),
             )
         }
@@ -275,11 +271,11 @@ internal class OpenApiDocTest : MockMvcOpenApiBaseTest() {
                 oneOf(
                     "type",
                     mapOf(
+                        "string_literal" to StringLiteralTemplatePropertyRepresentation::class, // datatype, pattern
+                        "number_literal" to NumberLiteralTemplatePropertyRepresentation::class, // datatype, minInclusive, maxInclusive
+                        "other_literal" to OtherLiteralTemplatePropertyRepresentation::class, // datatype
+                        "resource" to ResourceTemplatePropertyRepresentation::class, // class
                         "untyped" to UntypedTemplatePropertyRepresentation::class,
-                        "string_literal" to StringLiteralTemplatePropertyRepresentation::class,
-                        "number_literal" to NumberLiteralTemplatePropertyRepresentation::class,
-                        "other_literal" to OtherLiteralTemplatePropertyRepresentation::class,
-                        "resource" to ResourceTemplatePropertyRepresentation::class,
                     ),
                 ),
             )

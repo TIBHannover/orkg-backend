@@ -1,0 +1,45 @@
+--- src/models/TemplatePropertyRequest.ts
++++ src/models/TemplatePropertyRequest.ts
+@@ -66,6 +66,9 @@
+     if (typeof json !== 'object') {
+         return json;
+     }
++    if (instanceOfStringLiteralPropertyRequest(json)) {
++        return StringLiteralPropertyRequestFromJSONTyped(json, true);
++    }
+     if (instanceOfNumberLiteralPropertyRequest(json)) {
+         return NumberLiteralPropertyRequestFromJSONTyped(json, true);
+     }
+@@ -75,9 +78,6 @@
+     if (instanceOfResourcePropertyRequest(json)) {
+         return ResourcePropertyRequestFromJSONTyped(json, true);
+     }
+-    if (instanceOfStringLiteralPropertyRequest(json)) {
+-        return StringLiteralPropertyRequestFromJSONTyped(json, true);
+-    }
+     if (instanceOfUntypedPropertyRequest(json)) {
+         return UntypedPropertyRequestFromJSONTyped(json, true);
+     }
+@@ -95,6 +95,9 @@
+     if (typeof value !== 'object') {
+         return value;
+     }
++    if (instanceOfStringLiteralPropertyRequest(value)) {
++        return StringLiteralPropertyRequestToJSON(value as StringLiteralPropertyRequest);
++    }
+     if (instanceOfNumberLiteralPropertyRequest(value)) {
+         return NumberLiteralPropertyRequestToJSON(value as NumberLiteralPropertyRequest);
+     }
+@@ -104,12 +107,8 @@
+     if (instanceOfResourcePropertyRequest(value)) {
+         return ResourcePropertyRequestToJSON(value as ResourcePropertyRequest);
+     }
+-    if (instanceOfStringLiteralPropertyRequest(value)) {
+-        return StringLiteralPropertyRequestToJSON(value as StringLiteralPropertyRequest);
+-    }
+     if (instanceOfUntypedPropertyRequest(value)) {
+         return UntypedPropertyRequestToJSON(value as UntypedPropertyRequest);
+     }
+     return {};
+ }
+-

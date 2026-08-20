@@ -31,8 +31,6 @@ dumps/
 
 .kotlin
 
-modules.*
-
 **/node_modules/
 
 # Mise-en-place

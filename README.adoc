@@ -165,17 +165,3 @@ The Neo4j Docker image includes the following extensions:
 
 APOC Core and APOC Extended are required by the ORKG.
 You need to include them when you set up Neo4j in your environment manually.
-
-== Gradle Subprojects (a. k. a. Modules)
-
-You can create an overview of the Gradle subproject dependencies as https://mermaid.js.org/[Mermaid] diagram,
-which can be converted to SVG or PDF, like this:
-
-[source,shell]
-....
-./gradlew createModuleGraph
-mmdc -i modules.mermaid -e svg -o modules.svg -c mermaid-config.json
-....
-
-The configuration file increases the maximum number of nodes allowed for processing.
-If you run into issues, this number can be increased further.

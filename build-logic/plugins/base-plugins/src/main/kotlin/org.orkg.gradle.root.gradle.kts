@@ -6,7 +6,6 @@ plugins {
     id("com.diffplug.spotless-changelog")
     id("com.github.ben-manes.versions")
     id("com.osacky.doctor")
-    id("dev.iurysouza.modulegraph")
 }
 
 doctor {
@@ -67,41 +66,3 @@ fun isSpringManaged(
             "org.springframework.security",
             "org.testcontainers",
         )
-
-// Module Graph plugin configuration
-
-val modulesFile = "./modules.mermaid"
-
-moduleGraphConfig {
-    readmePath.set(modulesFile)
-    heading = ""
-}
-
-val convertModuleGraphCodeBlockToStandaloneFile by tasks.registering {
-    description = "Converts a module graph diagram to a standalone adoc file"
-    mustRunAfter(tasks.named("createModuleGraph"))
-    doLast {
-        val outputFile = File(modulesFile)
-        val content = outputFile.readText().lineSequence()
-        val asciidocContent =
-            content
-                // Remove Markdown code blocks
-                .filterNot { it.startsWith("```mermaid") }
-                .filterNot { it.startsWith("```") }
-                // Filter root module, because it connects to everything and gives no information
-                .filterNot { it.contains(": --> :") }
-                // Work-around for "graph" being a reserved word, which leads to parsing errors
-                .map { it.replace(":g", ":G") }
-                // Remove emtpy lines at the top of the file
-                .filter { it.isNotBlank() }
-                .joinToString("\n")
-        outputFile.writeText(asciidocContent)
-    }
-}
-
-tasks.named("createModuleGraph") {
-    doFirst {
-        File(modulesFile).delete()
-    }
-    finalizedBy(convertModuleGraphCodeBlockToStandaloneFile)
-}

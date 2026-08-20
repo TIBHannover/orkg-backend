@@ -17,6 +17,5 @@ dependencies {
     implementation("com.diffplug.spotless-changelog:spotless-changelog-plugin-gradle")
     implementation("com.github.ben-manes:gradle-versions-plugin")
     implementation("com.osacky.doctor:doctor-plugin")
-    implementation("dev.iurysouza:modulegraph")
     implementation("io.github.java-diff-utils:java-diff-utils")
 }

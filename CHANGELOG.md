@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [0.102.0] - 2026-08-20
 ### Added
 - Added endpoint for deleting draft comparisons.
   (See [!1516](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1516))
@@ -2050,7 +2052,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - This CHANGELOG file. Finally!
 
-[unreleased]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/compare/0.101.1...master
+[unreleased]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/compare/0.102.0...master
+[0.102.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.102.0
 [0.101.1]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.101.1
 [0.101.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.101.0
 [0.100.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.100.0

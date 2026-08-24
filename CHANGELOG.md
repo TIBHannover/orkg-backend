@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [0.102.1] - 2026-08-24
 ### Changed
 - It is now possible to change the extraction method from `AI_GENERATED(_WITH_MANUAL_REVIEW)` to a different value when a new label is provided at the same time.
   (See [!1526](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1526))
@@ -2057,7 +2059,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - This CHANGELOG file. Finally!
 
-[unreleased]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/compare/0.102.0...master
+[unreleased]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/compare/0.102.1...master
+[0.102.1]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.102.1
 [0.102.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.102.0
 [0.101.1]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.101.1
 [0.101.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.101.0

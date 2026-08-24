@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Changed
+- It is now possible to change the extraction method from `AI_GENERATED(_WITH_MANUAL_REVIEW)` to a different value when a new label is provided at the same time.
+  (See [!1526](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1526))
+- The extraction method now resets from `AI_GENERATED(_WITH_MANUAL_REVIEW)` to `MANUAL` when the label of a thing is updated.
+  (See [!1526](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1526))
 
 ## [0.102.0] - 2026-08-20
 ### Added

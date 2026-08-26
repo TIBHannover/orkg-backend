@@ -7,94 +7,101 @@ shopt -s expand_aliases
 
 neo4j_version=2026-community
 
-dump_volume=orkg-dumps
 source_dir=orkg-backend
-is_podman=false
 
 function check_docker_availability() {
-    docker_exe=$(docker -v 2>/dev/null | grep version >/dev/null && echo found || echo missing)
+    for variant in podman podman-remote-static-linux_amd64 docker
+    do
+        docker_exe=$(command -v "$variant")
+        [ -n "$docker_exe" ] && break
+    done
+
+    if [ -z "$docker_exe" ]; then
+        echo "ERROR: Docker client was not found. Please ensure it is installed and can be called."
+        exit 1
+    fi
+}
+
+function check_docker_compose_availability() {
+    docker_compose_exe=$($docker_exe compose version 2>/dev/null | grep version >/dev/null && echo "$docker_exe compose" || echo "")
+
+    if [ -z "$docker_compose_exe" ]; then
+        echo "ERROR: Unable to find the Compose plug-in, running '$docker_exe compose' failed. Please ensure that it is installed."
+        exit 1
+    fi
+}
+
+function wait_for_neo4j {
+    # We initially used:
+    #   ( docker-compose up neo4j & ) | grep -q 'Remote interface available at http:'
+    # but that does not seem to work in Windows Subsystem for Linux (WSL).
+    until $docker_compose_exe logs neo4j 2>/dev/null | grep -q 'Remote interface available at http:'; do sleep 1; done
 }
 
 check_docker_availability
+check_docker_compose_availability
 
-if [ "$docker_exe" != "found" ]; then
-    alias docker=podman
-    is_podman=true
-    check_docker_availability
-fi
-
-if [ "$docker_exe" != "found" ]; then
-    alias podman='podman-remote-static-linux_amd64'
-    check_docker_availability
-fi
-
-if [ "$docker_exe" != "found" ]; then
-    echo "ERROR: Docker client was not found. Please ensure it is installed and can be called."
-    exit 1
-fi
-
-docker_compose_exe=$(docker compose version 2>/dev/null | grep version >/dev/null && echo found || echo missing)
-
-if [ "$docker_compose_exe" != "found" ]; then
-    echo "ERROR: Unable to find Docker Compose plug-in. Please ensure that it is installed."
-    exit 1
-fi
+is_podman=$(echo "$docker_exe" | grep podman >/dev/null && echo true || echo false)
 
 # Find the root/project directory
 root_dir="$(git rev-parse --show-toplevel)"
 
+# Ensure dumps directory exists
+mkdir -p "$root_dir/dumps"
+
 # Load dump into separate volume
 if [ "$is_podman" == "true" ]; then
     # podman throws an error when volume already exists, pass --ignore
-    docker volume create --ignore "$dump_volume"
-    temp_container=$(docker container create --volume "${dump_volume}:/dumps" alpine)
-    # podman follows symlinks by default
-    docker cp "${1:-"${root_dir}/dumps/neo4j-dump-latest.dump"}" "${temp_container}:/dumps/neo4j-dump-latest.dump"
+    docker_volume_create_opts="--ignore"
 else
-    # docker does not throw an error when volume already exists
-    docker volume create "$dump_volume"
-    temp_container=$(docker container create --volume "${dump_volume}:/dumps" alpine)
     # docker does not follow symlinks by default, pass -L parameter
-    docker cp -L "${1:-"${root_dir}/dumps/neo4j-dump-latest.dump"}" "${temp_container}:/dumps/neo4j-dump-latest.dump"
+    docker_cp_opts="-L"
 fi
 
-docker rm "$temp_container"
+if [ ! -e "$root_dir/dumps/active.dump" ] && [ -z "${1:-}" ]; then
+    echo "The active dump file is not set, and no other file is provided." >&2
+    echo "Please pass a dump as an argument to this script," >&2
+    echo "or provide '$root_dir/dumps/active.dump'." >&2
+    exit 1
+fi
+
+# Check if an argument was passed. If so, make it "active", meaning update the symlink to the active dump.
+if [ -n "${1:-}" ]; then
+    # Update symlink to active dump to be loaded
+    ln -s -f "$(realpath -m --relative-to="$root_dir/dumps" "$1")" "$root_dir/dumps/active.dump"
+fi
+
+local_dump_file="$root_dir/dumps/active.dump" # must be absolute, but that is given
 
 # Shutdown and remove Neo4j
-docker compose stop neo4j
-docker compose rm -f neo4j
+$docker_compose_exe stop neo4j
+$docker_compose_exe rm -f neo4j
 
 # Trash old database
-docker volume rm "${source_dir}_neo4j-data"
+$docker_exe volume rm "${source_dir}_neo4j-data"
 
 # Re-initialize database. Wait for Neo4j to start (this might take a while), then shut down again.
-# We initially used:
-#   ( docker-compose up neo4j & ) | grep -q 'Remote interface available at http:'
-# but that does not seem to work in Windows Subsystem for Linux (WSL).
-docker compose up -d neo4j
-until docker compose logs neo4j 2>/dev/null | grep -q 'Remote interface available at http:'; do sleep 1; done
-docker compose stop neo4j
+$docker_compose_exe up -d neo4j
+wait_for_neo4j
+$docker_compose_exe stop neo4j
 
 # Load dump.
 # The double dash seems to be required to make the script work with "Git Bash" in Windows. :-/
-docker run -i --rm --entrypoint //bin/bash --volumes-from "${source_dir}-neo4j-1" --volume "${dump_volume}:/dumps" neo4j:$neo4j_version <<EOS
-neo4j-admin database load orkg --overwrite-destination=true --from-stdin < /dumps/neo4j-dump-latest.dump
+$docker_exe run -i --rm --entrypoint //bin/bash --volumes-from "${source_dir}-neo4j-1" --volume "${local_dump_file}:/dumps/active.dump" neo4j:$neo4j_version <<EOS
+neo4j-admin database load orkg --overwrite-destination=true --from-stdin < /dumps/active.dump
 EOS
 
 # Destroy database container. This is required to get rid of the logs, so the next step can wait successfully.
 # Data is already stored in the volume, so this only affects the container.
-docker compose rm -f neo4j
-
-# Destroy dump volume
-docker volume rm "$dump_volume"
+$docker_compose_exe rm -f neo4j
 
 # Bring up database
-docker compose up -d neo4j
-until docker compose logs neo4j 2>/dev/null | grep -q 'Remote interface available at http:'; do sleep 1; done
+$docker_compose_exe up -d neo4j
+wait_for_neo4j
 
 # Apply some migrations that already ran, containing custom procedures. This is a work-around because we cannot share
 # the "system" database.
 # shellcheck disable=SC2002
 cat "${root_dir}/migrations/neo4j-migrations/src/main/resources/neo4j/migrations-system/R0027__create_custom_subgraph_procedure.cypher" \
   "${root_dir}/migrations/neo4j-migrations/src/main/resources/neo4j/migrations-system/R0031__create_custom_timestamp_parsing_function.cypher" \
-  | docker compose exec -T neo4j cypher-shell -d system
+  | $docker_compose_exe exec -T neo4j cypher-shell -d system

@@ -427,7 +427,7 @@ class SpringDataNeo4jStatementAdapter(
             val r = name("r")
             val `object` = name("obj")
             val propertyMappings = mapOf(
-                "id" to r.property("id"),
+                "id" to r.property("statement_id"),
                 "created_at" to r.property("created_at"),
                 "created_by" to r.property("created_by"),
                 "index" to r.property("index"),
@@ -452,7 +452,7 @@ class SpringDataNeo4jStatementAdapter(
                 .with(r, subject, `object`)
                 .orderBy(
                     sort.toSortItems(
-                        uniqueKey = r.property("id"),
+                        uniqueKey = r.property("statement_id"),
                         propertyMappings = propertyMappings,
                         knownProperties = arrayOf(
                             "id",

@@ -58,7 +58,10 @@ tasks.withType<Test>().configureEach {
     useJUnitPlatform()
 
     // maxParallelForks = 4
-    // maxHeapSize = "1g"
+
+    // Configure Gradle Workers to use a larger heap size than 512m.
+    // This is required for running integration tests.
+    maxHeapSize = "1G"
 
     // testLogging.showStandardStreams = true
 

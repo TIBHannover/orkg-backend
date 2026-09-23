@@ -67,6 +67,7 @@ object Schemes {
         }
         types {
             type("text", Classes.string)
+            type("string", Classes.string)
             type("decimal", Classes.decimal)
             type("integer", Classes.integer)
             type("boolean", Classes.boolean)

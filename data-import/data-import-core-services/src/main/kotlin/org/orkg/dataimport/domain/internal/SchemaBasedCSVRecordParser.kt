@@ -192,7 +192,7 @@ data class SchemaBasedCSVRecordParser(
                 val matcher = valueWithDataType.matcher(input).also { it.find() }
                 val namespace = matcher.group(1)
                 val value = matcher.group(2).takeIf { it.isNotEmpty() }
-                val type = matcher.group(3)?.let { typeMappings[it] ?: throw UnknownCSVValueType(it, row, column) }
+                val type = matcher.group(3)?.let { typeMappings[it.lowercase()] ?: throw UnknownCSVValueType(it, row, column) }
                 return Value(namespace, value, type)
             }
         }

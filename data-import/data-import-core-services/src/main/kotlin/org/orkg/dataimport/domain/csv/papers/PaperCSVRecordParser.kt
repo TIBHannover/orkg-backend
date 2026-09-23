@@ -135,7 +135,7 @@ open class PaperCSVRecordParser(
         val statements = headers.zip(item.values)
             .filterIndexed { index, (_, value) -> namespaces[index]?.closed != true && !value.value.isNullOrBlank() }
             .map { (header, value) ->
-                if (value.type != Classes.resource && Literals.XSD.fromClass(value.type) == null) {
+                if (!isKnownValueType(value)) {
                     throw UnknownCSVValueType(value.type.value, item.itemNumber, header.column)
                 }
                 if (value.namespace == "orkg") {
@@ -242,6 +242,13 @@ open class PaperCSVRecordParser(
 
     private fun TypedCSVRecord.getOrNull(index: Int?): TypedValue? =
         if (index != null && index >= 0 && index < values.size) values[index] else null
+
+    private fun isKnownValueType(value: TypedValue): Boolean =
+        value.type == Classes.thing ||
+            value.type == Classes.resource ||
+            value.type == Classes.`class` ||
+            value.type == Classes.predicate ||
+            Literals.XSD.fromClass(value.type) != null
 
     companion object {
         const val PAPER_NS = "paper"

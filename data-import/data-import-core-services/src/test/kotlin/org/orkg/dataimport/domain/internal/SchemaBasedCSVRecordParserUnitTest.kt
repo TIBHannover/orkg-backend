@@ -21,7 +21,7 @@ import org.orkg.dataimport.domain.testing.fixtures.createCSVHeaders
 import org.orkg.dataimport.domain.testing.fixtures.createCSVSchema
 import org.orkg.graph.domain.Classes
 
-internal class SchemaBasedCSVRecordParserTest {
+internal class SchemaBasedCSVRecordParserUnitTest {
     private val schemaBasedCSVRecordParser = SchemaBasedCSVRecordParser(createCSVSchema())
     private val headers = createCSVHeaders()
 

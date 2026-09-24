@@ -6,6 +6,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Fixed
+- Fixed statements endpoint returning empty results when sorting by `id`.
+  (See [!1543](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1543))
+- Fixed literal type mappings being case-sensitive for CSV import.
+  (See [!1546](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1546))
+- Fixed type checking not accounting for classes, predicates and things during CSV import.
+  (See [!1546](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1546))
+- Fixed missing type mapping for `string` for CSV import.
+  (See [!1546](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1546))
 
 ## [0.102.1] - 2026-08-24
 ### Changed

@@ -48,7 +48,7 @@ class ComparisonPublicationInfoCreator(
             CreateStatementUseCase.CreateCommand(
                 contributorId = command.contributorId,
                 subjectId = comparisonId,
-                predicateId = Predicates.yearPublished,
+                predicateId = Predicates.monthPublished,
                 objectId = publicationMonthLiteralId,
                 extractionMethod = command.extractionMethod,
             ),

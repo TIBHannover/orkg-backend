@@ -1,11 +1,19 @@
 package org.orkg.contenttypes.domain.actions.comparisons
 
 import org.orkg.contenttypes.domain.actions.CreateComparisonCommand
+import org.orkg.contenttypes.domain.actions.CreateComparisonRelatedFigureCommand
+import org.orkg.contenttypes.domain.actions.CreateComparisonRelatedFigureState
+import org.orkg.contenttypes.domain.actions.CreateComparisonRelatedResourceCommand
+import org.orkg.contenttypes.domain.actions.CreateComparisonRelatedResourceState
 import org.orkg.contenttypes.domain.actions.CreateComparisonState
 import org.orkg.contenttypes.domain.actions.PublishComparisonCommand
 import org.orkg.contenttypes.domain.actions.comparisons.PublishComparisonAction.State
+import org.orkg.contenttypes.domain.actions.comparisons.figures.ComparisonRelatedFigureCreator
+import org.orkg.contenttypes.domain.actions.comparisons.resources.ComparisonRelatedResourceCreator
 import org.orkg.contenttypes.domain.actions.execute
 import org.orkg.contenttypes.domain.ids
+import org.orkg.contenttypes.input.ComparisonRelatedFigureUseCases
+import org.orkg.contenttypes.input.ComparisonRelatedResourceUseCases
 import org.orkg.contenttypes.input.ComparisonSearchProtocolCommand
 import org.orkg.graph.input.ListUseCases
 import org.orkg.graph.input.UnsafeLiteralUseCases
@@ -14,8 +22,11 @@ import org.orkg.graph.input.UnsafeStatementUseCases
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.StatementRepository
 import java.time.Clock
+import kotlin.jvm.optionals.getOrNull
 
 class ComparisonVersionCreator(
+    private val comparisonRelatedFigureUseCases: ComparisonRelatedFigureUseCases,
+    private val comparisonRelatedResourceUseCases: ComparisonRelatedResourceUseCases,
     private val resourceRepository: ResourceRepository,
     private val statementRepository: StatementRepository,
     private val unsafeResourceUseCases: UnsafeResourceUseCases,
@@ -65,11 +76,40 @@ class ComparisonVersionCreator(
             ComparisonVisualizationCreator(unsafeStatementUseCases),
             ComparisonPublicationInfoCreator(unsafeStatementUseCases, unsafeLiteralUseCases, clock),
         )
-        return state.copy(
-            comparisonVersionId = steps.execute(
-                createComparisonCommand,
-                CreateComparisonState(),
-            ).comparisonId!!,
-        )
+        val comparisonVersionId = steps.execute(createComparisonCommand, CreateComparisonState()).comparisonId!!
+        comparison.relatedFigures.forEach {
+            val relatedFigure = comparisonRelatedFigureUseCases.findByIdAndComparisonId(comparison.id, it.id).getOrNull()
+                ?: return@forEach
+            val createComparisonRelatedFigureCommand = CreateComparisonRelatedFigureCommand(
+                comparisonId = comparisonVersionId,
+                contributorId = relatedFigure.createdBy,
+                label = relatedFigure.label,
+                image = relatedFigure.image,
+                description = relatedFigure.description,
+                modifiable = false,
+            )
+            val steps = listOf(
+                ComparisonRelatedFigureCreator(unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases),
+            )
+            steps.execute(createComparisonRelatedFigureCommand, CreateComparisonRelatedFigureState())
+        }
+        comparison.relatedResources.forEach {
+            val relatedResource = comparisonRelatedResourceUseCases.findByIdAndComparisonId(comparison.id, it.id).getOrNull()
+                ?: return@forEach
+            val createComparisonRelatedResourceCommand = CreateComparisonRelatedResourceCommand(
+                comparisonId = comparisonVersionId,
+                contributorId = relatedResource.createdBy,
+                label = relatedResource.label,
+                image = relatedResource.image,
+                url = relatedResource.url,
+                description = relatedResource.description,
+                modifiable = false,
+            )
+            val steps = listOf(
+                ComparisonRelatedResourceCreator(unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases),
+            )
+            steps.execute(createComparisonRelatedResourceCommand, CreateComparisonRelatedResourceState())
+        }
+        return state.copy(comparisonVersionId = comparisonVersionId)
     }
 }

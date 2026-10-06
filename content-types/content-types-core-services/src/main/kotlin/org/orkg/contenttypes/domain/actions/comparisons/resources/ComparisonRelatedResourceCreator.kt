@@ -23,6 +23,7 @@ class ComparisonRelatedResourceCreator(
                 contributorId = command.contributorId,
                 label = command.label,
                 classes = setOf(Classes.comparisonRelatedResource),
+                modifiable = command.modifiable,
             ),
         )
         unsafeStatementUseCases.create(
@@ -32,6 +33,7 @@ class ComparisonRelatedResourceCreator(
                 predicateId = Predicates.hasRelatedResource,
                 objectId = comparisonRelatedResourceId,
                 extractionMethod = ExtractionMethod.UNKNOWN, // TODO: Get extraction method from command
+                modifiable = command.modifiable,
             ),
         )
         if (command.image != null) {
@@ -45,9 +47,11 @@ class ComparisonRelatedResourceCreator(
                             contributorId = command.contributorId,
                             label = command.image!!,
                             extractionMethod = ExtractionMethod.UNKNOWN, // TODO: Get extraction method from command
+                            modifiable = command.modifiable,
                         ),
                     ),
                     extractionMethod = ExtractionMethod.UNKNOWN, // TODO: Get extraction method from command
+                    modifiable = command.modifiable,
                 ),
             )
         }
@@ -62,9 +66,11 @@ class ComparisonRelatedResourceCreator(
                             contributorId = command.contributorId,
                             label = command.url!!,
                             extractionMethod = ExtractionMethod.UNKNOWN, // TODO: Get extraction method from command
+                            modifiable = command.modifiable,
                         ),
                     ),
                     extractionMethod = ExtractionMethod.UNKNOWN, // TODO: Get extraction method from command
+                    modifiable = command.modifiable,
                 ),
             )
         }
@@ -79,9 +85,11 @@ class ComparisonRelatedResourceCreator(
                             contributorId = command.contributorId,
                             label = command.description!!,
                             extractionMethod = ExtractionMethod.UNKNOWN, // TODO: Get extraction method from command
+                            modifiable = command.modifiable,
                         ),
                     ),
                     extractionMethod = ExtractionMethod.UNKNOWN, // TODO: Get extraction method from command
+                    modifiable = command.modifiable,
                 ),
             )
         }

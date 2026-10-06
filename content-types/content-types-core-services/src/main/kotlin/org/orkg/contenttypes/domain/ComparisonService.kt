@@ -66,6 +66,8 @@ import org.orkg.contenttypes.domain.actions.comparisons.ComparisonVersionTableCr
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonVisualizationCreator
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonVisualizationUpdater
 import org.orkg.contenttypes.domain.actions.execute
+import org.orkg.contenttypes.input.ComparisonRelatedFigureUseCases
+import org.orkg.contenttypes.input.ComparisonRelatedResourceUseCases
 import org.orkg.contenttypes.input.ComparisonTableUseCases
 import org.orkg.contenttypes.input.ComparisonUseCases
 import org.orkg.contenttypes.output.ComparisonRepository
@@ -119,6 +121,8 @@ class ComparisonService(
     private val comparisonRepository: ComparisonRepository,
     private val comparisonTableUseCases: ComparisonTableUseCases,
     private val comparisonTableRepository: ComparisonTableRepository,
+    private val comparisonRelatedFigureUseCases: ComparisonRelatedFigureUseCases,
+    private val comparisonRelatedResourceUseCases: ComparisonRelatedResourceUseCases,
     private val clock: Clock,
     @param:Value($$"${orkg.publishing.base-url.comparison}")
     private val comparisonPublishBaseUri: String = "http://localhost/comparison/",
@@ -238,7 +242,7 @@ class ComparisonService(
     override fun publish(command: PublishComparisonCommand): ThingId {
         val steps = listOf<Action<PublishComparisonCommand, PublishComparisonState>>(
             ComparisonPublishableValidator(this),
-            ComparisonVersionCreator(resourceRepository, statementRepository, unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases, listService, clock),
+            ComparisonVersionCreator(comparisonRelatedFigureUseCases, comparisonRelatedResourceUseCases, resourceRepository, statementRepository, unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases, listService, clock),
             ComparisonVersionTableCreator(comparisonTableUseCases, comparisonTableRepository),
             ComparisonVersionHistoryUpdater(unsafeStatementUseCases, unsafeResourceUseCases),
             ComparisonVersionDoiPublisher(unsafeStatementUseCases, unsafeLiteralUseCases, comparisonRepository, doiService, comparisonPublishBaseUri),

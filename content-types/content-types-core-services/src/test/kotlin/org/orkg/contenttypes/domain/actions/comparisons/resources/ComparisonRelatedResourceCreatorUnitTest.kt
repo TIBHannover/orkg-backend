@@ -43,9 +43,9 @@ internal class ComparisonRelatedResourceCreatorUnitTest : MockkBaseTest {
             image = "https://example.org/test.png",
             url = "https://orkg.org/resources/R1000",
             description = "comparison related resource description",
+            modifiable = true,
         )
         val resourceId = ThingId("R456")
-        val comparison = createResource(classes = setOf(Classes.comparison))
         val imageLiteralId = ThingId("L1")
         val urlLiteralId = ThingId("L2")
         val descriptionLiteralId = ThingId("L3")
@@ -73,6 +73,7 @@ internal class ComparisonRelatedResourceCreatorUnitTest : MockkBaseTest {
                     contributorId = command.contributorId,
                     label = command.label,
                     classes = setOf(Classes.comparisonRelatedResource),
+                    modifiable = command.modifiable,
                 ),
             )
         } returns resourceId
@@ -83,6 +84,7 @@ internal class ComparisonRelatedResourceCreatorUnitTest : MockkBaseTest {
                     subjectId = command.comparisonId,
                     predicateId = Predicates.hasRelatedResource,
                     objectId = resourceId,
+                    modifiable = command.modifiable,
                 ),
             )
         } returns StatementId("S123")
@@ -96,6 +98,7 @@ internal class ComparisonRelatedResourceCreatorUnitTest : MockkBaseTest {
                     subjectId = resourceId,
                     predicateId = Predicates.hasImage,
                     objectId = imageLiteralId,
+                    modifiable = command.modifiable,
                 ),
             )
         } returns StatementId("S1")
@@ -106,6 +109,7 @@ internal class ComparisonRelatedResourceCreatorUnitTest : MockkBaseTest {
                     subjectId = resourceId,
                     predicateId = Predicates.hasURL,
                     objectId = urlLiteralId,
+                    modifiable = command.modifiable,
                 ),
             )
         } returns StatementId("S2")
@@ -116,6 +120,7 @@ internal class ComparisonRelatedResourceCreatorUnitTest : MockkBaseTest {
                     subjectId = resourceId,
                     predicateId = Predicates.description,
                     objectId = descriptionLiteralId,
+                    modifiable = command.modifiable,
                 ),
             )
         } returns StatementId("S3")
@@ -128,6 +133,7 @@ internal class ComparisonRelatedResourceCreatorUnitTest : MockkBaseTest {
                     contributorId = command.contributorId,
                     label = command.label,
                     classes = setOf(Classes.comparisonRelatedResource),
+                    modifiable = command.modifiable,
                 ),
             )
         }
@@ -138,6 +144,7 @@ internal class ComparisonRelatedResourceCreatorUnitTest : MockkBaseTest {
                     subjectId = command.comparisonId,
                     predicateId = Predicates.hasRelatedResource,
                     objectId = resourceId,
+                    modifiable = command.modifiable,
                 ),
             )
         }
@@ -151,6 +158,7 @@ internal class ComparisonRelatedResourceCreatorUnitTest : MockkBaseTest {
                     subjectId = resourceId,
                     predicateId = Predicates.hasImage,
                     objectId = imageLiteralId,
+                    modifiable = command.modifiable,
                 ),
             )
         }
@@ -161,6 +169,7 @@ internal class ComparisonRelatedResourceCreatorUnitTest : MockkBaseTest {
                     subjectId = resourceId,
                     predicateId = Predicates.hasURL,
                     objectId = urlLiteralId,
+                    modifiable = command.modifiable,
                 ),
             )
         }
@@ -171,6 +180,7 @@ internal class ComparisonRelatedResourceCreatorUnitTest : MockkBaseTest {
                     subjectId = resourceId,
                     predicateId = Predicates.description,
                     objectId = descriptionLiteralId,
+                    modifiable = command.modifiable,
                 ),
             )
         }

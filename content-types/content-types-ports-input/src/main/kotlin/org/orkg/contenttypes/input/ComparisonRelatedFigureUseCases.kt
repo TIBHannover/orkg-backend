@@ -28,6 +28,7 @@ interface CreateComparisonRelatedFigureUseCase {
         val label: String,
         val image: String?,
         val description: String?,
+        val modifiable: Boolean = true,
     )
 }
 

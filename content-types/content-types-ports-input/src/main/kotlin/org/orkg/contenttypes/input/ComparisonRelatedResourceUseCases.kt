@@ -29,6 +29,7 @@ interface CreateComparisonRelatedResourceUseCase {
         val image: String?,
         val url: String?,
         val description: String?,
+        val modifiable: Boolean = true,
     )
 }
 

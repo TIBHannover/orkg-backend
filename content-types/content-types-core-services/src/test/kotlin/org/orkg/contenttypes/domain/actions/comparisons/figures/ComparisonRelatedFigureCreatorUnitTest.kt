@@ -42,6 +42,7 @@ internal class ComparisonRelatedFigureCreatorUnitTest : MockkBaseTest {
             label = "related figure",
             image = "https://example.org/test.png",
             description = "comparison related figure description",
+            modifiable = true,
         )
         val figureId = ThingId("R456")
         val image = createLiteral(ThingId("L1"))
@@ -51,11 +52,13 @@ internal class ComparisonRelatedFigureCreatorUnitTest : MockkBaseTest {
             contributorId = command.contributorId,
             label = command.image!!,
             extractionMethod = extractionMethod,
+            modifiable = command.modifiable,
         )
         val createDescriptionCommand = CreateLiteralUseCase.CreateCommand(
             contributorId = command.contributorId,
             label = command.description!!,
             extractionMethod = extractionMethod,
+            modifiable = command.modifiable,
         )
         val state = CreateComparisonRelatedFigureState()
         val expected = CreateComparisonRelatedFigureState(figureId)
@@ -66,6 +69,7 @@ internal class ComparisonRelatedFigureCreatorUnitTest : MockkBaseTest {
                     contributorId = command.contributorId,
                     label = command.label,
                     classes = setOf(Classes.comparisonRelatedFigure),
+                    modifiable = command.modifiable,
                 ),
             )
         } returns figureId
@@ -76,6 +80,7 @@ internal class ComparisonRelatedFigureCreatorUnitTest : MockkBaseTest {
                     subjectId = command.comparisonId,
                     predicateId = Predicates.hasRelatedFigure,
                     objectId = figureId,
+                    modifiable = command.modifiable,
                 ),
             )
         } returns StatementId("S1")
@@ -88,6 +93,7 @@ internal class ComparisonRelatedFigureCreatorUnitTest : MockkBaseTest {
                     subjectId = figureId,
                     predicateId = Predicates.hasImage,
                     objectId = image.id,
+                    modifiable = command.modifiable,
                 ),
             )
         } returns StatementId("S2")
@@ -98,6 +104,7 @@ internal class ComparisonRelatedFigureCreatorUnitTest : MockkBaseTest {
                     subjectId = figureId,
                     predicateId = Predicates.description,
                     objectId = description.id,
+                    modifiable = command.modifiable,
                 ),
             )
         } returns StatementId("S3")
@@ -110,6 +117,7 @@ internal class ComparisonRelatedFigureCreatorUnitTest : MockkBaseTest {
                     contributorId = command.contributorId,
                     label = command.label,
                     classes = setOf(Classes.comparisonRelatedFigure),
+                    modifiable = command.modifiable,
                 ),
             )
         }
@@ -120,6 +128,7 @@ internal class ComparisonRelatedFigureCreatorUnitTest : MockkBaseTest {
                     subjectId = command.comparisonId,
                     predicateId = Predicates.hasRelatedFigure,
                     objectId = figureId,
+                    modifiable = command.modifiable,
                 ),
             )
         }
@@ -132,6 +141,7 @@ internal class ComparisonRelatedFigureCreatorUnitTest : MockkBaseTest {
                     subjectId = figureId,
                     predicateId = Predicates.hasImage,
                     objectId = image.id,
+                    modifiable = command.modifiable,
                 ),
             )
         }
@@ -142,6 +152,7 @@ internal class ComparisonRelatedFigureCreatorUnitTest : MockkBaseTest {
                     subjectId = figureId,
                     predicateId = Predicates.description,
                     objectId = description.id,
+                    modifiable = command.modifiable,
                 ),
             )
         }

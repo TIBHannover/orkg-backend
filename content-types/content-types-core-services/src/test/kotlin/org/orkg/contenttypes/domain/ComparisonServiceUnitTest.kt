@@ -17,6 +17,8 @@ import org.orkg.community.output.ConferenceSeriesRepository
 import org.orkg.community.output.ContributorRepository
 import org.orkg.community.output.ObservatoryRepository
 import org.orkg.community.output.OrganizationRepository
+import org.orkg.contenttypes.input.ComparisonRelatedFigureUseCases
+import org.orkg.contenttypes.input.ComparisonRelatedResourceUseCases
 import org.orkg.contenttypes.input.ComparisonTableUseCases
 import org.orkg.contenttypes.output.ComparisonRepository
 import org.orkg.contenttypes.output.ComparisonTableRepository
@@ -68,6 +70,8 @@ internal class ComparisonServiceUnitTest : MockkBaseTest {
     private val comparisonRepository: ComparisonRepository = mockk()
     private val comparisonTableUseCases: ComparisonTableUseCases = mockk()
     private val comparisonTableRepository: ComparisonTableRepository = mockk()
+    private val comparisonRelatedFigureUseCases: ComparisonRelatedFigureUseCases = mockk()
+    private val comparisonRelatedResourceUseCases: ComparisonRelatedResourceUseCases = mockk()
 
     private val service = ComparisonService(
         resourceRepository = resourceRepository,
@@ -89,6 +93,8 @@ internal class ComparisonServiceUnitTest : MockkBaseTest {
         comparisonRepository = comparisonRepository,
         comparisonTableUseCases = comparisonTableUseCases,
         comparisonTableRepository = comparisonTableRepository,
+        comparisonRelatedFigureUseCases = comparisonRelatedFigureUseCases,
+        comparisonRelatedResourceUseCases = comparisonRelatedResourceUseCases,
         clock = fixedClock,
         comparisonPublishBaseUri = "https://orkg.org/comparison/",
     )

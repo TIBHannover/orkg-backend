@@ -1,20 +1,19 @@
 package org.orkg.contenttypes.domain
 
-import dev.forkhandles.values.ofOrNull
 import org.orkg.common.ContributorId
 import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.actions.CreateComparisonRelatedFigureCommand
+import org.orkg.contenttypes.domain.actions.CreateComparisonRelatedFigureState
 import org.orkg.contenttypes.domain.actions.UpdateComparisonRelatedFigureCommand
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonRelatedFigureDeleter
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonRelatedFigureUpdater
+import org.orkg.contenttypes.domain.actions.comparisons.figures.ComparisonRelatedFigureCreator
+import org.orkg.contenttypes.domain.actions.comparisons.figures.ComparisonRelatedFigureValidator
+import org.orkg.contenttypes.domain.actions.execute
 import org.orkg.contenttypes.input.ComparisonRelatedFigureUseCases
 import org.orkg.graph.domain.Classes
-import org.orkg.graph.domain.Description
 import org.orkg.graph.domain.ExtractionMethod
-import org.orkg.graph.domain.InvalidDescription
-import org.orkg.graph.domain.InvalidLabel
-import org.orkg.graph.domain.Label
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Resource
 import org.orkg.graph.input.CreateLiteralUseCase
@@ -61,63 +60,11 @@ class ComparisonRelatedFigureService(
             .map { (it.`object` as Resource).toComparisonRelatedFigure() }
 
     override fun create(command: CreateComparisonRelatedFigureCommand): ThingId {
-        Label.ofOrNull(command.label) ?: throw InvalidLabel()
-        command.image?.let { Label.ofOrNull(it) ?: throw InvalidLabel("image") }
-        command.description?.let { Description.ofOrNull(it) ?: throw InvalidDescription() }
-        resourceRepository.findById(command.comparisonId)
-            .filter { Classes.comparison in it.classes }
-            .orElseThrow { ComparisonNotFound(command.comparisonId) }
-        val figureId = unsafeResourceUseCases.create(
-            CreateResourceUseCase.CreateCommand(
-                contributorId = command.contributorId,
-                label = command.label,
-                classes = setOf(Classes.comparisonRelatedFigure),
-            ),
+        val steps = listOf(
+            ComparisonRelatedFigureValidator(resourceRepository),
+            ComparisonRelatedFigureCreator(unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases),
         )
-        unsafeStatementUseCases.create(
-            CreateStatementUseCase.CreateCommand(
-                contributorId = command.contributorId,
-                subjectId = command.comparisonId,
-                predicateId = Predicates.hasRelatedFigure,
-                objectId = figureId,
-                extractionMethod = ExtractionMethod.UNKNOWN, // TODO: Get from command
-            ),
-        )
-        if (command.image != null) {
-            unsafeStatementUseCases.create(
-                CreateStatementUseCase.CreateCommand(
-                    contributorId = command.contributorId,
-                    subjectId = figureId,
-                    predicateId = Predicates.hasImage,
-                    objectId = unsafeLiteralUseCases.create(
-                        CreateLiteralUseCase.CreateCommand(
-                            contributorId = command.contributorId,
-                            label = command.image!!,
-                            extractionMethod = ExtractionMethod.UNKNOWN, // TODO: Get extraction method from command
-                        ),
-                    ),
-                    extractionMethod = ExtractionMethod.UNKNOWN, // TODO: Get extraction method from command
-                ),
-            )
-        }
-        if (command.description != null) {
-            unsafeStatementUseCases.create(
-                CreateStatementUseCase.CreateCommand(
-                    contributorId = command.contributorId,
-                    subjectId = figureId,
-                    predicateId = Predicates.description,
-                    objectId = unsafeLiteralUseCases.create(
-                        CreateLiteralUseCase.CreateCommand(
-                            contributorId = command.contributorId,
-                            label = command.description!!,
-                            extractionMethod = ExtractionMethod.UNKNOWN, // TODO: Get extraction method from command
-                        ),
-                    ),
-                    extractionMethod = ExtractionMethod.UNKNOWN, // TODO: Get extraction method from command
-                ),
-            )
-        }
-        return figureId
+        return steps.execute(command, CreateComparisonRelatedFigureState()).comparisonRelatedFigureId!!
     }
 
     override fun update(command: UpdateComparisonRelatedFigureCommand) {

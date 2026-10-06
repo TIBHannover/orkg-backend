@@ -1,7 +1,5 @@
-package org.orkg.contenttypes.domain
+package org.orkg.contenttypes.domain.actions.comparisons.resources
 
-import io.kotest.assertions.asClue
-import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
@@ -11,48 +9,33 @@ import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.contenttypes.domain.actions.CreateComparisonRelatedResourceCommand
+import org.orkg.contenttypes.domain.actions.CreateComparisonRelatedResourceState
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ExtractionMethod
-import org.orkg.graph.domain.InvalidDescription
-import org.orkg.graph.domain.InvalidLabel
-import org.orkg.graph.domain.MAX_LABEL_LENGTH
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.StatementId
 import org.orkg.graph.input.CreateLiteralUseCase
 import org.orkg.graph.input.CreateResourceUseCase
 import org.orkg.graph.input.CreateStatementUseCase
-import org.orkg.graph.input.ResourceUseCases
-import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UnsafeLiteralUseCases
 import org.orkg.graph.input.UnsafeResourceUseCases
 import org.orkg.graph.input.UnsafeStatementUseCases
-import org.orkg.graph.output.ResourceRepository
-import org.orkg.graph.output.StatementRepository
 import org.orkg.graph.testing.fixtures.createResource
-import java.util.Optional
 import java.util.UUID
 
-internal class ComparisonRelatedResourceServiceUnitTest : MockkBaseTest {
-    private val resourceRepository: ResourceRepository = mockk()
-    private val statementRepository: StatementRepository = mockk()
-    private val resourceService: ResourceUseCases = mockk()
+internal class ComparisonRelatedResourceCreatorUnitTest : MockkBaseTest {
     private val unsafeResourceUseCases: UnsafeResourceUseCases = mockk()
-    private val statementService: StatementUseCases = mockk()
     private val unsafeStatementUseCases: UnsafeStatementUseCases = mockk()
     private val unsafeLiteralUseCases: UnsafeLiteralUseCases = mockk()
 
-    private val service = ComparisonRelatedResourceService(
-        resourceRepository,
-        statementRepository,
-        resourceService,
+    private val comparisonRelatedResourceCreator = ComparisonRelatedResourceCreator(
         unsafeResourceUseCases,
-        statementService,
         unsafeStatementUseCases,
         unsafeLiteralUseCases,
     )
 
     @Test
-    fun `Given a comparison related resource create command, it creates the comparison related resource`() {
+    fun `Given a comparison related resource create command, it creates a comparison related resource`() {
         val command = CreateComparisonRelatedResourceCommand(
             comparisonId = ThingId("R123"),
             contributorId = ContributorId(UUID.randomUUID()),
@@ -81,8 +64,9 @@ internal class ComparisonRelatedResourceServiceUnitTest : MockkBaseTest {
             label = command.description!!,
             extractionMethod = ExtractionMethod.UNKNOWN,
         )
+        val state = CreateComparisonRelatedResourceState()
+        val expected = CreateComparisonRelatedResourceState(resourceId)
 
-        every { resourceRepository.findById(command.comparisonId) } returns Optional.of(comparison)
         every {
             unsafeResourceUseCases.create(
                 CreateResourceUseCase.CreateCommand(
@@ -136,9 +120,8 @@ internal class ComparisonRelatedResourceServiceUnitTest : MockkBaseTest {
             )
         } returns StatementId("S3")
 
-        service.create(command) shouldBe resourceId
+        comparisonRelatedResourceCreator(command, state) shouldBe expected
 
-        verify(exactly = 1) { resourceRepository.findById(command.comparisonId) }
         verify(exactly = 1) {
             unsafeResourceUseCases.create(
                 CreateResourceUseCase.CreateCommand(
@@ -191,83 +174,5 @@ internal class ComparisonRelatedResourceServiceUnitTest : MockkBaseTest {
                 ),
             )
         }
-    }
-
-    @Test
-    fun `Given a comparison related resource create command, when label is invalid, it throws an exception`() {
-        val command = CreateComparisonRelatedResourceCommand(
-            comparisonId = ThingId("R123"),
-            contributorId = ContributorId(UUID.randomUUID()),
-            label = "\n",
-            image = null,
-            url = null,
-            description = null,
-        )
-        shouldThrow<InvalidLabel> { service.create(command) }.asClue {
-            it.property shouldBe "label"
-        }
-    }
-
-    @Test
-    fun `Given a comparison related resource create command, when image is invalid, it throws an exception`() {
-        val command = CreateComparisonRelatedResourceCommand(
-            comparisonId = ThingId("R123"),
-            contributorId = ContributorId(UUID.randomUUID()),
-            label = "related resource",
-            image = "\n",
-            url = null,
-            description = null,
-        )
-        shouldThrow<InvalidLabel> { service.create(command) }.asClue {
-            it.property shouldBe "image"
-        }
-    }
-
-    @Test
-    fun `Given a comparison related resource create command, when url is invalid, it throws an exception`() {
-        val command = CreateComparisonRelatedResourceCommand(
-            comparisonId = ThingId("R123"),
-            contributorId = ContributorId(UUID.randomUUID()),
-            label = "related resource",
-            image = null,
-            url = "\n",
-            description = null,
-        )
-        shouldThrow<InvalidLabel> { service.create(command) }.asClue {
-            it.property shouldBe "url"
-        }
-    }
-
-    @Test
-    fun `Given a comparison related resource create command, when description is invalid, it throws an exception`() {
-        val command = CreateComparisonRelatedResourceCommand(
-            comparisonId = ThingId("R123"),
-            contributorId = ContributorId(UUID.randomUUID()),
-            label = "related resource",
-            image = null,
-            url = null,
-            description = "a".repeat(MAX_LABEL_LENGTH + 1),
-        )
-        shouldThrow<InvalidDescription> { service.create(command) }.asClue {
-            it.property shouldBe "description"
-        }
-    }
-
-    @Test
-    fun `Given a comparison related resource create command, when comparison does not exist, it throws an exception`() {
-        val command = CreateComparisonRelatedResourceCommand(
-            comparisonId = ThingId("R123"),
-            contributorId = ContributorId(UUID.randomUUID()),
-            label = "related resource",
-            image = null,
-            url = null,
-            description = null,
-        )
-
-        every { resourceRepository.findById(any()) } returns Optional.empty()
-
-        shouldThrow<ComparisonNotFound> { service.create(command) }
-
-        verify(exactly = 1) { resourceRepository.findById(any()) }
     }
 }

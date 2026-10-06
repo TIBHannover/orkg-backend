@@ -5,6 +5,7 @@ import org.orkg.contenttypes.domain.actions.comparisons.DeleteComparisonAction
 import org.orkg.contenttypes.domain.actions.comparisons.PublishComparisonAction
 import org.orkg.contenttypes.domain.actions.comparisons.UpdateComparisonAction
 import org.orkg.contenttypes.domain.actions.comparisons.figures.CreateComparisonRelatedFigureAction
+import org.orkg.contenttypes.domain.actions.comparisons.resources.CreateComparisonRelatedResourceAction
 import org.orkg.contenttypes.domain.actions.contributions.ContributionAction
 import org.orkg.contenttypes.domain.actions.literaturelists.CreateLiteratureListAction
 import org.orkg.contenttypes.domain.actions.literaturelists.PublishLiteratureListAction
@@ -141,6 +142,7 @@ internal typealias PublishSmartReviewCommand = PublishSmartReviewUseCase.Publish
 
 internal typealias CreateComparisonState = CreateComparisonAction.State
 internal typealias CreateComparisonRelatedFigureState = CreateComparisonRelatedFigureAction.State
+internal typealias CreateComparisonRelatedResourceState = CreateComparisonRelatedResourceAction.State
 internal typealias CreateLiteratureListSectionState = CreateLiteratureListSectionAction.State
 internal typealias CreateLiteratureListState = CreateLiteratureListAction.State
 internal typealias CreatePaperState = CreatePaperAction.State

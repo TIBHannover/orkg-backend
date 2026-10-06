@@ -1,25 +1,20 @@
 package org.orkg.contenttypes.domain
 
-import dev.forkhandles.values.ofOrNull
 import org.orkg.common.ContributorId
 import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.actions.CreateComparisonRelatedResourceCommand
+import org.orkg.contenttypes.domain.actions.CreateComparisonRelatedResourceState
 import org.orkg.contenttypes.domain.actions.UpdateComparisonRelatedResourceCommand
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonRelatedResourceDeleter
 import org.orkg.contenttypes.domain.actions.comparisons.ComparisonRelatedResourceUpdater
+import org.orkg.contenttypes.domain.actions.comparisons.resources.ComparisonRelatedResourceCreator
+import org.orkg.contenttypes.domain.actions.comparisons.resources.ComparisonRelatedResourceValidator
+import org.orkg.contenttypes.domain.actions.execute
 import org.orkg.contenttypes.input.ComparisonRelatedResourceUseCases
 import org.orkg.graph.domain.Classes
-import org.orkg.graph.domain.Description
-import org.orkg.graph.domain.ExtractionMethod
-import org.orkg.graph.domain.InvalidDescription
-import org.orkg.graph.domain.InvalidLabel
-import org.orkg.graph.domain.Label
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Resource
-import org.orkg.graph.input.CreateLiteralUseCase
-import org.orkg.graph.input.CreateResourceUseCase
-import org.orkg.graph.input.CreateStatementUseCase
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UnsafeLiteralUseCases
@@ -61,81 +56,11 @@ class ComparisonRelatedResourceService(
             .map { (it.`object` as Resource).toComparisonRelatedResource() }
 
     override fun create(command: CreateComparisonRelatedResourceCommand): ThingId {
-        Label.ofOrNull(command.label) ?: throw InvalidLabel()
-        command.image?.let { Label.ofOrNull(it) ?: throw InvalidLabel("image") }
-        command.url?.let { Label.ofOrNull(it) ?: throw InvalidLabel("url") }
-        command.description?.let { Description.ofOrNull(it) ?: throw InvalidDescription() }
-        resourceRepository.findById(command.comparisonId)
-            .filter { Classes.comparison in it.classes }
-            .orElseThrow { ComparisonNotFound(command.comparisonId) }
-        val resourceId = unsafeResourceUseCases.create(
-            CreateResourceUseCase.CreateCommand(
-                contributorId = command.contributorId,
-                label = command.label,
-                classes = setOf(Classes.comparisonRelatedResource),
-            ),
+        val steps = listOf(
+            ComparisonRelatedResourceValidator(resourceRepository),
+            ComparisonRelatedResourceCreator(unsafeResourceUseCases, unsafeStatementUseCases, unsafeLiteralUseCases),
         )
-        unsafeStatementUseCases.create(
-            CreateStatementUseCase.CreateCommand(
-                contributorId = command.contributorId,
-                subjectId = command.comparisonId,
-                predicateId = Predicates.hasRelatedResource,
-                objectId = resourceId,
-                extractionMethod = ExtractionMethod.UNKNOWN, // TODO: Get extraction method from command
-            ),
-        )
-        if (command.image != null) {
-            unsafeStatementUseCases.create(
-                CreateStatementUseCase.CreateCommand(
-                    contributorId = command.contributorId,
-                    subjectId = resourceId,
-                    predicateId = Predicates.hasImage,
-                    objectId = unsafeLiteralUseCases.create(
-                        CreateLiteralUseCase.CreateCommand(
-                            contributorId = command.contributorId,
-                            label = command.image!!,
-                            extractionMethod = ExtractionMethod.UNKNOWN, // TODO: Get extraction method from command
-                        ),
-                    ),
-                    extractionMethod = ExtractionMethod.UNKNOWN, // TODO: Get extraction method from command
-                ),
-            )
-        }
-        if (command.url != null) {
-            unsafeStatementUseCases.create(
-                CreateStatementUseCase.CreateCommand(
-                    contributorId = command.contributorId,
-                    subjectId = resourceId,
-                    predicateId = Predicates.hasURL,
-                    objectId = unsafeLiteralUseCases.create(
-                        CreateLiteralUseCase.CreateCommand(
-                            contributorId = command.contributorId,
-                            label = command.url!!,
-                            extractionMethod = ExtractionMethod.UNKNOWN, // TODO: Get extraction method from command
-                        ),
-                    ),
-                    extractionMethod = ExtractionMethod.UNKNOWN, // TODO: Get extraction method from command
-                ),
-            )
-        }
-        if (command.description != null) {
-            unsafeStatementUseCases.create(
-                CreateStatementUseCase.CreateCommand(
-                    contributorId = command.contributorId,
-                    subjectId = resourceId,
-                    predicateId = Predicates.description,
-                    objectId = unsafeLiteralUseCases.create(
-                        CreateLiteralUseCase.CreateCommand(
-                            contributorId = command.contributorId,
-                            label = command.description!!,
-                            extractionMethod = ExtractionMethod.UNKNOWN, // TODO: Get extraction method from command
-                        ),
-                    ),
-                    extractionMethod = ExtractionMethod.UNKNOWN, // TODO: Get extraction method from command
-                ),
-            )
-        }
-        return resourceId
+        return steps.execute(command, CreateComparisonRelatedResourceState()).comparisonRelatedResourceId!!
     }
 
     override fun update(command: UpdateComparisonRelatedResourceCommand) {

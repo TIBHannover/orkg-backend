@@ -19,17 +19,21 @@ ui:
     snapshot: true
 antora:
   extensions:
-    - require: '@sntke/antora-mermaid-extension'
-      script_stem: header-scripts
-      mermaid_initialize_options:
-        start_on_load: true
-        theme: dark
-    - require: '@springio/antora-extensions/override-navigation-builder-extension'
     - require: '@antora/atlas-extension'
     - require: '@antora/collector-extension'
     - require: '@springio/antora-extensions/root-component-extension'
       root_component_name: 'orkg-backend'
     - require: '@springio/antora-extensions/root-attachments-extension'
+    - require: '@sntke/antora-mermaid-extension'
+      script_stem: header-scripts
+      mermaid_initialize_options:
+        start_on_load: false
+        theme: dark
+      mermaid_run_options_raw_text_override: >
+        {
+          querySelector: ".mermaid",
+          postRenderCallback: applySvgZoom,
+        }
 asciidoc:
   attributes:
     page-related-doc-categories: core,api

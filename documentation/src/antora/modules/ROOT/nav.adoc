@@ -9,6 +9,7 @@
 ** xref:how-to-guides/development/remote-debugging.adoc[]
 ** xref:how-to-guides/development/running-acceptance-tests.adoc[]
 * xref:reference.adoc[]
+** xref:api-doc/index.adoc[]
 ** xref:reference/architecture.adoc[]
 ** xref:reference/development.adoc[]
 *** xref:reference/development/setup.adoc[Setup]
@@ -28,4 +29,3 @@
 *** xref:reference/models/graph/template-model.adoc[]
 *** xref:reference/models/graph/visualization-model.adoc[]
 *** xref:reference/models/graph-internal/rosetta-stone-statement-model.adoc[]
-* xref:api-doc/index.adoc[]

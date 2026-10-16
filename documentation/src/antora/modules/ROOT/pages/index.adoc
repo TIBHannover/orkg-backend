@@ -4,3 +4,6 @@
 include::partial$description.adoc[]
 
 It currently only supports JSON as a serialization format.
+
+[TIP]
+The xref::api-doc/index.adoc[] for the REST-API can be found in the xref::reference.adoc[] documentation.

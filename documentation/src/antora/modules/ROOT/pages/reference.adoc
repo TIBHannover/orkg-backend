@@ -1,4 +1,8 @@
-= Reference guides
+= Reference
+
+== API documentation
+
+* xref:api-doc/index.adoc[]
 
 == Architecture
 

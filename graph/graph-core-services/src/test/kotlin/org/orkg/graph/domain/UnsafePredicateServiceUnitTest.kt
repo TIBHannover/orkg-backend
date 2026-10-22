@@ -8,6 +8,7 @@ import io.mockk.runs
 import io.mockk.verify
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
+import org.orkg.common.IRI
 import org.orkg.common.ThingId
 import org.orkg.common.testing.fixtures.MockkBaseTest
 import org.orkg.common.testing.fixtures.fixedClock
@@ -31,6 +32,7 @@ internal class UnsafePredicateServiceUnitTest : MockkBaseTest {
             id = id,
             contributorId = ContributorId(MockUserId.USER),
             label = "label",
+            uri = IRI.create("https://orkg.org/P1"),
             extractionMethod = ExtractionMethod.MANUAL,
             modifiable = false,
         )
@@ -44,6 +46,7 @@ internal class UnsafePredicateServiceUnitTest : MockkBaseTest {
                 withArg {
                     it.id shouldBe command.id
                     it.label shouldBe command.label
+                    it.uri shouldBe command.uri
                     it.createdAt shouldBe OffsetDateTime.now(fixedClock)
                     it.createdBy shouldBe command.contributorId
                     it.extractionMethod shouldBe command.extractionMethod
@@ -74,6 +77,7 @@ internal class UnsafePredicateServiceUnitTest : MockkBaseTest {
                 withArg {
                     it.id shouldBe id
                     it.label shouldBe command.label
+                    it.uri shouldBe command.uri
                     it.createdAt shouldBe OffsetDateTime.now(fixedClock)
                     it.createdBy shouldBe contributorId
                     it.extractionMethod shouldBe command.extractionMethod
@@ -88,6 +92,7 @@ internal class UnsafePredicateServiceUnitTest : MockkBaseTest {
         val predicate = createPredicate()
         val contributorId = ContributorId(MockUserId.USER)
         val label = "updated label"
+        val uri = IRI.create("https://orkg.org/P2")
         val extractionMethod = ExtractionMethod.AUTOMATIC
         val modifiable = false
 
@@ -99,6 +104,7 @@ internal class UnsafePredicateServiceUnitTest : MockkBaseTest {
                 id = predicate.id,
                 contributorId = contributorId,
                 label = label,
+                uri = uri,
                 extractionMethod = extractionMethod,
                 modifiable = modifiable,
             ),
@@ -109,6 +115,7 @@ internal class UnsafePredicateServiceUnitTest : MockkBaseTest {
             repository.save(
                 withArg {
                     it.label shouldBe label
+                    it.uri shouldBe uri
                     it.extractionMethod shouldBe extractionMethod
                     it.modifiable shouldBe modifiable
                 },

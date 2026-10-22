@@ -23,6 +23,7 @@ class UnsafePredicateService(
             label = command.label,
             createdAt = OffsetDateTime.now(clock),
             createdBy = command.contributorId,
+            uri = command.uri,
             extractionMethod = command.extractionMethod,
             modifiable = command.modifiable,
         )

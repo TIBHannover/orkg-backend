@@ -8,6 +8,7 @@ import io.mockk.runs
 import io.mockk.verify
 import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
+import org.orkg.common.IRI
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
@@ -35,6 +36,7 @@ internal class UnsafeResourceServiceUnitTest : MockkBaseTest {
             contributorId = ContributorId(MockUserId.USER),
             label = "label",
             classes = setOf(Classes.paper),
+            uri = IRI.create("https://orkg.org/R1"),
             extractionMethod = ExtractionMethod.MANUAL,
             observatoryId = ObservatoryId("1255bbe4-1850-4033-ba10-c80d4b370e3e"),
             organizationId = OrganizationId("56a4b65e-de56-0d4b-255b-255b372b65ef"),
@@ -52,6 +54,7 @@ internal class UnsafeResourceServiceUnitTest : MockkBaseTest {
                     it.label shouldBe command.label
                     it.createdAt shouldBe OffsetDateTime.now(fixedClock)
                     it.classes shouldBe command.classes
+                    it.uri shouldBe command.uri
                     it.createdBy shouldBe command.contributorId
                     it.observatoryId shouldBe command.observatoryId
                     it.extractionMethod shouldBe command.extractionMethod
@@ -87,6 +90,7 @@ internal class UnsafeResourceServiceUnitTest : MockkBaseTest {
                     it.label shouldBe command.label
                     it.createdAt shouldBe OffsetDateTime.now(fixedClock)
                     it.classes shouldBe command.classes
+                    it.uri shouldBe command.uri
                     it.createdBy shouldBe contributorId
                     it.observatoryId shouldBe ObservatoryId.UNKNOWN
                     it.extractionMethod shouldBe ExtractionMethod.UNKNOWN
@@ -106,6 +110,7 @@ internal class UnsafeResourceServiceUnitTest : MockkBaseTest {
         val contributorId = ContributorId(MockUserId.USER)
         val label = "updated label"
         val classes = setOf(Classes.paper)
+        val uri = IRI.create("https://orkg.org/R2")
         val observatoryId = ObservatoryId(UUID.randomUUID())
         val organizationId = OrganizationId(UUID.randomUUID())
         val extractionMethod = ExtractionMethod.AUTOMATIC
@@ -122,6 +127,7 @@ internal class UnsafeResourceServiceUnitTest : MockkBaseTest {
                 contributorId = contributorId,
                 label = label,
                 classes = classes,
+                uri = uri,
                 observatoryId = observatoryId,
                 organizationId = organizationId,
                 extractionMethod = extractionMethod,
@@ -137,6 +143,7 @@ internal class UnsafeResourceServiceUnitTest : MockkBaseTest {
                 withArg {
                     it.label shouldBe label
                     it.classes shouldBe classes
+                    it.uri shouldBe uri
                     it.observatoryId shouldBe observatoryId
                     it.organizationId shouldBe organizationId
                     it.extractionMethod shouldBe extractionMethod

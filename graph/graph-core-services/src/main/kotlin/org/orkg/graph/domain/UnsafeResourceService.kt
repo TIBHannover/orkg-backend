@@ -22,6 +22,7 @@ class UnsafeResourceService(
             id = command.id ?: repository.nextIdentity(),
             label = command.label,
             classes = command.classes,
+            uri = command.uri,
             extractionMethod = command.extractionMethod ?: ExtractionMethod.UNKNOWN,
             createdAt = OffsetDateTime.now(clock),
             createdBy = command.contributorId,

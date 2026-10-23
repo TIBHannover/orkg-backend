@@ -1,0 +1,89 @@
+### Create RDF File
+POST {{server_url}}/api/rdf-files
+Authorization: Bearer {{access_token}}
+Content-Type: multipart/form-data; boundary=boundary
+
+--boundary
+Content-Disposition: form-data; name="file"; filename="snyder-2020-1-1-51d7ugp9.jsonld"
+Content-Type: application/ld+json;
+
+< ../data-import/data-import-core-model/src/testFixtures/resources/assets/rdf/jsonld/snyder-2020-1-1-51d7ugp9.jsonld
+
+--boundary--
+
+> {%
+if (response.status == 201) {
+    const location = response.headers.valueOf("Location")
+    const id = location.substring(location.lastIndexOf('/') + 1)
+    client.global.set("rdf_file_id", id);
+}
+%}
+
+### Create RDF File (ttl)
+POST {{server_url}}/api/rdf-files
+Authorization: Bearer {{access_token}}
+Content-Type: multipart/form-data; boundary=boundary
+
+--boundary
+Content-Disposition: form-data; name="file"; filename="aliceKnowsBob.ttl"
+Content-Type: text/turtle;
+
+< ../data-import/data-import-core-model/src/testFixtures/resources/assets/rdf/turtle/aliceKnowsBob.ttl
+
+--boundary--
+
+> {%
+if (response.status == 201) {
+    const location = response.headers.valueOf("Location")
+    const id = location.substring(location.lastIndexOf('/') + 1)
+    client.global.set("rdf_file_id", id);
+}
+%}
+
+### Fetch RDF File
+GET {{server_url}}/api/rdf-files/{{rdf_file_id}}
+Authorization: Bearer {{access_token}}
+
+### Fetch RDF File data
+GET {{server_url}}/api/rdf-files/{{rdf_file_id}}/data
+Authorization: Bearer {{access_token}}
+
+### List RDF Files
+GET {{server_url}}/api/rdf-files
+Authorization: Bearer {{access_token}}
+
+### Start RDF File validation
+POST {{server_url}}/api/rdf-files/{{rdf_file_id}}/validate
+Authorization: Bearer {{access_token}}
+
+### Fetch RDF File validation status
+GET {{server_url}}/api/rdf-files/{{rdf_file_id}}/validate
+Authorization: Bearer {{access_token}}
+
+### Fetch RDF File validation result
+GET {{server_url}}/api/rdf-files/{{rdf_file_id}}/validate/results
+Authorization: Bearer {{access_token}}
+
+### Stop RDF File validation
+DELETE {{server_url}}/api/rdf-files/{{rdf_file_id}}/validate
+Authorization: Bearer {{access_token}}
+
+### Start RDF File import
+POST {{server_url}}/api/rdf-files/{{rdf_file_id}}/import
+Authorization: Bearer {{access_token}}
+
+### Fetch RDF File import status
+GET {{server_url}}/api/rdf-files/{{rdf_file_id}}/import
+Authorization: Bearer {{access_token}}
+
+### Fetch RDF File import result
+GET {{server_url}}/api/rdf-files/{{rdf_file_id}}/import/results
+Authorization: Bearer {{access_token}}
+
+### Stop RDF File validation
+DELETE {{server_url}}/api/rdf-files/{{rdf_file_id}}/import
+Authorization: Bearer {{access_token}}
+
+### Delete RDF File
+DELETE {{server_url}}/api/rdf-files/{{rdf_file_id}}
+Authorization: Bearer {{access_token}}

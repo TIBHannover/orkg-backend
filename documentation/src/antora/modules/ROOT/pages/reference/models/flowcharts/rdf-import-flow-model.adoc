@@ -1,0 +1,3 @@
+= RDF Import Flow
+
+image::reference/models/flowcharts/rdf-import-flow-model.svg[opts=interactive]

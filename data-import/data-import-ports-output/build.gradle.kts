@@ -3,6 +3,7 @@ plugins {
 }
 
 dependencies {
+    api("org.eclipse.rdf4j:rdf4j-model-api")
     api("org.springframework.data:spring-data-commons")
     api(project(":common:core-identifiers"))
     api(project(":data-import:data-import-core-model"))
@@ -11,6 +12,8 @@ dependencies {
     testFixturesImplementation("io.kotest:kotest-assertions-core")
     testFixturesImplementation("io.kotest:kotest-assertions-shared")
     testFixturesImplementation("io.kotest:kotest-runner-junit5")
+    testFixturesImplementation("org.eclipse.rdf4j:rdf4j-model")
+    testFixturesImplementation("org.eclipse.rdf4j:rdf4j-model-vocabulary")
     testFixturesImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
     testFixturesImplementation("org.springframework.data:spring-data-commons")
     testFixturesImplementation("dev.forkhandles:fabrikate4k")

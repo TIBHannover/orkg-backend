@@ -7,7 +7,7 @@ import org.orkg.dataimport.domain.csv.CSVID
 import org.orkg.dataimport.domain.jobs.JobId
 import org.springframework.http.HttpStatus
 import org.springframework.http.ProblemDetail
-import java.lang.IllegalArgumentException
+import java.util.UUID
 
 data class JobException(
     val problemDetails: List<ProblemDetail> = emptyList(),
@@ -362,5 +362,140 @@ class PaperCSVThingNotFound(
             "item_number" to itemNumber,
             "line_number" to lineNumber,
             "csv_column" to column,
+        ),
+    )
+
+class RdfFileAlreadyExists :
+    SimpleMessageException(
+        status = HttpStatus.BAD_REQUEST,
+        message = "An RDF file with the same data already exists.",
+        type = createProblemURI("rdf_file_already_exists"),
+    )
+
+class RdfFileCannotBeBlank :
+    SimpleMessageException(
+        status = HttpStatus.BAD_REQUEST,
+        message = "RDF file can not be blank.",
+        type = createProblemURI("rdf_file_cannot_be_blank"),
+    )
+
+class RdfFileNotFound(rdfFileId: UUID) :
+    SimpleMessageException(
+        status = HttpStatus.NOT_FOUND,
+        message = """RDF file "$rdfFileId" not found.""",
+        type = createProblemURI("rdf_file_not_found"),
+        properties = mapOf("rdf_file_id" to rdfFileId),
+    )
+
+class RdfFileValidationJobNotFound(
+    rdfFileId: UUID,
+    jobId: JobId? = null,
+) : SimpleMessageException(
+        status = HttpStatus.NOT_FOUND,
+        message = """RDF file validation job not found.""",
+        type = createProblemURI("rdf_file_validation_job_not_found"),
+        properties = mapOf(
+            "rdf_file_id" to rdfFileId,
+            "job_id" to jobId,
+        ),
+    )
+
+class RdfFileImportJobNotFound(
+    rdfFileId: UUID,
+    jobId: JobId? = null,
+) : SimpleMessageException(
+        status = HttpStatus.NOT_FOUND,
+        message = """RDF file import job not found.""",
+        type = createProblemURI("rdf_file_import_job_not_found"),
+        properties = mapOf(
+            "rdf_file_id" to rdfFileId,
+            "job_id" to jobId,
+        ),
+    )
+
+class RdfFileAlreadyValidated(rdfFileId: UUID) :
+    SimpleMessageException(
+        status = HttpStatus.BAD_REQUEST,
+        message = """RDF file "$rdfFileId" was already validated.""",
+        type = createProblemURI("rdf_file_already_validated"),
+        properties = mapOf("rdf_file_id" to rdfFileId),
+    )
+
+class RdfFileValidationAlreadyRunning(rdfFileId: UUID) :
+    SimpleMessageException(
+        status = HttpStatus.BAD_REQUEST,
+        message = """Validation for RDF file "$rdfFileId" is already running.""",
+        type = createProblemURI("rdf_file_validation_already_running"),
+        properties = mapOf("rdf_file_id" to rdfFileId),
+    )
+
+class RdfFileValidationRestartFailed(
+    rdfFileId: UUID,
+    override val cause: Throwable,
+) : SimpleMessageException(
+        status = HttpStatus.BAD_REQUEST,
+        message = """Could not restart validation for RDF file "$rdfFileId".""",
+        type = createProblemURI("rdf_file_validation_restart_failed"),
+        cause = cause,
+        properties = mapOf("rdf_file_id" to rdfFileId),
+    )
+
+class RdfFileNotValidated(rdfFileId: UUID) :
+    SimpleMessageException(
+        status = HttpStatus.BAD_REQUEST,
+        message = """RDF file "$rdfFileId" must be validated before import.""",
+        type = createProblemURI("rdf_file_not_validated"),
+        properties = mapOf("rdf_file_id" to rdfFileId),
+    )
+
+class RdfFileAlreadyImported(rdfFileId: UUID) :
+    SimpleMessageException(
+        status = HttpStatus.BAD_REQUEST,
+        message = """RDF file "$rdfFileId" was already imported.""",
+        type = createProblemURI("rdf_file_already_imported"),
+        properties = mapOf("rdf_file_id" to rdfFileId),
+    )
+
+class RdfFileImportAlreadyRunning(rdfFileId: UUID) :
+    SimpleMessageException(
+        status = HttpStatus.BAD_REQUEST,
+        message = """Import for RDF file "$rdfFileId" is already running.""",
+        type = createProblemURI("rdf_file_import_already_running"),
+        properties = mapOf("rdf_file_id" to rdfFileId),
+    )
+
+class RdfFileImportRestartFailed(
+    rdfFileId: UUID,
+    override val cause: Throwable,
+) : SimpleMessageException(
+        status = HttpStatus.BAD_REQUEST,
+        message = """Could not restart import for RDF file "$rdfFileId".""",
+        type = createProblemURI("rdf_file_import_restart_failed"),
+        cause = cause,
+        properties = mapOf("rdf_file_id" to rdfFileId),
+    )
+
+class RdfParsingException(
+    message: String,
+    line: Long,
+    column: Long,
+) : SimpleMessageException(
+        status = HttpStatus.BAD_REQUEST,
+        message = message,
+        type = createProblemURI("rdf_parsing_exception"),
+        properties = mapOf(
+            "line" to line,
+            "column" to column,
+        ),
+    )
+
+class UnsupportedRdfFormat(
+    format: String?,
+) : SimpleMessageException(
+        status = HttpStatus.BAD_REQUEST,
+        message = """Unsupported RDF format "$format".""",
+        type = createProblemURI("unsupported_rdf_format"),
+        properties = mapOf(
+            "rdf_format" to format,
         ),
     )

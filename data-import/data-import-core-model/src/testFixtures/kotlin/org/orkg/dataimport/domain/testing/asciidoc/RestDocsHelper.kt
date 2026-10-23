@@ -3,6 +3,8 @@ package org.orkg.dataimport.domain.testing.asciidoc
 import org.orkg.dataimport.domain.csv.CSV
 import org.orkg.dataimport.domain.csv.papers.PaperCSVRecordImportResult
 import org.orkg.dataimport.domain.jobs.JobStatus
+import org.orkg.dataimport.domain.rdf.RdfFile
+import org.orkg.dataimport.domain.rdf.ResourceToTypeMapping
 
 val allowedCSVStateValues =
     CSV.State.entries.sorted().joinToString(separator = "`, `", prefix = "`", postfix = "`")
@@ -12,3 +14,9 @@ val allowedJobStatusValues =
 
 val allowedEntityTypeValues =
     PaperCSVRecordImportResult.Type.entries.sorted().joinToString(separator = "`, `", prefix = "`", postfix = "`")
+
+val allowedRdfFileStateValues =
+    RdfFile.State.entries.sorted().joinToString(separator = "`, `", prefix = "`", postfix = "`")
+
+val allowedOrkgEntityTypeValues =
+    ResourceToTypeMapping.OrkgEntityType.entries.sorted().joinToString(separator = "`, `", prefix = "`", postfix = "`")

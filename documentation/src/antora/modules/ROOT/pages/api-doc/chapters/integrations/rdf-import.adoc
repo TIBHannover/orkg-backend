@@ -1,0 +1,145 @@
+= RDF File Import
+
+WARNING: The following endpoints are only used for debugging and are currently not available for use on production instances.
+
+An RDF File can be used to import data into the {orkg}.
+For a list of supported RDF formats, see <<rdf-file-formats,RDF File Formats>>.
+There are three workflow stages for an RDF File:
+
+[mermaid,format=svg,opts=interactive,width=100%]
+----
+stateDiagram-v2
+    direction LR
+    [*] --> UPLOADED
+    state "Stage 1: Upload" as UploadedStage {
+        UPLOADED --> VALIDATION_QUEUED : validate
+    }
+    state "Stage 2: Validation" as ValidationStage {
+        VALIDATION_QUEUED --> VALIDATION_RUNNING
+        VALIDATION_RUNNING --> VALIDATION_STOPPED
+        VALIDATION_RUNNING --> VALIDATION_DONE
+        VALIDATION_RUNNING --> VALIDATION_FAILED
+        VALIDATION_DONE --> IMPORT_QUEUED : import
+        VALIDATION_STOPPED --> VALIDATION_QUEUED
+    }
+    state "Stage 3: Import" as ImportStage {
+        IMPORT_QUEUED --> IMPORT_RUNNING
+        IMPORT_RUNNING --> IMPORT_STOPPED
+        IMPORT_RUNNING --> IMPORT_DONE
+        IMPORT_RUNNING --> IMPORT_FAILED
+        IMPORT_STOPPED --> IMPORT_QUEUED
+    }
+    VALIDATION_FAILED --> [*]
+    IMPORT_FAILED --> [*]
+    IMPORT_DONE --> [*]
+----
+
+[[rdf-files-fetch]]
+== Fetching RDF Files
+
+include::{snippets}/rdf-files_find-by-id/description.adoc[]
+
+operation::rdf-files_find-by-id[snippets='path-parameters,curl-request,http-response,response-fields,errors']
+
+[[rdf-files-fetch-data]]
+== Fetching RDF File data
+
+include::{snippets}/rdf-files_find-data-by-id/description.adoc[]
+
+operation::rdf-files_find-data-by-id[snippets='path-parameters,curl-request,http-response,errors']
+
+[[rdf-files-list]]
+== Listing RDF Files
+
+include::{snippets}/rdf-files_find-all/description.adoc[]
+
+operation::rdf-files_find-all[snippets='curl-request,query-parameters']
+
+[[rdf-files-create]]
+== Creating RDF Files
+
+include::{snippets}/rdf-files_create/description.adoc[]
+
+operation::rdf-files_create[snippets='request-parts,curl-request,response-headers,http-response,errors']
+
+[[rdf-files-update]]
+== Updating RDF Files
+
+include::{snippets}/rdf-files_update/description.adoc[]
+
+operation::rdf-files_update[snippets='path-parameters,request-parts,curl-request,http-response,errors']
+
+[[rdf-files-validate]]
+== Validating RDF Files
+
+Before an RDF File can be imported, it must be validated.
+The following endpoints describe the workflow of validating an RDF File.
+
+[[rdf-files-validate-start]]
+=== Starting RDF File Validation
+
+include::{snippets}/rdf-files_start-validation-by-id/description.adoc[]
+
+operation::rdf-files_start-validation-by-id[snippets='path-parameters,curl-request,http-response,errors']
+
+[[rdf-files-validate-fetch-status]]
+=== Fetching RDF File Validation Status
+
+include::{snippets}/rdf-files_find-validation-status-by-id/description.adoc[]
+
+operation::rdf-files_find-validation-status-by-id[snippets='path-parameters,curl-request,http-response,response-fields,errors']
+
+[[rdf-files-validate-fetch-results]]
+=== Fetching RDF File Validation Results
+
+include::{snippets}/rdf-files_find-validation-results-by-id/description.adoc[]
+
+operation::rdf-files_find-validation-results-by-id[snippets='path-parameters,curl-request,query-parameters,http-response,response-fields,errors']
+
+[[rdf-files-validate-stop]]
+=== Stopping RDF File Validation
+
+include::{snippets}/rdf-files_stop-validation-by-id/description.adoc[]
+
+operation::rdf-files_stop-validation-by-id[snippets='path-parameters,curl-request,http-response,errors']
+
+[[rdf-files-import]]
+== Importing RDF Files
+
+After an RDF File has been validated, it can be imported.
+The following endpoints describe the workflow of importing an RDF File.
+
+[[rdf-files-import-start]]
+=== Starting an RDF File Import
+
+include::{snippets}/rdf-files_start-import-by-id/description.adoc[]
+
+operation::rdf-files_start-import-by-id[snippets='path-parameters,curl-request,http-response,errors']
+
+[[rdf-files-import-fetch-status]]
+=== Fetching RDF File Import Status
+
+include::{snippets}/rdf-files_find-import-status-by-id/description.adoc[]
+
+operation::rdf-files_find-import-status-by-id[snippets='path-parameters,curl-request,http-response,response-fields,errors']
+
+[[rdf-files-import-fetch-results]]
+=== Fetching RDF File Import Results
+
+include::{snippets}/rdf-files_find-import-results-by-id/description.adoc[]
+
+operation::rdf-files_find-import-results-by-id[snippets='path-parameters,curl-request,http-response,response-fields,errors']
+
+[[rdf-files-import-stop]]
+=== Stopping RDF File Imports
+
+include::{snippets}/rdf-files_stop-import-by-id/description.adoc[]
+
+operation::rdf-files_stop-import-by-id[snippets='path-parameters,curl-request,http-response,errors']
+
+[[rdf-files-delete]]
+== Deleting RDF Files
+
+include::{snippets}/rdf-files_delete-by-id/description.adoc[]
+
+operation::rdf-files_delete-by-id[snippets='path-parameters,curl-request,http-response,errors']

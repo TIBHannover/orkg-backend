@@ -3,6 +3,8 @@ plugins {
 }
 
 dependencies {
+    api("org.eclipse.rdf4j:rdf4j-model-api")
+    api("org.eclipse.rdf4j:rdf4j-rio-api")
     api("tools.jackson.core:jackson-databind")
     api("org.springframework.batch:spring-batch-core")
     api("org.springframework.batch:spring-batch-infrastructure")
@@ -19,8 +21,11 @@ dependencies {
     api(project(":data-import:data-import-core-model"))
     api(project(":data-import:data-import-ports-input"))
     api(project(":data-import:data-import-ports-output"))
+    api(project(":graph:graph-core-model"))
     api(project(":graph:graph-ports-input"))
     api(project(":graph:graph-ports-output"))
+    implementation("org.eclipse.rdf4j:rdf4j-model")
+    implementation("org.eclipse.rdf4j:rdf4j-model-vocabulary")
     implementation("tools.jackson.core:jackson-core")
     implementation("tools.jackson.module:jackson-module-kotlin")
     implementation("dev.forkhandles:values4k")
@@ -35,7 +40,12 @@ dependencies {
     implementation(project(":community:community-core-model"))
     implementation(project(":content-types:content-types-core-model"))
     implementation(project(":graph:graph-core-constants"))
-    implementation(project(":graph:graph-core-model"))
+    runtimeOnly("org.eclipse.rdf4j:rdf4j-rio-jsonld")
+    runtimeOnly("org.eclipse.rdf4j:rdf4j-rio-n3")
+    runtimeOnly("org.eclipse.rdf4j:rdf4j-rio-ntriples")
+    runtimeOnly("org.eclipse.rdf4j:rdf4j-rio-nquads")
+    runtimeOnly("org.eclipse.rdf4j:rdf4j-rio-rdfxml")
+    runtimeOnly("org.eclipse.rdf4j:rdf4j-rio-trig")
 }
 
 testing {

@@ -51,6 +51,10 @@ orkg:
   import:
     csv:
       enabled: true
+    rdf:
+      # RDF import endpoints are only intended to be used internally for Loom record imports.
+      # They solely exist for debugging purposes.
+      enabled: false
   export:
     rdf:
       # cron schedule for the rdf-dump

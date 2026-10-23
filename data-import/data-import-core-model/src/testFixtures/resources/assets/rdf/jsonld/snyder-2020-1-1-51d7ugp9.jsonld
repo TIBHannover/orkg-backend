@@ -1,0 +1,950 @@
+{
+  "@id": "_:n1",
+  "@type": "doi:feeb33ad3e4440682a4d",
+  "doi:feeb33ad3e4440682a4d#is_implemented_by": "https://service.tib.eu/ldmservice/dataset/e8b6ec49-63b7-44d8-9f8f-2472e816eecb/resource/4b904dd7-71f2-4116-bc92-6eb615746fba/download/nyxekzzr.r",
+  "doi:feeb33ad3e4440682a4d#has_part": [
+    {
+      "@id": "_:n2",
+      "@type": "doi:c6b413ba96ba477b5dca",
+      "doi:c6b413ba96ba477b5dca#has_output": {
+        "@id": "_:n3",
+        "@type": "doi:aff130c76e68ead3862e",
+        "doi:aff130c76e68ead3862e#has_characteristic": {
+          "@id": "_:n4",
+          "@type": "doi:31483624b5c80014b6c7",
+          "doi:31483624b5c80014b6c7#number_of_columns": 4,
+          "doi:31483624b5c80014b6c7#number_of_rows": 6
+        },
+        "doi:aff130c76e68ead3862e#has_part": [
+          {
+            "@id": "_:n5",
+            "@type": "doi:cceac5fb8acf5ade2bf5",
+            "doi:cceac5fb8acf5ade2bf5#label": "Estimate"
+          },
+          {
+            "@id": "_:n6",
+            "@type": "doi:cceac5fb8acf5ade2bf5",
+            "doi:cceac5fb8acf5ade2bf5#label": "Std. Error"
+          },
+          {
+            "@id": "_:n7",
+            "@type": "doi:cceac5fb8acf5ade2bf5",
+            "doi:cceac5fb8acf5ade2bf5#label": "z value"
+          },
+          {
+            "@id": "_:n8",
+            "@type": "doi:cceac5fb8acf5ade2bf5",
+            "doi:cceac5fb8acf5ade2bf5#label": "Pr(>|z|)"
+          }
+        ],
+        "doi:aff130c76e68ead3862e#source_table": {
+          "@type": "doi:0424f6e7026fa4bc2c4a",
+          "tab_label": "Table",
+          "columns": [
+            {
+              "@type": "doi:65ba00e95e60fb8971e6",
+              "col_number": 1,
+              "col_titles": "Estimate",
+              "@id": "_:n9"
+            },
+            {
+              "@type": "doi:65ba00e95e60fb8971e6",
+              "col_number": 2,
+              "col_titles": "Std. Error",
+              "@id": "_:n10"
+            },
+            {
+              "@type": "doi:65ba00e95e60fb8971e6",
+              "col_number": 3,
+              "col_titles": "z value",
+              "@id": "_:n11"
+            },
+            {
+              "@type": "doi:65ba00e95e60fb8971e6",
+              "col_number": 4,
+              "col_titles": "Pr(>|z|)",
+              "@id": "_:n12"
+            }
+          ],
+          "rows": [
+            {
+              "@type": "doi:9bf7a8e8909bfd491b38",
+              "row_number": 1,
+              "row_titles": "(Intercept)",
+              "@id": "_:n13",
+              "cells": [
+                {
+                  "@type": "doi:4607bc7c42ac8db29bfc",
+                  "@id": "_:n14",
+                  "value": "-3.28175433044839",
+                  "column": "_:n9"
+                },
+                {
+                  "@type": "doi:4607bc7c42ac8db29bfc",
+                  "@id": "_:n15",
+                  "value": "3.12863180913839",
+                  "column": "_:n10"
+                },
+                {
+                  "@type": "doi:4607bc7c42ac8db29bfc",
+                  "@id": "_:n16",
+                  "value": "-1.04894232707816",
+                  "column": "_:n11"
+                },
+                {
+                  "@type": "doi:4607bc7c42ac8db29bfc",
+                  "@id": "_:n17",
+                  "value": "0.294204663012721",
+                  "column": "_:n12"
+                }
+              ]
+            },
+            {
+              "@type": "doi:9bf7a8e8909bfd491b38",
+              "row_number": 2,
+              "row_titles": "VarietalRichness",
+              "@id": "_:n18",
+              "cells": [
+                {
+                  "@type": "doi:4607bc7c42ac8db29bfc",
+                  "@id": "_:n19",
+                  "value": "4.97138939665951",
+                  "column": "_:n9"
+                },
+                {
+                  "@type": "doi:4607bc7c42ac8db29bfc",
+                  "@id": "_:n20",
+                  "value": "1.63140413692437",
+                  "column": "_:n10"
+                },
+                {
+                  "@type": "doi:4607bc7c42ac8db29bfc",
+                  "@id": "_:n21",
+                  "value": "3.04730709217883",
+                  "column": "_:n11"
+                },
+                {
+                  "@type": "doi:4607bc7c42ac8db29bfc",
+                  "@id": "_:n22",
+                  "value": "0.00230901680829423",
+                  "column": "_:n12"
+                }
+              ]
+            },
+            {
+              "@type": "doi:9bf7a8e8909bfd491b38",
+              "row_number": 3,
+              "row_titles": "PerAg1000",
+              "@id": "_:n23",
+              "cells": [
+                {
+                  "@type": "doi:4607bc7c42ac8db29bfc",
+                  "@id": "_:n24",
+                  "value": "12.2995649982401",
+                  "column": "_:n9"
+                },
+                {
+                  "@type": "doi:4607bc7c42ac8db29bfc",
+                  "@id": "_:n25",
+                  "value": "10.5155255442182",
+                  "column": "_:n10"
+                },
+                {
+                  "@type": "doi:4607bc7c42ac8db29bfc",
+                  "@id": "_:n26",
+                  "value": "1.16965765966903",
+                  "column": "_:n11"
+                },
+                {
+                  "@type": "doi:4607bc7c42ac8db29bfc",
+                  "@id": "_:n27",
+                  "value": "0.242138763455136",
+                  "column": "_:n12"
+                }
+              ]
+            },
+            {
+              "@type": "doi:9bf7a8e8909bfd491b38",
+              "row_number": 4,
+              "row_titles": "NumColors",
+              "@id": "_:n28",
+              "cells": [
+                {
+                  "@type": "doi:4607bc7c42ac8db29bfc",
+                  "@id": "_:n29",
+                  "value": "-2.73132143116459",
+                  "column": "_:n9"
+                },
+                {
+                  "@type": "doi:4607bc7c42ac8db29bfc",
+                  "@id": "_:n30",
+                  "value": "2.98019474938602",
+                  "column": "_:n10"
+                },
+                {
+                  "@type": "doi:4607bc7c42ac8db29bfc",
+                  "@id": "_:n31",
+                  "value": "-0.916490921181343",
+                  "column": "_:n11"
+                },
+                {
+                  "@type": "doi:4607bc7c42ac8db29bfc",
+                  "@id": "_:n32",
+                  "value": "0.359409467087998",
+                  "column": "_:n12"
+                }
+              ]
+            },
+            {
+              "@type": "doi:9bf7a8e8909bfd491b38",
+              "row_number": 5,
+              "row_titles": "VarietalRichness:PerAg1000",
+              "@id": "_:n33",
+              "cells": [
+                {
+                  "@type": "doi:4607bc7c42ac8db29bfc",
+                  "@id": "_:n34",
+                  "value": "-13.3355452640472",
+                  "column": "_:n9"
+                },
+                {
+                  "@type": "doi:4607bc7c42ac8db29bfc",
+                  "@id": "_:n35",
+                  "value": "4.26283804276763",
+                  "column": "_:n10"
+                },
+                {
+                  "@type": "doi:4607bc7c42ac8db29bfc",
+                  "@id": "_:n36",
+                  "value": "-3.12832557330494",
+                  "column": "_:n11"
+                },
+                {
+                  "@type": "doi:4607bc7c42ac8db29bfc",
+                  "@id": "_:n37",
+                  "value": "0.00175805324428339",
+                  "column": "_:n12"
+                }
+              ]
+            },
+            {
+              "@type": "doi:9bf7a8e8909bfd491b38",
+              "row_number": 6,
+              "row_titles": "PerAg1000:NumColors",
+              "@id": "_:n38",
+              "cells": [
+                {
+                  "@type": "doi:4607bc7c42ac8db29bfc",
+                  "@id": "_:n39",
+                  "value": "6.94356040894904",
+                  "column": "_:n9"
+                },
+                {
+                  "@type": "doi:4607bc7c42ac8db29bfc",
+                  "@id": "_:n40",
+                  "value": "8.28819282504669",
+                  "column": "_:n10"
+                },
+                {
+                  "@type": "doi:4607bc7c42ac8db29bfc",
+                  "@id": "_:n41",
+                  "value": "0.8377653072894",
+                  "column": "_:n11"
+                },
+                {
+                  "@type": "doi:4607bc7c42ac8db29bfc",
+                  "@id": "_:n42",
+                  "value": "0.402162526749956",
+                  "column": "_:n12"
+                }
+              ]
+            }
+          ],
+          "@id": "_:n43"
+        },
+        "doi:aff130c76e68ead3862e#label": "Generalized linear mixed model with probability of flea beetle incidence as the response variable, and the following fixed effects: varietal richness; the percent of agriculture within a 1,000 m radius; the number of varietal colors; the interaction between varietal richness and number of varietal colors; and the interaction between varietal richness and the percent of agriculture."
+      },
+      "doi:c6b413ba96ba477b5dca#has_input": [
+        {
+          "@id": "_:n44",
+          "@type": "doi:aff130c76e68ead3862e",
+          "doi:aff130c76e68ead3862e#has_characteristic": {
+            "@id": "_:n45",
+            "@type": "doi:31483624b5c80014b6c7",
+            "doi:31483624b5c80014b6c7#number_of_columns": 39,
+            "doi:31483624b5c80014b6c7#number_of_rows": 1799
+          },
+          "doi:aff130c76e68ead3862e#source_url": "https://service.tib.eu/ldmservice/dataset/e8b6ec49-63b7-44d8-9f8f-2472e816eecb/resource/5377164a-ab6a-4e8a-bad9-04e731afc044/download/gcwteleb.csv"
+        },
+        {
+          "@id": "_:n46",
+          "@type": "doi:aff130c76e68ead3862e",
+          "doi:aff130c76e68ead3862e#has_characteristic": {
+            "@id": "_:n47",
+            "@type": "doi:31483624b5c80014b6c7",
+            "doi:31483624b5c80014b6c7#number_of_columns": 20,
+            "doi:31483624b5c80014b6c7#number_of_rows": 20
+          },
+          "doi:aff130c76e68ead3862e#source_url": "https://service.tib.eu/ldmservice/dataset/e8b6ec49-63b7-44d8-9f8f-2472e816eecb/resource/d203a917-7e0b-4362-9732-ca0ffe6195f8/download/1tlo1kk6.csv"
+        }
+      ],
+      "doi:c6b413ba96ba477b5dca#level": [
+        {
+          "@id": "_:n48",
+          "@type": "doi:cceac5fb8acf5ade2bf5",
+          "doi:cceac5fb8acf5ade2bf5#label": "PlotNumber"
+        },
+        {
+          "@id": "_:n49",
+          "@type": "doi:cceac5fb8acf5ade2bf5",
+          "doi:cceac5fb8acf5ade2bf5#label": "PlotNumber:Period"
+        },
+        {
+          "@id": "_:n50",
+          "@type": "doi:cceac5fb8acf5ade2bf5",
+          "doi:cceac5fb8acf5ade2bf5#label": "PlotNumber:Period:Point"
+        }
+      ],
+      "doi:c6b413ba96ba477b5dca#targets": {
+        "@id": "_:n51",
+        "@type": "doi:cceac5fb8acf5ade2bf5",
+        "doi:cceac5fb8acf5ade2bf5#label": "I(FleaBeetle>0)"
+      },
+      "doi:c6b413ba96ba477b5dca#executes": {
+        "@id": "_:n52",
+        "@type": "doi:abef9f1c0d48853f3e51",
+        "doi:abef9f1c0d48853f3e51#has_support_url": "https://search.r-project.org/CRAN/refmans/lme4/html/glmer.html",
+        "doi:abef9f1c0d48853f3e51#is_implemented_by": "lme4::glmer(I(FleaBeetle>0) ~ VarietalRichness + PerAg1000 + NumColors + VarietalRichness:PerAg1000 + NumColors:PerAg1000 + (1|PlotNumber) + (1|PlotNumber:Period) + (1|PlotNumber:Period:Point), family=binomial, data=combined, control=glmerControl(optimizer='bobyqa', optCtrl=list(maxfun=1e5)))",
+        "doi:abef9f1c0d48853f3e51#part_of": {
+          "@id": "_:n53",
+          "@type": "doi:4b99260369df9110f9bd",
+          "doi:4b99260369df9110f9bd#has_support_url": "https://doi.org/10.32614/CRAN.package.lme4",
+          "doi:4b99260369df9110f9bd#part_of": {
+            "@id": "_:n54",
+            "@type": "doi:c981d125d1a564c9f573",
+            "doi:c981d125d1a564c9f573#has_support_url": "https://www.r-project.org",
+            "doi:c981d125d1a564c9f573#version_info": "4.4.1",
+            "doi:c981d125d1a564c9f573#label": "R"
+          },
+          "doi:4b99260369df9110f9bd#version_info": "1.1.35.5",
+          "doi:4b99260369df9110f9bd#label": "lme4"
+        },
+        "doi:abef9f1c0d48853f3e51#label": "glmer"
+      },
+      "doi:c6b413ba96ba477b5dca#label": "To analyze flea beetle incidence we used generalized linear mixed effects model with a binomial distribution (logit link). Explanatory variables included varietal richness, color richness, percent cropland, and two-way interactions between percent cropland and the local-scale predictors: varietal richness and color richness. We used a nested random effects design of sampling point nested within sampling period nested within field. By including field as a random effect, we accounted for variation in field size, planting scheme, and management style."
+    },
+    {
+      "@id": "_:n55",
+      "@type": "doi:b9335ce2c99ed87735a6",
+      "doi:b9335ce2c99ed87735a6#has_output": {
+        "@id": "_:n56",
+        "@type": "doi:aff130c76e68ead3862e",
+        "doi:aff130c76e68ead3862e#has_expression": {
+          "@id": "_:n57",
+          "@type": "doi:1f20e66b17a6eb7c2baf",
+          "doi:1f20e66b17a6eb7c2baf#source_url": "https://service.tib.eu/ldmservice/dataset/e8b6ec49-63b7-44d8-9f8f-2472e816eecb/resource/9cccc498-fd50-4980-a201-1b8c68555aa3/download/hwohzs8j.jpg"
+        },
+        "doi:aff130c76e68ead3862e#has_characteristic": {
+          "@id": "_:n58",
+          "@type": "doi:31483624b5c80014b6c7",
+          "doi:31483624b5c80014b6c7#number_of_columns": 4,
+          "doi:31483624b5c80014b6c7#number_of_rows": 6
+        },
+        "doi:aff130c76e68ead3862e#has_part": [
+          {
+            "@id": "_:n59",
+            "@type": "doi:cceac5fb8acf5ade2bf5",
+            "doi:cceac5fb8acf5ade2bf5#label": "PerAg1000"
+          },
+          {
+            "@id": "_:n60",
+            "@type": "doi:cceac5fb8acf5ade2bf5",
+            "doi:cceac5fb8acf5ade2bf5#label": "VarietalRichness.trend"
+          },
+          {
+            "@id": "_:n61",
+            "@type": "doi:cceac5fb8acf5ade2bf5",
+            "doi:cceac5fb8acf5ade2bf5#label": "SE"
+          },
+          {
+            "@id": "_:n62",
+            "@type": "doi:cceac5fb8acf5ade2bf5",
+            "doi:cceac5fb8acf5ade2bf5#label": "df"
+          },
+          {
+            "@id": "_:n63",
+            "@type": "doi:cceac5fb8acf5ade2bf5",
+            "doi:cceac5fb8acf5ade2bf5#label": "asymp.LCL"
+          },
+          {
+            "@id": "_:n64",
+            "@type": "doi:cceac5fb8acf5ade2bf5",
+            "doi:cceac5fb8acf5ade2bf5#label": "asymp.UCL"
+          }
+        ],
+        "doi:aff130c76e68ead3862e#source_table": {
+          "@type": "doi:0424f6e7026fa4bc2c4a",
+          "tab_label": "Table",
+          "columns": [
+            {
+              "@type": "doi:65ba00e95e60fb8971e6",
+              "col_number": 1,
+              "col_titles": "PerAg1000",
+              "@id": "_:n65"
+            },
+            {
+              "@type": "doi:65ba00e95e60fb8971e6",
+              "col_number": 2,
+              "col_titles": "VarietalRichness.trend",
+              "@id": "_:n66"
+            },
+            {
+              "@type": "doi:65ba00e95e60fb8971e6",
+              "col_number": 3,
+              "col_titles": "SE",
+              "@id": "_:n67"
+            },
+            {
+              "@type": "doi:65ba00e95e60fb8971e6",
+              "col_number": 4,
+              "col_titles": "df",
+              "@id": "_:n68"
+            },
+            {
+              "@type": "doi:65ba00e95e60fb8971e6",
+              "col_number": 5,
+              "col_titles": "asymp.LCL",
+              "@id": "_:n69"
+            },
+            {
+              "@type": "doi:65ba00e95e60fb8971e6",
+              "col_number": 6,
+              "col_titles": "asymp.UCL",
+              "@id": "_:n70"
+            }
+          ],
+          "rows": [
+            {
+              "@type": "doi:9bf7a8e8909bfd491b38",
+              "row_number": 1,
+              "row_titles": "1",
+              "@id": "_:n71",
+              "cells": [
+                {
+                  "@type": "doi:4607bc7c42ac8db29bfc",
+                  "@id": "_:n72",
+                  "value": "0.05",
+                  "column": "_:n65"
+                },
+                {
+                  "@type": "doi:4607bc7c42ac8db29bfc",
+                  "@id": "_:n73",
+                  "value": "4.30461213345714",
+                  "column": "_:n66"
+                },
+                {
+                  "@type": "doi:4607bc7c42ac8db29bfc",
+                  "@id": "_:n74",
+                  "value": "1.42722477278569",
+                  "column": "_:n67"
+                },
+                {
+                  "@type": "doi:4607bc7c42ac8db29bfc",
+                  "@id": "_:n75",
+                  "value": "Inf",
+                  "column": "_:n68"
+                },
+                {
+                  "@type": "doi:4607bc7c42ac8db29bfc",
+                  "@id": "_:n76",
+                  "value": "1.50730298095382",
+                  "column": "_:n69"
+                },
+                {
+                  "@type": "doi:4607bc7c42ac8db29bfc",
+                  "@id": "_:n77",
+                  "value": "7.10192128596046",
+                  "column": "_:n70"
+                }
+              ]
+            },
+            {
+              "@type": "doi:9bf7a8e8909bfd491b38",
+              "row_number": 2,
+              "row_titles": "2",
+              "@id": "_:n78",
+              "cells": [
+                {
+                  "@type": "doi:4607bc7c42ac8db29bfc",
+                  "@id": "_:n79",
+                  "value": "0.2",
+                  "column": "_:n65"
+                },
+                {
+                  "@type": "doi:4607bc7c42ac8db29bfc",
+                  "@id": "_:n80",
+                  "value": "2.30428034385",
+                  "column": "_:n66"
+                },
+                {
+                  "@type": "doi:4607bc7c42ac8db29bfc",
+                  "@id": "_:n81",
+                  "value": "0.84178232320292",
+                  "column": "_:n67"
+                },
+                {
+                  "@type": "doi:4607bc7c42ac8db29bfc",
+                  "@id": "_:n82",
+                  "value": "Inf",
+                  "column": "_:n68"
+                },
+                {
+                  "@type": "doi:4607bc7c42ac8db29bfc",
+                  "@id": "_:n83",
+                  "value": "0.654417307549824",
+                  "column": "_:n69"
+                },
+                {
+                  "@type": "doi:4607bc7c42ac8db29bfc",
+                  "@id": "_:n84",
+                  "value": "3.95414338015018",
+                  "column": "_:n70"
+                }
+              ]
+            },
+            {
+              "@type": "doi:9bf7a8e8909bfd491b38",
+              "row_number": 3,
+              "row_titles": "3",
+              "@id": "_:n85",
+              "cells": [
+                {
+                  "@type": "doi:4607bc7c42ac8db29bfc",
+                  "@id": "_:n86",
+                  "value": "0.35",
+                  "column": "_:n65"
+                },
+                {
+                  "@type": "doi:4607bc7c42ac8db29bfc",
+                  "@id": "_:n87",
+                  "value": "0.303948554243146",
+                  "column": "_:n66"
+                },
+                {
+                  "@type": "doi:4607bc7c42ac8db29bfc",
+                  "@id": "_:n88",
+                  "value": "0.444921201236478",
+                  "column": "_:n67"
+                },
+                {
+                  "@type": "doi:4607bc7c42ac8db29bfc",
+                  "@id": "_:n89",
+                  "value": "Inf",
+                  "column": "_:n68"
+                },
+                {
+                  "@type": "doi:4607bc7c42ac8db29bfc",
+                  "@id": "_:n90",
+                  "value": "-0.568080976138649",
+                  "column": "_:n69"
+                },
+                {
+                  "@type": "doi:4607bc7c42ac8db29bfc",
+                  "@id": "_:n91",
+                  "value": "1.17597808462494",
+                  "column": "_:n70"
+                }
+              ]
+            },
+            {
+              "@type": "doi:9bf7a8e8909bfd491b38",
+              "row_number": 4,
+              "row_titles": "4",
+              "@id": "_:n92",
+              "cells": [
+                {
+                  "@type": "doi:4607bc7c42ac8db29bfc",
+                  "@id": "_:n93",
+                  "value": "0.5",
+                  "column": "_:n65"
+                },
+                {
+                  "@type": "doi:4607bc7c42ac8db29bfc",
+                  "@id": "_:n94",
+                  "value": "-1.69638323536408",
+                  "column": "_:n66"
+                },
+                {
+                  "@type": "doi:4607bc7c42ac8db29bfc",
+                  "@id": "_:n95",
+                  "value": "0.710663590604923",
+                  "column": "_:n67"
+                },
+                {
+                  "@type": "doi:4607bc7c42ac8db29bfc",
+                  "@id": "_:n96",
+                  "value": "Inf",
+                  "column": "_:n68"
+                },
+                {
+                  "@type": "doi:4607bc7c42ac8db29bfc",
+                  "@id": "_:n97",
+                  "value": "-3.08925827807365",
+                  "column": "_:n69"
+                },
+                {
+                  "@type": "doi:4607bc7c42ac8db29bfc",
+                  "@id": "_:n98",
+                  "value": "-0.303508192654516",
+                  "column": "_:n70"
+                }
+              ]
+            },
+            {
+              "@type": "doi:9bf7a8e8909bfd491b38",
+              "row_number": 5,
+              "row_titles": "5",
+              "@id": "_:n99",
+              "cells": [
+                {
+                  "@type": "doi:4607bc7c42ac8db29bfc",
+                  "@id": "_:n100",
+                  "value": "0.65",
+                  "column": "_:n65"
+                },
+                {
+                  "@type": "doi:4607bc7c42ac8db29bfc",
+                  "@id": "_:n101",
+                  "value": "-3.69671502497094",
+                  "column": "_:n66"
+                },
+                {
+                  "@type": "doi:4607bc7c42ac8db29bfc",
+                  "@id": "_:n102",
+                  "value": "1.27666012343227",
+                  "column": "_:n67"
+                },
+                {
+                  "@type": "doi:4607bc7c42ac8db29bfc",
+                  "@id": "_:n103",
+                  "value": "Inf",
+                  "column": "_:n68"
+                },
+                {
+                  "@type": "doi:4607bc7c42ac8db29bfc",
+                  "@id": "_:n104",
+                  "value": "-6.19892288739666",
+                  "column": "_:n69"
+                },
+                {
+                  "@type": "doi:4607bc7c42ac8db29bfc",
+                  "@id": "_:n105",
+                  "value": "-1.19450716254523",
+                  "column": "_:n70"
+                }
+              ]
+            }
+          ],
+          "@id": "_:n106"
+        },
+        "doi:aff130c76e68ead3862e#label": "Least square means of the slopes of fitted lines."
+      },
+      "doi:b9335ce2c99ed87735a6#has_input": {
+        "@id": "_:n107",
+        "@type": "doi:aff130c76e68ead3862e",
+        "doi:aff130c76e68ead3862e#has_characteristic": {
+          "@id": "_:n108",
+          "@type": "doi:31483624b5c80014b6c7",
+          "doi:31483624b5c80014b6c7#number_of_columns": 4,
+          "doi:31483624b5c80014b6c7#number_of_rows": 6
+        },
+        "doi:aff130c76e68ead3862e#has_part": [
+          {
+            "@id": "_:n109",
+            "@type": "doi:cceac5fb8acf5ade2bf5",
+            "doi:cceac5fb8acf5ade2bf5#label": "Estimate"
+          },
+          {
+            "@id": "_:n110",
+            "@type": "doi:cceac5fb8acf5ade2bf5",
+            "doi:cceac5fb8acf5ade2bf5#label": "Std. Error"
+          },
+          {
+            "@id": "_:n111",
+            "@type": "doi:cceac5fb8acf5ade2bf5",
+            "doi:cceac5fb8acf5ade2bf5#label": "z value"
+          },
+          {
+            "@id": "_:n112",
+            "@type": "doi:cceac5fb8acf5ade2bf5",
+            "doi:cceac5fb8acf5ade2bf5#label": "Pr(>|z|)"
+          }
+        ],
+        "doi:aff130c76e68ead3862e#source_table": {
+          "@type": "doi:0424f6e7026fa4bc2c4a",
+          "tab_label": "Table",
+          "columns": [
+            {
+              "@type": "doi:65ba00e95e60fb8971e6",
+              "col_number": 1,
+              "col_titles": "Estimate",
+              "@id": "_:n113"
+            },
+            {
+              "@type": "doi:65ba00e95e60fb8971e6",
+              "col_number": 2,
+              "col_titles": "Std. Error",
+              "@id": "_:n114"
+            },
+            {
+              "@type": "doi:65ba00e95e60fb8971e6",
+              "col_number": 3,
+              "col_titles": "z value",
+              "@id": "_:n115"
+            },
+            {
+              "@type": "doi:65ba00e95e60fb8971e6",
+              "col_number": 4,
+              "col_titles": "Pr(>|z|)",
+              "@id": "_:n116"
+            }
+          ],
+          "rows": [
+            {
+              "@type": "doi:9bf7a8e8909bfd491b38",
+              "row_number": 1,
+              "row_titles": "(Intercept)",
+              "@id": "_:n117",
+              "cells": [
+                {
+                  "@type": "doi:4607bc7c42ac8db29bfc",
+                  "@id": "_:n118",
+                  "value": "-3.28175433044839",
+                  "column": "_:n113"
+                },
+                {
+                  "@type": "doi:4607bc7c42ac8db29bfc",
+                  "@id": "_:n119",
+                  "value": "3.12863180913839",
+                  "column": "_:n114"
+                },
+                {
+                  "@type": "doi:4607bc7c42ac8db29bfc",
+                  "@id": "_:n120",
+                  "value": "-1.04894232707816",
+                  "column": "_:n115"
+                },
+                {
+                  "@type": "doi:4607bc7c42ac8db29bfc",
+                  "@id": "_:n121",
+                  "value": "0.294204663012721",
+                  "column": "_:n116"
+                }
+              ]
+            },
+            {
+              "@type": "doi:9bf7a8e8909bfd491b38",
+              "row_number": 2,
+              "row_titles": "VarietalRichness",
+              "@id": "_:n122",
+              "cells": [
+                {
+                  "@type": "doi:4607bc7c42ac8db29bfc",
+                  "@id": "_:n123",
+                  "value": "4.97138939665951",
+                  "column": "_:n113"
+                },
+                {
+                  "@type": "doi:4607bc7c42ac8db29bfc",
+                  "@id": "_:n124",
+                  "value": "1.63140413692437",
+                  "column": "_:n114"
+                },
+                {
+                  "@type": "doi:4607bc7c42ac8db29bfc",
+                  "@id": "_:n125",
+                  "value": "3.04730709217883",
+                  "column": "_:n115"
+                },
+                {
+                  "@type": "doi:4607bc7c42ac8db29bfc",
+                  "@id": "_:n126",
+                  "value": "0.00230901680829423",
+                  "column": "_:n116"
+                }
+              ]
+            },
+            {
+              "@type": "doi:9bf7a8e8909bfd491b38",
+              "row_number": 3,
+              "row_titles": "PerAg1000",
+              "@id": "_:n127",
+              "cells": [
+                {
+                  "@type": "doi:4607bc7c42ac8db29bfc",
+                  "@id": "_:n128",
+                  "value": "12.2995649982401",
+                  "column": "_:n113"
+                },
+                {
+                  "@type": "doi:4607bc7c42ac8db29bfc",
+                  "@id": "_:n129",
+                  "value": "10.5155255442182",
+                  "column": "_:n114"
+                },
+                {
+                  "@type": "doi:4607bc7c42ac8db29bfc",
+                  "@id": "_:n130",
+                  "value": "1.16965765966903",
+                  "column": "_:n115"
+                },
+                {
+                  "@type": "doi:4607bc7c42ac8db29bfc",
+                  "@id": "_:n131",
+                  "value": "0.242138763455136",
+                  "column": "_:n116"
+                }
+              ]
+            },
+            {
+              "@type": "doi:9bf7a8e8909bfd491b38",
+              "row_number": 4,
+              "row_titles": "NumColors",
+              "@id": "_:n132",
+              "cells": [
+                {
+                  "@type": "doi:4607bc7c42ac8db29bfc",
+                  "@id": "_:n133",
+                  "value": "-2.73132143116459",
+                  "column": "_:n113"
+                },
+                {
+                  "@type": "doi:4607bc7c42ac8db29bfc",
+                  "@id": "_:n134",
+                  "value": "2.98019474938602",
+                  "column": "_:n114"
+                },
+                {
+                  "@type": "doi:4607bc7c42ac8db29bfc",
+                  "@id": "_:n135",
+                  "value": "-0.916490921181343",
+                  "column": "_:n115"
+                },
+                {
+                  "@type": "doi:4607bc7c42ac8db29bfc",
+                  "@id": "_:n136",
+                  "value": "0.359409467087998",
+                  "column": "_:n116"
+                }
+              ]
+            },
+            {
+              "@type": "doi:9bf7a8e8909bfd491b38",
+              "row_number": 5,
+              "row_titles": "VarietalRichness:PerAg1000",
+              "@id": "_:n137",
+              "cells": [
+                {
+                  "@type": "doi:4607bc7c42ac8db29bfc",
+                  "@id": "_:n138",
+                  "value": "-13.3355452640472",
+                  "column": "_:n113"
+                },
+                {
+                  "@type": "doi:4607bc7c42ac8db29bfc",
+                  "@id": "_:n139",
+                  "value": "4.26283804276763",
+                  "column": "_:n114"
+                },
+                {
+                  "@type": "doi:4607bc7c42ac8db29bfc",
+                  "@id": "_:n140",
+                  "value": "-3.12832557330494",
+                  "column": "_:n115"
+                },
+                {
+                  "@type": "doi:4607bc7c42ac8db29bfc",
+                  "@id": "_:n141",
+                  "value": "0.00175805324428339",
+                  "column": "_:n116"
+                }
+              ]
+            },
+            {
+              "@type": "doi:9bf7a8e8909bfd491b38",
+              "row_number": 6,
+              "row_titles": "PerAg1000:NumColors",
+              "@id": "_:n142",
+              "cells": [
+                {
+                  "@type": "doi:4607bc7c42ac8db29bfc",
+                  "@id": "_:n143",
+                  "value": "6.94356040894904",
+                  "column": "_:n113"
+                },
+                {
+                  "@type": "doi:4607bc7c42ac8db29bfc",
+                  "@id": "_:n144",
+                  "value": "8.28819282504669",
+                  "column": "_:n114"
+                },
+                {
+                  "@type": "doi:4607bc7c42ac8db29bfc",
+                  "@id": "_:n145",
+                  "value": "0.8377653072894",
+                  "column": "_:n115"
+                },
+                {
+                  "@type": "doi:4607bc7c42ac8db29bfc",
+                  "@id": "_:n146",
+                  "value": "0.402162526749956",
+                  "column": "_:n116"
+                }
+              ]
+            }
+          ],
+          "@id": "_:n147"
+        },
+        "doi:aff130c76e68ead3862e#label": "Generalized linear mixed model with probability of flea beetle incidence as the response variable, and the following fixed effects: varietal richness; the percent of agriculture within a 1,000 m radius; the number of varietal colors; the interaction between varietal richness and number of varietal colors; and the interaction between varietal richness and the percent of agriculture."
+      },
+      "doi:b9335ce2c99ed87735a6#targets": {
+        "@id": "_:n148",
+        "@type": "doi:cceac5fb8acf5ade2bf5",
+        "doi:cceac5fb8acf5ade2bf5#label": "FleaBeetle>0"
+      },
+      "doi:b9335ce2c99ed87735a6#executes": {
+        "@id": "_:n149",
+        "@type": "doi:abef9f1c0d48853f3e51",
+        "doi:abef9f1c0d48853f3e51#is_implemented_by": "lsmeans::lstrends(FBBin.1000ag, ~ PerAg1000, var='VarietalRichness', at=list(PerAg1000=c(0.05,0.2,0.35,0.5,0.65)))",
+        "doi:abef9f1c0d48853f3e51#part_of": {
+          "@id": "_:n150",
+          "@type": "doi:4b99260369df9110f9bd",
+          "doi:4b99260369df9110f9bd#has_support_url": "https://doi.org/10.32614/CRAN.package.lsmeans",
+          "doi:4b99260369df9110f9bd#part_of": {
+            "@id": "_:n151",
+            "@type": "doi:c981d125d1a564c9f573",
+            "doi:c981d125d1a564c9f573#version_info": "4.4.1",
+            "doi:c981d125d1a564c9f573#label": "R"
+          },
+          "doi:4b99260369df9110f9bd#version_info": "2.30.2",
+          "doi:4b99260369df9110f9bd#label": "lsmeans"
+        },
+        "doi:abef9f1c0d48853f3e51#label": "lstrends"
+      },
+      "doi:b9335ce2c99ed87735a6#label": "The slopes of fitted lines were estimated and compared using least square means."
+    }
+  ],
+  "@context": {
+    "doi": "https://doi.org/21.T11969/",
+    "columns": "https://doi.org/21.T11969/0424f6e7026fa4bc2c4a#columns",
+    "col_number": "https://doi.org/21.T11969/65ba00e95e60fb8971e6#number",
+    "col_titles": "https://doi.org/21.T11969/65ba00e95e60fb8971e6#titles",
+    "rows": "https://doi.org/21.T11969/0424f6e7026fa4bc2c4a#rows",
+    "row_number": "https://doi.org/21.T11969/9bf7a8e8909bfd491b38#number",
+    "row_titles": "https://doi.org/21.T11969/9bf7a8e8909bfd491b38#titles",
+    "cells": "https://doi.org/21.T11969/9bf7a8e8909bfd491b38#cells",
+    "column": "https://doi.org/21.T11969/4607bc7c42ac8db29bfc#column",
+    "value": "https://doi.org/21.T11969/4607bc7c42ac8db29bfc#value",
+    "tab_label": "https://doi.org/21.T11969/0424f6e7026fa4bc2c4a#label"
+  }
+}

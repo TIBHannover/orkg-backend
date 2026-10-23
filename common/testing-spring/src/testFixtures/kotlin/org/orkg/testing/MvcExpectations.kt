@@ -522,3 +522,12 @@ fun ResultActions.andExpectContributionRecord(path: String = "$"): ResultActions
     .andExpect(jsonPath("$path.research_problem_count", `is`(notNullValue())))
     .andExpect(jsonPath("$path.visualization_count", `is`(notNullValue())))
     .andExpect(jsonPath("$path.total_count", `is`(notNullValue())))
+
+fun ResultActions.andExpectRdfFile(path: String = "$"): ResultActions = this
+    .andExpect(jsonPath("$path.id", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.name", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.base_uri", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.format", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.state", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.created_by", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.created_at", `is`(notNullValue())))

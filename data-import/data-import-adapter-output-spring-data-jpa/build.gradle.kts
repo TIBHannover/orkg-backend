@@ -8,6 +8,7 @@ plugins {
 
 dependencies {
     api("jakarta.persistence:jakarta.persistence-api")
+    api("org.eclipse.rdf4j:rdf4j-model-api")
     api("org.springframework.boot:spring-boot-persistence")
     api("org.springframework.data:spring-data-commons")
     api("org.springframework.data:spring-data-jpa")
@@ -17,6 +18,9 @@ dependencies {
     api(project(":data-import:data-import-core-model"))
     api(project(":data-import:data-import-ports-output"))
     api(project(":graph:graph-core-model"))
+    implementation("org.eclipse.rdf4j:rdf4j-model")
+    implementation("org.eclipse.rdf4j:rdf4j-model-vocabulary")
+    implementation("org.eclipse.rdf4j:rdf4j-rio-api")
     implementation(project(":common:pagination"))
     implementation(project(":common:serialization"))
     implementation(project(":common:string-utils"))

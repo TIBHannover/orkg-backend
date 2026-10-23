@@ -4,7 +4,9 @@ import org.orkg.common.ContributorId
 import org.orkg.community.domain.ContributorNotFound
 import org.orkg.community.output.ContributorRepository
 import org.orkg.dataimport.domain.csv.CSV
+import org.orkg.dataimport.domain.rdf.RdfFile
 import org.orkg.dataimport.input.UpdateCSVUseCase
+import org.orkg.dataimport.input.UpdateRdfFileUseCase
 import org.springframework.batch.core.job.parameters.JobParameters
 import org.springframework.batch.core.job.parameters.JobParametersBuilder
 import org.springframework.batch.infrastructure.item.ExecutionContext
@@ -20,6 +22,20 @@ fun CSV.apply(command: UpdateCSVUseCase.UpdateCommand): CSV =
         name = command.name ?: name,
         data = command.data?.takeIf { it.isNotBlank() } ?: data,
         type = command.type ?: type,
+        format = command.format ?: format,
+    )
+
+fun UpdateRdfFileUseCase.UpdateCommand.hasNoContents(): Boolean =
+    name == null &&
+        data == null &&
+        baseUri == null &&
+        format == null
+
+fun RdfFile.apply(command: UpdateRdfFileUseCase.UpdateCommand): RdfFile =
+    copy(
+        name = command.name ?: name,
+        data = command.data?.takeIf { it.isNotBlank() } ?: data,
+        baseUri = command.baseUri,
         format = command.format ?: format,
     )
 

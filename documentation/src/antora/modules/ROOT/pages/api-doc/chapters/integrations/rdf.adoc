@@ -22,6 +22,9 @@ include::{snippets}/rdf-hints_create-rdf-dump/description.adoc[]
 
 operation::rdf-hints_create-rdf-dump[snippets='curl-request,http-response']
 
+[[rdf-import]]
+include::rdf-import.adoc[leveloffset=+1]
+
 [[resolvable-vocab]]
 == Resolvable Vocabulary
 

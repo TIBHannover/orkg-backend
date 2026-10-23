@@ -7,6 +7,7 @@ dependencies {
     api("org.springframework.data:spring-data-commons")
     api(project(":common:core-identifiers"))
     api(project(":data-import:data-import-core-model"))
+    api(project(":graph:graph-core-model"))
 
     testFixturesApi(project(":data-import:data-import-ports-input"))
     testFixturesImplementation(project(":data-import:data-import-core-model"))

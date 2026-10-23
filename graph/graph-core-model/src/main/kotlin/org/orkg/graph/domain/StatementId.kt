@@ -1,8 +1,12 @@
 package org.orkg.graph.domain
 
 import org.orkg.common.VALID_ID_REGEX
+import java.io.Serial
+import java.io.Serializable
 
-data class StatementId(val value: String) : Comparable<StatementId> {
+data class StatementId(val value: String) :
+    Comparable<StatementId>,
+    Serializable {
     init {
         require(value.isNotBlank()) { "ID must not be blank" }
         require(value.startsWith("S")) { "ID must start with \"S\"" }
@@ -16,4 +20,9 @@ data class StatementId(val value: String) : Comparable<StatementId> {
     override fun toString() = value
 
     override fun compareTo(other: StatementId) = value.compareTo(other.value)
+
+    companion object {
+        @Serial
+        private const val serialVersionUID: Long = 3366478835159789925L
+    }
 }

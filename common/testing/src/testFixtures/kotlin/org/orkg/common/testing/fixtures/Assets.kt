@@ -26,6 +26,8 @@ object Assets {
 
     fun csv(name: String): String = fileContents("csvs/$name.csv").decodeToString()
 
+    fun turtle(name: String): String = fileContents("rdf/turtle/$name.ttl").decodeToString()
+
     private fun fileContents(name: String): ByteArray =
         ClassPathResource(URI.create("classpath:/assets/$name").path).inputStream.use { it.readBytes() }
 }

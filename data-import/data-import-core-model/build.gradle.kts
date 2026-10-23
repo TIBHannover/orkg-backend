@@ -4,6 +4,8 @@ plugins {
 }
 
 dependencies {
+    api("org.eclipse.rdf4j:rdf4j-model-api")
+    api("org.eclipse.rdf4j:rdf4j-rio-api")
     api("org.springframework.batch:spring-batch-core")
     api("org.springframework:spring-web")
     api(project(":common:core-identifiers"))
@@ -16,8 +18,10 @@ dependencies {
     implementation(project(":graph:graph-core-constants"))
 
     testFixturesApi("dev.forkhandles:fabrikate4k")
+    testFixturesApi("org.eclipse.rdf4j:rdf4j-model-api")
     testFixturesApi("org.springframework.batch:spring-batch-core")
     testFixturesApi(project(":common:core-identifiers"))
+    testFixturesImplementation("org.eclipse.rdf4j:rdf4j-model")
     testFixturesImplementation(project(":graph:graph-core-constants"))
     testFixturesImplementation(testFixtures(project(":common:testing")))
 }

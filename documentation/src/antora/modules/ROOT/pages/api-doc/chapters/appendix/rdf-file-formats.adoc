@@ -1,0 +1,14 @@
+= RDF File Formats
+
+The following RDF File formats are supported:
+
+[options="header"]
+|===============================
+| Name      | Format     | Media Types
+| JSON-LD   | `JSONLD`   | `application/ld+json`
+| N3        | `N3`       | `text/n3`, `text/rdf+n3`
+| N-Triples | `NTRIPLES` | `application/n-triples`, `text/plain`
+| RDF/XML   | `RDFXML`   | `application/rdf+xml`, `application/xml`, `text/xml`
+| TriG      | `TRIG`     | `application/trig`, `application/x-trig`
+| Turtle    | `TURTLE`   | `text/turtle`, `application/x-turtle`
+|===============================

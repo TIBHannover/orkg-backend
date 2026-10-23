@@ -12,6 +12,8 @@ import org.orkg.dataimport.domain.csv.CSVID
 import org.orkg.dataimport.domain.csv.papers.PaperCSVRecordImportResult.Type
 import org.orkg.dataimport.domain.jobs.JobId
 import org.orkg.dataimport.domain.jobs.JobStatus.Status
+import org.orkg.dataimport.domain.rdf.RdfFile
+import org.orkg.dataimport.domain.rdf.ResourceToTypeMapping.OrkgEntityType
 import org.orkg.graph.domain.ExtractionMethod
 import java.time.OffsetDateTime
 import java.util.UUID
@@ -22,6 +24,19 @@ data class CSVRepresentation(
     val type: CSV.Type,
     val format: CSV.Format,
     val state: CSV.State,
+    @field:JsonProperty("created_by")
+    val createdBy: ContributorId,
+    @field:JsonProperty("created_at")
+    val createdAt: OffsetDateTime,
+)
+
+data class RdfFileRepresentation(
+    val id: UUID,
+    val name: String,
+    @field:JsonProperty("base_uri")
+    val baseUri: IRI?,
+    val format: RdfFile.Format,
+    val state: RdfFile.State,
     @field:JsonProperty("created_by")
     val createdBy: ContributorId,
     @field:JsonProperty("created_at")
@@ -101,4 +116,20 @@ data class PaperCSVRecordImportResultRepresentation(
     val itemNumber: Long,
     @field:JsonProperty("line_number")
     val lineNumber: Long,
+)
+
+data class ResourceToTypeMappingRepresentation(
+    val iri: IRI,
+    val type: OrkgEntityType,
+)
+
+data class RdfFileImportResultRepresentation(
+    @field:JsonProperty("class_count")
+    val classCount: Int,
+    @field:JsonProperty("predicate_count")
+    val predicateCount: Int,
+    @field:JsonProperty("resource_count")
+    val resourceCount: Int,
+    @field:JsonProperty("statement_count")
+    val statementCount: Int,
 )

@@ -5,6 +5,7 @@
 * xref:reference/models/graph/csvw-table-model.adoc[]
 * xref:reference/models/graph/literature-list-model.adoc[]
 * xref:reference/models/graph/paper-model.adoc[]
+* xref:reference/models/flowcharts/rdf-import-flow-model.adoc[]
 * xref:reference/models/graph/rosetta-stone-template-model.adoc[]
 * xref:reference/models/graph/smart-review-model.adoc[]
 * xref:reference/models/graph/template-model.adoc[]

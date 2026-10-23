@@ -121,6 +121,7 @@ testing {
                 runtimeOnly(project(":graph:graph-ports-input"))
                 runtimeOnly(project(":keycloak"))
                 runtimeOnly(project(":media-storage:media-storage-core-model"))
+                runtimeOnly(testFixtures(project(":data-import:data-import-core-model"))) // for aliceKnowsBob.ttl
             }
             targets {
                 all {

@@ -8,6 +8,8 @@ import org.orkg.dataimport.domain.jobs.JobNames
 import org.orkg.dataimport.domain.testing.asciidoc.allowedCSVStateValues
 import org.orkg.dataimport.domain.testing.asciidoc.allowedEntityTypeValues
 import org.orkg.dataimport.domain.testing.asciidoc.allowedJobStatusValues
+import org.orkg.dataimport.domain.testing.asciidoc.allowedOrkgEntityTypeValues
+import org.orkg.dataimport.domain.testing.asciidoc.allowedRdfFileStateValues
 import org.orkg.graph.testing.asciidoc.allowedExtractionMethodValues
 import org.orkg.testing.spring.restdocs.constraints
 import org.orkg.testing.spring.restdocs.polymorphicResponseFields
@@ -28,6 +30,23 @@ fun jobStatusResponseFields() = listOf(
 fun csvJobStatusResponseFields() = listOf(
     *jobStatusResponseFields().toTypedArray(),
     fieldWithPath("context.csv_id").description("The id of the CSV. Only present when `job_name` is `${JobNames.VALIDATE_PAPER_CSV}` or `${JobNames.IMPORT_PAPER_CSV}`.").optional(),
+)
+
+fun rdfFileJobStatusResponseFields() = listOf(
+    *jobStatusResponseFields().toTypedArray(),
+    fieldWithPath("context.rdf_file_id").description("The id of the RDF file. Only present when `job_name` is `${JobNames.VALIDATE_RDF_FILE}` or `${JobNames.IMPORT_RDF_FILE}`.").optional(),
+)
+
+fun resourceToTypeMappingResponseFields() = listOf(
+    fieldWithPath("iri").description("The iri of the entity."),
+    fieldWithPath("type").description("The parsed ORKG type of the entity. Either of $allowedOrkgEntityTypeValues."),
+)
+
+fun rdfFileImportResultResponseFields() = listOf(
+    fieldWithPath("class_count").description("The count of classes created."),
+    fieldWithPath("predicate_count").description("The count of predicates created."),
+    fieldWithPath("resource_count").description("The count of resources created."),
+    fieldWithPath("statement_count").description("The count of statements created."),
 )
 
 fun csvResponseFields() = listOf(
@@ -90,4 +109,15 @@ fun paperCSVRecordImportResultResponseFields() = listOf(
     fieldWithPath("csv_id").description("The id of the csv."),
     fieldWithPath("item_number").description("The item number of the entity."),
     fieldWithPath("line_number").description("The line number of the entity."),
+)
+
+fun rdfFileResponseFields() = listOf(
+    fieldWithPath("id").description("The identifier of the RDF file."),
+    fieldWithPath("name").description("The name of the RDF file."),
+    fieldWithPath("base_uri").description("The base uri of the RDF file."),
+    fieldWithPath("format").description("The format of the RDF file. See <<rdf-file-formats,RDF File Formats>>."),
+    fieldWithPath("state").description("The state of the RDF file. Either of $allowedRdfFileStateValues."),
+    timestampFieldWithPath("created_at", "the RDF file was created"),
+    // TODO: Add links to documentation of special user UUIDs.
+    fieldWithPath("created_by").description("The UUID of the user or service who created the RDF file."),
 )

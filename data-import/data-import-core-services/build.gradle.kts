@@ -3,6 +3,7 @@ plugins {
 }
 
 dependencies {
+    api("org.eclipse.rdf4j:rdf4j-model")
     api("org.eclipse.rdf4j:rdf4j-model-api")
     api("org.eclipse.rdf4j:rdf4j-rio-api")
     api("tools.jackson.core:jackson-databind")
@@ -24,7 +25,6 @@ dependencies {
     api(project(":graph:graph-core-model"))
     api(project(":graph:graph-ports-input"))
     api(project(":graph:graph-ports-output"))
-    implementation("org.eclipse.rdf4j:rdf4j-model")
     implementation("org.eclipse.rdf4j:rdf4j-model-vocabulary")
     implementation("tools.jackson.core:jackson-core")
     implementation("tools.jackson.module:jackson-module-kotlin")

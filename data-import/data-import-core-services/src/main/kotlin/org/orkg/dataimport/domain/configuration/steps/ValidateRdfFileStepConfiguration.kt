@@ -2,6 +2,7 @@ package org.orkg.dataimport.domain.configuration.steps
 
 import org.eclipse.rdf4j.model.IRI
 import org.eclipse.rdf4j.model.Resource
+import org.eclipse.rdf4j.model.ValueFactory
 import org.orkg.dataimport.domain.extractRdfFileId
 import org.orkg.dataimport.domain.rdf.RdfClass
 import org.orkg.dataimport.domain.rdf.RdfClassParser
@@ -33,10 +34,12 @@ class ValidateRdfFileStepConfiguration {
         @Value("#{jobParameters}")
         jobParameters: Map<String, Any>,
         rdfFileRepository: RdfFileRepository,
+        valueFactory: ValueFactory,
     ): StatementReader =
         StatementReader(
             rdfFileId = extractRdfFileId(jobParameters),
             rdfFileRepository = rdfFileRepository,
+            valueFactory = valueFactory,
         )
 
     @Bean

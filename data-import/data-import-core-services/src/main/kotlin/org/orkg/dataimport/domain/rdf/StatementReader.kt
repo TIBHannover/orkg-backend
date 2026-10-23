@@ -2,7 +2,7 @@ package org.orkg.dataimport.domain.rdf
 
 import org.eclipse.rdf4j.model.Model
 import org.eclipse.rdf4j.model.Statement
-import org.eclipse.rdf4j.model.impl.SimpleValueFactory
+import org.eclipse.rdf4j.model.ValueFactory
 import org.eclipse.rdf4j.rio.ParseErrorListener
 import org.eclipse.rdf4j.rio.ParserConfig
 import org.eclipse.rdf4j.rio.Rio
@@ -19,6 +19,7 @@ import java.util.UUID
 open class StatementReader(
     private val rdfFileId: UUID,
     private val rdfFileRepository: RdfFileRepository,
+    private val valueFactory: ValueFactory,
 ) : AbstractItemCountingItemStreamItemReader<Statement>() {
     private lateinit var model: Model
     private lateinit var iterator: Iterator<Statement>
@@ -45,7 +46,7 @@ open class StatementReader(
                 rdfFile.baseUri?.toString(),
                 rdfFile.format.rdfFormat,
                 parserConfig,
-                SimpleValueFactory.getInstance(),
+                valueFactory,
                 errorListener,
             )
         } catch (t: Throwable) {

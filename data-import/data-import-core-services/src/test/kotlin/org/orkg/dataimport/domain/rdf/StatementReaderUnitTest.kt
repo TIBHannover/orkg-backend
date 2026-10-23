@@ -9,6 +9,7 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import org.eclipse.rdf4j.model.Statement
+import org.eclipse.rdf4j.model.ValueFactory
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory
 import org.eclipse.rdf4j.model.vocabulary.RDF
 import org.junit.jupiter.api.Test
@@ -22,9 +23,10 @@ import java.util.UUID
 
 internal class StatementReaderUnitTest : MockkBaseTest {
     private val rdfFileId = UUID.fromString("bf59dd89-6a4b-424b-b9d5-36042661e837")
+    private val valueFactory: ValueFactory = SimpleValueFactory.getInstance()
     private val rdfFileRepository: RdfFileRepository = mockk()
 
-    private val statementReader = StatementReader(rdfFileId, rdfFileRepository)
+    private val statementReader = StatementReader(rdfFileId, rdfFileRepository, valueFactory)
 
     @Test
     fun `Given an rdf file id, when reading statements, it returns the correct result`() {
@@ -36,9 +38,9 @@ internal class StatementReaderUnitTest : MockkBaseTest {
         statementReader.read().asClue {
             it.shouldNotBeNull()
             it.shouldBeInstanceOf<Statement>()
-            it.subject shouldBe SimpleValueFactory.getInstance().createIRI("http://example.org/Alice")
+            it.subject shouldBe valueFactory.createIRI("http://example.org/Alice")
             it.predicate shouldBe RDF.TYPE
-            it.`object` shouldBe SimpleValueFactory.getInstance().createIRI("http://xmlns.com/foaf/0.1/Person")
+            it.`object` shouldBe valueFactory.createIRI("http://xmlns.com/foaf/0.1/Person")
             it.context shouldBe null
         }
         statementReader.close()

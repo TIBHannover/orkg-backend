@@ -13,7 +13,7 @@ const val KEYCLOAK_CLIENT_SECRET = "**********"
 class KeycloakTestContainerInitializer : ApplicationContextInitializer<ConfigurableApplicationContext> {
     companion object {
         val keycloakContainer: KeycloakContainer = KeycloakContainer(BuildConfig.CONTAINER_IMAGE_KEYCLOAK)
-            .withRealmImportFile("import/realm_orkg.json")
+            .withRealmImportFile("import/orkg-realm.json")
             .withExposedPorts(8080, 8443, 8787, 9000)
     }
 

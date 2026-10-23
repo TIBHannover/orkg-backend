@@ -29,7 +29,7 @@ dependencies {
     // for the respective version, and check the compatibility.
     api("org.apache.lucene:lucene-queryparser:10.3.2")
 
-    val keycloakAdminClientVersion = "26.0.7"
+    val keycloakAdminClientVersion = "26.0.12"
     api("org.keycloak:keycloak-admin-client:$keycloakAdminClientVersion")
 
     val neo4jMigrationsVersion = "3.1.0"

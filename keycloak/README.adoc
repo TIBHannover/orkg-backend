@@ -7,4 +7,4 @@ The following command can be used to trigger the export:
 To improve diffs when changes are made, the JSON objects should be sorted by their keys.
 This can be achieved e.g. by running them through `jq`:
 
-    jq --sort-keys . realm_orkg.json > sorted.json
+    jq --sort-keys . orkg-realm.json > sorted.json

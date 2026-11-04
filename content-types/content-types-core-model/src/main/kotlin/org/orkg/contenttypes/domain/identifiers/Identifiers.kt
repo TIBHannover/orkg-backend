@@ -7,6 +7,7 @@ import org.orkg.common.ISSN
 import org.orkg.common.LinkedInId
 import org.orkg.common.ORCID
 import org.orkg.common.OpenAlexId
+import org.orkg.common.PubMedID
 import org.orkg.common.ResearchGateId
 import org.orkg.common.ResearcherId
 import org.orkg.common.WikidataId
@@ -18,6 +19,7 @@ object Identifiers {
         Identifier("isbn", Predicates.hasISBN, ISBN::of),
         Identifier("issn", Predicates.hasISSN, ISSN::of),
         Identifier("open_alex", Predicates.hasOpenAlexId, OpenAlexId::of),
+        Identifier("pubmed", Predicates.hasPubMedId, PubMedID::of),
     )
     val comparison = setOf(
         Identifier("doi", Predicates.hasDOI, DOI::of),

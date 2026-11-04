@@ -40,6 +40,7 @@ object Predicates {
     val hasORCID = ThingId("HAS_ORCID")
     val hasPaper = ThingId("HasPaper")
     val hasPublishedVersion = ThingId("hasPublishedVersion")
+    val hasPubMedId = ThingId("P74033")
     val hasPreviousVersion = ThingId("hasPreviousVersion")
     val hasReference = ThingId("HasReference")
     val hasRelatedFigure = ThingId("RelatedFigure")

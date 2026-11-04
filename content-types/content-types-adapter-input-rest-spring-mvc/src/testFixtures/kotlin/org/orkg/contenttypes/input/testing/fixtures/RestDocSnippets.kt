@@ -9,6 +9,7 @@ import org.orkg.common.testing.fixtures.issnConstraint
 import org.orkg.common.testing.fixtures.linkedInIdConstraint
 import org.orkg.common.testing.fixtures.openAlexIdConstraint
 import org.orkg.common.testing.fixtures.orcidConstraint
+import org.orkg.common.testing.fixtures.pubMedIdConstraint
 import org.orkg.common.testing.fixtures.researchGateIdConstraint
 import org.orkg.common.testing.fixtures.researcherIdConstraint
 import org.orkg.common.testing.fixtures.wikidataIdConstraint
@@ -64,6 +65,7 @@ fun paperIdentifierFields(path: String = "identifiers") = listOf(
     fieldWithPath("$path.isbn").type("Array").description("The list of ISBNs of the paper. (optional)").arrayItemsType("String").constraints(isbnConstraint).optional(),
     fieldWithPath("$path.issn").type("Array").description("The list of ISSNs of the paper. (optional)").arrayItemsType("String").constraints(issnConstraint).optional(),
     fieldWithPath("$path.open_alex").type("Array").description("The list of OpenAlex IDs of the paper. (optional)").arrayItemsType("String").constraints(openAlexIdConstraint).optional(),
+    fieldWithPath("$path.pubmed").type("Array").description("The list of PubMed IDs of the paper. (optional)").arrayItemsType("String").constraints(pubMedIdConstraint).optional(),
 )
 
 fun literatureListIdentifierResponseFields(path: String = "identifiers") = listOf(

@@ -18,6 +18,8 @@ import org.orkg.common.VALID_OPEN_ALEX_ID_REGEX
 import org.orkg.common.VALID_OPEN_ALEX_ID_URI_REGEX
 import org.orkg.common.VALID_ORCID_REGEX
 import org.orkg.common.VALID_ORCID_URI_REGEX
+import org.orkg.common.VALID_PUB_MED_ID_REGEX
+import org.orkg.common.VALID_PUB_MED_ID_URI_REGEX
 import org.orkg.common.VALID_RESEARCHER_ID_REGEX
 import org.orkg.common.VALID_RESEARCHER_ID_URI_REGEX
 import org.orkg.common.VALID_RESEARCH_GATE_ID_REGEX
@@ -96,6 +98,17 @@ val openAlexIdConstraint = Constraint(
     Pattern::class.qualifiedName!!,
     mapOf(
         "regexp" to oneOf(VALID_OPEN_ALEX_ID_REGEX, VALID_OPEN_ALEX_ID_URI_REGEX),
+        "flags" to emptyArray<Pattern.Flag>(),
+        "message" to "{jakarta.validation.constraints.Pattern.message}",
+        "groups" to emptyArray<Class<*>>(),
+        "payload" to emptyArray<Class<out Payload>>(),
+    ),
+)
+
+val pubMedIdConstraint = Constraint(
+    Pattern::class.qualifiedName!!,
+    mapOf(
+        "regexp" to oneOf(VALID_PUB_MED_ID_REGEX, VALID_PUB_MED_ID_URI_REGEX),
         "flags" to emptyArray<Pattern.Flag>(),
         "message" to "{jakarta.validation.constraints.Pattern.message}",
         "groups" to emptyArray<Class<*>>(),

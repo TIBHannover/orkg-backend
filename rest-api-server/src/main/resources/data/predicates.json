@@ -526,5 +526,9 @@
     {
         "id": "numberOfStudiesRetained",
         "label": "number of studies retained"
+    },
+    {
+        "id": "P74033",
+        "label": "PubMed ID"
     }
 ]

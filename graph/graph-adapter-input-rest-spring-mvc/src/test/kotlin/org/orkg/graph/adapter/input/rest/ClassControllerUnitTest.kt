@@ -282,11 +282,14 @@ internal class ClassControllerUnitTest : MockMvcBaseTest("classes") {
             .andExpect(header().string("Location", endsWith("/api/classes/$id")))
             .andDocument {
                 summary("Replacing classes")
+                deprecated()
                 description(
                     """
                     A `PUT` request updates a class with a new given label and URI.
                     All fields will be updated in the process.
                     The response will be `204 NO CONTENT` when successful.
+                    
+                    WARNING: *Deprecated*: This endpoint is deprecated and will be removed soon. Please use <<classes-update,Updating Classes>> instead!
                     """,
                 )
                 pathParameters(

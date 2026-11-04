@@ -6,6 +6,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Added support for PubMed IDs on papers.
+  (See [#713](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/work_items/713))
+- Added internal functionality for importing RDF dumps.
+  (See [#18](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/work_items/18))
+### Changed
+- Updated to Spring Boot 4.1.1.
+  (See [!1542](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1542),
+       [!1545](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1545)),
+- Updated to Keycloak 26.8.1.
+  (See [!1552](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1552))
+- Fixed node version to 24.22.2 for documentation builds.
+  (See [!1556](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/1556))
+### Deprecated
+- The endpoint for replacing classes is now deprecated.
 
 ## [0.102.5] - 2026-10-22
 ### Fixed

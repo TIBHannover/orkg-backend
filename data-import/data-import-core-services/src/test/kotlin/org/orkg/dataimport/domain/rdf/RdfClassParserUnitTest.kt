@@ -6,17 +6,15 @@ import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.verify
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory
-import org.eclipse.rdf4j.model.vocabulary.RDFS
 import org.junit.jupiter.api.Test
 import org.orkg.common.testing.fixtures.MockkBaseTest
-import org.orkg.dataimport.output.RdfTripleRepository
 import java.util.UUID
 
 internal class RdfClassParserUnitTest : MockkBaseTest {
     private val rdfFileId = UUID.fromString("9cb68baa-593d-4516-8473-ca0de261f3f4")
-    private val rdfTripleRepository: RdfTripleRepository = mockk()
+    private val rdfLabelResolverService: RdfLabelResolverService = mockk()
 
-    private val rdfClassParser = RdfClassParser(rdfFileId, rdfTripleRepository)
+    private val rdfClassParser = RdfClassParser(rdfFileId, rdfLabelResolverService)
 
     @Test
     fun `Given a class iri, when parsing an rdf class, it parses the rdf class correctly`() {
@@ -31,16 +29,12 @@ internal class RdfClassParserUnitTest : MockkBaseTest {
 
         mockkStatic(UUID::class) {
             every { UUID.randomUUID() } returns id
-            every {
-                rdfTripleRepository.findAllDistinctObjectLiteralsByRdfFileIdAndSubjectAndPredicate(rdfFileId, iri, RDFS.LABEL)
-            } returns setOf(
-                SimpleValueFactory.getInstance().createLiteral("class label"),
-            )
+            every { rdfLabelResolverService.resolveLabel(rdfFileId, iri) } returns "class label"
 
             rdfClassParser.process(iri) shouldBe expected
 
             verify(exactly = 1) { UUID.randomUUID() }
-            verify(exactly = 1) { rdfTripleRepository.findAllDistinctObjectLiteralsByRdfFileIdAndSubjectAndPredicate(rdfFileId, iri, RDFS.LABEL) }
+            verify(exactly = 1) { rdfLabelResolverService.resolveLabel(rdfFileId, iri) }
         }
     }
 

@@ -106,6 +106,8 @@ orkg:
       caller: "ORKG"
     wikidata:
       host: "https://www.wikidata.org"
+    typeregistry:
+      host: "https://typeregistry.lab.pidconsortium.net/cordra/doip"
   keycloak:
     host: "http://localhost:8888"
     realm: "orkg"

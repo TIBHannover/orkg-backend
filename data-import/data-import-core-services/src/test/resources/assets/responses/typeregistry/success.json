@@ -1,0 +1,53 @@
+{
+    "id": "21.T11969/4607bc7c42ac8db29bfc",
+    "type": "InfoType",
+    "attributes": {
+        "content": {
+            "Identifier": "21.T11969/4607bc7c42ac8db29bfc",
+            "name": "Cell",
+            "description": "Data type for a cell of a table",
+            "versioning": {
+                "version": "1"
+            },
+            "provenance": {
+                "contributors": [
+                    {
+                        "Name": "Markus Stocker",
+                        "ORCID": "0000-0001-5492-3212"
+                    }
+                ],
+                "creationDate": "2024-04-12T17:02:55.339Z",
+                "lastModificationDate": "2024-08-12T10:14:26.651Z"
+            },
+            "Schema": {
+                "Type": "Object",
+                "Properties": [
+                    {
+                        "Name": "value",
+                        "Description": "The value of the cell",
+                        "Type": "21.T11969/3df63b7acb0522da685d",
+                        "Properties": {
+                            "Cardinality": "1"
+                        }
+                    },
+                    {
+                        "Name": "column",
+                        "Title": "Column",
+                        "Description": "The column of the cell",
+                        "Type": "21.T11969/fb2e379f820c6f8f9e82",
+                        "Properties": {
+                            "Cardinality": "1"
+                        }
+                    }
+                ]
+            }
+        },
+        "metadata": {
+            "createdOn": 1712941375339,
+            "createdBy": "21.T11969/9f771036215571ac5b93",
+            "modifiedOn": 1723457666654,
+            "modifiedBy": "21.T11969/9f771036215571ac5b93",
+            "txnId": 1723457666651162
+        }
+    }
+}

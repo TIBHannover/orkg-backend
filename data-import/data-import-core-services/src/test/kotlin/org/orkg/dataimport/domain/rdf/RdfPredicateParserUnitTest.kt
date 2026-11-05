@@ -6,17 +6,15 @@ import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.verify
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory
-import org.eclipse.rdf4j.model.vocabulary.RDFS
 import org.junit.jupiter.api.Test
 import org.orkg.common.testing.fixtures.MockkBaseTest
-import org.orkg.dataimport.output.RdfTripleRepository
 import java.util.UUID
 
 internal class RdfPredicateParserUnitTest : MockkBaseTest {
     private val rdfFileId = UUID.fromString("9cb68baa-593d-4516-8473-ca0de261f3f4")
-    private val rdfTripleRepository: RdfTripleRepository = mockk()
+    private val rdfLabelResolverService: RdfLabelResolverService = mockk()
 
-    private val rdfPredicateParser = RdfPredicateParser(rdfFileId, rdfTripleRepository)
+    private val rdfPredicateParser = RdfPredicateParser(rdfFileId, rdfLabelResolverService)
 
     @Test
     fun `Given a predicate iri, when parsing an rdf predicate, it parses the rdf predicate correctly`() {
@@ -31,16 +29,12 @@ internal class RdfPredicateParserUnitTest : MockkBaseTest {
 
         mockkStatic(UUID::class) {
             every { UUID.randomUUID() } returns id
-            every {
-                rdfTripleRepository.findAllDistinctObjectLiteralsByRdfFileIdAndSubjectAndPredicate(rdfFileId, iri, RDFS.LABEL)
-            } returns setOf(
-                SimpleValueFactory.getInstance().createLiteral("predicate label"),
-            )
+            every { rdfLabelResolverService.resolveLabel(rdfFileId, iri) } returns "predicate label"
 
             rdfPredicateParser.process(iri) shouldBe expected
 
             verify(exactly = 1) { UUID.randomUUID() }
-            verify(exactly = 1) { rdfTripleRepository.findAllDistinctObjectLiteralsByRdfFileIdAndSubjectAndPredicate(rdfFileId, iri, RDFS.LABEL) }
+            verify(exactly = 1) { rdfLabelResolverService.resolveLabel(rdfFileId, iri) }
         }
     }
 

@@ -6,6 +6,7 @@ import org.eclipse.rdf4j.model.ValueFactory
 import org.orkg.dataimport.domain.extractRdfFileId
 import org.orkg.dataimport.domain.rdf.RdfClass
 import org.orkg.dataimport.domain.rdf.RdfClassParser
+import org.orkg.dataimport.domain.rdf.RdfLabelResolverService
 import org.orkg.dataimport.domain.rdf.RdfPredicate
 import org.orkg.dataimport.domain.rdf.RdfPredicateParser
 import org.orkg.dataimport.domain.rdf.RdfResource
@@ -75,11 +76,11 @@ class ValidateRdfFileStepConfiguration {
     fun rdfClassParser(
         @Value("#{jobParameters}")
         jobParameters: Map<String, Any>,
-        rdfTripleRepository: RdfTripleRepository,
+        rdfLabelResolverService: RdfLabelResolverService,
     ): RdfClassParser =
         RdfClassParser(
             rdfFileId = extractRdfFileId(jobParameters),
-            rdfTripleRepository = rdfTripleRepository,
+            rdfLabelResolverService = rdfLabelResolverService,
         )
 
     @Bean
@@ -105,11 +106,11 @@ class ValidateRdfFileStepConfiguration {
     fun rdfPredicateParser(
         @Value("#{jobParameters}")
         jobParameters: Map<String, Any>,
-        rdfTripleRepository: RdfTripleRepository,
+        rdfLabelResolverService: RdfLabelResolverService,
     ): RdfPredicateParser =
         RdfPredicateParser(
             rdfFileId = extractRdfFileId(jobParameters),
-            rdfTripleRepository = rdfTripleRepository,
+            rdfLabelResolverService = rdfLabelResolverService,
         )
 
     @Bean
@@ -136,10 +137,12 @@ class ValidateRdfFileStepConfiguration {
         @Value("#{jobParameters}")
         jobParameters: Map<String, Any>,
         rdfTripleRepository: RdfTripleRepository,
+        rdfLabelResolverService: RdfLabelResolverService,
     ): RdfResourceParser =
         RdfResourceParser(
             rdfFileId = extractRdfFileId(jobParameters),
             rdfTripleRepository = rdfTripleRepository,
+            rdfLabelResolverService = rdfLabelResolverService,
         )
 
     @Bean

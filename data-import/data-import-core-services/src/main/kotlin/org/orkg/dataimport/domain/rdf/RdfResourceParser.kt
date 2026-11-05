@@ -9,6 +9,7 @@ import java.util.UUID
 open class RdfResourceParser(
     private val rdfFileId: UUID,
     private val rdfTripleRepository: RdfTripleRepository,
+    private val rdfLabelResolverService: RdfLabelResolverService,
 ) : ItemProcessor<Resource, RdfResource> {
     override fun process(iri: Resource): RdfResource? {
         if (iri.toString().startsWith(ORKG_VOCAB_PREFIX)) {
@@ -18,7 +19,7 @@ open class RdfResourceParser(
             id = UUID.randomUUID(),
             rdfFileId = rdfFileId,
             iri = iri,
-            label = rdfTripleRepository.findLabel(rdfFileId, iri),
+            label = rdfLabelResolverService.resolveLabel(rdfFileId, iri),
             classes = rdfTripleRepository.findAllDistinctObjectIrisByRdfFileIdAndSubjectAndPredicate(
                 rdfFileId = rdfFileId,
                 subject = iri,

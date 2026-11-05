@@ -1,13 +1,12 @@
 package org.orkg.dataimport.domain.rdf
 
 import org.eclipse.rdf4j.model.IRI
-import org.orkg.dataimport.output.RdfTripleRepository
 import org.springframework.batch.infrastructure.item.ItemProcessor
 import java.util.UUID
 
 open class RdfClassParser(
     private val rdfFileId: UUID,
-    private val rdfTripleRepository: RdfTripleRepository,
+    private val rdfLabelResolverService: RdfLabelResolverService,
 ) : ItemProcessor<IRI, RdfClass> {
     override fun process(iri: IRI): RdfClass? {
         if (iri.toString().startsWith(ORKG_VOCAB_PREFIX)) {
@@ -17,7 +16,7 @@ open class RdfClassParser(
             id = UUID.randomUUID(),
             rdfFileId = rdfFileId,
             iri = iri,
-            label = rdfTripleRepository.findLabel(rdfFileId, iri),
+            label = rdfLabelResolverService.resolveLabel(rdfFileId, iri),
         )
     }
 }

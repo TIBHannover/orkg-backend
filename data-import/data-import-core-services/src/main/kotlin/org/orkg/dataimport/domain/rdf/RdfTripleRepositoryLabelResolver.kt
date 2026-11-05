@@ -5,6 +5,7 @@ import org.eclipse.rdf4j.model.Resource
 import org.eclipse.rdf4j.model.vocabulary.RDFS
 import org.orkg.dataimport.output.RdfTripleRepository
 import org.orkg.graph.domain.MAX_LABEL_LENGTH
+import org.springframework.stereotype.Component
 import java.util.UUID
 
 private val languageComparator = Comparator<Literal> { a, b ->
@@ -22,13 +23,18 @@ private val languageComparator = Comparator<Literal> { a, b ->
     } else if (b.language.isPresent && b.language.get() == "en") {
         return@Comparator Int.MIN_VALUE
     }
-    return@Comparator a.label.compareTo(b.label)
+    return@Comparator 0
 }
 
-internal fun RdfTripleRepository.findLabel(rdfFileId: UUID, input: Resource): String? =
-    findAllDistinctObjectLiteralsByRdfFileIdAndSubjectAndPredicate(rdfFileId, input, RDFS.LABEL)
-        .sortedWith(languageComparator)
-        .firstOrNull()
-        ?.stringValue()
-        ?.replace("\n", " ")
-        ?.take(MAX_LABEL_LENGTH)
+@Component
+class RdfTripleRepositoryLabelResolver(
+    private val rdfTripleRepository: RdfTripleRepository,
+) : RdfLabelResolver {
+    override fun resolve(rdfFileId: UUID, resource: Resource): String? =
+        rdfTripleRepository.findAllDistinctObjectLiteralsByRdfFileIdAndSubjectAndPredicate(rdfFileId, resource, RDFS.LABEL)
+            .sortedWith(languageComparator)
+            .firstOrNull()
+            ?.stringValue()
+
+    override fun canResolve(rdfFileId: UUID, resource: Resource): Boolean = true
+}

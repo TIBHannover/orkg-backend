@@ -1,9 +1,6 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 
-// Platforms do not work at this point, but we need an explicit version.
-val byteBuddyAgentVersion = "1.18.8"
-
 plugins {
     id("java")
     id("org.jetbrains.kotlin.jvm")
@@ -19,11 +16,6 @@ val javaLanguageVersion = JavaLanguageVersion.of(25)
 // Support downloading Javadoc and sources artifacts by enabling it via Gradle properties
 val downloadJavadoc: String? by project
 val downloadSources: String? by project
-
-val javaAgent by configurations.creating {
-    isCanBeResolved = true
-    isCanBeConsumed = false
-}
 
 idea {
     module {
@@ -71,9 +63,6 @@ tasks.withType<Test>().configureEach {
     // Configure Byte-Buddy to not use sun.misc.Unsafe
     systemProperty("net.bytebuddy.safe", true)
 
-    // Load agents by explicitly passing the paths via the command line, when added to the "javaAgent" configuration.
-    jvmArgs("-javaagent:${javaAgent.asPath}")
-
     // Disable warnings due to dynamic agent loading ("Sharing is only supported for boot loader classes because bootstrap classpath
     // has been appended").
     // This should be fine, as explicit loading of agents via the JVM args will be the official,
@@ -92,7 +81,6 @@ configurations.all {
 // Configure common test runtime dependencies for *all* projects
 dependencies {
     api(platform("org.orkg:platform"))
-    javaAgent("net.bytebuddy:byte-buddy-agent:$byteBuddyAgentVersion") { isTransitive = false }
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     testRuntimeOnly("ch.qos.logback:logback-classic") // Logger implementation. Should be same as in production.

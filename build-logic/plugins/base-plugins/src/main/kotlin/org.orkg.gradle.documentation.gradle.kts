@@ -8,8 +8,3 @@ plugins {
 }
 
 val asciidoctor by configurations.creating
-
-node {
-    // TODO: move to version catalog
-    version = "24.22.2"
-}

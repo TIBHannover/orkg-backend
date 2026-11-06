@@ -11,6 +11,7 @@ rootProject.name = "orkg-backend"
 includeBuild("include/restdocs-api-spec")
 
 include("documentation")
+include("constants")
 include(
     "common:testing",
     "common:testing-spring",
@@ -126,6 +127,7 @@ include(
     "curation:curation-adapter-input-rest-spring-mvc",
     "curation:curation-adapter-output-spring-data-neo4j",
 )
+include("eventbus")
 include("widget")
 include("rest-api-server")
 include(":integrations:datacite-serialization")

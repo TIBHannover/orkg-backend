@@ -76,6 +76,10 @@ val generateRestDocsSnippets by tasks.registering(Sync::class) {
     into(generatedSnippetsDir)
 }
 
+node {
+    version = libs.versions.node
+}
+
 antora {
     setOptions(
         mapOf(

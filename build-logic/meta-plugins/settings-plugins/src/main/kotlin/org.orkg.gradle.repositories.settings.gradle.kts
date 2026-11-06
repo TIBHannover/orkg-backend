@@ -2,7 +2,7 @@ pluginManagement {
     // Get community plugins from the Gradle Plugin Portal
     repositories.gradlePluginPortal()
 
-    // Get our own convention plugins from 'gradle/plugins'
+    // Get our own convention plugins from 'build-logic/plugins'
     if (File(rootDir, "build-logic/plugins").exists()) {
         includeBuild("build-logic/plugins")
     }
@@ -21,8 +21,8 @@ dependencyResolutionManagement {
         mavenCentral()
         maven("https://jitpack.io")
     }
-    // In the main build, find the platform in 'gradle/platform'
-    if (File(rootDir, "gradle/platform").exists()) {
-        includeBuild("gradle/platform")
+    // In the main build, find the platform in 'build-logic/platform'
+    if (File(rootDir, "build-logic/platform").exists()) {
+        includeBuild("build-logic/platform")
     }
 }

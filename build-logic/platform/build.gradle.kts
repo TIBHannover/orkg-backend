@@ -3,59 +3,57 @@ plugins {
 }
 
 dependencies {
-    api(platform("org.springframework.boot:spring-boot-dependencies:4.1.1"))
+    api(platform(libs.bom.spring.boot))
     // Kotlin
-    api(platform(kotlin("bom", "2.3.20"))) // Align with version from Gradle, which is newer than the one in Spring
+    api(platform(libs.bom.kotlin))
     // Platforms not included in Spring Boot
-    api(platform("dev.forkhandles:forkhandles-bom:2.24.0.0"))
-    api(platform("io.kotest:kotest-bom:6.0.7"))
-    api(platform("io.rest-assured:rest-assured-bom:6.0.0"))
-    api(platform("org.eclipse.rdf4j:rdf4j-bom:5.2.2"))
-    api(platform("org.axonframework:axon-framework-bom:5.2.2"))
+    api(platform(libs.bom.forkhandles))
+    api(platform(libs.bom.kotest))
+    api(platform(libs.bom.rest.assured))
+    api(platform(libs.bom.rdf4j))
+    api(platform(libs.bom.axon))
     // May not be needed when axon bom and spring bom use the same version
-    api(platform("org.junit:junit-bom:6.1.2"))
+    api(platform(libs.bom.junit))
 
     // Third-party versions not provided by Spring, and without platform/BOM
-    api("io.mockk:mockk:1.14.9") // anchor for MockKVirtualPlatformAlignmentRule
-    api("org.commonmark:commonmark:0.27.1") // anchor for CommonMarkVirtualPlatformAlignmentRule
-    api("org.commonmark:commonmark-ext-autolink:0.27.1")
-    api("org.commonmark:commonmark-ext-gfm-strikethrough:0.27.1")
-    api("org.commonmark:commonmark-ext-gfm-tables:0.27.1")
-    api("nl.jqno.equalsverifier:equalsverifier:4.4.2")
+    api(libs.mockk) // anchor for MockKVirtualPlatformAlignmentRule
+    api(libs.commonmark) // anchor for CommonMarkVirtualPlatformAlignmentRule
+    api(libs.commonmark.ext.autolink)
+    api(libs.commonmark.ext.gfm.strikethrough)
+    api(libs.commonmark.ext.gfm.tables)
+    api(libs.equalsverifier)
 
     // The Lucene Query Parser version should match the one used by the currently used Neo4j database.
     // Although newer versions should not be a problem, differences in the syntax can be a problem.
     // Check https://mvnrepository.com/artifact/org.neo4j/neo4j-lucene-index/{NEO4J_VERSION}/dependencies
     // for the respective version, and check the compatibility.
-    api("org.apache.lucene:lucene-queryparser:10.3.2")
+    api(libs.lucene.queryparser)
 
-    val keycloakAdminClientVersion = "26.0.12"
-    api("org.keycloak:keycloak-admin-client:$keycloakAdminClientVersion")
+    api(libs.keycloak.admin.client)
 
-    val neo4jMigrationsVersion = "3.1.0"
-    api("eu.michael-simons.neo4j:neo4j-migrations-spring-boot-starter:$neo4jMigrationsVersion")
-    api("eu.michael-simons.neo4j:neo4j-migrations-spring-boot-autoconfigure:$neo4jMigrationsVersion")
+    api(libs.neo4j.migrations.spring.boot.starter)
+    api(libs.neo4j.migrations.spring.boot.autoconfigure)
 
     // JWT
-    api("io.jsonwebtoken:jjwt-api:0.13.0")
-    api("io.jsonwebtoken:jjwt-impl:0.13.0")
-    api("io.jsonwebtoken:jjwt-jackson:0.13.0")
+    api(libs.jsonwebtoken.api)
+    api(libs.jsonwebtoken.impl)
+    api(libs.jsonwebtoken.jackson)
 
     // Testcontainers
-    api("com.github.dasniko:testcontainers-keycloak:4.0.1")
+    api(libs.testcontainers.keycloak)
 
-    api("com.redfin:contractual:3.0.0")
-    api("org.jbibtex:jbibtex:1.0.20")
-    api("net.datafaker:datafaker:2.5.3")
-    api("io.hypersistence:hypersistence-utils-hibernate-73:3.15.1") // JSONB support for Hibernate
-    api("net.handle:handle-client:9.3.2")
-    api("org.freemarker:freemarker:2.3.34")
-    api("org.apache.commons:commons-csv:1.14.1")
-    api("com.github.multiformats:java-multihash:v1.3.6")
-    api("org.jetbrains.kotlinx:kotlinx-html-jvm:0.12.0")
+    api(libs.contractual)
+    api(libs.jbibtex)
+    api(libs.datafaker)
+    api(libs.hypersistence.utils.hibernate) // JSONB support for Hibernate
+    api(libs.handle.client)
+    api(libs.freemarker)
+    api(libs.apache.commons.csv)
+    api(libs.multiformats.multihash)
+    api(libs.kotlinx.html.jvm)
 
     // Declare constraints on all components that need alignment
     constraints {
-        api("com.ninja-squad:springmockk:5.0.1")
+        api(libs.spring.mockk)
     }
 }

@@ -8,10 +8,6 @@ plugins {
     id("org.orkg.gradle.spring-boot-application")
     id("jacoco-report-aggregation")
     id("org.orkg.gradle.docker-image")
-
-    // The taskinfo plugin currently does not work with Gradle 7.6: https://gitlab.com/barfuin/gradle-taskinfo/-/issues/20
-    // It was used only occasionally for debugging, and can be re-enabled again later (if needed).
-    // id("org.barfuin.gradle.taskinfo") version "1.2.0"
 }
 
 testing {

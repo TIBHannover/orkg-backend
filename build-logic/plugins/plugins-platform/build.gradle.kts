@@ -3,29 +3,23 @@ plugins {
 }
 
 dependencies.constraints {
-    val kotlinVersion = "2.3.20"
-    api("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
-    api("org.jetbrains.kotlin:kotlin-allopen:$kotlinVersion")
-    api("org.jetbrains.kotlin:kotlin-noarg:$kotlinVersion")
-
-    // FIXME: This version should be the same as the one used in the platform.
-    api("org.springframework.boot:spring-boot-gradle-plugin:4.1.1")
-
-    api("io.spring.gradle.antora:spring-antora-plugin:0.0.1")
-    api("org.antora:gradle-antora-plugin:1.0.0")
-    // NOTE: This version should be the same as the one used in the antora plugin.
-    api("com.github.node-gradle:gradle-node-plugin:3.5.1")
-    api("org.openapitools:openapi-generator-gradle-plugin:7.22.0")
-
-    api("org.gradlex:jvm-dependency-conflict-resolution:2.5")
-    api("com.autonomousapps.dependency-analysis:com.autonomousapps.dependency-analysis.gradle.plugin:3.6.1")
-    api("com.osacky.doctor:doctor-plugin:0.12.0")
-    api("com.github.ben-manes:gradle-versions-plugin:0.53.0")
-    api("com.github.gmazzo.buildconfig:com.github.gmazzo.buildconfig.gradle.plugin:6.0.9")
-
-    api("com.google.cloud.tools:jib-gradle-plugin:3.5.3")
-    api("com.diffplug.spotless:spotless-plugin-gradle:8.3.0")
-    api("com.diffplug.spotless-changelog:spotless-changelog-plugin-gradle:3.1.2")
-
-    api("io.github.java-diff-utils:java-diff-utils:4.16")
+    // Gradle plugins
+    api(libs.gradle.plugin.jar.antora)
+    api(libs.gradle.plugin.jar.buildconfig)
+    api(libs.gradle.plugin.jar.dependency.analysis)
+    api(libs.gradle.plugin.jar.doctor)
+    api(libs.gradle.plugin.jar.jib)
+    api(libs.gradle.plugin.jar.jvm.dependency.conflict.resolution)
+    api(libs.gradle.plugin.jar.kotlin)
+    api(libs.gradle.plugin.jar.kotlin.allopen)
+    api(libs.gradle.plugin.jar.kotlin.noarg)
+    api(libs.gradle.plugin.jar.node)
+    api(libs.gradle.plugin.jar.openapi.generator)
+    api(libs.gradle.plugin.jar.spotless)
+    api(libs.gradle.plugin.jar.spotless.changelog)
+    api(libs.gradle.plugin.jar.spring.antora)
+    api(libs.gradle.plugin.jar.spring.boot)
+    api(libs.gradle.plugin.jar.versions)
+    // Regular libraries
+    api(libs.diff.utils)
 }

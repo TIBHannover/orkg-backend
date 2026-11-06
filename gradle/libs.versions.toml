@@ -1,0 +1,78 @@
+[versions]
+# Versions are defined here only if they are either:
+#   * used in a BOM
+#   * used in several library dependencies (which are not aligned)
+#   * used in several declared dependencies (e.g. a library and a plugin)
+# All other versions are declared directly declared on the entry itself.
+#
+kotlin = "2.3.20" # Align Kotlin version with version from Gradle (which might be newer than the one in Spring)
+spring-boot = "4.1.1"
+# Sorted alphabetically, starting here
+axon = "5.2.2"
+commonmark = "0.27.1"
+forkhandles = "2.24.0.0"
+jjwt = "0.13.0"
+junit = "6.1.2"
+kotest = "6.0.7"
+lucene-queryparser = "10.3.2" # see notes in platform
+neo4j-migrations = "3.1.0"
+node = "24.22.2"
+rdf4j = "5.2.2"
+
+[libraries]
+# BOMs. Sorted alphabetically.
+bom-axon = { module = "org.axonframework:axon-framework-bom", version.ref = "axon" }
+bom-forkhandles = { module = "dev.forkhandles:forkhandles-bom", version.ref = "forkhandles" }
+bom-junit = { module = "org.junit:junit-bom", version.ref = "junit" }
+bom-kotest = { module = "io.kotest:kotest-bom", version.ref = "kotest" }
+bom-kotlin = { module = "org.jetbrains.kotlin:kotlin-bom", version.ref = "kotlin" }
+bom-rdf4j = { module = "org.eclipse.rdf4j:rdf4j-bom", version.ref = "rdf4j" }
+bom-rest-assured = { module = "io.rest-assured:rest-assured-bom", version = "6.0.0" }
+bom-spring-boot = { module = "org.springframework.boot:spring-boot-dependencies", version.ref = "spring-boot" }
+# Regular libraries. Sorted alphabetically.
+apache-commons-csv = { module = "org.apache.commons:commons-csv", version = "1.14.1" }
+commonmark = { module = "org.commonmark:commonmark", version.ref = "commonmark" }
+commonmark-ext-autolink = { module = "org.commonmark:commonmark-ext-autolink", version.ref = "commonmark" }
+commonmark-ext-gfm-strikethrough = { module = "org.commonmark:commonmark-ext-gfm-strikethrough", version.ref = "commonmark" }
+commonmark-ext-gfm-tables = { module = "org.commonmark:commonmark-ext-gfm-tables", version.ref = "commonmark" }
+contractual = { module = "com.redfin:contractual", version = "3.0.0" }
+datafaker = { module = "net.datafaker:datafaker", version = "2.5.3" }
+diff-utils = { module = "io.github.java-diff-utils:java-diff-utils", version = "4.16" }
+equalsverifier = { module = "nl.jqno.equalsverifier:equalsverifier", version = "4.4.2" }
+freemarker = { module = "org.freemarker:freemarker", version = "2.3.34" }
+handle-client = { module = "net.handle:handle-client", version = "9.3.2" }
+hypersistence-utils-hibernate = { module = "io.hypersistence:hypersistence-utils-hibernate-73", version = "3.15.1" }
+jbibtex = { module = "org.jbibtex:jbibtex", version = "1.0.20" }
+jsonwebtoken-api = { module = "io.jsonwebtoken:jjwt-api", version.ref = "jjwt" }
+jsonwebtoken-impl = { module = "io.jsonwebtoken:jjwt-impl", version.ref = "jjwt" }
+jsonwebtoken-jackson = { module = "io.jsonwebtoken:jjwt-jackson", version.ref = "jjwt" }
+keycloak-admin-client = { module = "org.keycloak:keycloak-admin-client", version = "26.0.12" }
+kotlinx-html-jvm = { module = "org.jetbrains.kotlinx:kotlinx-html-jvm", version = "0.12.0" }
+lucene-queryparser = { module = "org.apache.lucene:lucene-queryparser", version.ref = "lucene-queryparser" }
+mockk = { module = "io.mockk:mockk", version = "1.14.9" }
+multiformats-multihash = { module = "com.github.multiformats:java-multihash", version = "v1.3.6" }
+neo4j-migrations-spring-boot-autoconfigure = { module = "eu.michael-simons.neo4j:neo4j-migrations-spring-boot-autoconfigure", version.ref = "neo4j-migrations" }
+neo4j-migrations-spring-boot-starter = { module = "eu.michael-simons.neo4j:neo4j-migrations-spring-boot-starter", version.ref = "neo4j-migrations" }
+spring-mockk = { module = "com.ninja-squad:springmockk", version = "5.0.1" }
+testcontainers-keycloak = { module = "com.github.dasniko:testcontainers-keycloak", version = "4.0.1" }
+# Gradle plugin JARs. Used in the plugins platform. Prefixed with "gradle-plugin-jar-" to avoid confusion. Sorted alphabetically.
+gradle-plugin-jar-antora = { module = "org.antora:gradle-antora-plugin", version = "1.0.0" }
+gradle-plugin-jar-buildconfig = { module = "com.github.gmazzo.buildconfig:com.github.gmazzo.buildconfig.gradle.plugin", version = "6.0.9" }
+gradle-plugin-jar-dependency-analysis = { module = "com.autonomousapps.dependency-analysis:com.autonomousapps.dependency-analysis.gradle.plugin", version = "3.6.1" }
+gradle-plugin-jar-doctor = { module = "com.osacky.doctor:doctor-plugin", version = "0.12.0" }
+gradle-plugin-jar-jib = { module = "com.google.cloud.tools:jib-gradle-plugin", version = "3.5.3" }
+gradle-plugin-jar-jvm-dependency-conflict-resolution = { module = "org.gradlex:jvm-dependency-conflict-resolution", version = "2.5" }
+gradle-plugin-jar-kotlin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
+gradle-plugin-jar-kotlin-allopen = { module = "org.jetbrains.kotlin:kotlin-allopen", version.ref = "kotlin" }
+gradle-plugin-jar-kotlin-noarg = { module = "org.jetbrains.kotlin:kotlin-noarg", version.ref = "kotlin" }
+gradle-plugin-jar-node = { module = "com.github.node-gradle:gradle-node-plugin", version = "3.5.1" } # NOTE: This version should be the same as the one used in the antora plugin.
+gradle-plugin-jar-openapi-generator = { module = "org.openapitools:openapi-generator-gradle-plugin", version = "7.22.0" }
+gradle-plugin-jar-spotless = { module = "com.diffplug.spotless:spotless-plugin-gradle", version = "8.3.0" }
+gradle-plugin-jar-spotless-changelog = { module = "com.diffplug.spotless-changelog:spotless-changelog-plugin-gradle", version = "3.1.2" }
+gradle-plugin-jar-spring-antora = { module = "io.spring.gradle.antora:spring-antora-plugin", version = "0.0.1" }
+gradle-plugin-jar-spring-boot = { module = "org.springframework.boot:spring-boot-gradle-plugin", version.ref = "spring-boot" }
+gradle-plugin-jar-versions = { module = "com.github.ben-manes:gradle-versions-plugin", version = "0.53.0" }
+# TODO: Libraries included in Spring. Version-less, to align with the platform. Sorted alphabetically.
+
+[plugins]
+build-parameters = { id = "org.gradlex.build-parameters", version = "1.4.3" }

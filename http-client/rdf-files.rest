@@ -80,7 +80,7 @@ Authorization: Bearer {{access_token}}
 GET {{server_url}}/api/rdf-files/{{rdf_file_id}}/import/results
 Authorization: Bearer {{access_token}}
 
-### Stop RDF File validation
+### Stop RDF File import
 DELETE {{server_url}}/api/rdf-files/{{rdf_file_id}}/import
 Authorization: Bearer {{access_token}}
 
